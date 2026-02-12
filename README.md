@@ -4,7 +4,9 @@ Public API for Grudge Warlords game data - weapons, materials, armor, and icons.
 
 ## 🔗 Live API
 
-**Base URL:** `https://grudge-studio.github.io/ObjectStore`
+**Base URL:** `https://molochdagod.github.io/ObjectStore`
+
+**📚 [Full API Documentation](https://molochdagod.github.io/ObjectStore/docs/)**
 
 | Endpoint | Description |
 |----------|-------------|
@@ -12,11 +14,13 @@ Public API for Grudge Warlords game data - weapons, materials, armor, and icons.
 | `/api/v1/materials.json` | Crafting materials (ore, wood, cloth, leather, gems, essence) |
 | `/api/v1/armor.json` | Armor slots (helm, chest, boots, etc.) |
 | `/api/v1/consumables.json` | Potions, bandages, grenades |
+| `/api/v1/skills.json` | Profession skill trees (5 professions) |
+| `/api/v1/professions.json` | Profession definitions and metadata |
 
 ## 📦 SDK
 
 ```javascript
-import { GrudgeSDK } from 'https://grudge-studio.github.io/ObjectStore/sdk/grudge-sdk.js';
+import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
 
 const sdk = new GrudgeSDK();
 
@@ -42,7 +46,7 @@ For AI agents that need game data without authentication:
 
 ```javascript
 // Direct fetch example
-const response = await fetch('https://grudge-studio.github.io/ObjectStore/api/v1/weapons.json');
+const response = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json');
 const data = await response.json();
 
 // Get all fire staves
@@ -141,7 +145,8 @@ This repository is deployed via GitHub Pages:
 
 1. Push to `main` branch
 2. GitHub Actions builds and deploys
-3. Available at `https://grudge-studio.github.io/ObjectStore`
+3. Available at `https://molochdagod.github.io/ObjectStore`
+4. API Docs: `https://molochdagod.github.io/ObjectStore/docs/`
 
 ## 📄 License
 
