@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation - Grudge Studio ObjectStore</title>
+  <meta name="description" content="Complete API documentation for Grudge Warlords game data">
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a1f2e;
+      --gold: #d4a84b;
+      --gold-light: #f0d890;
+      --text: #e8e6e3;
+      --text-dim: #8b8685;
+      --border: #3d3d3d;
+      --code-bg: #0d1117;
+      --success: #22c55e;
+      --info: #3b82f6;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      color: var(--gold);
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar a {
+      display: block;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: var(--bg);
+      color: var(--gold-light);
+    }
+    .sidebar .section-title {
+      color: var(--text);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 20px 0 10px 0;
+    }
+    .main {
+      margin-left: 260px;
+      padding: 40px;
+      max-width: 900px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin: 40px 0 16px 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--text);
+      font-size: 1.2rem;
+      margin: 24px 0 12px 0;
+    }
+    p { margin-bottom: 16px; color: var(--text-dim); }
+    .intro { font-size: 1.1rem; margin-bottom: 30px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .endpoint-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .method {
+      background: var(--success);
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .endpoint-url {
+      font-family: 'Consolas', monospace;
+      color: var(--gold-light);
+      font-size: 0.95rem;
+    }
+    .endpoint-body { padding: 20px; }
+    .endpoint-desc { color: var(--text-dim); margin-bottom: 16px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      margin: 16px 0;
+      border: 1px solid var(--border);
+    }
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: var(--gold-light);
+    }
+    .inline-code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+    td { color: var(--text-dim); }
+    td code { color: var(--gold-light); }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .badge-success { background: var(--success); color: #000; }
+    .badge-info { background: var(--info); color: #fff; }
+    .badge-warning { background: var(--warning); color: #000; }
+    .tip {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid var(--info);
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .tip-title {
+      color: var(--info);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--warning);
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .warning-title {
+      color: var(--warning);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    ul { margin: 16px 0; padding-left: 24px; }
+    li { margin-bottom: 8px; color: var(--text-dim); }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: var(--text-dim);
+    }
+    .back-link:hover { color: var(--gold); }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>⚔️ ObjectStore</h2>
+    <a href="../">← Back to Home</a>
+    
+    <div class="section-title">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#base-url">Base URL</a>
+    <a href="#authentication">Authentication</a>
+    
+    <div class="section-title">API Endpoints</div>
+    <a href="#weapons">Weapons</a>
+    <a href="#materials">Materials</a>
+    <a href="#armor">Armor</a>
+    <a href="#consumables">Consumables</a>
+    <a href="#skills">Skills</a>
+    <a href="#professions">Professions</a>
+    
+    <div class="section-title">Data Models</div>
+    <a href="#weapon-schema">Weapon Schema</a>
+    <a href="#material-schema">Material Schema</a>
+    <a href="#tier-system">Tier System</a>
+    
+    <div class="section-title">SDK & Tools</div>
+    <a href="#javascript-sdk">JavaScript SDK</a>
+    <a href="#python-examples">Python Examples</a>
+    <a href="#ai-integration">AI Integration</a>
+    
+    <div class="section-title">Resources</div>
+    <a href="./DATABASE.md">Database Schema</a>
+    <a href="../sdk/grudge-sdk.js">Download SDK</a>
+  </nav>
+
+  <main class="main">
+    <a href="../" class="back-link">← Back to ObjectStore</a>
+    
+    <h1>📖 API Documentation</h1>
+    <p class="intro">Complete reference for the Grudge Studio ObjectStore API - access game data for Grudge Warlords including weapons, materials, armor, consumables, and more.</p>
+
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>The ObjectStore API provides read-only access to all static game data for Grudge Warlords. This includes:</p>
+      <ul>
+        <li><strong>816 Weapons</strong> across 17 categories with 8 tiers each</li>
+        <li><strong>98 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
+        <li><strong>132 Consumables</strong> including foods, potions, and engineer items</li>
+        <li><strong>47 Skills</strong> for weapon combat abilities</li>
+        <li><strong>5 Professions</strong> with complete skill trees</li>
+      </ul>
+      
+      <div class="tip">
+        <div class="tip-title">💡 Perfect for AI Agents</div>
+        <p>This API requires no authentication and returns JSON data. Ideal for building game companions, crafting calculators, or AI-powered assistants.</p>
+      </div>
+    </section>
+
+    <section id="base-url">
+      <h2>Base URL</h2>
+      <pre><code>https://molochdagod.github.io/ObjectStore</code></pre>
+      <p>All endpoints are relative to this base URL. For example:</p>
+      <pre><code>GET https://molochdagod.github.io/ObjectStore/api/v1/weapons.json</code></pre>
+    </section>
+
+    <section id="authentication">
+      <h2>Authentication</h2>
+      <p><span class="badge badge-success">No Auth Required</span></p>
+      <p>The ObjectStore API is completely public. No API keys, tokens, or authentication headers are needed. Simply make HTTP GET requests to any endpoint.</p>
+      
+      <div class="warning">
+        <div class="warning-title">⚠️ Player Data</div>
+        <p>This API only serves static game definitions. For player-specific data (inventory, characters, progress), you'll need authenticated access to our Supabase database. See <a href="./DATABASE.md">Database Schema</a> for details.</p>
+      </div>
+    </section>
+
+    <section id="weapons">
+      <h2>Weapons Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/weapons.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all weapon definitions organized by category. Each weapon includes stats, abilities, lore, and crafting requirements.</p>
+          
+          <h3>Response Structure</h3>
+          <pre><code>{
+  "version": "1.0.0",
+  "generated": "2026-02-12T00:00:00Z",
+  "categories": {
+    "swords": {
+      "craftedBy": "Miner",
+      "category": "1h",
+      "items": [
+        {
+          "id": "sword-bloodfeud",
+          "name": "Bloodfeud Blade",
+          "type": "Sword",
+          "lore": "Forged in endless clan blood feuds",
+          "stats": {
+            "damageBase": 50,
+            "damagePerTier": 12,
+            "speedBase": 100,
+            "critBase": 3
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": ["Blood Rush", "Iron Grudge", "Clan Charge"],
+          "signatureAbility": "Crimson Reprisal",
+          "passives": ["Bloodlust", "Swift Vengeance", "Deep Cuts"]
+        }
+      ]
+    },
+    "axes": { ... },
+    "daggers": { ... },
+    "spears": { ... },
+    "maces": { ... },
+    "hammers1h": { ... },
+    "hammers2h": { ... },
+    "greatswords": { ... },
+    "greataxes": { ... },
+    "bows": { ... },
+    "crossbows": { ... },
+    "guns": { ... },
+    "fireStaves": { ... },
+    "frostStaves": { ... },
+    "holyStaves": { ... },
+    "lightningStaves": { ... },
+    "arcaneStaves": { ... },
+    "tomes": { ... }
+  }
+}</code></pre>
+
+          <h3>Weapon Categories</h3>
+          <table>
+            <tr><th>Category</th><th>Type</th><th>Crafted By</th><th>Count</th></tr>
+            <tr><td>Swords</td><td>1-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Axes</td><td>1-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Daggers</td><td>1-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Spears</td><td>2-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Maces</td><td>1-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Hammers (1H)</td><td>1-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Hammers (2H)</td><td>2-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Greatswords</td><td>2-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Greataxes</td><td>2-Hand</td><td>Miner</td><td>6</td></tr>
+            <tr><td>Bows</td><td>Ranged 2H</td><td>Forester</td><td>6</td></tr>
+            <tr><td>Crossbows</td><td>Ranged 2H</td><td>Engineer</td><td>6</td></tr>
+            <tr><td>Guns</td><td>Ranged 2H</td><td>Engineer</td><td>6</td></tr>
+            <tr><td>Fire Staves</td><td>Ranged 2H</td><td>Mystic</td><td>6</td></tr>
+            <tr><td>Frost Staves</td><td>Ranged 2H</td><td>Mystic</td><td>6</td></tr>
+            <tr><td>Holy Staves</td><td>Ranged 2H</td><td>Mystic</td><td>6</td></tr>
+            <tr><td>Lightning Staves</td><td>Ranged 2H</td><td>Mystic</td><td>6</td></tr>
+            <tr><td>Arcane Staves</td><td>Ranged 2H</td><td>Mystic</td><td>6</td></tr>
+            <tr><td>Tomes</td><td>Off-hand</td><td>Mystic</td><td>12</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="materials">
+      <h2>Materials Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/materials.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all crafting materials including ores, wood, cloth, leather, gems, and magical essences.</p>
+          
+          <h3>Material Categories</h3>
+          <table>
+            <tr><th>Category</th><th>Gathered By</th><th>Tiers</th></tr>
+            <tr><td>Ore</td><td>Miner</td><td>T1-T8</td></tr>
+            <tr><td>Ingots</td><td>Refined</td><td>T1-T8</td></tr>
+            <tr><td>Wood</td><td>Forester</td><td>T1-T8</td></tr>
+            <tr><td>Planks</td><td>Refined</td><td>T1-T8</td></tr>
+            <tr><td>Cloth</td><td>Mystic</td><td>T1-T8</td></tr>
+            <tr><td>Leather</td><td>Forester</td><td>T1-T8</td></tr>
+            <tr><td>Essence</td><td>Mystic</td><td>T1-T8</td></tr>
+            <tr><td>Gems</td><td>Miner</td><td>T1-T8</td></tr>
+            <tr><td>Infusions</td><td>Various</td><td>T1-T5</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="armor">
+      <h2>Armor Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/armor.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns armor sets organized by profession and type.</p>
+          
+          <h3>Armor Sets</h3>
+          <table>
+            <tr><th>Profession</th><th>Type</th><th>Sets</th></tr>
+            <tr><td>Miner</td><td>Metal Plate</td><td>Guardian, Berserker</td></tr>
+            <tr><td>Forester</td><td>Leather</td><td>Stalker, Brawler</td></tr>
+            <tr><td>Mystic</td><td>Cloth</td><td>Scholar, Archmage</td></tr>
+            <tr><td>Engineer</td><td>Mech</td><td>Mechanist, Inventor</td></tr>
+          </table>
+          <p>Each set contains 6 pieces: Head, Chest, Legs, Hands, Feet, Shoulders.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="consumables">
+      <h2>Consumables Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/consumables.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all consumable items including foods, potions, and engineer utilities.</p>
+          
+          <h3>Consumable Types</h3>
+          <table>
+            <tr><th>Type</th><th>Profession</th><th>Count</th><th>Effect</th></tr>
+            <tr><td>Red Foods</td><td>Chef</td><td>30</td><td>Attack/Damage buffs</td></tr>
+            <tr><td>Green Foods</td><td>Chef</td><td>30</td><td>Regen/Healing buffs</td></tr>
+            <tr><td>Blue Foods</td><td>Chef</td><td>30</td><td>Mana/Magic buffs</td></tr>
+            <tr><td>Potions</td><td>Chef/Mystic</td><td>30</td><td>Combat effects</td></tr>
+            <tr><td>Engineer Items</td><td>Engineer</td><td>12</td><td>Utility/Explosives</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2>Skills Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/skills.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all weapon combat skills with tooltips, cooldowns, and damage formulas.</p>
+          
+          <pre><code>{
+  "skills": [
+    {
+      "id": "vengeful-slash",
+      "name": "Vengeful Slash",
+      "weaponType": "Sword",
+      "slot": "basic",
+      "tooltip": "A fierce slash that builds Grudge Mark stacks...",
+      "cooldown": 0,
+      "manaCost": 0,
+      "damage": "100% weapon damage",
+      "effect": "Applies Grudge Mark (5% damage amp, max 3)"
+    }
+  ]
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="professions">
+      <h2>Professions Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/professions.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns all 5 professions with their skill trees, recipes, and specializations.</p>
+          
+          <h3>Professions</h3>
+          <table>
+            <tr><th>Profession</th><th>Role</th><th>Skill Nodes</th><th>Crafts</th></tr>
+            <tr><td>⛏️ Miner</td><td>Weaponsmith & Armorsmith</td><td>42</td><td>Metal weapons, plate armor</td></tr>
+            <tr><td>🌲 Forester</td><td>Bowyer & Leatherworker</td><td>28</td><td>Bows, leather armor</td></tr>
+            <tr><td>🔮 Mystic</td><td>Enchanter & Clothier</td><td>37</td><td>Staves, cloth armor, enchants</td></tr>
+            <tr><td>🍲 Chef</td><td>Cook & Alchemist</td><td>28</td><td>Foods, potions</td></tr>
+            <tr><td>🔧 Engineer</td><td>Mechanist & Siege Master</td><td>28</td><td>Guns, crossbows, mech armor</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tier-system">
+      <h2>Tier System</h2>
+      <p>All equipment in Grudge Warlords uses an 8-tier system:</p>
+      
+      <table>
+        <tr><th>Tier</th><th>Name</th><th>Level Req</th><th>Material Example</th></tr>
+        <tr><td>T1</td><td>Common</td><td>1</td><td>Copper, Pine</td></tr>
+        <tr><td>T2</td><td>Uncommon</td><td>10</td><td>Iron, Oak</td></tr>
+        <tr><td>T3</td><td>Rare</td><td>20</td><td>Steel, Maple</td></tr>
+        <tr><td>T4</td><td>Epic</td><td>30</td><td>Mithril, Ash</td></tr>
+        <tr><td>T5</td><td>Legendary</td><td>40</td><td>Adamantine, Ironwood</td></tr>
+        <tr><td>T6</td><td>Mythic</td><td>50</td><td>Orichalcum, Ebony</td></tr>
+        <tr><td>T7</td><td>Ancient</td><td>60</td><td>Starmetal, Wyrmwood</td></tr>
+        <tr><td>T8</td><td>Divine</td><td>70</td><td>Divine Ore, Worldtree</td></tr>
+      </table>
+      
+      <p>Stats scale with tier using <code class="inline-code">base + (perTier × (tier - 1))</code></p>
+    </section>
+
+    <section id="javascript-sdk">
+      <h2>JavaScript SDK</h2>
+      <p>Download the SDK for easy integration:</p>
+      
+      <pre><code>import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
+
+const sdk = new GrudgeSDK();
+
+// Get all weapons
+const weapons = await sdk.getWeapons();
+
+// Search across all data
+const results = await sdk.search('iron');
+
+// Calculate weapon stats at tier
+const t5Stats = sdk.calculateStatsAtTier(weapon, 5);
+
+// Get material icon URL
+const iconUrl = sdk.getMaterialIconUrl('ore', 3);</code></pre>
+    </section>
+
+    <section id="python-examples">
+      <h2>Python Examples</h2>
+      
+      <pre><code>import requests
+
+BASE_URL = "https://molochdagod.github.io/ObjectStore/api/v1"
+
+# Get all weapons
+weapons = requests.get(f"{BASE_URL}/weapons.json").json()
+
+# Find all swords
+swords = weapons["categories"]["swords"]["items"]
+print(f"Found {len(swords)} swords")
+
+# Get materials
+materials = requests.get(f"{BASE_URL}/materials.json").json()
+
+# Find T5+ ores
+high_tier_ores = [m for m in materials["materials"] 
+                  if m["category"] == "ore" and m["tier"] >= 5]</code></pre>
+    </section>
+
+    <section id="ai-integration">
+      <h2>AI Integration</h2>
+      <p>The ObjectStore API is designed for AI agent consumption:</p>
+      
+      <ul>
+        <li><strong>No Authentication</strong> - Direct HTTP access</li>
+        <li><strong>JSON Format</strong> - Easy to parse</li>
+        <li><strong>Stable Schema</strong> - Rarely changes</li>
+        <li><strong>Complete Data</strong> - All game definitions in one place</li>
+      </ul>
+      
+      <div class="tip">
+        <div class="tip-title">💡 Recommended: Cache Responses</div>
+        <p>Game data updates infrequently. Cache API responses for 24 hours to reduce requests and improve performance.</p>
+      </div>
+      
+      <h3>Example: AI Crafting Assistant</h3>
+      <pre><code>// Fetch required data
+const [weapons, materials] = await Promise.all([
+  fetch(BASE_URL + '/weapons.json').then(r => r.json()),
+  fetch(BASE_URL + '/materials.json').then(r => r.json())
+]);
+
+// Helper: Get materials needed for a weapon
+function getCraftingRequirements(weaponId, tier) {
+  const weapon = findWeapon(weapons, weaponId);
+  const tierMaterials = materials.materials.filter(m => m.tier === tier);
+  
+  return {
+    weapon: weapon.name,
+    tier: tier,
+    profession: weapon.craftedBy,
+    primaryMaterial: tierMaterials.find(m => 
+      m.gatheredBy === weapon.craftedBy
+    )
+  };
+}</code></pre>
+    </section>
+
+    <footer style="text-align: center; color: var(--text-dim); margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);">
+      <p>© 2026 Grudge Studio | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
+    </footer>
+  </main>
+</body>
+</html>
