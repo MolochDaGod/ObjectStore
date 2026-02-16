@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprite Database - Grudge Warlords ObjectStore</title>
+  <meta name="description" content="Visual database of all sprites and icons for Grudge Warlords game objects">
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a1f2e;
+      --gold: #d4a84b;
+      --gold-light: #f0d890;
+      --text: #e8e6e3;
+      --text-dim: #8b8685;
+      --border: #3d3d3d;
+      --code-bg: #0d1117;
+      --success: #22c55e;
+      --info: #3b82f6;
+      --warning: #f59e0b;
+      --tier1: #9ca3af;
+      --tier2: #22c55e;
+      --tier3: #3b82f6;
+      --tier4: #a855f7;
+      --tier5: #f59e0b;
+      --tier6: #ef4444;
+      --tier7: #ec4899;
+      --tier8: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, var(--card), var(--bg));
+      padding: 30px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .subtitle { color: var(--text-dim); font-size: 1rem; }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: var(--gold); color: var(--text); }
+    .tab-btn.active {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+      font-weight: bold;
+    }
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      width: 250px;
+    }
+    .search-box:focus { outline: none; border-color: var(--gold); }
+    .filter-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .stats-bar {
+      display: flex;
+      gap: 24px;
+      margin-left: auto;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    .stat-item { display: flex; align-items: center; gap: 6px; }
+    .stat-value { color: var(--gold); font-weight: bold; }
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 40px;
+    }
+    .section { margin-bottom: 40px; display: none; }
+    .section.active { display: block; }
+    .section-title {
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .category-group { margin-bottom: 30px; }
+    .category-title {
+      color: var(--text);
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .category-count {
+      background: var(--bg);
+      color: var(--text-dim);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .item-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .item-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 168, 75, 0.2);
+    }
+    .item-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .item-name {
+      font-size: 0.8rem;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+    .tier-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .tier-1 { background: var(--tier1); color: #000; }
+    .tier-2 { background: var(--tier2); color: #000; }
+    .tier-3 { background: var(--tier3); color: #fff; }
+    .tier-4 { background: var(--tier4); color: #fff; }
+    .tier-5 { background: var(--tier5); color: #000; }
+    .tier-6 { background: var(--tier6); color: #fff; }
+    .tier-7 { background: var(--tier7); color: #fff; }
+    .tier-8 { background: var(--tier8); color: #000; animation: glow 2s ease-in-out infinite; }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px var(--tier8); }
+      50% { box-shadow: 0 0 15px var(--tier8), 0 0 25px var(--tier8); }
+    }
+    .tier-colors {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .tier-chip {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0.6;
+    }
+    .tier-chip.active { opacity: 1; transform: scale(1.1); }
+    .tier-chip:hover { opacity: 1; }
+    /* Detail Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .modal-icon { font-size: 3rem; }
+    .modal-title { font-size: 1.5rem; color: var(--gold); }
+    .modal-subtitle { color: var(--text-dim); font-size: 0.9rem; }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: var(--text); }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-label { color: var(--text-dim); }
+    .detail-value { color: var(--text); font-weight: 500; }
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-dim);
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--gold); }
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      padding: 40px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { padding: 20px; }
+      .main { padding: 20px; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .search-box { width: 100%; }
+      .stats-bar { margin-left: 0; margin-top: 10px; justify-content: center; }
+      .items-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a href="./" class="back-link">← Back to ObjectStore</a>
+      <h1>🎨 Sprite Database</h1>
+      <p class="subtitle">Visual browser for all Grudge Warlords game objects</p>
+      
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-tab="weapons">⚔️ Weapons</button>
+        <button class="tab-btn" data-tab="materials">🪨 Materials</button>
+        <button class="tab-btn" data-tab="armor">🛡️ Armor</button>
+        <button class="tab-btn" data-tab="consumables">🧪 Consumables</button>
+        <button class="tab-btn" data-tab="all">📦 All Items</button>
+      </div>
+      
+      <div class="controls">
+        <input type="text" class="search-box" id="searchInput" placeholder="Search items...">
+        <select class="filter-select" id="tierFilter">
+          <option value="all">All Tiers</option>
+          <option value="1">T1 - Common</option>
+          <option value="2">T2 - Uncommon</option>
+          <option value="3">T3 - Rare</option>
+          <option value="4">T4 - Epic</option>
+          <option value="5">T5 - Legendary</option>
+          <option value="6">T6 - Mythic</option>
+          <option value="7">T7 - Eternal</option>
+          <option value="8">T8 - Divine</option>
+        </select>
+        <div class="stats-bar">
+          <div class="stat-item">Weapons: <span class="stat-value" id="weaponCount">-</span></div>
+          <div class="stat-item">Materials: <span class="stat-value" id="materialCount">-</span></div>
+          <div class="stat-item">Consumables: <span class="stat-value" id="consumableCount">-</span></div>
+          <div class="stat-item">Total: <span class="stat-value" id="totalCount">-</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="weapons-section" class="section active">
+      <div class="loading" id="weapons-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading weapons...</p>
+      </div>
+      <div id="weapons-content"></div>
+    </section>
+
+    <section id="materials-section" class="section">
+      <div class="loading" id="materials-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading materials...</p>
+      </div>
+      <div id="materials-content"></div>
+    </section>
+
+    <section id="armor-section" class="section">
+      <div class="loading" id="armor-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading armor...</p>
+      </div>
+      <div id="armor-content"></div>
+    </section>
+
+    <section id="consumables-section" class="section">
+      <div class="loading" id="consumables-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading consumables...</p>
+      </div>
+      <div id="consumables-content"></div>
+    </section>
+
+    <section id="all-section" class="section">
+      <div class="loading" id="all-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading all items...</p>
+      </div>
+      <div id="all-content"></div>
+    </section>
+  </main>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-header">
+        <span class="modal-icon" id="modalIcon"></span>
+        <div>
+          <div class="modal-title" id="modalTitle"></div>
+          <div class="modal-subtitle" id="modalSubtitle"></div>
+        </div>
+      </div>
+      <div id="modalDetails"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Grudge Studio | <a href="https://grudgewarlords.com">grudgewarlords.com</a> | <a href="./docs/">API Docs</a></p>
+  </footer>
+
+  <script>
+    const BASE_URL = './api/v1';
+    let allData = { weapons: null, materials: null, armor: null, consumables: null };
+    let currentTab = 'weapons';
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${currentTab}-section`).classList.add('active');
+        loadTabData(currentTab);
+      });
+    });
+
+    // Search and filter
+    document.getElementById('searchInput').addEventListener('input', debounce(filterItems, 300));
+    document.getElementById('tierFilter').addEventListener('change', filterItems);
+
+    function debounce(fn, delay) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    // Load data
+    async function fetchJSON(endpoint) {
+      try {
+        const res = await fetch(`${BASE_URL}/${endpoint}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        console.error(`Failed to fetch ${endpoint}:`, err);
+        return null;
+      }
+    }
+
+    async function loadTabData(tab) {
+      if (tab === 'all') {
+        await Promise.all([
+          loadWeapons(),
+          loadMaterials(),
+          loadArmor(),
+          loadConsumables()
+        ]);
+        renderAllItems();
+        return;
+      }
+      
+      switch(tab) {
+        case 'weapons': await loadWeapons(); break;
+        case 'materials': await loadMaterials(); break;
+        case 'armor': await loadArmor(); break;
+        case 'consumables': await loadConsumables(); break;
+      }
+    }
+
+    async function loadWeapons() {
+      if (allData.weapons) return renderWeapons();
+      
+      const data = await fetchJSON('weapons.json');
+      if (!data) {
+        document.getElementById('weapons-loading').innerHTML = '<div class="error">Failed to load weapons</div>';
+        return;
+      }
+      allData.weapons = data;
+      document.getElementById('weaponCount').textContent = data.total || countItems(data.categories);
+      renderWeapons();
+    }
+
+    async function loadMaterials() {
+      if (allData.materials) return renderMaterials();
+      
+      const data = await fetchJSON('materials.json');
+      if (!data) {
+        document.getElementById('materials-loading').innerHTML = '<div class="error">Failed to load materials</div>';
+        return;
+      }
+      allData.materials = data;
+      document.getElementById('materialCount').textContent = data.total || countItems(data.categories);
+      renderMaterials();
+    }
+
+    async function loadArmor() {
+      if (allData.armor) return renderArmor();
+      
+      const data = await fetchJSON('armor.json');
+      if (!data) {
+        document.getElementById('armor-loading').innerHTML = '<div class="error">Failed to load armor</div>';
+        return;
+      }
+      allData.armor = data;
+      renderArmor();
+    }
+
+    async function loadConsumables() {
+      if (allData.consumables) return renderConsumables();
+      
+      const data = await fetchJSON('consumables.json');
+      if (!data) {
+        document.getElementById('consumables-loading').innerHTML = '<div class="error">Failed to load consumables</div>';
+        return;
+      }
+      allData.consumables = data;
+      document.getElementById('consumableCount').textContent = data.total || countConsumables(data.categories);
+      renderConsumables();
+    }
+
+    function countItems(categories) {
+      let count = 0;
+      for (const cat in categories) {
+        if (categories[cat].items) count += categories[cat].items.length;
+      }
+      return count;
+    }
+
+    function countConsumables(categories) {
+      let count = 0;
+      for (const cat in categories) {
+        if (categories[cat].items) count += categories[cat].items.length;
+      }
+      return count;
+    }
+
+    // Render functions
+    function renderWeapons() {
+      const data = allData.weapons;
+      if (!data) return;
+      
+      document.getElementById('weapons-loading').style.display = 'none';
+      const container = document.getElementById('weapons-content');
+      
+      let html = '<h2 class="section-title">⚔️ Weapons Database</h2>';
+      
+      const categoryNames = {
+        swords: '🗡️ Swords',
+        axes1h: '🪓 Axes (1H)',
+        daggers: '🗡️ Daggers',
+        greatswords: '⚔️ Greatswords',
+        greataxes: '🪓 Greataxes',
+        hammers1h: '🔨 Hammers (1H)',
+        hammers2h: '🔨 Hammers (2H)',
+        spears: '🔱 Spears',
+        bows: '🏹 Bows',
+        crossbows: '🎯 Crossbows',
+        guns: '🔫 Guns',
+        fireStaves: '🔥 Fire Staves',
+        frostStaves: '❄️ Frost Staves',
+        holyStaves: '✨ Holy Staves',
+        lightningStaves: '⚡ Lightning Staves',
+        arcaneStaves: '🔮 Arcane Staves',
+        natureStaves: '🌿 Nature Staves',
+        tools: '🔧 Tools'
+      };
+
+      for (const [catKey, catData] of Object.entries(data.categories)) {
+        if (!catData.items || catData.items.length === 0) continue;
+        
+        html += `
+          <div class="category-group" data-category="${catKey}">
+            <h3 class="category-title">
+              ${categoryNames[catKey] || catKey}
+              <span class="category-count">${catData.items.length} items × 8 tiers</span>
+            </h3>
+            <div class="items-grid">
+        `;
+        
+        for (const item of catData.items) {
+          html += createItemCard(item, 'weapon', catKey);
+        }
+        
+        html += '</div></div>';
+      }
+      
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    function renderMaterials() {
+      const data = allData.materials;
+      if (!data) return;
+      
+      document.getElementById('materials-loading').style.display = 'none';
+      const container = document.getElementById('materials-content');
+      
+      let html = '<h2 class="section-title">🪨 Materials Database</h2>';
+      
+      const categoryNames = {
+        ore: '⛏️ Ores',
+        ingot: '🔩 Ingots',
+        wood: '🪵 Wood',
+        cloth: '🧵 Cloth',
+        leather: '🦴 Leather',
+        essence: '💎 Essences',
+        gem: '💠 Gems'
+      };
+
+      for (const [catKey, catData] of Object.entries(data.categories)) {
+        if (!catData.items || catData.items.length === 0) continue;
+        
+        html += `
+          <div class="category-group" data-category="${catKey}">
+            <h3 class="category-title">
+              ${categoryNames[catKey] || catKey}
+              <span class="category-count">${catData.items.length} items</span>
+            </h3>
+            <div class="items-grid">
+        `;
+        
+        for (const item of catData.items) {
+          html += createMaterialCard(item, catKey);
+        }
+        
+        html += '</div></div>';
+      }
+      
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    function renderArmor() {
+      const data = allData.armor;
+      if (!data) return;
+      
+      document.getElementById('armor-loading').style.display = 'none';
+      const container = document.getElementById('armor-content');
+      
+      let html = '<h2 class="section-title">🛡️ Armor Slots</h2>';
+      
+      const slotEmojis = {
+        helm: '⛑️',
+        shoulder: '🦾',
+        chest: '🎽',
+        hands: '🧤',
+        belt: '📿',
+        pants: '👖',
+        feet: '🥾',
+        bracer: '⌚',
+        ring: '💍',
+        necklace: '📿',
+        back: '🧣'
+      };
+
+      html += '<div class="items-grid">';
+      
+      for (const [slotKey, slotData] of Object.entries(data.slots)) {
+        html += `
+          <div class="item-card" onclick="showArmorDetail('${slotKey}')">
+            <span class="item-icon">${slotEmojis[slotKey] || '🛡️'}</span>
+            <div class="item-name">${slotData.name}</div>
+            <div class="item-meta">${slotData.maxIcons || 0} variants</div>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+      
+      // Tier colors reference
+      html += '<h3 class="category-title" style="margin-top: 30px;">🎨 Tier Colors</h3>';
+      html += '<div class="items-grid">';
+      
+      for (const [tier, tierData] of Object.entries(data.tierColors)) {
+        html += `
+          <div class="item-card" style="border-color: ${tierData.color};">
+            <span class="tier-badge tier-${tier}">T${tier}</span>
+            <span class="item-icon" style="color: ${tierData.color};">⬢</span>
+            <div class="item-name">${tierData.name}</div>
+            <div class="item-meta">Tier ${tier}</div>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    function renderConsumables() {
+      const data = allData.consumables;
+      if (!data) return;
+      
+      document.getElementById('consumables-loading').style.display = 'none';
+      const container = document.getElementById('consumables-content');
+      
+      let html = '<h2 class="section-title">🧪 Consumables Database</h2>';
+
+      for (const [catKey, catData] of Object.entries(data.categories)) {
+        if (!catData.items || catData.items.length === 0) continue;
+        
+        html += `
+          <div class="category-group" data-category="${catKey}">
+            <h3 class="category-title">
+              ${catData.emoji || '📦'} ${catData.name}
+              <span class="category-count">${catData.items.length} items • ${catData.profession}</span>
+            </h3>
+            <div class="items-grid">
+        `;
+        
+        for (const item of catData.items) {
+          html += createConsumableCard(item, catKey);
+        }
+        
+        html += '</div></div>';
+      }
+      
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    function renderAllItems() {
+      document.getElementById('all-loading').style.display = 'none';
+      const container = document.getElementById('all-content');
+      
+      let html = '<h2 class="section-title">📦 Complete Item Database</h2>';
+      
+      // Weapons summary
+      if (allData.weapons) {
+        html += '<div class="category-group"><h3 class="category-title">⚔️ All Weapons</h3><div class="items-grid">';
+        for (const [catKey, catData] of Object.entries(allData.weapons.categories)) {
+          if (!catData.items) continue;
+          for (const item of catData.items) {
+            html += createItemCard(item, 'weapon', catKey);
+          }
+        }
+        html += '</div></div>';
+      }
+      
+      // Materials summary
+      if (allData.materials) {
+        html += '<div class="category-group"><h3 class="category-title">🪨 All Materials</h3><div class="items-grid">';
+        for (const [catKey, catData] of Object.entries(allData.materials.categories)) {
+          if (!catData.items) continue;
+          for (const item of catData.items) {
+            html += createMaterialCard(item, catKey);
+          }
+        }
+        html += '</div></div>';
+      }
+      
+      // Consumables summary
+      if (allData.consumables) {
+        html += '<div class="category-group"><h3 class="category-title">🧪 All Consumables</h3><div class="items-grid">';
+        for (const [catKey, catData] of Object.entries(allData.consumables.categories)) {
+          if (!catData.items) continue;
+          for (const item of catData.items) {
+            html += createConsumableCard(item, catKey);
+          }
+        }
+        html += '</div></div>';
+      }
+      
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    // Card creators
+    function createItemCard(item, type, category) {
+      return `
+        <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="${type}" onclick="showDetail('${type}', '${item.id}', '${category}')">
+          <span class="item-icon">${item.emoji || '⚔️'}</span>
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">${item.primaryStat || ''}</div>
+        </div>
+      `;
+    }
+
+    function createMaterialCard(item, category) {
+      return `
+        <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="material" data-tier="${item.tier}" onclick="showMaterialDetail('${item.id}', '${category}')">
+          <span class="tier-badge tier-${item.tier}">T${item.tier}</span>
+          <span class="item-icon">${item.emoji || '🪨'}</span>
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">${item.gatheredBy || 'Refined'}</div>
+        </div>
+      `;
+    }
+
+    function createConsumableCard(item, category) {
+      return `
+        <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" onclick="showConsumableDetail('${item.id}', '${category}')">
+          <span class="item-icon">${item.icon || '🧪'}</span>
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">Lvl ${item.lvl || '?'}</div>
+        </div>
+      `;
+    }
+
+    // Filter items
+    function filterItems() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const tierFilter = document.getElementById('tierFilter').value;
+      
+      document.querySelectorAll('.item-card').forEach(card => {
+        const name = card.dataset.name || '';
+        const tier = card.dataset.tier || 'all';
+        
+        const matchesSearch = !search || name.includes(search);
+        const matchesTier = tierFilter === 'all' || tier === tierFilter;
+        
+        card.style.display = (matchesSearch && matchesTier) ? '' : 'none';
+      });
+    }
+
+    // Modal functions
+    function showDetail(type, id, category) {
+      const data = allData.weapons;
+      if (!data || !data.categories[category]) return;
+      
+      const item = data.categories[category].items.find(i => i.id === id);
+      if (!item) return;
+      
+      document.getElementById('modalIcon').textContent = item.emoji || '⚔️';
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `${category} • Weapon`;
+      
+      let details = `
+        <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Primary Stat</span><span class="detail-value">${item.primaryStat || '-'}</span></div>
+        <div class="detail-row"><span class="detail-label">Secondary Stat</span><span class="detail-value">${item.secondaryStat || '-'}</span></div>
+        <div class="detail-row"><span class="detail-label">Tiers</span><span class="detail-value">T1 - T8</span></div>
+      `;
+      
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function showMaterialDetail(id, category) {
+      const data = allData.materials;
+      if (!data || !data.categories[category]) return;
+      
+      const item = data.categories[category].items.find(i => i.id === id);
+      if (!item) return;
+      
+      document.getElementById('modalIcon').textContent = item.emoji || '🪨';
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `${category} • Material • Tier ${item.tier}`;
+      
+      let details = `
+        <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Tier</span><span class="detail-value">T${item.tier}</span></div>
+        <div class="detail-row"><span class="detail-label">Gathered By</span><span class="detail-value">${item.gatheredBy || 'Refined'}</span></div>
+        <div class="detail-row"><span class="detail-label">Category</span><span class="detail-value">${category}</span></div>
+      `;
+      
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function showConsumableDetail(id, category) {
+      const data = allData.consumables;
+      if (!data || !data.categories[category]) return;
+      
+      const item = data.categories[category].items.find(i => i.id == id);
+      if (!item) return;
+      
+      document.getElementById('modalIcon').textContent = item.icon || '🧪';
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `${data.categories[category].name} • Level ${item.lvl}`;
+      
+      let details = `
+        <div class="detail-row"><span class="detail-label">Level Required</span><span class="detail-value">${item.lvl}</span></div>
+        <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value">${item.desc || '-'}</span></div>
+      `;
+      
+      // Stats
+      if (item.stats) {
+        for (const [stat, val] of Object.entries(item.stats)) {
+          details += `<div class="detail-row"><span class="detail-label">${stat}</span><span class="detail-value">${val}</span></div>`;
+        }
+      }
+      
+      // Materials
+      if (item.mats) {
+        details += `<div class="detail-row"><span class="detail-label">Materials</span><span class="detail-value">`;
+        for (const [mat, qty] of Object.entries(item.mats)) {
+          details += `${mat} ×${qty}<br>`;
+        }
+        details += `</span></div>`;
+      }
+      
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function showArmorDetail(slot) {
+      const data = allData.armor;
+      if (!data || !data.slots[slot]) return;
+      
+      const slotData = data.slots[slot];
+      
+      document.getElementById('modalIcon').textContent = '🛡️';
+      document.getElementById('modalTitle').textContent = slotData.name;
+      document.getElementById('modalSubtitle').textContent = 'Armor Slot';
+      
+      let details = `
+        <div class="detail-row"><span class="detail-label">Slot</span><span class="detail-value">${slot}</span></div>
+        <div class="detail-row"><span class="detail-label">Icon Base</span><span class="detail-value">${slotData.iconBase}</span></div>
+        <div class="detail-row"><span class="detail-label">Max Icons</span><span class="detail-value">${slotData.maxIcons}</span></div>
+        <div class="detail-row"><span class="detail-label">Icon Folder</span><span class="detail-value">${slotData.iconFolder}</span></div>
+      `;
+      
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    // Close modal on outside click
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('detailModal')) {
+        closeModal();
+      }
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    function updateTotalCount() {
+      let total = 0;
+      if (allData.weapons) total += allData.weapons.total || countItems(allData.weapons.categories);
+      if (allData.materials) total += allData.materials.total || countItems(allData.materials.categories);
+      if (allData.consumables) total += allData.consumables.total || countConsumables(allData.consumables.categories);
+      document.getElementById('totalCount').textContent = total || '-';
+    }
+
+    // Initial load
+    loadWeapons();
+  </script>
+</body>
+</html>
