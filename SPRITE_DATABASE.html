@@ -18,6 +18,7 @@
       --success: #22c55e;
       --info: #3b82f6;
       --warning: #f59e0b;
+      --tier0: #6b7280;
       --tier1: #9ca3af;
       --tier2: #22c55e;
       --tier3: #3b82f6;
@@ -205,6 +206,7 @@
       border-radius: 4px;
       font-weight: bold;
     }
+    .tier-0 { background: var(--tier0); color: #fff; }
     .tier-1 { background: var(--tier1); color: #000; }
     .tier-2 { background: var(--tier2); color: #000; }
     .tier-3 { background: var(--tier3); color: #fff; }
@@ -356,6 +358,7 @@
         <input type="text" class="search-box" id="searchInput" placeholder="Search items...">
         <select class="filter-select" id="tierFilter">
           <option value="all">All Tiers</option>
+          <option value="0">T0 - Starter</option>
           <option value="1">T1 - Common</option>
           <option value="2">T2 - Uncommon</option>
           <option value="3">T3 - Rare</option>
