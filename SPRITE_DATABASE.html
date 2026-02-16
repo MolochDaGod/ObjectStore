@@ -806,31 +806,41 @@
       updateTotalCount();
     }
 
-    // Icon resolver
-    function getIconPath(type, category, itemId) {
-      if (!iconIndex) return null;
+    // Icon resolver - tries multiple paths to find icons
+    function getIconPath(type, category, itemId, tier) {
+      // Direct file paths to try
+      const tryPaths = [];
       
-      // Try specific mapping first
-      if (type === 'weapon' && iconIndex.weapons?.[category]?.[itemId]) {
-        return `${ICONS_URL}/${iconIndex.weapons[category][itemId]}`;
+      if (type === 'weapon') {
+        // Weapon: try item-id.png first, then various sprite patterns
+        tryPaths.push(
+          `${ICONS_URL}/weapons/${itemId}.png`,
+          `${ICONS_URL}/weapons/${itemId.replace(/-/g, '_')}_sprite.png`,
+          `${ICONS_URL}/weapons/${itemId.replace(/-/g, '_')}_${category.replace(/s$/, '')}_sprite.png`
+        );
+        // Check icon index
+        if (iconIndex?.weapons?.[category]?.[itemId]) {
+          return `${ICONS_URL}/${iconIndex.weapons[category][itemId]}`;
+        }
       }
-      if (type === 'material' && iconIndex.materials?.[category]?.[itemId]) {
-        return `${ICONS_URL}/${iconIndex.materials[category][itemId]}`;
+      
+      if (type === 'material') {
+        // Material: try category_tX.png patterns
+        tryPaths.push(
+          `${ICONS_URL}/materials/${category}_t${tier}.png`,
+          `${ICONS_URL}/materials/${itemId.replace(/-/g, '_')}_sprite.png`
+        );
+        // Check icon index
+        if (iconIndex?.materials?.[category]?.[itemId]) {
+          return `${ICONS_URL}/${iconIndex.materials[category][itemId]}`;
+        }
       }
-      if (type === 'profession' && iconIndex.professions?.[itemId]) {
+      
+      if (type === 'profession' && iconIndex?.professions?.[itemId]) {
         return `${ICONS_URL}/${iconIndex.professions[itemId]}`;
       }
       
-      // Try pattern matching for weapons
-      if (type === 'weapon') {
-        const patterns = [
-          `weapons/${itemId.replace(/-/g, '_')}_sprite.png`,
-          `weapons/${itemId.replace(/-/g, '_')}_${category.replace(/s$/, '')}_sprite.png`
-        ];
-        return `${ICONS_URL}/${patterns[0]}`;
-      }
-      
-      return null;
+      return tryPaths[0] || null;
     }
 
     function createIconElement(iconPath, emoji, cssClass = '') {
@@ -854,7 +864,7 @@
     }
 
     function createMaterialCard(item, category) {
-      const iconPath = getIconPath('material', category, item.id);
+      const iconPath = getIconPath('material', category, item.id, item.tier);
       const iconHtml = createIconElement(iconPath, item.emoji || '🪨');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="material" data-tier="${item.tier}" onclick="showMaterialDetail('${item.id}', '${category}')">
@@ -867,11 +877,28 @@
     }
 
     function createConsumableCard(item, category) {
-      // Use numbered icons for consumables
-      const iconNum = (item.id % 48) + 1;
-      const iconPath = category.includes('Potion') || category.includes('mystic') 
-        ? `${ICONS_URL}/consumables/potion_${iconNum}.png`
-        : `${ICONS_URL}/consumables/ingredient_${iconNum}.png`;
+      // Map category to icon prefix
+      let iconPrefix, iconNum;
+      if (category === 'redFoods') {
+        iconPrefix = 'red_food_';
+        iconNum = ((item.id - 1) % 30) + 1;
+      } else if (category === 'greenFoods') {
+        iconPrefix = 'green_food_';
+        iconNum = ((item.id - 1) % 30) + 1;
+      } else if (category === 'blueFoods') {
+        iconPrefix = 'blue_food_';
+        iconNum = ((item.id - 1) % 30) + 1;
+      } else if (category === 'mysticPotions') {
+        iconPrefix = 'potion_';
+        iconNum = ((item.id - 1) % 48) + 1;
+      } else if (category === 'engineerConsumables') {
+        iconPrefix = 'engineer_';
+        iconNum = ((item.id - 1) % 12) + 1;
+      } else {
+        iconPrefix = 'ingredient_';
+        iconNum = ((item.id - 1) % 50) + 1;
+      }
+      const iconPath = `${ICONS_URL}/consumables/${iconPrefix}${iconNum}.png`;
       const iconHtml = createIconElement(iconPath, item.icon || '🧪');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" onclick="showConsumableDetail('${item.id}', '${category}')">
