@@ -172,6 +172,18 @@
       margin-bottom: 8px;
       display: block;
     }
+    .item-icon-img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      image-rendering: pixelated;
+      border-radius: 4px;
+    }
+    .item-icon-img.large {
+      width: 96px;
+      height: 96px;
+    }
     .item-name {
       font-size: 0.8rem;
       color: var(--text);
@@ -426,8 +438,19 @@
 
   <script>
     const BASE_URL = './api/v1';
+    const ICONS_URL = './icons';
     let allData = { weapons: null, materials: null, armor: null, consumables: null };
+    let iconIndex = null;
     let currentTab = 'weapons';
+
+    // Load icon index
+    async function loadIconIndex() {
+      try {
+        const res = await fetch(`${ICONS_URL}/icon-index.json`);
+        if (res.ok) iconIndex = await res.json();
+      } catch(e) { console.log('Icon index not available, using emojis'); }
+    }
+    loadIconIndex();
 
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -783,11 +806,47 @@
       updateTotalCount();
     }
 
+    // Icon resolver
+    function getIconPath(type, category, itemId) {
+      if (!iconIndex) return null;
+      
+      // Try specific mapping first
+      if (type === 'weapon' && iconIndex.weapons?.[category]?.[itemId]) {
+        return `${ICONS_URL}/${iconIndex.weapons[category][itemId]}`;
+      }
+      if (type === 'material' && iconIndex.materials?.[category]?.[itemId]) {
+        return `${ICONS_URL}/${iconIndex.materials[category][itemId]}`;
+      }
+      if (type === 'profession' && iconIndex.professions?.[itemId]) {
+        return `${ICONS_URL}/${iconIndex.professions[itemId]}`;
+      }
+      
+      // Try pattern matching for weapons
+      if (type === 'weapon') {
+        const patterns = [
+          `weapons/${itemId.replace(/-/g, '_')}_sprite.png`,
+          `weapons/${itemId.replace(/-/g, '_')}_${category.replace(/s$/, '')}_sprite.png`
+        ];
+        return `${ICONS_URL}/${patterns[0]}`;
+      }
+      
+      return null;
+    }
+
+    function createIconElement(iconPath, emoji, cssClass = '') {
+      if (iconPath) {
+        return `<img src="${iconPath}" class="item-icon-img ${cssClass}" onerror="this.outerHTML='<span class=item-icon>${emoji}</span>'" alt="icon">`;
+      }
+      return `<span class="item-icon">${emoji}</span>`;
+    }
+
     // Card creators
     function createItemCard(item, type, category) {
+      const iconPath = getIconPath('weapon', category, item.id);
+      const iconHtml = createIconElement(iconPath, item.emoji || '⚔️');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="${type}" onclick="showDetail('${type}', '${item.id}', '${category}')">
-          <span class="item-icon">${item.emoji || '⚔️'}</span>
+          ${iconHtml}
           <div class="item-name">${item.name}</div>
           <div class="item-meta">${item.primaryStat || ''}</div>
         </div>
@@ -795,10 +854,12 @@
     }
 
     function createMaterialCard(item, category) {
+      const iconPath = getIconPath('material', category, item.id);
+      const iconHtml = createIconElement(iconPath, item.emoji || '🪨');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="material" data-tier="${item.tier}" onclick="showMaterialDetail('${item.id}', '${category}')">
           <span class="tier-badge tier-${item.tier}">T${item.tier}</span>
-          <span class="item-icon">${item.emoji || '🪨'}</span>
+          ${iconHtml}
           <div class="item-name">${item.name}</div>
           <div class="item-meta">${item.gatheredBy || 'Refined'}</div>
         </div>
@@ -806,9 +867,15 @@
     }
 
     function createConsumableCard(item, category) {
+      // Use numbered icons for consumables
+      const iconNum = (item.id % 48) + 1;
+      const iconPath = category.includes('Potion') || category.includes('mystic') 
+        ? `${ICONS_URL}/consumables/potion_${iconNum}.png`
+        : `${ICONS_URL}/consumables/ingredient_${iconNum}.png`;
+      const iconHtml = createIconElement(iconPath, item.icon || '🧪');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" onclick="showConsumableDetail('${item.id}', '${category}')">
-          <span class="item-icon">${item.icon || '🧪'}</span>
+          ${iconHtml}
           <div class="item-name">${item.name}</div>
           <div class="item-meta">Lvl ${item.lvl || '?'}</div>
         </div>
