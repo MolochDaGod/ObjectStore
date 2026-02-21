@@ -224,6 +224,154 @@ class GrudgeSDK {
   }
 
   // ==========================================
+  // ENEMIES
+  // ==========================================
+
+  /**
+   * Get all enemies data
+   */
+  async getEnemies() {
+    return this.fetch('/api/v1/enemies.json');
+  }
+
+  /**
+   * Get enemies by category
+   */
+  async getEnemiesByCategory(category) {
+    const data = await this.getEnemies();
+    return data.categories[category] || null;
+  }
+
+  /**
+   * Get enemies by tier
+   */
+  async getEnemiesByTier(tier) {
+    const data = await this.getEnemies();
+    const results = [];
+    for (const category of Object.values(data.categories)) {
+      results.push(...category.items.filter(e => e.tier === tier));
+    }
+    return results;
+  }
+
+  /**
+   * Get enemies by zone
+   */
+  async getEnemiesByZone(zone) {
+    const data = await this.getEnemies();
+    const results = [];
+    for (const category of Object.values(data.categories)) {
+      results.push(...category.items.filter(e => e.zone === zone));
+    }
+    return results;
+  }
+
+  /**
+   * Get a specific enemy by ID
+   */
+  async getEnemy(enemyId) {
+    const data = await this.getEnemies();
+    for (const category of Object.values(data.categories)) {
+      const enemy = category.items.find(e => e.id === enemyId);
+      if (enemy) return enemy;
+    }
+    return null;
+  }
+
+  // ==========================================
+  // BOSSES
+  // ==========================================
+
+  /**
+   * Get all bosses data
+   */
+  async getBosses() {
+    return this.fetch('/api/v1/bosses.json');
+  }
+
+  /**
+   * Get bosses by tier
+   */
+  async getBossesByTier(tier) {
+    const data = await this.getBosses();
+    return data.bosses.filter(b => b.tier === tier);
+  }
+
+  /**
+   * Get bosses by zone
+   */
+  async getBossesByZone(zone) {
+    const data = await this.getBosses();
+    return data.bosses.filter(b => b.zone === zone);
+  }
+
+  /**
+   * Get a specific boss by ID
+   */
+  async getBoss(bossId) {
+    const data = await this.getBosses();
+    return data.bosses.find(b => b.id === bossId) || null;
+  }
+
+  // ==========================================
+  // SKILLS (Expanded)
+  // ==========================================
+
+  /**
+   * Get all skills data
+   */
+  async getSkills() {
+    return this.fetch('/api/v1/skills.json');
+  }
+
+  /**
+   * Get skills by weapon/class type
+   */
+  async getSkillsByType(type) {
+    const data = await this.getSkills();
+    return data.categories[type] || null;
+  }
+
+  /**
+   * Get class-specific skills (warrior, ranger, mage, worge)
+   */
+  async getClassSkills(className) {
+    const data = await this.getSkills();
+    return data.categories[className.toLowerCase()] || null;
+  }
+
+  /**
+   * Get a specific skill by ID
+   */
+  async getSkill(skillId) {
+    const data = await this.getSkills();
+    for (const category of Object.values(data.categories)) {
+      const skill = category.skills.find(s => s.id === skillId);
+      if (skill) return skill;
+    }
+    return null;
+  }
+
+  // ==========================================
+  // SPRITES
+  // ==========================================
+
+  /**
+   * Get all sprites data
+   */
+  async getSprites() {
+    return this.fetch('/api/v1/sprites.json');
+  }
+
+  /**
+   * Get sprites by category
+   */
+  async getSpritesByCategory(category) {
+    const data = await this.getSprites();
+    return data.categories[category] || null;
+  }
+
+  // ==========================================
   // SEARCH
   // ==========================================
   
@@ -232,11 +380,14 @@ class GrudgeSDK {
    */
   async search(query) {
     const lower = query.toLowerCase();
-    const results = { weapons: [], materials: [], armor: [], consumables: [] };
+    const results = { weapons: [], materials: [], armor: [], consumables: [], enemies: [], bosses: [], skills: [] };
 
-    const [weapons, materials] = await Promise.all([
+    const [weapons, materials, enemies, bosses, skills] = await Promise.all([
       this.getWeapons(),
       this.getMaterials(),
+      this.getEnemies(),
+      this.getBosses(),
+      this.getSkills(),
     ]);
 
     for (const [cat, data] of Object.entries(weapons.categories)) {
@@ -249,6 +400,22 @@ class GrudgeSDK {
       results.materials.push(...data.items.filter(m => 
         m.name.toLowerCase().includes(lower) || m.id.includes(lower)
       ).map(m => ({ ...m, category: cat })));
+    }
+
+    for (const [cat, data] of Object.entries(enemies.categories)) {
+      results.enemies.push(...data.items.filter(e => 
+        e.name.toLowerCase().includes(lower) || e.id.includes(lower)
+      ).map(e => ({ ...e, category: cat })));
+    }
+
+    results.bosses.push(...bosses.bosses.filter(b => 
+      b.name.toLowerCase().includes(lower) || b.id.includes(lower)
+    ));
+
+    for (const [cat, data] of Object.entries(skills.categories)) {
+      results.skills.push(...data.skills.filter(s => 
+        s.name.toLowerCase().includes(lower) || s.id.includes(lower)
+      ).map(s => ({ ...s, category: cat })));
     }
 
     return results;
@@ -274,6 +441,11 @@ class GrudgeSDK {
         materials: `${this.baseUrl}/api/v1/materials.json`,
         armor: `${this.baseUrl}/api/v1/armor.json`,
         consumables: `${this.baseUrl}/api/v1/consumables.json`,
+        skills: `${this.baseUrl}/api/v1/skills.json`,
+        professions: `${this.baseUrl}/api/v1/professions.json`,
+        enemies: `${this.baseUrl}/api/v1/enemies.json`,
+        bosses: `${this.baseUrl}/api/v1/bosses.json`,
+        sprites: `${this.baseUrl}/api/v1/sprites.json`,
       },
       docs: `${this.baseUrl}/docs/`,
     };

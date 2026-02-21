@@ -1,0 +1,546 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-02-21",
+  "total": 12,
+  "bosses": [
+    {
+      "id": "boss-hunter",
+      "name": "The Hunter",
+      "title": "Predator of the Wild",
+      "tier": 4,
+      "zone": "Fabled Island",
+      "hp": 8000,
+      "phases": 2,
+      "emoji": "🏹",
+      "assetPack": "Boss_Character_Hunter",
+      "texturePath": "Assets/Boss_Character_Hunter",
+      "mechanics": {
+        "phase1": {
+          "name": "Stalking Phase",
+          "hp_threshold": "100%-50%",
+          "abilities": [
+            { "id": "precision-shot", "name": "Precision Shot", "damage": 120, "desc": "Long-range sniper attack, must dodge" },
+            { "id": "trap-placement", "name": "Trap Placement", "damage": 80, "desc": "Places bear traps that root for 3s" },
+            { "id": "smoke-bomb", "name": "Smoke Bomb", "damage": 0, "desc": "Vanishes and repositions" }
+          ]
+        },
+        "phase2": {
+          "name": "Feral Phase",
+          "hp_threshold": "50%-0%",
+          "abilities": [
+            { "id": "rapid-fire", "name": "Rapid Fire", "damage": 60, "desc": "5 quick shots in succession" },
+            { "id": "hunters-mark", "name": "Hunter's Mark", "damage": 0, "desc": "Marks a player, +50% damage taken" },
+            { "id": "call-of-wild", "name": "Call of the Wild", "damage": 0, "desc": "Summons 2 Dire Wolves to aid" },
+            { "id": "final-shot", "name": "Final Shot", "damage": 300, "desc": "Must be interrupted or dodged" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "hunters-bow", "name": "Hunter's Longbow", "dropRate": 0.15, "type": "weapon" },
+        { "id": "stalker-cloak", "name": "Stalker's Cloak", "dropRate": 0.20, "type": "armor" },
+        { "id": "beast-master-ring", "name": "Beast Master Ring", "dropRate": 0.10, "type": "accessory" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.05, "type": "special" }
+      ]
+    },
+    {
+      "id": "tortoise-boss",
+      "name": "Ancient Tortoise",
+      "title": "Guardian of the Deep",
+      "tier": 5,
+      "zone": "Crusade Island",
+      "hp": 15000,
+      "phases": 3,
+      "emoji": "🐢",
+      "assetPack": "Tortoise Boss",
+      "texturePath": "Assets/Tortoise Boss",
+      "mechanics": {
+        "phase1": {
+          "name": "Shell Defense",
+          "hp_threshold": "100%-70%",
+          "abilities": [
+            { "id": "shell-slam", "name": "Shell Slam", "damage": 150, "desc": "AoE slam around the boss" },
+            { "id": "tidal-wave", "name": "Tidal Wave", "damage": 100, "desc": "Knockback wave across arena" },
+            { "id": "shell-shield", "name": "Shell Shield", "damage": 0, "desc": "90% damage reduction for 5s" }
+          ]
+        },
+        "phase2": {
+          "name": "Enraged Assault",
+          "hp_threshold": "70%-30%",
+          "abilities": [
+            { "id": "headbutt", "name": "Headbutt", "damage": 200, "desc": "Targeted charge at random player" },
+            { "id": "earthquake-stomp", "name": "Earthquake Stomp", "damage": 120, "desc": "Arena-wide earthquake" },
+            { "id": "steam-vent", "name": "Steam Vent", "damage": 80, "desc": "Smoke cloud that blinds for 4s" }
+          ]
+        },
+        "phase3": {
+          "name": "Ancient Fury",
+          "hp_threshold": "30%-0%",
+          "abilities": [
+            { "id": "primordial-beam", "name": "Primordial Beam", "damage": 250, "desc": "Sweeping laser beam attack" },
+            { "id": "shell-spin", "name": "Shell Spin", "damage": 180, "desc": "Spins rapidly dealing AoE" },
+            { "id": "ancient-summon", "name": "Ancient Summon", "damage": 0, "desc": "Summons 3 mini tortoises" },
+            { "id": "last-stand", "name": "Last Stand", "damage": 0, "desc": "Enrages, +100% damage" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "shell-shield-item", "name": "Ancient Shell Shield", "dropRate": 0.12, "type": "weapon" },
+        { "id": "primordial-plate", "name": "Primordial Plate", "dropRate": 0.15, "type": "armor" },
+        { "id": "tortoise-shell-mount", "name": "Tortoise Shell (Mount)", "dropRate": 0.03, "type": "mount" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.05, "type": "special" }
+      ]
+    },
+    {
+      "id": "dragon-terror-bringer",
+      "name": "Terror Bringer",
+      "title": "Dragon of the Apocalypse",
+      "tier": 7,
+      "zone": "Piglin Outpost",
+      "hp": 30000,
+      "phases": 3,
+      "emoji": "🐲",
+      "assetPack": "DragonTerrorBringer",
+      "texturePath": "Assets/DragonTerrorBringer",
+      "mechanics": {
+        "phase1": {
+          "name": "Air Assault",
+          "hp_threshold": "100%-65%",
+          "abilities": [
+            { "id": "terror-breath", "name": "Terror Breath", "damage": 300, "desc": "Cone fire breath dealing massive damage" },
+            { "id": "wing-tempest", "name": "Wing Tempest", "damage": 150, "desc": "Creates tornados across arena" },
+            { "id": "dive-bomb", "name": "Dive Bomb", "damage": 400, "desc": "Dives from sky, massive AoE impact" }
+          ]
+        },
+        "phase2": {
+          "name": "Ground War",
+          "hp_threshold": "65%-30%",
+          "abilities": [
+            { "id": "tail-sweep", "name": "Tail Sweep", "damage": 200, "desc": "360-degree tail attack" },
+            { "id": "claw-rend", "name": "Claw Rend", "damage": 250, "desc": "Bleed for 10s dealing 30/tick" },
+            { "id": "fear-roar", "name": "Fear Roar", "damage": 0, "desc": "Fears all players for 3s" },
+            { "id": "summon-drakes", "name": "Summon Drakes", "damage": 0, "desc": "Spawns 2 Fire Drakes" }
+          ]
+        },
+        "phase3": {
+          "name": "Apocalypse",
+          "hp_threshold": "30%-0%",
+          "abilities": [
+            { "id": "infernal-rain", "name": "Infernal Rain", "damage": 180, "desc": "Arena covered in fire patches" },
+            { "id": "apocalypse-breath", "name": "Apocalypse Breath", "damage": 500, "desc": "Must hide behind pillars" },
+            { "id": "death-grip", "name": "Death Grip", "damage": 350, "desc": "Grabs a player, must break free" },
+            { "id": "extinction-nova", "name": "Extinction Nova", "damage": 999, "desc": "Wipe mechanic if not killed in time" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "terror-fang", "name": "Terror Fang Greatsword", "dropRate": 0.08, "type": "weapon" },
+        { "id": "dragon-wing-cape", "name": "Dragon Wing Cape", "dropRate": 0.10, "type": "armor" },
+        { "id": "dragon-mount", "name": "Terror Drake (Mount)", "dropRate": 0.01, "type": "mount" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.08, "type": "special" },
+        { "id": "dragon-soul-gem", "name": "Dragon Soul Gem", "dropRate": 0.05, "type": "relic" }
+      ]
+    },
+    {
+      "id": "minotaur-king",
+      "name": "Minotaur King",
+      "title": "Lord of the Labyrinth",
+      "tier": 6,
+      "zone": "Fabled Island",
+      "hp": 20000,
+      "phases": 2,
+      "emoji": "🐂",
+      "assetPack": "minotaur1",
+      "texturePath": "Assets/minotaur1",
+      "mechanics": {
+        "phase1": {
+          "name": "Arena Combat",
+          "hp_threshold": "100%-50%",
+          "abilities": [
+            { "id": "axe-cleave", "name": "Great Axe Cleave", "damage": 250, "desc": "Massive frontal cleave" },
+            { "id": "bull-charge", "name": "Bull Charge", "damage": 300, "desc": "Charges across arena, stuns on hit" },
+            { "id": "war-stomp", "name": "War Stomp", "damage": 150, "desc": "AoE stun for 2s" }
+          ]
+        },
+        "phase2": {
+          "name": "Blood Rage",
+          "hp_threshold": "50%-0%",
+          "abilities": [
+            { "id": "frenzy-strikes", "name": "Frenzy Strikes", "damage": 180, "desc": "Rapid 5-hit combo" },
+            { "id": "labyrinth-walls", "name": "Labyrinth Walls", "damage": 0, "desc": "Raises walls splitting the arena" },
+            { "id": "blood-sacrifice", "name": "Blood Sacrifice", "damage": 0, "desc": "Heals 10% HP, must interrupt" },
+            { "id": "final-charge", "name": "Final Charge", "damage": 500, "desc": "Arena-length charge, one-shot potential" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "minotaur-crown", "name": "Crown of the Labyrinth", "dropRate": 0.10, "type": "armor" },
+        { "id": "minotaur-greataxe", "name": "King's Greataxe", "dropRate": 0.12, "type": "weapon" },
+        { "id": "labyrinth-key", "name": "Labyrinth Master Key", "dropRate": 0.20, "type": "key" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.06, "type": "special" }
+      ]
+    },
+    {
+      "id": "necromancer-lord",
+      "name": "Necromancer Lord",
+      "title": "Master of Death",
+      "tier": 6,
+      "zone": "Crusade Island",
+      "hp": 18000,
+      "phases": 3,
+      "emoji": "💀",
+      "assetPack": "Necromancer",
+      "texturePath": "Assets/Necromancer",
+      "mechanics": {
+        "phase1": {
+          "name": "Dark Ritual",
+          "hp_threshold": "100%-65%",
+          "abilities": [
+            { "id": "shadow-bolt-barrage", "name": "Shadow Bolt Barrage", "damage": 100, "desc": "Rapid shadow projectiles" },
+            { "id": "summon-undead", "name": "Summon Undead", "damage": 0, "desc": "Raises 4 skeleton warriors" },
+            { "id": "life-drain-aoe", "name": "Mass Life Drain", "damage": 80, "desc": "AoE drain, heals boss" }
+          ]
+        },
+        "phase2": {
+          "name": "Undead Army",
+          "hp_threshold": "65%-30%",
+          "abilities": [
+            { "id": "raise-champions", "name": "Raise Champions", "damage": 0, "desc": "Summons 2 undead champions" },
+            { "id": "death-coil", "name": "Death Coil", "damage": 200, "desc": "Bouncing curse, chains to nearby players" },
+            { "id": "bone-prison", "name": "Bone Prison", "damage": 0, "desc": "Traps a player in bone cage" },
+            { "id": "corpse-explosion", "name": "Corpse Explosion", "damage": 150, "desc": "Detonates dead enemies for AoE" }
+          ]
+        },
+        "phase3": {
+          "name": "Lich Transformation",
+          "hp_threshold": "30%-0%",
+          "abilities": [
+            { "id": "lich-form", "name": "Lich Transformation", "damage": 0, "desc": "Transforms, gains new abilities" },
+            { "id": "soul-storm", "name": "Soul Storm", "damage": 200, "desc": "Arena-wide soul damage over time" },
+            { "id": "finger-of-death", "name": "Finger of Death", "damage": 999, "desc": "Instant kill on one player, 30s CD" },
+            { "id": "army-of-dead", "name": "Army of the Dead", "damage": 0, "desc": "Raises all dead enemies in dungeon" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "skull-staff", "name": "Skull Staff of Undeath", "dropRate": 0.10, "type": "weapon" },
+        { "id": "necromancer-robes", "name": "Robes of the Lich", "dropRate": 0.12, "type": "armor" },
+        { "id": "soul-gem", "name": "Soul Gem", "dropRate": 0.08, "type": "relic" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.06, "type": "special" }
+      ]
+    },
+    {
+      "id": "phoenix-infernal",
+      "name": "Phoenix Infernal",
+      "title": "The Eternal Flame",
+      "tier": 7,
+      "zone": "Piglin Outpost",
+      "hp": 25000,
+      "phases": 3,
+      "emoji": "🔥",
+      "assetPack": "Flames Of The Phoenix",
+      "texturePath": "Assets/Flames Of The Phoenix",
+      "mechanics": {
+        "phase1": {
+          "name": "Fire Storm",
+          "hp_threshold": "100%-60%",
+          "abilities": [
+            { "id": "flame-dive", "name": "Flame Dive", "damage": 250, "desc": "Aerial dive leaving fire trail" },
+            { "id": "feather-storm", "name": "Feather Storm", "damage": 120, "desc": "Burning feathers rain down" },
+            { "id": "immolation-aura", "name": "Immolation Aura", "damage": 60, "desc": "Passive damage to nearby players" }
+          ]
+        },
+        "phase2": {
+          "name": "Solar Wrath",
+          "hp_threshold": "60%-0%",
+          "abilities": [
+            { "id": "solar-beam", "name": "Solar Beam", "damage": 350, "desc": "Sweeping beam of solar fire" },
+            { "id": "rebirth-eggs", "name": "Rebirth Eggs", "damage": 0, "desc": "Spawns 3 eggs, if not destroyed boss heals 20%" },
+            { "id": "supernova", "name": "Supernova", "damage": 400, "desc": "Must LoS behind cover" }
+          ]
+        },
+        "phase3": {
+          "name": "Rebirth",
+          "hp_threshold": "Triggers on death",
+          "abilities": [
+            { "id": "phoenix-rebirth", "name": "Phoenix Rebirth", "damage": 0, "desc": "Revives with 30% HP if eggs survived" },
+            { "id": "eternal-flame", "name": "Eternal Flame", "damage": 500, "desc": "Enrage timer - arena fills with fire" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "phoenix-feather-staff", "name": "Phoenix Feather Staff", "dropRate": 0.08, "type": "weapon" },
+        { "id": "phoenix-wings", "name": "Phoenix Wings (Back)", "dropRate": 0.05, "type": "armor" },
+        { "id": "phoenix-egg", "name": "Phoenix Egg (Pet)", "dropRate": 0.02, "type": "pet" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.08, "type": "special" }
+      ]
+    },
+    {
+      "id": "titan-colossus",
+      "name": "Titan Colossus",
+      "title": "The World Breaker",
+      "tier": 8,
+      "zone": "Piglin Outpost",
+      "hp": 50000,
+      "phases": 3,
+      "emoji": "⚡",
+      "assetPack": "Creatures Titan",
+      "texturePath": "Assets/Creatures Titan",
+      "mechanics": {
+        "phase1": {
+          "name": "Awakening",
+          "hp_threshold": "100%-65%",
+          "abilities": [
+            { "id": "titan-stomp", "name": "Titan Stomp", "damage": 300, "desc": "Arena-wide shockwave" },
+            { "id": "fist-slam", "name": "Fist Slam", "damage": 400, "desc": "Targeted ground pound" },
+            { "id": "earth-surge", "name": "Earth Surge", "damage": 200, "desc": "Ground eruption line attack" }
+          ]
+        },
+        "phase2": {
+          "name": "Elemental Fury",
+          "hp_threshold": "65%-30%",
+          "abilities": [
+            { "id": "crystal-barrage", "name": "Crystal Barrage", "damage": 250, "desc": "Launches crystals at all players" },
+            { "id": "gravity-well", "name": "Gravity Well", "damage": 150, "desc": "Pulls all players to center" },
+            { "id": "tectonic-shift", "name": "Tectonic Shift", "damage": 0, "desc": "Rearranges arena platforms" },
+            { "id": "summon-golems", "name": "Summon Golems", "damage": 0, "desc": "Spawns 3 Rock Golems" }
+          ]
+        },
+        "phase3": {
+          "name": "World Breaker",
+          "hp_threshold": "30%-0%",
+          "abilities": [
+            { "id": "world-shatter", "name": "World Shatter", "damage": 600, "desc": "Destroys arena sections" },
+            { "id": "titan-beam", "name": "Titan Beam", "damage": 500, "desc": "Sweeping energy beam" },
+            { "id": "extinction-event", "name": "Extinction Event", "damage": 999, "desc": "10 minute enrage timer wipe" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "world-breaker-hammer", "name": "World Breaker Hammer", "dropRate": 0.05, "type": "weapon" },
+        { "id": "titan-plate", "name": "Titan's Plate Armor", "dropRate": 0.08, "type": "armor" },
+        { "id": "titan-core", "name": "Titan Core (Relic)", "dropRate": 0.03, "type": "relic" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.10, "type": "special" }
+      ]
+    },
+    {
+      "id": "mimic-king",
+      "name": "Mimic King",
+      "title": "The Devourer of Greed",
+      "tier": 5,
+      "zone": "Any Dungeon",
+      "hp": 12000,
+      "phases": 2,
+      "emoji": "📦",
+      "assetPack": "Mimic",
+      "texturePath": "Assets/Mimic",
+      "mechanics": {
+        "phase1": {
+          "name": "Disguise",
+          "hp_threshold": "100%-50%",
+          "abilities": [
+            { "id": "surprise-chomp", "name": "Surprise Chomp", "damage": 200, "desc": "Lunges from chest form" },
+            { "id": "gold-spray", "name": "Gold Spray", "damage": 100, "desc": "Projectile gold coins, confuse" },
+            { "id": "loot-trap", "name": "Loot Trap", "damage": 150, "desc": "Fake drops that explode" }
+          ]
+        },
+        "phase2": {
+          "name": "True Form",
+          "hp_threshold": "50%-0%",
+          "abilities": [
+            { "id": "devour", "name": "Devour", "damage": 300, "desc": "Swallows a player whole for 5s" },
+            { "id": "spawn-mimiclings", "name": "Spawn Mimiclings", "damage": 0, "desc": "Creates 5 mini mimics" },
+            { "id": "treasure-storm", "name": "Treasure Storm", "damage": 120, "desc": "Arena-wide projectile barrage" },
+            { "id": "golden-prison", "name": "Golden Prison", "damage": 0, "desc": "Encases player in gold for 4s" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "mimic-maw", "name": "Mimic's Maw Dagger", "dropRate": 0.15, "type": "weapon" },
+        { "id": "greed-ring", "name": "Ring of Greed", "dropRate": 0.10, "type": "accessory" },
+        { "id": "mimic-pet", "name": "Baby Mimic (Pet)", "dropRate": 0.05, "type": "pet" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.06, "type": "special" }
+      ]
+    },
+    {
+      "id": "rhino-warlord",
+      "name": "Rhino Warlord",
+      "title": "The Unstoppable",
+      "tier": 5,
+      "zone": "Fabled Island",
+      "hp": 14000,
+      "phases": 2,
+      "emoji": "🦏",
+      "assetPack": "Rhino",
+      "texturePath": "Assets/Rhino",
+      "mechanics": {
+        "phase1": {
+          "name": "Rampage",
+          "hp_threshold": "100%-40%",
+          "abilities": [
+            { "id": "gore-charge", "name": "Gore Charge", "damage": 250, "desc": "Charges and impales on horn" },
+            { "id": "ground-tremor", "name": "Ground Tremor", "damage": 120, "desc": "Stomp causing AoE damage" },
+            { "id": "horn-toss", "name": "Horn Toss", "damage": 180, "desc": "Launches player into air" }
+          ]
+        },
+        "phase2": {
+          "name": "Warlord's Fury",
+          "hp_threshold": "40%-0%",
+          "abilities": [
+            { "id": "stampede-frenzy", "name": "Stampede Frenzy", "damage": 150, "desc": "Charges back and forth across arena" },
+            { "id": "war-horn-blast", "name": "War Horn Blast", "damage": 100, "desc": "AoE knockback + summons adds" },
+            { "id": "iron-hide", "name": "Iron Hide", "damage": 0, "desc": "75% damage reduction for 8s" },
+            { "id": "final-stampede", "name": "Final Stampede", "damage": 400, "desc": "Must dodge 3 consecutive charges" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "rhino-horn-spear", "name": "Rhino Horn Spear", "dropRate": 0.12, "type": "weapon" },
+        { "id": "warlord-plate", "name": "Warlord's Iron Plate", "dropRate": 0.15, "type": "armor" },
+        { "id": "rhino-mount", "name": "War Rhino (Mount)", "dropRate": 0.03, "type": "mount" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.06, "type": "special" }
+      ]
+    },
+    {
+      "id": "four-evil-dragons",
+      "name": "The Four Evil Dragons",
+      "title": "Harbingers of Destruction",
+      "tier": 8,
+      "zone": "Piglin Outpost",
+      "hp": 40000,
+      "phases": 4,
+      "emoji": "🐉",
+      "assetPack": "FourEvilDragonsHP",
+      "texturePath": "Assets/FourEvilDragonsHP",
+      "mechanics": {
+        "phase1": {
+          "name": "Fire Dragon",
+          "hp_threshold": "100%-75%",
+          "abilities": [
+            { "id": "infernal-breath", "name": "Infernal Breath", "damage": 300, "desc": "Massive fire cone" },
+            { "id": "lava-pools", "name": "Lava Pools", "damage": 100, "desc": "Creates persistent fire zones" }
+          ]
+        },
+        "phase2": {
+          "name": "Ice Dragon",
+          "hp_threshold": "75%-50%",
+          "abilities": [
+            { "id": "glacial-breath", "name": "Glacial Breath", "damage": 280, "desc": "Freezing breath attack" },
+            { "id": "blizzard-storm", "name": "Blizzard Storm", "damage": 120, "desc": "Arena-wide slow + damage" }
+          ]
+        },
+        "phase3": {
+          "name": "Shadow Dragon",
+          "hp_threshold": "50%-25%",
+          "abilities": [
+            { "id": "void-breath", "name": "Void Breath", "damage": 350, "desc": "Shadow damage cone" },
+            { "id": "darkness-shroud", "name": "Darkness Shroud", "damage": 0, "desc": "Reduces visibility to 5m" }
+          ]
+        },
+        "phase4": {
+          "name": "All Four Combined",
+          "hp_threshold": "25%-0%",
+          "abilities": [
+            { "id": "elemental-convergence", "name": "Elemental Convergence", "damage": 500, "desc": "All 4 elements combine" },
+            { "id": "dragon-storm", "name": "Dragon Storm", "damage": 200, "desc": "All 4 dragons attack simultaneously" },
+            { "id": "apocalypse-now", "name": "Apocalypse", "damage": 999, "desc": "Enrage wipe mechanic" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "quad-dragon-staff", "name": "Staff of Four Elements", "dropRate": 0.03, "type": "weapon" },
+        { "id": "dragon-scale-set", "name": "Dragon Scale Armor Set Piece", "dropRate": 0.10, "type": "armor" },
+        { "id": "evil-dragon-mount", "name": "Evil Dragon Hatchling (Mount)", "dropRate": 0.01, "type": "mount" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.10, "type": "special" },
+        { "id": "elemental-soul", "name": "Elemental Dragon Soul", "dropRate": 0.05, "type": "relic" }
+      ]
+    },
+    {
+      "id": "spider-queen",
+      "name": "Spider Queen",
+      "title": "Matriarch of the Web",
+      "tier": 5,
+      "zone": "Crusade Island",
+      "hp": 13000,
+      "phases": 2,
+      "emoji": "🕷️",
+      "assetPack": "Fantasy_creature_Battle Spider",
+      "texturePath": "Assets/Fantasy_creature_Battle Spider",
+      "mechanics": {
+        "phase1": {
+          "name": "Web Domain",
+          "hp_threshold": "100%-45%",
+          "abilities": [
+            { "id": "web-barrage", "name": "Web Barrage", "damage": 80, "desc": "Rapid web shots that root" },
+            { "id": "venom-spray", "name": "Venom Spray", "damage": 150, "desc": "Cone poison attack" },
+            { "id": "spawn-spiderlings", "name": "Spawn Spiderlings", "damage": 0, "desc": "Creates 6 small spiders" }
+          ]
+        },
+        "phase2": {
+          "name": "Nest Defense",
+          "hp_threshold": "45%-0%",
+          "abilities": [
+            { "id": "cocoon-wrap", "name": "Cocoon Wrap", "damage": 0, "desc": "Wraps player, must break free" },
+            { "id": "poison-nova", "name": "Poison Nova", "damage": 200, "desc": "Arena-wide poison burst" },
+            { "id": "egg-sac-explosion", "name": "Egg Sac Explosion", "damage": 120, "desc": "Destroyable eggs spawn waves" },
+            { "id": "queens-wrath", "name": "Queen's Wrath", "damage": 250, "desc": "Enraged final assault" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "spider-fang-dagger", "name": "Spider Fang Dagger", "dropRate": 0.12, "type": "weapon" },
+        { "id": "web-weaver-cloak", "name": "Web Weaver's Cloak", "dropRate": 0.15, "type": "armor" },
+        { "id": "spiderling-pet", "name": "Spiderling (Pet)", "dropRate": 0.05, "type": "pet" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.06, "type": "special" }
+      ]
+    },
+    {
+      "id": "egypt-pharaoh",
+      "name": "Pharaoh Azar-Khet",
+      "title": "The Undying Sovereign",
+      "tier": 6,
+      "zone": "Crusade Island",
+      "hp": 22000,
+      "phases": 3,
+      "emoji": "👑",
+      "assetPack": "EgyptMonsters",
+      "texturePath": "Assets/EgyptMonsters",
+      "mechanics": {
+        "phase1": {
+          "name": "Royal Guard",
+          "hp_threshold": "100%-65%",
+          "abilities": [
+            { "id": "scepter-blast", "name": "Scepter Blast", "damage": 200, "desc": "Magical energy beam" },
+            { "id": "summon-anubis", "name": "Summon Anubis Guards", "damage": 0, "desc": "Spawns 2 Anubis Warriors" },
+            { "id": "sandstorm", "name": "Sandstorm", "damage": 100, "desc": "Arena-wide damage + blind" }
+          ]
+        },
+        "phase2": {
+          "name": "Curse Unleashed",
+          "hp_threshold": "65%-30%",
+          "abilities": [
+            { "id": "plague-of-scarabs", "name": "Plague of Scarabs", "damage": 80, "desc": "Swarm DoT on all players" },
+            { "id": "mummify", "name": "Mummify", "damage": 0, "desc": "Stuns a player for 6s" },
+            { "id": "obelisk-beam", "name": "Obelisk Beam", "damage": 250, "desc": "4 obelisks fire beams across arena" }
+          ]
+        },
+        "phase3": {
+          "name": "Ascension",
+          "hp_threshold": "30%-0%",
+          "abilities": [
+            { "id": "sun-god-form", "name": "Sun God Form", "damage": 0, "desc": "Transforms, gains flight + fire" },
+            { "id": "solar-judgment", "name": "Solar Judgment", "damage": 400, "desc": "Massive AoE solar attack" },
+            { "id": "eternal-curse", "name": "Eternal Curse", "damage": 150, "desc": "All healing reduced 50%" },
+            { "id": "call-of-dead", "name": "Call of the Dead", "damage": 0, "desc": "Raises all fallen adds" }
+          ]
+        }
+      },
+      "drops": [
+        { "id": "pharaoh-scepter", "name": "Pharaoh's Scepter", "dropRate": 0.08, "type": "weapon" },
+        { "id": "golden-death-mask", "name": "Golden Death Mask", "dropRate": 0.10, "type": "armor" },
+        { "id": "scarab-mount", "name": "Giant Scarab (Mount)", "dropRate": 0.02, "type": "mount" },
+        { "id": "gouldstone", "name": "Gouldstone", "dropRate": 0.07, "type": "special" },
+        { "id": "ankh-of-rebirth", "name": "Ankh of Rebirth", "dropRate": 0.04, "type": "relic" }
+      ]
+    }
+  ]
+}

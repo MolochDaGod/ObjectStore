@@ -1,81 +1,172 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-02-12",
-  "total": 47,
+  "version": "2.0.0",
+  "updated": "2026-02-21",
+  "total": 112,
   "categories": {
     "sword": {
-      "weaponType": "Sword",
-      "emoji": "⚔️",
+      "weaponType": "Sword", "emoji": "⚔️",
       "skills": [
-        { "id": "slash", "name": "Slash", "cooldown": "0s", "mana": 0, "desc": "Basic sword slash attack" },
-        { "id": "thrust", "name": "Thrust", "cooldown": "0s", "mana": 0, "desc": "Quick thrusting attack, +10% armor pen" },
-        { "id": "power-strike", "name": "Power Strike", "cooldown": "6s", "mana": 15, "desc": "Powerful overhead strike dealing 150% damage" },
-        { "id": "rend", "name": "Rend", "cooldown": "5s", "mana": 12, "desc": "Tearing strike causing bleed for 4s" },
-        { "id": "cleave", "name": "Cleave", "cooldown": "7s", "mana": 18, "desc": "Wide arc hitting multiple enemies" },
-        { "id": "parry", "name": "Parry", "cooldown": "8s", "mana": 10, "desc": "Block incoming attack and counter for 50% damage" },
-        { "id": "sidestep", "name": "Sidestep", "cooldown": "6s", "mana": 8, "desc": "Quick dodge with i-frames" },
-        { "id": "riposte", "name": "Riposte", "cooldown": "10s", "mana": 15, "desc": "Counter next attack for 200% damage" },
-        { "id": "bloodfeud-vengeance", "name": "Bloodfeud's Vengeance", "cooldown": "45s", "mana": 50, "desc": "Deal 300% damage to enemies who damaged you", "unique": "Bloodfeud Blade" },
-        { "id": "wraith-whisper", "name": "Wraith's Whisper", "cooldown": "40s", "mana": 45, "desc": "Become invisible, next attack crits 250%", "unique": "Wraithfang" },
-        { "id": "oathbreaker-judgment", "name": "Oathbreaker's Judgment", "cooldown": "50s", "mana": 40, "desc": "Enemy takes 50% more damage for 8s", "unique": "Oathbreaker" },
-        { "id": "emberclad-inferno", "name": "Emberclad's Inferno", "cooldown": "45s", "mana": 50, "desc": "Engulf in flames, dealing AoE fire damage", "unique": "Emberclad" }
+        { "id": "slash", "name": "Slash", "cooldown": "0s", "mana": 0, "desc": "Basic sword slash attack", "icon": "skills/swordsman_01.png" },
+        { "id": "thrust", "name": "Thrust", "cooldown": "0s", "mana": 0, "desc": "Quick thrusting attack, +10% armor pen", "icon": "skills/swordsman_02.png" },
+        { "id": "power-strike", "name": "Power Strike", "cooldown": "6s", "mana": 15, "desc": "Powerful overhead strike dealing 150% damage", "icon": "skills/swordsman_03.png" },
+        { "id": "rend", "name": "Rend", "cooldown": "5s", "mana": 12, "desc": "Tearing strike causing bleed for 4s", "icon": "skills/swordsman_04.png" },
+        { "id": "cleave", "name": "Cleave", "cooldown": "7s", "mana": 18, "desc": "Wide arc hitting multiple enemies", "icon": "skills/swordsman_05.png" },
+        { "id": "parry", "name": "Parry", "cooldown": "8s", "mana": 10, "desc": "Block incoming attack and counter for 50% damage", "icon": "skills/swordsman_06.png" },
+        { "id": "sidestep", "name": "Sidestep", "cooldown": "6s", "mana": 8, "desc": "Quick dodge with i-frames", "icon": "skills/swordsman_07.png" },
+        { "id": "riposte", "name": "Riposte", "cooldown": "10s", "mana": 15, "desc": "Counter next attack for 200% damage", "icon": "skills/swordsman_08.png" },
+        { "id": "bloodfeud-vengeance", "name": "Bloodfeud's Vengeance", "cooldown": "45s", "mana": 50, "desc": "Deal 300% damage to enemies who damaged you", "unique": "Bloodfeud Blade", "icon": "skills/swordsman_09.png" },
+        { "id": "wraith-whisper", "name": "Wraith's Whisper", "cooldown": "40s", "mana": 45, "desc": "Become invisible, next attack crits 250%", "unique": "Wraithfang", "icon": "skills/swordsman_10.png" },
+        { "id": "oathbreaker-judgment", "name": "Oathbreaker's Judgment", "cooldown": "50s", "mana": 40, "desc": "Enemy takes 50% more damage for 8s", "unique": "Oathbreaker", "icon": "skills/swordsman_11.png" },
+        { "id": "emberclad-inferno", "name": "Emberclad's Inferno", "cooldown": "45s", "mana": 50, "desc": "Engulf in flames, dealing AoE fire damage", "unique": "Emberclad", "icon": "skills/swordsman_12.png" }
       ]
     },
     "axe": {
-      "weaponType": "Axe",
-      "emoji": "🪓",
+      "weaponType": "Axe", "emoji": "🪓",
       "skills": [
-        { "id": "chop", "name": "Chop", "cooldown": "0s", "mana": 0, "desc": "Basic axe chop attack" },
-        { "id": "hack", "name": "Hack", "cooldown": "0s", "mana": 0, "desc": "Quick hack with armor penetration" },
-        { "id": "wild-swing", "name": "Wild Swing", "cooldown": "0s", "mana": 0, "desc": "Reckless high damage swing" },
-        { "id": "cleave-axe", "name": "Cleave", "cooldown": "5s", "mana": 12, "desc": "Cleave through enemies in arc" },
-        { "id": "double-chop", "name": "Double Chop", "cooldown": "4s", "mana": 10, "desc": "Two rapid chops" },
-        { "id": "whirlwind", "name": "Whirlwind", "cooldown": "8s", "mana": 15, "desc": "Spin dealing damage and knockback" },
-        { "id": "throw-axe", "name": "Throw Axe", "cooldown": "10s", "mana": 12, "desc": "Throw axe for ranged damage + slow" },
-        { "id": "gorehowl-fury", "name": "Gorehowl's Fury", "cooldown": "60s", "mana": 40, "desc": "Enter blood rage, +50% damage taken and dealt", "unique": "Gorehowl" },
-        { "id": "skullsplitter-rampage", "name": "Skullsplitter's Rampage", "cooldown": "90s", "mana": 50, "desc": "Kill resets cooldowns for 8s", "unique": "Skullsplitter" }
+        { "id": "chop", "name": "Chop", "cooldown": "0s", "mana": 0, "desc": "Basic axe chop attack", "icon": "skills/swordsman_13.png" },
+        { "id": "hack", "name": "Hack", "cooldown": "0s", "mana": 0, "desc": "Quick hack with armor penetration", "icon": "skills/swordsman_14.png" },
+        { "id": "wild-swing", "name": "Wild Swing", "cooldown": "0s", "mana": 0, "desc": "Reckless high damage swing", "icon": "skills/swordsman_15.png" },
+        { "id": "cleave-axe", "name": "Cleave", "cooldown": "5s", "mana": 12, "desc": "Cleave through enemies in arc", "icon": "skills/swordsman_16.png" },
+        { "id": "double-chop", "name": "Double Chop", "cooldown": "4s", "mana": 10, "desc": "Two rapid chops", "icon": "skills/swordsman_17.png" },
+        { "id": "whirlwind", "name": "Whirlwind", "cooldown": "8s", "mana": 15, "desc": "Spin dealing damage and knockback", "icon": "skills/swordsman_18.png" },
+        { "id": "throw-axe", "name": "Throw Axe", "cooldown": "10s", "mana": 12, "desc": "Throw axe for ranged damage + slow", "icon": "skills/swordsman_19.png" },
+        { "id": "gorehowl-fury", "name": "Gorehowl's Fury", "cooldown": "60s", "mana": 40, "desc": "Enter blood rage, +50% damage taken and dealt", "unique": "Gorehowl", "icon": "skills/swordsman_20.png" },
+        { "id": "skullsplitter-rampage", "name": "Skullsplitter's Rampage", "cooldown": "90s", "mana": 50, "desc": "Kill resets cooldowns for 8s", "unique": "Skullsplitter", "icon": "skills/swordsman_21.png" }
       ]
     },
     "bow": {
-      "weaponType": "Bow",
-      "emoji": "🏹",
+      "weaponType": "Bow", "emoji": "🏹",
       "skills": [
-        { "id": "quick-shot", "name": "Quick Shot", "cooldown": "0s", "mana": 0, "desc": "Fast basic arrow shot" },
-        { "id": "aimed-shot", "name": "Aimed Shot", "cooldown": "0s", "mana": 5, "desc": "Slow accurate shot, +50% damage" },
-        { "id": "multi-shot", "name": "Multi Shot", "cooldown": "8s", "mana": 20, "desc": "Fire 3 arrows in spread" },
-        { "id": "piercing-arrow", "name": "Piercing Arrow", "cooldown": "6s", "mana": 15, "desc": "Arrow pierces through enemies" },
-        { "id": "rain-of-arrows", "name": "Rain of Arrows", "cooldown": "12s", "mana": 30, "desc": "Barrage of arrows in area" },
-        { "id": "evasive-roll", "name": "Evasive Roll", "cooldown": "8s", "mana": 10, "desc": "Dodge roll with i-frames" },
-        { "id": "shadowflight-volley", "name": "Shadowflight's Volley", "cooldown": "50s", "mana": 55, "desc": "Rain of shadow arrows from above", "unique": "Shadowflight" }
+        { "id": "quick-shot", "name": "Quick Shot", "cooldown": "0s", "mana": 0, "desc": "Fast basic arrow shot", "icon": "skills/aeromancer_01.png" },
+        { "id": "aimed-shot", "name": "Aimed Shot", "cooldown": "0s", "mana": 5, "desc": "Slow accurate shot, +50% damage", "icon": "skills/aeromancer_02.png" },
+        { "id": "multi-shot", "name": "Multi Shot", "cooldown": "8s", "mana": 20, "desc": "Fire 3 arrows in spread", "icon": "skills/aeromancer_03.png" },
+        { "id": "piercing-arrow", "name": "Piercing Arrow", "cooldown": "6s", "mana": 15, "desc": "Arrow pierces through enemies", "icon": "skills/aeromancer_04.png" },
+        { "id": "rain-of-arrows", "name": "Rain of Arrows", "cooldown": "12s", "mana": 30, "desc": "Barrage of arrows in area", "icon": "sprites/Archer_Arrow rain.png" },
+        { "id": "charge-shot", "name": "Charge Shot", "cooldown": "8s", "mana": 20, "desc": "Charged powerful shot, 200% damage", "icon": "sprites/Archer_Charge shot_2.png" },
+        { "id": "evasive-roll", "name": "Evasive Roll", "cooldown": "8s", "mana": 10, "desc": "Dodge roll with i-frames", "icon": "skills/aeromancer_05.png" },
+        { "id": "shadowflight-volley", "name": "Shadowflight's Volley", "cooldown": "50s", "mana": 55, "desc": "Rain of shadow arrows from above", "unique": "Shadowflight", "icon": "skills/aeromancer_06.png" }
       ]
     },
     "staff": {
-      "weaponType": "Staff",
-      "emoji": "🪄",
+      "weaponType": "Staff", "emoji": "🪄",
       "skills": [
-        { "id": "bolt", "name": "Bolt", "cooldown": "0s", "mana": 5, "desc": "Basic magic projectile" },
-        { "id": "charged-bolt", "name": "Charged Bolt", "cooldown": "3s", "mana": 15, "desc": "Charged projectile for more damage" },
-        { "id": "fireball", "name": "Fireball", "cooldown": "8s", "mana": 25, "desc": "Explosive fire projectile" },
-        { "id": "ice-spike", "name": "Ice Spike", "cooldown": "6s", "mana": 20, "desc": "Frost projectile that slows" },
-        { "id": "chain-lightning", "name": "Chain Lightning", "cooldown": "10s", "mana": 30, "desc": "Lightning that jumps between enemies" },
-        { "id": "barrier", "name": "Barrier", "cooldown": "15s", "mana": 25, "desc": "Create magic shield" },
-        { "id": "blink", "name": "Blink", "cooldown": "10s", "mana": 20, "desc": "Short range teleport" },
-        { "id": "emberwrath-nova", "name": "Emberwrath's Nova", "cooldown": "60s", "mana": 60, "desc": "Massive fire explosion around caster", "unique": "Emberwrath" },
-        { "id": "glacial-blizzard", "name": "Glacial Spire's Blizzard", "cooldown": "55s", "mana": 55, "desc": "Create freezing storm in area", "unique": "Glacial Spire" }
+        { "id": "bolt", "name": "Bolt", "cooldown": "0s", "mana": 5, "desc": "Basic magic projectile", "icon": "skills/warlock_01.png" },
+        { "id": "charged-bolt", "name": "Charged Bolt", "cooldown": "3s", "mana": 15, "desc": "Charged projectile for more damage", "icon": "skills/warlock_02.png" },
+        { "id": "fireball", "name": "Fireball", "cooldown": "8s", "mana": 25, "desc": "Explosive fire projectile", "icon": "skills/warlock_03.png" },
+        { "id": "ice-spike", "name": "Ice Spike", "cooldown": "6s", "mana": 20, "desc": "Frost projectile that slows", "icon": "skills/warlock_04.png" },
+        { "id": "chain-lightning", "name": "Chain Lightning", "cooldown": "10s", "mana": 30, "desc": "Lightning that jumps between enemies", "icon": "sprites/07_Lightning_Strike_nobg.png" },
+        { "id": "barrier", "name": "Barrier", "cooldown": "15s", "mana": 25, "desc": "Create magic shield", "icon": "skills/warlock_05.png" },
+        { "id": "blink", "name": "Blink", "cooldown": "10s", "mana": 20, "desc": "Short range teleport", "icon": "skills/warlock_06.png" },
+        { "id": "emberwrath-nova", "name": "Emberwrath's Nova", "cooldown": "60s", "mana": 60, "desc": "Massive fire explosion around caster", "unique": "Emberwrath", "icon": "skills/warlock_07.png" },
+        { "id": "glacial-blizzard", "name": "Glacial Spire's Blizzard", "cooldown": "55s", "mana": 55, "desc": "Create freezing storm in area", "unique": "Glacial Spire", "icon": "skills/warlock_08.png" }
       ]
     },
     "gun": {
-      "weaponType": "Gun",
-      "emoji": "🔫",
+      "weaponType": "Gun", "emoji": "🔫",
       "skills": [
-        { "id": "quick-shot-gun", "name": "Quick Shot", "cooldown": "0s", "mana": 0, "desc": "Fast shot" },
-        { "id": "aimed-shot-gun", "name": "Aimed Shot", "cooldown": "0s", "mana": 0, "desc": "Accurate shot for +20% damage" },
-        { "id": "sniper-shot", "name": "Sniper Shot", "cooldown": "10s", "mana": 25, "desc": "Long range precision, 300% damage" },
-        { "id": "burst-fire", "name": "Burst Fire", "cooldown": "5s", "mana": 15, "desc": "3 shot burst" },
-        { "id": "explosive-round", "name": "Explosive Round", "cooldown": "8s", "mana": 22, "desc": "AoE damage explosion" },
-        { "id": "combat-roll", "name": "Combat Roll", "cooldown": "8s", "mana": 10, "desc": "Dodge roll + reload" },
-        { "id": "smoke-bomb", "name": "Smoke Bomb", "cooldown": "15s", "mana": 18, "desc": "AoE blind enemies" },
-        { "id": "ironstorm-minigun", "name": "Ironstorm's Minigun", "cooldown": "50s", "mana": 60, "desc": "Sustained fire for 5 seconds", "unique": "Ironstorm" }
+        { "id": "quick-shot-gun", "name": "Quick Shot", "cooldown": "0s", "mana": 0, "desc": "Fast shot", "icon": "skills/aeromancer_07.png" },
+        { "id": "aimed-shot-gun", "name": "Aimed Shot", "cooldown": "0s", "mana": 0, "desc": "Accurate shot for +20% damage", "icon": "skills/aeromancer_08.png" },
+        { "id": "sniper-shot", "name": "Sniper Shot", "cooldown": "10s", "mana": 25, "desc": "Long range precision, 300% damage", "icon": "skills/aeromancer_09.png" },
+        { "id": "burst-fire", "name": "Burst Fire", "cooldown": "5s", "mana": 15, "desc": "3 shot burst", "icon": "skills/aeromancer_10.png" },
+        { "id": "explosive-round", "name": "Explosive Round", "cooldown": "8s", "mana": 22, "desc": "AoE damage explosion", "icon": "skills/aeromancer_11.png" },
+        { "id": "combat-roll", "name": "Combat Roll", "cooldown": "8s", "mana": 10, "desc": "Dodge roll + reload", "icon": "skills/aeromancer_12.png" },
+        { "id": "smoke-bomb", "name": "Smoke Bomb", "cooldown": "15s", "mana": 18, "desc": "AoE blind enemies", "icon": "skills/aeromancer_13.png" },
+        { "id": "ironstorm-minigun", "name": "Ironstorm's Minigun", "cooldown": "50s", "mana": 60, "desc": "Sustained fire for 5 seconds", "unique": "Ironstorm", "icon": "skills/aeromancer_14.png" }
+      ]
+    },
+    "warrior": {
+      "weaponType": "Class", "emoji": "🛡️", "class": "Warrior",
+      "skills": [
+        { "id": "sprint", "name": "Sprint", "cooldown": "0s", "mana": 0, "desc": "Invisible target lock, speed boost while stamina lasts", "icon": "skills/swordsman_22.png", "resource": "stamina" },
+        { "id": "charge-attack", "name": "Charge Attack", "cooldown": "0s", "mana": 0, "desc": "Sprint into a powerful charge strike", "icon": "skills/swordsman_23.png", "resource": "stamina" },
+        { "id": "perfect-parry", "name": "Perfect Parry", "cooldown": "0s", "mana": 0, "desc": "Parry with perfect timing for extra stamina", "icon": "skills/swordsman_24.png", "resource": "stamina" },
+        { "id": "perfect-dodge", "name": "Perfect Dodge", "cooldown": "0s", "mana": 0, "desc": "Dodge with perfect timing for extra stamina", "icon": "skills/swordsman_25.png", "resource": "stamina" },
+        { "id": "perfect-block", "name": "Perfect Block", "cooldown": "0s", "mana": 0, "desc": "Block with perfect timing for extra stamina", "icon": "skills/swordsman_26.png", "resource": "stamina" },
+        { "id": "double-jump", "name": "Double Jump", "cooldown": "0s", "mana": 0, "desc": "Warriors can double jump", "icon": "skills/swordsman_27.png" },
+        { "id": "aoe-slam", "name": "AoE Slam", "cooldown": "12s", "mana": 30, "desc": "Area of effect ground slam attack", "icon": "skills/swordsman_28.png" },
+        { "id": "group-invincibility", "name": "Group Invincibility", "cooldown": "120s", "mana": 80, "desc": "All nearby allies become invincible for 3s", "icon": "skills/swordsman_29.png" },
+        { "id": "shield-wall", "name": "Shield Wall", "cooldown": "20s", "mana": 25, "desc": "Massive damage reduction for 6s", "icon": "skills/swordsman_30.png" },
+        { "id": "battle-cry", "name": "Battle Cry", "cooldown": "30s", "mana": 20, "desc": "Z-key battle cry, stackable buff with flame indicator", "icon": "skills/swordsman_31.png" }
+      ]
+    },
+    "ranger": {
+      "weaponType": "Class", "emoji": "🏹", "class": "Ranger",
+      "skills": [
+        { "id": "ranger-parry", "name": "Ranger Parry", "cooldown": "0s", "mana": 0, "desc": "RMB+LMB attempted parry, perfect parry = counter", "icon": "skills/aeromancer_15.png" },
+        { "id": "dash-attack", "name": "Dash Attack", "cooldown": "0s", "mana": 0, "desc": "Instant dash attack on stunned enemy (2s window)", "icon": "skills/aeromancer_16.png" },
+        { "id": "stun-strike", "name": "Stun Strike", "cooldown": "8s", "mana": 15, "desc": "Perfect parry stuns enemy for 0.5s (players)", "icon": "skills/aeromancer_17.png" },
+        { "id": "poison-arrow", "name": "Poison Arrow", "cooldown": "10s", "mana": 18, "desc": "Arrow coated in venom, DoT for 6s", "icon": "skills/aeromancer_18.png" },
+        { "id": "trap-set", "name": "Trap Set", "cooldown": "15s", "mana": 20, "desc": "Place a snare trap on the ground", "icon": "skills/aeromancer_19.png" },
+        { "id": "camouflage", "name": "Camouflage", "cooldown": "25s", "mana": 22, "desc": "Become nearly invisible while stationary", "icon": "skills/aeromancer_20.png" },
+        { "id": "eagle-eye", "name": "Eagle Eye", "cooldown": "20s", "mana": 15, "desc": "Reveals hidden enemies, +range for 10s", "icon": "skills/aeromancer_21.png" },
+        { "id": "volley", "name": "Volley", "cooldown": "18s", "mana": 35, "desc": "Rapid fire barrage at target area", "icon": "skills/aeromancer_22.png" }
+      ]
+    },
+    "mage": {
+      "weaponType": "Class", "emoji": "🔮", "class": "Mage",
+      "skills": [
+        { "id": "teleport-block", "name": "Teleport Block", "cooldown": "30s", "mana": 40, "desc": "Create particle teleport block (max 10 placed)", "icon": "skills/warlock_09.png" },
+        { "id": "arcane-shield", "name": "Arcane Shield", "cooldown": "15s", "mana": 30, "desc": "Absorb damage with magic barrier", "icon": "skills/warlock_10.png" },
+        { "id": "mana-surge", "name": "Mana Surge", "cooldown": "45s", "mana": 0, "desc": "Instantly restore 50% mana", "icon": "skills/warlock_11.png" },
+        { "id": "polymorph", "name": "Polymorph", "cooldown": "30s", "mana": 35, "desc": "Transform enemy into harmless creature for 4s", "icon": "skills/warlock_12.png" },
+        { "id": "meteor", "name": "Meteor", "cooldown": "60s", "mana": 70, "desc": "Call down a massive meteor strike", "icon": "skills/warlock_13.png" },
+        { "id": "frost-nova", "name": "Frost Nova", "cooldown": "12s", "mana": 25, "desc": "Freeze all nearby enemies for 3s", "icon": "skills/warlock_14.png" },
+        { "id": "arcane-intellect", "name": "Arcane Intellect", "cooldown": "300s", "mana": 50, "desc": "Buff party +15% spell power for 30min", "icon": "skills/warlock_15.png" },
+        { "id": "portal", "name": "Portal", "cooldown": "120s", "mana": 60, "desc": "Create portal to town or faction base", "icon": "skills/warlock_16.png" }
+      ]
+    },
+    "worge": {
+      "weaponType": "Class", "emoji": "🐻", "class": "Worge",
+      "skills": [
+        { "id": "bear-form", "name": "Bear Form", "cooldown": "3s", "mana": 20, "desc": "Transform into large powerful Bear, +HP +armor", "icon": "skills/warlock_17.png" },
+        { "id": "raptor-form", "name": "Raptor Form", "cooldown": "3s", "mana": 20, "desc": "Transform into invisible rogue-like Raptor", "icon": "skills/warlock_18.png" },
+        { "id": "bird-form", "name": "Large Bird Form", "cooldown": "3s", "mana": 20, "desc": "Transform into flyable/mountable Large Bird", "icon": "skills/warlock_19.png" },
+        { "id": "bear-swipe", "name": "Bear Swipe", "cooldown": "4s", "mana": 10, "desc": "Massive claw swipe in Bear form", "icon": "skills/warlock_20.png", "requires": "bear-form" },
+        { "id": "bear-roar", "name": "Bear Roar", "cooldown": "15s", "mana": 20, "desc": "Taunt all nearby enemies in Bear form", "icon": "skills/warlock_21.png", "requires": "bear-form" },
+        { "id": "raptor-ambush", "name": "Raptor Ambush", "cooldown": "8s", "mana": 15, "desc": "Strike from stealth for 250% damage", "icon": "skills/warlock_22.png", "requires": "raptor-form" },
+        { "id": "raptor-vanish", "name": "Raptor Vanish", "cooldown": "20s", "mana": 18, "desc": "Re-enter stealth in combat", "icon": "skills/warlock_23.png", "requires": "raptor-form" },
+        { "id": "bird-dive", "name": "Bird Dive", "cooldown": "10s", "mana": 15, "desc": "Dive bomb from flight dealing AoE", "icon": "skills/warlock_24.png", "requires": "bird-form" },
+        { "id": "bird-carry", "name": "Bird Carry", "cooldown": "5s", "mana": 10, "desc": "Pick up and carry a player or AI", "icon": "skills/warlock_25.png", "requires": "bird-form" },
+        { "id": "primal-howl", "name": "Primal Howl", "cooldown": "60s", "mana": 40, "desc": "Buff all forms for 15s, +30% stats", "icon": "skills/warlock_26.png" }
+      ]
+    },
+    "hammer": {
+      "weaponType": "Hammer", "emoji": "🔨",
+      "skills": [
+        { "id": "hammer-strike", "name": "Hammer Strike", "cooldown": "0s", "mana": 0, "desc": "Basic hammer strike", "icon": "sprites/Samurai_Sword Strike.png" },
+        { "id": "overhead-smash", "name": "Overhead Smash", "cooldown": "6s", "mana": 15, "desc": "Powerful overhead smash with stun", "icon": "skills/swordsman_32.png" },
+        { "id": "ground-pound", "name": "Ground Pound", "cooldown": "10s", "mana": 25, "desc": "Slam ground for AoE damage + slow", "icon": "skills/swordsman_33.png" },
+        { "id": "shield-breaker", "name": "Shield Breaker", "cooldown": "8s", "mana": 18, "desc": "Ignores block, shatters shields", "icon": "skills/swordsman_34.png" },
+        { "id": "quake", "name": "Quake", "cooldown": "15s", "mana": 30, "desc": "Massive AoE earthquake", "icon": "skills/swordsman_35.png" }
+      ]
+    },
+    "spear": {
+      "weaponType": "Spear", "emoji": "🔱",
+      "skills": [
+        { "id": "spear-thrust", "name": "Spear Thrust", "cooldown": "0s", "mana": 0, "desc": "Long range thrust attack", "icon": "skills/swordsman_36.png" },
+        { "id": "impale", "name": "Impale", "cooldown": "6s", "mana": 15, "desc": "Impale enemy, bonus vs charging foes", "icon": "skills/swordsman_37.png" },
+        { "id": "sweep", "name": "Sweep", "cooldown": "5s", "mana": 12, "desc": "Low sweep knocking enemies down", "icon": "skills/swordsman_38.png" },
+        { "id": "javelin-throw", "name": "Javelin Throw", "cooldown": "10s", "mana": 18, "desc": "Throw spear for ranged damage", "icon": "skills/swordsman_39.png" },
+        { "id": "phalanx", "name": "Phalanx", "cooldown": "20s", "mana": 25, "desc": "Defensive stance, +50% block", "icon": "skills/swordsman_40.png" }
+      ]
+    },
+    "dagger": {
+      "weaponType": "Dagger", "emoji": "🗡️",
+      "skills": [
+        { "id": "stab", "name": "Stab", "cooldown": "0s", "mana": 0, "desc": "Quick stab attack", "icon": "skills/swordsman_41.png" },
+        { "id": "backstab", "name": "Backstab", "cooldown": "6s", "mana": 12, "desc": "+200% damage from behind", "icon": "skills/swordsman_42.png" },
+        { "id": "fan-of-knives", "name": "Fan of Knives", "cooldown": "8s", "mana": 18, "desc": "Throw daggers in 360 arc", "icon": "skills/swordsman_43.png" },
+        { "id": "envenom", "name": "Envenom", "cooldown": "10s", "mana": 15, "desc": "Coat blades in poison for 10s", "icon": "skills/swordsman_44.png" },
+        { "id": "shadow-step", "name": "Shadow Step", "cooldown": "12s", "mana": 20, "desc": "Teleport behind target", "icon": "skills/swordsman_45.png" }
+      ]
+    },
+    "crossbow": {
+      "weaponType": "Crossbow", "emoji": "🎯",
+      "skills": [
+        { "id": "bolt-shot", "name": "Bolt Shot", "cooldown": "0s", "mana": 0, "desc": "Basic crossbow bolt", "icon": "skills/aeromancer_23.png" },
+        { "id": "rapid-reload", "name": "Rapid Reload", "cooldown": "5s", "mana": 10, "desc": "3 quick bolts in succession", "icon": "skills/aeromancer_24.png" },
+        { "id": "explosive-bolt", "name": "Explosive Bolt", "cooldown": "10s", "mana": 22, "desc": "Bolt that explodes on impact", "icon": "skills/aeromancer_25.png" },
+        { "id": "grapple-bolt", "name": "Grapple Bolt", "cooldown": "15s", "mana": 15, "desc": "Pull yourself to target location", "icon": "skills/aeromancer_26.png" }
       ]
     }
   }

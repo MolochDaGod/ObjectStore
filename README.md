@@ -14,8 +14,11 @@ Public API for Grudge Warlords game data - weapons, materials, armor, and icons.
 | `/api/v1/materials.json` | Crafting materials (ore, wood, cloth, leather, gems, essence) |
 | `/api/v1/armor.json` | Armor slots (helm, chest, boots, etc.) |
 | `/api/v1/consumables.json` | Potions, bandages, grenades |
-| `/api/v1/skills.json` | Profession skill trees (5 professions) |
+| `/api/v1/skills.json` | All skills (112 skills: weapon + class skills for Warrior, Ranger, Mage, Worge) |
 | `/api/v1/professions.json` | Profession definitions and metadata |
+| `/api/v1/enemies.json` | All enemies (38 enemies across 12 categories, T1-T8) |
+| `/api/v1/bosses.json` | Boss encounters (12 bosses with multi-phase mechanics & drops) |
+| `/api/v1/sprites.json` | 2D sprite asset index from Unity project (45 sprites) |
 
 ## 📦 SDK
 
@@ -35,6 +38,18 @@ const t5Materials = await sdk.getMaterialsByTier(5);
 
 // Search across all data
 const results = await sdk.search('iron');
+
+// Get enemies by zone
+const starterEnemies = await sdk.getEnemiesByZone('Starter Island');
+
+// Get bosses by tier
+const t7Bosses = await sdk.getBossesByTier(7);
+
+// Get class-specific skills
+const worgeSkills = await sdk.getClassSkills('Worge');
+
+// Get sprites
+const sprites = await sdk.getSprites();
 
 // Get icon URLs
 const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5); // Sword icon, tier 5

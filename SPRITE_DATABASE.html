@@ -351,6 +351,9 @@
         <button class="tab-btn" data-tab="materials">🪨 Materials</button>
         <button class="tab-btn" data-tab="armor">🛡️ Armor</button>
         <button class="tab-btn" data-tab="consumables">🧪 Consumables</button>
+        <button class="tab-btn" data-tab="enemies">👹 Enemies</button>
+        <button class="tab-btn" data-tab="bosses">💀 Bosses</button>
+        <button class="tab-btn" data-tab="skills">⚡ Skills</button>
         <button class="tab-btn" data-tab="all">📦 All Items</button>
       </div>
       
@@ -369,9 +372,11 @@
           <option value="8">T8 - Divine</option>
         </select>
         <div class="stats-bar">
-          <div class="stat-item">Weapons: <span class="stat-value" id="weaponCount">-</span></div>
+        <div class="stat-item">Weapons: <span class="stat-value" id="weaponCount">-</span></div>
           <div class="stat-item">Materials: <span class="stat-value" id="materialCount">-</span></div>
-          <div class="stat-item">Consumables: <span class="stat-value" id="consumableCount">-</span></div>
+          <div class="stat-item">Enemies: <span class="stat-value" id="enemyCount">-</span></div>
+          <div class="stat-item">Bosses: <span class="stat-value" id="bossCount">-</span></div>
+          <div class="stat-item">Skills: <span class="stat-value" id="skillCount">-</span></div>
           <div class="stat-item">Total: <span class="stat-value" id="totalCount">-</span></div>
         </div>
       </div>
@@ -411,6 +416,30 @@
       <div id="consumables-content"></div>
     </section>
 
+    <section id="enemies-section" class="section">
+      <div class="loading" id="enemies-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading enemies...</p>
+      </div>
+      <div id="enemies-content"></div>
+    </section>
+
+    <section id="bosses-section" class="section">
+      <div class="loading" id="bosses-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading bosses...</p>
+      </div>
+      <div id="bosses-content"></div>
+    </section>
+
+    <section id="skills-section" class="section">
+      <div class="loading" id="skills-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading skills...</p>
+      </div>
+      <div id="skills-content"></div>
+    </section>
+
     <section id="all-section" class="section">
       <div class="loading" id="all-loading">
         <div class="loading-spinner"></div>
@@ -442,7 +471,7 @@
   <script>
     const BASE_URL = './api/v1';
     const ICONS_URL = './icons';
-    let allData = { weapons: null, materials: null, armor: null, consumables: null };
+    let allData = { weapons: null, materials: null, armor: null, consumables: null, enemies: null, bosses: null, skills: null };
     let iconIndex = null;
     let currentTab = 'weapons';
 
@@ -497,7 +526,10 @@
           loadWeapons(),
           loadMaterials(),
           loadArmor(),
-          loadConsumables()
+          loadConsumables(),
+          loadEnemies(),
+          loadBosses(),
+          loadSkillsData()
         ]);
         renderAllItems();
         return;
@@ -508,6 +540,9 @@
         case 'materials': await loadMaterials(); break;
         case 'armor': await loadArmor(); break;
         case 'consumables': await loadConsumables(); break;
+        case 'enemies': await loadEnemies(); break;
+        case 'bosses': await loadBosses(); break;
+        case 'skills': await loadSkillsData(); break;
       }
     }
 
@@ -1042,6 +1077,99 @@
       if (allData.materials) total += allData.materials.total || countItems(allData.materials.categories);
       if (allData.consumables) total += allData.consumables.total || countConsumables(allData.consumables.categories);
       document.getElementById('totalCount').textContent = total || '-';
+    }
+
+    // Load enemies
+    async function loadEnemies() {
+      if (allData.enemies) return renderEnemies();
+      const data = await fetchJSON('enemies.json');
+      if (!data) { document.getElementById('enemies-loading').innerHTML = '<div class="error">Failed to load enemies</div>'; return; }
+      allData.enemies = data;
+      document.getElementById('enemyCount').textContent = data.total || 0;
+      renderEnemies();
+    }
+
+    function renderEnemies() {
+      const data = allData.enemies;
+      if (!data) return;
+      document.getElementById('enemies-loading').style.display = 'none';
+      const container = document.getElementById('enemies-content');
+      let html = '<h2 class="section-title">👹 Enemies Database</h2>';
+      const categoryNames = { beasts: '🐺 Beasts', spiders: '🕷️ Spiders & Arachnids', trolls: '👹 Trolls', orcs: '👺 Orcs & Goblins', undead: '💀 Undead & Dark', golems: '🗿 Golems', minotaurs: '🐂 Minotaurs', dragons: '🐉 Dragons & Wyrms', egyptians: '🏛️ Egyptian Horrors', titans: '⚡ Titans & Giants', reptiles: '🦎 Reptiles', elementals: '🔥 Elementals' };
+      for (const [catKey, catData] of Object.entries(data.categories)) {
+        if (!catData.items || catData.items.length === 0) continue;
+        html += `<div class="category-group" data-category="${catKey}"><h3 class="category-title">${categoryNames[catKey] || catKey}<span class="category-count">${catData.items.length} enemies</span></h3><div class="items-grid">`;
+        for (const item of catData.items) {
+          html += `<div class="item-card" data-name="${item.name.toLowerCase()}" data-tier="${item.tier}"><span class="tier-badge tier-${item.tier}">T${item.tier}</span><span class="item-icon">${item.emoji}</span><div class="item-name">${item.name}</div><div class="item-meta">${item.zone} • HP: ${item.hp}</div></div>`;
+        }
+        html += '</div></div>';
+      }
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    // Load bosses
+    async function loadBosses() {
+      if (allData.bosses) return renderBosses();
+      const data = await fetchJSON('bosses.json');
+      if (!data) { document.getElementById('bosses-loading').innerHTML = '<div class="error">Failed to load bosses</div>'; return; }
+      allData.bosses = data;
+      document.getElementById('bossCount').textContent = data.total || 0;
+      renderBosses();
+    }
+
+    function renderBosses() {
+      const data = allData.bosses;
+      if (!data) return;
+      document.getElementById('bosses-loading').style.display = 'none';
+      const container = document.getElementById('bosses-content');
+      let html = '<h2 class="section-title">💀 Boss Encounters</h2>';
+      for (const boss of data.bosses) {
+        html += `<div class="category-group"><h3 class="category-title">${boss.emoji} ${boss.name} <span class="category-count">T${boss.tier} • ${boss.zone} • ${boss.phases} phases • ${boss.hp.toLocaleString()} HP</span></h3>`;
+        html += `<p style="color: var(--text-dim); margin-bottom: 12px; font-style: italic;">${boss.title}</p>`;
+        html += '<div class="items-grid">';
+        for (const [phaseKey, phase] of Object.entries(boss.mechanics)) {
+          for (const ability of phase.abilities) {
+            html += `<div class="item-card"><span class="tier-badge tier-${boss.tier}">P${phaseKey.replace('phase','')}</span><span class="item-icon">${ability.damage > 200 ? '💥' : ability.damage > 0 ? '⚔️' : '🛡️'}</span><div class="item-name">${ability.name}</div><div class="item-meta">${ability.damage > 0 ? ability.damage + ' dmg' : 'Mechanic'}</div></div>`;
+          }
+        }
+        html += '</div>';
+        html += '<div style="margin-top: 12px;"><strong style="color: var(--gold);">Drops:</strong> ';
+        html += boss.drops.map(d => `<span style="color: var(--text-dim);">${d.name} (${(d.dropRate*100).toFixed(0)}%)</span>`).join(' • ');
+        html += '</div></div>';
+      }
+      container.innerHTML = html;
+      updateTotalCount();
+    }
+
+    // Load skills
+    async function loadSkillsData() {
+      if (allData.skills) return renderSkillsData();
+      const data = await fetchJSON('skills.json');
+      if (!data) { document.getElementById('skills-loading').innerHTML = '<div class="error">Failed to load skills</div>'; return; }
+      allData.skills = data;
+      document.getElementById('skillCount').textContent = data.total || 0;
+      renderSkillsData();
+    }
+
+    function renderSkillsData() {
+      const data = allData.skills;
+      if (!data) return;
+      document.getElementById('skills-loading').style.display = 'none';
+      const container = document.getElementById('skills-content');
+      let html = '<h2 class="section-title">⚡ Skills Database</h2>';
+      for (const [catKey, catData] of Object.entries(data.categories)) {
+        if (!catData.skills || catData.skills.length === 0) continue;
+        const label = catData.class ? `🌟 ${catData.class} Class` : `${catData.emoji} ${catData.weaponType}`;
+        html += `<div class="category-group" data-category="${catKey}"><h3 class="category-title">${label}<span class="category-count">${catData.skills.length} skills</span></h3><div class="items-grid">`;
+        for (const skill of catData.skills) {
+          const iconHtml = skill.icon ? `<img src="${ICONS_URL}/${skill.icon}" class="item-icon-img" onerror="this.outerHTML='<span class=item-icon>${catData.emoji}</span>'" alt="icon">` : `<span class="item-icon">${catData.emoji}</span>`;
+          html += `<div class="item-card" data-name="${skill.name.toLowerCase()}">${iconHtml}<div class="item-name">${skill.name}</div><div class="item-meta">${skill.cooldown} • ${skill.mana}mp</div></div>`;
+        }
+        html += '</div></div>';
+      }
+      container.innerHTML = html;
+      updateTotalCount();
     }
 
     // Initial load
