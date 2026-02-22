@@ -9,36 +9,470 @@
       "emoji": "🔴",
       "count": 30,
       "items": [
-        { "id": 1, "name": "Burnt Skewer", "lvl": 1, "icon": "🍡", "mats": {"Scrap Meat": 1, "Twig": 1}, "stats": {"attack": "+2%"}, "desc": "Basic starter food" },
-        { "id": 2, "name": "Roasted Rabbit", "lvl": 5, "icon": "🐰", "mats": {"Rabbit Meat": 1, "Salt": 1}, "stats": {"attack": "+4%"}, "desc": "Simple roast" },
-        { "id": 3, "name": "Grilled Sausage", "lvl": 10, "icon": "🌭", "mats": {"Ground Meat": 2, "Casing": 1}, "stats": {"attack": "+6%"}, "desc": "Hearty sausage" },
-        { "id": 4, "name": "Smoked Haunch", "lvl": 15, "icon": "🍗", "mats": {"Prime Meat": 1, "Salt": 2}, "stats": {"attack": "+8%"}, "desc": "Smoked meat leg" },
-        { "id": 5, "name": "Grilled Steak", "lvl": 20, "icon": "🥩", "mats": {"Beef": 2, "Pepper": 1}, "stats": {"attack": "+10%"}, "desc": "Juicy steak" },
-        { "id": 6, "name": "Bacon Strips", "lvl": 22, "icon": "🥓", "mats": {"Pork Belly": 2, "Salt": 1}, "stats": {"attack": "+11%"}, "desc": "Crispy bacon" },
-        { "id": 7, "name": "Spiced Ribs", "lvl": 25, "icon": "🍖", "mats": {"Ribs": 3, "Spice": 2}, "stats": {"attack": "+12%"}, "desc": "Spiced ribs" },
-        { "id": 8, "name": "Pepper Steak", "lvl": 28, "icon": "🥩", "mats": {"Beef": 3, "Hot Pepper": 2}, "stats": {"attack": "+13%"}, "desc": "Spicy steak" },
-        { "id": 9, "name": "Venison Cutlet", "lvl": 30, "icon": "🦌", "mats": {"Deer Meat": 2, "Herbs": 2}, "stats": {"attack": "+14%"}, "desc": "Wild venison" },
-        { "id": 10, "name": "Wild Boar Roast", "lvl": 33, "icon": "🐗", "mats": {"Boar Meat": 2, "Herbs": 3}, "stats": {"attack": "+15%"}, "desc": "Boar roast" },
-        { "id": 11, "name": "Braised Lamb", "lvl": 36, "icon": "🐑", "mats": {"Lamb": 3, "Wine": 1}, "stats": {"attack": "+16%"}, "desc": "Tender lamb" },
-        { "id": 12, "name": "Hunter's Platter", "lvl": 40, "icon": "🍖", "mats": {"Mixed Meats": 3, "Spice": 2}, "stats": {"attack": "+18%"}, "desc": "Mixed game meats" },
-        { "id": 13, "name": "Inferno Curry", "lvl": 45, "icon": "🥘", "mats": {"Spicy Herb": 5, "Meat": 2}, "stats": {"attack": "+20%", "burn": "+5%"}, "desc": "Fiery curry" },
-        { "id": 14, "name": "Flame-Seared Boar", "lvl": 50, "icon": "🔥", "mats": {"Boar Meat": 3, "Fire Spice": 2}, "stats": {"attack": "+22%", "burn": "+8%"}, "desc": "Fire-seared" },
-        { "id": 15, "name": "Orcish BBQ Platter", "lvl": 55, "icon": "🍖", "mats": {"Mixed Meats": 5, "Fire Spice": 3}, "stats": {"attack": "+24%"}, "desc": "Massive platter" },
-        { "id": 16, "name": "Bear Roast", "lvl": 58, "icon": "🐻", "mats": {"Bear Meat": 3, "Honey": 2}, "stats": {"attack": "+25%", "str": "+10"}, "desc": "Bear meat" },
-        { "id": 17, "name": "Wyvern Wings", "lvl": 62, "icon": "🦇", "mats": {"Wyvern Meat": 2, "Hot Sauce": 3}, "stats": {"attack": "+27%"}, "desc": "Wyvern wings" },
-        { "id": 18, "name": "Lava Ribs", "lvl": 65, "icon": "🍖", "mats": {"Fire Beast Ribs": 3, "Lava Salt": 2}, "stats": {"attack": "+28%", "burn": "+10%"}, "desc": "Volcanic ribs" },
-        { "id": 19, "name": "Hellfire Steak", "lvl": 70, "icon": "🔥", "mats": {"Demon Beef": 2, "Hellfire Salt": 1}, "stats": {"attack": "+30%", "burn": "+12%"}, "desc": "Demon beef" },
-        { "id": 20, "name": "Chimera Kebab", "lvl": 73, "icon": "🍢", "mats": {"Chimera Meat": 3, "Exotic Spice": 2}, "stats": {"attack": "+32%"}, "desc": "Exotic kebab" },
-        { "id": 21, "name": "Dire Wolf Steak", "lvl": 76, "icon": "🐺", "mats": {"Wolf Meat": 4, "Wild Herbs": 3}, "stats": {"attack": "+33%", "crit": "+5%"}, "desc": "Alpha wolf meat" },
-        { "id": 22, "name": "Manticore Roast", "lvl": 78, "icon": "🦁", "mats": {"Manticore Meat": 3, "Poison Resist Herb": 2}, "stats": {"attack": "+34%"}, "desc": "Dangerous delicacy" },
-        { "id": 23, "name": "Hydra Stew", "lvl": 80, "icon": "🐍", "mats": {"Hydra Meat": 4, "Regenerative Herb": 2}, "stats": {"attack": "+35%", "regen": "+5/s"}, "desc": "Multi-headed feast" },
-        { "id": 24, "name": "Dragon Steak", "lvl": 83, "icon": "🐉", "mats": {"Dragon Flank": 1, "Liquid Fire": 1}, "stats": {"attack": "+36%", "burn": "+15%"}, "desc": "Dragon meat!" },
-        { "id": 25, "name": "Griffin Feast", "lvl": 85, "icon": "🦅", "mats": {"Griffin Meat": 3, "Sky Salt": 2}, "stats": {"attack": "+37%", "speed": "+5%"}, "desc": "Aerial predator" },
-        { "id": 26, "name": "Behemoth Burger", "lvl": 88, "icon": "🍔", "mats": {"Behemoth Meat": 5, "Giant Bun": 2}, "stats": {"attack": "+38%", "hp": "+50"}, "desc": "Massive burger" },
-        { "id": 27, "name": "Phoenix Roast", "lvl": 90, "icon": "🔶", "mats": {"Phoenix Meat": 2, "Eternal Flame": 1}, "stats": {"attack": "+39%", "resurrect": "5%"}, "desc": "Legendary roast" },
-        { "id": 28, "name": "Colossus Cuts", "lvl": 92, "icon": "🗿", "mats": {"Colossus Meat": 4, "Ancient Salt": 2}, "stats": {"attack": "+40%", "str": "+20"}, "desc": "Titan portions" },
-        { "id": 29, "name": "Leviathan Sashimi", "lvl": 94, "icon": "🐋", "mats": {"Leviathan Flesh": 3, "Ocean Salt": 2}, "stats": {"attack": "+42%", "armorPen": "+10%"}, "desc": "Sea titan raw" },
-        { "id": 30, "name": "Titan's Feast", "lvl": 95, "icon": "⚔️", "mats": {"Giant Meat": 3, "Divine Salt": 1}, "stats": {"attack": "+45%", "str": "+25"}, "desc": "Ultimate feast" }
+        {
+          "id": 1,
+          "name": "Burnt Skewer",
+          "lvl": 1,
+          "icon": "🍡",
+          "mats": {
+            "Scrap Meat": 1,
+            "Twig": 1
+          },
+          "stats": {
+            "attack": "+2%"
+          },
+          "desc": "Basic starter food",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 2,
+          "name": "Roasted Rabbit",
+          "lvl": 5,
+          "icon": "🐰",
+          "mats": {
+            "Rabbit Meat": 1,
+            "Salt": 1
+          },
+          "stats": {
+            "attack": "+4%"
+          },
+          "desc": "Simple roast",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 3,
+          "name": "Grilled Sausage",
+          "lvl": 10,
+          "icon": "🌭",
+          "mats": {
+            "Ground Meat": 2,
+            "Casing": 1
+          },
+          "stats": {
+            "attack": "+6%"
+          },
+          "desc": "Hearty sausage",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 4,
+          "name": "Smoked Haunch",
+          "lvl": 15,
+          "icon": "🍗",
+          "mats": {
+            "Prime Meat": 1,
+            "Salt": 2
+          },
+          "stats": {
+            "attack": "+8%"
+          },
+          "desc": "Smoked meat leg",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 5,
+          "name": "Grilled Steak",
+          "lvl": 20,
+          "icon": "🥩",
+          "mats": {
+            "Beef": 2,
+            "Pepper": 1
+          },
+          "stats": {
+            "attack": "+10%"
+          },
+          "desc": "Juicy steak",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 6,
+          "name": "Bacon Strips",
+          "lvl": 22,
+          "icon": "🥓",
+          "mats": {
+            "Pork Belly": 2,
+            "Salt": 1
+          },
+          "stats": {
+            "attack": "+11%"
+          },
+          "desc": "Crispy bacon",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 7,
+          "name": "Spiced Ribs",
+          "lvl": 25,
+          "icon": "🍖",
+          "mats": {
+            "Ribs": 3,
+            "Spice": 2
+          },
+          "stats": {
+            "attack": "+12%"
+          },
+          "desc": "Spiced ribs",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 8,
+          "name": "Pepper Steak",
+          "lvl": 28,
+          "icon": "🥩",
+          "mats": {
+            "Beef": 3,
+            "Hot Pepper": 2
+          },
+          "stats": {
+            "attack": "+13%"
+          },
+          "desc": "Spicy steak",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 9,
+          "name": "Venison Cutlet",
+          "lvl": 30,
+          "icon": "🦌",
+          "mats": {
+            "Deer Meat": 2,
+            "Herbs": 2
+          },
+          "stats": {
+            "attack": "+14%"
+          },
+          "desc": "Wild venison",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 10,
+          "name": "Wild Boar Roast",
+          "lvl": 33,
+          "icon": "🐗",
+          "mats": {
+            "Boar Meat": 2,
+            "Herbs": 3
+          },
+          "stats": {
+            "attack": "+15%"
+          },
+          "desc": "Boar roast",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 11,
+          "name": "Braised Lamb",
+          "lvl": 36,
+          "icon": "🐑",
+          "mats": {
+            "Lamb": 3,
+            "Wine": 1
+          },
+          "stats": {
+            "attack": "+16%"
+          },
+          "desc": "Tender lamb",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 12,
+          "name": "Hunter's Platter",
+          "lvl": 40,
+          "icon": "🍖",
+          "mats": {
+            "Mixed Meats": 3,
+            "Spice": 2
+          },
+          "stats": {
+            "attack": "+18%"
+          },
+          "desc": "Mixed game meats",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 13,
+          "name": "Inferno Curry",
+          "lvl": 45,
+          "icon": "🥘",
+          "mats": {
+            "Spicy Herb": 5,
+            "Meat": 2
+          },
+          "stats": {
+            "attack": "+20%",
+            "burn": "+5%"
+          },
+          "desc": "Fiery curry",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 14,
+          "name": "Flame-Seared Boar",
+          "lvl": 50,
+          "icon": "🔥",
+          "mats": {
+            "Boar Meat": 3,
+            "Fire Spice": 2
+          },
+          "stats": {
+            "attack": "+22%",
+            "burn": "+8%"
+          },
+          "desc": "Fire-seared",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 15,
+          "name": "Orcish BBQ Platter",
+          "lvl": 55,
+          "icon": "🍖",
+          "mats": {
+            "Mixed Meats": 5,
+            "Fire Spice": 3
+          },
+          "stats": {
+            "attack": "+24%"
+          },
+          "desc": "Massive platter",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 16,
+          "name": "Bear Roast",
+          "lvl": 58,
+          "icon": "🐻",
+          "mats": {
+            "Bear Meat": 3,
+            "Honey": 2
+          },
+          "stats": {
+            "attack": "+25%",
+            "str": "+10"
+          },
+          "desc": "Bear meat",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 17,
+          "name": "Wyvern Wings",
+          "lvl": 62,
+          "icon": "🦇",
+          "mats": {
+            "Wyvern Meat": 2,
+            "Hot Sauce": 3
+          },
+          "stats": {
+            "attack": "+27%"
+          },
+          "desc": "Wyvern wings",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 18,
+          "name": "Lava Ribs",
+          "lvl": 65,
+          "icon": "🍖",
+          "mats": {
+            "Fire Beast Ribs": 3,
+            "Lava Salt": 2
+          },
+          "stats": {
+            "attack": "+28%",
+            "burn": "+10%"
+          },
+          "desc": "Volcanic ribs",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 19,
+          "name": "Hellfire Steak",
+          "lvl": 70,
+          "icon": "🔥",
+          "mats": {
+            "Demon Beef": 2,
+            "Hellfire Salt": 1
+          },
+          "stats": {
+            "attack": "+30%",
+            "burn": "+12%"
+          },
+          "desc": "Demon beef",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 20,
+          "name": "Chimera Kebab",
+          "lvl": 73,
+          "icon": "🍢",
+          "mats": {
+            "Chimera Meat": 3,
+            "Exotic Spice": 2
+          },
+          "stats": {
+            "attack": "+32%"
+          },
+          "desc": "Exotic kebab",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 21,
+          "name": "Dire Wolf Steak",
+          "lvl": 76,
+          "icon": "🐺",
+          "mats": {
+            "Wolf Meat": 4,
+            "Wild Herbs": 3
+          },
+          "stats": {
+            "attack": "+33%",
+            "crit": "+5%"
+          },
+          "desc": "Alpha wolf meat",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 22,
+          "name": "Manticore Roast",
+          "lvl": 78,
+          "icon": "🦁",
+          "mats": {
+            "Manticore Meat": 3,
+            "Poison Resist Herb": 2
+          },
+          "stats": {
+            "attack": "+34%"
+          },
+          "desc": "Dangerous delicacy",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 23,
+          "name": "Hydra Stew",
+          "lvl": 80,
+          "icon": "🐍",
+          "mats": {
+            "Hydra Meat": 4,
+            "Regenerative Herb": 2
+          },
+          "stats": {
+            "attack": "+35%",
+            "regen": "+5/s"
+          },
+          "desc": "Multi-headed feast",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 24,
+          "name": "Dragon Steak",
+          "lvl": 83,
+          "icon": "🐉",
+          "mats": {
+            "Dragon Flank": 1,
+            "Liquid Fire": 1
+          },
+          "stats": {
+            "attack": "+36%",
+            "burn": "+15%"
+          },
+          "desc": "Dragon meat!",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 25,
+          "name": "Griffin Feast",
+          "lvl": 85,
+          "icon": "🦅",
+          "mats": {
+            "Griffin Meat": 3,
+            "Sky Salt": 2
+          },
+          "stats": {
+            "attack": "+37%",
+            "speed": "+5%"
+          },
+          "desc": "Aerial predator",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 26,
+          "name": "Behemoth Burger",
+          "lvl": 88,
+          "icon": "🍔",
+          "mats": {
+            "Behemoth Meat": 5,
+            "Giant Bun": 2
+          },
+          "stats": {
+            "attack": "+38%",
+            "hp": "+50"
+          },
+          "desc": "Massive burger",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 27,
+          "name": "Phoenix Roast",
+          "lvl": 90,
+          "icon": "🔶",
+          "mats": {
+            "Phoenix Meat": 2,
+            "Eternal Flame": 1
+          },
+          "stats": {
+            "attack": "+39%",
+            "resurrect": "5%"
+          },
+          "desc": "Legendary roast",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 28,
+          "name": "Colossus Cuts",
+          "lvl": 92,
+          "icon": "🗿",
+          "mats": {
+            "Colossus Meat": 4,
+            "Ancient Salt": 2
+          },
+          "stats": {
+            "attack": "+40%",
+            "str": "+20"
+          },
+          "desc": "Titan portions",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 29,
+          "name": "Leviathan Sashimi",
+          "lvl": 94,
+          "icon": "🐋",
+          "mats": {
+            "Leviathan Flesh": 3,
+            "Ocean Salt": 2
+          },
+          "stats": {
+            "attack": "+42%",
+            "armorPen": "+10%"
+          },
+          "desc": "Sea titan raw",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 30,
+          "name": "Titan's Feast",
+          "lvl": 95,
+          "icon": "⚔️",
+          "mats": {
+            "Giant Meat": 3,
+            "Divine Salt": 1
+          },
+          "stats": {
+            "attack": "+45%",
+            "str": "+25"
+          },
+          "desc": "Ultimate feast",
+          "grudgeType": "consumable"
+        }
       ]
     },
     "greenFoods": {
@@ -47,36 +481,472 @@
       "emoji": "🟢",
       "count": 30,
       "items": [
-        { "id": 1, "name": "Simple Salad", "lvl": 1, "icon": "🥗", "mats": {"Lettuce": 2, "Tomato": 1}, "stats": {"regen": "+2/s"}, "desc": "Fresh greens" },
-        { "id": 2, "name": "Vegetable Soup", "lvl": 5, "icon": "🥣", "mats": {"Carrot": 1, "Potato": 1, "Water": 1}, "stats": {"regen": "+4/s"}, "desc": "Warm soup" },
-        { "id": 3, "name": "Herb Bundle", "lvl": 10, "icon": "🌿", "mats": {"Herbs": 3}, "stats": {"regen": "+6/s"}, "desc": "Healing herbs" },
-        { "id": 4, "name": "Stuffed Mushroom", "lvl": 15, "icon": "🍄", "mats": {"Large Mushroom": 2, "Cheese": 1}, "stats": {"regen": "+8/s"}, "desc": "Stuffed shroom" },
-        { "id": 5, "name": "Garden Medley", "lvl": 20, "icon": "🥕", "mats": {"Carrot": 2, "Celery": 2, "Onion": 1}, "stats": {"regen": "+10/s"}, "desc": "Mixed veggies" },
-        { "id": 6, "name": "Cucumber Rolls", "lvl": 23, "icon": "🥒", "mats": {"Cucumber": 3, "Rice": 2}, "stats": {"regen": "+11/s"}, "desc": "Fresh rolls" },
-        { "id": 7, "name": "Spring Salad", "lvl": 26, "icon": "🥬", "mats": {"Spring Greens": 3, "Olive Oil": 1}, "stats": {"regen": "+12/s"}, "desc": "Seasonal greens" },
-        { "id": 8, "name": "Elven Greens", "lvl": 30, "icon": "🌱", "mats": {"Forest Herbs": 3, "Moonpetal": 1}, "stats": {"regen": "+14/s"}, "desc": "Elven recipe" },
-        { "id": 9, "name": "Healing Herb Tea", "lvl": 33, "icon": "🍵", "mats": {"Healing Herb": 3, "Hot Water": 1}, "stats": {"regen": "+15/s", "heal": "+5%"}, "desc": "Healing tea" },
-        { "id": 10, "name": "Vitality Wrap", "lvl": 36, "icon": "🫔", "mats": {"Leaf Wrap": 2, "Healing Herb": 3}, "stats": {"regen": "+16/s"}, "desc": "Stamina wrap" },
-        { "id": 11, "name": "Forest Stew", "lvl": 40, "icon": "🥬", "mats": {"Wild Vegetables": 4, "Broth": 2}, "stats": {"regen": "+18/s"}, "desc": "Forest recipe" },
-        { "id": 12, "name": "Druid's Bowl", "lvl": 43, "icon": "🥣", "mats": {"Sacred Herbs": 3, "Pure Water": 2}, "stats": {"regen": "+19/s", "nature": "+5%"}, "desc": "Natural blessing" },
-        { "id": 13, "name": "Druid's Feast", "lvl": 46, "icon": "🍀", "mats": {"Sacred Vegetables": 5, "Dew": 2}, "stats": {"regen": "+20/s", "nature": "+10%"}, "desc": "Nature blessing" },
-        { "id": 14, "name": "Regeneration Salve", "lvl": 50, "icon": "💚", "mats": {"Regen Herb": 4, "Aloe": 2}, "stats": {"regen": "+22/s"}, "desc": "Healing salve" },
-        { "id": 15, "name": "Treant Bark Tea", "lvl": 54, "icon": "🌲", "mats": {"Living Bark": 2, "Spring Water": 1}, "stats": {"regen": "+24/s", "armor": "+10"}, "desc": "Ancient tea" },
-        { "id": 16, "name": "Nature's Blessing", "lvl": 58, "icon": "🌳", "mats": {"World Tree Fruit": 2, "Life Essence": 1}, "stats": {"regen": "+26/s"}, "desc": "Blessed food" },
-        { "id": 17, "name": "Moonwell Soup", "lvl": 62, "icon": "🌙", "mats": {"Moonlit Herbs": 3, "Moonwell Water": 2}, "stats": {"regen": "+28/s", "mana": "+20"}, "desc": "Lunar soup" },
-        { "id": 18, "name": "Fairy Ring Salad", "lvl": 66, "icon": "🧚", "mats": {"Fairy Mushroom": 3, "Dewdrops": 2}, "stats": {"regen": "+30/s"}, "desc": "Magical salad" },
-        { "id": 19, "name": "Life Blossom Soup", "lvl": 70, "icon": "🌸", "mats": {"Life Blossom": 3, "Pure Water": 2}, "stats": {"regen": "+32/s", "hp": "+50"}, "desc": "Life soup" },
-        { "id": 20, "name": "Sanctuary Stew", "lvl": 73, "icon": "🏛️", "mats": {"Holy Vegetables": 4, "Blessed Water": 2}, "stats": {"regen": "+33/s", "heal": "+10%"}, "desc": "Sacred stew" },
-        { "id": 21, "name": "Verdant Feast", "lvl": 76, "icon": "🌿", "mats": {"Ancient Greens": 5, "Life Dew": 2}, "stats": {"regen": "+34/s", "nature": "+15%"}, "desc": "Ancient recipe" },
-        { "id": 22, "name": "Ambrosia Salad", "lvl": 78, "icon": "✨", "mats": {"Divine Greens": 3, "Starfruit": 2}, "stats": {"regen": "+35/s"}, "desc": "Divine salad" },
-        { "id": 23, "name": "Phoenix Feather Soup", "lvl": 80, "icon": "🔥", "mats": {"Phoenix Down": 1, "Healing Spring": 2}, "stats": {"regen": "+36/s", "resurrect": "3%"}, "desc": "Resurrection soup" },
-        { "id": 24, "name": "Eternal Spring Mix", "lvl": 83, "icon": "🌺", "mats": {"Eternal Petals": 4, "Lifewater": 2}, "stats": {"regen": "+37/s"}, "desc": "Eternal youth" },
-        { "id": 25, "name": "Yggdrasil Fruit", "lvl": 85, "icon": "🍎", "mats": {"World Tree Fruit": 3, "Divine Nectar": 1}, "stats": {"regen": "+38/s", "all": "+3%"}, "desc": "World tree gift" },
-        { "id": 26, "name": "Celestial Greens", "lvl": 88, "icon": "⭐", "mats": {"Starlight Herbs": 4, "Moonwater": 2}, "stats": {"regen": "+39/s", "mana": "+30"}, "desc": "Heavenly vegetables" },
-        { "id": 27, "name": "World Tree Nectar", "lvl": 90, "icon": "🌳", "mats": {"World Tree Sap": 2, "Divine Pollen": 1}, "stats": {"regen": "+40/s", "all": "+5%"}, "desc": "Sacred nectar" },
-        { "id": 28, "name": "Eden's Garden", "lvl": 92, "icon": "🏞️", "mats": {"Paradise Fruit": 3, "Holy Water": 2}, "stats": {"regen": "+42/s", "heal": "+15%"}, "desc": "Paradise bounty" },
-        { "id": 29, "name": "Immortal's Salad", "lvl": 94, "icon": "♾️", "mats": {"Immortal Herbs": 4, "Eternity Dew": 2}, "stats": {"regen": "+44/s", "hp": "+100"}, "desc": "Eternal life" },
-        { "id": 30, "name": "Divine Restoration", "lvl": 95, "icon": "💎", "mats": {"Divine Herbs": 5, "Holy Water": 2}, "stats": {"regen": "+50/s", "heal": "+25%"}, "desc": "Ultimate heal" }
+        {
+          "id": 1,
+          "name": "Simple Salad",
+          "lvl": 1,
+          "icon": "🥗",
+          "mats": {
+            "Lettuce": 2,
+            "Tomato": 1
+          },
+          "stats": {
+            "regen": "+2/s"
+          },
+          "desc": "Fresh greens",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 2,
+          "name": "Vegetable Soup",
+          "lvl": 5,
+          "icon": "🥣",
+          "mats": {
+            "Carrot": 1,
+            "Potato": 1,
+            "Water": 1
+          },
+          "stats": {
+            "regen": "+4/s"
+          },
+          "desc": "Warm soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 3,
+          "name": "Herb Bundle",
+          "lvl": 10,
+          "icon": "🌿",
+          "mats": {
+            "Herbs": 3
+          },
+          "stats": {
+            "regen": "+6/s"
+          },
+          "desc": "Healing herbs",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 4,
+          "name": "Stuffed Mushroom",
+          "lvl": 15,
+          "icon": "🍄",
+          "mats": {
+            "Large Mushroom": 2,
+            "Cheese": 1
+          },
+          "stats": {
+            "regen": "+8/s"
+          },
+          "desc": "Stuffed shroom",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 5,
+          "name": "Garden Medley",
+          "lvl": 20,
+          "icon": "🥕",
+          "mats": {
+            "Carrot": 2,
+            "Celery": 2,
+            "Onion": 1
+          },
+          "stats": {
+            "regen": "+10/s"
+          },
+          "desc": "Mixed veggies",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 6,
+          "name": "Cucumber Rolls",
+          "lvl": 23,
+          "icon": "🥒",
+          "mats": {
+            "Cucumber": 3,
+            "Rice": 2
+          },
+          "stats": {
+            "regen": "+11/s"
+          },
+          "desc": "Fresh rolls",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 7,
+          "name": "Spring Salad",
+          "lvl": 26,
+          "icon": "🥬",
+          "mats": {
+            "Spring Greens": 3,
+            "Olive Oil": 1
+          },
+          "stats": {
+            "regen": "+12/s"
+          },
+          "desc": "Seasonal greens",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 8,
+          "name": "Elven Greens",
+          "lvl": 30,
+          "icon": "🌱",
+          "mats": {
+            "Forest Herbs": 3,
+            "Moonpetal": 1
+          },
+          "stats": {
+            "regen": "+14/s"
+          },
+          "desc": "Elven recipe",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 9,
+          "name": "Healing Herb Tea",
+          "lvl": 33,
+          "icon": "🍵",
+          "mats": {
+            "Healing Herb": 3,
+            "Hot Water": 1
+          },
+          "stats": {
+            "regen": "+15/s",
+            "heal": "+5%"
+          },
+          "desc": "Healing tea",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 10,
+          "name": "Vitality Wrap",
+          "lvl": 36,
+          "icon": "🫔",
+          "mats": {
+            "Leaf Wrap": 2,
+            "Healing Herb": 3
+          },
+          "stats": {
+            "regen": "+16/s"
+          },
+          "desc": "Stamina wrap",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 11,
+          "name": "Forest Stew",
+          "lvl": 40,
+          "icon": "🥬",
+          "mats": {
+            "Wild Vegetables": 4,
+            "Broth": 2
+          },
+          "stats": {
+            "regen": "+18/s"
+          },
+          "desc": "Forest recipe",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 12,
+          "name": "Druid's Bowl",
+          "lvl": 43,
+          "icon": "🥣",
+          "mats": {
+            "Sacred Herbs": 3,
+            "Pure Water": 2
+          },
+          "stats": {
+            "regen": "+19/s",
+            "nature": "+5%"
+          },
+          "desc": "Natural blessing",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 13,
+          "name": "Druid's Feast",
+          "lvl": 46,
+          "icon": "🍀",
+          "mats": {
+            "Sacred Vegetables": 5,
+            "Dew": 2
+          },
+          "stats": {
+            "regen": "+20/s",
+            "nature": "+10%"
+          },
+          "desc": "Nature blessing",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 14,
+          "name": "Regeneration Salve",
+          "lvl": 50,
+          "icon": "💚",
+          "mats": {
+            "Regen Herb": 4,
+            "Aloe": 2
+          },
+          "stats": {
+            "regen": "+22/s"
+          },
+          "desc": "Healing salve",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 15,
+          "name": "Treant Bark Tea",
+          "lvl": 54,
+          "icon": "🌲",
+          "mats": {
+            "Living Bark": 2,
+            "Spring Water": 1
+          },
+          "stats": {
+            "regen": "+24/s",
+            "armor": "+10"
+          },
+          "desc": "Ancient tea",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 16,
+          "name": "Nature's Blessing",
+          "lvl": 58,
+          "icon": "🌳",
+          "mats": {
+            "World Tree Fruit": 2,
+            "Life Essence": 1
+          },
+          "stats": {
+            "regen": "+26/s"
+          },
+          "desc": "Blessed food",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 17,
+          "name": "Moonwell Soup",
+          "lvl": 62,
+          "icon": "🌙",
+          "mats": {
+            "Moonlit Herbs": 3,
+            "Moonwell Water": 2
+          },
+          "stats": {
+            "regen": "+28/s",
+            "mana": "+20"
+          },
+          "desc": "Lunar soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 18,
+          "name": "Fairy Ring Salad",
+          "lvl": 66,
+          "icon": "🧚",
+          "mats": {
+            "Fairy Mushroom": 3,
+            "Dewdrops": 2
+          },
+          "stats": {
+            "regen": "+30/s"
+          },
+          "desc": "Magical salad",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 19,
+          "name": "Life Blossom Soup",
+          "lvl": 70,
+          "icon": "🌸",
+          "mats": {
+            "Life Blossom": 3,
+            "Pure Water": 2
+          },
+          "stats": {
+            "regen": "+32/s",
+            "hp": "+50"
+          },
+          "desc": "Life soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 20,
+          "name": "Sanctuary Stew",
+          "lvl": 73,
+          "icon": "🏛️",
+          "mats": {
+            "Holy Vegetables": 4,
+            "Blessed Water": 2
+          },
+          "stats": {
+            "regen": "+33/s",
+            "heal": "+10%"
+          },
+          "desc": "Sacred stew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 21,
+          "name": "Verdant Feast",
+          "lvl": 76,
+          "icon": "🌿",
+          "mats": {
+            "Ancient Greens": 5,
+            "Life Dew": 2
+          },
+          "stats": {
+            "regen": "+34/s",
+            "nature": "+15%"
+          },
+          "desc": "Ancient recipe",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 22,
+          "name": "Ambrosia Salad",
+          "lvl": 78,
+          "icon": "✨",
+          "mats": {
+            "Divine Greens": 3,
+            "Starfruit": 2
+          },
+          "stats": {
+            "regen": "+35/s"
+          },
+          "desc": "Divine salad",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 23,
+          "name": "Phoenix Feather Soup",
+          "lvl": 80,
+          "icon": "🔥",
+          "mats": {
+            "Phoenix Down": 1,
+            "Healing Spring": 2
+          },
+          "stats": {
+            "regen": "+36/s",
+            "resurrect": "3%"
+          },
+          "desc": "Resurrection soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 24,
+          "name": "Eternal Spring Mix",
+          "lvl": 83,
+          "icon": "🌺",
+          "mats": {
+            "Eternal Petals": 4,
+            "Lifewater": 2
+          },
+          "stats": {
+            "regen": "+37/s"
+          },
+          "desc": "Eternal youth",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 25,
+          "name": "Yggdrasil Fruit",
+          "lvl": 85,
+          "icon": "🍎",
+          "mats": {
+            "World Tree Fruit": 3,
+            "Divine Nectar": 1
+          },
+          "stats": {
+            "regen": "+38/s",
+            "all": "+3%"
+          },
+          "desc": "World tree gift",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 26,
+          "name": "Celestial Greens",
+          "lvl": 88,
+          "icon": "⭐",
+          "mats": {
+            "Starlight Herbs": 4,
+            "Moonwater": 2
+          },
+          "stats": {
+            "regen": "+39/s",
+            "mana": "+30"
+          },
+          "desc": "Heavenly vegetables",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 27,
+          "name": "World Tree Nectar",
+          "lvl": 90,
+          "icon": "🌳",
+          "mats": {
+            "World Tree Sap": 2,
+            "Divine Pollen": 1
+          },
+          "stats": {
+            "regen": "+40/s",
+            "all": "+5%"
+          },
+          "desc": "Sacred nectar",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 28,
+          "name": "Eden's Garden",
+          "lvl": 92,
+          "icon": "🏞️",
+          "mats": {
+            "Paradise Fruit": 3,
+            "Holy Water": 2
+          },
+          "stats": {
+            "regen": "+42/s",
+            "heal": "+15%"
+          },
+          "desc": "Paradise bounty",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 29,
+          "name": "Immortal's Salad",
+          "lvl": 94,
+          "icon": "♾️",
+          "mats": {
+            "Immortal Herbs": 4,
+            "Eternity Dew": 2
+          },
+          "stats": {
+            "regen": "+44/s",
+            "hp": "+100"
+          },
+          "desc": "Eternal life",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 30,
+          "name": "Divine Restoration",
+          "lvl": 95,
+          "icon": "💎",
+          "mats": {
+            "Divine Herbs": 5,
+            "Holy Water": 2
+          },
+          "stats": {
+            "regen": "+50/s",
+            "heal": "+25%"
+          },
+          "desc": "Ultimate heal",
+          "grudgeType": "consumable"
+        }
       ]
     },
     "blueFoods": {
@@ -85,36 +955,474 @@
       "emoji": "🔵",
       "count": 30,
       "items": [
-        { "id": 1, "name": "Basic Broth", "lvl": 1, "icon": "🥣", "mats": {"Water": 2, "Salt": 1}, "stats": {"mana": "+10"}, "desc": "Simple broth" },
-        { "id": 2, "name": "Wheat Bread", "lvl": 5, "icon": "🍞", "mats": {"Flour": 2, "Water": 1}, "stats": {"mana": "+20"}, "desc": "Fresh bread" },
-        { "id": 3, "name": "Stamina Brew", "lvl": 10, "icon": "🍺", "mats": {"Grain": 2, "Hops": 1}, "stats": {"mana": "+30", "stamina": "+10"}, "desc": "Energy drink" },
-        { "id": 4, "name": "Warrior's Bread", "lvl": 15, "icon": "🥖", "mats": {"Grain": 3, "Water": 1}, "stats": {"mana": "+40"}, "desc": "Hearty bread" },
-        { "id": 5, "name": "Fish Stew", "lvl": 20, "icon": "🐟", "mats": {"Fish": 2, "Potato": 2, "Broth": 1}, "stats": {"mana": "+50"}, "desc": "Seafood stew" },
-        { "id": 6, "name": "Hearty Stew", "lvl": 23, "icon": "🍲", "mats": {"Meat": 2, "Potato": 3, "Broth": 1}, "stats": {"mana": "+55"}, "desc": "Filling stew" },
-        { "id": 7, "name": "Mage's Biscuit", "lvl": 26, "icon": "🍪", "mats": {"Magic Flour": 2, "Mana Butter": 1}, "stats": {"mana": "+60"}, "desc": "Arcane snack" },
-        { "id": 8, "name": "Honey Bread", "lvl": 30, "icon": "🍯", "mats": {"Flour": 3, "Honey": 2}, "stats": {"mana": "+70"}, "desc": "Sweet bread" },
-        { "id": 9, "name": "Mana Soup", "lvl": 33, "icon": "🔮", "mats": {"Magic Mushroom": 3, "Arcane Water": 1}, "stats": {"mana": "+80", "manaRegen": "+5/s"}, "desc": "Magical soup" },
-        { "id": 10, "name": "Sailor's Chowder", "lvl": 36, "icon": "🦐", "mats": {"Shellfish": 3, "Cream": 2}, "stats": {"mana": "+90"}, "desc": "Seafood chowder" },
-        { "id": 11, "name": "Mystic Gumbo", "lvl": 40, "icon": "🫕", "mats": {"Seafood": 3, "Spellwort": 2, "Broth": 2}, "stats": {"mana": "+100"}, "desc": "Arcane gumbo" },
-        { "id": 12, "name": "Enchanted Pastry", "lvl": 43, "icon": "🥐", "mats": {"Magic Flour": 3, "Enchanted Butter": 1}, "stats": {"mana": "+105", "spell": "+3%"}, "desc": "Magic pastry" },
-        { "id": 13, "name": "Arcane Pastry", "lvl": 46, "icon": "🥧", "mats": {"Magic Flour": 3, "Mana Butter": 2}, "stats": {"mana": "+110", "spell": "+5%"}, "desc": "Magic pastry" },
-        { "id": 14, "name": "Grog of Courage", "lvl": 50, "icon": "🍻", "mats": {"Strong Grain": 4, "Fire Water": 1}, "stats": {"mana": "+120", "courage": "+10%"}, "desc": "Brave brew" },
-        { "id": 15, "name": "Wizard's Stew", "lvl": 54, "icon": "🧙", "mats": {"Magic Ingredients": 4, "Mana Crystal": 1}, "stats": {"mana": "+130"}, "desc": "Arcane stew" },
-        { "id": 16, "name": "Enchanted Pie", "lvl": 58, "icon": "🥮", "mats": {"Enchanted Fruit": 3, "Magic Crust": 2}, "stats": {"mana": "+140"}, "desc": "Magic pie" },
-        { "id": 17, "name": "Ley Line Soup", "lvl": 62, "icon": "✨", "mats": {"Ley Energy": 2, "Pure Water": 3}, "stats": {"mana": "+150", "manaRegen": "+8/s"}, "desc": "Power lines" },
-        { "id": 18, "name": "Astral Soup", "lvl": 66, "icon": "🌌", "mats": {"Star Essence": 2, "Void Mushroom": 3}, "stats": {"mana": "+160", "spell": "+10%"}, "desc": "Cosmic soup" },
-        { "id": 19, "name": "Void Bisque", "lvl": 70, "icon": "🌑", "mats": {"Void Crab": 2, "Shadow Cream": 2}, "stats": {"mana": "+170"}, "desc": "Void energy" },
-        { "id": 20, "name": "Ethereal Cake", "lvl": 73, "icon": "🎂", "mats": {"Ethereal Flour": 4, "Ghost Sugar": 2}, "stats": {"mana": "+175", "spell": "+12%"}, "desc": "Spirit cake" },
-        { "id": 21, "name": "Celestial Cake", "lvl": 76, "icon": "🎂", "mats": {"Starlight Flour": 4, "Moon Sugar": 3}, "stats": {"mana": "+180"}, "desc": "Heavenly cake" },
-        { "id": 22, "name": "Planar Stew", "lvl": 78, "icon": "🌀", "mats": {"Planar Meat": 3, "Dimensional Broth": 2}, "stats": {"mana": "+185", "manaRegen": "+10/s"}, "desc": "Cross-dimensional" },
-        { "id": 23, "name": "Cosmic Brew", "lvl": 80, "icon": "🌠", "mats": {"Cosmic Hops": 3, "Starwater": 2}, "stats": {"mana": "+190", "spell": "+15%"}, "desc": "Starlight brew" },
-        { "id": 24, "name": "Astral Pie", "lvl": 83, "icon": "🥧", "mats": {"Astral Fruit": 4, "Cosmic Crust": 2}, "stats": {"mana": "+195"}, "desc": "Space pastry" },
-        { "id": 25, "name": "Eternal Cake", "lvl": 85, "icon": "🍰", "mats": {"Divine Flour": 5, "Eternal Sugar": 3}, "stats": {"mana": "+200"}, "desc": "Never spoils" },
-        { "id": 26, "name": "Infinity Stew", "lvl": 88, "icon": "♾️", "mats": {"Infinite Meat": 3, "Endless Broth": 2}, "stats": {"mana": "+210", "manaRegen": "+12/s"}, "desc": "Limitless energy" },
-        { "id": 27, "name": "Divine Bread", "lvl": 90, "icon": "🍞", "mats": {"Divine Grain": 4, "Holy Water": 2}, "stats": {"mana": "+220", "all": "+5%"}, "desc": "Blessed bread" },
-        { "id": 28, "name": "Omniscient Soup", "lvl": 92, "icon": "👁️", "mats": {"All-Seeing Herb": 3, "Knowledge Water": 2}, "stats": {"mana": "+230", "spell": "+18%"}, "desc": "All-knowing" },
-        { "id": 29, "name": "Creator's Feast", "lvl": 94, "icon": "🌟", "mats": {"Creation Essence": 3, "Divine Nectar": 2}, "stats": {"mana": "+240", "all": "+8%"}, "desc": "Godly meal" },
-        { "id": 30, "name": "Nectar of Gods", "lvl": 95, "icon": "🍷", "mats": {"Astral Fruit": 10, "Holy Water": 1}, "stats": {"mana": "+250", "all": "+10%"}, "desc": "Divine ambrosia" }
+        {
+          "id": 1,
+          "name": "Basic Broth",
+          "lvl": 1,
+          "icon": "🥣",
+          "mats": {
+            "Water": 2,
+            "Salt": 1
+          },
+          "stats": {
+            "mana": "+10"
+          },
+          "desc": "Simple broth",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 2,
+          "name": "Wheat Bread",
+          "lvl": 5,
+          "icon": "🍞",
+          "mats": {
+            "Flour": 2,
+            "Water": 1
+          },
+          "stats": {
+            "mana": "+20"
+          },
+          "desc": "Fresh bread",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 3,
+          "name": "Stamina Brew",
+          "lvl": 10,
+          "icon": "🍺",
+          "mats": {
+            "Grain": 2,
+            "Hops": 1
+          },
+          "stats": {
+            "mana": "+30",
+            "stamina": "+10"
+          },
+          "desc": "Energy drink",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 4,
+          "name": "Warrior's Bread",
+          "lvl": 15,
+          "icon": "🥖",
+          "mats": {
+            "Grain": 3,
+            "Water": 1
+          },
+          "stats": {
+            "mana": "+40"
+          },
+          "desc": "Hearty bread",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 5,
+          "name": "Fish Stew",
+          "lvl": 20,
+          "icon": "🐟",
+          "mats": {
+            "Fish": 2,
+            "Potato": 2,
+            "Broth": 1
+          },
+          "stats": {
+            "mana": "+50"
+          },
+          "desc": "Seafood stew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 6,
+          "name": "Hearty Stew",
+          "lvl": 23,
+          "icon": "🍲",
+          "mats": {
+            "Meat": 2,
+            "Potato": 3,
+            "Broth": 1
+          },
+          "stats": {
+            "mana": "+55"
+          },
+          "desc": "Filling stew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 7,
+          "name": "Mage's Biscuit",
+          "lvl": 26,
+          "icon": "🍪",
+          "mats": {
+            "Magic Flour": 2,
+            "Mana Butter": 1
+          },
+          "stats": {
+            "mana": "+60"
+          },
+          "desc": "Arcane snack",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 8,
+          "name": "Honey Bread",
+          "lvl": 30,
+          "icon": "🍯",
+          "mats": {
+            "Flour": 3,
+            "Honey": 2
+          },
+          "stats": {
+            "mana": "+70"
+          },
+          "desc": "Sweet bread",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 9,
+          "name": "Mana Soup",
+          "lvl": 33,
+          "icon": "🔮",
+          "mats": {
+            "Magic Mushroom": 3,
+            "Arcane Water": 1
+          },
+          "stats": {
+            "mana": "+80",
+            "manaRegen": "+5/s"
+          },
+          "desc": "Magical soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 10,
+          "name": "Sailor's Chowder",
+          "lvl": 36,
+          "icon": "🦐",
+          "mats": {
+            "Shellfish": 3,
+            "Cream": 2
+          },
+          "stats": {
+            "mana": "+90"
+          },
+          "desc": "Seafood chowder",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 11,
+          "name": "Mystic Gumbo",
+          "lvl": 40,
+          "icon": "🫕",
+          "mats": {
+            "Seafood": 3,
+            "Spellwort": 2,
+            "Broth": 2
+          },
+          "stats": {
+            "mana": "+100"
+          },
+          "desc": "Arcane gumbo",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 12,
+          "name": "Enchanted Pastry",
+          "lvl": 43,
+          "icon": "🥐",
+          "mats": {
+            "Magic Flour": 3,
+            "Enchanted Butter": 1
+          },
+          "stats": {
+            "mana": "+105",
+            "spell": "+3%"
+          },
+          "desc": "Magic pastry",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 13,
+          "name": "Arcane Pastry",
+          "lvl": 46,
+          "icon": "🥧",
+          "mats": {
+            "Magic Flour": 3,
+            "Mana Butter": 2
+          },
+          "stats": {
+            "mana": "+110",
+            "spell": "+5%"
+          },
+          "desc": "Magic pastry",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 14,
+          "name": "Grog of Courage",
+          "lvl": 50,
+          "icon": "🍻",
+          "mats": {
+            "Strong Grain": 4,
+            "Fire Water": 1
+          },
+          "stats": {
+            "mana": "+120",
+            "courage": "+10%"
+          },
+          "desc": "Brave brew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 15,
+          "name": "Wizard's Stew",
+          "lvl": 54,
+          "icon": "🧙",
+          "mats": {
+            "Magic Ingredients": 4,
+            "Mana Crystal": 1
+          },
+          "stats": {
+            "mana": "+130"
+          },
+          "desc": "Arcane stew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 16,
+          "name": "Enchanted Pie",
+          "lvl": 58,
+          "icon": "🥮",
+          "mats": {
+            "Enchanted Fruit": 3,
+            "Magic Crust": 2
+          },
+          "stats": {
+            "mana": "+140"
+          },
+          "desc": "Magic pie",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 17,
+          "name": "Ley Line Soup",
+          "lvl": 62,
+          "icon": "✨",
+          "mats": {
+            "Ley Energy": 2,
+            "Pure Water": 3
+          },
+          "stats": {
+            "mana": "+150",
+            "manaRegen": "+8/s"
+          },
+          "desc": "Power lines",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 18,
+          "name": "Astral Soup",
+          "lvl": 66,
+          "icon": "🌌",
+          "mats": {
+            "Star Essence": 2,
+            "Void Mushroom": 3
+          },
+          "stats": {
+            "mana": "+160",
+            "spell": "+10%"
+          },
+          "desc": "Cosmic soup",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 19,
+          "name": "Void Bisque",
+          "lvl": 70,
+          "icon": "🌑",
+          "mats": {
+            "Void Crab": 2,
+            "Shadow Cream": 2
+          },
+          "stats": {
+            "mana": "+170"
+          },
+          "desc": "Void energy",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 20,
+          "name": "Ethereal Cake",
+          "lvl": 73,
+          "icon": "🎂",
+          "mats": {
+            "Ethereal Flour": 4,
+            "Ghost Sugar": 2
+          },
+          "stats": {
+            "mana": "+175",
+            "spell": "+12%"
+          },
+          "desc": "Spirit cake",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 21,
+          "name": "Celestial Cake",
+          "lvl": 76,
+          "icon": "🎂",
+          "mats": {
+            "Starlight Flour": 4,
+            "Moon Sugar": 3
+          },
+          "stats": {
+            "mana": "+180"
+          },
+          "desc": "Heavenly cake",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 22,
+          "name": "Planar Stew",
+          "lvl": 78,
+          "icon": "🌀",
+          "mats": {
+            "Planar Meat": 3,
+            "Dimensional Broth": 2
+          },
+          "stats": {
+            "mana": "+185",
+            "manaRegen": "+10/s"
+          },
+          "desc": "Cross-dimensional",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 23,
+          "name": "Cosmic Brew",
+          "lvl": 80,
+          "icon": "🌠",
+          "mats": {
+            "Cosmic Hops": 3,
+            "Starwater": 2
+          },
+          "stats": {
+            "mana": "+190",
+            "spell": "+15%"
+          },
+          "desc": "Starlight brew",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 24,
+          "name": "Astral Pie",
+          "lvl": 83,
+          "icon": "🥧",
+          "mats": {
+            "Astral Fruit": 4,
+            "Cosmic Crust": 2
+          },
+          "stats": {
+            "mana": "+195"
+          },
+          "desc": "Space pastry",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 25,
+          "name": "Eternal Cake",
+          "lvl": 85,
+          "icon": "🍰",
+          "mats": {
+            "Divine Flour": 5,
+            "Eternal Sugar": 3
+          },
+          "stats": {
+            "mana": "+200"
+          },
+          "desc": "Never spoils",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 26,
+          "name": "Infinity Stew",
+          "lvl": 88,
+          "icon": "♾️",
+          "mats": {
+            "Infinite Meat": 3,
+            "Endless Broth": 2
+          },
+          "stats": {
+            "mana": "+210",
+            "manaRegen": "+12/s"
+          },
+          "desc": "Limitless energy",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 27,
+          "name": "Divine Bread",
+          "lvl": 90,
+          "icon": "🍞",
+          "mats": {
+            "Divine Grain": 4,
+            "Holy Water": 2
+          },
+          "stats": {
+            "mana": "+220",
+            "all": "+5%"
+          },
+          "desc": "Blessed bread",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 28,
+          "name": "Omniscient Soup",
+          "lvl": 92,
+          "icon": "👁️",
+          "mats": {
+            "All-Seeing Herb": 3,
+            "Knowledge Water": 2
+          },
+          "stats": {
+            "mana": "+230",
+            "spell": "+18%"
+          },
+          "desc": "All-knowing",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 29,
+          "name": "Creator's Feast",
+          "lvl": 94,
+          "icon": "🌟",
+          "mats": {
+            "Creation Essence": 3,
+            "Divine Nectar": 2
+          },
+          "stats": {
+            "mana": "+240",
+            "all": "+8%"
+          },
+          "desc": "Godly meal",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 30,
+          "name": "Nectar of Gods",
+          "lvl": 95,
+          "icon": "🍷",
+          "mats": {
+            "Astral Fruit": 10,
+            "Holy Water": 1
+          },
+          "stats": {
+            "mana": "+250",
+            "all": "+10%"
+          },
+          "desc": "Divine ambrosia",
+          "grudgeType": "consumable"
+        }
       ]
     },
     "mysticPotions": {
@@ -123,36 +1431,457 @@
       "emoji": "💜",
       "count": 30,
       "items": [
-        { "id": 1, "name": "Minor Health Potion", "lvl": 1, "icon": "❤️", "mats": {"Red Herb": 2, "Water": 1}, "stats": {"heal": "50 HP"}, "desc": "Restores 50 HP" },
-        { "id": 2, "name": "Minor Mana Potion", "lvl": 1, "icon": "💙", "mats": {"Blue Herb": 2, "Water": 1}, "stats": {"mana": "30 MP"}, "desc": "Restores 30 MP" },
-        { "id": 3, "name": "Minor Stamina Potion", "lvl": 5, "icon": "💛", "mats": {"Yellow Herb": 2, "Water": 1}, "stats": {"stamina": "50"}, "desc": "Restores stamina" },
-        { "id": 4, "name": "Antidote", "lvl": 10, "icon": "💜", "mats": {"Antitoxin Herb": 3, "Pure Water": 1}, "stats": {"cure": "poison"}, "desc": "Cures poison" },
-        { "id": 5, "name": "Health Potion", "lvl": 15, "icon": "❤️", "mats": {"Blood Moss": 3, "Distilled Water": 1}, "stats": {"heal": "150 HP"}, "desc": "Restores 150 HP" },
-        { "id": 6, "name": "Mana Potion", "lvl": 15, "icon": "💙", "mats": {"Mana Bloom": 3, "Distilled Water": 1}, "stats": {"mana": "100 MP"}, "desc": "Restores 100 MP" },
-        { "id": 7, "name": "Swiftness Potion", "lvl": 20, "icon": "💨", "mats": {"Swift Herb": 3, "Wind Essence": 1}, "stats": {"speed": "+20%"}, "desc": "+20% move speed" },
-        { "id": 8, "name": "Rage Potion", "lvl": 25, "icon": "🔴", "mats": {"Berserker Root": 3, "Fire Essence": 1}, "stats": {"damage": "+25%"}, "desc": "+25% damage" },
-        { "id": 9, "name": "Speed Potion", "lvl": 30, "icon": "⚡", "mats": {"Swift Herb": 3, "Wind Essence": 1}, "stats": {"speed": "+30%"}, "desc": "+30% speed" },
-        { "id": 10, "name": "Defense Potion", "lvl": 35, "icon": "🛡️", "mats": {"Ironbark": 3, "Earth Essence": 1}, "stats": {"armor": "+20"}, "desc": "+20 armor" },
-        { "id": 11, "name": "Greater Health Potion", "lvl": 40, "icon": "❤️", "mats": {"Heart Blossom": 4, "Life Essence": 1}, "stats": {"heal": "300 HP"}, "desc": "Restores 300 HP" },
-        { "id": 12, "name": "Greater Mana Potion", "lvl": 40, "icon": "💙", "mats": {"Mana Crystal Dust": 4, "Arcane Water": 1}, "stats": {"mana": "200 MP"}, "desc": "Restores 200 MP" },
-        { "id": 13, "name": "Strength Potion", "lvl": 45, "icon": "💪", "mats": {"Giant Root": 4, "Earth Essence": 2}, "stats": {"str": "+30"}, "desc": "+30 strength" },
-        { "id": 14, "name": "Invisibility Potion", "lvl": 50, "icon": "👻", "mats": {"Ghost Orchid": 4, "Shadow Essence": 2}, "stats": {"stealth": "30s"}, "desc": "30s invisibility" },
-        { "id": 15, "name": "Fire Resistance", "lvl": 55, "icon": "🔥", "mats": {"Firebloom": 4, "Ice Essence": 2}, "stats": {"fireRes": "+50%"}, "desc": "+50% fire resist" },
-        { "id": 16, "name": "Frost Resistance", "lvl": 55, "icon": "❄️", "mats": {"Frostleaf": 4, "Fire Essence": 2}, "stats": {"frostRes": "+50%"}, "desc": "+50% frost resist" },
-        { "id": 17, "name": "Super Health Potion", "lvl": 60, "icon": "❤️", "mats": {"Dragon Blood Herb": 5, "Life Crystal": 1}, "stats": {"heal": "500 HP"}, "desc": "Restores 500 HP" },
-        { "id": 18, "name": "Super Mana Potion", "lvl": 60, "icon": "💙", "mats": {"Arcane Lotus": 5, "Mana Crystal": 1}, "stats": {"mana": "400 MP"}, "desc": "Restores 400 MP" },
-        { "id": 19, "name": "Lightning Resistance", "lvl": 60, "icon": "⚡", "mats": {"Storm Leaf": 4, "Earth Essence": 2}, "stats": {"lightningRes": "+50%"}, "desc": "+50% lightning resist" },
-        { "id": 20, "name": "Poison Resistance", "lvl": 60, "icon": "☠️", "mats": {"Antitoxin Root": 5, "Pure Essence": 2}, "stats": {"poisonRes": "+75%"}, "desc": "+75% poison resist" },
-        { "id": 21, "name": "Berserker Elixir", "lvl": 70, "icon": "💢", "mats": {"Rage Flower": 5, "Blood Essence": 2}, "stats": {"damage": "+50%", "defense": "-20%"}, "desc": "Glass cannon" },
-        { "id": 22, "name": "Elemental Ward", "lvl": 75, "icon": "🌈", "mats": {"Elemental Herb": 6, "All Essence": 1}, "stats": {"allRes": "+30%"}, "desc": "+30% all resist" },
-        { "id": 23, "name": "Titan Strength", "lvl": 80, "icon": "💪", "mats": {"Giant's Blood": 3, "Power Crystal": 1}, "stats": {"str": "+100"}, "desc": "+100 strength" },
-        { "id": 24, "name": "Mega Health Potion", "lvl": 80, "icon": "❤️", "mats": {"Phoenix Tears": 2, "Life Crystal": 2}, "stats": {"heal": "750 HP"}, "desc": "Restores 750 HP" },
-        { "id": 25, "name": "Mega Mana Potion", "lvl": 80, "icon": "💙", "mats": {"Arcane Crystal": 2, "Mana Well": 2}, "stats": {"mana": "600 MP"}, "desc": "Restores 600 MP" },
-        { "id": 26, "name": "Invulnerability Potion", "lvl": 85, "icon": "🛡️", "mats": {"Divine Shield Herb": 5, "Holy Essence": 3}, "stats": {"invuln": "5s"}, "desc": "5s immunity" },
-        { "id": 27, "name": "Divine Health", "lvl": 90, "icon": "❤️", "mats": {"Phoenix Tear": 2, "Divine Essence": 1}, "stats": {"heal": "Full"}, "desc": "Full heal" },
-        { "id": 28, "name": "Divine Mana", "lvl": 90, "icon": "💙", "mats": {"Arcane Well": 2, "Divine Essence": 1}, "stats": {"mana": "Full"}, "desc": "Full mana restore" },
-        { "id": 29, "name": "Ultimate Elixir", "lvl": 93, "icon": "🌟", "mats": {"Philosopher's Stone": 1, "All Essence": 5}, "stats": {"all": "+25%"}, "desc": "+25% all stats" },
-        { "id": 30, "name": "Elixir of Immortality", "lvl": 95, "icon": "✨", "mats": {"Philosopher's Stone": 1, "Dragon Blood": 3}, "stats": {"immortal": "1x"}, "desc": "Prevents death once" }
+        {
+          "id": 1,
+          "name": "Minor Health Potion",
+          "lvl": 1,
+          "icon": "❤️",
+          "mats": {
+            "Red Herb": 2,
+            "Water": 1
+          },
+          "stats": {
+            "heal": "50 HP"
+          },
+          "desc": "Restores 50 HP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 2,
+          "name": "Minor Mana Potion",
+          "lvl": 1,
+          "icon": "💙",
+          "mats": {
+            "Blue Herb": 2,
+            "Water": 1
+          },
+          "stats": {
+            "mana": "30 MP"
+          },
+          "desc": "Restores 30 MP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 3,
+          "name": "Minor Stamina Potion",
+          "lvl": 5,
+          "icon": "💛",
+          "mats": {
+            "Yellow Herb": 2,
+            "Water": 1
+          },
+          "stats": {
+            "stamina": "50"
+          },
+          "desc": "Restores stamina",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 4,
+          "name": "Antidote",
+          "lvl": 10,
+          "icon": "💜",
+          "mats": {
+            "Antitoxin Herb": 3,
+            "Pure Water": 1
+          },
+          "stats": {
+            "cure": "poison"
+          },
+          "desc": "Cures poison",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 5,
+          "name": "Health Potion",
+          "lvl": 15,
+          "icon": "❤️",
+          "mats": {
+            "Blood Moss": 3,
+            "Distilled Water": 1
+          },
+          "stats": {
+            "heal": "150 HP"
+          },
+          "desc": "Restores 150 HP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 6,
+          "name": "Mana Potion",
+          "lvl": 15,
+          "icon": "💙",
+          "mats": {
+            "Mana Bloom": 3,
+            "Distilled Water": 1
+          },
+          "stats": {
+            "mana": "100 MP"
+          },
+          "desc": "Restores 100 MP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 7,
+          "name": "Swiftness Potion",
+          "lvl": 20,
+          "icon": "💨",
+          "mats": {
+            "Swift Herb": 3,
+            "Wind Essence": 1
+          },
+          "stats": {
+            "speed": "+20%"
+          },
+          "desc": "+20% move speed",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 8,
+          "name": "Rage Potion",
+          "lvl": 25,
+          "icon": "🔴",
+          "mats": {
+            "Berserker Root": 3,
+            "Fire Essence": 1
+          },
+          "stats": {
+            "damage": "+25%"
+          },
+          "desc": "+25% damage",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 9,
+          "name": "Speed Potion",
+          "lvl": 30,
+          "icon": "⚡",
+          "mats": {
+            "Swift Herb": 3,
+            "Wind Essence": 1
+          },
+          "stats": {
+            "speed": "+30%"
+          },
+          "desc": "+30% speed",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 10,
+          "name": "Defense Potion",
+          "lvl": 35,
+          "icon": "🛡️",
+          "mats": {
+            "Ironbark": 3,
+            "Earth Essence": 1
+          },
+          "stats": {
+            "armor": "+20"
+          },
+          "desc": "+20 armor",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 11,
+          "name": "Greater Health Potion",
+          "lvl": 40,
+          "icon": "❤️",
+          "mats": {
+            "Heart Blossom": 4,
+            "Life Essence": 1
+          },
+          "stats": {
+            "heal": "300 HP"
+          },
+          "desc": "Restores 300 HP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 12,
+          "name": "Greater Mana Potion",
+          "lvl": 40,
+          "icon": "💙",
+          "mats": {
+            "Mana Crystal Dust": 4,
+            "Arcane Water": 1
+          },
+          "stats": {
+            "mana": "200 MP"
+          },
+          "desc": "Restores 200 MP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 13,
+          "name": "Strength Potion",
+          "lvl": 45,
+          "icon": "💪",
+          "mats": {
+            "Giant Root": 4,
+            "Earth Essence": 2
+          },
+          "stats": {
+            "str": "+30"
+          },
+          "desc": "+30 strength",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 14,
+          "name": "Invisibility Potion",
+          "lvl": 50,
+          "icon": "👻",
+          "mats": {
+            "Ghost Orchid": 4,
+            "Shadow Essence": 2
+          },
+          "stats": {
+            "stealth": "30s"
+          },
+          "desc": "30s invisibility",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 15,
+          "name": "Fire Resistance",
+          "lvl": 55,
+          "icon": "🔥",
+          "mats": {
+            "Firebloom": 4,
+            "Ice Essence": 2
+          },
+          "stats": {
+            "fireRes": "+50%"
+          },
+          "desc": "+50% fire resist",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 16,
+          "name": "Frost Resistance",
+          "lvl": 55,
+          "icon": "❄️",
+          "mats": {
+            "Frostleaf": 4,
+            "Fire Essence": 2
+          },
+          "stats": {
+            "frostRes": "+50%"
+          },
+          "desc": "+50% frost resist",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 17,
+          "name": "Super Health Potion",
+          "lvl": 60,
+          "icon": "❤️",
+          "mats": {
+            "Dragon Blood Herb": 5,
+            "Life Crystal": 1
+          },
+          "stats": {
+            "heal": "500 HP"
+          },
+          "desc": "Restores 500 HP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 18,
+          "name": "Super Mana Potion",
+          "lvl": 60,
+          "icon": "💙",
+          "mats": {
+            "Arcane Lotus": 5,
+            "Mana Crystal": 1
+          },
+          "stats": {
+            "mana": "400 MP"
+          },
+          "desc": "Restores 400 MP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 19,
+          "name": "Lightning Resistance",
+          "lvl": 60,
+          "icon": "⚡",
+          "mats": {
+            "Storm Leaf": 4,
+            "Earth Essence": 2
+          },
+          "stats": {
+            "lightningRes": "+50%"
+          },
+          "desc": "+50% lightning resist",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 20,
+          "name": "Poison Resistance",
+          "lvl": 60,
+          "icon": "☠️",
+          "mats": {
+            "Antitoxin Root": 5,
+            "Pure Essence": 2
+          },
+          "stats": {
+            "poisonRes": "+75%"
+          },
+          "desc": "+75% poison resist",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 21,
+          "name": "Berserker Elixir",
+          "lvl": 70,
+          "icon": "💢",
+          "mats": {
+            "Rage Flower": 5,
+            "Blood Essence": 2
+          },
+          "stats": {
+            "damage": "+50%",
+            "defense": "-20%"
+          },
+          "desc": "Glass cannon",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 22,
+          "name": "Elemental Ward",
+          "lvl": 75,
+          "icon": "🌈",
+          "mats": {
+            "Elemental Herb": 6,
+            "All Essence": 1
+          },
+          "stats": {
+            "allRes": "+30%"
+          },
+          "desc": "+30% all resist",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 23,
+          "name": "Titan Strength",
+          "lvl": 80,
+          "icon": "💪",
+          "mats": {
+            "Giant's Blood": 3,
+            "Power Crystal": 1
+          },
+          "stats": {
+            "str": "+100"
+          },
+          "desc": "+100 strength",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 24,
+          "name": "Mega Health Potion",
+          "lvl": 80,
+          "icon": "❤️",
+          "mats": {
+            "Phoenix Tears": 2,
+            "Life Crystal": 2
+          },
+          "stats": {
+            "heal": "750 HP"
+          },
+          "desc": "Restores 750 HP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 25,
+          "name": "Mega Mana Potion",
+          "lvl": 80,
+          "icon": "💙",
+          "mats": {
+            "Arcane Crystal": 2,
+            "Mana Well": 2
+          },
+          "stats": {
+            "mana": "600 MP"
+          },
+          "desc": "Restores 600 MP",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 26,
+          "name": "Invulnerability Potion",
+          "lvl": 85,
+          "icon": "🛡️",
+          "mats": {
+            "Divine Shield Herb": 5,
+            "Holy Essence": 3
+          },
+          "stats": {
+            "invuln": "5s"
+          },
+          "desc": "5s immunity",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 27,
+          "name": "Divine Health",
+          "lvl": 90,
+          "icon": "❤️",
+          "mats": {
+            "Phoenix Tear": 2,
+            "Divine Essence": 1
+          },
+          "stats": {
+            "heal": "Full"
+          },
+          "desc": "Full heal",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 28,
+          "name": "Divine Mana",
+          "lvl": 90,
+          "icon": "💙",
+          "mats": {
+            "Arcane Well": 2,
+            "Divine Essence": 1
+          },
+          "stats": {
+            "mana": "Full"
+          },
+          "desc": "Full mana restore",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 29,
+          "name": "Ultimate Elixir",
+          "lvl": 93,
+          "icon": "🌟",
+          "mats": {
+            "Philosopher's Stone": 1,
+            "All Essence": 5
+          },
+          "stats": {
+            "all": "+25%"
+          },
+          "desc": "+25% all stats",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 30,
+          "name": "Elixir of Immortality",
+          "lvl": 95,
+          "icon": "✨",
+          "mats": {
+            "Philosopher's Stone": 1,
+            "Dragon Blood": 3
+          },
+          "stats": {
+            "immortal": "1x"
+          },
+          "desc": "Prevents death once",
+          "grudgeType": "consumable"
+        }
       ]
     },
     "engineerConsumables": {
@@ -161,18 +1890,190 @@
       "emoji": "🔧",
       "count": 12,
       "items": [
-        { "id": 1, "name": "Bandage", "lvl": 1, "icon": "🩹", "mats": {"Cloth": 2}, "stats": {"heal": "50 HP over 5s"}, "desc": "First aid" },
-        { "id": 2, "name": "Heavy Bandage", "lvl": 20, "icon": "🩹", "mats": {"Silk": 2, "Healing Salve": 1}, "stats": {"heal": "150 HP over 5s"}, "desc": "Better bandage" },
-        { "id": 3, "name": "Medkit", "lvl": 40, "icon": "🧰", "mats": {"Steel": 1, "Bandages": 5, "Antidote": 2}, "stats": {"heal": "300 HP"}, "desc": "Emergency medkit" },
-        { "id": 4, "name": "Smoke Grenade", "lvl": 15, "icon": "💨", "mats": {"Iron": 1, "Smoke Powder": 2}, "stats": {"blind": "5s AoE"}, "desc": "Obscures vision" },
-        { "id": 5, "name": "Flashbang", "lvl": 25, "icon": "💥", "mats": {"Iron": 2, "Flash Powder": 2}, "stats": {"stun": "2s AoE"}, "desc": "Stuns enemies" },
-        { "id": 6, "name": "Frag Grenade", "lvl": 35, "icon": "💣", "mats": {"Steel": 2, "Gunpowder": 3, "Shrapnel": 2}, "stats": {"damage": "200 AoE"}, "desc": "Explosive damage" },
-        { "id": 7, "name": "Incendiary Grenade", "lvl": 45, "icon": "🔥", "mats": {"Steel": 2, "Fire Essence": 2, "Oil": 2}, "stats": {"burn": "50 DPS for 5s"}, "desc": "Fire AoE" },
-        { "id": 8, "name": "EMP Grenade", "lvl": 55, "icon": "⚡", "mats": {"Titanium": 2, "Lightning Essence": 2}, "stats": {"silence": "4s AoE"}, "desc": "Disables magic" },
-        { "id": 9, "name": "Fishing Lure (Basic)", "lvl": 10, "icon": "🎣", "mats": {"Scrap": 2, "Feather": 1}, "stats": {"fishQuality": "+10%"}, "desc": "Attracts fish" },
-        { "id": 10, "name": "Fishing Lure (Rare)", "lvl": 30, "icon": "🎣", "mats": {"Steel": 1, "Gem": 1}, "stats": {"fishQuality": "+25%"}, "desc": "Rare fish" },
-        { "id": 11, "name": "Portable Turret", "lvl": 50, "icon": "🤖", "mats": {"Gears": 10, "Steel": 5, "Power Core": 1}, "stats": {"damage": "50 DPS for 30s"}, "desc": "Auto-turret" },
-        { "id": 12, "name": "Repair Kit", "lvl": 35, "icon": "🔧", "mats": {"Steel": 3, "Gears": 2, "Oil": 1}, "stats": {"repair": "50%"}, "desc": "Repairs equipment" }
+        {
+          "id": 1,
+          "name": "Bandage",
+          "lvl": 1,
+          "icon": "🩹",
+          "mats": {
+            "Cloth": 2
+          },
+          "stats": {
+            "heal": "50 HP over 5s"
+          },
+          "desc": "First aid",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 2,
+          "name": "Heavy Bandage",
+          "lvl": 20,
+          "icon": "🩹",
+          "mats": {
+            "Silk": 2,
+            "Healing Salve": 1
+          },
+          "stats": {
+            "heal": "150 HP over 5s"
+          },
+          "desc": "Better bandage",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 3,
+          "name": "Medkit",
+          "lvl": 40,
+          "icon": "🧰",
+          "mats": {
+            "Steel": 1,
+            "Bandages": 5,
+            "Antidote": 2
+          },
+          "stats": {
+            "heal": "300 HP"
+          },
+          "desc": "Emergency medkit",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 4,
+          "name": "Smoke Grenade",
+          "lvl": 15,
+          "icon": "💨",
+          "mats": {
+            "Iron": 1,
+            "Smoke Powder": 2
+          },
+          "stats": {
+            "blind": "5s AoE"
+          },
+          "desc": "Obscures vision",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 5,
+          "name": "Flashbang",
+          "lvl": 25,
+          "icon": "💥",
+          "mats": {
+            "Iron": 2,
+            "Flash Powder": 2
+          },
+          "stats": {
+            "stun": "2s AoE"
+          },
+          "desc": "Stuns enemies",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 6,
+          "name": "Frag Grenade",
+          "lvl": 35,
+          "icon": "💣",
+          "mats": {
+            "Steel": 2,
+            "Gunpowder": 3,
+            "Shrapnel": 2
+          },
+          "stats": {
+            "damage": "200 AoE"
+          },
+          "desc": "Explosive damage",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 7,
+          "name": "Incendiary Grenade",
+          "lvl": 45,
+          "icon": "🔥",
+          "mats": {
+            "Steel": 2,
+            "Fire Essence": 2,
+            "Oil": 2
+          },
+          "stats": {
+            "burn": "50 DPS for 5s"
+          },
+          "desc": "Fire AoE",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 8,
+          "name": "EMP Grenade",
+          "lvl": 55,
+          "icon": "⚡",
+          "mats": {
+            "Titanium": 2,
+            "Lightning Essence": 2
+          },
+          "stats": {
+            "silence": "4s AoE"
+          },
+          "desc": "Disables magic",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 9,
+          "name": "Fishing Lure (Basic)",
+          "lvl": 10,
+          "icon": "🎣",
+          "mats": {
+            "Scrap": 2,
+            "Feather": 1
+          },
+          "stats": {
+            "fishQuality": "+10%"
+          },
+          "desc": "Attracts fish",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 10,
+          "name": "Fishing Lure (Rare)",
+          "lvl": 30,
+          "icon": "🎣",
+          "mats": {
+            "Steel": 1,
+            "Gem": 1
+          },
+          "stats": {
+            "fishQuality": "+25%"
+          },
+          "desc": "Rare fish",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 11,
+          "name": "Portable Turret",
+          "lvl": 50,
+          "icon": "🤖",
+          "mats": {
+            "Gears": 10,
+            "Steel": 5,
+            "Power Core": 1
+          },
+          "stats": {
+            "damage": "50 DPS for 30s"
+          },
+          "desc": "Auto-turret",
+          "grudgeType": "consumable"
+        },
+        {
+          "id": 12,
+          "name": "Repair Kit",
+          "lvl": 35,
+          "icon": "🔧",
+          "mats": {
+            "Steel": 3,
+            "Gears": 2,
+            "Oil": 1
+          },
+          "stats": {
+            "repair": "50%"
+          },
+          "desc": "Repairs equipment",
+          "grudgeType": "consumable"
+        }
       ]
     }
   }

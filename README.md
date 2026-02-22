@@ -1,8 +1,10 @@
 # Grudge Studio ObjectStore
 
-Public API for Grudge Warlords game data - weapons, materials, armor, and icons.
+Public API for Grudge Warlords game data — weapons, armor, materials, races, classes, factions, and icons.
 
-## 🔗 Live API
+**Live game:** [grudgewarlords.com](https://grudgewarlords.com) · **Live API (dynamic):** [grudgewarlords.com/api](https://grudgewarlords.com/api/health)
+
+## 🔗 Static API
 
 **Base URL:** `https://molochdagod.github.io/ObjectStore`
 
@@ -14,11 +16,12 @@ Public API for Grudge Warlords game data - weapons, materials, armor, and icons.
 | `/api/v1/materials.json` | Crafting materials (ore, wood, cloth, leather, gems, essence) |
 | `/api/v1/armor.json` | Armor slots (helm, chest, boots, etc.) |
 | `/api/v1/consumables.json` | Potions, bandages, grenades |
-| `/api/v1/skills.json` | All skills (112 skills: weapon + class skills for Warrior, Ranger, Mage, Worge) |
+| `/api/v1/skills.json` | Weapon skill trees (sword, axe, bow, staff, gun) |
 | `/api/v1/professions.json` | Profession definitions and metadata |
-| `/api/v1/enemies.json` | All enemies (38 enemies across 12 categories, T1-T8) |
-| `/api/v1/bosses.json` | Boss encounters (12 bosses with multi-phase mechanics & drops) |
-| `/api/v1/sprites.json` | 2D sprite asset index from Unity project (45 sprites) |
+| `/api/v1/races.json` | 6 playable races with bonuses, lore, and faction affiliations |
+| `/api/v1/classes.json` | 4 classes with abilities, weapon/armor types, and signature moves |
+| `/api/v1/factions.json` | 3 factions (Crusade, Legion, Fabled) with race mappings |
+| `/api/v1/attributes.json` | 8 attribute definitions with stat formulas |
 
 ## 📦 SDK
 
@@ -39,20 +42,14 @@ const t5Materials = await sdk.getMaterialsByTier(5);
 // Search across all data
 const results = await sdk.search('iron');
 
-// Get enemies by zone
-const starterEnemies = await sdk.getEnemiesByZone('Starter Island');
-
-// Get bosses by tier
-const t7Bosses = await sdk.getBossesByTier(7);
-
-// Get class-specific skills
-const worgeSkills = await sdk.getClassSkills('Worge');
-
-// Get sprites
-const sprites = await sdk.getSprites();
-
 // Get icon URLs
 const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5); // Sword icon, tier 5
+
+// Get races, classes, factions
+const races = await sdk.getRaces();
+const warrior = await sdk.getClass('warrior');
+const crusade = await sdk.getFaction('crusade');
+const attrs = await sdk.getAttributes();
 ```
 
 ## 🤖 AI Integration
@@ -68,22 +65,25 @@ const data = await response.json();
 const fireStaves = data.categories.fireStaves.items;
 ```
 
-## 🗄️ Database Architecture
+## 🗄️ Data Architecture
 
 ### Static Data (This Repository)
-- Game definitions (what items exist)
+- Game definitions (what items/races/classes exist)
 - No authentication required
 - Hosted on GitHub Pages (free CDN)
 
-### Dynamic Data (Supabase)
-For player-specific data (requires authentication):
+### Dynamic Data (GRUDA-Wars API)
+For player-specific data, arena, and accounts — hosted on [grudgewarlords.com](https://grudgewarlords.com):
 
-| Schema | Tables |
-|--------|--------|
-| `studio_core` | accounts, sessions, api_keys |
-| `warlord_crafting` | characters, inventory_items, crafted_items, islands |
+| Resource | Endpoint |
+|----------|----------|
+| Accounts & Auth | `/api/auth/*`, `/api/discord/*` |
+| Characters & Inventory | `/api/db/characters`, `/api/db/inventory` |
+| Arena PvP | `/api/arena/lobby`, `/api/arena/battle/simulate` |
+| Leaderboards | `/api/arena/leaderboard`, `/api/public/leaderboard` |
+| Save/Load | `/api/db/save-game`, `/api/db/load-game` |
 
-**Supabase Project:** `wfbcuyaiwtfxincdiihc.supabase.co`
+See [GRUDA-Wars README](https://github.com/MolochDaGod/StandaloneGrudge) for full API reference.
 
 ## 📊 Data Structure
 
@@ -140,15 +140,19 @@ Example: `/icons/weapons/Sword_01.png`
 
 ```
 ObjectStore/
-├── api/
-│   └── v1/
-│       ├── weapons.json
-│       ├── materials.json
-│       ├── armor.json
-│       └── consumables.json
-├── sdk/
-│   └── grudge-sdk.js
-├── icons/           # Symlink to main project icons
+├── api/v1/
+│   ├── weapons.json        # 17 categories, 816+ items
+│   ├── materials.json       # Ore, wood, cloth, leather, gems, essence
+│   ├── armor.json           # Helm, chest, boots, gloves, etc.
+│   ├── consumables.json     # Potions, food, engineer items
+│   ├── skills.json          # Weapon skill trees
+│   ├── professions.json     # Miner, Forester, Mystic, Chef, Engineer
+│   ├── races.json           # Human, Orc, Elf, Undead, Barbarian, Dwarf
+│   ├── classes.json         # Warrior, Mage Priest, Worge, Ranger
+│   ├── factions.json        # Crusade, Legion, Fabled
+│   └── attributes.json      # STR, INT, VIT, DEX, END, WIS, AGI, TAC
+├── sdk/grudge-sdk.js        # JavaScript SDK with caching + UUID system
+├── icons/                   # 659+ PNG sprite icons
 ├── docs/
 ├── index.html
 └── README.md
