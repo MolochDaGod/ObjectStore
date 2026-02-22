@@ -348,13 +348,14 @@
       
       <div class="nav-tabs">
         <button class="tab-btn active" data-tab="weapons">⚔️ Weapons</button>
-        <button class="tab-btn" data-tab="materials">🪨 Materials</button>
         <button class="tab-btn" data-tab="armor">🛡️ Armor</button>
+        <button class="tab-btn" data-tab="skills">⚡ Skills</button>
+        <button class="tab-btn" data-tab="materials">🪨 Materials</button>
         <button class="tab-btn" data-tab="consumables">🧪 Consumables</button>
         <button class="tab-btn" data-tab="enemies">👹 Enemies</button>
         <button class="tab-btn" data-tab="bosses">💀 Bosses</button>
-        <button class="tab-btn" data-tab="skills">⚡ Skills</button>
-        <button class="tab-btn" data-tab="all">📦 All Items</button>
+        <button class="tab-btn" data-tab="rpgicons">🎨 RPG Icons</button>
+        <button class="tab-btn" data-tab="all">📦 All Sprites</button>
       </div>
       
       <div class="controls">
@@ -372,12 +373,11 @@
           <option value="8">T8 - Divine</option>
         </select>
         <div class="stats-bar">
-        <div class="stat-item">Weapons: <span class="stat-value" id="weaponCount">-</span></div>
-          <div class="stat-item">Materials: <span class="stat-value" id="materialCount">-</span></div>
-          <div class="stat-item">Enemies: <span class="stat-value" id="enemyCount">-</span></div>
-          <div class="stat-item">Bosses: <span class="stat-value" id="bossCount">-</span></div>
+          <div class="stat-item">Weapons: <span class="stat-value" id="weaponCount">-</span></div>
+          <div class="stat-item">Armor: <span class="stat-value" id="armorCount">-</span></div>
           <div class="stat-item">Skills: <span class="stat-value" id="skillCount">-</span></div>
-          <div class="stat-item">Total: <span class="stat-value" id="totalCount">-</span></div>
+          <div class="stat-item">RPG Icons: <span class="stat-value" id="rpgCount">-</span></div>
+          <div class="stat-item">Total Sprites: <span class="stat-value" id="totalCount">-</span></div>
         </div>
       </div>
     </div>
@@ -440,10 +440,18 @@
       <div id="skills-content"></div>
     </section>
 
+    <section id="rpgicons-section" class="section">
+      <div class="loading" id="rpgicons-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading RPG icons...</p>
+      </div>
+      <div id="rpgicons-content"></div>
+    </section>
+
     <section id="all-section" class="section">
       <div class="loading" id="all-loading">
         <div class="loading-spinner"></div>
-        <p>Loading all items...</p>
+        <p>Loading all sprites...</p>
       </div>
       <div id="all-content"></div>
     </section>
@@ -543,6 +551,7 @@
         case 'enemies': await loadEnemies(); break;
         case 'bosses': await loadBosses(); break;
         case 'skills': await loadSkillsData(); break;
+        case 'rpgicons': await loadRPGIcons(); break;
       }
     }
 
@@ -1172,8 +1181,95 @@
       updateTotalCount();
     }
 
+    // Load RPG Icons from sprites.json
+    async function loadRPGIcons() {
+      document.getElementById('rpgicons-loading').style.display = 'block';
+      const data = await fetchJSON('sprites.json');
+      if (!data) {
+        document.getElementById('rpgicons-loading').innerHTML = '<div class="error">Failed to load sprite data</div>';
+        return;
+      }
+      
+      renderSpriteCategory(data, 'rpgicons');
+    }
+    
+    function renderSpriteCategory(spriteData, targetSection) {
+      document.getElementById(`${targetSection}-loading`).style.display = 'none';
+      const container = document.getElementById(`${targetSection}-content`);
+      
+      let html = '<h2 class="section-title">🎨 Sprite Collections</h2>';
+      
+      // Map of category display names
+      const categoryNames = {
+        'skill_nobg': '⚡ Skill Icons (No Background)',
+        'armor_full': '🛡️ Armor Icons',
+        'weapons_full': '⚔️ Weapon Icons',
+        '496_rpg_icons': '🎨 RPG Icon Pack',
+        'armor': '🛡️ Armor Sprites',
+        'weapons': '⚔️ Weapon Sprites'
+      };
+      
+      for (const [catKey, catData] of Object.entries(spriteData.categories)) {
+        if (!catData.sprites || catData.sprites.length === 0) continue;
+        
+        html += `
+          <div class="category-group" data-category="${catKey}">
+            <h3 class="category-title">
+              ${categoryNames[catKey] || catKey}
+              <span class="category-count">${catData.count} sprites</span>
+            </h3>
+            <div class="items-grid">
+        `;
+        
+        // Show first 50 sprites from each category
+        const spritesToShow = catData.sprites.slice(0, 50);
+        for (const sprite of spritesToShow) {
+          const spritePath = sprite.path.startsWith('icons/') ? sprite.path : `icons/${catKey}/${sprite.filename}`;
+          html += `
+            <div class="item-card" data-name="${sprite.filename.toLowerCase()}">
+              <img src="${spritePath}" class="item-icon-img" onerror="this.outerHTML='<span class=item-icon>🖼️</span>'" alt="${sprite.filename}">
+              <div class="item-name">${sprite.filename.replace(/\.(png|jpg|jpeg|gif)$/i, '')}</div>
+              <div class="item-meta">${(sprite.size / 1024).toFixed(1)}KB</div>
+            </div>
+          `;
+        }
+        
+        if (catData.sprites.length > 50) {
+          html += `
+            <div class="item-card" style="border-style: dashed; opacity: 0.6;">
+              <span class="item-icon">📦</span>
+              <div class="item-name">+${catData.sprites.length - 50} more</div>
+              <div class="item-meta">View in GitHub</div>
+            </div>
+          `;
+        }
+        
+        html += '</div></div>';
+      }
+      
+      container.innerHTML = html;
+      
+      // Update counts
+      document.getElementById('weaponCount').textContent = spriteData.categories.weapons_full?.count || '-';
+      document.getElementById('armorCount').textContent = spriteData.categories.armor_full?.count || '-';
+      document.getElementById('skillCount').textContent = spriteData.categories.skill_nobg?.count || '-';
+      document.getElementById('rpgCount').textContent = spriteData.categories['496_rpg_icons']?.count || '-';
+      document.getElementById('totalCount').textContent = spriteData.totalSprites || '-';
+    }
+
     // Initial load
     loadWeapons();
+    
+    // Load sprite counts on page load
+    fetchJSON('sprites.json').then(data => {
+      if (data) {
+        document.getElementById('weaponCount').textContent = data.categories.weapons_full?.count || '-';
+        document.getElementById('armorCount').textContent = data.categories.armor_full?.count || '-';
+        document.getElementById('skillCount').textContent = data.categories.skill_nobg?.count || '-';
+        document.getElementById('rpgCount').textContent = data.categories['496_rpg_icons']?.count || '-';
+        document.getElementById('totalCount').textContent = data.totalSprites || '-';
+      }
+    });
   </script>
 </body>
 </html>
