@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprite Test</title>
+  <style>
+    body { background: #0f1419; color: #fff; font-family: sans-serif; padding: 20px; }
+    .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; }
+    .test-card { border: 1px solid #444; padding: 10px; text-align: center; }
+    img { width: 64px; height: 64px; object-fit: contain; }
+    .error { color: #ff4444; }
+    .success { color: #44ff44; }
+  </style>
+</head>
+<body>
+  <h1>Sprite Path Test</h1>
+  <p id="status">Loading sprites.json...</p>
+  
+  <div class="test-grid" id="results"></div>
+
+  <script>
+    async function testSprites() {
+      const results = document.getElementById('results');
+      const status = document.getElementById('status');
+      
+      try {
+        // Test 1: Load sprites.json
+        const response = await fetch('./api/v1/sprites.json');
+        if (!response.ok) {
+          status.innerHTML = '<span class="error">Failed to load sprites.json: ' + response.status + '</span>';
+          return;
+        }
+        
+        const data = await response.json();
+        status.innerHTML = `<span class="success">Loaded sprites.json - ${data.totalSprites} total sprites</span>`;
+        
+        // Test 2: Try loading first 10 sprites from each category
+        let html = '';
+        let testCount = 0;
+        
+        for (const [catKey, catData] of Object.entries(data.categories)) {
+          if (testCount >= 3) break; // Only test 3 categories
+          
+          html += `<div class="test-card"><strong>${catKey}</strong><br>${catData.count} sprites</div>`;
+          
+          const testSprites = catData.sprites.slice(0, 3);
+          for (const sprite of testSprites) {
+            const path = sprite.path;
+            html += `
+              <div class="test-card">
+                <img src="${path}" 
+                     onerror="this.outerHTML='<span class=error>Failed: ${sprite.filename}</span>'" 
+                     onload="this.style.border='2px solid green'"
+                     alt="${sprite.filename}">
+                <div style="font-size:10px; margin-top:5px;">${sprite.filename}</div>
+                <div style="font-size:9px; color:#888;">${path}</div>
+              </div>
+            `;
+          }
+          testCount++;
+        }
+        
+        results.innerHTML = html;
+        
+      } catch (err) {
+        status.innerHTML = '<span class="error">Error: ' + err.message + '</span>';
+      }
+    }
+    
+    testSprites();
+  </script>
+</body>
+</html>
