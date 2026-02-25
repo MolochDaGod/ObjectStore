@@ -12,6 +12,7 @@
 export { GrudgeSDK, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid } from '../sdk/grudge-sdk.js';
 export { itemRegistry, ItemRegistry } from '../utils/item-registry.js';
 export { imageGenerator, GrudgeImageGenerator } from '../utils/image-generator.js';
+export { aiBackend, AIBackendClient } from './grudge-ai-backend.js';
 
 /**
  * Grudge Studio Unified API Client
@@ -22,15 +23,19 @@ export class GrudgeStudioAPI {
     this.config = {
       objectStoreUrl: config.objectStoreUrl || 'https://molochdagod.github.io/ObjectStore',
       arsenalUrl: config.arsenalUrl || 'https://warlord-crafting-suite.vercel.app',
+      aiBackendUrl: config.aiBackendUrl || 'http://localhost:3000/api/ai',
+      gameApiUrl: config.gameApiUrl || 'http://localhost:4000/api/gruda',
       puterEnabled: config.puterEnabled !== false,
       cacheEnabled: config.cacheEnabled !== false,
-      debug: config.debug || false
+      debug: config.debug || false,
+      environment: config.environment || 'production'
     };
 
     // Initialize sub-clients
     this.objectStore = new ObjectStoreClient(this.config);
     this.arsenal = new ArsenalClient(this.config);
     this.puter = new PuterClient(this.config);
+    this.ai = null; // Lazy initialization
     this.uuid = new UUIDManager(this.config);
     
     if (this.config.debug) {
@@ -57,6 +62,11 @@ export class GrudgeStudioAPI {
       if (this.config.puterEnabled) {
         await this.puter.initialize();
       }
+
+      // Initialize AI Backend
+      const { AIBackendClient } = await import('./grudge-ai-backend.js');
+      this.ai = new AIBackendClient(this.config);
+      await this.ai.initialize();
 
       const duration = Date.now() - startTime;
       
@@ -149,6 +159,7 @@ export class GrudgeStudioAPI {
       objectStore: await this.objectStore.getStatus(),
       arsenal: await this.arsenal.getStatus(),
       puter: this.puter.getStatus(),
+      ai: this.ai ? this.ai.getStatus() : { available: false },
       timestamp: new Date().toISOString()
     };
   }

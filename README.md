@@ -11,16 +11,18 @@ Centralized data API for all Grudge Studio projects — weapons, armor, material
 
 ### NPM Installation
 ```bash
-npm install @grudge-studio/core
+npm install @grudgstudio/core
 ```
 
 ### Basic Usage
 ```javascript
-import { initGrudgeStudio } from '@grudge-studio/core';
+import { initGrudgeStudio } from '@grudgstudio/core';
 
 const api = await initGrudgeStudio({
   objectStoreUrl: 'https://molochdagod.github.io/ObjectStore',
-  puterEnabled: true  // Enable AI image generation
+  puterEnabled: true,  // Enable AI image generation
+  aiBackendUrl: 'http://localhost:3000/api/ai',  // AI agents backend
+  gameApiUrl: 'http://localhost:4000/api/gruda'  // GAME_API_GRUDA
 });
 
 // Search for T5 swords
@@ -33,6 +35,10 @@ const item = api.createItem({
   tier: 8 
 });
 console.log(item.uuid); // ITEM-20260225120000-000001-A1B2C3D4
+
+// Use AI agents
+const lore = await api.ai.generateLore({ item: 'Legendary Blade' });
+const balanced = await api.ai.balanceItem(item);
 ```
 
 **[📖 Full Integration Guide](INTEGRATION-GUIDE.md)** | **[🔧 Unity C# Example](integrations/GrudgeWarlords-Unity-Integration.cs)** | **[⚛️ React/TS Example](integrations/warlord-crafting-suite-integration.tsx)**
@@ -134,17 +140,81 @@ const crusade = await sdk.getFaction('crusade');
 const attrs = await sdk.getAttributes();
 ```
 
-## 🤖 AI Integration
+## 🤖 AI Backend Integration
 
-For AI agents that need game data without authentication:
+**NEW in 2.1.0**: Integrated AI agent system with specialized agents for game development.
+
+### Available AI Agents
+
+- **Code Agent**: Code generation, refactoring, optimization
+- **Art Agent**: Asset generation, style guidance, icon design
+- **Lore Agent**: World building, narrative consistency, character backstories
+- **Balance Agent**: Game balance analysis, stat tuning, economy balance
+- **QA Agent**: Test strategies, bug detection, edge case analysis
+- **Mission Agent**: Quest design, mission flow, reward structures
+
+### Usage Example
 
 ```javascript
-// Direct fetch example
-const response = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json');
-const data = await response.json();
+import { initGrudgeStudio } from '@grudgstudio/core';
 
-// Get all fire staves
-const fireStaves = data.categories.fireStaves.items;
+const api = await initGrudgeStudio({
+  aiBackendUrl: 'http://localhost:3000/api/ai'
+});
+
+// Query an AI agent
+const response = await api.ai.queryAgent({
+  agentType: 'lore',
+  prompt: 'Create a backstory for a legendary sword',
+  context: { faction: 'Crusade', tier: 8 }
+});
+
+console.log(response.result);
+
+// Research game balance
+const research = await api.ai.research({
+  topic: 'T8 weapon damage scaling',
+  category: 'balance',
+  context: { currentMax: 500, proposedMax: 650 }
+});
+
+// Design a mission
+const mission = await api.ai.designMission({
+  level: 50,
+  type: 'boss-raid',
+  faction: 'Legion',
+  rewards: ['epic-weapon', 'gold']
+});
+
+// Connect to GAME_API_GRUDA (local IDE integration)
+const result = await api.ai.connectToGameAPI('update-character', {
+  characterId: 'hero-123',
+  stats: { strength: 100 }
+});
+```
+
+### Fallback to Puter AI
+
+If the AI backend is unavailable, the system automatically falls back to Puter.js:
+
+```javascript
+// Works offline with Puter fallback
+const api = await initGrudgeStudio({ puterEnabled: true });
+const lore = await api.ai.generateLore({ item: 'Mystic Staff' });
+```
+
+### TypeScript Support
+
+Full TypeScript definitions included:
+
+```typescript
+import type { AIRequest, AIResponse, ResearchQuery } from '@grudgstudio/core';
+
+const request: AIRequest = {
+  agentType: 'balance',
+  prompt: 'Analyze this weapon',
+  context: { weapon: myWeapon }
+};
 ```
 
 ## 🗄️ Data Architecture
