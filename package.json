@@ -1,0 +1,97 @@
+{
+  "name": "@grudge-studio/core",
+  "version": "2.1.0",
+  "description": "Unified integration layer for all Grudge Studio projects - ObjectStore, Arsenal, Puter, and game clients",
+  "main": "./integrations/grudge-studio-core.js",
+  "module": "./integrations/grudge-studio-core.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./integrations/grudge-studio-core.js",
+      "require": "./integrations/grudge-studio-core.js",
+      "types": "./types/index.d.ts"
+    },
+    "./sdk": {
+      "import": "./sdk/grudge-sdk.js"
+    },
+    "./utils": {
+      "import": "./utils/item-registry.js"
+    },
+    "./integrations": {
+      "import": "./integrations/grudge-studio-core.js"
+    }
+  },
+  "files": [
+    "integrations/",
+    "sdk/",
+    "utils/",
+    "types/",
+    "css/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "echo 'No build needed - pure ES modules'",
+    "test": "echo 'Tests coming soon'",
+    "prepublishOnly": "npm run validate",
+    "validate": "echo 'Validating package...'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MolochDaGod/ObjectStore.git"
+  },
+  "keywords": [
+    "grudge",
+    "grudge-studio",
+    "grudge-warlords",
+    "game-api",
+    "object-store",
+    "arsenal",
+    "uuid",
+    "gaming",
+    "rpg",
+    "crafting",
+    "items",
+    "weapons",
+    "materials",
+    "puter"
+  ],
+  "author": {
+    "name": "Grudge Studio",
+    "email": "contact@grudgewarlords.com"
+  },
+  "contributors": [
+    {
+      "name": "Oz",
+      "email": "oz-agent@warp.dev"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MolochDaGod/ObjectStore/issues"
+  },
+  "homepage": "https://molochdagod.github.io/ObjectStore",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://grudgewarlords.com/support"
+  }
+}

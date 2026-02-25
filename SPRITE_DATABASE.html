@@ -482,6 +482,7 @@
     let allData = { weapons: null, materials: null, armor: null, consumables: null, enemies: null, bosses: null, skills: null };
     let iconIndex = null;
     let currentTab = 'weapons';
+    let weaponIconCounter = {}; // Track icon indices per category
 
     // Load icon index
     async function loadIconIndex() {
@@ -564,7 +565,8 @@
         return;
       }
       allData.weapons = data;
-      document.getElementById('weaponCount').textContent = data.total || countItems(data.categories);
+      const countEl = document.getElementById('weaponCount');
+      if (countEl) countEl.textContent = data.total || countItems(data.categories);
       renderWeapons();
     }
 
@@ -577,7 +579,8 @@
         return;
       }
       allData.materials = data;
-      document.getElementById('materialCount').textContent = data.total || countItems(data.categories);
+      const countEl = document.getElementById('materialCount');
+      if (countEl) countEl.textContent = data.total || countItems(data.categories);
       renderMaterials();
     }
 
@@ -602,7 +605,8 @@
         return;
       }
       allData.consumables = data;
-      document.getElementById('consumableCount').textContent = data.total || countConsumables(data.categories);
+      const countEl = document.getElementById('consumableCount');
+      if (countEl) countEl.textContent = data.total || countConsumables(data.categories);
       renderConsumables();
     }
 
@@ -666,7 +670,7 @@
         `;
         
         for (const item of catData.items) {
-          html += createItemCard(item, 'weapon', catKey);
+          html += createItemCard(item, 'weapon', catKey, catData);
         }
         
         html += '</div></div>';
@@ -853,11 +857,22 @@
       updateTotalCount();
     }
 
-    // Icon resolver - tries multiple paths to find icons
-    function getIconPath(type, category, itemId, tier) {
-      if (type === 'weapon') {
-        // Weapon: direct item-id.png match
-        return `${ICONS_URL}/weapons/${itemId}.png`;
+    // Icon resolver - uses iconBase system from weapon categories
+    function getIconPath(type, category, itemId, tier, iconBase, iconMax, iconOffset = 0) {
+      if (type === 'weapon' && iconBase) {
+        // Initialize counter for this category if not exists
+        if (!weaponIconCounter[category]) weaponIconCounter[category] = 1;
+        
+        // Get next icon number and wrap around if exceeds max
+        let iconNum = weaponIconCounter[category];
+        weaponIconCounter[category] = (weaponIconCounter[category] % iconMax) + 1;
+        
+        // Apply offset if specified (for greatswords, etc.)
+        iconNum += iconOffset;
+        
+        // Format: Axe_01.png, Sword_15.png, etc.
+        const iconFile = `${iconBase}_${String(iconNum).padStart(2, '0')}.png`;
+        return `${ICONS_URL}/weapons_full/${iconFile}`;
       }
       
       if (type === 'material') {
@@ -880,8 +895,16 @@
     }
 
     // Card creators
-    function createItemCard(item, type, category) {
-      const iconPath = getIconPath('weapon', category, item.id);
+    function createItemCard(item, type, category, categoryData) {
+      const iconPath = getIconPath(
+        'weapon', 
+        category, 
+        item.id, 
+        null, 
+        categoryData?.iconBase, 
+        categoryData?.iconMax, 
+        categoryData?.iconOffset || 0
+      );
       const iconHtml = createIconElement(iconPath, item.emoji || '⚔️');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="${type}" onclick="showDetail('${type}', '${item.id}', '${category}')">
@@ -1094,7 +1117,8 @@
       const data = await fetchJSON('enemies.json');
       if (!data) { document.getElementById('enemies-loading').innerHTML = '<div class="error">Failed to load enemies</div>'; return; }
       allData.enemies = data;
-      document.getElementById('enemyCount').textContent = data.total || 0;
+      const countEl = document.getElementById('enemyCount');
+      if (countEl) countEl.textContent = data.total || 0;
       renderEnemies();
     }
 
@@ -1123,7 +1147,8 @@
       const data = await fetchJSON('bosses.json');
       if (!data) { document.getElementById('bosses-loading').innerHTML = '<div class="error">Failed to load bosses</div>'; return; }
       allData.bosses = data;
-      document.getElementById('bossCount').textContent = data.total || 0;
+      const countEl = document.getElementById('bossCount');
+      if (countEl) countEl.textContent = data.total || 0;
       renderBosses();
     }
 
@@ -1157,7 +1182,8 @@
       const data = await fetchJSON('skills.json');
       if (!data) { document.getElementById('skills-loading').innerHTML = '<div class="error">Failed to load skills</div>'; return; }
       allData.skills = data;
-      document.getElementById('skillCount').textContent = data.total || 0;
+      const countEl = document.getElementById('skillCount');
+      if (countEl) countEl.textContent = data.total || 0;
       renderSkillsData();
     }
 

@@ -1,0 +1,378 @@
+/**
+ * Grudge Studio Tier System CSS
+ * T1-T8 items share same image but use different borders/backgrounds
+ * Higher tiers get gold gradients and glowing effects
+ */
+
+:root {
+  --tier-1: #8b7355;  /* Bronze */
+  --tier-2: #a8a8a8;  /* Silver */
+  --tier-3: #4a9eff;  /* Blue */
+  --tier-4: #9d4dff;  /* Purple */
+  --tier-5: #ff4d4d;  /* Red */
+  --tier-6: #ffaa00;  /* Orange */
+  --tier-7: #d4a84b;  /* Gold */
+  --tier-8: #f0d890;  /* Legendary Gold */
+  
+  --bg-dark: #0f1419;
+  --card-bg: #1a1f2e;
+  --border-color: #3d3d3d;
+  --text-primary: #e8e6e3;
+  --text-dim: #8b8685;
+}
+
+/* Base item card with image */
+.item-card {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Item image container - same image for all tiers */
+.item-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.item-card:hover .item-image {
+  transform: scale(1.1);
+}
+
+/* Tier-specific borders and backgrounds */
+.item-card[data-tier="1"] .item-image-container {
+  border: 3px solid var(--tier-1);
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.15), rgba(139, 115, 85, 0.05));
+}
+
+.item-card[data-tier="2"] .item-image-container {
+  border: 3px solid var(--tier-2);
+  background: linear-gradient(135deg, rgba(168, 168, 168, 0.15), rgba(168, 168, 168, 0.05));
+}
+
+.item-card[data-tier="3"] .item-image-container {
+  border: 3px solid var(--tier-3);
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.15), rgba(74, 158, 255, 0.05));
+  box-shadow: 0 0 10px rgba(74, 158, 255, 0.3);
+}
+
+.item-card[data-tier="4"] .item-image-container {
+  border: 3px solid var(--tier-4);
+  background: linear-gradient(135deg, rgba(157, 77, 255, 0.2), rgba(157, 77, 255, 0.05));
+  box-shadow: 0 0 12px rgba(157, 77, 255, 0.4);
+}
+
+.item-card[data-tier="5"] .item-image-container {
+  border: 3px solid var(--tier-5);
+  background: linear-gradient(135deg, rgba(255, 77, 77, 0.2), rgba(255, 77, 77, 0.05));
+  box-shadow: 0 0 14px rgba(255, 77, 77, 0.5);
+}
+
+.item-card[data-tier="6"] .item-image-container {
+  border: 3px solid var(--tier-6);
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.25), rgba(255, 170, 0, 0.08));
+  box-shadow: 0 0 16px rgba(255, 170, 0, 0.5);
+}
+
+.item-card[data-tier="7"] .item-image-container {
+  border: 4px solid var(--tier-7);
+  background: linear-gradient(135deg, rgba(212, 168, 75, 0.3), rgba(212, 168, 75, 0.1));
+  box-shadow: 0 0 18px rgba(212, 168, 75, 0.6);
+  animation: pulse-gold 2s infinite;
+}
+
+.item-card[data-tier="8"] .item-image-container {
+  border: 4px solid var(--tier-8);
+  background: linear-gradient(135deg, rgba(240, 216, 144, 0.35), rgba(240, 216, 144, 0.15));
+  box-shadow: 0 0 24px rgba(240, 216, 144, 0.8), 0 0 48px rgba(240, 216, 144, 0.4);
+  animation: pulse-legendary 3s infinite;
+  position: relative;
+}
+
+/* Legendary tier shimmer effect */
+.item-card[data-tier="8"] .item-image-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+/* Tier badge */
+.tier-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 10;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.tier-badge.tier-1 {
+  background: linear-gradient(135deg, var(--tier-1), #6b5545);
+  color: #fff;
+}
+
+.tier-badge.tier-2 {
+  background: linear-gradient(135deg, var(--tier-2), #888);
+  color: #fff;
+}
+
+.tier-badge.tier-3 {
+  background: linear-gradient(135deg, var(--tier-3), #3a7ecc);
+  color: #fff;
+}
+
+.tier-badge.tier-4 {
+  background: linear-gradient(135deg, var(--tier-4), #7d3dcc);
+  color: #fff;
+}
+
+.tier-badge.tier-5 {
+  background: linear-gradient(135deg, var(--tier-5), #cc3d3d);
+  color: #fff;
+}
+
+.tier-badge.tier-6 {
+  background: linear-gradient(135deg, var(--tier-6), #cc8a00);
+  color: #fff;
+}
+
+.tier-badge.tier-7 {
+  background: linear-gradient(135deg, var(--tier-7), #b48b3b);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(212, 168, 75, 0.5);
+}
+
+.tier-badge.tier-8 {
+  background: linear-gradient(135deg, var(--tier-8), #d4a84b);
+  color: #000;
+  box-shadow: 0 2px 12px rgba(240, 216, 144, 0.8);
+  animation: pulse-badge 2s infinite;
+}
+
+/* Item name and metadata */
+.item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.item-meta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Tier-colored item names for high tiers */
+.item-card[data-tier="7"] .item-name {
+  background: linear-gradient(135deg, var(--tier-7), #f0d890);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.item-card[data-tier="8"] .item-name {
+  background: linear-gradient(135deg, var(--tier-8), #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  animation: text-shimmer 3s infinite;
+}
+
+/* Loading skeleton for images */
+.item-image-skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* Animations */
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(212, 168, 75, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(212, 168, 75, 0.8);
+  }
+}
+
+@keyframes pulse-legendary {
+  0%, 100% {
+    box-shadow: 0 0 24px rgba(240, 216, 144, 0.8), 0 0 48px rgba(240, 216, 144, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(240, 216, 144, 1), 0 0 64px rgba(240, 216, 144, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes text-shimmer {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Grid layout for items */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+  
+  .item-card {
+    padding: 8px;
+  }
+  
+  .item-name {
+    font-size: 0.8rem;
+  }
+  
+  .item-meta {
+    font-size: 0.7rem;
+  }
+}
+
+/* Filter controls */
+.filter-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.filter-btn:hover {
+  border-color: var(--tier-7);
+  background: rgba(212, 168, 75, 0.1);
+}
+
+.filter-btn.active {
+  border-color: var(--tier-7);
+  background: linear-gradient(135deg, var(--tier-7), #b48b3b);
+  color: #000;
+}
+
+/* Tier filter buttons */
+.tier-filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tier-filter-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tier-filter-btn[data-tier="1"] { border-color: var(--tier-1); color: var(--tier-1); }
+.tier-filter-btn[data-tier="2"] { border-color: var(--tier-2); color: var(--tier-2); }
+.tier-filter-btn[data-tier="3"] { border-color: var(--tier-3); color: var(--tier-3); }
+.tier-filter-btn[data-tier="4"] { border-color: var(--tier-4); color: var(--tier-4); }
+.tier-filter-btn[data-tier="5"] { border-color: var(--tier-5); color: var(--tier-5); }
+.tier-filter-btn[data-tier="6"] { border-color: var(--tier-6); color: var(--tier-6); }
+.tier-filter-btn[data-tier="7"] { border-color: var(--tier-7); color: var(--tier-7); }
+.tier-filter-btn[data-tier="8"] { border-color: var(--tier-8); color: var(--tier-8); }
+
+.tier-filter-btn.active {
+  background: currentColor;
+  color: #000;
+  transform: scale(1.1);
+}

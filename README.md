@@ -1,8 +1,67 @@
 # Grudge Studio ObjectStore
+**Version 2.1.0** | Unified Game Data API & Integration Hub
 
-Public API for Grudge Warlords game data — weapons, armor, materials, races, classes, factions, and icons.
+Centralized data API for all Grudge Studio projects — weapons, armor, materials, races, classes, factions, and icons. Now with AI-powered image generation, GRUDGE UUID system, and cross-project integration.
 
-**Live game:** [grudgewarlords.com](https://grudgewarlords.com) · **Live API (dynamic):** [grudgewarlords.com/api](https://grudgewarlords.com/api/health)
+**Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki)
+
+---
+
+## 🚀 Quick Start
+
+### NPM Installation
+```bash
+npm install @grudge-studio/core
+```
+
+### Basic Usage
+```javascript
+import { initGrudgeStudio } from '@grudge-studio/core';
+
+const api = await initGrudgeStudio({
+  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore',
+  puterEnabled: true  // Enable AI image generation
+});
+
+// Search for T5 swords
+const items = await api.search('sword', { tier: 5 });
+
+// Create item with GRUDGE UUID
+const item = api.createItem({ 
+  type: 'weapon', 
+  name: 'Legendary Blade',
+  tier: 8 
+});
+console.log(item.uuid); // ITEM-20260225120000-000001-A1B2C3D4
+```
+
+**[📖 Full Integration Guide](INTEGRATION-GUIDE.md)** | **[🔧 Unity C# Example](integrations/GrudgeWarlords-Unity-Integration.cs)** | **[⚛️ React/TS Example](integrations/warlord-crafting-suite-integration.tsx)**
+
+---
+
+## ✨ What's New in 2.1.0
+
+### 🎮 Unified Integration Package
+- **NPM Package**: `@grudge-studio/core` - Single library for all Grudge Studio projects
+- **Cross-Platform**: JavaScript, TypeScript, Unity C#, Node.js
+- **35+ Repository Integration**: Works across all Grudge Studio projects
+
+### 🏷️ GRUDGE UUID System
+- **Universal IDs**: `ITEM-20260225120000-000001-A1B2C3D4`
+- **16 Entity Types**: Items, heroes, materials, abilities, missions, and more
+- **Arsenal Compatible**: Uses the same UUID format from Warlord-Crafting-Suite
+
+### 🎨 AI-Powered Features
+- **Image Generation**: Puter.js integration for txt2img item icons
+- **Tier System**: T1-T8 visual system with colored borders (Bronze → Legendary)
+- **Smart Caching**: localStorage + batch generation with rate limiting
+
+### 📦 Integration Ready
+- **React/TypeScript**: Pre-built Arsenal tab component
+- **Unity C#**: Complete GrudgeStudioAPI MonoBehaviour
+- **Node.js**: Server-side API client with caching
+
+---
 
 ## 🔗 Static API
 
@@ -23,7 +82,30 @@ Public API for Grudge Warlords game data — weapons, armor, materials, races, c
 | `/api/v1/factions.json` | 3 factions (Crusade, Legion, Fabled) with race mappings |
 | `/api/v1/attributes.json` | 8 attribute definitions with stat formulas |
 
-## 📦 SDK
+## 🔗 Supported Projects
+
+ObjectStore integrates with all Grudge Studio repositories:
+
+### High Priority
+- **[Warlord-Crafting-Suite](https://warlord-crafting-suite.vercel.app)** — React/TypeScript crafting system with Arsenal tab
+- **GrudgeWarlords** — Unity WebGL MMO with real-time item loading
+- **GrudgeStudioNPM** — NPM package aggregator for all Grudge modules
+
+### Medium Priority
+- **grudge-warlords** — Voxel RPG with ItemRegistry integration
+- **PuterGrudge** — Backend server with AI image generation endpoints
+- **GrudgeGameIslands** — WebGL island exploration with materials system
+
+### All Projects
+35+ repositories including: grudge-match-webgl, grudge-angeler, nexus-webgl, TheForge, Grudge-Realms, GrudgeController, and more.
+
+**See [Integration Guide](INTEGRATION-GUIDE.md) for complete implementation examples.**
+
+---
+
+## 📦 Legacy SDK
+
+> **Note**: For new projects, use `@grudge-studio/core` instead. This legacy SDK is maintained for backward compatibility.
 
 ```javascript
 import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
@@ -140,7 +222,7 @@ Example: `/icons/weapons/Sword_01.png`
 
 ```
 ObjectStore/
-├── api/v1/
+├── api/v1/                   # Static JSON data
 │   ├── weapons.json        # 17 categories, 816+ items
 │   ├── materials.json       # Ore, wood, cloth, leather, gems, essence
 │   ├── armor.json           # Helm, chest, boots, gloves, etc.
@@ -151,21 +233,59 @@ ObjectStore/
 │   ├── classes.json         # Warrior, Mage Priest, Worge, Ranger
 │   ├── factions.json        # Crusade, Legion, Fabled
 │   └── attributes.json      # STR, INT, VIT, DEX, END, WIS, AGI, TAC
-├── sdk/grudge-sdk.js        # JavaScript SDK with caching + UUID system
+├── integrations/            # 🆕 NEW: Cross-project integrations
+│   ├── grudge-studio-core.js                      # Main API client
+│   ├── warlord-crafting-suite-integration.tsx     # React/TS component
+│   └── GrudgeWarlords-Unity-Integration.cs        # Unity C# API
+├── utils/                   # 🆕 NEW: Utility modules
+│   ├── item-registry.js      # Single source of truth
+│   └── image-generator.js    # AI image generation
+├── css/                     # 🆕 NEW: Styling
+│   └── tier-system.css       # T1-T8 visual system
+├── sdk/                     # Legacy SDK
+│   └── grudge-sdk.js         # Original SDK (backward compat)
 ├── icons/                   # 659+ PNG sprite icons
-├── docs/
-├── index.html
+│   ├── weapons/
+│   ├── armor/
+│   └── resources/
+├── docs/                    # API documentation
+├── INTEGRATION-GUIDE.md     # 🆕 NEW: Complete integration guide
+├── WIKI-HOME.md             # 🆕 NEW: GitHub wiki home
+├── WIKI-DEPLOYMENT.md       # 🆕 NEW: Deployment guide
+├── package.json             # 🆕 NEW: NPM package config
+├── SPRITE_DATABASE.html     # Visual sprite browser
+├── index.html               # Landing page
 └── README.md
 ```
 
 ## 🚀 Deployment
 
-This repository is deployed via GitHub Pages:
+### GitHub Pages (Static API)
+This repository is deployed automatically:
 
 1. Push to `main` branch
 2. GitHub Actions builds and deploys
 3. Available at `https://molochdagod.github.io/ObjectStore`
 4. API Docs: `https://molochdagod.github.io/ObjectStore/docs/`
+
+### NPM Package Publishing
+
+Publish `@grudge-studio/core` to NPM:
+
+```bash
+cd D:\GrudgeLink\OneDrive\Desktop\ObjectStore
+npm login
+npm publish --access public
+```
+
+Update version:
+```bash
+npm version patch  # 2.1.0 -> 2.1.1
+npm version minor  # 2.1.0 -> 2.2.0
+npm version major  # 2.1.0 -> 3.0.0
+```
+
+**See [WIKI-DEPLOYMENT.md](WIKI-DEPLOYMENT.md) for full deployment guide.**
 
 ## 📄 License
 

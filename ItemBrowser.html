@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Studio Item Browser - AI-Powered</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tier-system.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    /* Header */
+    .header {
+      margin-bottom: 32px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--tier-7), var(--tier-8));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
+    
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .stat-item {
+      background: var(--card-bg);
+      padding: 12px 20px;
+      border-radius: 8px;
+      border-left: 3px solid var(--tier-7);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--tier-7);
+    }
+    
+    /* Search and Filters */
+    .controls {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg-dark);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: var(--tier-7);
+    }
+    
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    /* Section */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 32px 0 16px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--tier-7);
+    }
+    .section-count {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-dim);
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border-color);
+      border-top: 4px solid var(--tier-7);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Progress Bar for Image Generation */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--card-bg);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--tier-7), var(--tier-8));
+      width: 0%;
+      transition: width 0.3s;
+    }
+    
+    /* Controls Toggle */
+    .toggle-group {
+      display: flex;
+      gap: 8px;
+    }
+    .toggle-btn {
+      padding: 8px 16px;
+      background: var(--bg-dark);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .toggle-btn:hover {
+      border-color: var(--tier-7);
+    }
+    .toggle-btn.active {
+      background: var(--tier-7);
+      border-color: var(--tier-7);
+      color: #000;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-dim);
+    }
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>⚔️ Grudge Studio Item Browser</h1>
+      <p class="subtitle">AI-Generated Images • Tier-Based System • Single Source of Truth</p>
+      
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-label">Total Items</div>
+          <div class="stat-value" id="totalCount">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Weapons</div>
+          <div class="stat-value" id="weaponCount">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Materials</div>
+          <div class="stat-value" id="materialCount">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Consumables</div>
+          <div class="stat-value" id="consumableCount">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Images Cached</div>
+          <div class="stat-value" id="imageCacheCount">0</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls">
+      <input 
+        type="text" 
+        class="search-box" 
+        id="searchBox" 
+        placeholder="🔍 Search items by name, stat, or description..."
+      >
+      
+      <div class="filter-row">
+        <!-- Type Filter -->
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-type="all">All</button>
+          <button class="toggle-btn" data-type="weapon">Weapons</button>
+          <button class="toggle-btn" data-type="armor">Armor</button>
+          <button class="toggle-btn" data-type="material">Materials</button>
+          <button class="toggle-btn" data-type="consumable">Consumables</button>
+        </div>
+        
+        <!-- Tier Filter -->
+        <div class="tier-filter">
+          <span style="color: var(--text-dim); font-size: 0.85rem; margin-right: 8px;">Tier:</span>
+          <button class="tier-filter-btn active" data-tier="all">All</button>
+          <button class="tier-filter-btn" data-tier="1">1</button>
+          <button class="tier-filter-btn" data-tier="2">2</button>
+          <button class="tier-filter-btn" data-tier="3">3</button>
+          <button class="tier-filter-btn" data-tier="4">4</button>
+          <button class="tier-filter-btn" data-tier="5">5</button>
+          <button class="tier-filter-btn" data-tier="6">6</button>
+          <button class="tier-filter-btn" data-tier="7">7</button>
+          <button class="tier-filter-btn" data-tier="8">8</button>
+        </div>
+        
+        <!-- Image Generation Controls -->
+        <button class="filter-btn" id="generateImagesBtn">🎨 Generate Images</button>
+        <button class="filter-btn" id="clearCacheBtn">🗑️ Clear Cache</button>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-bar" id="progressBar" style="display: none;">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+      <div class="spinner"></div>
+      <p>Loading item data...</p>
+    </div>
+    
+    <!-- Results -->
+    <div id="results" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Items</h2>
+        <span class="section-count" id="resultsCount">0 items</span>
+      </div>
+      <div class="items-grid" id="itemsGrid"></div>
+    </div>
+    
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-state-icon">🔍</div>
+      <h3>No items found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { imageGenerator } from './utils/image-generator.js';
+    import { itemRegistry } from './utils/item-registry.js';
+
+    // State
+    let currentFilters = {
+      search: '',
+      type: 'all',
+      tier: 'all'
+    };
+
+    // Initialize
+    async function init() {
+      console.log('🚀 Initializing Grudge Studio Item Browser...');
+      
+      // Load all data
+      await loadAllData();
+      
+      // Setup event listeners
+      setupEventListeners();
+      
+      // Initial render
+      renderItems();
+      
+      // Update stats
+      updateStats();
+      
+      console.log('✅ Initialization complete!');
+    }
+
+    async function loadAllData() {
+      try {
+        // Load weapons
+        const weaponsRes = await fetch('./api/v1/weapons.json');
+        const weaponsData = await weaponsRes.json();
+        
+        for (const [category, catData] of Object.entries(weaponsData.categories)) {
+          if (catData.items) {
+            for (const item of catData.items) {
+              // For T1-T8, register 8 versions of each item
+              for (let tier = 1; tier <= 8; tier++) {
+                itemRegistry.register({
+                  ...item,
+                  tier,
+                  id: `${item.id}-t${tier}`
+                }, category, 'weapon');
+              }
+            }
+          }
+        }
+
+        // Load materials
+        const materialsRes = await fetch('./api/v1/materials.json');
+        const materialsData = await materialsRes.json();
+        
+        for (const [category, catData] of Object.entries(materialsData.categories)) {
+          if (catData.items) {
+            itemRegistry.registerBatch(catData.items, category, 'material');
+          }
+        }
+
+        // Load consumables
+        const consumablesRes = await fetch('./api/v1/consumables.json');
+        const consumablesData = await consumablesRes.json();
+        
+        for (const [category, catData] of Object.entries(consumablesData.categories)) {
+          if (catData.items) {
+            itemRegistry.registerBatch(catData.items, category, 'consumable');
+          }
+        }
+
+        console.log('✅ Loaded all data:', itemRegistry.getStats());
+
+        // Validate data integrity
+        const validation = itemRegistry.validate();
+        if (!validation.valid) {
+          console.warn('⚠️ Data validation issues:', validation.issues);
+        }
+
+      } catch (error) {
+        console.error('❌ Error loading data:', error);
+      }
+    }
+
+    function setupEventListeners() {
+      // Search
+      document.getElementById('searchBox').addEventListener('input', debounce((e) => {
+        currentFilters.search = e.target.value;
+        renderItems();
+      }, 300));
+
+      // Type filters
+      document.querySelectorAll('[data-type]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilters.type = btn.dataset.type;
+          renderItems();
+        });
+      });
+
+      // Tier filters
+      document.querySelectorAll('[data-tier]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-tier]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilters.tier = btn.dataset.tier;
+          renderItems();
+        });
+      });
+
+      // Generate images button
+      document.getElementById('generateImagesBtn').addEventListener('click', () => {
+        generateImagesForCurrentView();
+      });
+
+      // Clear cache button
+      document.getElementById('clearCacheBtn').addEventListener('click', () => {
+        if (confirm('Clear all cached images?')) {
+          imageGenerator.clearCache();
+          updateStats();
+          renderItems();
+        }
+      });
+    }
+
+    function renderItems() {
+      const filters = {
+        type: currentFilters.type === 'all' ? undefined : currentFilters.type,
+        tier: currentFilters.tier === 'all' ? undefined : currentFilters.tier
+      };
+
+      const results = itemRegistry.search(currentFilters.search, filters);
+      
+      const grid = document.getElementById('itemsGrid');
+      const loadingState = document.getElementById('loadingState');
+      const resultsDiv = document.getElementById('results');
+      const emptyState = document.getElementById('emptyState');
+
+      loadingState.style.display = 'none';
+      
+      if (results.length === 0) {
+        resultsDiv.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      resultsDiv.style.display = 'block';
+      
+      document.getElementById('resultsCount').textContent = `${results.length} items`;
+
+      grid.innerHTML = results.map(item => createItemCard(item)).join('');
+    }
+
+    function createItemCard(item) {
+      const tier = item.tier || 1;
+      const tierClass = `tier-${tier}`;
+      
+      return `
+        <div class="item-card" data-tier="${tier}" data-item-id="${item.id}">
+          <div class="item-image-container">
+            <div class="item-image-skeleton" id="img-${item.id}"></div>
+            <span class="tier-badge ${tierClass}">T${tier}</span>
+          </div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">${item.primaryStat || item.category}</div>
+        </div>
+      `;
+    }
+
+    async function generateImagesForCurrentView() {
+      const visibleCards = document.querySelectorAll('.item-card');
+      if (visibleCards.length === 0) return;
+
+      const btn = document.getElementById('generateImagesBtn');
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+      progressBar.style.display = 'block';
+      progressFill.style.width = '0%';
+
+      let completed = 0;
+      const total = Math.min(visibleCards.length, 20); // Limit to first 20 for demo
+
+      for (let i = 0; i < total; i++) {
+        const card = visibleCards[i];
+        const itemId = card.dataset.itemId;
+        const item = itemRegistry.getItem(itemId);
+        
+        if (item) {
+          try {
+            // Get base item (without tier) for image generation
+            const baseId = item.id.replace(/-t\d+$/, '');
+            const baseItem = { ...item, id: baseId };
+            
+            const imageUrl = await imageGenerator.generateItemImage(baseItem, item.type);
+            const imgContainer = card.querySelector(`#img-${itemId}`);
+            
+            if (imgContainer) {
+              imgContainer.outerHTML = `<img src="${imageUrl}" class="item-image" alt="${item.name}">`;
+            }
+          } catch (error) {
+            console.error(`Failed to generate image for ${item.name}:`, error);
+          }
+        }
+
+        completed++;
+        progressFill.style.width = `${(completed / total) * 100}%`;
+      }
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = '🎨 Generate Images';
+        progressBar.style.display = 'none';
+        updateStats();
+      }, 500);
+    }
+
+    function updateStats() {
+      const stats = itemRegistry.getStats();
+      
+      document.getElementById('totalCount').textContent = stats.totalItems;
+      document.getElementById('weaponCount').textContent = stats.byType.weapon || 0;
+      document.getElementById('materialCount').textContent = stats.byType.material || 0;
+      document.getElementById('consumableCount').textContent = stats.byType.consumable || 0;
+      
+      const imageStats = imageGenerator.getCacheStats();
+      document.getElementById('imageCacheCount').textContent = imageStats.cached;
+    }
+
+    function debounce(fn, delay) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
