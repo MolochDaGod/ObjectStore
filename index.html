@@ -105,11 +105,14 @@
     <div class="card">
       <h2>📊 API Statistics</h2>
       <div class="grid">
-        <div class="stat"><div class="stat-value">816</div><div class="stat-label">Weapons</div></div>
+        <div class="stat"><div class="stat-value">119</div><div class="stat-label">Weapons</div></div>
+        <div class="stat"><div class="stat-value">150</div><div class="stat-label">Equipment</div></div>
         <div class="stat"><div class="stat-value">132</div><div class="stat-label">Consumables</div></div>
-        <div class="stat"><div class="stat-value">98</div><div class="stat-label">Materials</div></div>
+        <div class="stat"><div class="stat-value">112</div><div class="stat-label">Materials</div></div>
         <div class="stat"><div class="stat-value">47</div><div class="stat-label">Skills</div></div>
-        <div class="stat"><div class="stat-value">5</div><div class="stat-label">Professions</div></div>
+        <div class="stat"><div class="stat-value">11</div><div class="stat-label">Professions</div></div>
+        <div class="stat"><div class="stat-value">246</div><div class="stat-label">Sprite Maps</div></div>
+        <div class="stat"><div class="stat-value">50</div><div class="stat-label">Enemies + Bosses</div></div>
       </div>
     </div>
 
@@ -120,32 +123,77 @@
       <div class="endpoint">
         <span class="method">GET</span>
         <span class="url">/api/v1/weapons.json</span>
-        <span class="desc">All weapon definitions (17 categories × 8 tiers)</span>
+        <span class="desc">119 weapons with full stats, lore, abilities, passives, sprite paths</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
-        <span class="url">/api/v1/materials.json</span>
-        <span class="desc">Crafting materials (ore, wood, cloth, leather, gems)</span>
+        <span class="url">/api/v1/equipment.json</span>
+        <span class="desc">150 armor items (6 sets × 8 slots × 3 materials + gems) with stats, procs, set bonuses</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
         <span class="url">/api/v1/armor.json</span>
-        <span class="desc">Armor slots and tiers</span>
+        <span class="desc">Armor slot definitions, tier colors (T1-T8)</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/materials.json</span>
+        <span class="desc">112 crafting materials (ore, wood, cloth, leather, gems, herbs)</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
         <span class="url">/api/v1/consumables.json</span>
-        <span class="desc">90 Chef foods (30/30/30), 30 Mystic potions, 12 Engineer items</span>
+        <span class="desc">132 consumables — Chef foods (red/green/blue), potions, engineer items</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
         <span class="url">/api/v1/skills.json</span>
-        <span class="desc">47 weapon skills (sword, axe, bow, staff, gun)</span>
+        <span class="desc">47 weapon skills with cooldowns, mana costs, descriptions</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
         <span class="url">/api/v1/professions.json</span>
-        <span class="desc">5 professions (Miner, Forester, Mystic, Chef, Engineer)</span>
+        <span class="desc">5 crafting + 6 gathering professions, skill trees, 363+ recipes</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/spriteMaps.json</span>
+        <span class="desc">246 sprite path mappings for weapons and armor icons</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/classes.json</span>
+        <span class="desc">4 classes — Warrior, Mage Priest, Worge, Ranger with abilities</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/races.json</span>
+        <span class="desc">6 races — Human, Orc, Elf, Undead, Barbarian, Dwarf</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/factions.json</span>
+        <span class="desc">3 factions — Crusade, Legion, Fabled with lore and race mappings</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/attributes.json</span>
+        <span class="desc">8 attributes with formulas — STR, INT, VIT, DEX, END, WIS, AGI, TAC</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/enemies.json</span>
+        <span class="desc">38 enemies across 8 tiers with abilities, drops, and 3D asset paths</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/bosses.json</span>
+        <span class="desc">12 bosses with multi-phase mechanics, drops, and Gouldstone chances</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/sprites.json</span>
+        <span class="desc">Full sprite database — 500+ icon paths organized by category</span>
       </div>
     </div>
 

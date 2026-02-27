@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-02-12",
-  "total": 816,
+  "version": "2.0.0",
+  "updated": "2026-02-27",
+  "total": 119,
   "tiers": 8,
   "categories": {
     "swords": {
@@ -14,7 +14,40 @@
           "primaryStat": "damage",
           "secondaryStat": "lifesteal",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Forged in endless clan blood feuds",
+          "category": "1h",
+          "stats": {
+            "damageBase": 50,
+            "damagePerTier": 12,
+            "speedBase": 100,
+            "speedPerTier": 25,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 5,
+            "blockPerTier": 1,
+            "defenseBase": 20,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Vengeful Slash (single-target slash, builds 1 Grudge Mark stack, max 3)",
+          "abilities": [
+            "Blood Rush (dash forward 8m, AoE damage)",
+            "Iron Grudge (3s damage reduction + reflect)",
+            "Clan Charge (gap-closer charge + 1s stun)",
+            "Heroic Cleave (cone AoE clear)",
+            "Parry Counter (block + counter dmg)",
+            "Deep Wound (apply bleed stack)"
+          ],
+          "signatureAbility": "Crimson Reprisal (large AoE slash, heals per enemy hit)",
+          "passives": [
+            "Bloodlust (5% lifesteal)",
+            "Swift Vengeance (+15% atk speed)",
+            "Deep Cuts (+20% bleed dmg)"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/bloodfeud_blade.png"
         },
         {
           "id": "wraithfang",
@@ -22,7 +55,41 @@
           "primaryStat": "crit",
           "secondaryStat": "mana",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Whispers forgotten grudges in the dark",
+          "category": "1h",
+          "stats": {
+            "damageBase": 55,
+            "damagePerTier": 13,
+            "speedBase": 80,
+            "speedPerTier": 20,
+            "comboBase": 20,
+            "comboPerTier": 10,
+            "critBase": 5,
+            "critPerTier": 0.8,
+            "blockBase": 3,
+            "blockPerTier": 0.8,
+            "defenseBase": 15,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": [
+            "Blood Rush",
+            "Iron Grudge",
+            "Clan Charge",
+            "Shadow Edge (dash + stun)",
+            "Execute (bonus dmg <30% HP)",
+            "Bleed Chain (spread bleed)",
+            "Fatal Strike (high single burst)"
+          ],
+          "signatureAbility": "Night's Judgment (teleport behind + bleed DoT)",
+          "passives": [
+            "Life Leech (heal on hit)",
+            "Aggressive Rush (+atk speed on mark)",
+            "Grudge Bleed (marks explode)"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/wraithfang.png"
         },
         {
           "id": "oathbreaker",
@@ -30,7 +97,40 @@
           "primaryStat": "defense",
           "secondaryStat": "block",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Breaks ancient oaths of peace",
+          "category": "1h",
+          "stats": {
+            "damageBase": 48,
+            "damagePerTier": 11,
+            "speedBase": 120,
+            "speedPerTier": 30,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 2,
+            "critPerTier": 0.4,
+            "blockBase": 8,
+            "blockPerTier": 1.5,
+            "defenseBase": 25,
+            "defensePerTier": 7
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": [
+            "Lunging Strike (ranged thrust)",
+            "Shadow Dash (mobility dash)",
+            "Fearful Swipe (AoE fear)",
+            "Hamstring (slow + dmg)",
+            "Betrayer's Mark (reduce healing)",
+            "Oathbreak (purge enemy buff)"
+          ],
+          "signatureAbility": "Ancestral Curse (AoE slow + DoT)",
+          "passives": [
+            "Resilience (+defense in crowds)",
+            "Armor Pen (ignore 10% def)",
+            "Block Mastery (+block chance)"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/oathbreaker.png"
         },
         {
           "id": "kinrend",
@@ -38,7 +138,41 @@
           "primaryStat": "hp",
           "secondaryStat": "lifesteal",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Rends bonds of blood and kinship",
+          "category": "1h",
+          "stats": {
+            "damageBase": 52,
+            "damagePerTier": 12,
+            "speedBase": 110,
+            "speedPerTier": 28,
+            "comboBase": 10,
+            "comboPerTier": 8,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 18,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": [
+            "Lunging Strike",
+            "Shadow Dash",
+            "Fearful Swipe",
+            "Kin Strike (single high dmg)",
+            "Ancestral Fury (knockback AoE)",
+            "Family Grudge (stack DoT)",
+            "Root Bind (root on mark)"
+          ],
+          "signatureAbility": "Wrath of Kin (AoE knockback + dmg)",
+          "passives": [
+            "Bloodlust",
+            "Swift Vengeance",
+            "Deep Cuts"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/kinrend.png"
         },
         {
           "id": "dusksinger",
@@ -46,7 +180,40 @@
           "primaryStat": "speed",
           "secondaryStat": "crit",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Sings of twilight and ending grudges",
+          "category": "1h",
+          "stats": {
+            "damageBase": 53,
+            "damagePerTier": 12,
+            "speedBase": 90,
+            "speedPerTier": 22,
+            "comboBase": 30,
+            "comboPerTier": 15,
+            "critBase": 6,
+            "critPerTier": 1,
+            "blockBase": 4,
+            "blockPerTier": 0.9,
+            "defenseBase": 17,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": [
+            "Blood Rush",
+            "Iron Grudge",
+            "Clan Charge",
+            "Dusk Blade (invis dash)",
+            "Twilight Fear (AoE fear)",
+            "Bleed Storm (multi bleed)"
+          ],
+          "signatureAbility": "Duskfall (AoE silence + dmg)",
+          "passives": [
+            "Life Leech",
+            "Aggressive Rush",
+            "Grudge Explosion"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/dusksinger.png"
         },
         {
           "id": "emberclad",
@@ -54,7 +221,41 @@
           "primaryStat": "damage",
           "secondaryStat": "burn",
           "emoji": "🔥",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Clad in flames of burning hatred",
+          "category": "1h",
+          "stats": {
+            "damageBase": 54,
+            "damagePerTier": 13,
+            "speedBase": 95,
+            "speedPerTier": 23,
+            "comboBase": 25,
+            "comboPerTier": 12,
+            "critBase": 4,
+            "critPerTier": 0.7,
+            "blockBase": 6,
+            "blockPerTier": 1.2,
+            "defenseBase": 22,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Vengeful Slash",
+          "abilities": [
+            "Lunging Strike",
+            "Shadow Dash",
+            "Fearful Swipe",
+            "Flame Slash (burn stack)",
+            "Ember Charge (dash + burn)",
+            "Heroic Burn (AoE DoT)",
+            "Ignite Mark (explode marks)"
+          ],
+          "signatureAbility": "Ember Wrath (AoE fire nova)",
+          "passives": [
+            "Burn Mastery (+burn dmg)",
+            "Attack Speed",
+            "Life Leech"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/emberclad.png"
         }
       ],
       "grudgeType": "equipment"
@@ -69,7 +270,40 @@
           "primaryStat": "damage",
           "secondaryStat": "bleed",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Howls with the gore of fallen foes",
+          "category": "1h",
+          "stats": {
+            "damageBase": 60,
+            "damagePerTier": 15,
+            "speedBase": 120,
+            "speedPerTier": 30,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 2,
+            "critPerTier": 0.4,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 25,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Rending Chop (single, applies Bleed stack)",
+          "abilities": [
+            "Adrenaline Surge (+atk speed buff)",
+            "Whirl of Pain (channeled AoE)",
+            "Bloodletting (AoE bleed apply)",
+            "Carnage Spin (360 AoE refresh bleed)",
+            "Headcracker (single stun)",
+            "Veinreaver (AoE lifesteal)"
+          ],
+          "signatureAbility": "Apocalypse Cleave (large knockback AoE)",
+          "passives": [
+            "Life Leech",
+            "Bleed Mastery (+bleed dmg)",
+            "Vicious Wounds (slow on bleed)"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/gorehowl.png"
         },
         {
           "id": "skullsplitter",
@@ -77,7 +311,40 @@
           "primaryStat": "crit",
           "secondaryStat": "armorPen",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Splits skulls of grudge bearers",
+          "category": "1h",
+          "stats": {
+            "damageBase": 62,
+            "damagePerTier": 16,
+            "speedBase": 110,
+            "speedPerTier": 28,
+            "comboBase": 10,
+            "comboPerTier": 5,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 5,
+            "blockPerTier": 1.2,
+            "defenseBase": 23,
+            "defensePerTier": 7
+          },
+          "basicAbility": "Rending Chop",
+          "abilities": [
+            "Adrenaline Surge",
+            "Whirl of Pain",
+            "Bloodletting",
+            "Headcracker (stun + dmg)",
+            "Ground Rend (AoE slow)",
+            "Ironmaw (armor reduce)"
+          ],
+          "signatureAbility": "Blood Harvest (AoE heal on hit)",
+          "passives": [
+            "Bleed Mastery",
+            "Heavy Hitter (+dmg)",
+            "Resilience"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/skullsplitter.png"
         },
         {
           "id": "veinreaver",
@@ -85,7 +352,41 @@
           "primaryStat": "lifesteal",
           "secondaryStat": "hp",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Reaves veins for blood tribute",
+          "category": "1h",
+          "stats": {
+            "damageBase": 58,
+            "damagePerTier": 14,
+            "speedBase": 130,
+            "speedPerTier": 35,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 3,
+            "blockPerTier": 0.8,
+            "defenseBase": 20,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Rending Chop",
+          "abilities": [
+            "Adrenaline Surge",
+            "Whirl of Pain",
+            "Bloodletting",
+            "Blood Harvest (lifesteal AoE)",
+            "Frenzied Chop (burst self-dmg)",
+            "Bonehew (armor break)",
+            "Shatterstrike (AoE shatter)"
+          ],
+          "signatureAbility": "Carnage Spin (refresh bleed)",
+          "passives": [
+            "Life Leech",
+            "Vicious Wounds",
+            "Slow Poison"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/veinreaver.png"
         },
         {
           "id": "ironmaw",
@@ -93,7 +394,40 @@
           "primaryStat": "defense",
           "secondaryStat": "block",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Maw of iron that crushes oaths",
+          "category": "1h",
+          "stats": {
+            "damageBase": 61,
+            "damagePerTier": 15,
+            "speedBase": 115,
+            "speedPerTier": 29,
+            "comboBase": 5,
+            "comboPerTier": 3,
+            "critBase": 2,
+            "critPerTier": 0.4,
+            "blockBase": 6,
+            "blockPerTier": 1.3,
+            "defenseBase": 28,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Rending Chop",
+          "abilities": [
+            "Lunging Chop (range)",
+            "War Cry (+dmg buff)",
+            "Ground Slam (AoE slow)",
+            "Ground Rend (slow AoE)",
+            "Iron Bite (defense ignore)",
+            "Dreadcleaver (frenzy)"
+          ],
+          "signatureAbility": "Reaping Slash (massive AoE)",
+          "passives": [
+            "Bleed Mastery",
+            "Life Leech",
+            "Heavy Hitter"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/ironmaw.png"
         },
         {
           "id": "dreadcleaver",
@@ -101,7 +435,40 @@
           "primaryStat": "damage",
           "secondaryStat": "fear",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Cleaves dread into enemies",
+          "category": "1h",
+          "stats": {
+            "damageBase": 59,
+            "damagePerTier": 14,
+            "speedBase": 125,
+            "speedPerTier": 32,
+            "comboBase": 15,
+            "comboPerTier": 8,
+            "critBase": 5,
+            "critPerTier": 0.7,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 22,
+            "defensePerTier": 7
+          },
+          "basicAbility": "Rending Chop",
+          "abilities": [
+            "Adrenaline Surge",
+            "Whirl of Pain",
+            "Bloodletting",
+            "Frenzied Chop (high dmg)",
+            "Shatterstrike (armor break)",
+            "Bonehew (shatter)"
+          ],
+          "signatureAbility": "Carnage Spin (360 bleed refresh)",
+          "passives": [
+            "Vicious Wounds",
+            "Attack Speed (+on hit)",
+            "Bloodlust"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/dreadcleaver.png"
         },
         {
           "id": "bonehew",
@@ -109,7 +476,41 @@
           "primaryStat": "armorPen",
           "secondaryStat": "crit",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Hews bone from grudge skeletons",
+          "category": "1h",
+          "stats": {
+            "damageBase": 63,
+            "damagePerTier": 16,
+            "speedBase": 105,
+            "speedPerTier": 27,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 7,
+            "blockPerTier": 1.4,
+            "defenseBase": 26,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Rending Chop",
+          "abilities": [
+            "Adrenaline Surge",
+            "Whirl of Pain",
+            "Bloodletting",
+            "Bone Break (armor reduce)",
+            "Veinreaver (lifesteal)",
+            "Skullsplitter (stun)",
+            "Ironmaw (slow)"
+          ],
+          "signatureAbility": "Apocalypse Cleave (knockback)",
+          "passives": [
+            "Heavy Hitter",
+            "Resilience",
+            "Block Mastery"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/bonehew.png"
         }
       ],
       "grudgeType": "equipment"
@@ -124,7 +525,40 @@
           "primaryStat": "bleed",
           "secondaryStat": "speed",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Shiv dripping enemy blood",
+          "category": "1h",
+          "stats": {
+            "damageBase": 47,
+            "damagePerTier": 11,
+            "speedBase": 75,
+            "speedPerTier": 17,
+            "comboBase": 15,
+            "comboPerTier": 8,
+            "critBase": 9,
+            "critPerTier": 1.3,
+            "blockBase": 3,
+            "blockPerTier": 0.6,
+            "defenseBase": 11,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Shadow Stab",
+          "abilities": [
+            "Phantom Dash",
+            "Poison Shiv",
+            "Assassin's Focus",
+            "Crimson Stab (high bleed)",
+            "Lunging Stabs (burst mobility)",
+            "Bloodletter Rage (heal burst)"
+          ],
+          "signatureAbility": "Raging Blades (AoE heal)",
+          "passives": [
+            "Bloodlust",
+            "Attack Speed",
+            "Deep Cuts"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/bloodshiv.png"
         },
         {
           "id": "wraithclaw",
@@ -132,7 +566,40 @@
           "primaryStat": "mana",
           "secondaryStat": "crit",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Claw of wraith vengeance",
+          "category": "1h",
+          "stats": {
+            "damageBase": 44,
+            "damagePerTier": 9,
+            "speedBase": 65,
+            "speedPerTier": 14,
+            "comboBase": 25,
+            "comboPerTier": 12,
+            "critBase": 10,
+            "critPerTier": 1.4,
+            "blockBase": 1,
+            "blockPerTier": 0.4,
+            "defenseBase": 10,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Shadow Stab",
+          "abilities": [
+            "Phantom Dash",
+            "Poison Shiv",
+            "Assassin's Focus",
+            "Shadow Strike (silence AoE)",
+            "Wraith Ambush (invis burst)",
+            "Phantom Claw (multi hit)"
+          ],
+          "signatureAbility": "Vengeful Ambush (back teleport)",
+          "passives": [
+            "Crit Chance",
+            "Venomous",
+            "Slow Poison"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/wraithclaw.png"
         },
         {
           "id": "emberfang",
@@ -140,7 +607,40 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Fang burning with ember hate",
+          "category": "1h",
+          "stats": {
+            "damageBase": 46,
+            "damagePerTier": 10,
+            "speedBase": 80,
+            "speedPerTier": 18,
+            "comboBase": 18,
+            "comboPerTier": 9,
+            "critBase": 7,
+            "critPerTier": 1.1,
+            "blockBase": 4,
+            "blockPerTier": 0.8,
+            "defenseBase": 13,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Shadow Stab",
+          "abilities": [
+            "Chain Slash (burst)",
+            "Assassin Spirit (speed)",
+            "Poison Shiv",
+            "Flame Dagger (burn DoT)",
+            "Ember Ambush (dash burn)",
+            "Ignite Shiv (explode)"
+          ],
+          "signatureAbility": "Bloodletter (mobility heal)",
+          "passives": [
+            "Burn Mastery",
+            "Life Leech",
+            "Crit"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/emberfang.png"
         },
         {
           "id": "ironspike",
@@ -148,7 +648,40 @@
           "primaryStat": "armorPen",
           "secondaryStat": "defense",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spike of unyielding iron",
+          "category": "1h",
+          "stats": {
+            "damageBase": 43,
+            "damagePerTier": 9,
+            "speedBase": 85,
+            "speedPerTier": 20,
+            "comboBase": 10,
+            "comboPerTier": 5,
+            "critBase": 6,
+            "critPerTier": 0.9,
+            "blockBase": 5,
+            "blockPerTier": 1,
+            "defenseBase": 14,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Shadow Stab",
+          "abilities": [
+            "Phantom Dash",
+            "Poison Shiv",
+            "Assassin's Focus",
+            "Pinning Stab (root burst)",
+            "Iron Shiv (armor pen)",
+            "Spike Chain (multi root)"
+          ],
+          "signatureAbility": "Fatal Blade (execute)",
+          "passives": [
+            "Resilience",
+            "Block Chance",
+            "Deep Wound"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/ironspike.png"
         },
         {
           "id": "nightfang",
@@ -156,7 +689,41 @@
           "primaryStat": "crit",
           "secondaryStat": "poison",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Fang of endless night grudges",
+          "category": "1h",
+          "stats": {
+            "damageBase": 45,
+            "damagePerTier": 10,
+            "speedBase": 70,
+            "speedPerTier": 15,
+            "comboBase": 20,
+            "comboPerTier": 10,
+            "critBase": 8,
+            "critPerTier": 1.2,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 12,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Shadow Stab (single, builds Mark)",
+          "abilities": [
+            "Phantom Dash (dash dmg)",
+            "Poison Shiv (DoT apply)",
+            "Assassin's Focus (+atk speed)",
+            "Vengeful Ambush (teleport behind burst)",
+            "Crimson Stab (bleed burst)",
+            "Shadow Strike (AoE silence)",
+            "Flame Dagger (DoT AoE)"
+          ],
+          "signatureAbility": "Deathgivers Fatal (execute)",
+          "passives": [
+            "Life Leech",
+            "Crit Chance",
+            "Venomous Wounds (slow)"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/nightfang.png"
         },
         {
           "id": "duskblade",
@@ -164,7 +731,41 @@
           "primaryStat": "speed",
           "secondaryStat": "crit",
           "emoji": "🗡️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Blade of falling dusk",
+          "category": "1h",
+          "stats": {
+            "damageBase": 48,
+            "damagePerTier": 11,
+            "speedBase": 60,
+            "speedPerTier": 13,
+            "comboBase": 30,
+            "comboPerTier": 15,
+            "critBase": 11,
+            "critPerTier": 1.5,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 9,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Shadow Stab",
+          "abilities": [
+            "Phantom Dash",
+            "Poison Shiv",
+            "Assassin's Focus",
+            "Frenzied Cuts (multi burst)",
+            "Dusk Ambush (silence dash)",
+            "Shadow Flurry (rapid)",
+            "Phantom Fatal (low HP)"
+          ],
+          "signatureAbility": "Death Blossom (360 spin)",
+          "passives": [
+            "Crit Chance",
+            "Attack Speed",
+            "Venomous"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/daggers/duskblade.png"
         }
       ],
       "grudgeType": "equipment"
@@ -180,7 +781,41 @@
           "primaryStat": "damage",
           "secondaryStat": "fear",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spire of impending doom",
+          "category": "2h",
+          "stats": {
+            "damageBase": 70,
+            "damagePerTier": 17,
+            "speedBase": 130,
+            "speedPerTier": 32,
+            "comboBase": 10,
+            "comboPerTier": 5,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 7,
+            "blockPerTier": 1.5,
+            "defenseBase": 28,
+            "defensePerTier": 9
+          },
+          "basicAbility": "Wrathful Slash (single, builds Mark)",
+          "abilities": [
+            "Blade Storm (AoE)",
+            "Iron Will (reduction)",
+            "Charge of Vengeance (gap stun)",
+            "Grudge of Ages (consume marks burst)",
+            "Crimson Slash (bleed AoE)",
+            "Shadowrend (fear AoE)",
+            "Flame Strike (DoT AoE)"
+          ],
+          "signatureAbility": "Stunning Slash (stun AoE)",
+          "passives": [
+            "Bloodlust",
+            "Swift Blade",
+            "Grudge Bleed"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/doomspire.png"
         },
         {
           "id": "bloodspire",
@@ -188,7 +823,40 @@
           "primaryStat": "lifesteal",
           "secondaryStat": "bleed",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spire dripping blood",
+          "category": "2h",
+          "stats": {
+            "damageBase": 72,
+            "damagePerTier": 18,
+            "speedBase": 140,
+            "speedPerTier": 35,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 6,
+            "blockPerTier": 1.4,
+            "defenseBase": 30,
+            "defensePerTier": 10
+          },
+          "basicAbility": "Wrathful Slash",
+          "abilities": [
+            "Blade Storm",
+            "Iron Will",
+            "Charge of Vengeance",
+            "Crimson Slash (AoE bleed)",
+            "Blood Storm (multi bleed)",
+            "Execute Slash (low HP)"
+          ],
+          "signatureAbility": "Doom Cleave (massive single)",
+          "passives": [
+            "Life Leech",
+            "Deep Cuts",
+            "Resilience"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/bloodspire.png"
         },
         {
           "id": "wraithblade",
@@ -196,7 +864,41 @@
           "primaryStat": "mana",
           "secondaryStat": "crit",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Blade of wraith essence",
+          "category": "2h",
+          "stats": {
+            "damageBase": 68,
+            "damagePerTier": 16,
+            "speedBase": 120,
+            "speedPerTier": 30,
+            "comboBase": 20,
+            "comboPerTier": 10,
+            "critBase": 5,
+            "critPerTier": 0.7,
+            "blockBase": 5,
+            "blockPerTier": 1.2,
+            "defenseBase": 26,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Wrathful Slash",
+          "abilities": [
+            "Blade Storm",
+            "Iron Will",
+            "Charge of Vengeance",
+            "Shadowrend (AoE fear)",
+            "Wraith Storm (silence)",
+            "Phantom Slash (pierce)",
+            "Multi-Slash (combo)"
+          ],
+          "signatureAbility": "Grudge Vortex (pull burst)",
+          "passives": [
+            "Aggressive Rush",
+            "Grudge Bleed",
+            "Cooldown Reduce"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/wraithblade.png"
         },
         {
           "id": "emberbrand",
@@ -204,7 +906,40 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "⚔️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Brand of burning embers",
+          "category": "2h",
+          "stats": {
+            "damageBase": 71,
+            "damagePerTier": 17,
+            "speedBase": 125,
+            "speedPerTier": 31,
+            "comboBase": 15,
+            "comboPerTier": 8,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 8,
+            "blockPerTier": 1.6,
+            "defenseBase": 32,
+            "defensePerTier": 10
+          },
+          "basicAbility": "Wrathful Slash",
+          "abilities": [
+            "Blade Storm",
+            "Iron Will",
+            "Charge of Vengeance",
+            "Flame Strike (AoE DoT)",
+            "Ember Storm (burn channel)",
+            "Ignite Blade (explode)"
+          ],
+          "signatureAbility": "Hellbrand (fire nova)",
+          "passives": [
+            "Burn Mastery",
+            "Attack Speed",
+            "Bloodlust"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/swords/emberbrand.png"
         },
         {
           "id": "ironedge",
@@ -236,7 +971,41 @@
           "primaryStat": "damage",
           "secondaryStat": "stun",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Sunders skulls in massive swings",
+          "category": "2h",
+          "stats": {
+            "damageBase": 75,
+            "damagePerTier": 18,
+            "speedBase": 140,
+            "speedPerTier": 35,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 2,
+            "critPerTier": 0.3,
+            "blockBase": 6,
+            "blockPerTier": 1.5,
+            "defenseBase": 30,
+            "defensePerTier": 10
+          },
+          "basicAbility": "Brutal Hew (AoE, applies Bleed)",
+          "abilities": [
+            "War Cry (+dmg buff)",
+            "Spinning Reave (channeled AoE)",
+            "Ground Slam (slow AoE)",
+            "Apocalypse Cleave (large knockback)",
+            "Crimson Harvest (lifesteal AoE)",
+            "Shadow Smash (silence AoE)",
+            "Flame Cleave (DoT AoE)"
+          ],
+          "signatureAbility": "Reaping Slash (massive AoE)",
+          "passives": [
+            "Life Leech",
+            "Bleed Mastery",
+            "Heavy Hitter"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/skullsunder.png"
         },
         {
           "id": "bloodreaver",
@@ -244,7 +1013,40 @@
           "primaryStat": "lifesteal",
           "secondaryStat": "bleed",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Reaves blood in wide arcs",
+          "category": "2h",
+          "stats": {
+            "damageBase": 77,
+            "damagePerTier": 19,
+            "speedBase": 150,
+            "speedPerTier": 38,
+            "comboBase": 10,
+            "comboPerTier": 5,
+            "critBase": 3,
+            "critPerTier": 0.4,
+            "blockBase": 5,
+            "blockPerTier": 1.3,
+            "defenseBase": 28,
+            "defensePerTier": 9
+          },
+          "basicAbility": "Brutal Hew",
+          "abilities": [
+            "War Cry",
+            "Spinning Reave",
+            "Ground Slam",
+            "Crimson Harvest (AoE heal)",
+            "Frenzied Reave (multi hit)",
+            "Blood Cleave (bleed amp)"
+          ],
+          "signatureAbility": "Carnage Cleave (refresh bleed)",
+          "passives": [
+            "Bloodlust",
+            "Vicious Wounds",
+            "Resilience"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/bloodreaver_greataxe.png"
         },
         {
           "id": "wraithhew",
@@ -252,7 +1054,41 @@
           "primaryStat": "mana",
           "secondaryStat": "fear",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Hews wraiths from shadows",
+          "category": "2h",
+          "stats": {
+            "damageBase": 73,
+            "damagePerTier": 17,
+            "speedBase": 130,
+            "speedPerTier": 32,
+            "comboBase": 20,
+            "comboPerTier": 10,
+            "critBase": 4,
+            "critPerTier": 0.5,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 26,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Brutal Hew",
+          "abilities": [
+            "War Cry",
+            "Spinning Reave",
+            "Ground Slam",
+            "Shadow Smash (AoE silence)",
+            "Wraith Reave (pierce)",
+            "Phantom Hew (multi)",
+            "Earthshatter (stun AoE)"
+          ],
+          "signatureAbility": "Apocalypse Cleave (knockback)",
+          "passives": [
+            "Heavy Hitter",
+            "Attack Speed",
+            "Slow Poison"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/wraithhew.png"
         },
         {
           "id": "embermaul",
@@ -260,7 +1096,40 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Maul of burning embers",
+          "category": "2h",
+          "stats": {
+            "damageBase": 76,
+            "damagePerTier": 18,
+            "speedBase": 135,
+            "speedPerTier": 34,
+            "comboBase": 15,
+            "comboPerTier": 8,
+            "critBase": 3,
+            "critPerTier": 0.4,
+            "blockBase": 7,
+            "blockPerTier": 1.6,
+            "defenseBase": 32,
+            "defensePerTier": 10
+          },
+          "basicAbility": "Brutal Hew",
+          "abilities": [
+            "Adrenaline Surge (speed)",
+            "Whirl of Pain",
+            "Ground Slam",
+            "Flame Cleave (burn AoE)",
+            "Ember Reave (DoT channel)",
+            "Ignite Hew (explode)"
+          ],
+          "signatureAbility": "Hellcleave (fire nova)",
+          "passives": [
+            "Burn Mastery",
+            "Life Leech",
+            "Bleed Amp"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/embermaul.png"
         },
         {
           "id": "ironrend",
@@ -268,7 +1137,40 @@
           "primaryStat": "armorPen",
           "secondaryStat": "damage",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Rends iron armor",
+          "category": "2h",
+          "stats": {
+            "damageBase": 78,
+            "damagePerTier": 19,
+            "speedBase": 145,
+            "speedPerTier": 36,
+            "comboBase": 5,
+            "comboPerTier": 3,
+            "critBase": 1,
+            "critPerTier": 0.2,
+            "blockBase": 8,
+            "blockPerTier": 1.8,
+            "defenseBase": 35,
+            "defensePerTier": 11
+          },
+          "basicAbility": "Brutal Hew",
+          "abilities": [
+            "War Cry",
+            "Spinning Reave",
+            "Ground Slam",
+            "Earthshatter (AoE stun)",
+            "Iron Cleave (armor break)",
+            "Rend Storm (multi reduce)"
+          ],
+          "signatureAbility": "Reaping Slash (massive)",
+          "passives": [
+            "Resilience",
+            "Block Mastery",
+            "Heavy Hitter"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/ironrend.png"
         },
         {
           "id": "dusksplitter",
@@ -276,7 +1178,41 @@
           "primaryStat": "speed",
           "secondaryStat": "crit",
           "emoji": "🪓",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Splits at dusk with shadow",
+          "category": "2h",
+          "stats": {
+            "damageBase": 74,
+            "damagePerTier": 17,
+            "speedBase": 125,
+            "speedPerTier": 30,
+            "comboBase": 25,
+            "comboPerTier": 12,
+            "critBase": 5,
+            "critPerTier": 0.6,
+            "blockBase": 5,
+            "blockPerTier": 1.2,
+            "defenseBase": 27,
+            "defensePerTier": 9
+          },
+          "basicAbility": "Brutal Hew",
+          "abilities": [
+            "War Cry",
+            "Spinning Reave",
+            "Ground Slam",
+            "Frenzied Reave (burst)",
+            "Dusk Silence (AoE mute)",
+            "Shadow Cleave (pierce)",
+            "Phantom Split (multi)"
+          ],
+          "signatureAbility": "Rampage Cleave (frenzy)",
+          "passives": [
+            "Attack Speed",
+            "Crit Chance",
+            "Slow"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/axes/dusksplitter.png"
         }
       ],
       "grudgeType": "equipment"
@@ -307,7 +1243,40 @@
           "primaryStat": "lifesteal",
           "secondaryStat": "damage",
           "emoji": "🔨",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Maul with blood",
+          "category": "1h",
+          "stats": {
+            "damageBase": 62,
+            "damagePerTier": 15,
+            "speedBase": 130,
+            "speedPerTier": 30,
+            "comboBase": 5,
+            "comboPerTier": 3,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 7,
+            "blockPerTier": 1.4,
+            "defenseBase": 23,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Skullbash",
+          "abilities": [
+            "Stunning Blow",
+            "Shockwave",
+            "Fortify",
+            "Crimson Bash (bleed dmg)",
+            "Blood Slam (lifesteal)",
+            "Maul Execute (burst)"
+          ],
+          "signatureAbility": "Vengeful Slam (slow)",
+          "passives": [
+            "Bloodlust",
+            "Bleed Mastery",
+            "Heavy Hitter"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/hammers/bloodmaul.png"
         },
         {
           "id": "ironbreak",
@@ -347,7 +1316,41 @@
           "primaryStat": "stun",
           "secondaryStat": "damage",
           "emoji": "🔨",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Maul of titanic grudges",
+          "category": "2h",
+          "stats": {
+            "damageBase": 80,
+            "damagePerTier": 20,
+            "speedBase": 150,
+            "speedPerTier": 40,
+            "comboBase": 0,
+            "comboPerTier": 0,
+            "critBase": 1,
+            "critPerTier": 0.2,
+            "blockBase": 10,
+            "blockPerTier": 2,
+            "defenseBase": 40,
+            "defensePerTier": 12
+          },
+          "basicAbility": "Earthshatter (AoE, applies Slow)",
+          "abilities": [
+            "Thunderous Charge (charge stun)",
+            "Quake Strike (knockup AoE)",
+            "Iron Skin (reduction)",
+            "Cataclysm Blow (AoE stun)",
+            "Crimson Smash (bleed AoE)",
+            "Shadow Quake (silence AoE)",
+            "Flame Hammer (DoT AoE)"
+          ],
+          "signatureAbility": "Seismic Slam (large stun)",
+          "passives": [
+            "Heavy Hitter",
+            "Stun Mastery",
+            "Resilience Boost"
+          ],
+          "craftedBy": "Miner",
+          "spritePath": "/icons/weapons/hammers/titanmaul.png"
         },
         {
           "id": "doomhammer",
@@ -457,7 +1460,41 @@
           "primaryStat": "mana",
           "secondaryStat": "crit",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Carved from bones of wraiths",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 55,
+            "damagePerTier": 11,
+            "speedBase": 80,
+            "speedPerTier": 18,
+            "comboBase": 30,
+            "comboPerTier": 12,
+            "critBase": 6,
+            "critPerTier": 1,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 15,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Grudge Arrow (single, builds Mark)",
+          "abilities": [
+            "Volley (cone AoE)",
+            "Swift Shot (mobility dmg)",
+            "Piercing Barrage (channeled)",
+            "Soulstorm Arrows (AoE rain)",
+            "Crimson Shot (bleed single)",
+            "Night Barrage (silence AoE)",
+            "Flame Volley (DoT AoE)"
+          ],
+          "signatureAbility": "Phantom Arrows (multi pierce)",
+          "passives": [
+            "Precision (+crit)",
+            "Speed Draw (+atk speed)",
+            "Slow Venom (slow on mark)"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/wraithbone_bow.png"
         },
         {
           "id": "bloodstring",
@@ -465,7 +1502,41 @@
           "primaryStat": "bleed",
           "secondaryStat": "damage",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Strung with strings of blood",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 57,
+            "damagePerTier": 12,
+            "speedBase": 85,
+            "speedPerTier": 20,
+            "comboBase": 25,
+            "comboPerTier": 10,
+            "critBase": 7,
+            "critPerTier": 1.1,
+            "blockBase": 3,
+            "blockPerTier": 0.6,
+            "defenseBase": 14,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Grudge Arrow",
+          "abilities": [
+            "Volley",
+            "Swift Shot",
+            "Piercing Barrage",
+            "Crimson Shot (high bleed)",
+            "Enchanted Quiver (+speed dmg)",
+            "Rooting Shot (root)",
+            "Demon Arrow (knockback AoE)"
+          ],
+          "signatureAbility": "Rain of Arrows (large AoE)",
+          "passives": [
+            "Attack Speed",
+            "Piercing Arrows",
+            "Slow Poison"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/bloodstring_bow.png"
         },
         {
           "id": "shadowflight",
@@ -473,7 +1544,40 @@
           "primaryStat": "crit",
           "secondaryStat": "speed",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Flies shadows as arrows",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 54,
+            "damagePerTier": 11,
+            "speedBase": 75,
+            "speedPerTier": 17,
+            "comboBase": 35,
+            "comboPerTier": 15,
+            "critBase": 8,
+            "critPerTier": 1.2,
+            "blockBase": 1,
+            "blockPerTier": 0.4,
+            "defenseBase": 13,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Grudge Arrow",
+          "abilities": [
+            "Volley",
+            "Swift Shot",
+            "Piercing Barrage",
+            "Night Barrage (AoE silence)",
+            "Phantom Arrows (pierce)",
+            "Enchanted Quiver (buff)"
+          ],
+          "signatureAbility": "Soulstorm Arrows (rain DoT)",
+          "passives": [
+            "Precision",
+            "Crit Chance",
+            "Speed Draw"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/shadowflight_bow.png"
         },
         {
           "id": "emberthorn",
@@ -481,7 +1585,40 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Thorns of ember fire",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 56,
+            "damagePerTier": 12,
+            "speedBase": 90,
+            "speedPerTier": 22,
+            "comboBase": 20,
+            "comboPerTier": 8,
+            "critBase": 5,
+            "critPerTier": 0.9,
+            "blockBase": 4,
+            "blockPerTier": 0.8,
+            "defenseBase": 16,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Grudge Arrow",
+          "abilities": [
+            "Explosive Arrows (DoT AoE)",
+            "Speed Shot (mobility)",
+            "Ray of Light (channeled knockback)",
+            "Flame Volley (burn AoE)",
+            "Fire Arrow (ignite)",
+            "Ember Shot (explode mark)"
+          ],
+          "signatureAbility": "Hellfire Barrage (channeled AoE)",
+          "passives": [
+            "Burn Mastery (+DoT)",
+            "Attack Speed",
+            "Piercing"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/emberthorn_bow.png"
         },
         {
           "id": "ironvine",
@@ -489,7 +1626,41 @@
           "primaryStat": "root",
           "secondaryStat": "defense",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Vines of iron entangle",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 53,
+            "damagePerTier": 10,
+            "speedBase": 95,
+            "speedPerTier": 24,
+            "comboBase": 10,
+            "comboPerTier": 5,
+            "critBase": 4,
+            "critPerTier": 0.7,
+            "blockBase": 5,
+            "blockPerTier": 1,
+            "defenseBase": 18,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Grudge Arrow",
+          "abilities": [
+            "Volley",
+            "Swift Shot",
+            "Piercing Barrage",
+            "Rooting Shot (single root)",
+            "Iron Barrage (armor reduce)",
+            "Vine Trap (AoE root)",
+            "Long Shot (range bonus)"
+          ],
+          "signatureAbility": "Rain of Arrows (AoE)",
+          "passives": [
+            "Slow Venom",
+            "Precision",
+            "Heavy Draw (+dmg)"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/ironvine_bow.png"
         },
         {
           "id": "duskreaver",
@@ -497,7 +1668,40 @@
           "primaryStat": "speed",
           "secondaryStat": "crit",
           "emoji": "🏹",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Reaves at dusk fall",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 58,
+            "damagePerTier": 13,
+            "speedBase": 70,
+            "speedPerTier": 16,
+            "comboBase": 40,
+            "comboPerTier": 18,
+            "critBase": 9,
+            "critPerTier": 1.3,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 12,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Grudge Arrow",
+          "abilities": [
+            "Volley",
+            "Swift Shot",
+            "Piercing Barrage",
+            "Phantom Arrows (multi hit)",
+            "Dusk Silence (AoE silence)",
+            "Shadow Volley (stealth shot)"
+          ],
+          "signatureAbility": "Storm of Arrows (ultimate rain)",
+          "passives": [
+            "Speed Draw",
+            "Crit Amp",
+            "Slow Poison"
+          ],
+          "craftedBy": "Forester",
+          "spritePath": "/icons/weapons/bows/duskreaver_bow.png"
         }
       ],
       "grudgeType": "equipment"
@@ -512,7 +1716,41 @@
           "primaryStat": "speed",
           "secondaryStat": "armorPen",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Rapid fire from iron veils",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 65,
+            "damagePerTier": 14,
+            "speedBase": 70,
+            "speedPerTier": 15,
+            "comboBase": 20,
+            "comboPerTier": 8,
+            "critBase": 5,
+            "critPerTier": 0.8,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 20,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Heavy Bolt (single, builds Mark)",
+          "abilities": [
+            "Knockback Bolt (push dmg)",
+            "Trap Bolt (root trap)",
+            "Sniper Shot (long burst)",
+            "Barrage of Vengeance (channeled 5 bolts)",
+            "Headshot (silence single)",
+            "Crimson Bolt (bleed AoE)",
+            "Shadow Trap (slow AoE)"
+          ],
+          "signatureAbility": "Sweeping Bolt (piercing AoE)",
+          "passives": [
+            "Penetration (+armor ignore)",
+            "Power Shot (+dmg)",
+            "Slow Bolt (slow)"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/ironveil_repeater.png"
         },
         {
           "id": "skullpiercer",
@@ -520,7 +1758,40 @@
           "primaryStat": "crit",
           "secondaryStat": "damage",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Pierces skulls with precision",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 68,
+            "damagePerTier": 15,
+            "speedBase": 65,
+            "speedPerTier": 14,
+            "comboBase": 15,
+            "comboPerTier": 6,
+            "critBase": 7,
+            "critPerTier": 1,
+            "blockBase": 3,
+            "blockPerTier": 0.7,
+            "defenseBase": 18,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Heavy Bolt",
+          "abilities": [
+            "Knockback Bolt",
+            "Trap Bolt",
+            "Sniper Shot",
+            "Headshot (high dmg silence)",
+            "Shrapnel Burst (armor break AoE)",
+            "Crippling Shot (slow burst)"
+          ],
+          "signatureAbility": "Noise Eraser (silence burst)",
+          "passives": [
+            "Aggression (+dmg buff)",
+            "Piercing Bolts",
+            "Slow"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/skullpiercer.png"
         },
         {
           "id": "bloodreaver-xbow",
@@ -528,7 +1799,40 @@
           "primaryStat": "bleed",
           "secondaryStat": "lifesteal",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Reaves blood with bolts",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 63,
+            "damagePerTier": 13,
+            "speedBase": 80,
+            "speedPerTier": 20,
+            "comboBase": 10,
+            "comboPerTier": 4,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 5,
+            "blockPerTier": 1.2,
+            "defenseBase": 22,
+            "defensePerTier": 7
+          },
+          "basicAbility": "Heavy Bolt",
+          "abilities": [
+            "Explosive Round (AoE)",
+            "Caltrops (slow field)",
+            "Rapid Fire (channeled)",
+            "Crimson Bolt (bleed AoE)",
+            "Blood Barrage (lifesteal)",
+            "Weeping Repeater (rapid burst)"
+          ],
+          "signatureAbility": "Crippling Shot (high slow)",
+          "passives": [
+            "Life Leech (+heal)",
+            "Power Shot",
+            "Aggression"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/bloodreaver_crossbow.png"
         },
         {
           "id": "wraithspike",
@@ -536,7 +1840,40 @@
           "primaryStat": "mana",
           "secondaryStat": "silence",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spikes from wraith essence",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 66,
+            "damagePerTier": 14,
+            "speedBase": 60,
+            "speedPerTier": 13,
+            "comboBase": 35,
+            "comboPerTier": 15,
+            "critBase": 6,
+            "critPerTier": 0.9,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 16,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Heavy Bolt",
+          "abilities": [
+            "Knockback Bolt",
+            "Trap Bolt",
+            "Sniper Shot",
+            "Shadow Trap (AoE slow)",
+            "Wraith Bolt (silence)",
+            "Phantom Spike (pierce)"
+          ],
+          "signatureAbility": "Sweeping Bolt (line pierce)",
+          "passives": [
+            "Penetration",
+            "Slow Bolt",
+            "Cooldown Reduce"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/wraithspike.png"
         },
         {
           "id": "emberbolt",
@@ -544,7 +1881,41 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Bolts of burning ember",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 64,
+            "damagePerTier": 14,
+            "speedBase": 75,
+            "speedPerTier": 18,
+            "comboBase": 25,
+            "comboPerTier": 10,
+            "critBase": 5,
+            "critPerTier": 0.8,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 19,
+            "defensePerTier": 6
+          },
+          "basicAbility": "Heavy Bolt",
+          "abilities": [
+            "Explosive Round",
+            "Caltrops",
+            "Rapid Fire",
+            "Firestorm Bolt (DoT AoE)",
+            "Ember Trap (burn field)",
+            "Flame Barrage (channeled burn)",
+            "Ignite Bolt (explode)"
+          ],
+          "signatureAbility": "Hellfire Barrage (AoE)",
+          "passives": [
+            "Burn Mastery",
+            "Attack Speed",
+            "Piercing"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/emberbolt.png"
         },
         {
           "id": "ironshard",
@@ -552,7 +1923,40 @@
           "primaryStat": "armorPen",
           "secondaryStat": "defense",
           "emoji": "🎯",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Shards of unbreakable iron",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 67,
+            "damagePerTier": 15,
+            "speedBase": 85,
+            "speedPerTier": 22,
+            "comboBase": 5,
+            "comboPerTier": 2,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 6,
+            "blockPerTier": 1.4,
+            "defenseBase": 24,
+            "defensePerTier": 8
+          },
+          "basicAbility": "Heavy Bolt",
+          "abilities": [
+            "Knockback Bolt",
+            "Trap Bolt",
+            "Sniper Shot",
+            "Shrapnel Burst (armor break)",
+            "Iron Trap (root + dmg)",
+            "Shard Storm (multi hit)"
+          ],
+          "signatureAbility": "Barrage of Vengeance (rapid)",
+          "passives": [
+            "Block Mastery",
+            "Defense Boost",
+            "Penetration"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/crossbows/ironshard_crossbow.png"
         }
       ],
       "grudgeType": "equipment"
@@ -568,7 +1972,41 @@
           "primaryStat": "damage",
           "secondaryStat": "knockback",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Blasts with ancient blackpowder grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 70,
+            "damagePerTier": 16,
+            "speedBase": 60,
+            "speedPerTier": 12,
+            "comboBase": 40,
+            "comboPerTier": 18,
+            "critBase": 7,
+            "critPerTier": 1.1,
+            "blockBase": 2,
+            "blockPerTier": 0.4,
+            "defenseBase": 14,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Grudge Shot (single, builds Powder Mark)",
+          "abilities": [
+            "Explosive Round (AoE burst)",
+            "Quick Reload (+atk speed)",
+            "Smoke Shot (AoE blind)",
+            "Hellfire Barrage (channeled AoE)",
+            "Sniper Round (long burst)",
+            "Crimson Blast (lifesteal AoE)",
+            "Shadow Shot (silence AoE)"
+          ],
+          "signatureAbility": "Demon Blast (knockback)",
+          "passives": [
+            "Crit Shot (+crit)",
+            "Powder Burn (DoT)",
+            "Reload Speed"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/blackpowder_blaster.png"
         },
         {
           "id": "ironstorm",
@@ -576,7 +2014,40 @@
           "primaryStat": "speed",
           "secondaryStat": "armorPen",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Storms of iron bullets",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 72,
+            "damagePerTier": 17,
+            "speedBase": 55,
+            "speedPerTier": 11,
+            "comboBase": 35,
+            "comboPerTier": 15,
+            "critBase": 8,
+            "critPerTier": 1.2,
+            "blockBase": 3,
+            "blockPerTier": 0.6,
+            "defenseBase": 13,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Grudge Shot",
+          "abilities": [
+            "Explosive Round",
+            "Quick Reload",
+            "Smoke Shot",
+            "Sniper Round (high range)",
+            "Storm Barrage (multi hit)",
+            "Iron Volley (armor pen)"
+          ],
+          "signatureAbility": "Blackpowder Fury (channeled)",
+          "passives": [
+            "Penetration",
+            "Crit Chance",
+            "Power Shot"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/ironstorm_gun.png"
         },
         {
           "id": "bloodcannon",
@@ -584,7 +2055,40 @@
           "primaryStat": "lifesteal",
           "secondaryStat": "damage",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Cannon of blood tribute",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 68,
+            "damagePerTier": 15,
+            "speedBase": 70,
+            "speedPerTier": 16,
+            "comboBase": 30,
+            "comboPerTier": 12,
+            "critBase": 6,
+            "critPerTier": 0.9,
+            "blockBase": 4,
+            "blockPerTier": 0.8,
+            "defenseBase": 16,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Grudge Shot",
+          "abilities": [
+            "Explosive Round",
+            "Quick Reload",
+            "Smoke Shot",
+            "Crimson Blast (AoE lifesteal)",
+            "Blood Barrage (heal on hit)",
+            "Cannon Execute (low HP burst)"
+          ],
+          "signatureAbility": "Hellfire Barrage (DoT AoE)",
+          "passives": [
+            "Life Leech",
+            "Powder Burn",
+            "Reload Speed"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/bloodcannon.png"
         },
         {
           "id": "wraithbarrel",
@@ -592,7 +2096,40 @@
           "primaryStat": "mana",
           "secondaryStat": "silence",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Barrel whispers wraith grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 71,
+            "damagePerTier": 16,
+            "speedBase": 50,
+            "speedPerTier": 10,
+            "comboBase": 45,
+            "comboPerTier": 20,
+            "critBase": 9,
+            "critPerTier": 1.3,
+            "blockBase": 1,
+            "blockPerTier": 0.3,
+            "defenseBase": 12,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Grudge Shot",
+          "abilities": [
+            "Explosive Round",
+            "Quick Reload",
+            "Smoke Shot",
+            "Shadow Shot (AoE silence)",
+            "Wraith Bullet (pierce silence)",
+            "Phantom Reload (invis buff)"
+          ],
+          "signatureAbility": "Storm Blast (ultimate AoE)",
+          "passives": [
+            "Crit Shot",
+            "Slow Poison",
+            "Cooldown Reduce"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/wraithbarrel.png"
         },
         {
           "id": "emberrifle",
@@ -600,7 +2137,40 @@
           "primaryStat": "burn",
           "secondaryStat": "damage",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Rifle of ember flames",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 69,
+            "damagePerTier": 15,
+            "speedBase": 65,
+            "speedPerTier": 14,
+            "comboBase": 38,
+            "comboPerTier": 17,
+            "critBase": 5,
+            "critPerTier": 0.8,
+            "blockBase": 3,
+            "blockPerTier": 0.7,
+            "defenseBase": 15,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Grudge Shot",
+          "abilities": [
+            "Flame Burst (DoT AoE)",
+            "Quick Reload",
+            "Smoke Shot",
+            "Flame Burst (burn AoE)",
+            "Ember Snipe (ignite burst)",
+            "Firestorm Round (channeled)"
+          ],
+          "signatureAbility": "Hellfire Barrage (large DoT)",
+          "passives": [
+            "Burn Mastery",
+            "Attack Speed",
+            "Powder Burn"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/emberrifle.png"
         },
         {
           "id": "duskblaster",
@@ -608,7 +2178,41 @@
           "primaryStat": "crit",
           "secondaryStat": "speed",
           "emoji": "🔫",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Blasts at dusk with shadow",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 73,
+            "damagePerTier": 17,
+            "speedBase": 45,
+            "speedPerTier": 9,
+            "comboBase": 50,
+            "comboPerTier": 22,
+            "critBase": 10,
+            "critPerTier": 1.4,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 11,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Grudge Shot",
+          "abilities": [
+            "Explosive Round",
+            "Quick Reload",
+            "Smoke Shot",
+            "Shrapnel Spray (armor break)",
+            "Dusk Silence (AoE mute)",
+            "Shadow Barrage (multi)",
+            "Phantom Blast (pierce)"
+          ],
+          "signatureAbility": "Thunder Blast (ultimate storm)",
+          "passives": [
+            "Crit Amp",
+            "Reload Speed",
+            "Slow"
+          ],
+          "craftedBy": "Engineer",
+          "spritePath": "/icons/weapons/guns/duskblaster.png"
         }
       ],
       "grudgeType": "equipment"
@@ -625,7 +2229,39 @@
           "primaryStat": "burn",
           "secondaryStat": "mana",
           "emoji": "🔥",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Wrath of endless burning grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 65,
+            "damagePerTier": 15,
+            "speedBase": 60,
+            "speedPerTier": 12,
+            "comboBase": 100,
+            "comboPerTier": 40,
+            "critBase": 6,
+            "critPerTier": 1,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 10,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Fire Bolt (single-target, builds Burn stack max 3)",
+          "abilities": [
+            "Flame Wave (cone AoE DoT)",
+            "Fireball (AoE burst)",
+            "Inferno Shield (reflect dmg)",
+            "Hellstorm (large AoE DoT)",
+            "Crimson Pyre (lifesteal burn AoE)"
+          ],
+          "signatureAbility": "Flame Nova (explode all burns)",
+          "passives": [
+            "Burn Mastery (+DoT dmg)",
+            "Mana Regen",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/emberwrath_staff.png"
         },
         {
           "id": "sunfire",
@@ -657,7 +2293,39 @@
           "primaryStat": "burn",
           "secondaryStat": "hp",
           "emoji": "🔥",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Wrath of endless burning grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 65,
+            "damagePerTier": 15,
+            "speedBase": 60,
+            "speedPerTier": 12,
+            "comboBase": 100,
+            "comboPerTier": 40,
+            "critBase": 6,
+            "critPerTier": 1,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 10,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Fire Bolt (single-target, builds Burn stack max 3)",
+          "abilities": [
+            "Flame Wave (cone AoE DoT)",
+            "Fireball (AoE burst)",
+            "Inferno Shield (reflect dmg)",
+            "Hellstorm (large AoE DoT)",
+            "Crimson Pyre (lifesteal burn AoE)"
+          ],
+          "signatureAbility": "Flame Nova (explode all burns)",
+          "passives": [
+            "Burn Mastery (+DoT dmg)",
+            "Mana Regen",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/emberwrath_staff.png"
         },
         {
           "id": "blazing-wrath",
@@ -683,7 +2351,39 @@
           "primaryStat": "slow",
           "secondaryStat": "mana",
           "emoji": "❄️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spire of glacial eternal grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 60,
+            "damagePerTier": 14,
+            "speedBase": 70,
+            "speedPerTier": 15,
+            "comboBase": 90,
+            "comboPerTier": 35,
+            "critBase": 5,
+            "critPerTier": 0.8,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 12,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Frost Bolt (single-target, builds Chill stack max 3)",
+          "abilities": [
+            "Ice Nova (AoE slow)",
+            "Frost Lance (single burst)",
+            "Glacial Shield (absorb dmg)",
+            "Blizzard Strike (channeled AoE slow dmg)",
+            "Crimson Ice (bleed + freeze)"
+          ],
+          "signatureAbility": "Absolute Zero (mass freeze)",
+          "passives": [
+            "Chill Mastery (+slow effect)",
+            "Mana Regen",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/glacial_spire_staff.png"
         },
         {
           "id": "frostbite",
@@ -707,7 +2407,39 @@
           "primaryStat": "slow",
           "secondaryStat": "defense",
           "emoji": "❄️",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spire from iceblood rituals",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 59,
+            "damagePerTier": 13.5,
+            "speedBase": 75,
+            "speedPerTier": 16.5,
+            "comboBase": 88,
+            "comboPerTier": 34,
+            "critBase": 4.5,
+            "critPerTier": 0.7,
+            "blockBase": 3,
+            "blockPerTier": 0.6,
+            "defenseBase": 13,
+            "defensePerTier": 4.5
+          },
+          "basicAbility": "Frost Bolt",
+          "abilities": [
+            "Ice Nova",
+            "Frost Lance",
+            "Glacial Shield",
+            "Iceblood (lifesteal freeze)",
+            "Frost Ritual (HoT + chill)"
+          ],
+          "signatureAbility": "Iceblood Eruption (explode + heal)",
+          "passives": [
+            "Life Leech",
+            "Mana Regen",
+            "Chill Amp"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/iceblood_spire.png"
         },
         {
           "id": "blizzard-heart",
@@ -741,7 +2473,39 @@
           "primaryStat": "heal",
           "secondaryStat": "mana",
           "emoji": "✨",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Staff of dawning holy grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 50,
+            "damagePerTier": 12,
+            "speedBase": 100,
+            "speedPerTier": 25,
+            "comboBase": 120,
+            "comboPerTier": 50,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 5,
+            "blockPerTier": 1,
+            "defenseBase": 15,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Holy Light (heal single, builds Grace max 3)",
+          "abilities": [
+            "Divine Wave (AoE heal)",
+            "Sacred Shield (ally shield)",
+            "Smite (dmg purge)",
+            "Radiant Salvation (AoE heal cleanse)",
+            "Crimson Grace (heal lifesteal)"
+          ],
+          "signatureAbility": "Holy Beacon (ally empower)",
+          "passives": [
+            "Heal Mastery (+power)",
+            "Mana Regen",
+            "Grace Duration"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/dawnspire_staff.png"
         },
         {
           "id": "redemption",
@@ -757,7 +2521,39 @@
           "primaryStat": "heal",
           "secondaryStat": "shield",
           "emoji": "✨",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Oathbreaker staff of sacred light",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 51,
+            "damagePerTier": 12.5,
+            "speedBase": 98,
+            "speedPerTier": 24.5,
+            "comboBase": 122,
+            "comboPerTier": 51,
+            "critBase": 4.5,
+            "critPerTier": 0.65,
+            "blockBase": 5.5,
+            "blockPerTier": 1.1,
+            "defenseBase": 15.5,
+            "defensePerTier": 5
+          },
+          "basicAbility": "Holy Light",
+          "abilities": [
+            "Divine Wave",
+            "Sacred Shield",
+            "Smite",
+            "Oathbreaker Light (purge + grace)",
+            "Sacred Chains (bind shield)"
+          ],
+          "signatureAbility": "Sacred Apocalypse (large purge AoE)",
+          "passives": [
+            "Heal Mastery (+purge)",
+            "Cooldown Reduce",
+            "Mana Regen"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/sacred_oathbreaker.png"
         },
         {
           "id": "holy-wrath",
@@ -799,7 +2595,38 @@
           "primaryStat": "damage",
           "secondaryStat": "stun",
           "emoji": "⚡",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Staff of stormwrath grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 68,
+            "damagePerTier": 16,
+            "speedBase": 55,
+            "speedPerTier": 10,
+            "comboBase": 110,
+            "comboPerTier": 45,
+            "critBase": 8,
+            "critPerTier": 1.2,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 9,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Thunder Bolt (single shock stack max 3)",
+          "abilities": [
+            "Lightning Strike (AoE stun)",
+            "Chain Shock (multi bounce)",
+            "Storm Shield (reflect)",
+            "Thunder Tempest (AoE chain stun)",
+            "Crimson Bolt (lifesteal shock)"
+          ],
+          "signatureAbility": "Storm Call (rain lightning)",
+          "passives": [
+            "Shock Mastery (+dmg)",
+            "Mana Regen",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic"
         },
         {
           "id": "tempest-spire",
@@ -831,7 +2658,39 @@
           "primaryStat": "damage",
           "secondaryStat": "stun",
           "emoji": "⚡",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Infused with thunder clan grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 70,
+            "damagePerTier": 17,
+            "speedBase": 50,
+            "speedPerTier": 9,
+            "comboBase": 115,
+            "comboPerTier": 47,
+            "critBase": 9,
+            "critPerTier": 1.3,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 8,
+            "defensePerTier": 1.5
+          },
+          "basicAbility": "Thunder Bolt",
+          "abilities": [
+            "Lightning Strike",
+            "Chain Shock",
+            "Storm Shield",
+            "Thunder Surge (channeled line shock)",
+            "Thunder Wall (wall stun)"
+          ],
+          "signatureAbility": "Thunder Cataclysm (ultimate storm)",
+          "passives": [
+            "Shock Mastery",
+            "Mana Efficiency",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/thundergrudge_staff.png"
         }
       ],
       "grudgeType": "equipment"
@@ -849,7 +2708,39 @@
           "primaryStat": "mana",
           "secondaryStat": "silence",
           "emoji": "🔮",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Staff channeling void grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 62,
+            "damagePerTier": 14,
+            "speedBase": 65,
+            "speedPerTier": 13,
+            "comboBase": 130,
+            "comboPerTier": 55,
+            "critBase": 7,
+            "critPerTier": 1.1,
+            "blockBase": 1,
+            "blockPerTier": 0.3,
+            "defenseBase": 11,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Arcane Bolt (single mark)",
+          "abilities": [
+            "Energy Wave (AoE dmg)",
+            "Time Stasis (freeze AoE)",
+            "Mana Shield (absorb)",
+            "Grudge Vortex (pull slow)",
+            "Crimson Pulse (lifesteal AoE)"
+          ],
+          "signatureAbility": "Arcane Nova (burst)",
+          "passives": [
+            "CC Mastery (+duration)",
+            "Mana Regen",
+            "Energy Efficiency"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/voidspire_staff.png"
         },
         {
           "id": "arcane-fury",
@@ -873,7 +2764,38 @@
           "primaryStat": "mana",
           "secondaryStat": "hp",
           "emoji": "🔮",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Spire from etherblood rituals",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 61,
+            "damagePerTier": 13.5,
+            "speedBase": 70,
+            "speedPerTier": 14.5,
+            "comboBase": 128,
+            "comboPerTier": 54,
+            "critBase": 6.5,
+            "critPerTier": 1,
+            "blockBase": 1.5,
+            "blockPerTier": 0.4,
+            "defenseBase": 12,
+            "defensePerTier": 3.5
+          },
+          "basicAbility": "Arcane Bolt",
+          "abilities": [
+            "Energy Wave",
+            "Time Stasis",
+            "Mana Shield",
+            "Etherblood (lifesteal mark)",
+            "Ether Ritual (buff + mark)"
+          ],
+          "signatureAbility": "Etherblood Eruption (explode + buff)",
+          "passives": [
+            "Life Leech",
+            "Mana Regen",
+            "CC Amp"
+          ],
+          "craftedBy": "Mystic"
         },
         {
           "id": "void-warden",
@@ -881,7 +2803,39 @@
           "primaryStat": "silence",
           "secondaryStat": "mana",
           "emoji": "🔮",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Staff channeling void grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 62,
+            "damagePerTier": 14,
+            "speedBase": 65,
+            "speedPerTier": 13,
+            "comboBase": 130,
+            "comboPerTier": 55,
+            "critBase": 7,
+            "critPerTier": 1.1,
+            "blockBase": 1,
+            "blockPerTier": 0.3,
+            "defenseBase": 11,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Arcane Bolt (single mark)",
+          "abilities": [
+            "Energy Wave (AoE dmg)",
+            "Time Stasis (freeze AoE)",
+            "Mana Shield (absorb)",
+            "Grudge Vortex (pull slow)",
+            "Crimson Pulse (lifesteal AoE)"
+          ],
+          "signatureAbility": "Arcane Nova (burst)",
+          "passives": [
+            "CC Mastery (+duration)",
+            "Mana Regen",
+            "Energy Efficiency"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/voidspire_staff.png"
         },
         {
           "id": "chaos-spire",
@@ -907,7 +2861,39 @@
           "primaryStat": "heal",
           "secondaryStat": "root",
           "emoji": "🌿",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Staff of verdant wrathful growth",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 55,
+            "damagePerTier": 13,
+            "speedBase": 90,
+            "speedPerTier": 22,
+            "comboBase": 110,
+            "comboPerTier": 45,
+            "critBase": 3,
+            "critPerTier": 0.5,
+            "blockBase": 4,
+            "blockPerTier": 1,
+            "defenseBase": 14,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Rejuvenate (HoT single, builds Growth max 3)",
+          "abilities": [
+            "Thorn Burst (AoE dmg)",
+            "Healing Bloom (AoE HoT)",
+            "Nature's Shield (absorb)",
+            "Grove's Embrace (AoE HoT + root)",
+            "Crimson Roots (HoT bleed)"
+          ],
+          "signatureAbility": "Nature's Fury (spirit allies)",
+          "passives": [
+            "HoT Mastery (+duration)",
+            "Mana Regen",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/verdant_wrath_staff.png"
         },
         {
           "id": "thorn-grudge",
@@ -915,7 +2901,39 @@
           "primaryStat": "damage",
           "secondaryStat": "poison",
           "emoji": "🌿",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Infused with thorny clan grudges",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 57,
+            "damagePerTier": 14,
+            "speedBase": 85,
+            "speedPerTier": 21,
+            "comboBase": 115,
+            "comboPerTier": 47,
+            "critBase": 4,
+            "critPerTier": 0.6,
+            "blockBase": 3.5,
+            "blockPerTier": 0.8,
+            "defenseBase": 13,
+            "defensePerTier": 3.5
+          },
+          "basicAbility": "Rejuvenate",
+          "abilities": [
+            "Thorn Burst",
+            "Healing Bloom",
+            "Nature's Shield",
+            "Thorn Surge (channeled vine DoT)",
+            "Verdant Wall (wall thorns)"
+          ],
+          "signatureAbility": "Verdant Cataclysm (ultimate storm)",
+          "passives": [
+            "HoT Mastery",
+            "Mana Efficiency",
+            "Crit Chance"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/thorngrudge_staff.png"
         },
         {
           "id": "wild-oathbreaker",
@@ -923,7 +2941,39 @@
           "primaryStat": "root",
           "secondaryStat": "heal",
           "emoji": "🌿",
-          "grudgeType": "item"
+          "grudgeType": "item",
+          "lore": "Oathbreaker staff of wild nature",
+          "category": "Ranged 2h",
+          "stats": {
+            "damageBase": 56,
+            "damagePerTier": 13.5,
+            "speedBase": 88,
+            "speedPerTier": 22.5,
+            "comboBase": 112,
+            "comboPerTier": 46,
+            "critBase": 3.5,
+            "critPerTier": 0.55,
+            "blockBase": 4.5,
+            "blockPerTier": 1,
+            "defenseBase": 14.5,
+            "defensePerTier": 4.5
+          },
+          "basicAbility": "Rejuvenate",
+          "abilities": [
+            "Thorn Burst",
+            "Healing Bloom",
+            "Nature's Shield",
+            "Oathbreaker Growth (purge + growth)",
+            "Wild Chains (bind thorns)"
+          ],
+          "signatureAbility": "Wild Apocalypse (large purge AoE)",
+          "passives": [
+            "HoT Mastery (+purge)",
+            "Cooldown Reduce",
+            "Mana Regen"
+          ],
+          "craftedBy": "Mystic",
+          "spritePath": "/icons/weapons/staves/wild_oathbreaker.png"
         },
         {
           "id": "grove-guardian",
@@ -1004,6 +3054,408 @@
           "secondaryStat": "versatility",
           "emoji": "🔧",
           "grudgeType": "item"
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "fireTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-fire-crimson",
+          "name": "Crimson Inferno Tome",
+          "lore": "Tome of crimson inferno grudges",
+          "category": "1h",
+          "primaryStat": "burn",
+          "secondaryStat": "crit",
+          "emoji": "🔥",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 63,
+            "damagePerTier": 14,
+            "speedBase": 62,
+            "speedPerTier": 12.5,
+            "comboBase": 110,
+            "comboPerTier": 44,
+            "critBase": 8,
+            "critPerTier": 1.2,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 8,
+            "defensePerTier": 2.5
+          },
+          "basicAbility": "Fire Bolt (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Flame Wave\", \"Fireball\", \"Inferno Shield\", \"Crimson Surge (dash burn)\", \"Inferno Page (summon fire minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"Burn Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-fire-blazewrath",
+          "name": "Blazewrath Grimoire",
+          "lore": "Grimoire holding blazewrath spells",
+          "category": "1h",
+          "primaryStat": "burn",
+          "secondaryStat": "crit",
+          "emoji": "🔥",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 68,
+            "damagePerTier": 16,
+            "speedBase": 50,
+            "speedPerTier": 10,
+            "comboBase": 115,
+            "comboPerTier": 46,
+            "critBase": 9,
+            "critPerTier": 1.3,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 7,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Fire Bolt",
+          "abilities": [],
+          "signatureAbility": "\"Flame Wave\", \"Fireball\", \"Inferno Shield\", \"Blaze Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"Burn Duration\"",
+          "spritePath": null
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "frostTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-frost-crimson",
+          "name": "Crimson Glacier Tome",
+          "lore": "Tome of crimson glacier grudges",
+          "category": "1h",
+          "primaryStat": "slow",
+          "secondaryStat": "crit",
+          "emoji": "❄️",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 58,
+            "damagePerTier": 13,
+            "speedBase": 72,
+            "speedPerTier": 15.5,
+            "comboBase": 100,
+            "comboPerTier": 40,
+            "critBase": 7,
+            "critPerTier": 1,
+            "blockBase": 0.5,
+            "blockPerTier": 0.2,
+            "defenseBase": 10,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Frost Bolt (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Ice Nova\", \"Frost Lance\", \"Glacial Shield\", \"Crimson Surge (dash chill)\", \"Glacier Page (summon ice minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"Chill Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-frost-icewrath",
+          "name": "Icewrath Grimoire",
+          "lore": "Grimoire holding icewrath spells",
+          "category": "1h",
+          "primaryStat": "slow",
+          "secondaryStat": "crit",
+          "emoji": "❄️",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 63,
+            "damagePerTier": 15,
+            "speedBase": 60,
+            "speedPerTier": 12.5,
+            "comboBase": 105,
+            "comboPerTier": 42,
+            "critBase": 8,
+            "critPerTier": 1.1,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 9,
+            "defensePerTier": 2.5
+          },
+          "basicAbility": "Frost Bolt",
+          "abilities": [],
+          "signatureAbility": "\"Ice Nova\", \"Frost Lance\", \"Glacial Shield\", \"Ice Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"Chill Duration\"",
+          "spritePath": null
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "natureTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-nature-crimson",
+          "name": "Crimson Verdant Tome",
+          "lore": "Tome of crimson verdant grudges",
+          "category": "1h",
+          "primaryStat": "heal",
+          "secondaryStat": "crit",
+          "emoji": "🌿",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 53,
+            "damagePerTier": 12,
+            "speedBase": 92,
+            "speedPerTier": 23.5,
+            "comboBase": 120,
+            "comboPerTier": 48,
+            "critBase": 5,
+            "critPerTier": 0.7,
+            "blockBase": 2,
+            "blockPerTier": 0.5,
+            "defenseBase": 12,
+            "defensePerTier": 3.5
+          },
+          "basicAbility": "Rejuvenate (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Thorn Burst\", \"Healing Bloom\", \"Nature's Shield\", \"Crimson Surge (dash growth)\", \"Verdant Page (summon vine minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"HoT Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-nature-growthwrath",
+          "name": "Growthwrath Grimoire",
+          "lore": "Grimoire holding growthwrath spells",
+          "category": "1h",
+          "primaryStat": "heal",
+          "secondaryStat": "crit",
+          "emoji": "🌿",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 58,
+            "damagePerTier": 14,
+            "speedBase": 80,
+            "speedPerTier": 20,
+            "comboBase": 125,
+            "comboPerTier": 50,
+            "critBase": 6,
+            "critPerTier": 0.8,
+            "blockBase": 1,
+            "blockPerTier": 0.3,
+            "defenseBase": 11,
+            "defensePerTier": 3
+          },
+          "basicAbility": "Rejuvenate",
+          "abilities": [],
+          "signatureAbility": "\"Thorn Burst\", \"Healing Bloom\", \"Nature's Shield\", \"Growth Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"HoT Duration\"",
+          "spritePath": null
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "holyTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-holy-crimson",
+          "name": "Crimson Dawn Tome",
+          "lore": "Tome of crimson dawn grudges",
+          "category": "1h",
+          "primaryStat": "heal",
+          "secondaryStat": "crit",
+          "emoji": "✨",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 48,
+            "damagePerTier": 11,
+            "speedBase": 102,
+            "speedPerTier": 25.5,
+            "comboBase": 130,
+            "comboPerTier": 53,
+            "critBase": 6,
+            "critPerTier": 0.8,
+            "blockBase": 3,
+            "blockPerTier": 0.6,
+            "defenseBase": 13,
+            "defensePerTier": 4
+          },
+          "basicAbility": "Holy Light (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Divine Wave\", \"Sacred Shield\", \"Smite\", \"Crimson Surge (dash grace)\", \"Dawn Page (summon light minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"Heal Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-holy-gracewrath",
+          "name": "Gracewrath Grimoire",
+          "lore": "Grimoire holding gracewrath spells",
+          "category": "1h",
+          "primaryStat": "heal",
+          "secondaryStat": "crit",
+          "emoji": "✨",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 53,
+            "damagePerTier": 13.5,
+            "speedBase": 90,
+            "speedPerTier": 22.5,
+            "comboBase": 135,
+            "comboPerTier": 55,
+            "critBase": 7,
+            "critPerTier": 0.9,
+            "blockBase": 2,
+            "blockPerTier": 0.4,
+            "defenseBase": 12,
+            "defensePerTier": 3.5
+          },
+          "basicAbility": "Holy Light",
+          "abilities": [],
+          "signatureAbility": "\"Divine Wave\", \"Sacred Shield\", \"Smite\", \"Grace Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"Grace Duration\"",
+          "spritePath": null
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "arcaneTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-arcane-crimson",
+          "name": "Crimson Void Tome",
+          "lore": "Tome of crimson void grudges",
+          "category": "1h",
+          "primaryStat": "mana",
+          "secondaryStat": "crit",
+          "emoji": "🔮",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 60,
+            "damagePerTier": 13.5,
+            "speedBase": 68,
+            "speedPerTier": 14,
+            "comboBase": 140,
+            "comboPerTier": 58,
+            "critBase": 9,
+            "critPerTier": 1.2,
+            "blockBase": 0.5,
+            "blockPerTier": 0.1,
+            "defenseBase": 9.5,
+            "defensePerTier": 2.5
+          },
+          "basicAbility": "Arcane Bolt (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Energy Wave\", \"Time Stasis\", \"Mana Shield\", \"Crimson Surge (dash mark)\", \"Void Page (summon void minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"CC Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-arcane-voidwrath",
+          "name": "Voidwrath Grimoire",
+          "lore": "Grimoire holding voidwrath spells",
+          "category": "1h",
+          "primaryStat": "mana",
+          "secondaryStat": "crit",
+          "emoji": "🔮",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 65,
+            "damagePerTier": 15.5,
+            "speedBase": 55,
+            "speedPerTier": 11,
+            "comboBase": 145,
+            "comboPerTier": 60,
+            "critBase": 10,
+            "critPerTier": 1.3,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 8.5,
+            "defensePerTier": 2
+          },
+          "basicAbility": "Arcane Bolt",
+          "abilities": [],
+          "signatureAbility": "\"Energy Wave\", \"Time Stasis\", \"Mana Shield\", \"Void Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"CC Duration\"",
+          "spritePath": null
+        }
+      ],
+      "grudgeType": "equipment"
+    },
+    "lightningTomes": {
+      "iconBase": "Tome",
+      "iconMax": 20,
+      "items": [
+        {
+          "id": "tome-lightning-crimson",
+          "name": "Crimson Storm Tome",
+          "lore": "Tome of crimson storm grudges",
+          "category": "1h",
+          "primaryStat": "shock",
+          "secondaryStat": "crit",
+          "emoji": "⚡",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 66,
+            "damagePerTier": 15,
+            "speedBase": 58,
+            "speedPerTier": 11,
+            "comboBase": 120,
+            "comboPerTier": 49,
+            "critBase": 10,
+            "critPerTier": 1.4,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 7.5,
+            "defensePerTier": 1.5
+          },
+          "basicAbility": "Thunder Bolt (quick cast)",
+          "abilities": [],
+          "signatureAbility": "\"Lightning Strike\", \"Chain Shock\", \"Storm Shield\", \"Crimson Surge (dash shock)\", \"Storm Page (summon lightning minion)\"",
+          "passives": [],
+          "craftedBy": "\"Spell Crit\", \"Shock Mastery\", \"Mana Efficiency\"",
+          "spritePath": null
+        },
+        {
+          "id": "tome-lightning-thunderwrath",
+          "name": "Thunderwrath Grimoire",
+          "lore": "Grimoire holding thunderwrath spells",
+          "category": "1h",
+          "primaryStat": "shock",
+          "secondaryStat": "crit",
+          "emoji": "⚡",
+          "grudgeType": "item",
+          "stats": {
+            "damageBase": 71,
+            "damagePerTier": 17.5,
+            "speedBase": 45,
+            "speedPerTier": 8.5,
+            "comboBase": 125,
+            "comboPerTier": 51,
+            "critBase": 11,
+            "critPerTier": 1.5,
+            "blockBase": 0,
+            "blockPerTier": 0,
+            "defenseBase": 6.5,
+            "defensePerTier": 1.5
+          },
+          "basicAbility": "Thunder Bolt",
+          "abilities": [],
+          "signatureAbility": "\"Lightning Strike\", \"Chain Shock\", \"Storm Shield\", \"Thunder Fury (frenzy cast speed)\", \"Wrath Page (empowered next spell)\"",
+          "passives": [],
+          "craftedBy": "\"Mana Regen\", \"Crit Chance\", \"Shock Duration\"",
+          "spritePath": null
         }
       ],
       "grudgeType": "equipment"
