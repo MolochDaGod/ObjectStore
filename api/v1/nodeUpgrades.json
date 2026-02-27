@@ -1,0 +1,154 @@
+{
+  "version": "1.0.0",
+  "description": "RTS node upgrade system with unit tiers, costs, and progression",
+  "unitTiers": {
+    "fabled": {
+      "tier0": [
+        "fabled_archer",
+        "fabled_priest"
+      ],
+      "tier1": [
+        "fabled_armored_axeman",
+        "fabled_mage"
+      ],
+      "tier2": [
+        "fabled_knight_templar",
+        "fabled_werebear"
+      ]
+    },
+    "legion": {
+      "tier0": [
+        "legion_skeleton",
+        "legion_skeleton_archer"
+      ],
+      "tier1": [
+        "legion_armored_skeleton",
+        "legion_greatsword_skeleton"
+      ],
+      "tier2": [
+        "legion_elite_orc",
+        "legion_orc_rider"
+      ]
+    },
+    "crusade": {
+      "tier0": [
+        "crusade_archer",
+        "crusade_soldier"
+      ],
+      "tier1": [
+        "crusade_swordsman",
+        "crusade_priest"
+      ],
+      "tier2": [
+        "crusade_knight",
+        "crusade_wizard",
+        "crusade_lancer"
+      ]
+    }
+  },
+  "nodeTypes": {
+    "start": {
+      "type": "start",
+      "description": "Main base - Losing this node means defeat",
+      "upgrades": [
+        {
+          "level": 0,
+          "cost": 0,
+          "spawnRate": 0.15,
+          "health": 5000,
+          "visionRadius": 200
+        },
+        {
+          "level": 1,
+          "cost": 500,
+          "spawnRate": 0.18,
+          "health": 7500,
+          "visionRadius": 250
+        },
+        {
+          "level": 2,
+          "cost": 1000,
+          "spawnRate": 0.22,
+          "health": 10000,
+          "visionRadius": 300
+        },
+        {
+          "level": 3,
+          "cost": 2000,
+          "spawnRate": 0.28,
+          "health": 15000,
+          "visionRadius": 350
+        }
+      ]
+    },
+    "standard": {
+      "type": "standard",
+      "description": "Standard control point - Provides unit spawning",
+      "upgrades": [
+        {
+          "level": 0,
+          "cost": 0,
+          "spawnRate": 0.08,
+          "health": 2000,
+          "visionRadius": 150
+        },
+        {
+          "level": 1,
+          "cost": 300,
+          "spawnRate": 0.12,
+          "health": 3500,
+          "visionRadius": 180
+        },
+        {
+          "level": 2,
+          "cost": 600,
+          "spawnRate": 0.16,
+          "health": 5000,
+          "visionRadius": 220
+        },
+        {
+          "level": 3,
+          "cost": 1200,
+          "spawnRate": 0.2,
+          "health": 7500,
+          "visionRadius": 280
+        }
+      ]
+    },
+    "resource": {
+      "type": "resource",
+      "description": "Resource node - Increases passive resource generation",
+      "resourceBonus": 0.25,
+      "upgrades": [
+        {
+          "level": 0,
+          "cost": 0,
+          "spawnRate": 0.05,
+          "health": 1500,
+          "visionRadius": 120
+        },
+        {
+          "level": 1,
+          "cost": 200,
+          "spawnRate": 0.08,
+          "health": 2500,
+          "visionRadius": 150
+        },
+        {
+          "level": 2,
+          "cost": 400,
+          "spawnRate": 0.12,
+          "health": 4000,
+          "visionRadius": 180
+        },
+        {
+          "level": 3,
+          "cost": 800,
+          "spawnRate": 0.16,
+          "health": 6000,
+          "visionRadius": 220
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "version": "1.0.0",
+  "description": "Three.js rendering reference — materials, skybox presets, particle effects, spell effects",
+  "materials": {
+    "MeshBasicMaterial": {
+      "description": "Simple shaded, not affected by lights",
+      "useCase": "Unlit objects, backgrounds, wireframes",
+      "performance": "Fastest"
+    },
+    "MeshLambertMaterial": {
+      "description": "Lambertian reflectance, per-vertex lighting",
+      "useCase": "Matte surfaces like wood, stone, fabric",
+      "performance": "Fast"
+    },
+    "MeshPhongMaterial": {
+      "description": "Blinn-Phong shading with specular highlights",
+      "useCase": "Shiny surfaces like plastic, polished metal",
+      "performance": "Medium"
+    },
+    "MeshStandardMaterial": {
+      "description": "PBR Metallic-Roughness workflow",
+      "useCase": "Realistic materials — default choice",
+      "performance": "Slower"
+    },
+    "MeshPhysicalMaterial": {
+      "description": "Extended PBR with clearcoat, transmission, sheen",
+      "useCase": "Glass, gems, car paint, subsurface scattering",
+      "performance": "Slowest"
+    }
+  },
+  "materialFeatures": {
+    "universal": [
+      "alphaMap",
+      "aoMap",
+      "aoMapIntensity",
+      "color",
+      "envMap",
+      "envMapRotation",
+      "fog",
+      "lightMap",
+      "lightMapIntensity",
+      "map"
+    ],
+    "litMaterials": [
+      "bumpMap",
+      "bumpScale",
+      "displacementMap",
+      "displacementScale",
+      "displacementBias",
+      "emissive",
+      "emissiveIntensity",
+      "emissiveMap",
+      "flatShading",
+      "normalMap",
+      "normalScale"
+    ],
+    "pbrMaterials": [
+      "metalness",
+      "metalnessMap",
+      "roughness",
+      "roughnessMap",
+      "envMapIntensity"
+    ],
+    "physicalOnly": [
+      "clearcoat",
+      "clearcoatMap",
+      "clearcoatRoughness",
+      "ior",
+      "transmission",
+      "transmissionMap",
+      "thickness",
+      "sheen",
+      "sheenColor",
+      "iridescence",
+      "anisotropy"
+    ]
+  },
+  "skyboxPresets": {
+    "daytime": {
+      "topColor": "#1e90ff",
+      "bottomColor": "#87ceeb",
+      "sunColor": "#ffdd88",
+      "cloudDensity": 0.3,
+      "timeOfDay": 0.5
+    },
+    "sunset": {
+      "topColor": "#1a1a4e",
+      "bottomColor": "#ff6b35",
+      "sunColor": "#ff4500",
+      "cloudDensity": 0.4,
+      "timeOfDay": 0.75
+    },
+    "night": {
+      "topColor": "#0a0a1a",
+      "bottomColor": "#1a1a2e",
+      "sunColor": "#aaaacc",
+      "cloudDensity": 0.1,
+      "timeOfDay": 0.1
+    },
+    "hellscape": {
+      "topColor": "#2a0a0a",
+      "bottomColor": "#8b0000",
+      "sunColor": "#ff4400",
+      "cloudDensity": 0.6,
+      "timeOfDay": 0.5
+    },
+    "arctic": {
+      "topColor": "#4a6fa5",
+      "bottomColor": "#d4e5f7",
+      "sunColor": "#ffffff",
+      "cloudDensity": 0.5,
+      "timeOfDay": 0.4
+    },
+    "fantasy": {
+      "topColor": "#2e1a47",
+      "bottomColor": "#6b3fa0",
+      "sunColor": "#ff88ff",
+      "cloudDensity": 0.4,
+      "timeOfDay": 0.6
+    },
+    "grudgeBrawl": {
+      "topColor": "#0a0a0a",
+      "bottomColor": "#1a0a0a",
+      "sunColor": "#dc2626",
+      "cloudDensity": 0.2,
+      "timeOfDay": 0.3
+    }
+  },
+  "particlePresets": {
+    "explosion": {
+      "count": 100,
+      "size": 0.5,
+      "color": "#ff6600",
+      "colorEnd": "#ff0000",
+      "lifetime": 0.8,
+      "speed": 8,
+      "spread": 5,
+      "gravity": 15
+    },
+    "fire": {
+      "count": 50,
+      "size": 0.4,
+      "color": "#ff4400",
+      "colorEnd": "#ffff00",
+      "lifetime": 1.2,
+      "speed": 3,
+      "spread": 1,
+      "gravity": -2
+    },
+    "smoke": {
+      "count": 30,
+      "size": 1,
+      "color": "#888888",
+      "colorEnd": "#333333",
+      "lifetime": 2,
+      "speed": 1.5,
+      "spread": 0.5,
+      "gravity": -0.5,
+      "opacity": 0.6
+    },
+    "spark": {
+      "count": 20,
+      "size": 0.15,
+      "color": "#ffff00",
+      "colorEnd": "#ff8800",
+      "lifetime": 0.5,
+      "speed": 12,
+      "spread": 3,
+      "gravity": 20
+    },
+    "blood": {
+      "count": 40,
+      "size": 0.2,
+      "color": "#8b0000",
+      "colorEnd": "#4a0000",
+      "lifetime": 0.6,
+      "speed": 6,
+      "spread": 2,
+      "gravity": 25
+    },
+    "magic": {
+      "count": 60,
+      "size": 0.3,
+      "color": "#9966ff",
+      "colorEnd": "#ffffff",
+      "lifetime": 1.5,
+      "speed": 2,
+      "spread": 2,
+      "gravity": -1
+    },
+    "heal": {
+      "count": 40,
+      "size": 0.25,
+      "color": "#00ff88",
+      "colorEnd": "#88ffcc",
+      "lifetime": 1.2,
+      "speed": 2,
+      "spread": 1.5,
+      "gravity": -3
+    },
+    "frost": {
+      "count": 50,
+      "size": 0.2,
+      "color": "#88ccff",
+      "colorEnd": "#ffffff",
+      "lifetime": 1.5,
+      "speed": 1.5,
+      "spread": 2,
+      "gravity": 1
+    },
+    "lightning": {
+      "count": 30,
+      "size": 0.15,
+      "color": "#aaddff",
+      "colorEnd": "#ffffff",
+      "lifetime": 0.2,
+      "speed": 20,
+      "spread": 1,
+      "gravity": 0
+    },
+    "impact": {
+      "count": 25,
+      "size": 0.2,
+      "color": "#ffffff",
+      "colorEnd": "#888888",
+      "lifetime": 0.3,
+      "speed": 10,
+      "spread": 4,
+      "gravity": 30
+    }
+  },
+  "spellEffects": [
+    "FireballEffect",
+    "FrostEffect",
+    "LightningEffect",
+    "HealingAura",
+    "PortalEffect"
+  ],
+  "damageTypes": {
+    "physical": "#ff4444",
+    "fire": "#ff6600",
+    "ice": "#88ccff",
+    "magic": "#9966ff"
+  }
+}

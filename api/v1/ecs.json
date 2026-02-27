@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "description": "Entity Component System — component definitions, systems, entity types for MMO world",
+  "entityTypes": [
+    "player",
+    "npc",
+    "item",
+    "interactable",
+    "projectile"
+  ],
+  "components": {
+    "TransformComponent": {
+      "fields": {
+        "x": "number",
+        "y": "number",
+        "rotation": "number",
+        "scale": "number"
+      }
+    },
+    "VelocityComponent": {
+      "fields": {
+        "vx": "number",
+        "vy": "number",
+        "speed": "number",
+        "maxSpeed": "number"
+      }
+    },
+    "StatsComponent": {
+      "fields": {
+        "health": "number",
+        "maxHealth": "number",
+        "mana": "number",
+        "maxMana": "number",
+        "level": "number",
+        "experience": "number",
+        "attack": "number",
+        "defense": "number"
+      }
+    },
+    "SpriteComponent": {
+      "fields": {
+        "spriteId": "string",
+        "width": "number",
+        "height": "number",
+        "frame": "number",
+        "animationState": "string"
+      }
+    },
+    "InteractableComponent": {
+      "fields": {
+        "type": "string",
+        "range": "number",
+        "cooldown": "number",
+        "lastInteraction": "number"
+      }
+    },
+    "NetworkedComponent": {
+      "fields": {
+        "ownerId": "string",
+        "lastSync": "number",
+        "dirty": "boolean"
+      }
+    },
+    "LootableComponent": {
+      "fields": {
+        "items": "string[]",
+        "gold": "number",
+        "experience": "number"
+      }
+    },
+    "AIComponent": {
+      "fields": {
+        "behavior": "idle | patrol | chase | attack | flee",
+        "targetId": "string?",
+        "patrolPath": "{ x, y }[]?",
+        "patrolIndex": "number",
+        "aggroRange": "number",
+        "attackRange": "number"
+      }
+    }
+  },
+  "systems": {
+    "MovementSystem": {
+      "description": "Updates entity positions based on velocity, enforces max speed, updates rotation"
+    },
+    "AISystem": {
+      "description": "Processes NPC behavior states — idle/patrol/chase/attack transitions based on player proximity"
+    }
+  },
+  "spatialHash": {
+    "cellSize": 64,
+    "description": "Spatial hash grid for efficient radius-based entity queries"
+  }
+}

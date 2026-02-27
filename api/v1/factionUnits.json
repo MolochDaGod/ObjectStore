@@ -1,0 +1,469 @@
+{
+  "version": "1.0.0",
+  "description": "RTS faction units with stats, animations, and sprite paths",
+  "totalUnits": 19,
+  "unitTypes": [
+    "melee",
+    "ranged",
+    "heavy",
+    "magic",
+    "support",
+    "cavalry"
+  ],
+  "factions": {
+    "fabled": {
+      "id": "fabled",
+      "name": "The Fabled",
+      "color": "#22c55e",
+      "buildingColor": "Lime",
+      "description": "Ancient warriors and mystical beings, guardians of the old ways",
+      "units": [
+        {
+          "id": "fabled_archer",
+          "name": "Archer",
+          "type": "ranged",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Archer",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 80,
+            "speed": 45,
+            "attackDamage": 20,
+            "attackRange": 120,
+            "attackCooldown": 0.8,
+            "size": 32
+          },
+          "description": "Swift ranged attacker with deadly accuracy"
+        },
+        {
+          "id": "fabled_armored_axeman",
+          "name": "Armored Axeman",
+          "type": "melee",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Armored Axeman",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Attack03",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 180,
+            "speed": 30,
+            "attackDamage": 35,
+            "attackRange": 25,
+            "attackCooldown": 1,
+            "size": 36
+          },
+          "description": "Heavily armored warrior with devastating axe strikes"
+        },
+        {
+          "id": "fabled_knight_templar",
+          "name": "Knight Templar",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Knight Templar",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 250,
+            "speed": 25,
+            "attackDamage": 45,
+            "attackRange": 30,
+            "attackCooldown": 1.2,
+            "size": 40
+          },
+          "description": "Elite holy warrior with unbreakable defense"
+        },
+        {
+          "id": "fabled_mage",
+          "name": "Mage",
+          "type": "magic",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Mage",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 60,
+            "speed": 35,
+            "attackDamage": 30,
+            "attackRange": 140,
+            "attackCooldown": 1.5,
+            "size": 32
+          },
+          "description": "Powerful spellcaster dealing magical damage"
+        },
+        {
+          "id": "fabled_priest",
+          "name": "Priest",
+          "type": "support",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Priest",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 100,
+            "speed": 40,
+            "attackDamage": 15,
+            "attackRange": 100,
+            "attackCooldown": 1,
+            "size": 32
+          },
+          "description": "Holy healer providing support to allies"
+        },
+        {
+          "id": "fabled_werebear",
+          "name": "Werebear",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Werebear",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 300,
+            "speed": 35,
+            "attackDamage": 55,
+            "attackRange": 35,
+            "attackCooldown": 1.3,
+            "size": 48
+          },
+          "description": "Massive beast with overwhelming strength"
+        }
+      ]
+    },
+    "legion": {
+      "id": "legion",
+      "name": "The Legion",
+      "color": "#dc2626",
+      "buildingColor": "Enemy",
+      "description": "Undead army and orcish hordes, servants of darkness",
+      "units": [
+        {
+          "id": "legion_skeleton",
+          "name": "Skeleton",
+          "type": "melee",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Skeleton",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 70,
+            "speed": 42,
+            "attackDamage": 18,
+            "attackRange": 22,
+            "attackCooldown": 0.7,
+            "size": 32
+          },
+          "description": "Basic undead warrior, fast but fragile"
+        },
+        {
+          "id": "legion_skeleton_archer",
+          "name": "Skeleton Archer",
+          "type": "ranged",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Skeleton Archer",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 60,
+            "speed": 45,
+            "attackDamage": 22,
+            "attackRange": 130,
+            "attackCooldown": 0.9,
+            "size": 32
+          },
+          "description": "Undead archer with cursed arrows"
+        },
+        {
+          "id": "legion_armored_skeleton",
+          "name": "Armored Skeleton",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Armored Skeleton",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 150,
+            "speed": 30,
+            "attackDamage": 32,
+            "attackRange": 25,
+            "attackCooldown": 1,
+            "size": 36
+          },
+          "description": "Heavily armored undead warrior"
+        },
+        {
+          "id": "legion_greatsword_skeleton",
+          "name": "Greatsword Skeleton",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Greatsword Skeleton",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 180,
+            "speed": 28,
+            "attackDamage": 50,
+            "attackRange": 30,
+            "attackCooldown": 1.4,
+            "size": 40
+          },
+          "description": "Powerful skeleton wielding a massive greatsword"
+        },
+        {
+          "id": "legion_elite_orc",
+          "name": "Elite Orc",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Elite Orc",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 220,
+            "speed": 32,
+            "attackDamage": 42,
+            "attackRange": 28,
+            "attackCooldown": 1.1,
+            "size": 40
+          },
+          "description": "Brutal orc champion with savage strength"
+        },
+        {
+          "id": "legion_orc_rider",
+          "name": "Orc Rider",
+          "type": "cavalry",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Orc rider",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 160,
+            "speed": 55,
+            "attackDamage": 38,
+            "attackRange": 30,
+            "attackCooldown": 0.9,
+            "size": 44
+          },
+          "description": "Fast-moving mounted orc warrior"
+        }
+      ]
+    },
+    "crusade": {
+      "id": "crusade",
+      "name": "Crusade",
+      "color": "#3b82f6",
+      "buildingColor": "Cyan",
+      "description": "United human forces, defenders of the realm",
+      "units": [
+        {
+          "id": "crusade_knight",
+          "name": "Knight",
+          "type": "heavy",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Knight",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 200,
+            "speed": 30,
+            "attackDamage": 40,
+            "attackRange": 28,
+            "attackCooldown": 1.1,
+            "size": 40
+          },
+          "description": "Noble knight in heavy armor"
+        },
+        {
+          "id": "crusade_wizard",
+          "name": "Wizard",
+          "type": "magic",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Wizard",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 70,
+            "speed": 35,
+            "attackDamage": 35,
+            "attackRange": 150,
+            "attackCooldown": 1.6,
+            "size": 32
+          },
+          "description": "Master of arcane magic"
+        },
+        {
+          "id": "crusade_priest",
+          "name": "Priest",
+          "type": "support",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Priest",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 90,
+            "speed": 40,
+            "attackDamage": 12,
+            "attackRange": 95,
+            "attackCooldown": 0.9,
+            "size": 32
+          },
+          "description": "Devoted cleric with healing powers"
+        },
+        {
+          "id": "crusade_archer",
+          "name": "Archer",
+          "type": "ranged",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Archer",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack01",
+            "Attack02",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 75,
+            "speed": 45,
+            "attackDamage": 18,
+            "attackRange": 115,
+            "attackCooldown": 0.75,
+            "size": 32
+          },
+          "description": "Skilled bowman with rapid fire"
+        },
+        {
+          "id": "crusade_swordsman",
+          "name": "Swordsman",
+          "type": "melee",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Swordsman",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 120,
+            "speed": 38,
+            "attackDamage": 25,
+            "attackRange": 24,
+            "attackCooldown": 0.8,
+            "size": 34
+          },
+          "description": "Veteran soldier with sword and shield"
+        },
+        {
+          "id": "crusade_soldier",
+          "name": "Soldier",
+          "type": "melee",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Soldier",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 110,
+            "speed": 40,
+            "attackDamage": 22,
+            "attackRange": 23,
+            "attackCooldown": 0.75,
+            "size": 34
+          },
+          "description": "Disciplined infantry unit"
+        },
+        {
+          "id": "crusade_lancer",
+          "name": "Lancer",
+          "type": "cavalry",
+          "spritePath": "docs/MiniWorldSprites/Characters/Heros/GrudgeRPGAssets2d/Lancer",
+          "animations": [
+            "Idle",
+            "Walk",
+            "Attack",
+            "Death",
+            "Hurt"
+          ],
+          "stats": {
+            "health": 140,
+            "speed": 52,
+            "attackDamage": 32,
+            "attackRange": 32,
+            "attackCooldown": 0.9,
+            "size": 40
+          },
+          "description": "Mounted warrior with lance"
+        }
+      ]
+    }
+  }
+}

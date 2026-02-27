@@ -1,0 +1,125 @@
+{
+  "version": "1.0.0",
+  "description": "Procedural terrain system — noise config, biome presets, terrain types",
+  "terrainTypes": [
+    "grass",
+    "dirt",
+    "water",
+    "sand",
+    "rock",
+    "snow"
+  ],
+  "terrainColors": {
+    "water": {
+      "r": 0.2,
+      "g": 0.3,
+      "b": 0.8
+    },
+    "sand": {
+      "r": 0.76,
+      "g": 0.7,
+      "b": 0.5
+    },
+    "grass": {
+      "r": 0.2,
+      "g": 0.6,
+      "b": 0.2
+    },
+    "rock": {
+      "r": 0.5,
+      "g": 0.5,
+      "b": 0.5
+    },
+    "snow": {
+      "r": 0.95,
+      "g": 0.95,
+      "b": 1
+    },
+    "dirt": {
+      "r": 0.5,
+      "g": 0.35,
+      "b": 0.2
+    }
+  },
+  "presets": {
+    "plains": {
+      "width": 100,
+      "height": 100,
+      "resolution": 128,
+      "heightScale": 5,
+      "noiseScale": 0.02,
+      "octaves": 4,
+      "persistence": 0.5,
+      "lacunarity": 2,
+      "waterLevel": 0.2,
+      "sandLevel": 0.25,
+      "grassLevel": 0.7,
+      "rockLevel": 0.85,
+      "snowLevel": 0.95
+    },
+    "mountains": {
+      "width": 100,
+      "height": 100,
+      "resolution": 128,
+      "heightScale": 30,
+      "noiseScale": 0.015,
+      "octaves": 6,
+      "persistence": 0.55,
+      "lacunarity": 2.2,
+      "waterLevel": 0.15,
+      "sandLevel": 0.2,
+      "grassLevel": 0.5,
+      "rockLevel": 0.7,
+      "snowLevel": 0.85
+    },
+    "islands": {
+      "width": 100,
+      "height": 100,
+      "resolution": 128,
+      "heightScale": 15,
+      "noiseScale": 0.025,
+      "octaves": 5,
+      "persistence": 0.5,
+      "lacunarity": 2,
+      "waterLevel": 0.4,
+      "sandLevel": 0.45,
+      "grassLevel": 0.75,
+      "rockLevel": 0.9,
+      "snowLevel": 1
+    },
+    "desert": {
+      "width": 100,
+      "height": 100,
+      "resolution": 128,
+      "heightScale": 8,
+      "noiseScale": 0.03,
+      "octaves": 3,
+      "persistence": 0.4,
+      "lacunarity": 2,
+      "waterLevel": 0.05,
+      "sandLevel": 0.8,
+      "grassLevel": 0.85,
+      "rockLevel": 0.95,
+      "snowLevel": 1
+    },
+    "arena": {
+      "width": 60,
+      "height": 60,
+      "resolution": 64,
+      "heightScale": 2,
+      "noiseScale": 0.05,
+      "octaves": 2,
+      "persistence": 0.3,
+      "lacunarity": 2,
+      "waterLevel": 0,
+      "sandLevel": 0.3,
+      "grassLevel": 0.9,
+      "rockLevel": 0.95,
+      "snowLevel": 1
+    }
+  },
+  "noiseConfig": {
+    "algorithm": "Perlin",
+    "description": "Fractal Brownian Motion (fBm) with configurable octaves, persistence, and lacunarity"
+  }
+}

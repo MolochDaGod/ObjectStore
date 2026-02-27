@@ -1,0 +1,82 @@
+{
+  "version": "1.0.0",
+  "description": "AI systems — behavior trees, entity states, blackboard properties, scoring",
+  "behaviorTreeNodes": {
+    "SequenceNode": {
+      "description": "Runs children in order, fails on first failure",
+      "category": "composite"
+    },
+    "SelectorNode": {
+      "description": "Runs children in order, succeeds on first success",
+      "category": "composite"
+    },
+    "ParallelNode": {
+      "description": "Runs all children simultaneously, configurable success threshold",
+      "category": "composite"
+    },
+    "ConditionalNode": {
+      "description": "If-else branching based on condition function",
+      "category": "decorator"
+    },
+    "RepeatNode": {
+      "description": "Repeats child N times or infinitely",
+      "category": "decorator"
+    },
+    "InverterNode": {
+      "description": "Inverts child result (SUCCESS↔FAILED)",
+      "category": "decorator"
+    },
+    "SucceederNode": {
+      "description": "Always returns SUCCESS regardless of child result",
+      "category": "decorator"
+    }
+  },
+  "behaviorResults": [
+    "SUCCESS",
+    "FAILED",
+    "RUNNING",
+    "NOT_STARTED"
+  ],
+  "entityStates": [
+    "idle",
+    "moving",
+    "attacking",
+    "gathering",
+    "building",
+    "fleeing",
+    "dead"
+  ],
+  "blackboardProperties": {
+    "targetId": "string",
+    "targetPosition": "Vector3",
+    "homePosition": "Vector3",
+    "goals": "Vector3[]",
+    "wanderRadius": "number",
+    "attackRange": "number",
+    "gatherAmount": "number",
+    "fleeDistance": "number",
+    "patrolPoints": "Vector3[]",
+    "currentPatrolIndex": "number",
+    "lastSeenEnemy": "{ id, position, time }",
+    "resourceType": "gold | wood | stone | food",
+    "buildingType": "string"
+  },
+  "aiBehaviors": [
+    "idle",
+    "patrol",
+    "chase",
+    "attack",
+    "flee"
+  ],
+  "scoringFactors": {
+    "description": "BehaviorScorer evaluates entity state to determine best action",
+    "factors": [
+      "healthPercentage",
+      "nearbyEnemies",
+      "nearbyAllies",
+      "resourceProximity",
+      "baseDistance",
+      "threatLevel"
+    ]
+  }
+}

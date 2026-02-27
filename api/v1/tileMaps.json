@@ -1,0 +1,467 @@
+{
+  "version": "1.0.0",
+  "description": "RTS tile-based maps with nodes, terrain objects, and collision data",
+  "tileTypes": [
+    "grass",
+    "road",
+    "dirt",
+    "water",
+    "stone"
+  ],
+  "terrainObjectTypes": [
+    "tree",
+    "rock",
+    "bush",
+    "water_area"
+  ],
+  "maps": [
+    {
+      "id": "small_conquest",
+      "name": "Small Conquest",
+      "width": 2400,
+      "height": 1400,
+      "tileSize": 50,
+      "difficulty": 1,
+      "description": "Small 2v2 map with resource control point",
+      "nodes": [
+        {
+          "id": "start_left",
+          "nodeType": "start",
+          "x": 300,
+          "y": 700,
+          "radius": 80,
+          "defaultFaction": "fabled"
+        },
+        {
+          "id": "start_right",
+          "nodeType": "start",
+          "x": 2100,
+          "y": 700,
+          "radius": 80,
+          "defaultFaction": "legion"
+        },
+        {
+          "id": "node_top",
+          "nodeType": "standard",
+          "x": 1200,
+          "y": 400,
+          "radius": 60,
+          "defaultFaction": null
+        },
+        {
+          "id": "node_bottom",
+          "nodeType": "standard",
+          "x": 1200,
+          "y": 1000,
+          "radius": 60,
+          "defaultFaction": null
+        },
+        {
+          "id": "resource_center",
+          "nodeType": "resource",
+          "x": 1200,
+          "y": 700,
+          "radius": 70,
+          "defaultFaction": null
+        }
+      ],
+      "terrainObjects": [
+        {
+          "id": "tree1",
+          "type": "tree",
+          "x": 150,
+          "y": 200,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree2",
+          "type": "tree",
+          "x": 200,
+          "y": 250,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree3",
+          "type": "tree",
+          "x": 150,
+          "y": 1200,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree4",
+          "type": "tree",
+          "x": 200,
+          "y": 1150,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree5",
+          "type": "tree",
+          "x": 2250,
+          "y": 200,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree6",
+          "type": "tree",
+          "x": 2200,
+          "y": 250,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree7",
+          "type": "tree",
+          "x": 2250,
+          "y": 1200,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "tree8",
+          "type": "tree",
+          "x": 2200,
+          "y": 1150,
+          "radius": 25,
+          "hasCollision": true
+        },
+        {
+          "id": "rock1",
+          "type": "rock",
+          "x": 1000,
+          "y": 600,
+          "radius": 30,
+          "hasCollision": true
+        },
+        {
+          "id": "rock2",
+          "type": "rock",
+          "x": 1400,
+          "y": 800,
+          "radius": 30,
+          "hasCollision": true
+        },
+        {
+          "id": "bush1",
+          "type": "bush",
+          "x": 500,
+          "y": 500,
+          "radius": 15,
+          "hasCollision": false
+        },
+        {
+          "id": "bush2",
+          "type": "bush",
+          "x": 1900,
+          "y": 900,
+          "radius": 15,
+          "hasCollision": false
+        }
+      ],
+      "roads": [
+        {
+          "from": [
+            300,
+            700
+          ],
+          "to": [
+            1200,
+            400
+          ]
+        },
+        {
+          "from": [
+            300,
+            700
+          ],
+          "to": [
+            1200,
+            1000
+          ]
+        },
+        {
+          "from": [
+            2100,
+            700
+          ],
+          "to": [
+            1200,
+            400
+          ]
+        },
+        {
+          "from": [
+            2100,
+            700
+          ],
+          "to": [
+            1200,
+            1000
+          ]
+        },
+        {
+          "from": [
+            1200,
+            400
+          ],
+          "to": [
+            1200,
+            1000
+          ]
+        }
+      ],
+      "startPositions": {
+        "fabled": {
+          "x": 300,
+          "y": 700
+        },
+        "legion": {
+          "x": 2100,
+          "y": 700
+        },
+        "crusade": {
+          "x": 1200,
+          "y": 700
+        }
+      }
+    },
+    {
+      "id": "medium_tactical",
+      "name": "Tactical Warfare",
+      "width": 3000,
+      "height": 1800,
+      "tileSize": 50,
+      "difficulty": 2,
+      "description": "Medium map with strategic chokepoints and resource nodes",
+      "nodes": [
+        {
+          "id": "start_left",
+          "nodeType": "start",
+          "x": 400,
+          "y": 900,
+          "radius": 80,
+          "defaultFaction": "fabled"
+        },
+        {
+          "id": "start_right",
+          "nodeType": "start",
+          "x": 2600,
+          "y": 900,
+          "radius": 80,
+          "defaultFaction": "crusade"
+        },
+        {
+          "id": "resource_top",
+          "nodeType": "resource",
+          "x": 1500,
+          "y": 400,
+          "radius": 65,
+          "defaultFaction": null
+        },
+        {
+          "id": "resource_bottom",
+          "nodeType": "resource",
+          "x": 1500,
+          "y": 1400,
+          "radius": 65,
+          "defaultFaction": null
+        },
+        {
+          "id": "node_mid_left",
+          "nodeType": "standard",
+          "x": 900,
+          "y": 600,
+          "radius": 60,
+          "defaultFaction": null
+        },
+        {
+          "id": "node_mid_right",
+          "nodeType": "standard",
+          "x": 2100,
+          "y": 1200,
+          "radius": 60,
+          "defaultFaction": null
+        },
+        {
+          "id": "node_center",
+          "nodeType": "standard",
+          "x": 1500,
+          "y": 900,
+          "radius": 70,
+          "defaultFaction": null
+        }
+      ],
+      "terrainObjects": [
+        {
+          "id": "forest1_1",
+          "type": "tree",
+          "x": 600,
+          "y": 300,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "forest1_2",
+          "type": "tree",
+          "x": 650,
+          "y": 350,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "forest1_3",
+          "type": "tree",
+          "x": 700,
+          "y": 320,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "forest2_1",
+          "type": "tree",
+          "x": 2300,
+          "y": 1500,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "forest2_2",
+          "type": "tree",
+          "x": 2350,
+          "y": 1550,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "forest2_3",
+          "type": "tree",
+          "x": 2400,
+          "y": 1520,
+          "radius": 28,
+          "hasCollision": true
+        },
+        {
+          "id": "rocks1",
+          "type": "rock",
+          "x": 1200,
+          "y": 700,
+          "radius": 35,
+          "hasCollision": true
+        },
+        {
+          "id": "rocks2",
+          "type": "rock",
+          "x": 1800,
+          "y": 1100,
+          "radius": 35,
+          "hasCollision": true
+        },
+        {
+          "id": "rocks3",
+          "type": "rock",
+          "x": 1300,
+          "y": 1200,
+          "radius": 30,
+          "hasCollision": true
+        },
+        {
+          "id": "bush_dec1",
+          "type": "bush",
+          "x": 800,
+          "y": 800,
+          "radius": 15,
+          "hasCollision": false
+        },
+        {
+          "id": "bush_dec2",
+          "type": "bush",
+          "x": 2200,
+          "y": 1000,
+          "radius": 15,
+          "hasCollision": false
+        }
+      ],
+      "roads": [
+        {
+          "from": [
+            400,
+            900
+          ],
+          "to": [
+            900,
+            600
+          ]
+        },
+        {
+          "from": [
+            900,
+            600
+          ],
+          "to": [
+            1500,
+            400
+          ]
+        },
+        {
+          "from": [
+            1500,
+            900
+          ],
+          "to": [
+            1500,
+            400
+          ]
+        },
+        {
+          "from": [
+            2600,
+            900
+          ],
+          "to": [
+            2100,
+            1200
+          ]
+        },
+        {
+          "from": [
+            2100,
+            1200
+          ],
+          "to": [
+            1500,
+            1400
+          ]
+        },
+        {
+          "from": [
+            1500,
+            900
+          ],
+          "to": [
+            1500,
+            1400
+          ]
+        }
+      ],
+      "startPositions": {
+        "fabled": {
+          "x": 400,
+          "y": 900
+        },
+        "legion": {
+          "x": 1500,
+          "y": 900
+        },
+        "crusade": {
+          "x": 2600,
+          "y": 900
+        }
+      }
+    }
+  ]
+}

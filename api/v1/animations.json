@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "description": "Animation system definitions — common animations, controller config, transition rules",
+  "commonAnimations": {
+    "IDLE": "idle",
+    "WALK": "walk",
+    "RUN": "run",
+    "ATTACK": "attack",
+    "ATTACK_MELEE": "attack_melee",
+    "ATTACK_RANGED": "attack_ranged",
+    "DIE": "die",
+    "DEATH": "death",
+    "HIT": "hit",
+    "HURT": "hurt",
+    "JUMP": "jump",
+    "FALL": "fall",
+    "GATHER": "gather",
+    "BUILD": "build",
+    "CAST": "cast",
+    "SPELL": "spell",
+    "VICTORY": "victory",
+    "DEFEAT": "defeat"
+  },
+  "controllerParameters": [
+    "speed",
+    "direction",
+    "intensity",
+    "blend",
+    "custom"
+  ],
+  "transitionRules": {
+    "idle": [
+      "walk",
+      "run",
+      "jump",
+      "attack"
+    ],
+    "walk": [
+      "idle",
+      "run",
+      "jump",
+      "attack"
+    ],
+    "run": [
+      "idle",
+      "walk",
+      "jump",
+      "attack"
+    ],
+    "attack": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack_melee": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack_ranged": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "cast": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "spell": [
+      "idle",
+      "walk",
+      "run"
+    ]
+  },
+  "animationCategories": {
+    "combat": {
+      "keywords": [
+        "attack",
+        "spell"
+      ],
+      "description": "Combat-related animations"
+    },
+    "movement": {
+      "keywords": [
+        "move",
+        "walk",
+        "run"
+      ],
+      "description": "Locomotion animations"
+    },
+    "idle": {
+      "keywords": [
+        "idle",
+        "stand"
+      ],
+      "description": "Idle/standing animations"
+    }
+  },
+  "blendDefaults": {
+    "fadeIn": 0.2,
+    "fadeOut": 0.2,
+    "similarAnimBlendMultiplier": 0.8,
+    "differentAnimBlendMultiplier": 1.2
+  },
+  "debugEventTypes": [
+    "start",
+    "end",
+    "blend",
+    "interrupt",
+    "error"
+  ]
+}

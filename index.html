@@ -110,9 +110,9 @@
         <div class="stat"><div class="stat-value">132</div><div class="stat-label">Consumables</div></div>
         <div class="stat"><div class="stat-value">112</div><div class="stat-label">Materials</div></div>
         <div class="stat"><div class="stat-value">47</div><div class="stat-label">Skills</div></div>
-        <div class="stat"><div class="stat-value">11</div><div class="stat-label">Professions</div></div>
-        <div class="stat"><div class="stat-value">246</div><div class="stat-label">Sprite Maps</div></div>
-        <div class="stat"><div class="stat-value">50</div><div class="stat-label">Enemies + Bosses</div></div>
+        <div class="stat"><div class="stat-value">19</div><div class="stat-label">Faction Units</div></div>
+        <div class="stat"><div class="stat-value">10</div><div class="stat-label">Particle FX</div></div>
+        <div class="stat"><div class="stat-value">24</div><div class="stat-label">API Endpoints</div></div>
       </div>
     </div>
 
@@ -194,6 +194,53 @@
         <span class="method">GET</span>
         <span class="url">/api/v1/sprites.json</span>
         <span class="desc">Full sprite database — 500+ icon paths organized by category</span>
+      </div>
+
+      <p style="color: var(--gold); margin: 20px 0 12px; font-weight: bold;">🎮 Game Engine (from GDevelop)</p>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/factionUnits.json</span>
+        <span class="desc">19 RTS faction units across 3 factions with stats, animations, sprite paths</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/nodeUpgrades.json</span>
+        <span class="desc">Node upgrade system — unit tiers, costs, spawn rates, vision radius</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/tileMaps.json</span>
+        <span class="desc">2 tile-based RTS maps with nodes, terrain objects, roads, collision data</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/animations.json</span>
+        <span class="desc">Animation system — 18 common anims, transition rules, blend config</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/rendering.json</span>
+        <span class="desc">Materials, 7 skybox presets, 10 particle effects, 5 spell effects</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/controllers.json</span>
+        <span class="desc">5 RTS camera presets, 4 chase camera presets, FPS, mouse controller config</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/terrain.json</span>
+        <span class="desc">Procedural terrain — 5 biome presets (plains, mountains, islands, desert, arena)</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/ai.json</span>
+        <span class="desc">AI behavior trees — 7 node types, entity states, blackboard, scoring</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/ecs.json</span>
+        <span class="desc">ECS components — 8 component types, 2 systems, spatial hash config</span>
       </div>
     </div>
 

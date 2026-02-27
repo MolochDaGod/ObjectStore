@@ -1,0 +1,186 @@
+{
+  "version": "1.0.0",
+  "description": "Camera systems and input controllers — RTS camera, chase camera, first-person, mouse controller",
+  "rtsCameraPresets": {
+    "classic": {
+      "minZoom": 10,
+      "maxZoom": 100,
+      "zoomSpeed": 5,
+      "panSpeed": 0.5,
+      "rotationSpeed": 0.3,
+      "smoothing": 0.1,
+      "minPitch": 30,
+      "maxPitch": 80,
+      "edgePanEnabled": true,
+      "edgePanMargin": 30,
+      "edgePanSpeed": 30
+    },
+    "closeUp": {
+      "minZoom": 5,
+      "maxZoom": 50,
+      "zoomSpeed": 3,
+      "panSpeed": 0.3,
+      "rotationSpeed": 0.2,
+      "smoothing": 0.15,
+      "minPitch": 20,
+      "maxPitch": 60,
+      "edgePanEnabled": true,
+      "edgePanMargin": 40,
+      "edgePanSpeed": 20
+    },
+    "strategic": {
+      "minZoom": 30,
+      "maxZoom": 200,
+      "zoomSpeed": 10,
+      "panSpeed": 1,
+      "rotationSpeed": 0.5,
+      "smoothing": 0.05,
+      "minPitch": 45,
+      "maxPitch": 90,
+      "edgePanEnabled": true,
+      "edgePanMargin": 20,
+      "edgePanSpeed": 50
+    },
+    "isometric": {
+      "minZoom": 15,
+      "maxZoom": 80,
+      "zoomSpeed": 4,
+      "panSpeed": 0.4,
+      "rotationSpeed": 0,
+      "smoothing": 0.08,
+      "minPitch": 45,
+      "maxPitch": 45,
+      "edgePanEnabled": true,
+      "edgePanMargin": 25,
+      "edgePanSpeed": 25
+    },
+    "grudgeBrawl": {
+      "minZoom": 8,
+      "maxZoom": 60,
+      "zoomSpeed": 4,
+      "panSpeed": 0.4,
+      "rotationSpeed": 0.25,
+      "smoothing": 0.12,
+      "minPitch": 25,
+      "maxPitch": 70,
+      "edgePanEnabled": true,
+      "edgePanMargin": 35,
+      "edgePanSpeed": 35
+    }
+  },
+  "chaseCameraPresets": {
+    "topDown": {
+      "distance": 20,
+      "height": 18,
+      "heightOffset": 0,
+      "lookAheadDistance": 0,
+      "smoothSpeed": 8,
+      "rotationSpeed": 0.003,
+      "minDistance": 10,
+      "maxDistance": 40,
+      "minVerticalAngle": 1.2,
+      "maxVerticalAngle": 1.4,
+      "collisionEnabled": false
+    },
+    "thirdPerson": {
+      "distance": 8,
+      "height": 3,
+      "heightOffset": 1.5,
+      "lookAheadDistance": 2,
+      "smoothSpeed": 6,
+      "rotationSpeed": 0.003,
+      "minDistance": 3,
+      "maxDistance": 15,
+      "minVerticalAngle": -0.3,
+      "maxVerticalAngle": 0.8,
+      "collisionEnabled": true
+    },
+    "cinematic": {
+      "distance": 12,
+      "height": 4,
+      "heightOffset": 1,
+      "lookAheadDistance": 4,
+      "smoothSpeed": 2,
+      "rotationSpeed": 0.002,
+      "minDistance": 8,
+      "maxDistance": 20,
+      "minVerticalAngle": 0,
+      "maxVerticalAngle": 0.6,
+      "collisionEnabled": true
+    },
+    "mobaStyle": {
+      "distance": 15,
+      "height": 12,
+      "heightOffset": 0,
+      "lookAheadDistance": 0,
+      "smoothSpeed": 10,
+      "rotationSpeed": 0,
+      "minDistance": 10,
+      "maxDistance": 25,
+      "minVerticalAngle": 0.8,
+      "maxVerticalAngle": 1,
+      "collisionEnabled": false
+    }
+  },
+  "firstPersonDefaults": {
+    "eyeHeight": 1.7,
+    "mouseSensitivity": 0.002,
+    "minPitch": -1.47,
+    "maxPitch": 1.47
+  },
+  "rtsMouseController": {
+    "selectionBoxStyle": {
+      "borderColor": "#22c55e",
+      "fillColor": "rgba(34, 197, 94, 0.15)",
+      "borderWidth": 2
+    },
+    "commandIndicators": {
+      "move": "#22c55e",
+      "attack": "#dc2626",
+      "gather": "#fbbf24"
+    },
+    "entityTypes": [
+      "unit",
+      "building",
+      "resource"
+    ],
+    "teamTypes": [
+      "player",
+      "enemy",
+      "neutral"
+    ]
+  },
+  "keyBindings": {
+    "rtsCamera": {
+      "panUp": [
+        "KeyW",
+        "ArrowUp"
+      ],
+      "panDown": [
+        "KeyS",
+        "ArrowDown"
+      ],
+      "panLeft": [
+        "KeyA",
+        "ArrowLeft"
+      ],
+      "panRight": [
+        "KeyD",
+        "ArrowRight"
+      ],
+      "rotateLeft": [
+        "KeyQ"
+      ],
+      "rotateRight": [
+        "KeyE"
+      ]
+    },
+    "chaseCamera": {
+      "orbit": "RightMouseButton",
+      "zoom": "MouseWheel"
+    },
+    "firstPerson": {
+      "look": "PointerLock"
+    }
+  }
+}
