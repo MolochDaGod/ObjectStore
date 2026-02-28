@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-02-28T06:01:35.779Z",
+  "manifest": "docs/puter-integration-inventory.json",
+  "puterSdk": {
+    "url": "https://js.puter.com/v2/",
+    "reachable": true,
+    "status": 200,
+    "error": null
+  },
+  "totals": {
+    "projects": 4,
+    "productionReady": 1,
+    "minorGaps": 1,
+    "atRisk": 2,
+    "notReady": 0,
+    "averageScore": 73
+  },
+  "projects": [
+    {
+      "name": "ObjectStore",
+      "type": "site",
+      "owner": "Grudge Studio Platform",
+      "puterEnabled": true,
+      "capabilities": [
+        "txt2img",
+        "fs.write"
+      ],
+      "score": 100,
+      "risk": "production-ready",
+      "checks": {
+        "urlReachable": true,
+        "urlStatus": 200,
+        "statusReachable": true,
+        "statusCode": 200,
+        "statusSkipped": false,
+        "integrationFileExists": true,
+        "integrationFile": "utils/image-generator.js"
+      }
+    },
+    {
+      "name": "Warlord-Crafting-Suite",
+      "type": "app",
+      "owner": "Grudge Studio Frontend",
+      "puterEnabled": true,
+      "capabilities": [
+        "txt2img"
+      ],
+      "score": 55,
+      "risk": "at-risk",
+      "checks": {
+        "urlReachable": false,
+        "urlStatus": 404,
+        "statusReachable": false,
+        "statusCode": 404,
+        "statusSkipped": false,
+        "integrationFileExists": true,
+        "integrationFile": "integrations/warlord-crafting-suite-integration.tsx"
+      }
+    },
+    {
+      "name": "GrudgeWarlords",
+      "type": "game-site",
+      "owner": "Grudge Studio Game Team",
+      "puterEnabled": false,
+      "capabilities": [],
+      "score": 85,
+      "risk": "minor-gaps",
+      "checks": {
+        "urlReachable": true,
+        "urlStatus": 200,
+        "statusReachable": true,
+        "statusCode": null,
+        "statusSkipped": true,
+        "integrationFileExists": true,
+        "integrationFile": "integrations/GrudgeWarlords-Unity-Integration.cs"
+      }
+    },
+    {
+      "name": "PuterGrudge",
+      "type": "backend",
+      "owner": "Grudge Studio AI",
+      "puterEnabled": true,
+      "capabilities": [
+        "txt2img",
+        "fs.write",
+        "ai.chat"
+      ],
+      "score": 50,
+      "risk": "at-risk",
+      "checks": {
+        "urlReachable": false,
+        "urlStatus": 404,
+        "statusReachable": true,
+        "statusCode": null,
+        "statusSkipped": true,
+        "integrationFileExists": false,
+        "integrationFile": "server/grudge-integration.js"
+      }
+    }
+  ]
+}

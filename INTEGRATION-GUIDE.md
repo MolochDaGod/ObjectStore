@@ -3,6 +3,11 @@
 
 Complete guide for integrating ObjectStore API across all Grudge Studio projects.
 
+Puter governance and integration audit resources:
+
+- [docs/PUTER-AUDIT-INTEGRATION.md](docs/PUTER-AUDIT-INTEGRATION.md)
+- [docs/puter-integration-inventory.json](docs/puter-integration-inventory.json)
+
 ---
 
 ## 🎯 Quick Start

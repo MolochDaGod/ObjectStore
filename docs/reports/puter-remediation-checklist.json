@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-02-28",
+  "sourceReport": "docs/reports/puter-audit-report.json",
+  "portfolioTargets": {
+    "minProjectScore": 70,
+    "targetAverageScore": 85,
+    "targetDate": "2026-03-07"
+  },
+  "items": [
+    {
+      "priority": "P0",
+      "project": "Warlord-Crafting-Suite",
+      "owner": "Grudge Studio Frontend",
+      "currentScore": 55,
+      "risk": "at-risk",
+      "dueDate": "2026-03-03",
+      "failingChecks": [
+        "urlReachable=false",
+        "statusReachable=false"
+      ],
+      "actions": [
+        "Confirm canonical production URL and update inventory",
+        "Restore deployment to return HTTP 200 on base URL",
+        "Implement /api/status health endpoint returning JSON",
+        "Re-run audit and verify score >= 85"
+      ],
+      "exitCriteria": {
+        "urlReachable": true,
+        "statusReachable": true,
+        "minimumScore": 85
+      }
+    },
+    {
+      "priority": "P0",
+      "project": "PuterGrudge",
+      "owner": "Grudge Studio AI",
+      "currentScore": 50,
+      "risk": "at-risk",
+      "dueDate": "2026-03-05",
+      "failingChecks": [
+        "urlReachable=false",
+        "integrationFileExists=false"
+      ],
+      "actions": [
+        "Validate canonical public URL and update inventory",
+        "Ensure service returns HTTP 200 on canonical URL or health route",
+        "Add missing integration module or correct integrationFile path",
+        "Define statusUrl in inventory for backend service",
+        "Re-run audit and verify score >= 80"
+      ],
+      "exitCriteria": {
+        "urlReachable": true,
+        "integrationFileExists": true,
+        "minimumScore": 80
+      }
+    },
+    {
+      "priority": "P1",
+      "project": "GrudgeWarlords",
+      "owner": "Grudge Studio Game Team",
+      "currentScore": 85,
+      "risk": "minor-gaps",
+      "dueDate": "2026-03-07",
+      "failingChecks": [],
+      "actions": [
+        "Document intentional puter.enabled=false rationale",
+        "Add statusUrl if health endpoint exists",
+        "Keep score >= 85"
+      ],
+      "exitCriteria": {
+        "minimumScore": 85
+      }
+    },
+    {
+      "priority": "P2",
+      "project": "ObjectStore",
+      "owner": "Grudge Studio Platform",
+      "currentScore": 100,
+      "risk": "production-ready",
+      "dueDate": "ongoing",
+      "failingChecks": [],
+      "actions": [
+        "Use ObjectStore as baseline reference for contract compliance",
+        "Run audit before each release candidate"
+      ],
+      "exitCriteria": {
+        "minimumScore": 95
+      }
+    }
+  ]
+}

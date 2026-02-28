@@ -2,6 +2,8 @@
 
 Complete guide for deploying ObjectStore and creating releases across the Grudge Studio ecosystem.
 
+**Last Updated**: 2026-02-27
+
 ---
 
 ## 📦 ObjectStore Deployment
@@ -76,6 +78,18 @@ Example: 2.1.0
 
 ### Creating a Release
 
+Set these once before running release commands:
+
+```bash
+VERSION=2.1.0
+RELEASE_DATE=2026-02-27
+```
+
+```powershell
+$VERSION = "2.1.0"
+$RELEASE_DATE = "2026-02-27"
+```
+
 #### 1. Update Version
 
 Update version in relevant files:
@@ -84,14 +98,14 @@ Update version in relevant files:
 // api/v1/weapons.json
 {
   "version": "2.1.0",
-  "updated": "2026-02-25"
+   "updated": "2026-02-27"
 }
 ```
 
 #### 2. Update CHANGELOG.md
 
 ```markdown
-## [2.1.0] - 2026-02-25
+## [2.1.0] - 2026-02-27
 
 ### Added
 - AI image generation with Puter.js
@@ -111,7 +125,7 @@ Update version in relevant files:
 
 ```bash
 # Create annotated tag
-git tag -a v2.1.0 -m "Release v2.1.0 - AI Integration & Tier System
+git tag -a "v$VERSION" -m "Release v$VERSION - AI Integration & Tier System
 
 Added:
 - AI image generation
@@ -121,7 +135,7 @@ Added:
 Co-Authored-By: Oz <oz-agent@warp.dev>"
 
 # Push tag
-git push origin v2.1.0
+git push origin "v$VERSION"
 ```
 
 #### 4. Create GitHub Release
@@ -129,8 +143,8 @@ git push origin v2.1.0
 Via GitHub CLI:
 
 ```bash
-gh release create v2.1.0 \
-  --title "v2.1.0 - AI Integration & Tier System" \
+gh release create "v$VERSION" \
+   --title "v$VERSION - AI Integration & Tier System" \
   --notes "## What's New
 
 ### 🎨 AI Image Generation
@@ -159,7 +173,7 @@ Co-Authored-By: Oz <oz-agent@warp.dev>"
 Or via GitHub Web UI:
 1. Go to https://github.com/MolochDaGod/ObjectStore/releases
 2. Click "Draft a new release"
-3. Choose tag `v2.1.0`
+3. Choose tag `v$VERSION`
 4. Fill in release notes
 5. Click "Publish release"
 
@@ -290,11 +304,11 @@ If issues arise:
 
 ```bash
 # Revert ObjectStore
-git revert v2.1.0
+git revert "v$VERSION"
 git push origin main
 
-# Revert NPM package
-npm unpublish @grudge-studio/tools@2.1.0
+# Deprecate problematic NPM package version (safer than unpublish)
+npm deprecate "@grudge-studio/tools@$VERSION" "Deprecated due to rollback from ObjectStore v$VERSION"
 
 # Notify integrations
 # Post in Discord/Slack about rollback
@@ -309,6 +323,9 @@ npm unpublish @grudge-studio/tools@2.1.0
 ```bash
 # Check API availability
 curl https://molochdagod.github.io/ObjectStore/api/v1/weapons.json
+
+# Windows PowerShell alternative
+Invoke-RestMethod https://molochdagod.github.io/ObjectStore/api/v1/weapons.json
 
 # Verify SDK
 node -e "
@@ -385,7 +402,7 @@ Projects that should update:
 
 ## 🎯 Current Release: v2.1.0
 
-**Deployed**: 2026-02-25
+**Deployed**: 2026-02-27
 **Status**: ✅ Live
 **URL**: https://molochdagod.github.io/ObjectStore
 

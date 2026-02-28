@@ -14,8 +14,9 @@
 3. [API Reference](#api-reference)
 4. [UUID System](#uuid-system)
 5. [Integration Guide](#integration-guide)
-6. [Ecosystem Projects](#ecosystem-projects)
-7. [Contributing](#contributing)
+6. [Puter Audit & Integration](#puter-audit--integration)
+7. [Ecosystem Projects](#ecosystem-projects)
+8. [Contributing](#contributing)
 
 ---
 
@@ -350,6 +351,33 @@ const imageBlob = await puter.ai.txt2img('legendary fire sword icon, fantasy RPG
 
 // Store in Puter cloud
 await puter.fs.write(`/icons/${itemId}.png`, imageBlob);
+```
+
+---
+
+## 🧪 Puter Audit & Integration
+
+Grudge Studio now maintains a repeatable Puter governance workflow for all apps/sites.
+
+- **Audit + Integration Standard**: [docs/PUTER-AUDIT-INTEGRATION.md](docs/PUTER-AUDIT-INTEGRATION.md)
+- **Portfolio Inventory**: [docs/puter-integration-inventory.json](docs/puter-integration-inventory.json)
+
+### Run the audit
+
+```bash
+npm run audit:puter
+```
+
+### Save full report
+
+```bash
+npm run audit:puter:save
+```
+
+Report output path:
+
+```text
+docs/reports/puter-audit-report.json
 ```
 
 ---
