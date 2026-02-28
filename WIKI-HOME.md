@@ -355,6 +355,14 @@ await puter.fs.write(`/icons/${itemId}.png`, imageBlob);
 
 ---
 
+## 🤖 Agent Context
+
+An AI agent context document is maintained in this repository to enable seamless session continuation:
+
+- **Agent Context**: [AGENT-CONTEXT.md](../AGENT-CONTEXT.md) — Pending tasks, technical inventory, codebase status, remediation plan, and agent guidelines
+
+---
+
 ## 🧪 Puter Audit & Integration
 
 Grudge Studio now maintains a repeatable Puter governance workflow for all apps/sites.
