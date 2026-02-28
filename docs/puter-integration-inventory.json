@@ -1,0 +1,57 @@
+{
+  "lastUpdated": "2026-02-27",
+  "objectStoreBaseUrl": "https://molochdagod.github.io/ObjectStore",
+  "puterSdkUrl": "https://js.puter.com/v2/",
+  "projects": [
+    {
+      "name": "ObjectStore",
+      "type": "site",
+      "url": "https://molochdagod.github.io/ObjectStore",
+      "statusUrl": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
+      "owner": "Grudge Studio Platform",
+      "repo": "MolochDaGod/ObjectStore",
+      "puter": {
+        "enabled": true,
+        "capabilities": ["txt2img", "fs.write"],
+        "integrationFile": "utils/image-generator.js"
+      }
+    },
+    {
+      "name": "Warlord-Crafting-Suite",
+      "type": "app",
+      "url": "https://warlord-crafting-suite.vercel.app",
+      "statusUrl": "https://warlord-crafting-suite.vercel.app/api/status",
+      "owner": "Grudge Studio Frontend",
+      "repo": "MolochDaGod/Warlord-Crafting-Suite",
+      "puter": {
+        "enabled": true,
+        "capabilities": ["txt2img"],
+        "integrationFile": "integrations/warlord-crafting-suite-integration.tsx"
+      }
+    },
+    {
+      "name": "GrudgeWarlords",
+      "type": "game-site",
+      "url": "https://grudgewarlords.com",
+      "owner": "Grudge Studio Game Team",
+      "repo": "MolochDaGod/GrudgeWarlords",
+      "puter": {
+        "enabled": false,
+        "capabilities": [],
+        "integrationFile": "integrations/GrudgeWarlords-Unity-Integration.cs"
+      }
+    },
+    {
+      "name": "PuterGrudge",
+      "type": "backend",
+      "url": "https://putergrudge.grudgewarlords.com",
+      "owner": "Grudge Studio AI",
+      "repo": "MolochDaGod/PuterGrudge",
+      "puter": {
+        "enabled": true,
+        "capabilities": ["txt2img", "fs.write", "ai.chat"],
+        "integrationFile": "server/grudge-integration.js"
+      }
+    }
+  ]
+}
