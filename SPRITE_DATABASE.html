@@ -728,53 +728,51 @@
       
       document.getElementById('armor-loading').style.display = 'none';
       const container = document.getElementById('armor-content');
+      const countEl = document.getElementById('armorCount');
+      if (countEl) countEl.textContent = data.total || 0;
       
-      let html = '<h2 class="section-title">🛡️ Armor Slots</h2>';
-      
-      const slotEmojis = {
-        helm: '⛑️',
-        shoulder: '🦾',
-        chest: '🎽',
-        hands: '🧤',
-        belt: '📿',
-        pants: '👖',
-        feet: '🥾',
-        bracer: '⌚',
-        ring: '💍',
-        necklace: '📿',
-        back: '🧣'
+      const materialLabels = {
+        cloth: '🧥 Cloth Armor',
+        leather: '🦺 Leather Armor',
+        metal: '⛑️ Metal Armor',
+        gem: '💎 Gem Offhands'
       };
 
-      html += '<div class="items-grid">';
-      
-      for (const [slotKey, slotData] of Object.entries(data.slots)) {
+      let html = '<h2 class="section-title">🛡️ Armor Database</h2>';
+
+      // Summary: sets overview
+      if (data.sets) {
+        html += '<div style="margin-bottom:20px; color:var(--text-dim); font-size:13px;">Sets: ' + data.sets.join(' • ') + '</div>';
+      }
+
+      for (const [matKey, matData] of Object.entries(data.materials)) {
+        if (!matData.items || matData.items.length === 0) continue;
+        
         html += `
-          <div class="item-card" onclick="showArmorDetail('${slotKey}')">
-            <span class="item-icon">${slotEmojis[slotKey] || '🛡️'}</span>
-            <div class="item-name">${slotData.name}</div>
-            <div class="item-meta">${slotData.maxIcons || 0} variants</div>
-          </div>
+          <div class="category-group" data-category="armor-${matKey}">
+            <h3 class="category-title">
+              ${materialLabels[matKey] || matKey}
+              <span class="category-count">${matData.count || matData.items.length} items • ${matData.primaryAttribute || ''}</span>
+            </h3>
+            <div class="items-grid">
         `;
+        
+        for (const item of matData.items) {
+          const iconPath = getIconPath('armor', item.type, item.id);
+          const iconHtml = createIconElement(iconPath, item.emoji || '🛡️');
+          const setName = item.id.split('-')[1] || '';
+          html += `
+            <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="armor" onclick="showArmorItemDetail('${item.id}', '${matKey}')">
+              ${iconHtml}
+              <div class="item-name">${item.name}</div>
+              <div class="item-meta">${item.type} • ${setName.charAt(0).toUpperCase() + setName.slice(1)}</div>
+            </div>
+          `;
+        }
+        
+        html += '</div></div>';
       }
       
-      html += '</div>';
-      
-      // Tier colors reference
-      html += '<h3 class="category-title" style="margin-top: 30px;">🎨 Tier Colors</h3>';
-      html += '<div class="items-grid">';
-      
-      for (const [tier, tierData] of Object.entries(data.tierColors)) {
-        html += `
-          <div class="item-card" style="border-color: ${tierData.color};">
-            <span class="tier-badge tier-${tier}">T${tier}</span>
-            <span class="item-icon" style="color: ${tierData.color};">⬢</span>
-            <div class="item-name">${tierData.name}</div>
-            <div class="item-meta">Tier ${tier}</div>
-          </div>
-        `;
-      }
-      
-      html += '</div>';
       container.innerHTML = html;
       updateTotalCount();
     }
@@ -823,7 +821,21 @@
         for (const [catKey, catData] of Object.entries(allData.weapons.categories)) {
           if (!catData.items) continue;
           for (const item of catData.items) {
-            html += createItemCard(item, 'weapon', catKey);
+            html += createItemCard(item, 'weapon', catKey, catData);
+          }
+        }
+        html += '</div></div>';
+      }
+      
+      // Armor summary
+      if (allData.armor) {
+        html += '<div class="category-group"><h3 class="category-title">🛡️ All Armor</h3><div class="items-grid">';
+        for (const [matKey, matData] of Object.entries(allData.armor.materials)) {
+          if (!matData.items) continue;
+          for (const item of matData.items) {
+            const iconPath = getIconPath('armor', item.type, item.id);
+            const iconHtml = createIconElement(iconPath, item.emoji || '🛡️');
+            html += `<div class="item-card" data-name="${item.name.toLowerCase()}" data-type="armor" onclick="showArmorItemDetail('${item.id}', '${matKey}')">${iconHtml}<div class="item-name">${item.name}</div><div class="item-meta">${item.material} ${item.type}</div></div>`;
           }
         }
         html += '</div></div>';
@@ -858,6 +870,63 @@
     }
 
     // Icon resolver - uses iconBase system from weapon categories
+    const MATERIAL_ICON_ALIASES = {
+      'moonweave-thread': 'enchanted-thread',
+      'starweave-thread': 'arcane-thread',
+      'voidweave-thread': 'celestial-thread',
+      'wyrm-leather': 'hardened-leather',
+      'infernal-leather': 'rugged-leather',
+      'titan-leather': 'thick-hide',
+      'divine-leather': 'rawhide'
+    };
+
+    // Armor type → armor_full/ icon prefix mapping
+    const ARMOR_ICON_MAP = {
+      'Helm': { prefix: 'Helm', max: 72 },
+      'Shoulder': { prefix: 'Shoulder', max: 70 },
+      'Chest': { prefix: 'Chest', max: 83 },
+      'Hands': { prefix: 'Gloves', max: 28 },
+      'Feet': { prefix: 'Boots', max: 56 },
+      'Ring': { prefix: 'Ring', max: 57 },
+      'Necklace': { prefix: 'necklace', max: 36 },
+      'Relic': { prefix: 'Bracer', max: 7 },
+      'Offhand': { prefix: 'Ring', max: 57 }
+    };
+    let armorIconCounter = {};
+
+    // Potion name → RPG icon mapping
+    function getPotionIconPath(name) {
+      const n = name.toLowerCase();
+      if (n.includes('health') || n.includes('heal')) return `${ICONS_URL}/consumables/health_potion.png`;
+      if (n.includes('mana')) return `${ICONS_URL}/consumables/mana_potion.png`;
+      if (n.includes('stamina')) return `${ICONS_URL}/496_rpg_icons/P_Green01.png`;
+      if (n.includes('antidote') || n.includes('poison')) return `${ICONS_URL}/496_rpg_icons/P_Orange01.png`;
+      if (n.includes('rage') || n.includes('berserker')) return `${ICONS_URL}/496_rpg_icons/P_Red01.png`;
+      if (n.includes('speed') || n.includes('swift')) return `${ICONS_URL}/496_rpg_icons/P_Yellow01.png`;
+      if (n.includes('strength') || n.includes('titan')) return `${ICONS_URL}/496_rpg_icons/P_Red02.png`;
+      if (n.includes('defense') || n.includes('ward') || n.includes('invul')) return `${ICONS_URL}/496_rpg_icons/P_Blue01.png`;
+      if (n.includes('invisib')) return `${ICONS_URL}/496_rpg_icons/P_White01.png`;
+      if (n.includes('fire')) return `${ICONS_URL}/496_rpg_icons/P_Orange02.png`;
+      if (n.includes('frost') || n.includes('ice')) return `${ICONS_URL}/496_rpg_icons/P_Blue02.png`;
+      if (n.includes('lightning')) return `${ICONS_URL}/496_rpg_icons/P_Yellow02.png`;
+      if (n.includes('elixir') || n.includes('ultimate') || n.includes('immortal')) return `${ICONS_URL}/496_rpg_icons/P_Pink01.png`;
+      if (n.includes('elemental')) return `${ICONS_URL}/496_rpg_icons/P_White02.png`;
+      return `${ICONS_URL}/496_rpg_icons/P_Blue03.png`;
+    }
+
+    // Engineer item name → RPG icon mapping
+    function getEngineerIconPath(name) {
+      const n = name.toLowerCase();
+      if (n.includes('bandage') || n.includes('medkit')) return `${ICONS_URL}/496_rpg_icons/P_Medicine01.png`;
+      if (n.includes('grenade') || n.includes('frag') || n.includes('incendiary')) return `${ICONS_URL}/496_rpg_icons/I_Cannon01.png`;
+      if (n.includes('flashbang') || n.includes('smoke')) return `${ICONS_URL}/496_rpg_icons/I_Cannon02.png`;
+      if (n.includes('emp')) return `${ICONS_URL}/496_rpg_icons/I_Cannon03.png`;
+      if (n.includes('lure') || n.includes('fishing')) return `${ICONS_URL}/496_rpg_icons/I_FishTail.png`;
+      if (n.includes('turret')) return `${ICONS_URL}/496_rpg_icons/E_Metal01.png`;
+      if (n.includes('repair') || n.includes('kit')) return `${ICONS_URL}/496_rpg_icons/E_Metal02.png`;
+      return `${ICONS_URL}/496_rpg_icons/E_Metal03.png`;
+    }
+
     function getIconPath(type, category, itemId, tier, iconBase, iconMax, iconOffset = 0) {
       if (type === 'weapon' && iconBase) {
         // Initialize counter for this category if not exists
@@ -876,8 +945,21 @@
       }
       
       if (type === 'material') {
-        // Material: try item-id.png first (e.g., copper-ore.png)
-        return `${ICONS_URL}/materials/${itemId}.png`;
+        // Try alias first for items without direct icon files
+        const resolvedId = MATERIAL_ICON_ALIASES[itemId] || itemId;
+        return `${ICONS_URL}/materials/${resolvedId}.png`;
+      }
+
+      if (type === 'armor') {
+        const mapping = ARMOR_ICON_MAP[category];
+        if (mapping) {
+          const counterKey = `armor-${category}`;
+          if (!armorIconCounter[counterKey]) armorIconCounter[counterKey] = 1;
+          let iconNum = armorIconCounter[counterKey];
+          armorIconCounter[counterKey] = (armorIconCounter[counterKey] % mapping.max) + 1;
+          const iconFile = `${mapping.prefix}_${String(iconNum).padStart(2, '0')}.png`;
+          return `${ICONS_URL}/armor_full/${iconFile}`;
+        }
       }
       
       if (type === 'profession' && iconIndex?.professions?.[itemId]) {
@@ -928,37 +1010,66 @@
       `;
     }
 
-    // Food icon mapping
-    const foodIcons = ['steak_cooked', 'ham', 'bread', 'cheese', 'fish_red', 'apple', 'carrot', 'grapes', 'mushroom', 'croissant', 'banana', 'mango', 'crab', 'squid', 'fish_silver', 'meat_raw', 'steak_rare', 'steak_raw', 'beer', 'wheat'];
-    const herbIcons = ['bouquet', 'branch', 'bundle', 'leaf', 'leaves', 'lavender', 'grass', 'seaweed', 'crystalplant', 'bundle_berries'];
+    // Semantic food icon mapping - matches item names to the best available food sprite
+    function getFoodIconForName(name) {
+      const n = name.toLowerCase();
+      // Steak / beef items
+      if (n.includes('steak') || n.includes('dragon') || n.includes('phoenix') || n.includes('titan')) return 'steak_cooked';
+      // Raw / skewer / kebab
+      if (n.includes('skewer') || n.includes('kebab') || n.includes('sashimi')) return 'steak_raw';
+      // Ribs / rare cuts
+      if (n.includes('rib') || n.includes('boar') || n.includes('cutlet') || n.includes('wolf') || n.includes('manticore') || n.includes('colossus') || n.includes('wyvern')) return 'steak_rare';
+      // Ham / roast / platter
+      if (n.includes('rabbit') || n.includes('roast') || n.includes('platter') || n.includes('feast') || n.includes('lamb') || n.includes('griffin')) return 'ham';
+      // Raw meat / haunch
+      if (n.includes('haunch') || n.includes('bacon') || n.includes('bear')) return 'meat_raw';
+      // Fish / sea
+      if (n.includes('fish') || n.includes('leviathan')) return 'fish_red';
+      if (n.includes('chowder') || n.includes('bisque') || n.includes('crab')) return 'crab';
+      if (n.includes('gumbo') || n.includes('squid') || n.includes('sailor')) return 'squid';
+      // Bread / burger / pie / wrap / pastry / biscuit / cake
+      if (n.includes('bread') || n.includes('burger') || n.includes('pie')) return 'bread';
+      if (n.includes('pastry') || n.includes('biscuit') || n.includes('croissant')) return 'croissant';
+      if (n.includes('cake')) return 'croissant';
+      // Mushroom / stew / soup / curry / broth / bowl / gumbo
+      if (n.includes('stew') || n.includes('soup') || n.includes('curry') || n.includes('broth') || n.includes('bowl') || n.includes('hydra') || n.includes('mushroom')) return 'mushroom';
+      // Salad / greens / herb / salve / mix
+      if (n.includes('salad') || n.includes('greens') || n.includes('mix') || n.includes('medley') || n.includes('garden') || n.includes('blessing') || n.includes('blossom') || n.includes('fruit') || n.includes('ambrosia') || n.includes('nectar') || n.includes('restoration') || n.includes('immortal')) return 'apple';
+      if (n.includes('herb') || n.includes('salve') || n.includes('bundle') || n.includes('roll') || n.includes('celestial') || n.includes('verdant') || n.includes('eden')) return 'grapes';
+      // Tea
+      if (n.includes('tea') || n.includes('sickle') || n.includes('wheat')) return 'wheat';
+      // Brew / grog / beer
+      if (n.includes('brew') || n.includes('grog') || n.includes('stamina')) return 'beer';
+      // Sausage
+      if (n.includes('sausage')) return 'ham';
+      // Honey
+      if (n.includes('honey')) return 'bread';
+      // Mana soup / enchanted / arcane / wizard / mage / ley / astral / void / ethereal / planar
+      if (n.includes('mana') || n.includes('arcane') || n.includes('wizard') || n.includes('enchanted') || n.includes('ley') || n.includes('astral') || n.includes('void') || n.includes('ethereal') || n.includes('planar') || n.includes('cosmic') || n.includes('infinity') || n.includes('omniscient') || n.includes('creator') || n.includes('divine') || n.includes('moonwell') || n.includes('druid') || n.includes('sanctuary') || n.includes('spring') || n.includes('elven') || n.includes('fairy') || n.includes('wrap') || n.includes('vitality') || n.includes('forest') || n.includes('regeneration') || n.includes('treant')) return 'mushroom';
+      // Apple / carrot
+      if (n.includes('apple') || n.includes('carrot')) return 'carrot';
+      if (n.includes('mango')) return 'mango';
+      if (n.includes('banana')) return 'banana';
+      if (n.includes('cheese')) return 'cheese';
+      // Default
+      return 'steak_cooked';
+    }
 
     function createConsumableCard(item, category) {
-      let iconPath;
-      const itemIdx = (item.id - 1);
+      let iconPath = null;
       
       if (category === 'redFoods' || category === 'greenFoods' || category === 'blueFoods') {
-        // Use actual food sprites
-        const foodIcon = foodIcons[itemIdx % foodIcons.length];
+        // Semantic food icon based on item name
+        const foodIcon = getFoodIconForName(item.name);
         iconPath = `${ICONS_URL}/consumables/food_${foodIcon}.png`;
       } else if (category === 'mysticPotions') {
-        // Use health or mana potion based on item name
-        if (item.name.toLowerCase().includes('health')) {
-          iconPath = `${ICONS_URL}/consumables/health_potion.png`;
-        } else if (item.name.toLowerCase().includes('mana')) {
-          iconPath = `${ICONS_URL}/consumables/mana_potion.png`;
-        } else {
-          // Alternate between health and mana for other potions
-          iconPath = `${ICONS_URL}/consumables/${itemIdx % 2 === 0 ? 'health' : 'mana'}_potion.png`;
-        }
+        // All potions get icons from health/mana sprites or RPG icon pack
+        iconPath = getPotionIconPath(item.name);
       } else if (category === 'engineerConsumables') {
-        // Use herb icons for engineer items (bandages, gadgets)
-        const herbIcon = herbIcons[itemIdx % herbIcons.length];
-        iconPath = `${ICONS_URL}/consumables/herb_herb_${herbIcon}.png`;
-      } else {
-        // Default to food icons
-        const foodIcon = foodIcons[itemIdx % foodIcons.length];
-        iconPath = `${ICONS_URL}/consumables/food_${foodIcon}.png`;
+        // Engineer items use RPG icon pack
+        iconPath = getEngineerIconPath(item.name);
       }
+      
       const iconHtml = createIconElement(iconPath, item.icon || '🧪');
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" onclick="showConsumableDetail('${item.id}', '${category}')">
@@ -1066,22 +1177,34 @@
       document.getElementById('detailModal').classList.add('active');
     }
 
-    function showArmorDetail(slot) {
+    function showArmorItemDetail(id, materialKey) {
       const data = allData.armor;
-      if (!data || !data.slots[slot]) return;
+      if (!data || !data.materials[materialKey]) return;
       
-      const slotData = data.slots[slot];
+      const item = data.materials[materialKey].items.find(i => i.id === id);
+      if (!item) return;
       
-      document.getElementById('modalIcon').textContent = '🛡️';
-      document.getElementById('modalTitle').textContent = slotData.name;
-      document.getElementById('modalSubtitle').textContent = 'Armor Slot';
+      document.getElementById('modalIcon').textContent = item.emoji || '🛡️';
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `${item.material} ${item.type} • ${item.lore || ''}`;
       
+      const s = item.stats || {};
       let details = `
-        <div class="detail-row"><span class="detail-label">Slot</span><span class="detail-value">${slot}</span></div>
-        <div class="detail-row"><span class="detail-label">Icon Base</span><span class="detail-value">${slotData.iconBase}</span></div>
-        <div class="detail-row"><span class="detail-label">Max Icons</span><span class="detail-value">${slotData.maxIcons}</span></div>
-        <div class="detail-row"><span class="detail-label">Icon Folder</span><span class="detail-value">${slotData.iconFolder}</span></div>
+        <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Material</span><span class="detail-value">${item.material}</span></div>
+        <div class="detail-row"><span class="detail-label">Slot</span><span class="detail-value">${item.type}</span></div>
+        <div class="detail-row"><span class="detail-label">HP</span><span class="detail-value">${s.hpBase || 0} (+${s.hpPerTier || 0}/tier)</span></div>
+        <div class="detail-row"><span class="detail-label">Mana</span><span class="detail-value">${s.manaBase || 0} (+${s.manaPerTier || 0}/tier)</span></div>
+        <div class="detail-row"><span class="detail-label">Crit</span><span class="detail-value">${s.critBase || 0}% (+${s.critPerTier || 0}%/tier)</span></div>
+        <div class="detail-row"><span class="detail-label">Block</span><span class="detail-value">${s.blockBase || 0}% (+${s.blockPerTier || 0}%/tier)</span></div>
+        <div class="detail-row"><span class="detail-label">Defense</span><span class="detail-value">${s.defenseBase || 0} (+${s.defensePerTier || 0}/tier)</span></div>
       `;
+      
+      if (item.passive) details += `<div class="detail-row"><span class="detail-label">Passive</span><span class="detail-value">${item.passive}</span></div>`;
+      if (item.attribute) details += `<div class="detail-row"><span class="detail-label">Attribute</span><span class="detail-value">${item.attribute}</span></div>`;
+      if (item.effect) details += `<div class="detail-row"><span class="detail-label">Effect</span><span class="detail-value">${item.effect}</span></div>`;
+      if (item.proc) details += `<div class="detail-row"><span class="detail-label">Proc</span><span class="detail-value">${item.proc}</span></div>`;
+      if (item.setBonus) details += `<div class="detail-row"><span class="detail-label">Set Bonus</span><span class="detail-value">${item.setBonus}</span></div>`;
       
       document.getElementById('modalDetails').innerHTML = details;
       document.getElementById('detailModal').classList.add('active');
@@ -1108,6 +1231,7 @@
       if (allData.weapons) total += allData.weapons.total || countItems(allData.weapons.categories);
       if (allData.materials) total += allData.materials.total || countItems(allData.materials.categories);
       if (allData.consumables) total += allData.consumables.total || countConsumables(allData.consumables.categories);
+      if (allData.armor) total += allData.armor.total || 0;
       document.getElementById('totalCount').textContent = total || '-';
     }
 

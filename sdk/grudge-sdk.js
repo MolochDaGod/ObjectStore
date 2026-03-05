@@ -246,11 +246,48 @@ class GrudgeSDK {
   }
 
   /**
-   * Get armor by slot
+   * Get armor by material (e.g. 'cloth', 'leather', 'metal', 'gem')
+   */
+  async getArmorByMaterial(material) {
+    const data = await this.getArmor();
+    return data.materials[material] || null;
+  }
+
+  /**
+   * Get armor by slot type (e.g. 'Helm', 'Chest', 'Hands', 'Feet', 'Shoulder', 'Ring', 'Necklace', 'Relic')
    */
   async getArmorBySlot(slot) {
     const data = await this.getArmor();
-    return data.slots[slot] || null;
+    const results = [];
+    for (const mat of Object.values(data.materials)) {
+      results.push(...mat.items.filter(i => i.type === slot));
+    }
+    return results.length > 0 ? results : null;
+  }
+
+  /**
+   * Get armor by set name (e.g. 'Bloodfeud', 'Wraithfang', 'Oathbreaker')
+   */
+  async getArmorBySet(setName) {
+    const data = await this.getArmor();
+    const lower = setName.toLowerCase();
+    const results = [];
+    for (const mat of Object.values(data.materials)) {
+      results.push(...mat.items.filter(i => i.id.split('-')[1] === lower));
+    }
+    return results.length > 0 ? results : null;
+  }
+
+  /**
+   * Get a specific armor piece by ID
+   */
+  async getArmorItem(armorId) {
+    const data = await this.getArmor();
+    for (const mat of Object.values(data.materials)) {
+      const item = mat.items.find(i => i.id === armorId);
+      if (item) return item;
+    }
+    return null;
   }
 
   // ==========================================
@@ -493,10 +530,11 @@ class GrudgeSDK {
    */
   async search(query) {
     const lower = query.toLowerCase();
-    const results = { weapons: [], materials: [], consumables: [], skills: [], races: [], classes: [] };
+    const results = { weapons: [], armor: [], materials: [], consumables: [], skills: [], races: [], classes: [] };
 
-    const [weapons, materials, consumables, skills, races, classes] = await Promise.all([
+    const [weapons, armor, materials, consumables, skills, races, classes] = await Promise.all([
       this.getWeapons(),
+      this.getArmor(),
       this.getMaterials(),
       this.getConsumables(),
       this.getSkills(),
@@ -509,6 +547,13 @@ class GrudgeSDK {
       results.weapons.push(...data.items.filter(w => 
         w.name.toLowerCase().includes(lower) || w.id.includes(lower)
       ).map(w => ({ ...w, category: cat })));
+    }
+
+    // Search armor
+    for (const [mat, data] of Object.entries(armor.materials)) {
+      results.armor.push(...data.items.filter(a =>
+        a.name.toLowerCase().includes(lower) || a.id.includes(lower)
+      ).map(a => ({ ...a, materialCategory: mat })));
     }
 
     // Search materials

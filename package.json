@@ -36,10 +36,9 @@
     "prepublishOnly": "npm run validate",
     "validate": "echo 'Validating package...'",
 
-    "audit:puter": "node scripts/puter-audit.mjs"
-
     "audit:puter": "node ./scripts/puter-audit.mjs",
-    "audit:puter:save": "node ./scripts/puter-audit.mjs --output docs/reports/puter-audit-report.json"
+    "audit:puter:save": "node ./scripts/puter-audit.mjs --output docs/reports/puter-audit-report.json",
+    "sync": "node ./scripts/sync-all.js"
 
   },
   "repository": {

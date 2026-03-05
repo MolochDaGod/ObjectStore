@@ -47,21 +47,64 @@ export interface GrudgeItem {
   source?: string;
 }
 
+export interface WeaponStats {
+  damageBase: number;
+  damagePerTier: number;
+  speedBase: number;
+  speedPerTier: number;
+  comboBase: number;
+  comboPerTier: number;
+  critBase: number;
+  critPerTier: number;
+  blockBase: number;
+  blockPerTier: number;
+  defenseBase: number;
+  defensePerTier: number;
+}
+
 export interface Weapon extends GrudgeItem {
   type: 'weapon';
-  weaponCategory: 'swords' | 'axes1h' | 'daggers' | 'bows' | 'crossbows' | 
-                   'hammers1h' | 'spears' | 'fireStaves' | 'frostStaves' | 'holyStaves';
-  damage?: number;
-  attackSpeed?: number;
-  range?: number;
+  weaponCategory: 'swords' | 'axes1h' | 'daggers' | 'bows' | 'crossbows' | 'guns' |
+                   'hammers1h' | 'hammers2h' | 'greatswords' | 'greataxes' |
+                   'fireStaves' | 'frostStaves' | 'natureStaves' | 'holyStaves' | 'arcaneStaves' | 'lightningStaves' |
+                   'fireTomes' | 'frostTomes' | 'natureTomes' | 'holyTomes' | 'arcaneTomes' | 'lightningTomes';
+  stats?: WeaponStats;
+  lore?: string;
+  basicAbility?: string;
+  abilities?: string[];
+  signatureAbility?: string;
+  passives?: string[];
+  craftedBy?: 'Miner' | 'Forester' | 'Engineer' | 'Mystic';
+  spritePath?: string | null;
+}
+
+export type ArmorSlot = 'Helm' | 'Shoulder' | 'Chest' | 'Hands' | 'Feet' | 'Ring' | 'Necklace' | 'Relic';
+export type ArmorMaterial = 'Cloth' | 'Leather' | 'Metal' | 'Gem';
+
+export interface ArmorStats {
+  hpBase: number;
+  hpPerTier: number;
+  manaBase: number;
+  manaPerTier: number;
+  critBase: number;
+  critPerTier: number;
+  blockBase: number;
+  blockPerTier: number;
+  defenseBase: number;
+  defensePerTier: number;
 }
 
 export interface Armor extends GrudgeItem {
   type: 'armor';
-  slot: 'helm' | 'chest' | 'boots' | 'gloves' | 'pants' | 'belt' | 
-        'shoulder' | 'bracer' | 'ring' | 'necklace' | 'back';
-  armorValue?: number;
-  armorType?: 'cloth' | 'leather' | 'metal';
+  slot: ArmorSlot;
+  material: ArmorMaterial;
+  stats?: ArmorStats;
+  passive?: string;
+  attribute?: string;
+  effect?: string;
+  proc?: string;
+  setBonus?: string;
+  spritePath?: string | null;
 }
 
 export interface Material extends GrudgeItem {
@@ -97,14 +140,14 @@ export interface HeroStats {
 export interface Equipment {
   weapon?: Weapon;
   helm?: Armor;
+  shoulder?: Armor;
   chest?: Armor;
-  boots?: Armor;
-  gloves?: Armor;
-  pants?: Armor;
+  hands?: Armor;
+  feet?: Armor;
   ring1?: Armor;
   ring2?: Armor;
   necklace?: Armor;
-  back?: Armor;
+  relic?: Armor;
 }
 
 // ==========================================
@@ -328,15 +371,53 @@ export function isValidGrudgeUuid(uuid: string): boolean;
 export class GrudgeSDK {
   constructor(baseUrl?: string);
   
+  // Weapons
   getWeapons(): Promise<any>;
   getWeaponsByCategory(category: string): Promise<any>;
+  getWeapon(weaponId: string): Promise<Weapon | null>;
+  getWeaponCategories(): Promise<string[]>;
+
+  // Materials
   getMaterials(): Promise<any>;
+  getMaterialsByCategory(category: string): Promise<any>;
   getMaterialsByTier(tier: number): Promise<Material[]>;
+  getMaterialsByProfession(profession: string): Promise<Material[]>;
+
+  // Armor
+  getArmor(): Promise<any>;
+  getArmorByMaterial(material: string): Promise<any>;
+  getArmorBySlot(slot: ArmorSlot): Promise<Armor[] | null>;
+  getArmorBySet(setName: string): Promise<Armor[] | null>;
+  getArmorItem(armorId: string): Promise<Armor | null>;
+
+  // Consumables
+  getConsumables(): Promise<any>;
+  getConsumablesByCategory(category: string): Promise<any>;
+  getConsumablesByProfession(profession: string): Promise<any>;
+
+  // Skills, Professions, Races, Classes, Factions, Attributes
+  getSkills(): Promise<any>;
+  getSkillsByWeapon(weaponType: string): Promise<any>;
+  getSkill(skillId: string): Promise<any>;
+  getProfessions(): Promise<any>;
+  getProfession(professionId: string): Promise<any>;
   getRaces(): Promise<any>;
+  getRace(raceId: string): Promise<any>;
+  getRacesByFaction(factionId: string): Promise<any[]>;
   getClasses(): Promise<any>;
+  getClass(classId: string): Promise<any>;
   getFactions(): Promise<any>;
-  search(query: string): Promise<any>;
+  getFaction(factionId: string): Promise<any>;
+  getAttributes(): Promise<any>;
+  getAttribute(attributeId: string): Promise<any>;
+
+  // Search & Icons
+  search(query: string): Promise<SearchResults & { armor: Armor[] }>;
+  getWeaponIconUrl(category: string, index: number, tier?: number): string | null;
+  getArmorIconUrl(slot: string, tier?: number): string | null;
+  getMaterialIconUrl(category: string, tier?: number): string | null;
   
+  // UUID utilities
   static generateGrudgeUuid(entityType: string, metadata?: string): string;
   static parseGrudgeUuid(uuid: string): ParsedUUID | null;
   static isValidGrudgeUuid(uuid: string): boolean;

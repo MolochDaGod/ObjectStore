@@ -21,7 +21,20 @@ const mimeTypes = {
   '.svg': 'image/svg+xml',
 };
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 const server = http.createServer((req, res) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, CORS_HEADERS);
+    res.end();
+    return;
+  }
+
   let filePath = '.' + req.url;
   if (filePath === './') {
     filePath = './index.html';
@@ -33,14 +46,14 @@ const server = http.createServer((req, res) => {
   fs.readFile(filePath, (error, content) => {
     if (error) {
       if (error.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.writeHead(404, { ...CORS_HEADERS, 'Content-Type': 'text/html' });
         res.end('<h1>404 - File Not Found</h1>', 'utf-8');
       } else {
-        res.writeHead(500);
+        res.writeHead(500, CORS_HEADERS);
         res.end(`Server Error: ${error.code}`, 'utf-8');
       }
     } else {
-      res.writeHead(200, { 'Content-Type': contentType });
+      res.writeHead(200, { ...CORS_HEADERS, 'Content-Type': contentType });
       res.end(content, 'utf-8');
     }
   });
