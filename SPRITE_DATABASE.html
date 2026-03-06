@@ -356,6 +356,7 @@
         <button class="tab-btn" data-tab="bosses">💀 Bosses</button>
         <button class="tab-btn" data-tab="rpgicons">🎨 RPG Icons</button>
         <button class="tab-btn" data-tab="all">📦 All Sprites</button>
+        <button class="tab-btn" data-tab="developer">🔧 Developer</button>
       </div>
       
       <div class="controls">
@@ -454,6 +455,184 @@
         <p>Loading all sprites...</p>
       </div>
       <div id="all-content"></div>
+    </section>
+
+    <section id="developer-section" class="section">
+      <h2 class="section-title">🔧 Developer Reference</h2>
+      <p style="color:var(--text-dim);margin-bottom:24px;">Slugs, API endpoints, UUID system, and integration best practices for all Grudge Studio projects.</p>
+
+      <!-- Slug Convention -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:var(--gold);margin-bottom:12px;">🏷️ Slug Convention</h3>
+        <p style="color:var(--text-dim);margin-bottom:12px;">Every game object has a URL-safe slug derived from its ID. Slugs are lowercase, hyphenated, and unique per category.</p>
+        <div style="background:var(--code-bg);padding:16px;border-radius:8px;font-family:monospace;font-size:0.85rem;line-height:1.8;overflow-x:auto;">
+          <span style="color:var(--text-dim);">// Weapon slug pattern</span><br>
+          <span style="color:var(--gold-light);">{category}/{item-id}</span> → <span style="color:var(--success);">swords/bloodfeud-blade</span><br>
+          <span style="color:var(--gold-light);">{category}/{item-id}/t{tier}</span> → <span style="color:var(--success);">swords/bloodfeud-blade/t5</span><br><br>
+          <span style="color:var(--text-dim);">// Material slug pattern</span><br>
+          <span style="color:var(--gold-light);">materials/{category}/{item-id}</span> → <span style="color:var(--success);">materials/ore/iron-ore</span><br><br>
+          <span style="color:var(--text-dim);">// Armor slug pattern</span><br>
+          <span style="color:var(--gold-light);">armor/{material}/{item-id}</span> → <span style="color:var(--success);">armor/metal/helm-iron-sentinel</span><br><br>
+          <span style="color:var(--text-dim);">// Consumable slug pattern</span><br>
+          <span style="color:var(--gold-light);">consumables/{category}/{item-id}</span> → <span style="color:var(--success);">consumables/redFoods/grilled-steak</span><br><br>
+          <span style="color:var(--text-dim);">// Enemy / Boss slug pattern</span><br>
+          <span style="color:var(--gold-light);">enemies/{category}/{item-id}</span> → <span style="color:var(--success);">enemies/beasts/dire-wolf</span><br>
+          <span style="color:var(--gold-light);">bosses/{boss-id}</span> → <span style="color:var(--success);">bosses/malachar-the-undying</span>
+        </div>
+        <p style="color:var(--text-dim);margin-top:12px;font-size:0.85rem;"><strong style="color:var(--gold);">Helper:</strong> Generate a slug from any name with <code style="color:var(--gold-light);">toSlug(name)</code> — lowercases, replaces spaces/specials with hyphens.</p>
+      </div>
+
+      <!-- API Endpoints -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:var(--gold);margin-bottom:12px;">🔗 API Endpoints</h3>
+        <p style="color:var(--text-dim);margin-bottom:16px;">All data is served as static JSON from GitHub Pages. No auth required. Base URL:</p>
+        <div style="background:var(--code-bg);padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+          <code style="color:var(--gold-light);font-size:0.95rem;">https://molochdagod.github.io/ObjectStore/api/v1/</code>
+          <button onclick="navigator.clipboard.writeText('https://molochdagod.github.io/ObjectStore/api/v1/');this.textContent='✓ Copied'" style="float:right;background:var(--gold);color:var(--bg);border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;">Copy</button>
+        </div>
+        <div id="dev-endpoints" style="display:grid;gap:8px;"></div>
+      </div>
+
+      <!-- UUID System -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:var(--gold);margin-bottom:12px;">🆔 GRUDGE UUID System</h3>
+        <p style="color:var(--text-dim);margin-bottom:12px;">Every game entity gets a deterministic GRUDGE UUID. This is the canonical identifier used across all Grudge Studio services.</p>
+        <div style="background:var(--code-bg);padding:16px;border-radius:8px;font-family:monospace;font-size:0.85rem;line-height:2;overflow-x:auto;">
+          <span style="color:var(--text-dim);">// UUID Format</span><br>
+          <span style="color:var(--gold-light);">{PREFIX}-{TIMESTAMP}-{SEQUENCE}-{HASH}</span><br><br>
+          <span style="color:var(--text-dim);">// Prefixes by entity type</span><br>
+          <span style="color:var(--success);">ITEM</span>-20260225120000-000001-A1B2C3D4 &nbsp;← weapon / armor / consumable<br>
+          <span style="color:var(--info);">MAT</span>&nbsp;-20260225120000-000002-E5F6G7H8 &nbsp;← crafting material<br>
+          <span style="color:#a855f7;">HERO</span>-20260225120000-000003-I9J0K1L2 &nbsp;← player hero<br>
+          <span style="color:#ef4444;">MOB</span>&nbsp;-20260225120000-000004-M3N4O5P6 &nbsp;← enemy / boss<br>
+          <span style="color:#f59e0b;">SKIL</span>-20260225120000-000005-Q7R8S9T0 &nbsp;← ability / skill<br>
+          <span style="color:#ec4899;">SPRT</span>-20260225120000-000006-U1V2W3X4 &nbsp;← sprite / icon asset<br>
+          <span style="color:#22d3ee;">MISS</span>-20260225120000-000007-Y5Z6A7B8 &nbsp;← mission / quest
+        </div>
+        <div style="background:var(--code-bg);padding:16px;border-radius:8px;font-family:monospace;font-size:0.85rem;margin-top:12px;overflow-x:auto;">
+          <span style="color:var(--text-dim);">// Generate UUID in code</span><br>
+          <span style="color:#8b5cf6;">import</span> { generateGrudgeUUID } <span style="color:#8b5cf6;">from</span> <span style="color:var(--success);">'@grudgstudio/core'</span>;<br><br>
+          <span style="color:#8b5cf6;">const</span> uuid = <span style="color:var(--gold-light);">generateGrudgeUUID</span>(<span style="color:var(--success);">'ITEM'</span>);<br>
+          <span style="color:var(--text-dim);">// → ITEM-20260306080000-000001-F3A9C2E7</span>
+        </div>
+      </div>
+
+      <!-- Quick Integration -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:var(--gold);margin-bottom:12px;">⚡ Quick Integration</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;">
+          <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
+            <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">Browser / Vanilla JS</p>
+            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">const BASE = 'https://molochdagod.github.io/ObjectStore';
+
+// Fetch all swords
+const weapons = await fetch(`${BASE}/api/v1/weapons.json`).then(r => r.json());
+const swords = weapons.categories.swords.items;
+
+// Get icon URL by slug
+const iconUrl = `${BASE}/icons/weapons_full/Sword_01.png`;
+
+// Resolve sprite from sprites.json
+const sprites = await fetch(`${BASE}/api/v1/sprites.json`).then(r => r.json());
+const armorIcons = sprites.categories.armor_full.sprites;</pre>
+          </div>
+          <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
+            <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">NPM / Node.js</p>
+            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">import { initGrudgeStudio } from '@grudgstudio/core';
+
+const api = await initGrudgeStudio({
+  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore'
+});
+
+// Search by name or slug
+const results = await api.search('bloodfeud');
+
+// Create tracked item with UUID
+const item = api.createItem({
+  type: 'weapon', name: 'Bloodfeud Blade', tier: 5
+});
+console.log(item.uuid); // ITEM-2026...-...-...
+console.log(item.slug); // swords/bloodfeud-blade/t5</pre>
+          </div>
+          <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
+            <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">Unity C#</p>
+            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">using GrudgeStudio;
+
+var api = new GrudgeStudioAPI(
+  "https://molochdagod.github.io/ObjectStore"
+);
+
+// Load weapon by slug
+var sword = await api.GetWeapon("swords/bloodfeud-blade");
+Debug.Log(sword.name); // Bloodfeud Blade
+
+// Load sprite texture
+var tex = await api.LoadIcon("weapons_full/Sword_01.png");
+renderer.sprite = Sprite.Create(tex, ...);</pre>
+          </div>
+          <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
+            <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">GDevelop / HTML5 Game</p>
+            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">// In GDevelop JavaScript event
+const BASE = 'https://molochdagod.github.io/ObjectStore';
+
+// Load enemy data for spawning
+const enemies = await fetch(`${BASE}/api/v1/enemies.json`)
+  .then(r => r.json());
+
+// Get boss by slug
+const boss = enemies.categories.dragons
+  .items.find(e => e.id === 'fire-dragon');
+
+// Use sprite path directly in Sprite object
+const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Best Practices -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;">
+        <h3 style="color:var(--gold);margin-bottom:16px;">📋 Best Practices for Grudge Studio Projects</h3>
+        <div style="display:grid;gap:16px;">
+          <div style="border-left:3px solid var(--success);padding-left:16px;">
+            <h4 style="color:var(--success);margin-bottom:4px;">✅ Always use slugs as keys</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Reference items by <code style="color:var(--gold-light);">category/item-id</code> slug, never by display name. Slugs are stable across data updates; names may change.</p>
+          </div>
+          <div style="border-left:3px solid var(--success);padding-left:16px;">
+            <h4 style="color:var(--success);margin-bottom:4px;">✅ Cache API responses</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">JSON files are static and change only on repo pushes. Cache with <code style="color:var(--gold-light);">localStorage</code> or IndexedDB. Use <code style="color:var(--gold-light);">If-None-Match</code> headers to avoid re-downloading.</p>
+          </div>
+          <div style="border-left:3px solid var(--success);padding-left:16px;">
+            <h4 style="color:var(--success);margin-bottom:4px;">✅ Use GRUDGE UUIDs for persistent entities</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Player inventory, crafted items, and hero instances must use UUIDs. Slugs identify <em>definitions</em>; UUIDs identify <em>instances</em>.</p>
+          </div>
+          <div style="border-left:3px solid var(--success);padding-left:16px;">
+            <h4 style="color:var(--success);margin-bottom:4px;">✅ Tier-aware icon loading</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Weapon icons cycle through <code style="color:var(--gold-light);">weapons_full/{Type}_{NN}.png</code>. Use the <code style="color:var(--gold-light);">iconBase</code> and <code style="color:var(--gold-light);">iconMax</code> fields from each weapon category to resolve the correct icon file.</p>
+          </div>
+          <div style="border-left:3px solid var(--success);padding-left:16px;">
+            <h4 style="color:var(--success);margin-bottom:4px;">✅ Sprites are pixelated — use CSS</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Always apply <code style="color:var(--gold-light);">image-rendering: pixelated</code> to all sprite &lt;img&gt; elements. In Unity, set Filter Mode to Point (no filter).</p>
+          </div>
+          <div style="border-left:3px solid #ef4444;padding-left:16px;">
+            <h4 style="color:#ef4444;margin-bottom:4px;">❌ Don't hardcode icon paths</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Icon paths may change when new sprites are added. Always resolve paths from <code style="color:var(--gold-light);">sprites.json</code> or use the SDK's icon resolver methods.</p>
+          </div>
+          <div style="border-left:3px solid #ef4444;padding-left:16px;">
+            <h4 style="color:#ef4444;margin-bottom:4px;">❌ Don't fetch all endpoints on page load</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Lazy-load data by category. Weapons alone is ~800+ items × 8 tiers. Use the SDK's <code style="color:var(--gold-light);">search()</code> to find specific items instead of loading entire catalogs.</p>
+          </div>
+          <div style="border-left:3px solid var(--info);padding-left:16px;">
+            <h4 style="color:var(--info);margin-bottom:4px;">📎 Cross-project slug registry</h4>
+            <p style="color:var(--text-dim);font-size:0.9rem;">ObjectStore slugs are the single source of truth for item definitions across all 35+ Grudge Studio repos. When adding items to GRUDA-Wars, GDevelop games, or the Warlord Crafting Suite, always reference ObjectStore slugs.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endpoint Reference Table -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <h3 style="color:var(--gold);margin-bottom:12px;">📦 Full Endpoint Reference</h3>
+        <div style="display:grid;gap:6px;" id="dev-full-endpoints"></div>
+      </div>
     </section>
   </main>
 
@@ -1097,12 +1276,18 @@
     }
 
     // Modal functions
+    function toSlug(str) { return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
     function showDetail(type, id, category) {
       const data = allData.weapons;
       if (!data || !data.categories[category]) return;
       
       const item = data.categories[category].items.find(i => i.id === id);
       if (!item) return;
+
+      const slug = `${category}/${toSlug(item.id)}`;
+      const apiPath = `api/v1/weapons.json → categories.${category}.items["${item.id}"]`;
+      const uuidExample = `ITEM-${new Date().toISOString().replace(/[-:T.Z]/g,'').slice(0,14)}-${String(Math.floor(Math.random()*999999)).padStart(6,'0')}-${Math.random().toString(16).slice(2,10).toUpperCase()}`;
       
       document.getElementById('modalIcon').textContent = item.emoji || '⚔️';
       document.getElementById('modalTitle').textContent = item.name;
@@ -1110,6 +1295,9 @@
       
       let details = `
         <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Slug</span><span class="detail-value" style="color:var(--success);font-family:monospace;font-size:0.85rem;cursor:pointer" onclick="navigator.clipboard.writeText('${slug}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='${slug}',1500)">${slug}</span></div>
+        <div class="detail-row"><span class="detail-label">UUID Format</span><span class="detail-value" style="font-family:monospace;font-size:0.75rem;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText('${uuidExample}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='${uuidExample}',1500)">${uuidExample}</span></div>
+        <div class="detail-row"><span class="detail-label">API Path</span><span class="detail-value" style="font-family:monospace;font-size:0.75rem;color:var(--info);">${apiPath}</span></div>
         <div class="detail-row"><span class="detail-label">Primary Stat</span><span class="detail-value">${item.primaryStat || '-'}</span></div>
         <div class="detail-row"><span class="detail-label">Secondary Stat</span><span class="detail-value">${item.secondaryStat || '-'}</span></div>
         <div class="detail-row"><span class="detail-label">Tiers</span><span class="detail-value">T1 - T8</span></div>
@@ -1125,6 +1313,8 @@
       
       const item = data.categories[category].items.find(i => i.id === id);
       if (!item) return;
+
+      const slug = `materials/${category}/${toSlug(item.id)}`;
       
       document.getElementById('modalIcon').textContent = item.emoji || '🪨';
       document.getElementById('modalTitle').textContent = item.name;
@@ -1132,6 +1322,8 @@
       
       let details = `
         <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Slug</span><span class="detail-value" style="color:var(--success);font-family:monospace;font-size:0.85rem;cursor:pointer" onclick="navigator.clipboard.writeText('${slug}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='${slug}',1500)">${slug}</span></div>
+        <div class="detail-row"><span class="detail-label">API Path</span><span class="detail-value" style="font-family:monospace;font-size:0.75rem;color:var(--info);">api/v1/materials.json → categories.${category}.items["${item.id}"]</span></div>
         <div class="detail-row"><span class="detail-label">Tier</span><span class="detail-value">T${item.tier}</span></div>
         <div class="detail-row"><span class="detail-label">Gathered By</span><span class="detail-value">${item.gatheredBy || 'Refined'}</span></div>
         <div class="detail-row"><span class="detail-label">Category</span><span class="detail-value">${category}</span></div>
@@ -1183,6 +1375,8 @@
       
       const item = data.materials[materialKey].items.find(i => i.id === id);
       if (!item) return;
+
+      const slug = `armor/${materialKey}/${toSlug(item.id)}`;
       
       document.getElementById('modalIcon').textContent = item.emoji || '🛡️';
       document.getElementById('modalTitle').textContent = item.name;
@@ -1191,6 +1385,8 @@
       const s = item.stats || {};
       let details = `
         <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${item.id}</span></div>
+        <div class="detail-row"><span class="detail-label">Slug</span><span class="detail-value" style="color:var(--success);font-family:monospace;font-size:0.85rem;cursor:pointer" onclick="navigator.clipboard.writeText('${slug}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='${slug}',1500)">${slug}</span></div>
+        <div class="detail-row"><span class="detail-label">API Path</span><span class="detail-value" style="font-family:monospace;font-size:0.75rem;color:var(--info);">api/v1/armor.json → materials.${materialKey}.items["${item.id}"]</span></div>
         <div class="detail-row"><span class="detail-label">Material</span><span class="detail-value">${item.material}</span></div>
         <div class="detail-row"><span class="detail-label">Slot</span><span class="detail-value">${item.type}</span></div>
         <div class="detail-row"><span class="detail-label">HP</span><span class="detail-value">${s.hpBase || 0} (+${s.hpPerTier || 0}/tier)</span></div>
@@ -1484,8 +1680,49 @@
       document.getElementById('totalCount').textContent = spriteData.totalSprites || '-';
     }
 
+    // Developer tab: render endpoint list
+    function renderDevEndpoints() {
+      const endpoints = [
+        { path: 'weapons.json', desc: '119 weapons (17 categories × 6 items × 8 tiers)', slug: 'weapons/{category}/{item-id}' },
+        { path: 'armor.json', desc: '150 armor items (cloth, leather, metal, gem)', slug: 'armor/{material}/{item-id}' },
+        { path: 'materials.json', desc: '112 crafting materials (ore, wood, cloth, leather, gems)', slug: 'materials/{category}/{item-id}' },
+        { path: 'consumables.json', desc: '132 consumables (foods, potions, engineer items)', slug: 'consumables/{category}/{item-id}' },
+        { path: 'enemies.json', desc: '38 enemies across 8 tiers', slug: 'enemies/{category}/{item-id}' },
+        { path: 'bosses.json', desc: '12 bosses with multi-phase mechanics', slug: 'bosses/{boss-id}' },
+        { path: 'weaponSkills.json', desc: '473 weapon skills with icons and cooldowns', slug: 'skills/{weapon-type}/{skill-id}' },
+        { path: 'sprites.json', desc: '500+ sprite paths by category', slug: 'sprites/{category}/{filename}' },
+        { path: 'spriteMaps.json', desc: '246 sprite path mappings', slug: 'sprite-maps/{item-id}' },
+        { path: 'skills.json', desc: '47 weapon skills (legacy format)', slug: 'skills/{skill-id}' },
+        { path: 'races.json', desc: '6 playable races', slug: 'races/{race-id}' },
+        { path: 'classes.json', desc: '4 classes with abilities', slug: 'classes/{class-id}' },
+        { path: 'factions.json', desc: '3 factions with lore', slug: 'factions/{faction-id}' },
+        { path: 'attributes.json', desc: '8 attributes with formulas', slug: 'attributes/{attr-id}' },
+        { path: 'professions.json', desc: '11 professions, 363+ recipes', slug: 'professions/{profession-id}' },
+        { path: 'effectSprites.json', desc: '147 VFX sprite sheets', slug: 'vfx/{effect-id}' },
+        { path: 'abilityEffects.json', desc: '209 battle abilities with effect chains', slug: 'abilities/{ability-id}' },
+        { path: 'factionUnits.json', desc: '19 RTS faction units', slug: 'units/{faction}/{unit-id}' },
+        { path: 'ai.json', desc: 'AI behavior trees and entity states', slug: 'ai/{behavior-id}' },
+        { path: 'terrain.json', desc: '5 procedural biome presets', slug: 'terrain/{biome-id}' },
+      ];
+
+      const baseUrl = 'https://molochdagod.github.io/ObjectStore/api/v1/';
+      const container = document.getElementById('dev-full-endpoints');
+      if (!container) return;
+
+      container.innerHTML = endpoints.map(ep => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:8px;">
+          <span style="background:#22c55e;color:#000;padding:3px 7px;border-radius:4px;font-size:0.7rem;font-weight:bold;flex-shrink:0;">GET</span>
+          <code style="color:var(--gold-light);font-size:0.85rem;min-width:200px;">/api/v1/${ep.path}</code>
+          <span style="color:var(--text-dim);font-size:0.82rem;flex:1;">${ep.desc}</span>
+          <code style="color:var(--success);font-size:0.72rem;min-width:180px;text-align:right;">${ep.slug}</code>
+          <button onclick="navigator.clipboard.writeText('${baseUrl}${ep.path}');this.textContent='✓';setTimeout(()=>this.textContent='📋',1200)" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:0.75rem;flex-shrink:0;">📋</button>
+        </div>
+      `).join('');
+    }
+
     // Initial load
     loadWeapons();
+    renderDevEndpoints();
     
     // Load sprite counts on page load
     fetchJSON('sprites.json').then(data => {
