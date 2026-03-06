@@ -1106,7 +1106,7 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       return `${ICONS_URL}/496_rpg_icons/E_Metal03.png`;
     }
 
-    function getIconPath(type, category, itemId, tier, iconBase, iconMax, iconOffset = 0) {
+    function getIconPath(type, category, itemId, tier, iconBase, iconMax, iconOffset = 0, noPad = false) {
       if (type === 'weapon' && iconBase) {
         // Initialize counter for this category if not exists
         if (!weaponIconCounter[category]) weaponIconCounter[category] = 1;
@@ -1118,8 +1118,9 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
         // Apply offset if specified (for greatswords, etc.)
         iconNum += iconOffset;
         
-        // Format: Axe_01.png, Sword_15.png, etc.
-        const iconFile = `${iconBase}_${String(iconNum).padStart(2, '0')}.png`;
+        // Format: Axe_01.png, staff_1.png (noPad), Book_5.png (noPad), etc.
+        const numStr = noPad ? String(iconNum) : String(iconNum).padStart(2, '0');
+        const iconFile = `${iconBase}_${numStr}.png`;
         return `${ICONS_URL}/weapons_full/${iconFile}`;
       }
       
@@ -1164,7 +1165,8 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
         null, 
         categoryData?.iconBase, 
         categoryData?.iconMax, 
-        categoryData?.iconOffset || 0
+        categoryData?.iconOffset || 0,
+        categoryData?.noPad || false
       );
       const iconHtml = createIconElement(iconPath, item.emoji || '⚔️');
       return `
