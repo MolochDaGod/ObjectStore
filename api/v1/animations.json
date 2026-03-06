@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "description": "Animation system definitions — common animations, controller config, transition rules",
+  "version": "2.0.0",
+  "description": "Animation system definitions — battle sprite states, VFX timing, controller config, transition rules",
   "commonAnimations": {
     "IDLE": "idle",
     "WALK": "walk",
@@ -21,6 +21,50 @@
     "VICTORY": "victory",
     "DEFEAT": "defeat"
   },
+  "battleAnimationStates": {
+    "description": "GRUDA-Wars battle sprite animation states used in BattleScreen combat",
+    "states": {
+      "idle": { "loop": true, "frameInterval": 120, "priority": 0 },
+      "attack1": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
+      "attack2": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
+      "attack3": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
+      "hurt": { "loop": false, "frameInterval": 100, "priority": 8, "returnTo": "idle" },
+      "death": { "loop": false, "frameInterval": 120, "priority": 10, "returnTo": null },
+      "cast": { "loop": false, "frameInterval": 100, "priority": 5, "returnTo": "idle" },
+      "heal": { "loop": false, "frameInterval": 100, "priority": 5, "returnTo": "idle" },
+      "block": { "loop": false, "frameInterval": 100, "priority": 6, "returnTo": "idle" },
+      "roll": { "loop": false, "frameInterval": 70, "priority": 7, "returnTo": "idle" },
+      "runAttack": { "loop": false, "frameInterval": 70, "priority": 6, "returnTo": "idle" },
+      "jump": { "loop": false, "frameInterval": 80, "priority": 6, "returnTo": "idle" },
+      "charge": { "loop": false, "frameInterval": 90, "priority": 5, "returnTo": "idle" }
+    },
+    "classFallbacks": {
+      "warrior": { "charge": "attack3", "roll": "block" },
+      "mage": { "charge": "attack2", "roll": "block", "runAttack": "attack3" },
+      "ranger": { "charge": "attack2", "runAttack": "attack3" },
+      "worge": { "runAttack": "attack3" }
+    }
+  },
+  "vfxTiming": {
+    "description": "Default timing parameters for VFX effect rendering",
+    "effectFrameInterval": 35,
+    "followUpBaseDelay": 150,
+    "effectCleanupBuffer": 200,
+    "critEffectDuration": 1500,
+    "slashImpactDuration": 500,
+    "castingEffectDuration": 2500,
+    "dodgeFlashDuration": 700,
+    "weaponContactDuration": 900,
+    "damageFloatDuration": 1800,
+    "healFloatDuration": 1500,
+    "buffFloatDuration": 1600,
+    "blendModes": {
+      "default": "screen",
+      "earth": "normal",
+      "smoke": "screen"
+    },
+    "effectMask": "radial-gradient(ellipse at center, black 50%, transparent 80%)"
+  },
   "controllerParameters": [
     "speed",
     "direction",
@@ -29,72 +73,52 @@
     "custom"
   ],
   "transitionRules": {
-    "idle": [
-      "walk",
-      "run",
-      "jump",
-      "attack"
-    ],
-    "walk": [
-      "idle",
-      "run",
-      "jump",
-      "attack"
-    ],
-    "run": [
-      "idle",
-      "walk",
-      "jump",
-      "attack"
-    ],
-    "attack": [
-      "idle",
-      "walk",
-      "run"
-    ],
-    "attack_melee": [
-      "idle",
-      "walk",
-      "run"
-    ],
-    "attack_ranged": [
-      "idle",
-      "walk",
-      "run"
-    ],
-    "cast": [
-      "idle",
-      "walk",
-      "run"
-    ],
-    "spell": [
-      "idle",
-      "walk",
-      "run"
-    ]
+    "idle": ["walk", "run", "jump", "attack1", "attack2", "attack3", "cast", "heal", "block"],
+    "walk": ["idle", "run", "jump", "attack1"],
+    "run": ["idle", "walk", "jump", "runAttack"],
+    "attack1": ["idle", "attack2", "hurt"],
+    "attack2": ["idle", "attack3", "hurt"],
+    "attack3": ["idle", "hurt"],
+    "cast": ["idle", "hurt"],
+    "heal": ["idle", "hurt"],
+    "block": ["idle", "hurt", "attack1"],
+    "hurt": ["idle", "death"],
+    "death": [],
+    "roll": ["idle", "attack1"],
+    "runAttack": ["idle", "hurt"],
+    "jump": ["idle", "attack1", "attack2"],
+    "charge": ["idle", "cast"]
   },
   "animationCategories": {
     "combat": {
-      "keywords": [
-        "attack",
-        "spell"
-      ],
-      "description": "Combat-related animations"
+      "keywords": ["attack", "spell", "cast", "charge"],
+      "description": "Combat-related animations",
+      "states": ["attack1", "attack2", "attack3", "cast", "charge", "runAttack"]
+    },
+    "defense": {
+      "keywords": ["block", "dodge", "roll"],
+      "description": "Defensive animations",
+      "states": ["block", "roll"]
+    },
+    "support": {
+      "keywords": ["heal", "buff"],
+      "description": "Support/healing animations",
+      "states": ["heal", "cast"]
+    },
+    "reaction": {
+      "keywords": ["hurt", "death", "hit"],
+      "description": "Damage reaction animations",
+      "states": ["hurt", "death"]
     },
     "movement": {
-      "keywords": [
-        "move",
-        "walk",
-        "run"
-      ],
-      "description": "Locomotion animations"
+      "keywords": ["move", "walk", "run", "jump"],
+      "description": "Locomotion animations",
+      "states": ["walk", "run", "jump"]
     },
     "idle": {
-      "keywords": [
-        "idle",
-        "stand"
-      ],
-      "description": "Idle/standing animations"
+      "keywords": ["idle", "stand"],
+      "description": "Idle/standing animations",
+      "states": ["idle"]
     }
   },
   "blendDefaults": {

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VFX Effects Browser - Grudge Studio ObjectStore</title>
+  <meta name="description" content="Animated VFX sprite browser for GRUDA-Wars battle effects">
+  <link rel="icon" href="favicon.svg">
+  <style>
+    :root {
+      --bg: #0f1419; --card: #1a1f2e; --gold: #d4a84b; --gold-light: #f0d890;
+      --text: #e8e6e3; --text-dim: #8b8685; --border: #3d3d3d; --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .header { background: linear-gradient(135deg, var(--card), var(--bg)); padding: 24px 32px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 1400px; margin: 0 auto; }
+    .back-link { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; }
+    .back-link:hover { color: var(--gold); }
+    h1 { font-size: 1.8rem; background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 8px 0 4px; }
+    .subtitle { color: var(--text-dim); font-size: 0.95rem; }
+    .controls { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
+    .search-box { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-size: 0.9rem; width: 220px; }
+    .search-box:focus { outline: none; border-color: var(--gold); }
+    .cat-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+    .pill { background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); padding: 5px 12px; border-radius: 16px; cursor: pointer; font-size: 0.78rem; transition: all 0.2s; white-space: nowrap; }
+    .pill:hover { border-color: var(--gold); color: var(--text); }
+    .pill.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+    .stats-bar { display: flex; gap: 20px; color: var(--text-dim); font-size: 0.82rem; margin-top: 10px; }
+    .stat-v { color: var(--gold); font-weight: bold; }
+    .main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .fx-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+    .fx-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(212,168,75,0.15); }
+    .fx-card canvas { display: block; margin: 0 auto 8px; border-radius: 6px; background: #0a0e14; image-rendering: pixelated; }
+    .fx-name { font-size: 0.78rem; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fx-meta { font-size: 0.68rem; color: var(--text-dim); }
+    .fx-tags { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+    .fx-tag { font-size: 0.6rem; padding: 1px 5px; border-radius: 8px; background: rgba(212,168,75,0.15); color: var(--gold); }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; }
+    .modal-bg.open { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 620px; width: 92%; max-height: 85vh; overflow-y: auto; position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; }
+    .modal-close:hover { color: var(--text); }
+    .modal h2 { color: var(--gold); margin-bottom: 4px; }
+    .modal .sub { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 16px; }
+    .modal canvas { display: block; margin: 0 auto 16px; border-radius: 8px; background: #0a0e14; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .detail-item { padding: 8px 12px; background: var(--bg); border-radius: 6px; }
+    .detail-label { font-size: 0.72rem; color: var(--text-dim); }
+    .detail-val { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    .usage-section { margin-top: 16px; }
+    .usage-section h3 { color: var(--gold); font-size: 0.95rem; margin-bottom: 8px; }
+    .usage-item { padding: 6px 10px; background: var(--bg); border-radius: 6px; margin-bottom: 4px; font-size: 0.82rem; display: flex; justify-content: space-between; }
+    .usage-class { color: var(--gold); font-weight: 600; text-transform: capitalize; }
+    .usage-role { color: var(--text-dim); font-size: 0.72rem; }
+    .loading { text-align: center; padding: 60px; color: var(--text-dim); }
+    .spin { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    footer { text-align: center; color: var(--text-dim); padding: 32px; border-top: 1px solid var(--border); margin-top: 40px; }
+    footer a { color: var(--gold); text-decoration: none; }
+    @media (max-width: 768px) {
+      .header { padding: 16px; } .main { padding: 16px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="./" class="back-link">← Back to ObjectStore</a>
+      <h1>✨ VFX Effects Browser</h1>
+      <p class="subtitle">Animated battle effect sprites from GRUDA-Wars</p>
+      <div class="controls">
+        <input type="text" class="search-box" id="search" placeholder="Search effects...">
+        <div class="cat-pills" id="pills"></div>
+      </div>
+      <div class="stats-bar">
+        <span>Effects: <span class="stat-v" id="countFx">-</span></span>
+        <span>Abilities: <span class="stat-v" id="countAb">-</span></span>
+        <span>Categories: <span class="stat-v" id="countCat">-</span></span>
+        <span>Showing: <span class="stat-v" id="countShow">-</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="loading" id="loadingEl"><div class="spin"></div><p>Loading VFX data...</p></div>
+    <div class="grid" id="gridEl"></div>
+  </main>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal" id="modal">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Grudge Studio | <a href="./">ObjectStore</a> | <a href="./SPRITE_DATABASE.html">Item Sprites</a> | <a href="./api/v1/effectSprites.json">API JSON</a></p>
+  </footer>
+
+  <script>
+    const BASE = './api/v1';
+    const SRC_BASE = 'https://grudgewarlords.com';
+    let fxData = null, abData = null, activeCat = 'all', animFrames = {};
+
+    // Featured categories to show as pills
+    const FEATURED_CATS = ['fire','ice','earth','lightning','arcane','holy','water','wind','dark','physical','melee','impact','projectile','aura','buff','debuff','heal','crit','retro','custom','pixel'];
+
+    async function init() {
+      try {
+        const [fxRes, abRes] = await Promise.all([
+          fetch(`${BASE}/effectSprites.json`).then(r => r.json()),
+          fetch(`${BASE}/abilityEffects.json`).then(r => r.json()),
+        ]);
+        fxData = fxRes;
+        abData = abRes;
+        document.getElementById('countFx').textContent = fxData.totalEffects;
+        document.getElementById('countAb').textContent = abData.totalAbilities;
+        document.getElementById('countCat').textContent = Object.keys(fxData.categories).length;
+        buildPills();
+        renderGrid();
+        document.getElementById('loadingEl').style.display = 'none';
+      } catch(e) {
+        document.getElementById('loadingEl').innerHTML = `<p style="color:#ef4444">Failed to load: ${e.message}</p>`;
+      }
+    }
+
+    function buildPills() {
+      const el = document.getElementById('pills');
+      let html = '<span class="pill active" data-cat="all" onclick="setCat(\'all\')">All</span>';
+      for (const c of FEATURED_CATS) {
+        if (fxData.categories[c]) {
+          html += `<span class="pill" data-cat="${c}" onclick="setCat('${c}')">${c}</span>`;
+        }
+      }
+      el.innerHTML = html;
+    }
+
+    function setCat(cat) {
+      activeCat = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+      renderGrid();
+    }
+
+    function getFilteredKeys() {
+      const q = document.getElementById('search').value.toLowerCase();
+      let keys = Object.keys(fxData.effects);
+      if (activeCat !== 'all') {
+        const catEffects = new Set(fxData.categories[activeCat] || []);
+        keys = keys.filter(k => catEffects.has(k));
+      }
+      if (q) keys = keys.filter(k => k.toLowerCase().includes(q) || (fxData.effects[k].categories || []).some(c => c.includes(q)));
+      return keys;
+    }
+
+    function renderGrid() {
+      // Stop existing animations
+      for (const id of Object.keys(animFrames)) { cancelAnimationFrame(animFrames[id]); }
+      animFrames = {};
+
+      const keys = getFilteredKeys();
+      document.getElementById('countShow').textContent = keys.length;
+      const el = document.getElementById('gridEl');
+      el.innerHTML = '';
+
+      for (const key of keys) {
+        const fx = fxData.effects[key];
+        const card = document.createElement('div');
+        card.className = 'fx-card';
+        card.onclick = () => openModal(key);
+
+        const cvs = document.createElement('canvas');
+        const displaySize = 80;
+        cvs.width = displaySize;
+        cvs.height = displaySize;
+        card.appendChild(cvs);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'fx-name';
+        nameEl.textContent = key;
+        card.appendChild(nameEl);
+
+        const metaEl = document.createElement('div');
+        metaEl.className = 'fx-meta';
+        metaEl.textContent = `${fx.frames}f · ${fx.cols||'?'}×${fx.rows||'?'} · ${fx.frameW||'?'}×${fx.frameH||'?'}px`;
+        card.appendChild(metaEl);
+
+        const tags = (fx.categories || []).slice(0, 3);
+        if (tags.length) {
+          const tagEl = document.createElement('div');
+          tagEl.className = 'fx-tags';
+          tagEl.innerHTML = tags.map(t => `<span class="fx-tag">${t}</span>`).join('');
+          card.appendChild(tagEl);
+        }
+
+        el.appendChild(card);
+        animateCanvas(cvs, fx, key, displaySize);
+      }
+    }
+
+    function animateCanvas(canvas, fx, key, displaySize) {
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = fx.sourceUrl || (SRC_BASE + fx.src);
+
+      let frame = 0, lastTime = 0;
+      const interval = 60; // ms per frame
+
+      const hasCustom = fx.cols !== undefined;
+      const cols = hasCustom ? fx.cols : Math.round(Math.sqrt(fx.frames));
+      const rows = hasCustom ? (fx.rows || Math.ceil(fx.frames / cols)) : Math.ceil(fx.frames / cols);
+      const frameW = hasCustom ? fx.frameW : (fx.size ? fx.size / cols : 64);
+      const frameH = hasCustom ? fx.frameH : (fx.size ? fx.size / cols : 64);
+
+      function draw(time) {
+        if (time - lastTime >= interval) {
+          lastTime = time;
+          frame = (frame + 1) % fx.frames;
+          ctx.clearRect(0, 0, displaySize, displaySize);
+          if (img.complete && img.naturalWidth > 0) {
+            const col = frame % cols;
+            const row2 = Math.floor(frame / cols);
+            const sx = col * frameW;
+            const sy = row2 * frameH;
+            // Scale to fit displaySize
+            const scale = displaySize / Math.max(frameW, frameH);
+            const dw = frameW * scale;
+            const dh = frameH * scale;
+            const dx = (displaySize - dw) / 2;
+            const dy = (displaySize - dh) / 2;
+            ctx.drawImage(img, sx, sy, frameW, frameH, dx, dy, dw, dh);
+          }
+        }
+        animFrames[key] = requestAnimationFrame(draw);
+      }
+      animFrames[key] = requestAnimationFrame(draw);
+    }
+
+    function openModal(key) {
+      const fx = fxData.effects[key];
+      const modal = document.getElementById('modalContent');
+      const hasCustom = fx.cols !== undefined;
+      const cols = hasCustom ? fx.cols : Math.round(Math.sqrt(fx.frames));
+      const rows = hasCustom ? (fx.rows || Math.ceil(fx.frames / cols)) : Math.ceil(fx.frames / cols);
+      const frameW = hasCustom ? fx.frameW : (fx.size ? fx.size / cols : 64);
+      const frameH = hasCustom ? fx.frameH : (fx.size ? fx.size / cols : 64);
+
+      // Find abilities using this effect
+      const usages = findUsages(key);
+
+      let html = `<h2>${key}</h2><p class="sub">${fx.src}</p>`;
+      html += `<canvas id="modalCanvas" width="160" height="160"></canvas>`;
+      html += `<div class="detail-grid">`;
+      html += `<div class="detail-item"><div class="detail-label">Frames</div><div class="detail-val">${fx.frames}</div></div>`;
+      html += `<div class="detail-item"><div class="detail-label">Grid</div><div class="detail-val">${cols} × ${rows}</div></div>`;
+      html += `<div class="detail-item"><div class="detail-label">Frame Size</div><div class="detail-val">${frameW} × ${frameH}px</div></div>`;
+      html += `<div class="detail-item"><div class="detail-label">Sheet Size</div><div class="detail-val">${cols * frameW} × ${rows * frameH}px</div></div>`;
+      if (fx.blendMode) html += `<div class="detail-item"><div class="detail-label">Blend Mode</div><div class="detail-val">${fx.blendMode}</div></div>`;
+      html += `<div class="detail-item"><div class="detail-label">Categories</div><div class="detail-val">${(fx.categories||[]).join(', ') || 'none'}</div></div>`;
+      html += `</div>`;
+
+      // Source URL
+      html += `<div class="detail-item" style="margin-bottom:16px"><div class="detail-label">Source URL</div><div class="detail-val" style="font-size:0.75rem;word-break:break-all"><a href="${fx.sourceUrl}" target="_blank" style="color:var(--gold)">${fx.sourceUrl}</a></div></div>`;
+
+      // Usages
+      if (usages.length) {
+        html += `<div class="usage-section"><h3>Used by ${usages.length} abilities</h3>`;
+        for (const u of usages.slice(0, 20)) {
+          html += `<div class="usage-item"><span>${u.ability}</span><span><span class="usage-class">${u.source}</span> <span class="usage-role">${u.role}</span></span></div>`;
+        }
+        if (usages.length > 20) html += `<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;margin-top:6px">+${usages.length - 20} more</div>`;
+        html += `</div>`;
+      }
+
+      // JSON snippet
+      html += `<details style="margin-top:16px"><summary style="color:var(--gold);cursor:pointer;font-size:0.85rem">JSON Definition</summary><pre style="background:var(--code-bg);padding:12px;border-radius:8px;margin-top:8px;font-size:0.75rem;overflow-x:auto;color:var(--gold-light)">${JSON.stringify(fx, null, 2)}</pre></details>`;
+
+      modal.innerHTML = html;
+      document.getElementById('modalBg').classList.add('open');
+
+      // Animate modal canvas
+      const cvs = document.getElementById('modalCanvas');
+      animateCanvas(cvs, fx, '_modal', 160);
+    }
+
+    function closeModal() {
+      document.getElementById('modalBg').classList.remove('open');
+      if (animFrames['_modal']) { cancelAnimationFrame(animFrames['_modal']); delete animFrames['_modal']; }
+    }
+
+    function findUsages(effectKey) {
+      const usages = [];
+      if (!abData) return usages;
+      // Class abilities
+      for (const [cls, abilities] of Object.entries(abData.classAbilities || {})) {
+        for (const [name, ab] of Object.entries(abilities)) {
+          if (ab.effect === effectKey) usages.push({ ability: name, source: cls, role: 'primary' });
+          if (ab.followUp) {
+            for (const fu of ab.followUp) {
+              if (fu.effect === effectKey) usages.push({ ability: name, source: cls, role: 'follow-up' });
+            }
+          }
+        }
+      }
+      // Weapon skills
+      for (const [id, ab] of Object.entries(abData.weaponSkills || {})) {
+        if (ab.effect === effectKey) usages.push({ ability: id, source: 'weapon', role: 'primary' });
+        if (ab.followUp) {
+          for (const fu of ab.followUp) {
+            if (fu.effect === effectKey) usages.push({ ability: id, source: 'weapon', role: 'follow-up' });
+          }
+        }
+      }
+      // Enemy abilities
+      for (const [name, ab] of Object.entries(abData.enemyAbilities || {})) {
+        if (ab.effect === effectKey) usages.push({ ability: name, source: 'enemy', role: 'primary' });
+        if (ab.followUp) {
+          for (const fu of ab.followUp) {
+            if (fu.effect === effectKey) usages.push({ ability: name, source: 'enemy', role: 'follow-up' });
+          }
+        }
+      }
+      return usages;
+    }
+
+    document.getElementById('search').addEventListener('input', renderGrid);
+    document.getElementById('modalBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    init();
+  </script>
+</body>
+</html>

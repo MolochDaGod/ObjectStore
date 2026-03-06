@@ -100,7 +100,7 @@
 <body>
   <div class="container">
     <h1>⚔️ Grudge Studio ObjectStore</h1>
-    <p class="subtitle">Public API for Grudge Warlords game data - weapons, materials, armor, and icons</p>
+    <p class="subtitle">Public API for Grudge Warlords game data — weapons, materials, armor, VFX effects, and battle abilities</p>
 
     <div class="card">
       <h2>📊 API Statistics</h2>
@@ -110,9 +110,10 @@
         <div class="stat"><div class="stat-value">132</div><div class="stat-label">Consumables</div></div>
         <div class="stat"><div class="stat-value">112</div><div class="stat-label">Materials</div></div>
         <div class="stat"><div class="stat-value">47</div><div class="stat-label">Skills</div></div>
+        <div class="stat"><div class="stat-value">147</div><div class="stat-label">VFX Effects</div></div>
+        <div class="stat"><div class="stat-value">209</div><div class="stat-label">Battle Abilities</div></div>
         <div class="stat"><div class="stat-value">19</div><div class="stat-label">Faction Units</div></div>
-        <div class="stat"><div class="stat-value">10</div><div class="stat-label">Particle FX</div></div>
-        <div class="stat"><div class="stat-value">24</div><div class="stat-label">API Endpoints</div></div>
+        <div class="stat"><div class="stat-value">27</div><div class="stat-label">API Endpoints</div></div>
       </div>
     </div>
 
@@ -194,6 +195,18 @@
         <span class="method">GET</span>
         <span class="url">/api/v1/sprites.json</span>
         <span class="desc">Full sprite database — 500+ icon paths organized by category</span>
+      </div>
+
+      <p style="color: var(--gold); margin: 20px 0 12px; font-weight: bold;">✨ VFX & Battle Effects (from GRUDA-Wars)</p>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/effectSprites.json</span>
+        <span class="desc">147 VFX sprite sheets — frame data, categories, blend modes, source URLs</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/abilityEffects.json</span>
+        <span class="desc">209 abilities — class, weapon, enemy with effect chains and follow-ups</span>
       </div>
 
       <p style="color: var(--gold); margin: 20px 0 12px; font-weight: bold;">🎮 Game Engine (from GDevelop)</p>
@@ -299,6 +312,7 @@ const t8Swords = weapons.categories.swords.items.map(w => ({
         <li>📖 <a href="./docs/">API Documentation</a></li>
         <li>🔧 <a href="./sdk/grudge-sdk.js">Download SDK</a></li>
         <li>📊 <a href="./SPRITE_DATABASE.html">Sprite Database (Visual)</a></li>
+        <li>✨ <a href="./VFX_BROWSER.html">VFX Effects Browser (Animated)</a></li>
         <li>💻 <a href="https://github.com/grudge-studio/ObjectStore">GitHub Repository</a></li>
       </ul>
     </div>

@@ -1,0 +1,1030 @@
+{
+  "version": "1.0.0",
+  "description": "GRUDA-Wars ability-to-VFX effect mapping — class abilities, weapon skills, enemy abilities",
+  "totalAbilities": 209,
+  "classAbilities": {
+    "warrior": {
+      "Slash": {
+        "effect": "critSlash",
+        "beam": null,
+        "anim": "attack1"
+      },
+      "Power Strike": {
+        "effect": "hitBurst",
+        "beam": null,
+        "anim": "attack3"
+      },
+      "War Cry": {
+        "effect": "beamHoly",
+        "beam": null,
+        "anim": "cast"
+      },
+      "Shield Bash": {
+        "effect": "hitBurst",
+        "beam": null,
+        "anim": "block"
+      },
+      "Cleave": {
+        "effect": "arcaneslash",
+        "beam": null,
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Demon Blade": {
+        "effect": "demonSlash3",
+        "beam": "blue",
+        "anim": "attack3"
+      },
+      "Invincible": {
+        "effect": "beamHoly",
+        "beam": null,
+        "anim": "cast"
+      },
+      "Guardian's Aura": {
+        "effect": "protectionCircle",
+        "beam": null,
+        "anim": "cast"
+      },
+      "Demoralizing Shout": {
+        "effect": "smokeVfx2",
+        "beam": null,
+        "anim": "cast",
+        "isAoE": true
+      },
+      "Life Drain": {
+        "effect": "arcanelighting",
+        "beam": "red",
+        "anim": "attack2"
+      },
+      "Concussive Blow": {
+        "effect": "thrust1",
+        "beam": null,
+        "anim": "attack3"
+      },
+      "Sunder Armor": {
+        "effect": "smearH2",
+        "beam": null,
+        "anim": "attack2"
+      },
+      "Execute": {
+        "effect": "critSlash",
+        "beam": "red",
+        "anim": "attack3"
+      },
+      "Avatar Form": {
+        "effect": "effect1",
+        "beam": null,
+        "anim": "cast"
+      }
+    },
+    "mage": {
+      "Arcane Bolt": {
+        "effect": "arcanebolt",
+        "beam": "blue",
+        "anim": "attack1"
+      },
+      "Fireball": {
+        "effect": "flamestrike",
+        "beam": "orange",
+        "anim": "attack1"
+      },
+      "Divine Heal": {
+        "effect": "holyheal",
+        "beam": null,
+        "anim": "heal",
+        "postHealEffect": "healingregen"
+      },
+      "Ice Storm": {
+        "effect": "frostbolt",
+        "beam": "blue",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Mana Shield": {
+        "effect": "arcanemist",
+        "beam": null,
+        "anim": "charge"
+      },
+      "Flame Brand": {
+        "effect": "flamestrike",
+        "beam": "orange",
+        "anim": "attack1"
+      },
+      "Blessing": {
+        "effect": "holyheal",
+        "beam": null,
+        "anim": "heal",
+        "postHealEffect": "healingregen"
+      },
+      "Meteor Strike": {
+        "effect": "flamestrike",
+        "beam": "red",
+        "anim": "charge",
+        "isAoE": true
+      },
+      "Chain Lightning": {
+        "effect": "arcanelighting",
+        "beam": "orange",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Slumber": {
+        "effect": "smokeVfx2",
+        "beam": "blue",
+        "anim": "cast"
+      },
+      "Mind Break": {
+        "effect": "arcanebolt",
+        "beam": "blue",
+        "anim": "attack1"
+      },
+      "Holy Nova": {
+        "effect": "holyheal",
+        "beam": null,
+        "anim": "heal",
+        "isAoE": true,
+        "postHealEffect": "healingregen"
+      },
+      "Bewilderment": {
+        "effect": "arcanemist",
+        "beam": "blue",
+        "anim": "cast"
+      },
+      "Purify": {
+        "effect": "holylight",
+        "beam": null,
+        "anim": "heal",
+        "postHealEffect": "healingregen"
+      },
+      "Arcane Cataclysm": {
+        "effect": "arcanelighting",
+        "beam": "blue",
+        "anim": "charge",
+        "isAoE": true
+      }
+    },
+    "worge": {
+      "Mace Strike": {
+        "effect": "hitBurst",
+        "beam": null,
+        "anim": "attack1"
+      },
+      "Lightning Lash": {
+        "effect": "arcanelighting",
+        "beam": "orange",
+        "anim": "attack2"
+      },
+      "Nature's Grasp": {
+        "effect": "healingwave",
+        "beam": "green",
+        "anim": "heal",
+        "postHealEffect": "healingregen"
+      },
+      "Dagger Toss": {
+        "effect": "windProjectile",
+        "beam": "green",
+        "anim": "attack2"
+      },
+      "Bear Form": {
+        "effect": "arcanemist",
+        "beam": null,
+        "anim": "cast"
+      },
+      "Maul": {
+        "effect": "arcaneslash",
+        "beam": null,
+        "anim": "attack1"
+      },
+      "Nature's Taunt": {
+        "effect": "arcanemist",
+        "beam": null,
+        "anim": "cast",
+        "isAoE": true
+      },
+      "Worge Charge": {
+        "effect": "critSlash",
+        "beam": null,
+        "anim": "runAttack"
+      },
+      "Revert Form": {
+        "effect": "beamHoly",
+        "beam": null,
+        "anim": "cast"
+      },
+      "Lacerate": {
+        "effect": "smearH1",
+        "beam": null,
+        "anim": "attack2"
+      },
+      "Soothing Rain": {
+        "effect": "waterSplash",
+        "beam": "green",
+        "anim": "heal",
+        "postHealEffect": "healingregen"
+      },
+      "Thunderclap": {
+        "effect": "arcanelighting",
+        "beam": "orange",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Venom Strike": {
+        "effect": "smearH3",
+        "beam": "green",
+        "anim": "attack1"
+      },
+      "Entangle": {
+        "effect": "windBreath",
+        "beam": "green",
+        "anim": "cast"
+      },
+      "Tempest": {
+        "effect": "arcanelighting",
+        "beam": "orange",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Primal Roar": {
+        "effect": "smokeVfx2",
+        "beam": null,
+        "anim": "cast",
+        "isAoE": true
+      },
+      "Nature's Wrath": {
+        "effect": "arcanelighting",
+        "beam": "green",
+        "anim": "attack2",
+        "isAoE": true
+      }
+    },
+    "ranger": {
+      "Quick Shot": {
+        "effect": "critSlash",
+        "beam": "green",
+        "anim": "attack1"
+      },
+      "Aimed Shot": {
+        "effect": "hitBurst",
+        "beam": "red",
+        "anim": "attack2"
+      },
+      "Poison Arrow": {
+        "effect": "healingregen",
+        "beam": "green",
+        "anim": "attack2",
+        "effectFilter": "hue-rotate(90deg) saturate(2)"
+      },
+      "Evasive Roll": {
+        "effect": "windBreath",
+        "beam": null,
+        "anim": "roll"
+      },
+      "Arrow Volley": {
+        "effect": "critSlash",
+        "beam": "green",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Focus": {
+        "effect": "beamHoly",
+        "beam": null,
+        "anim": "block"
+      },
+      "Venom Arrow": {
+        "effect": "windHit",
+        "beam": "green",
+        "anim": "attack1"
+      },
+      "Hunter's Mark": {
+        "effect": "effect4",
+        "beam": "red",
+        "anim": "attack1"
+      },
+      "Piercing Shot": {
+        "effect": "thrust2",
+        "beam": "red",
+        "anim": "attack2"
+      },
+      "Multishot": {
+        "effect": "critSlash",
+        "beam": "green",
+        "anim": "attack2",
+        "isAoE": true
+      },
+      "Bear Trap": {
+        "effect": "earthBump",
+        "beam": null,
+        "anim": "attack1"
+      },
+      "Barbed Arrow": {
+        "effect": "smearH2",
+        "beam": "red",
+        "anim": "attack2"
+      },
+      "Sniper Shot": {
+        "effect": "critSlash",
+        "beam": "red",
+        "anim": "attack2"
+      },
+      "Wind Walk": {
+        "effect": "windBreath",
+        "beam": null,
+        "anim": "roll"
+      },
+      "Sleep Dart": {
+        "effect": "smokeVfx2",
+        "beam": "green",
+        "anim": "attack1"
+      },
+      "Arrow Storm": {
+        "effect": "critSlash",
+        "beam": "green",
+        "anim": "attack2",
+        "isAoE": true
+      }
+    }
+  },
+  "weaponSkills": {
+    "ws_sword_slash": {
+      "effect": "slash",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_sword_thrust": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_riposte": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_blade_dance": {
+      "effect": "arcaneslash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_mortal_wound": {
+      "effect": "critSlash",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_axe_chop": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_axe_hack": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_rend": {
+      "effect": "arcaneslash",
+      "beam": "red",
+      "anim": "jump"
+    },
+    "ws_whirlwind": {
+      "effect": "vortex",
+      "beam": null,
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_sunder_armor": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_gs_sweep": {
+      "effect": "arcaneslash",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_gs_overhead": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_gs_cleave": {
+      "effect": "fireExplosion2",
+      "beam": null,
+      "anim": "attack3",
+      "isAoE": true
+    },
+    "ws_gs_whirlwind": {
+      "effect": "vortex",
+      "beam": null,
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_gs_execute": {
+      "effect": "critSlash",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_ga_slam": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_ga_swing": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_ga_rampage": {
+      "effect": "holyVfx",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_ga_bonecrusher": {
+      "effect": "thrust1",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_ga_bloodrage": {
+      "effect": "fireExplosion",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_h2_smash": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_h2_bash": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_h2_shockwave": {
+      "effect": "earthBump",
+      "beam": null,
+      "anim": "attack3",
+      "isAoE": true
+    },
+    "ws_h2_pulverize": {
+      "effect": "thrust1",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_h2_earthshatter": {
+      "effect": "earthWall",
+      "beam": null,
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_h1_strike": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_h1_crack": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_h1_concuss": {
+      "effect": "earthBump",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_h1_chain_smash": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_h1_thunderstrike": {
+      "effect": "thunderHit",
+      "beam": "orange",
+      "anim": "attack3"
+    },
+    "ws_staff_strike": {
+      "effect": "arcanebolt",
+      "beam": "blue",
+      "anim": "attack1"
+    },
+    "ws_staff_pulse": {
+      "effect": "arcanemist",
+      "beam": "blue",
+      "anim": "attack1"
+    },
+    "ws_staff_nova": {
+      "effect": "arcanelighting",
+      "beam": "blue",
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_staff_barrier": {
+      "effect": "arcanemist",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_staff_drain": {
+      "effect": "arcanelighting",
+      "beam": "blue",
+      "anim": "attack2"
+    },
+    "ws_dagger_stab": {
+      "effect": "smearV1",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_dagger_slash": {
+      "effect": "smearH1",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_backstab": {
+      "effect": "smearV2",
+      "beam": null,
+      "anim": "attack3"
+    },
+    "ws_envenom": {
+      "effect": "smokeVfx1",
+      "beam": "green",
+      "anim": "attack2"
+    },
+    "ws_fan_of_knives": {
+      "effect": "smearH3",
+      "beam": null,
+      "anim": "attack1",
+      "isAoE": true
+    },
+    "ws_bow_shot": {
+      "effect": "holyRepeatable",
+      "beam": "green",
+      "anim": "attack1",
+      "effectFilter": "hue-rotate(90deg) saturate(1.5)"
+    },
+    "ws_bow_aim": {
+      "effect": "critSlash",
+      "beam": "green",
+      "anim": "attack2"
+    },
+    "ws_bow_volley": {
+      "effect": "holyRepeatable",
+      "beam": "green",
+      "anim": "attack2",
+      "isAoE": true,
+      "effectFilter": "hue-rotate(90deg) saturate(1.5)"
+    },
+    "ws_bow_pierce": {
+      "effect": "critSlash",
+      "beam": "red",
+      "anim": "attack2"
+    },
+    "ws_bow_poison": {
+      "effect": "windHit",
+      "beam": "green",
+      "anim": "attack1"
+    },
+    "ws_xbow_bolt": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_xbow_snap": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_xbow_heavy": {
+      "effect": "thrust2",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_xbow_explosive": {
+      "effect": "fireExplosion",
+      "beam": "orange",
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_xbow_net": {
+      "effect": "windHit",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_gun_shot": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_gun_hip": {
+      "effect": "critSlash",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_gun_sniper": {
+      "effect": "critSlash",
+      "beam": "red",
+      "anim": "attack2"
+    },
+    "ws_gun_buckshot": {
+      "effect": "fireExplosion2",
+      "beam": null,
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_gun_suppressive": {
+      "effect": "holyRepeatable",
+      "beam": null,
+      "anim": "attack1",
+      "isAoE": true,
+      "effectFilter": "hue-rotate(30deg) brightness(1.2)"
+    },
+    "ws_wand_zap": {
+      "effect": "arcaneslash",
+      "beam": "blue",
+      "anim": "attack1"
+    },
+    "ws_wand_flick": {
+      "effect": "arcanemist",
+      "beam": "blue",
+      "anim": "attack1"
+    },
+    "ws_wand_chain": {
+      "effect": "arcanelighting",
+      "beam": "orange",
+      "anim": "attack2",
+      "isAoE": true
+    },
+    "ws_wand_arcane_blast": {
+      "effect": "arcanebolt",
+      "beam": "blue",
+      "anim": "attack2"
+    },
+    "ws_wand_dispel": {
+      "effect": "holylight",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_shield_bash": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_shield_wall": {
+      "effect": "protectionCircle",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_shield_slam": {
+      "effect": "hitBurst",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_shield_reflect": {
+      "effect": "holyRepeatable",
+      "beam": null,
+      "anim": "block"
+    },
+    "ws_shield_charge": {
+      "effect": "thrust1",
+      "beam": null,
+      "anim": "runAttack"
+    },
+    "ws_spear_jab": {
+      "effect": "thrust1",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_spear_thrust": {
+      "effect": "thrust2",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_spear_impale": {
+      "effect": "thrust1",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_spear_sweep": {
+      "effect": "smearH1",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_spear_skewer": {
+      "effect": "thrust2",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_lance_thrust": {
+      "effect": "thrust2",
+      "beam": null,
+      "anim": "attack1"
+    },
+    "ws_lance_jab": {
+      "effect": "thrust1",
+      "beam": null,
+      "anim": "attack2"
+    },
+    "ws_lance_charge": {
+      "effect": "thrust2",
+      "beam": "red",
+      "anim": "runAttack"
+    },
+    "ws_lance_impale": {
+      "effect": "thrust1",
+      "beam": "red",
+      "anim": "attack3"
+    },
+    "ws_lance_sweep": {
+      "effect": "smearH1",
+      "beam": null,
+      "anim": "attack2",
+      "isAoE": true
+    }
+  },
+  "enemyAbilities": {
+    "Shadow Bolt": {
+      "effect": "arcanebolt",
+      "beam": "purple"
+    },
+    "Dark Nova": {
+      "effect": "arcanemist",
+      "beam": "purple"
+    },
+    "Drain Life": {
+      "effect": "arcanelighting",
+      "beam": "purple"
+    },
+    "Fire Breath": {
+      "effect": "flamestrike",
+      "beam": "orange"
+    },
+    "Hellfire": {
+      "effect": "flamestrike",
+      "beam": "orange"
+    },
+    "Meteor": {
+      "effect": "flamestrike",
+      "beam": "red"
+    },
+    "Soul Bolt": {
+      "effect": "arcanebolt",
+      "beam": "purple"
+    },
+    "Death Coil": {
+      "effect": "arcaneslash",
+      "beam": "purple"
+    },
+    "Doom Strike": {
+      "effect": "critSlash",
+      "beam": "red"
+    },
+    "Ground Pound": {
+      "effect": "earthBump",
+      "beam": null
+    },
+    "Void Blast": {
+      "effect": "thunderProjectile2",
+      "beam": "purple"
+    },
+    "Annihilate": {
+      "effect": "fireExplosion2",
+      "beam": "red"
+    },
+    "Reality Tear": {
+      "effect": "felSpell",
+      "beam": "purple"
+    },
+    "Tidal Strike": {
+      "effect": "waterSpike",
+      "beam": "blue"
+    },
+    "Torrent": {
+      "effect": "waterSplash",
+      "beam": "blue"
+    },
+    "Tsunami": {
+      "effect": "waterSpike",
+      "beam": "blue"
+    },
+    "Vine Lash": {
+      "effect": "windHit",
+      "beam": "green"
+    },
+    "Nature's Wrath": {
+      "effect": "windBreath",
+      "beam": "green"
+    },
+    "Earthquake": {
+      "effect": "earthBump",
+      "beam": null
+    },
+    "Regenerate": {
+      "effect": "healEffect",
+      "beam": "green"
+    },
+    "Thorn Armor": {
+      "effect": "protectionCircle",
+      "beam": "green"
+    },
+    "Root Bind": {
+      "effect": "windBreath",
+      "beam": "green"
+    },
+    "Healing Tide": {
+      "effect": "healingwave",
+      "beam": "blue"
+    },
+    "Frozen Prison": {
+      "effect": "iceVfx1",
+      "beam": "blue"
+    },
+    "Soul Drain": {
+      "effect": "arcanelighting",
+      "beam": "purple"
+    },
+    "Raise Dead": {
+      "effect": "arcanemist",
+      "beam": "purple"
+    },
+    "Shadow Nova": {
+      "effect": "arcanebolt",
+      "beam": "purple"
+    },
+    "Curse of Weakness": {
+      "effect": "arcanemist",
+      "beam": "purple"
+    },
+    "Demonic Regeneration": {
+      "effect": "healingwave",
+      "beam": "red"
+    },
+    "Infernal Chains": {
+      "effect": "flamestrike",
+      "beam": "red"
+    },
+    "Hellfire Aura": {
+      "effect": "flamestrike",
+      "beam": "orange"
+    },
+    "Void Drain": {
+      "effect": "vortex",
+      "beam": "purple"
+    },
+    "Oblivion Pulse": {
+      "effect": "sunburn",
+      "beam": "purple"
+    },
+    "Time Stop": {
+      "effect": "freezing",
+      "beam": "purple"
+    },
+    "Void Enrage": {
+      "effect": "felSpell",
+      "beam": "red"
+    },
+    "Nature Strike": {
+      "effect": "windHit",
+      "beam": "green"
+    },
+    "Forest Heal": {
+      "effect": "healEffect",
+      "beam": "green"
+    },
+    "Poison Spore": {
+      "effect": "windHit",
+      "beam": "green"
+    },
+    "Corrupted Bolt": {
+      "effect": "midnight",
+      "beam": "purple"
+    },
+    "Verdant Stun": {
+      "effect": "freezing",
+      "beam": "green"
+    },
+    "Grove Fireball": {
+      "effect": "fireExplosion",
+      "beam": "green"
+    },
+    "Resurrect Guardian": {
+      "effect": "healEffect",
+      "beam": "green"
+    },
+    "Dark Bloom": {
+      "effect": "felSpell",
+      "beam": "purple"
+    },
+    "Eye Beam": {
+      "effect": "midnight",
+      "beam": "purple"
+    },
+    "Dive Attack": {
+      "effect": "hitEffect1",
+      "beam": null
+    },
+    "Spore Slap": {
+      "effect": "hitEffect3",
+      "beam": null
+    },
+    "Toxic Spore": {
+      "effect": "windHit",
+      "beam": "green"
+    },
+    "Sword Slash": {
+      "effect": "slash",
+      "beam": null
+    },
+    "Shield Wall": {
+      "effect": "protectionCircle",
+      "beam": null
+    },
+    "Bone Breaker": {
+      "effect": "hitEffect2",
+      "beam": null
+    },
+    "Wing Slash": {
+      "effect": "slash",
+      "beam": null
+    },
+    "Sonic Screech": {
+      "effect": "windBreath",
+      "beam": "purple"
+    },
+    "Blood Drain": {
+      "effect": "nebula",
+      "beam": "red"
+    },
+    "Imp Scratch": {
+      "effect": "hitEffect3",
+      "beam": null
+    },
+    "Hex Bolt": {
+      "effect": "felSpell",
+      "beam": "purple"
+    },
+    "Imp Frenzy": {
+      "effect": "fireSpin",
+      "beam": null
+    },
+    "Jaw Snap": {
+      "effect": "hitEffect1",
+      "beam": null
+    },
+    "Tongue Lash": {
+      "effect": "hitEffect2",
+      "beam": null
+    },
+    "Devour Gold": {
+      "effect": "hitEffect1",
+      "beam": null
+    },
+    "Iron Shell": {
+      "effect": "protectionCircle",
+      "beam": null
+    },
+    "Talon Strike": {
+      "effect": "slash",
+      "beam": null
+    },
+    "Dive Bomb": {
+      "effect": "hitEffect1",
+      "beam": null
+    },
+    "Murder of Crows": {
+      "effect": "midnight",
+      "beam": "purple"
+    },
+    "Shadow Feint": {
+      "effect": "phantom",
+      "beam": null
+    },
+    "Stone Fist": {
+      "effect": "earthBump",
+      "beam": null
+    },
+    "Petrify Gaze": {
+      "effect": "iceVfx1",
+      "beam": "purple"
+    },
+    "Quake Slam": {
+      "effect": "earthWall",
+      "beam": null
+    },
+    "Fortify": {
+      "effect": "protectionCircle",
+      "beam": null
+    },
+    "Crumble Curse": {
+      "effect": "felSpell",
+      "beam": "purple"
+    },
+    "Shadow Strike": {
+      "effect": "hitEffect1",
+      "beam": null
+    },
+    "Dark Frenzy": {
+      "effect": "fireSpin",
+      "beam": null
+    },
+    "Shadow Leap": {
+      "effect": "critSlash",
+      "beam": "purple"
+    }
+  }
+}
