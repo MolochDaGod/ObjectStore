@@ -227,17 +227,31 @@
     <a href="#base-url">Base URL</a>
     <a href="#authentication">Authentication</a>
     
-    <div class="section-title">API Endpoints</div>
+    <div class="section-title">Core Game Data</div>
     <a href="#weapons">Weapons</a>
-    <a href="#materials">Materials</a>
+    <a href="#equipment">Equipment</a>
     <a href="#armor">Armor</a>
+    <a href="#materials">Materials</a>
     <a href="#consumables">Consumables</a>
     <a href="#skills">Skills</a>
+    <a href="#weapon-skills">Weapon Skills</a>
     <a href="#professions">Professions</a>
+    <a href="#classes">Classes & Races</a>
+    <a href="#enemies">Enemies & Bosses</a>
+    <a href="#factions">Factions</a>
+
+    <div class="section-title">VFX & Battle</div>
+    <a href="#effect-sprites">Effect Sprites</a>
+    <a href="#ability-effects">Ability Effects</a>
+    <a href="#sprites">Sprite Database</a>
+
+    <div class="section-title">Game Engine</div>
+    <a href="#faction-units">Faction Units</a>
+    <a href="#maps-terrain">Maps & Terrain</a>
+    <a href="#animations">Animations</a>
+    <a href="#ai">AI Systems</a>
     
     <div class="section-title">Data Models</div>
-    <a href="#weapon-schema">Weapon Schema</a>
-    <a href="#material-schema">Material Schema</a>
     <a href="#tier-system">Tier System</a>
     
     <div class="section-title">SDK & Tools</div>
@@ -248,6 +262,8 @@
     <div class="section-title">Resources</div>
     <a href="./DATABASE.md">Database Schema</a>
     <a href="../sdk/grudge-sdk.js">Download SDK</a>
+    <a href="../SPRITE_DATABASE.html">Sprite Browser</a>
+    <a href="../VFX_BROWSER.html">VFX Browser</a>
   </nav>
 
   <main class="main">
@@ -260,11 +276,16 @@
       <h2>Overview</h2>
       <p>The ObjectStore API provides read-only access to all static game data for Grudge Warlords. This includes:</p>
       <ul>
-        <li><strong>816 Weapons</strong> across 17 categories with 8 tiers each</li>
-        <li><strong>98 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
+        <li><strong>119 Weapons</strong> across 17 categories with 8 tiers each</li>
+        <li><strong>150 Equipment</strong> items (armor sets, gems, accessories)</li>
+        <li><strong>112 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
         <li><strong>132 Consumables</strong> including foods, potions, and engineer items</li>
-        <li><strong>47 Skills</strong> for weapon combat abilities</li>
-        <li><strong>5 Professions</strong> with complete skill trees</li>
+        <li><strong>473 Weapon Skills</strong> across 24 weapon types with icons, cooldowns, and effects</li>
+        <li><strong>147 VFX Effect Sprites</strong> with frame data and blend modes</li>
+        <li><strong>209 Battle Abilities</strong> with effect chains and follow-ups</li>
+        <li><strong>5 Professions</strong> with complete skill trees and 363+ recipes</li>
+        <li><strong>19 Faction Units</strong> for the RTS game mode</li>
+        <li><strong>27 API Endpoints</strong> total</li>
       </ul>
       
       <div class="tip">
@@ -375,6 +396,20 @@
       </div>
     </section>
 
+    <section id="equipment">
+      <h2>Equipment Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/equipment.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns 150 armor items (6 sets × 8 slots × 3 material types + gems) with stats, procs, and set bonuses.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="materials">
       <h2>Materials Endpoint</h2>
       
@@ -460,7 +495,7 @@
           <span class="endpoint-url">/api/v1/skills.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Returns all weapon combat skills with tooltips, cooldowns, and damage formulas.</p>
+          <p class="endpoint-desc">Returns weapon combat skills with tooltips, cooldowns, and damage formulas.</p>
           
           <pre><code>{
   "skills": [
@@ -477,6 +512,57 @@
     }
   ]
 }</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="weapon-skills">
+      <h2>Weapon Skills Endpoint</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/weaponSkills.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns 473 weapon skills across 24 weapon types sourced from the Warlord Crafting Suite. Each skill includes an icon path, cooldown, mana cost, effects, and slot assignment.</p>
+          
+          <h3>Response Structure</h3>
+          <pre><code>{
+  "version": "1.0.0",
+  "totalSkills": 473,
+  "weaponTypes": [
+    {
+      "weaponType": "Sword",
+      "skillCount": 18,
+      "skills": [
+        {
+          "id": "sword_vengeful_slash",
+          "name": "Vengeful Slash",
+          "slot": "Attack",
+          "cooldown": 0,
+          "manaCost": 0,
+          "description": "A fierce slash dealing 100% weapon damage...",
+          "effect": "Applies Grudge Mark (5% damage amp, max 3)",
+          "icon": "/icons/wcs/weapons/Sword_01.png"
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+          <h3>Slot Types</h3>
+          <table>
+            <tr><th>Slot</th><th>Description</th><th>Color</th></tr>
+            <tr><td>Attack</td><td>Primary damage abilities</td><td><span style="color:#22c55e">Green</span></td></tr>
+            <tr><td>Core</td><td>Core rotation skills</td><td><span style="color:#3b82f6">Blue</span></td></tr>
+            <tr><td>Defense</td><td>Defensive/utility skills</td><td><span style="color:#eab308">Yellow</span></td></tr>
+            <tr><td>Special</td><td>Situational abilities</td><td><span style="color:#a855f7">Purple</span></td></tr>
+            <tr><td>Ultimate</td><td>High-impact ultimate abilities</td><td><span style="color:#ef4444">Red</span></td></tr>
+          </table>
+
+          <h3>Weapon Types (24)</h3>
+          <p>Sword, Axe (1H), Greatsword, Greataxe, Bow, Crossbow, Gun, Fire Staff, Frost Staff, Holy Staff, Lightning Staff, Nature Staff, Dagger, Arcane Staff, Spear, Hammer, Scythe, Tool, Fire Tome, Frost Tome, Holy Tome, Shadow Tome, Nature Tome, Arcane Tome</p>
         </div>
       </div>
     </section>
@@ -501,6 +587,269 @@
             <tr><td>🍲 Chef</td><td>Cook & Alchemist</td><td>28</td><td>Foods, potions</td></tr>
             <tr><td>🔧 Engineer</td><td>Mechanist & Siege Master</td><td>28</td><td>Guns, crossbows, mech armor</td></tr>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="classes">
+      <h2>Classes & Races Endpoints</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/classes.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">4 classes — Warrior, Mage Priest, Worge, Ranger — with starting attributes, abilities, and weapon restrictions.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/races.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">6 races — Human, Orc, Elf, Undead, Barbarian, Dwarf — with attribute bonuses and faction alignment.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/attributes.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">8 attributes with stat formulas — STR, INT, VIT, DEX, END, WIS, AGI, TAC.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="enemies">
+      <h2>Enemies & Bosses</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/enemies.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">38 enemies across 8 tiers with abilities, drops, and 3D asset paths.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/bosses.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">12 bosses with multi-phase mechanics, drops, and Gouldstone chances.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="factions">
+      <h2>Factions</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/factions.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">3 factions — Crusade, Legion, Fabled — with lore, race mappings, and faction-specific bonuses.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="effect-sprites">
+      <h2>VFX Effect Sprites</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/effectSprites.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">147 VFX sprite sheets sourced from GRUDA-Wars. Includes frame dimensions, frame counts, categories, blend modes, and source image URLs.</p>
+          
+          <h3>Response Structure</h3>
+          <pre><code>{
+  "version": "1.0.0",
+  "totalEffects": 147,
+  "categories": ["fire", "ice", "lightning", "nature", "dark", ...],
+  "effects": [
+    {
+      "key": "fireSpin",
+      "name": "Fire Spin",
+      "category": "fire",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "cols": 8,
+      "rows": 8,
+      "totalFrames": 64,
+      "blendMode": "screen",
+      "src": "/effects/fire_spin.png"
+    }
+  ]
+}</code></pre>
+          <div class="tip">
+            <div class="tip-title">💡 Live Preview</div>
+            <p>See all effects animated in real-time at <a href="../VFX_BROWSER.html">VFX Effects Browser</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ability-effects">
+      <h2>Battle Ability Effects</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/abilityEffects.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">209 abilities mapping class skills, weapon abilities, and enemy attacks to their VFX effect chains with follow-up effects.</p>
+          
+          <h3>Ability Sources</h3>
+          <table>
+            <tr><th>Source</th><th>Description</th></tr>
+            <tr><td>Class Abilities</td><td>Warrior, Mage, Ranger, Worge class skills</td></tr>
+            <tr><td>Weapon Abilities</td><td>Skills tied to specific weapon types</td></tr>
+            <tr><td>Enemy Abilities</td><td>Boss and mob attack effects</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="sprites">
+      <h2>Sprite Database</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/sprites.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Full sprite database — 500+ icon paths organized by category (weapons, armor, skills, items).</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/spriteMaps.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">246 sprite path mappings for weapons and armor icons — maps item IDs to their sprite sheet locations.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faction-units">
+      <h2>Faction Units (RTS)</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/factionUnits.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">19 RTS faction units across 3 factions with stats, animations, and sprite paths.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/nodeUpgrades.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Node upgrade system — unit tiers, costs, spawn rates, vision radius.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="maps-terrain">
+      <h2>Maps & Terrain</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/tileMaps.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">2 tile-based RTS maps with nodes, terrain objects, roads, and collision data.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/terrain.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Procedural terrain — 5 biome presets (plains, mountains, islands, desert, arena).</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/rendering.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Materials, 7 skybox presets, 10 particle effects, 5 spell effects.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="animations">
+      <h2>Animations</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/animations.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Animation system v2.0 — 18 common anims, transition rules, blend config.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/controllers.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">5 RTS camera presets, 4 chase camera presets, FPS, mouse controller config.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <h2>AI Systems</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/ai.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">AI behavior trees — 7 node types, entity states, blackboard, scoring.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/ecs.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">ECS components — 8 component types, 2 systems, spatial hash config.</p>
         </div>
       </div>
     </section>
