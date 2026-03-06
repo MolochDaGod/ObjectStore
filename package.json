@@ -36,6 +36,7 @@
     "prepublishOnly": "npm run validate",
     "validate": "echo 'Validating package...'",
 
+    "generate:registry": "node ./scripts/generate-asset-registry.mjs",
     "audit:puter": "node ./scripts/puter-audit.mjs",
     "audit:puter:save": "node ./scripts/puter-audit.mjs --output docs/reports/puter-audit-report.json",
     "sync": "node ./scripts/sync-all.js"

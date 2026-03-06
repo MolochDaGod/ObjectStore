@@ -672,17 +672,47 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
     }
     loadIconIndex();
 
-    // Tab switching
+    // Valid tab slugs for URL routing
+    const VALID_TABS = ['weapons', 'armor', 'skills', 'materials', 'consumables', 'enemies', 'bosses', 'rpgicons', 'all', 'developer'];
+
+    // Switch to a tab by name (updates UI and loads data)
+    function switchTab(tabName) {
+      if (!VALID_TABS.includes(tabName)) tabName = 'weapons';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      currentTab = tabName;
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`${currentTab}-section`).classList.add('active');
+      loadTabData(currentTab);
+    }
+
+    // Tab click → update hash (which triggers hashchange)
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentTab = btn.dataset.tab;
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(`${currentTab}-section`).classList.add('active');
-        loadTabData(currentTab);
+        window.location.hash = btn.dataset.tab;
       });
     });
+
+    // Hash change → switch tab (supports browser back/forward)
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && VALID_TABS.includes(hash)) {
+        switchTab(hash);
+      }
+    });
+
+    // On page load → read hash and activate correct tab
+    function initFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && VALID_TABS.includes(hash)) {
+        switchTab(hash);
+      } else {
+        // Default tab, set hash without triggering extra load
+        history.replaceState(null, '', '#weapons');
+        switchTab('weapons');
+      }
+    }
 
     // Search and filter
     document.getElementById('searchInput').addEventListener('input', debounce(filterItems, 300));
@@ -1722,8 +1752,8 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       `).join('');
     }
 
-    // Initial load
-    loadWeapons();
+    // Initial load from URL hash
+    initFromHash();
     renderDevEndpoints();
     
     // Load sprite counts on page load
