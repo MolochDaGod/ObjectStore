@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sprite Database - Grudge Warlords ObjectStore</title>
-  <meta name="description" content="Visual database of all sprites and icons for Grudge Warlords game objects">
+<meta name="description" content="Visual database of all sprites and icons for Grudge Warlords game objects">
+  <!-- Grudge Auth SDK -->
+  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { GrudgeAuth.renderAuthBar(); });</script>
   <style>
     :root {
       --bg: #0f1419;
@@ -36,7 +39,9 @@
       min-height: 100vh;
       line-height: 1.6;
     }
+    /* Push header down for auth bar */
     .header {
+      top: 40px;
       background: linear-gradient(135deg, var(--card), var(--bg));
       padding: 30px 40px;
       border-bottom: 1px solid var(--border);
