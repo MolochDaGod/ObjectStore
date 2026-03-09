@@ -4,7 +4,20 @@
  * Replaces all emoji icons with real AI-generated images
  */
 
-import puter from 'https://js.puter.com/v2/';
+// Lazy-load puter to avoid blocking module initialization
+let _puter = null;
+async function getPuter() {
+  if (!_puter) {
+    try {
+      const mod = await import('https://js.puter.com/v2/');
+      _puter = mod.default || mod;
+    } catch (e) {
+      console.warn('[ImageGenerator] Puter.js unavailable — image generation disabled:', e.message);
+      _puter = null;
+    }
+  }
+  return _puter;
+}
 
 class GrudgeImageGenerator {
   constructor() {
@@ -25,6 +38,13 @@ class GrudgeImageGenerator {
     // Return cached image if exists
     if (this.generatedImages.has(cacheKey)) {
       return this.generatedImages.get(cacheKey);
+    }
+
+    // Check localStorage cache
+    const stored = this._loadFromStorage(cacheKey);
+    if (stored) {
+      this.generatedImages.set(cacheKey, stored);
+      return stored;
     }
 
     // Wait for pending request if already generating
@@ -49,6 +69,12 @@ class GrudgeImageGenerator {
 
   async _generateImage(item, category, cacheKey) {
     try {
+      const puter = await getPuter();
+      if (!puter) {
+        console.warn(`[ImageGenerator] Puter not available, using fallback for: ${item.name}`);
+        return this._getFallbackImage(category);
+      }
+
       // Build descriptive prompt for AI image generation
       const prompt = this._buildPrompt(item, category);
       
