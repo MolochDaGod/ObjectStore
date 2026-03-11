@@ -1,0 +1,78 @@
+{
+  "playerRows": {
+    "protection": {
+      "id": "protection",
+      "name": "Protection Pocket",
+      "icon": "shield",
+      "index": 0,
+      "description": "Defensive stance. +Evasion, +Block, but -Damage, -Crit, -Accuracy.",
+      "modifiers": {
+        "evasionBonus": 12,
+        "blockBonus": 10,
+        "damageMult": 0.8,
+        "critMult": 0.7,
+        "accuracyPenalty": 10
+      }
+    },
+    "battle": {
+      "id": "battle",
+      "name": "Battle Line",
+      "icon": "crossed_swords",
+      "index": 1,
+      "description": "Standard combat position. No bonuses or penalties.",
+      "modifiers": {}
+    },
+    "back": {
+      "id": "back",
+      "name": "Back Row",
+      "icon": "bow",
+      "index": 2,
+      "description": "Rear position. +Speed, ranged counter vs melee. Melee attacks from here lose accuracy.",
+      "modifiers": {
+        "speedBonus": 4,
+        "meleeAccuracyPenalty": 15,
+        "rangedCounterChance": 25
+      }
+    }
+  },
+  "enemyRows": {
+    "vanguard": {
+      "id": "vanguard",
+      "name": "Vanguard",
+      "icon": "crossed_swords",
+      "index": 0,
+      "description": "Front-line enemy position.",
+      "modifiers": {}
+    },
+    "formation": {
+      "id": "formation",
+      "name": "Formation",
+      "icon": "shield",
+      "index": 1,
+      "description": "Standard enemy position. Bosses command from here.",
+      "modifiers": {
+        "defenseBonus": 5
+      }
+    },
+    "charge": {
+      "id": "charge",
+      "name": "Charge",
+      "icon": "skull",
+      "index": 2,
+      "description": "Aggressive assault. +Damage, +Crit, but -Defense, -Block.",
+      "modifiers": {
+        "damageMult": 1.25,
+        "critBonus": 10,
+        "defenseMult": 0.7,
+        "blockPenalty": 10
+      }
+    }
+  },
+  "rangedWeaponTypes": [
+    "bow",
+    "crossbow",
+    "gun",
+    "staff",
+    "tome"
+  ]
+}

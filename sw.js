@@ -1,6 +1,6 @@
-const CACHE_NAME = 'objectstore-v2';
-const API_CACHE = 'objectstore-api-v2';
-const ASSET_CACHE = 'objectstore-assets-v2';
+const CACHE_NAME = 'objectstore-v3';
+const API_CACHE = 'objectstore-api-v3';
+const ASSET_CACHE = 'objectstore-assets-v3';
 
 const PRECACHE_URLS = [
   './',
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
 ];
 
 const API_ENDPOINTS = [
+  // Core game data
   './api/v1/weapons.json',
   './api/v1/armor.json',
   './api/v1/materials.json',
@@ -27,7 +28,25 @@ const API_ENDPOINTS = [
   './api/v1/sprites2d.json',
   './api/v1/effectSprites.json',
   './api/v1/abilityEffects.json',
-  './api/v1/factionUnits.json'
+  './api/v1/factionUnits.json',
+  // v3.0.0 — Game data extraction
+  './api/v1/quests.json',
+  './api/v1/missions.json',
+  './api/v1/skillTrees.json',
+  './api/v1/equipment.json',
+  './api/v1/enemyTemplates.json',
+  './api/v1/worldMap.json',
+  './api/v1/dialogue.json',
+  './api/v1/cutscenes.json',
+  './api/v1/regions.json',
+  './api/v1/battleFormations.json',
+  './api/v1/randomEvents.json',
+  './api/v1/lore.json',
+  // v3.0.0 — Asset registries
+  './api/v1/audio.json',
+  './api/v1/video.json',
+  './api/v1/heroes.json',
+  './api/v1/models3d.json'
 ];
 
 self.addEventListener('install', event => {

@@ -1,7 +1,7 @@
 # Grudge Studio ObjectStore
-**Version 2.1.0** | Unified Game Data API & Integration Hub
+**Version 3.0.0** | Unified Game Data API, Asset Library & Integration Hub
 
-Centralized data API for all Grudge Studio projects — weapons, armor, materials, races, classes, factions, and icons. Now with AI-powered image generation, GRUDGE UUID system, and cross-project integration.
+The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, MCP server for AI agents, SDK, OpenAPI spec, and full game data extracted from GrudgeWars.
 
 **Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
 
@@ -45,27 +45,34 @@ const balanced = await api.ai.balanceItem(item);
 
 ---
 
-## ✨ What's New in 2.1.0
+## ✨ What's New in 3.0.0
 
-### 🎮 Unified Integration Package
-- **NPM Package**: `@grudge-studio/core` - Single library for all Grudge Studio projects
-- **Cross-Platform**: JavaScript, TypeScript, Unity C#, Node.js
-- **35+ Repository Integration**: Works across all Grudge Studio projects
+### 📦 Massive Asset Collection
+- **10,000+ assets** collected from GrudgeWars, Warlord-Crafting-Suite, and GDevelopAssistant
+- **108 sprite directories** with 7,324+ indexed 2D sprites
+- **5,653 icons** across weapons, armor, food, materials, RPG packs
+- **450 audio files** (SFX in wav/mp3/ogg/flac)
+- **471 3D model** registry (GLB, GLTF, FBX, OBJ) organized by race
+- **167 backgrounds**, 36 hero portraits, 6 cinematic videos
 
-### 🏷️ GRUDGE UUID System
-- **Universal IDs**: `ITEM-20260225120000-000001-A1B2C3D4`
-- **16 Entity Types**: Items, heroes, materials, abilities, missions, and more
-- **Arsenal Compatible**: Uses the same UUID format from Warlord-Crafting-Suite
+### 🗺️ Full Game Data Extraction
+- **12 new JSON API endpoints** extracted from GrudgeWars source:
+- Quests (28 zones), Missions (10 story + 10 arena), Skill Trees (4 classes)
+- Equipment (15 weapon types + skills), Enemy Templates (20+ types, 8 bosses)
+- World Map (33 locations, 79 paths), Dialogue (7 trigger types, 6 races)
+- Cutscenes, Regions, Battle Formations, Random Events, Lore (3 gods + heroes)
 
-### 🎨 AI-Powered Features
-- **Image Generation**: Puter.js integration for txt2img item icons
-- **Tier System**: T1-T8 visual system with colored borders (Bronze → Legendary)
-- **Smart Caching**: localStorage + batch generation with rate limiting
+### 🤖 AI Agent Infrastructure
+- **MCP Server** with 7 tools for AI agent integration
+- **OpenAPI 3.0.3 spec** covering all 45+ endpoints
+- **Service Worker** with stale-while-revalidate caching
+- **Vercel serverless** endpoints (search, stats, export)
 
-### 📦 Integration Ready
-- **React/TypeScript**: Pre-built Arsenal tab component
-- **Unity C#**: Complete GrudgeStudioAPI MonoBehaviour
-- **Node.js**: Server-side API client with caching
+### 🔧 Developer Tools
+- **SDK** with 30+ methods covering every endpoint
+- **CI workflow** for auto-regenerating registries
+- **JSON schema validation** for 14+ data files
+- **Changelog/RSS** generation from git log
 
 ---
 
@@ -87,6 +94,22 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/classes.json` | 4 classes with abilities, weapon/armor types, and signature moves |
 | `/api/v1/factions.json` | 3 factions (Crusade, Legion, Fabled) with race mappings |
 | `/api/v1/attributes.json` | 8 attribute definitions with stat formulas |
+| `/api/v1/quests.json` | Zone quests (28 zones, 112 quests) |
+| `/api/v1/missions.json` | Story missions + arena templates |
+| `/api/v1/skillTrees.json` | Full skill trees (4 classes, 5 tiers each) |
+| `/api/v1/equipment.json` | Equipment types, tiers, weapon skills |
+| `/api/v1/enemyTemplates.json` | 20+ enemy types with abilities, 8+ bosses |
+| `/api/v1/worldMap.json` | 33 locations, 79 paths, terrain regions |
+| `/api/v1/dialogue.json` | NPC dialogue, race/class chatter |
+| `/api/v1/cutscenes.json` | Zone intro cutscenes + extended lore |
+| `/api/v1/regions.json` | 5 world regions with zone mappings |
+| `/api/v1/battleFormations.json` | Player/enemy row formations |
+| `/api/v1/randomEvents.json` | 8 random event templates |
+| `/api/v1/lore.json` | 3 gods + hero lore entries |
+| `/api/v1/audio.json` | 450 sound effect registry |
+| `/api/v1/video.json` | 6 cinematic video registry |
+| `/api/v1/heroes.json` | 36 hero portrait + effect images |
+| `/api/v1/models3d.json` | 471 3D model registry (GLB/GLTF/FBX/OBJ) |
 
 ## 🔗 Supported Projects
 
@@ -292,39 +315,36 @@ Example: `/icons/weapons/Sword_01.png`
 
 ```
 ObjectStore/
-├── api/v1/                   # Static JSON data
-│   ├── weapons.json        # 17 categories, 816+ items
-│   ├── materials.json       # Ore, wood, cloth, leather, gems, essence
-│   ├── armor.json           # Helm, chest, boots, gloves, etc.
-│   ├── consumables.json     # Potions, food, engineer items
-│   ├── skills.json          # Weapon skill trees
-│   ├── professions.json     # Miner, Forester, Mystic, Chef, Engineer
-│   ├── races.json           # Human, Orc, Elf, Undead, Barbarian, Dwarf
-│   ├── classes.json         # Warrior, Mage Priest, Worge, Ranger
-│   ├── factions.json        # Crusade, Legion, Fabled
-│   └── attributes.json      # STR, INT, VIT, DEX, END, WIS, AGI, TAC
-├── integrations/            # 🆕 NEW: Cross-project integrations
-│   ├── grudge-studio-core.js                      # Main API client
-│   ├── warlord-crafting-suite-integration.tsx     # React/TS component
-│   └── GrudgeWarlords-Unity-Integration.cs        # Unity C# API
-├── utils/                   # 🆕 NEW: Utility modules
-│   ├── item-registry.js      # Single source of truth
-│   └── image-generator.js    # AI image generation
-├── css/                     # 🆕 NEW: Styling
-│   └── tier-system.css       # T1-T8 visual system
-├── sdk/                     # Legacy SDK
-│   └── grudge-sdk.js         # Original SDK (backward compat)
-├── icons/                   # 659+ PNG sprite icons
-│   ├── weapons/
-│   ├── armor/
-│   └── resources/
-├── docs/                    # API documentation
-├── INTEGRATION-GUIDE.md     # 🆕 NEW: Complete integration guide
-├── WIKI-HOME.md             # 🆕 NEW: GitHub wiki home
-├── WIKI-DEPLOYMENT.md       # 🆕 NEW: Deployment guide
-├── package.json             # 🆕 NEW: NPM package config
-├── SPRITE_DATABASE.html     # Visual sprite browser
-├── index.html               # Landing page
+├── api/v1/                   # 45+ Static JSON API endpoints
+│   ├── weapons.json         # 17 categories, 816+ items
+│   ├── armor.json           # Helm, chest, boots, etc.
+│   ├── materials.json       # Ore, wood, cloth, leather, gems
+│   ├── quests.json          # 28 zones, 112 quests
+│   ├── missions.json        # Story + arena templates
+│   ├── skillTrees.json      # 4 classes × 5 tiers
+│   ├── equipment.json       # Weapon types + skills
+│   ├── enemyTemplates.json  # 20+ enemies, 8+ bosses
+│   ├── worldMap.json        # 33 locations, 79 paths
+│   ├── dialogue.json        # NPC chatter system
+│   ├── cutscenes.json       # Zone intro cinematics
+│   ├── audio.json           # 450 SFX registry
+│   ├── video.json           # 6 cinematic videos
+│   ├── heroes.json          # 36 hero portraits
+│   ├── models3d.json        # 471 3D model registry
+│   └── ...                  # + 30 more endpoints
+├── sprites/                  # 108 dirs, 7,324+ 2D sprites
+├── icons/                    # 5,653 PNG icons
+├── backgrounds/              # 167 scene backgrounds
+├── heroes/                   # 36 hero portraits + effects
+├── audio/                    # 450 SFX (wav/mp3/ogg/flac)
+├── video/                    # 6 cinematic MP4s
+├── branding/                 # Favicons + brand assets
+├── sdk/grudge-sdk.js         # SDK with 30+ methods
+├── mcp/                      # MCP server for AI agents
+├── scripts/                  # Build + extraction tools
+├── openapi.yaml              # OpenAPI 3.0.3 spec
+├── sw.js                     # Service worker
+├── package.json              # @grudge-studio/objectstore v3.0.0
 └── README.md
 ```
 

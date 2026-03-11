@@ -1,0 +1,536 @@
+{
+  "missions": [
+    {
+      "id": "undead_raid_plains",
+      "title": "Undead Raid on Verdant Plains",
+      "description": "The undead have raided the Verdant Plains! Travel there and put an end to their terror.",
+      "targetLocation": "verdant_plains",
+      "cityId": "greenhollow",
+      "levelRange": [
+        1,
+        3
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "skeleton",
+            "skeleton"
+          ],
+          "description": "A scouting party of skeletons approaches!"
+        },
+        {
+          "enemies": [
+            "skeleton",
+            "skeleton",
+            "dark_mage"
+          ],
+          "description": "The main force arrives — led by a Dark Mage!"
+        }
+      ],
+      "rewards": {
+        "xp": 60,
+        "gold": 40
+      },
+      "repeatable": true
+    },
+    {
+      "id": "wolf_pack_hunt",
+      "title": "Wolf Pack Terrorizing Farmers",
+      "description": "A dire wolf pack has been attacking farms near Greenhollow. Hunt them down before more livestock is lost.",
+      "targetLocation": "verdant_plains",
+      "cityId": "greenhollow",
+      "levelRange": [
+        1,
+        4
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "wolf",
+            "wolf",
+            "wolf"
+          ],
+          "description": "The wolf pack attacks!"
+        }
+      ],
+      "rewards": {
+        "xp": 35,
+        "gold": 25
+      },
+      "repeatable": true
+    },
+    {
+      "id": "goblin_hideout",
+      "title": "Clear the Goblin Hideout",
+      "description": "Goblins have set up a hideout in the Dark Forest and are ambushing travelers. Root them out.",
+      "targetLocation": "dark_forest",
+      "cityId": "ironkeep",
+      "levelRange": [
+        3,
+        6
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "goblin",
+            "goblin",
+            "goblin"
+          ],
+          "description": "Goblin scouts spot you first!"
+        },
+        {
+          "enemies": [
+            "goblin",
+            "goblin",
+            "orc"
+          ],
+          "description": "Their Orc enforcer charges in with reinforcements!"
+        }
+      ],
+      "rewards": {
+        "xp": 80,
+        "gold": 55
+      },
+      "repeatable": true
+    },
+    {
+      "id": "dark_forest_corruption",
+      "title": "Purge the Dark Forest",
+      "description": "Dark magic is corrupting the forest. Destroy the source of the taint.",
+      "targetLocation": "dark_forest",
+      "cityId": "ironkeep",
+      "levelRange": [
+        4,
+        7
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "wolf",
+            "skeleton"
+          ],
+          "description": "Corrupted beasts guard the path!"
+        },
+        {
+          "enemies": [
+            "dark_mage",
+            "skeleton",
+            "skeleton"
+          ],
+          "description": "The dark mages maintain the corruption!"
+        }
+      ],
+      "rewards": {
+        "xp": 100,
+        "gold": 70
+      },
+      "repeatable": true
+    },
+    {
+      "id": "cursed_ruins_excavation",
+      "title": "Ruins Excavation Gone Wrong",
+      "description": "Scholars digging in the Cursed Ruins awakened ancient guardians. Rescue what remains of the expedition.",
+      "targetLocation": "cursed_ruins",
+      "cityId": "shadowhaven",
+      "levelRange": [
+        6,
+        10
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "skeleton",
+            "skeleton",
+            "skeleton"
+          ],
+          "description": "Ancient skeletons rise from the rubble!"
+        },
+        {
+          "enemies": [
+            "dark_mage",
+            "dark_mage",
+            "skeleton"
+          ],
+          "description": "The awakened mages defend their tomb!"
+        }
+      ],
+      "rewards": {
+        "xp": 140,
+        "gold": 100
+      },
+      "repeatable": true
+    },
+    {
+      "id": "smuggler_ambush",
+      "title": "Smuggler Ambush",
+      "description": "A smuggling ring is using the ruins as a base. Shadowhaven wants them eliminated — bad for business.",
+      "targetLocation": "cursed_ruins",
+      "cityId": "shadowhaven",
+      "levelRange": [
+        7,
+        11
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "goblin",
+            "goblin",
+            "dark_mage"
+          ],
+          "description": "The smugglers spring their trap!"
+        },
+        {
+          "enemies": [
+            "orc",
+            "dark_mage",
+            "goblin"
+          ],
+          "description": "Their leader calls for backup!"
+        }
+      ],
+      "rewards": {
+        "xp": 160,
+        "gold": 120
+      },
+      "repeatable": true
+    },
+    {
+      "id": "orc_warchief",
+      "title": "Slay the Orc Warchief",
+      "description": "An Orc warchief is rallying forces in Blood Canyon. Cut off the head of the snake.",
+      "targetLocation": "blood_canyon",
+      "cityId": "emberpeak",
+      "levelRange": [
+        9,
+        13
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "orc",
+            "orc"
+          ],
+          "description": "Orc warriors block the canyon pass!"
+        },
+        {
+          "enemies": [
+            "orc",
+            "orc",
+            "dark_mage"
+          ],
+          "description": "The warchief's personal guard attacks!"
+        },
+        {
+          "enemies": [
+            "orc",
+            "orc",
+            "orc"
+          ],
+          "description": "The warchief himself charges with his elite!"
+        }
+      ],
+      "rewards": {
+        "xp": 250,
+        "gold": 180
+      },
+      "repeatable": true
+    },
+    {
+      "id": "dragon_egg_retrieval",
+      "title": "Dragon Egg Retrieval",
+      "description": "A dragon egg was stolen from the peaks. Retrieve it before the mother dragon razes the countryside.",
+      "targetLocation": "dragon_peaks",
+      "cityId": "emberpeak",
+      "levelRange": [
+        12,
+        16
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "dragon_whelp",
+            "dragon_whelp"
+          ],
+          "description": "Young dragons guard the stolen egg!"
+        },
+        {
+          "enemies": [
+            "dragon_whelp",
+            "orc",
+            "dark_mage"
+          ],
+          "description": "The thieves won't give up their prize!"
+        }
+      ],
+      "rewards": {
+        "xp": 300,
+        "gold": 200
+      },
+      "repeatable": true
+    },
+    {
+      "id": "lich_ritual",
+      "title": "Stop the Lich Ritual",
+      "description": "A powerful lich is conducting a dark ritual in the Shadow Citadel that could raise an army of the dead.",
+      "targetLocation": "shadow_citadel",
+      "cityId": "crystalspire",
+      "levelRange": [
+        15,
+        19
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "lich",
+            "dark_mage"
+          ],
+          "description": "The ritual's outer ward guardians attack!"
+        },
+        {
+          "enemies": [
+            "lich",
+            "skeleton",
+            "skeleton",
+            "dark_mage"
+          ],
+          "description": "The ritual chamber defenders rise!"
+        },
+        {
+          "enemies": [
+            "lich",
+            "lich"
+          ],
+          "description": "Twin liches guard the ritual circle itself!"
+        }
+      ],
+      "rewards": {
+        "xp": 450,
+        "gold": 350
+      },
+      "repeatable": true
+    },
+    {
+      "id": "demon_incursion",
+      "title": "Seal the Demon Rift",
+      "description": "A rift has opened near the Crystal Spire, spewing demons into the realm. Seal it before it widens.",
+      "targetLocation": "demon_gate",
+      "cityId": "crystalspire",
+      "levelRange": [
+        17,
+        20
+      ],
+      "rounds": [
+        {
+          "enemies": [
+            "dragon_whelp",
+            "dark_mage",
+            "dark_mage"
+          ],
+          "description": "Corrupted creatures pour from the rift!"
+        },
+        {
+          "enemies": [
+            "demon_lord",
+            "lich"
+          ],
+          "description": "A demon lord emerges to defend the rift!"
+        }
+      ],
+      "rewards": {
+        "xp": 500,
+        "gold": 400
+      },
+      "repeatable": true
+    }
+  ],
+  "arenaTemplates": [
+    {
+      "id": "arena_rookie",
+      "title": "Rookie Trial",
+      "description": "Prove yourself against basic opponents.",
+      "levelRange": [
+        1,
+        5
+      ],
+      "cityId": "greenhollow",
+      "enemies": [
+        "goblin",
+        "wolf"
+      ],
+      "rewards": {
+        "xp": 30,
+        "gold": 20
+      }
+    },
+    {
+      "id": "arena_brawl",
+      "title": "Pit Brawl",
+      "description": "A chaotic free-for-all in the fighting pit.",
+      "levelRange": [
+        1,
+        5
+      ],
+      "cityId": "greenhollow",
+      "enemies": [
+        "goblin",
+        "goblin",
+        "wolf"
+      ],
+      "rewards": {
+        "xp": 50,
+        "gold": 35
+      }
+    },
+    {
+      "id": "arena_forest_fury",
+      "title": "Forest Fury",
+      "description": "Beasts from the dark forest have been caged for your challenge.",
+      "levelRange": [
+        3,
+        8
+      ],
+      "cityId": "ironkeep",
+      "enemies": [
+        "wolf",
+        "wolf",
+        "skeleton"
+      ],
+      "rewards": {
+        "xp": 65,
+        "gold": 45
+      }
+    },
+    {
+      "id": "arena_iron_gauntlet",
+      "title": "Iron Gauntlet",
+      "description": "Face the toughest fighters Ironkeep has to offer.",
+      "levelRange": [
+        4,
+        9
+      ],
+      "cityId": "ironkeep",
+      "enemies": [
+        "skeleton",
+        "orc",
+        "goblin"
+      ],
+      "rewards": {
+        "xp": 90,
+        "gold": 60
+      }
+    },
+    {
+      "id": "arena_shadow_duel",
+      "title": "Shadow Duel",
+      "description": "Dark magic users challenge you in the underground arena.",
+      "levelRange": [
+        7,
+        12
+      ],
+      "cityId": "shadowhaven",
+      "enemies": [
+        "dark_mage",
+        "dark_mage"
+      ],
+      "rewards": {
+        "xp": 110,
+        "gold": 80
+      }
+    },
+    {
+      "id": "arena_pit_champion",
+      "title": "Pit Champion",
+      "description": "The reigning champion awaits all challengers.",
+      "levelRange": [
+        8,
+        13
+      ],
+      "cityId": "shadowhaven",
+      "enemies": [
+        "orc",
+        "dark_mage",
+        "skeleton"
+      ],
+      "rewards": {
+        "xp": 140,
+        "gold": 100
+      }
+    },
+    {
+      "id": "arena_fire_trial",
+      "title": "Trial by Fire",
+      "description": "Survive the volcanic arena against dragon-kin.",
+      "levelRange": [
+        12,
+        17
+      ],
+      "cityId": "emberpeak",
+      "enemies": [
+        "dragon_whelp",
+        "dragon_whelp"
+      ],
+      "rewards": {
+        "xp": 200,
+        "gold": 150
+      }
+    },
+    {
+      "id": "arena_forge_master",
+      "title": "Forge Master's Challenge",
+      "description": "The forge masters test warriors with their most dangerous creations.",
+      "levelRange": [
+        13,
+        18
+      ],
+      "cityId": "emberpeak",
+      "enemies": [
+        "orc",
+        "dragon_whelp",
+        "dark_mage"
+      ],
+      "rewards": {
+        "xp": 250,
+        "gold": 180
+      }
+    },
+    {
+      "id": "arena_arcane_trial",
+      "title": "Arcane Trial",
+      "description": "Face magically empowered opponents in the Crystal Arena.",
+      "levelRange": [
+        16,
+        20
+      ],
+      "cityId": "crystalspire",
+      "enemies": [
+        "lich",
+        "dark_mage",
+        "dark_mage"
+      ],
+      "rewards": {
+        "xp": 350,
+        "gold": 250
+      }
+    },
+    {
+      "id": "arena_ultimate",
+      "title": "Ultimate Challenge",
+      "description": "Only the strongest warriors dare enter this legendary arena.",
+      "levelRange": [
+        18,
+        20
+      ],
+      "cityId": "crystalspire",
+      "enemies": [
+        "demon_lord",
+        "lich"
+      ],
+      "rewards": {
+        "xp": 500,
+        "gold": 400
+      }
+    }
+  ],
+  "totalMissions": 10,
+  "totalArenas": 10
+}

@@ -1,0 +1,3293 @@
+{
+  "enemies": {
+    "goblin": {
+      "name": "Goblin Scout",
+      "icon": "sword",
+      "color": "#84cc16",
+      "baseHealth": 80,
+      "baseDamage": 12,
+      "baseDefense": 5,
+      "baseMana": 20,
+      "xpReward": 15,
+      "goldReward": 8,
+      "speed": 14,
+      "abilities": [
+        {
+          "id": "scratch",
+          "name": "Scratch",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1,
+          "description": "A quick scratch"
+        },
+        {
+          "id": "sneak_stab",
+          "name": "Sneak Stab",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "A backstab attempt"
+        }
+      ]
+    },
+    "skeleton": {
+      "name": "Skeleton Warrior",
+      "icon": "skull",
+      "color": "#d4d4d8",
+      "baseHealth": 120,
+      "baseDamage": 18,
+      "baseDefense": 15,
+      "baseMana": 0,
+      "xpReward": 22,
+      "goldReward": 12,
+      "speed": 10,
+      "abilities": [
+        {
+          "id": "bone_strike",
+          "name": "Bone Strike",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "A bony slam"
+        },
+        {
+          "id": "shield_block",
+          "name": "Shield Block",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Raises defense",
+          "effect": {
+            "stat": "defense",
+            "flat": 20,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "wolf": {
+      "name": "Dire Wolf",
+      "icon": "wolf",
+      "color": "#78716c",
+      "baseHealth": 100,
+      "baseDamage": 22,
+      "baseDefense": 8,
+      "baseMana": 0,
+      "xpReward": 18,
+      "goldReward": 6,
+      "speed": 18,
+      "abilities": [
+        {
+          "id": "bite",
+          "name": "Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A savage bite"
+        },
+        {
+          "id": "howl_buff",
+          "name": "Feral Howl",
+          "icon": "sparkle",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Increases damage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.4,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "dark_mage": {
+      "name": "Dark Mage",
+      "icon": "crystal",
+      "color": "#7c3aed",
+      "baseHealth": 90,
+      "baseDamage": 25,
+      "baseDefense": 6,
+      "baseMana": 100,
+      "xpReward": 30,
+      "goldReward": 20,
+      "speed": 12,
+      "abilities": [
+        {
+          "id": "shadow_bolt",
+          "name": "Shadow Bolt",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1.3,
+          "description": "A bolt of dark energy"
+        },
+        {
+          "id": "dark_nova",
+          "name": "Dark Nova",
+          "icon": "bomb",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 3,
+          "description": "An explosion of shadow"
+        },
+        {
+          "id": "drain_life",
+          "name": "Drain Life",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Steals life force",
+          "drainPercent": 0.5
+        }
+      ]
+    },
+    "dark_knight": {
+      "name": "Dark Knight",
+      "icon": "skull",
+      "color": "#4a1a6b",
+      "baseHealth": 160,
+      "baseDamage": 26,
+      "baseDefense": 22,
+      "baseMana": 30,
+      "xpReward": 32,
+      "goldReward": 18,
+      "speed": 10,
+      "abilities": [
+        {
+          "id": "dk_slash",
+          "name": "Sword Slash",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A heavy dark blade strike"
+        },
+        {
+          "id": "dk_shield",
+          "name": "Shield Wall",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Raises a dark shield",
+          "effect": {
+            "stat": "defense",
+            "flat": 25,
+            "duration": 2
+          }
+        },
+        {
+          "id": "dk_crush",
+          "name": "Bone Breaker",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "A crushing overhead blow"
+        }
+      ]
+    },
+    "shadow_warrior": {
+      "name": "Shadow Warrior",
+      "icon": "skull",
+      "color": "#1e1b4b",
+      "baseHealth": 140,
+      "baseDamage": 30,
+      "baseDefense": 16,
+      "baseMana": 40,
+      "xpReward": 35,
+      "goldReward": 20,
+      "speed": 14,
+      "abilities": [
+        {
+          "id": "sw_strike",
+          "name": "Shadow Strike",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.3,
+          "description": "A swift strike from the shadows"
+        },
+        {
+          "id": "sw_frenzy",
+          "name": "Dark Frenzy",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Enters a dark frenzy",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.5,
+            "duration": 2
+          }
+        },
+        {
+          "id": "sw_leap",
+          "name": "Shadow Leap",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Leaps at the target with dark energy"
+        }
+      ]
+    },
+    "water_priestess_mage": {
+      "name": "Water Priestess",
+      "icon": "ice",
+      "color": "#0891b2",
+      "baseHealth": 110,
+      "baseDamage": 20,
+      "baseMagicDamage": 32,
+      "baseDefense": 12,
+      "baseMana": 150,
+      "xpReward": 38,
+      "goldReward": 24,
+      "speed": 12,
+      "abilities": [
+        {
+          "id": "wp_bolt",
+          "name": "Tidal Strike",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1.3,
+          "description": "A bolt of pressurized water"
+        },
+        {
+          "id": "wp_heal",
+          "name": "Healing Tide",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Heals with tidal energy",
+          "healPercent": 0.15
+        },
+        {
+          "id": "wp_frost",
+          "name": "Frozen Prison",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Encases in ice",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "orc": {
+      "name": "Orc Berserker",
+      "icon": "sword",
+      "color": "#65a30d",
+      "baseHealth": 180,
+      "baseDamage": 28,
+      "baseDefense": 20,
+      "baseMana": 0,
+      "xpReward": 35,
+      "goldReward": 18,
+      "speed": 8,
+      "abilities": [
+        {
+          "id": "smash",
+          "name": "Smash",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A powerful smash"
+        },
+        {
+          "id": "berserk",
+          "name": "Berserk",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Goes berserk",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.6,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ground_pound",
+          "name": "Ground Pound",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Slams the ground"
+        }
+      ]
+    },
+    "dragon_whelp": {
+      "name": "Dragon Whelp",
+      "icon": "fire",
+      "color": "#dc2626",
+      "baseHealth": 150,
+      "baseDamage": 30,
+      "baseDefense": 18,
+      "baseMana": 80,
+      "xpReward": 45,
+      "goldReward": 30,
+      "speed": 15,
+      "abilities": [
+        {
+          "id": "claw",
+          "name": "Claw",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "A claw swipe"
+        },
+        {
+          "id": "fire_breath",
+          "name": "Fire Breath",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 2,
+          "cooldown": 3,
+          "description": "Breathes fire"
+        },
+        {
+          "id": "tail_whip",
+          "name": "Tail Whip",
+          "icon": "sparkle",
+          "type": "physical",
+          "damage": 1.5,
+          "cooldown": 2,
+          "description": "A tail strike"
+        }
+      ]
+    },
+    "fire_worm": {
+      "name": "Fire Worm",
+      "icon": "fire",
+      "color": "#f97316",
+      "baseHealth": 180,
+      "baseDamage": 32,
+      "baseDefense": 18,
+      "baseMana": 60,
+      "xpReward": 45,
+      "goldReward": 30,
+      "speed": 10,
+      "abilities": [
+        {
+          "id": "lava_spit",
+          "name": "Lava Spit",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 1.4,
+          "description": "Spits molten lava"
+        },
+        {
+          "id": "worm_bite",
+          "name": "Gnashing Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.6,
+          "cooldown": 3,
+          "description": "Chomps with fiery jaws"
+        },
+        {
+          "id": "burrow_strike",
+          "name": "Burrow Strike",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Burrows underground and erupts beneath the target"
+        }
+      ]
+    },
+    "forest_guardian": {
+      "name": "Guardian of the Forest",
+      "icon": "nature",
+      "color": "#22c55e",
+      "baseHealth": 280,
+      "baseDamage": 28,
+      "baseDefense": 18,
+      "baseMana": 120,
+      "xpReward": 50,
+      "goldReward": 35,
+      "speed": 11,
+      "abilities": [
+        {
+          "id": "nature_strike",
+          "name": "Nature Strike",
+          "icon": "nature",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "A vine-lashed charge attack"
+        },
+        {
+          "id": "forest_heal",
+          "name": "Forest Heal",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Channels the forest to heal wounds",
+          "healPercent": 0.15
+        },
+        {
+          "id": "poison_spore",
+          "name": "Poison Spore",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 3,
+          "description": "Releases toxic spores that poison the target",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "flying_eye": {
+      "name": "Flying Eye",
+      "icon": "crystal",
+      "color": "#e879f9",
+      "baseHealth": 70,
+      "baseDamage": 16,
+      "baseDefense": 4,
+      "baseMana": 40,
+      "xpReward": 14,
+      "goldReward": 7,
+      "speed": 19,
+      "abilities": [
+        {
+          "id": "eye_beam",
+          "name": "Eye Beam",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.2,
+          "description": "A focused beam of dark energy"
+        },
+        {
+          "id": "dive_attack",
+          "name": "Dive Attack",
+          "icon": "energy",
+          "type": "physical",
+          "damage": 1.6,
+          "cooldown": 3,
+          "description": "Dives down with blinding speed"
+        }
+      ]
+    },
+    "mushroom": {
+      "name": "Poison Mushroom",
+      "icon": "nature",
+      "color": "#a3e635",
+      "baseHealth": 90,
+      "baseDamage": 10,
+      "baseDefense": 8,
+      "baseMana": 60,
+      "xpReward": 13,
+      "goldReward": 6,
+      "speed": 8,
+      "abilities": [
+        {
+          "id": "spore_slap",
+          "name": "Spore Slap",
+          "icon": "nature",
+          "type": "physical",
+          "damage": 0.9,
+          "description": "A slap with a mushroom cap"
+        },
+        {
+          "id": "toxic_spore",
+          "name": "Toxic Spore",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 3,
+          "description": "Releases toxic spores that poison",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "skeleton_knight": {
+      "name": "Skeleton Knight",
+      "icon": "skull",
+      "color": "#a1a1aa",
+      "baseHealth": 160,
+      "baseDamage": 22,
+      "baseDefense": 20,
+      "baseMana": 0,
+      "xpReward": 28,
+      "goldReward": 15,
+      "speed": 9,
+      "abilities": [
+        {
+          "id": "sword_slash",
+          "name": "Sword Slash",
+          "icon": "crossed_swords",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A heavy sword slash"
+        },
+        {
+          "id": "shield_wall",
+          "name": "Shield Wall",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Raises shield to block attacks",
+          "effect": {
+            "stat": "defense",
+            "flat": 25,
+            "duration": 2
+          }
+        },
+        {
+          "id": "bone_breaker",
+          "name": "Bone Breaker",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "A devastating overhead strike"
+        }
+      ]
+    },
+    "shadow_bat": {
+      "name": "Shadow Bat",
+      "icon": "energy",
+      "color": "#7c3aed",
+      "baseHealth": 55,
+      "baseDamage": 14,
+      "baseDefense": 3,
+      "baseMana": 30,
+      "xpReward": 12,
+      "goldReward": 5,
+      "speed": 22,
+      "abilities": [
+        {
+          "id": "wing_slash",
+          "name": "Wing Slash",
+          "icon": "energy",
+          "type": "physical",
+          "damage": 0.9,
+          "description": "Slashes with razor-sharp wings"
+        },
+        {
+          "id": "sonic_screech",
+          "name": "Sonic Screech",
+          "icon": "energy",
+          "type": "magical",
+          "damage": 1.4,
+          "cooldown": 3,
+          "description": "A disorienting screech that rattles the mind",
+          "effect": {
+            "type": "dot",
+            "damage": 0.08,
+            "duration": 2
+          }
+        },
+        {
+          "id": "blood_drain",
+          "name": "Blood Drain",
+          "icon": "target",
+          "type": "physical",
+          "damage": 1.1,
+          "cooldown": 4,
+          "description": "Latches on and drains blood to heal",
+          "drainPercent": 0.6
+        }
+      ]
+    },
+    "imp": {
+      "name": "Cave Imp",
+      "icon": "fire",
+      "color": "#16a34a",
+      "baseHealth": 65,
+      "baseDamage": 11,
+      "baseDefense": 4,
+      "baseMana": 50,
+      "xpReward": 13,
+      "goldReward": 7,
+      "speed": 17,
+      "abilities": [
+        {
+          "id": "imp_scratch",
+          "name": "Imp Scratch",
+          "icon": "fire",
+          "type": "physical",
+          "damage": 0.8,
+          "description": "Quick claws rake across flesh"
+        },
+        {
+          "id": "hex_bolt",
+          "name": "Hex Bolt",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.5,
+          "cooldown": 3,
+          "description": "A cursed bolt that weakens the target",
+          "effect": {
+            "stat": "defense",
+            "flat": -10,
+            "duration": 2
+          }
+        },
+        {
+          "id": "imp_frenzy",
+          "name": "Imp Frenzy",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Enters a wild frenzy, boosting speed and damage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.5,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "mimic": {
+      "name": "Mimic",
+      "icon": "shield",
+      "color": "#b45309",
+      "baseHealth": 200,
+      "baseDamage": 26,
+      "baseDefense": 22,
+      "baseMana": 80,
+      "xpReward": 40,
+      "goldReward": 35,
+      "speed": 7,
+      "abilities": [
+        {
+          "id": "jaw_snap",
+          "name": "Jaw Snap",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.3,
+          "description": "Enormous jaws snap shut on the target"
+        },
+        {
+          "id": "tongue_lash",
+          "name": "Tongue Lash",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "A whip-like tongue lashes out with stunning force",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "devour_gold",
+          "name": "Devour Gold",
+          "icon": "gold",
+          "type": "physical",
+          "damage": 2.2,
+          "cooldown": 4,
+          "description": "Bites hard and steals gold from the hero"
+        },
+        {
+          "id": "iron_shell",
+          "name": "Iron Shell",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Retreats into its chest form, hardening its shell",
+          "effect": {
+            "stat": "defense",
+            "flat": 35,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "crow_knight": {
+      "name": "Crow Knight",
+      "icon": "sword",
+      "color": "#1e293b",
+      "baseHealth": 170,
+      "baseDamage": 24,
+      "baseDefense": 16,
+      "baseMana": 40,
+      "xpReward": 32,
+      "goldReward": 18,
+      "speed": 16,
+      "abilities": [
+        {
+          "id": "talon_strike",
+          "name": "Talon Strike",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "A swift blade slash guided by predator instinct"
+        },
+        {
+          "id": "dive_bomb",
+          "name": "Dive Bomb",
+          "icon": "energy",
+          "type": "physical",
+          "damage": 2.2,
+          "cooldown": 3,
+          "description": "Launches skyward and crashes down with devastating force"
+        },
+        {
+          "id": "murder_flock",
+          "name": "Murder of Crows",
+          "icon": "energy",
+          "type": "magical",
+          "damage": 1.4,
+          "cooldown": 4,
+          "description": "Summons a swarm of crows that peck and blind",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "shadow_feint",
+          "name": "Shadow Feint",
+          "icon": "skull",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Blends with shadows, greatly increasing evasion",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.4,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "stone_guardian": {
+      "name": "Stone Guardian",
+      "icon": "shield",
+      "color": "#78716c",
+      "baseHealth": 250,
+      "baseDamage": 20,
+      "baseDefense": 30,
+      "baseMana": 60,
+      "xpReward": 38,
+      "goldReward": 22,
+      "speed": 6,
+      "abilities": [
+        {
+          "id": "stone_fist",
+          "name": "Stone Fist",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A heavy fist of carved stone crushes down"
+        },
+        {
+          "id": "petrify_gaze",
+          "name": "Petrify Gaze",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 5,
+          "description": "Eyes glow and partially petrify a hero",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "quake_slam",
+          "name": "Quake Slam",
+          "icon": "shield",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Slams the ground causing a localized earthquake"
+        },
+        {
+          "id": "fortify",
+          "name": "Fortify",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Channels ancient stone magic to harden its body",
+          "effect": {
+            "stat": "defense",
+            "flat": 40,
+            "duration": 3
+          }
+        },
+        {
+          "id": "crumble_curse",
+          "name": "Crumble Curse",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Curses a hero with decay, eroding their armor",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 4
+          }
+        }
+      ]
+    },
+    "desert_snake": {
+      "name": "Sand Viper",
+      "icon": "sword",
+      "color": "#d4a017",
+      "baseHealth": 70,
+      "baseDamage": 18,
+      "baseDefense": 4,
+      "baseMana": 0,
+      "xpReward": 14,
+      "goldReward": 6,
+      "speed": 20,
+      "abilities": [
+        {
+          "id": "venom_bite",
+          "name": "Venom Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "A quick venomous strike"
+        },
+        {
+          "id": "poison_spit",
+          "name": "Poison Spit",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 0.8,
+          "cooldown": 3,
+          "description": "Spits venom at the target",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "desert_hyena": {
+      "name": "Desert Hyena",
+      "icon": "wolf",
+      "color": "#c2a04e",
+      "baseHealth": 110,
+      "baseDamage": 20,
+      "baseDefense": 8,
+      "baseMana": 0,
+      "xpReward": 18,
+      "goldReward": 8,
+      "speed": 17,
+      "abilities": [
+        {
+          "id": "savage_bite",
+          "name": "Savage Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.2,
+          "description": "A crushing bite from powerful jaws"
+        },
+        {
+          "id": "pack_howl",
+          "name": "Pack Howl",
+          "icon": "energy",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Lets out a rallying howl",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.3,
+            "duration": 2
+          }
+        },
+        {
+          "id": "pounce",
+          "name": "Pounce",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Leaps at the target with ferocity"
+        }
+      ]
+    },
+    "desert_scorpio": {
+      "name": "Giant Scorpion",
+      "icon": "shield",
+      "color": "#8b4513",
+      "baseHealth": 140,
+      "baseDamage": 16,
+      "baseDefense": 20,
+      "baseMana": 0,
+      "xpReward": 22,
+      "goldReward": 12,
+      "speed": 10,
+      "abilities": [
+        {
+          "id": "claw_pinch",
+          "name": "Claw Pinch",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1,
+          "description": "Grabs and squeezes with its pincers"
+        },
+        {
+          "id": "tail_sting",
+          "name": "Tail Sting",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.6,
+          "cooldown": 3,
+          "description": "Strikes with a venomous tail barb",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "burrow",
+          "name": "Burrow",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Burrows into the sand for protection",
+          "effect": {
+            "stat": "defense",
+            "flat": 25,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "desert_vulture": {
+      "name": "Carrion Vulture",
+      "icon": "energy",
+      "color": "#6b4423",
+      "baseHealth": 85,
+      "baseDamage": 22,
+      "baseDefense": 6,
+      "baseMana": 0,
+      "xpReward": 16,
+      "goldReward": 7,
+      "speed": 19,
+      "abilities": [
+        {
+          "id": "talon_swipe",
+          "name": "Talon Swipe",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "Swoops down with razor talons"
+        },
+        {
+          "id": "carrion_dive",
+          "name": "Carrion Dive",
+          "icon": "energy",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Dives from above with devastating impact"
+        }
+      ]
+    },
+    "desert_mummy": {
+      "name": "Ancient Mummy",
+      "icon": "skull",
+      "color": "#8b7355",
+      "baseHealth": 180,
+      "baseDamage": 22,
+      "baseDefense": 18,
+      "baseMana": 50,
+      "xpReward": 30,
+      "goldReward": 20,
+      "speed": 8,
+      "abilities": [
+        {
+          "id": "bandage_lash",
+          "name": "Bandage Lash",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "Whips with decayed wrappings"
+        },
+        {
+          "id": "curse_of_ages",
+          "name": "Curse of Ages",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 4,
+          "description": "An ancient curse weakens the target",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 4
+          }
+        },
+        {
+          "id": "sand_tomb",
+          "name": "Sand Tomb",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Entombs the target in swirling sand"
+        },
+        {
+          "id": "unholy_resilience",
+          "name": "Unholy Resilience",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Draws on dark magic to restore vitality",
+          "effect": {
+            "stat": "defense",
+            "flat": 20,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "desert_deceased": {
+      "name": "Risen Corpse",
+      "icon": "skull",
+      "color": "#5a4e3a",
+      "baseHealth": 130,
+      "baseDamage": 19,
+      "baseDefense": 12,
+      "baseMana": 30,
+      "xpReward": 24,
+      "goldReward": 14,
+      "speed": 9,
+      "abilities": [
+        {
+          "id": "grave_swipe",
+          "name": "Grave Swipe",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.1,
+          "description": "Swings with bony arms"
+        },
+        {
+          "id": "death_ball",
+          "name": "Death Ball",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.6,
+          "cooldown": 3,
+          "description": "Hurls a sphere of necrotic energy"
+        },
+        {
+          "id": "life_drain",
+          "name": "Life Drain",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Siphons life from the target",
+          "drainPercent": 0.4
+        }
+      ]
+    },
+    "giant_fly": {
+      "name": "Giant Fly",
+      "icon": "energy",
+      "color": "#4ade80",
+      "baseHealth": 60,
+      "baseDamage": 13,
+      "baseDefense": 3,
+      "baseMana": 0,
+      "xpReward": 11,
+      "goldReward": 5,
+      "speed": 24,
+      "abilities": [
+        {
+          "id": "fly_buzz_bite",
+          "name": "Buzz Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 0.9,
+          "description": "Darts in and bites with mandibles"
+        },
+        {
+          "id": "fly_acid_spit",
+          "name": "Acid Spit",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.4,
+          "cooldown": 3,
+          "description": "Spits corrosive acid that melts armor",
+          "effect": {
+            "stat": "defense",
+            "flat": -8,
+            "duration": 2
+          }
+        },
+        {
+          "id": "fly_swarm",
+          "name": "Swarm Cloud",
+          "icon": "energy",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 4,
+          "description": "Summons a buzzing cloud that disorients",
+          "effect": {
+            "type": "dot",
+            "damage": 0.08,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "ice_elemental": {
+      "name": "Ice Elemental",
+      "icon": "ice",
+      "color": "#93c5fd",
+      "baseHealth": 160,
+      "baseDamage": 22,
+      "baseDefense": 18,
+      "baseMana": 120,
+      "xpReward": 34,
+      "goldReward": 20,
+      "speed": 11,
+      "abilities": [
+        {
+          "id": "ice_shard",
+          "name": "Ice Shard",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1.2,
+          "description": "Launches a razor-sharp shard of ice"
+        },
+        {
+          "id": "frost_nova",
+          "name": "Frost Nova",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Explodes in a ring of frost that chills all nearby"
+        },
+        {
+          "id": "glacial_armor",
+          "name": "Glacial Armor",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Encases itself in thick ice armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 30,
+            "duration": 3
+          }
+        },
+        {
+          "id": "blizzard_breath",
+          "name": "Blizzard Breath",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 4,
+          "description": "Exhales a devastating blizzard that freezes on contact",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "twig_blight": {
+      "name": "Twig Blight",
+      "icon": "nature",
+      "color": "#6b8e23",
+      "baseHealth": 75,
+      "baseDamage": 15,
+      "baseDefense": 6,
+      "baseMana": 30,
+      "xpReward": 14,
+      "goldReward": 6,
+      "speed": 13,
+      "abilities": [
+        {
+          "id": "thorn_scratch",
+          "name": "Thorn Scratch",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1,
+          "description": "Rakes with thorny branches"
+        },
+        {
+          "id": "entangle",
+          "name": "Entangle",
+          "icon": "nature",
+          "type": "physical",
+          "damage": 0.6,
+          "cooldown": 4,
+          "description": "Roots wrap around the target slowing them",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "poison_barbs",
+          "name": "Poison Barbs",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.2,
+          "cooldown": 3,
+          "description": "Launches venomous thorns",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "mimic_chest": {
+      "name": "Chest Mimic",
+      "icon": "shield",
+      "color": "#92400e",
+      "baseHealth": 220,
+      "baseDamage": 28,
+      "baseDefense": 24,
+      "baseMana": 60,
+      "xpReward": 42,
+      "goldReward": 40,
+      "speed": 6,
+      "abilities": [
+        {
+          "id": "mimic_chomp",
+          "name": "Chomp",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.4,
+          "description": "Opens wide and bites down with wooden teeth"
+        },
+        {
+          "id": "mimic_tongue",
+          "name": "Tongue Lash",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.9,
+          "cooldown": 3,
+          "description": "A sticky tongue whips out and slams the target",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "mimic_hide",
+          "name": "Chest Form",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Retreats into chest disguise, hardening defense",
+          "effect": {
+            "stat": "defense",
+            "flat": 40,
+            "duration": 3
+          }
+        },
+        {
+          "id": "mimic_devour",
+          "name": "Devour",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 2.4,
+          "cooldown": 4,
+          "description": "Swallows the target whole momentarily",
+          "drainPercent": 0.3
+        }
+      ]
+    },
+    "fire_elemental": {
+      "name": "Fire Elemental",
+      "icon": "fire",
+      "color": "#f97316",
+      "baseHealth": 140,
+      "baseDamage": 28,
+      "baseDefense": 10,
+      "baseMana": 100,
+      "xpReward": 32,
+      "goldReward": 18,
+      "speed": 14,
+      "abilities": [
+        {
+          "id": "flame_strike",
+          "name": "Flame Strike",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 1.3,
+          "description": "Lashes out with a tendril of pure flame"
+        },
+        {
+          "id": "inferno_burst",
+          "name": "Inferno Burst",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 2,
+          "cooldown": 3,
+          "description": "Erupts in a violent explosion of fire"
+        },
+        {
+          "id": "burn_aura",
+          "name": "Burning Aura",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 0.5,
+          "cooldown": 4,
+          "description": "Radiates intense heat that sears nearby foes",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "molten_shield",
+          "name": "Molten Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Surrounds itself with molten rock",
+          "effect": {
+            "stat": "defense",
+            "flat": 25,
+            "duration": 2
+          }
+        }
+      ]
+    }
+  },
+  "bosses": {
+    "lich": {
+      "name": "Lich Lord",
+      "icon": "skull",
+      "color": "#6366f1",
+      "baseHealth": 700,
+      "baseDamage": 40,
+      "baseDefense": 22,
+      "baseMana": 350,
+      "xpReward": 120,
+      "goldReward": 90,
+      "speed": 11,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "soul_bolt",
+          "name": "Soul Bolt",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1.4,
+          "description": "A bolt of soul energy"
+        },
+        {
+          "id": "death_coil",
+          "name": "Death Coil",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "Devastating necrotic blast that steals life",
+          "drainPercent": 0.4
+        },
+        {
+          "id": "bone_shield",
+          "name": "Bone Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Summons bone armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 40,
+            "duration": 3
+          }
+        },
+        {
+          "id": "soul_drain",
+          "name": "Soul Drain",
+          "icon": "crystal",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Drains life from all nearby souls",
+          "healPercent": 0.15,
+          "drainPercent": 0.5
+        },
+        {
+          "id": "raise_dead",
+          "name": "Raise Dead",
+          "icon": "skull",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 7,
+          "description": "Enrages with undead fury",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.6,
+            "duration": 3
+          }
+        },
+        {
+          "id": "shadow_nova",
+          "name": "Shadow Nova",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 3,
+          "cooldown": 5,
+          "description": "Unleashes a wave of shadow energy"
+        },
+        {
+          "id": "curse_weakness",
+          "name": "Curse of Weakness",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 0.5,
+          "cooldown": 4,
+          "description": "Curses a hero, reducing their damage",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 4
+          }
+        }
+      ]
+    },
+    "red_dragon": {
+      "name": "Ignaroth, Flame Terror",
+      "icon": "fire",
+      "color": "#dc2626",
+      "baseHealth": 1100,
+      "baseDamage": 58,
+      "baseDefense": 38,
+      "baseMana": 300,
+      "xpReward": 400,
+      "goldReward": 300,
+      "speed": 16,
+      "isBoss": true,
+      "isWorldBoss": true,
+      "abilities": [
+        {
+          "id": "dragon_claw",
+          "name": "Dragon Claw",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.8,
+          "description": "Rakes with massive burning claws"
+        },
+        {
+          "id": "inferno_breath",
+          "name": "Inferno Breath",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 3,
+          "cooldown": 3,
+          "description": "Unleashes a torrent of dragonfire",
+          "isAoE": true
+        },
+        {
+          "id": "wing_buffet",
+          "name": "Wing Buffet",
+          "icon": "energy",
+          "type": "physical",
+          "damage": 2.2,
+          "cooldown": 4,
+          "description": "Batters all heroes with massive wings",
+          "isAoE": true
+        },
+        {
+          "id": "molten_armor",
+          "name": "Molten Armor",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Coats scales in molten rock",
+          "effect": {
+            "stat": "defense",
+            "flat": 50,
+            "duration": 3
+          }
+        },
+        {
+          "id": "tail_slam",
+          "name": "Tail Slam",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "Crushes a hero with a devastating tail strike",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "dragon_roar",
+          "name": "Terrifying Roar",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "A roar that shakes the very earth",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.8,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "red_dragon_2": {
+      "name": "Vyraxes, Ember Wyrm",
+      "icon": "fire",
+      "color": "#ef4444",
+      "baseHealth": 1000,
+      "baseDamage": 62,
+      "baseDefense": 35,
+      "baseMana": 280,
+      "xpReward": 400,
+      "goldReward": 300,
+      "speed": 18,
+      "isBoss": true,
+      "isWorldBoss": true,
+      "abilities": [
+        {
+          "id": "rend",
+          "name": "Rending Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2,
+          "description": "Bites through armor with superheated fangs"
+        },
+        {
+          "id": "fire_storm",
+          "name": "Fire Storm",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 2.8,
+          "cooldown": 3,
+          "description": "Engulfs the battlefield in flames",
+          "isAoE": true
+        },
+        {
+          "id": "dive_attack",
+          "name": "Dive Attack",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 3.5,
+          "cooldown": 5,
+          "description": "Dives from the sky with devastating force"
+        },
+        {
+          "id": "flame_shield",
+          "name": "Flame Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Wraps in protective fire",
+          "effect": {
+            "stat": "defense",
+            "flat": 45,
+            "duration": 3
+          }
+        },
+        {
+          "id": "scorched_earth",
+          "name": "Scorched Earth",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 1.5,
+          "cooldown": 4,
+          "description": "Burns the ground beneath all heroes",
+          "isAoE": true,
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "berserk_fury",
+          "name": "Draconic Fury",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 7,
+          "description": "Enters a primal draconic rage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "white_dragon_mother": {
+      "name": "Zephyria, The Dragon Mother",
+      "icon": "fire",
+      "color": "#e2e8f0",
+      "baseHealth": 2200,
+      "baseDamage": 80,
+      "baseDefense": 50,
+      "baseMana": 500,
+      "xpReward": 600,
+      "goldReward": 500,
+      "speed": 17,
+      "isBoss": true,
+      "isWorldBoss": true,
+      "abilities": [
+        {
+          "id": "frost_claw",
+          "name": "Ancient Claw",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2.2,
+          "description": "Strikes with primordial fury"
+        },
+        {
+          "id": "divine_breath",
+          "name": "Divine Breath",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 3,
+          "description": "A breath of pure elemental energy scorches all",
+          "isAoE": true
+        },
+        {
+          "id": "mothers_wrath",
+          "name": "Mother's Wrath",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 5,
+          "cooldown": 6,
+          "description": "Unleashes devastating fury for her fallen children",
+          "isAoE": true
+        },
+        {
+          "id": "ancient_scales",
+          "name": "Ancient Scales",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Scales harden to impenetrable diamond",
+          "effect": {
+            "stat": "defense",
+            "flat": 80,
+            "duration": 3
+          }
+        },
+        {
+          "id": "dragon_heal",
+          "name": "Primordial Restoration",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Draws on ancient power to heal wounds",
+          "healPercent": 0.12
+        },
+        {
+          "id": "tail_sweep",
+          "name": "Tail Sweep",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2.8,
+          "cooldown": 3,
+          "description": "Sweeps all heroes with massive tail",
+          "isAoE": true
+        },
+        {
+          "id": "sky_fury",
+          "name": "Sky Fury",
+          "icon": "energy",
+          "type": "magical",
+          "damage": 4.2,
+          "cooldown": 5,
+          "description": "Calls down pillars of elemental fury"
+        },
+        {
+          "id": "terrify",
+          "name": "Ancient Terror",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 5,
+          "description": "Paralyzes with primordial dread",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "enrage",
+          "name": "Vengeance Incarnate",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 8,
+          "description": "Power surges with motherly vengeance",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2.5,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "demon_lord": {
+      "name": "Infernal Fire Worm",
+      "icon": "fire",
+      "color": "#f97316",
+      "baseHealth": 900,
+      "baseDamage": 52,
+      "baseDefense": 35,
+      "baseMana": 250,
+      "xpReward": 160,
+      "goldReward": 120,
+      "speed": 13,
+      "isBoss": true,
+      "bossScale": 2.5,
+      "abilities": [
+        {
+          "id": "lava_spit",
+          "name": "Lava Spit",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 1.6,
+          "description": "Spits molten lava"
+        },
+        {
+          "id": "worm_bite",
+          "name": "Savage Bite",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 3,
+          "cooldown": 4,
+          "description": "A crushing bite"
+        },
+        {
+          "id": "heat_wave",
+          "name": "Heat Wave",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 3,
+          "description": "Radiates intense heat",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "volcanic_slam",
+          "name": "Volcanic Slam",
+          "icon": "shield",
+          "type": "physical",
+          "damage": 3.5,
+          "cooldown": 6,
+          "description": "Slams the ground with infernal force"
+        }
+      ]
+    },
+    "evil_wizard": {
+      "name": "Malachar the Undying",
+      "icon": "crystal",
+      "color": "#c026d3",
+      "baseHealth": 1400,
+      "baseDamage": 65,
+      "baseDefense": 35,
+      "baseMana": 600,
+      "xpReward": 350,
+      "goldReward": 250,
+      "speed": 14,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "arcane_bolt",
+          "name": "Arcane Bolt",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.6,
+          "description": "A crackling bolt of dark arcane energy"
+        },
+        {
+          "id": "chaos_storm",
+          "name": "Chaos Storm",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 3.2,
+          "cooldown": 4,
+          "description": "Unleashes a storm of chaotic energy on all heroes"
+        },
+        {
+          "id": "soul_siphon",
+          "name": "Soul Siphon",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1.8,
+          "cooldown": 3,
+          "description": "Drains life force to restore health",
+          "drainPercent": 0.6
+        },
+        {
+          "id": "dark_barrier",
+          "name": "Dark Barrier",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Erects a barrier of dark magic",
+          "effect": {
+            "stat": "defense",
+            "flat": 50,
+            "duration": 3
+          }
+        },
+        {
+          "id": "necrotic_curse",
+          "name": "Necrotic Curse",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 4,
+          "description": "Curses a hero with necrotic decay",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 4
+          }
+        },
+        {
+          "id": "hellfire_rain",
+          "name": "Hellfire Rain",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 4,
+          "cooldown": 6,
+          "description": "Rains hellfire from the sky, scorching all heroes"
+        },
+        {
+          "id": "petrify",
+          "name": "Petrify",
+          "icon": "shield",
+          "type": "magical",
+          "damage": 0.5,
+          "cooldown": 5,
+          "description": "Turns a hero to stone briefly",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "dark_empowerment",
+          "name": "Dark Empowerment",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 7,
+          "description": "Channels forbidden power, greatly boosting damage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2,
+            "duration": 3
+          }
+        },
+        {
+          "id": "shadow_teleport",
+          "name": "Shadow Teleport",
+          "icon": "chaos",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Teleports through shadow, greatly boosting speed",
+          "effect": {
+            "stat": "speed",
+            "flat": 20,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "void_king": {
+      "name": "The Void King",
+      "icon": "crown",
+      "color": "#fbbf24",
+      "baseHealth": 1200,
+      "baseDamage": 60,
+      "baseDefense": 48,
+      "baseMana": 500,
+      "xpReward": 300,
+      "goldReward": 200,
+      "speed": 16,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "void_slash",
+          "name": "Void Slash",
+          "icon": "chaos",
+          "type": "physical",
+          "damage": 1.8,
+          "description": "A slash through the fabric of reality"
+        },
+        {
+          "id": "annihilate",
+          "name": "Annihilate",
+          "icon": "bomb",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 4,
+          "description": "Pure destruction unleashed on all"
+        },
+        {
+          "id": "void_barrier",
+          "name": "Void Barrier",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Impenetrable void shield",
+          "effect": {
+            "stat": "defense",
+            "flat": 60,
+            "duration": 3
+          }
+        },
+        {
+          "id": "reality_tear",
+          "name": "Reality Tear",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 4.5,
+          "cooldown": 7,
+          "description": "Tears reality asunder, devastating all"
+        },
+        {
+          "id": "void_drain",
+          "name": "Void Drain",
+          "icon": "skull",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Absorbs life force from the void",
+          "healPercent": 0.12
+        },
+        {
+          "id": "oblivion_pulse",
+          "name": "Oblivion Pulse",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 3,
+          "description": "Radiates obliterating energy at all",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 3
+          }
+        },
+        {
+          "id": "time_stop",
+          "name": "Time Stop",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 6,
+          "description": "Freezes a hero in time",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "void_enrage",
+          "name": "Void Enrage",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 8,
+          "description": "The Void King enters a furious state",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "god_odin": {
+      "name": "Odin, The Allfather",
+      "icon": "lightning",
+      "color": "#fbbf24",
+      "baseHealth": 1800,
+      "baseDamage": 75,
+      "baseDefense": 55,
+      "baseMana": 600,
+      "xpReward": 500,
+      "goldReward": 400,
+      "speed": 18,
+      "isBoss": true,
+      "isGod": true,
+      "faction": "crusade",
+      "abilities": [
+        {
+          "id": "gungnir",
+          "name": "Gungnir",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 2.2,
+          "description": "Hurls the divine spear Gungnir"
+        },
+        {
+          "id": "thunderclap",
+          "name": "Thunderclap",
+          "icon": "lightning",
+          "type": "magical",
+          "damage": 3.8,
+          "cooldown": 4,
+          "description": "Lightning crashes down from the heavens"
+        },
+        {
+          "id": "divine_shield",
+          "name": "Divine Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "An impenetrable divine barrier",
+          "effect": {
+            "stat": "defense",
+            "flat": 80,
+            "duration": 3
+          }
+        },
+        {
+          "id": "wisdom_sight",
+          "name": "Wisdom of the Ages",
+          "icon": "crystal",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 7,
+          "description": "Sees all weaknesses, boosting damage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2.2,
+            "duration": 3
+          }
+        },
+        {
+          "id": "valkyrie_storm",
+          "name": "Valkyrie Storm",
+          "icon": "crossed_swords",
+          "type": "magical",
+          "damage": 4.5,
+          "cooldown": 6,
+          "description": "Summons a storm of divine warriors"
+        },
+        {
+          "id": "ragnarok",
+          "name": "Ragnarok",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 5,
+          "cooldown": 8,
+          "description": "Unleashes the end of all things"
+        },
+        {
+          "id": "divine_heal",
+          "name": "Divine Restoration",
+          "icon": "sparkle",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Restores vitality through divine power",
+          "healPercent": 0.15
+        },
+        {
+          "id": "time_freeze",
+          "name": "Temporal Halt",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 5,
+          "description": "Freezes a hero outside of time",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "god_madra": {
+      "name": "Madra, The Devourer",
+      "icon": "target",
+      "color": "#dc2626",
+      "baseHealth": 2000,
+      "baseDamage": 82,
+      "baseDefense": 45,
+      "baseMana": 500,
+      "xpReward": 500,
+      "goldReward": 400,
+      "speed": 17,
+      "isBoss": true,
+      "isGod": true,
+      "faction": "legion",
+      "abilities": [
+        {
+          "id": "blood_rend",
+          "name": "Blood Rend",
+          "icon": "target",
+          "type": "physical",
+          "damage": 2,
+          "description": "Tears flesh with claws of blood"
+        },
+        {
+          "id": "soul_devour",
+          "name": "Soul Devour",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 4,
+          "description": "Consumes a hero's soul energy",
+          "drainPercent": 0.5
+        },
+        {
+          "id": "corruption_aura",
+          "name": "Corruption Aura",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1.5,
+          "cooldown": 3,
+          "description": "Radiates corrupting energy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.18,
+            "duration": 4
+          }
+        },
+        {
+          "id": "blood_frenzy",
+          "name": "Blood Frenzy",
+          "icon": "fire",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Enters a blood-mad frenzy",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2.5,
+            "duration": 3
+          }
+        },
+        {
+          "id": "death_grip",
+          "name": "Death Grip",
+          "icon": "sword",
+          "type": "magical",
+          "damage": 1.2,
+          "cooldown": 5,
+          "description": "Grips a hero with deathly force",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "apocalypse",
+          "name": "Apocalypse",
+          "icon": "bomb",
+          "type": "magical",
+          "damage": 5.5,
+          "cooldown": 8,
+          "description": "Brings forth total annihilation"
+        },
+        {
+          "id": "vampiric_feast",
+          "name": "Vampiric Feast",
+          "icon": "skull",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Feasts on blood to heal wounds",
+          "healPercent": 0.18
+        },
+        {
+          "id": "plague_wave",
+          "name": "Plague Wave",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 2.8,
+          "cooldown": 5,
+          "description": "A wave of plague washes over all"
+        }
+      ]
+    },
+    "god_omni": {
+      "name": "The Omni, Weaver of Fate",
+      "icon": "sparkle",
+      "color": "#a78bfa",
+      "baseHealth": 1600,
+      "baseDamage": 70,
+      "baseDefense": 60,
+      "baseMana": 800,
+      "xpReward": 500,
+      "goldReward": 400,
+      "speed": 20,
+      "isBoss": true,
+      "isGod": true,
+      "faction": "fabled",
+      "abilities": [
+        {
+          "id": "arcane_blast",
+          "name": "Arcane Blast",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 2,
+          "description": "A blast of pure arcane energy"
+        },
+        {
+          "id": "fate_weave",
+          "name": "Fate Weave",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 3.2,
+          "cooldown": 4,
+          "description": "Rewrites fate to deal massive damage"
+        },
+        {
+          "id": "cosmic_barrier",
+          "name": "Cosmic Barrier",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "A barrier woven from starlight",
+          "effect": {
+            "stat": "defense",
+            "flat": 70,
+            "duration": 3
+          }
+        },
+        {
+          "id": "time_warp",
+          "name": "Time Warp",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 5,
+          "description": "Warps time around a hero",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "stellar_rain",
+          "name": "Stellar Rain",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 4.8,
+          "cooldown": 6,
+          "description": "Stars fall from the heavens"
+        },
+        {
+          "id": "genesis",
+          "name": "Genesis",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 5.5,
+          "cooldown": 9,
+          "description": "Unmakes and remakes reality itself"
+        },
+        {
+          "id": "cosmic_heal",
+          "name": "Cosmic Restoration",
+          "icon": "crystal",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Draws healing from the cosmic weave",
+          "healPercent": 0.14
+        },
+        {
+          "id": "mind_shatter",
+          "name": "Mind Shatter",
+          "icon": "mind",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 4,
+          "description": "Shatters the mind with psychic force",
+          "effect": {
+            "type": "dot",
+            "damage": 0.2,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "water_elemental": {
+      "name": "Grand Water Elemental",
+      "icon": "ice",
+      "color": "#06b6d4",
+      "baseHealth": 550,
+      "baseDamage": 50,
+      "baseDefense": 38,
+      "baseMana": 300,
+      "xpReward": 175,
+      "goldReward": 120,
+      "speed": 14,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "tidal_strike",
+          "name": "Tidal Strike",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1.4,
+          "description": "A crashing wave of water"
+        },
+        {
+          "id": "torrent",
+          "name": "Torrent",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "A devastating torrent that poisons",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 3
+          }
+        },
+        {
+          "id": "frost_armor",
+          "name": "Frost Armor",
+          "icon": "ice",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Encases in ice armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 45,
+            "duration": 3
+          }
+        },
+        {
+          "id": "tsunami",
+          "name": "Tsunami",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 6,
+          "description": "A massive wave crashes down on all"
+        },
+        {
+          "id": "healing_tide",
+          "name": "Healing Tide",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Heals with the power of the tides",
+          "healPercent": 0.18
+        },
+        {
+          "id": "frozen_prison",
+          "name": "Frozen Prison",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 4,
+          "description": "Freezes a hero solid",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "nature_elemental": {
+      "name": "Grand Nature Elemental",
+      "icon": "nature",
+      "color": "#22c55e",
+      "baseHealth": 600,
+      "baseDamage": 44,
+      "baseDefense": 42,
+      "baseMana": 250,
+      "xpReward": 175,
+      "goldReward": 120,
+      "speed": 12,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "vine_lash",
+          "name": "Vine Lash",
+          "icon": "nature",
+          "type": "physical",
+          "damage": 1.3,
+          "description": "Thorned vines whip out"
+        },
+        {
+          "id": "natures_wrath",
+          "name": "Nature's Wrath",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 2.4,
+          "cooldown": 3,
+          "description": "The fury of nature unleashed",
+          "effect": {
+            "type": "dot",
+            "damage": 0.18,
+            "duration": 3
+          }
+        },
+        {
+          "id": "regenerate",
+          "name": "Regenerate",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Regenerates health rapidly",
+          "healPercent": 0.2
+        },
+        {
+          "id": "earthquake",
+          "name": "Earthquake",
+          "icon": "shield",
+          "type": "physical",
+          "damage": 3.5,
+          "cooldown": 6,
+          "description": "The earth splits apart, hitting all heroes"
+        },
+        {
+          "id": "thorn_armor",
+          "name": "Thorn Armor",
+          "icon": "nature",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Reflects damage back to attackers",
+          "effect": {
+            "stat": "defense",
+            "flat": 35,
+            "duration": 3
+          }
+        },
+        {
+          "id": "root_bind",
+          "name": "Root Bind",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Roots entangle a hero, stunning them",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "grand_shaman": {
+      "name": "Grand Shaman",
+      "icon": "nature",
+      "color": "#16a34a",
+      "baseHealth": 500,
+      "baseDamage": 32,
+      "baseDefense": 18,
+      "baseMana": 200,
+      "xpReward": 80,
+      "goldReward": 55,
+      "speed": 11,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "nature_bolt",
+          "name": "Nature Bolt",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 1.3,
+          "description": "A bolt of concentrated nature energy"
+        },
+        {
+          "id": "healing_rain",
+          "name": "Healing Rain",
+          "icon": "bow",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 4,
+          "description": "Calls healing rain to restore vitality",
+          "healPercent": 0.18
+        },
+        {
+          "id": "thorn_burst",
+          "name": "Thorn Burst",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 3,
+          "description": "Thorns erupt from the ground hitting all",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 3
+          }
+        },
+        {
+          "id": "bark_shield",
+          "name": "Bark Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Encases in hardened bark",
+          "effect": {
+            "stat": "defense",
+            "flat": 30,
+            "duration": 3
+          }
+        },
+        {
+          "id": "entangle",
+          "name": "Entangle",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 0.6,
+          "cooldown": 5,
+          "description": "Roots grab and hold a hero",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "canyon_warlord": {
+      "name": "Canyon Warlord",
+      "icon": "crossed_swords",
+      "color": "#b91c1c",
+      "baseHealth": 650,
+      "baseDamage": 38,
+      "baseDefense": 28,
+      "baseMana": 50,
+      "xpReward": 95,
+      "goldReward": 65,
+      "speed": 10,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "cleave",
+          "name": "Cleave",
+          "icon": "axe",
+          "type": "physical",
+          "damage": 1.4,
+          "description": "A massive cleaving strike"
+        },
+        {
+          "id": "war_cry",
+          "name": "War Cry",
+          "icon": "sword",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Enrages into a battle fury",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.6,
+            "duration": 3
+          }
+        },
+        {
+          "id": "skull_crusher",
+          "name": "Skull Crusher",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 2.8,
+          "cooldown": 4,
+          "description": "A devastating overhead smash"
+        },
+        {
+          "id": "iron_skin",
+          "name": "Iron Skin",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Hardens skin like iron",
+          "effect": {
+            "stat": "defense",
+            "flat": 35,
+            "duration": 3
+          }
+        },
+        {
+          "id": "bloodlust",
+          "name": "Bloodlust",
+          "icon": "target",
+          "type": "physical",
+          "damage": 1.6,
+          "cooldown": 3,
+          "description": "Frenzied strikes that drain life",
+          "drainPercent": 0.3
+        }
+      ]
+    },
+    "frost_wyrm": {
+      "name": "Frost Wyrm",
+      "icon": "ice",
+      "color": "#38bdf8",
+      "baseHealth": 750,
+      "baseDamage": 42,
+      "baseDefense": 30,
+      "baseMana": 200,
+      "xpReward": 110,
+      "goldReward": 80,
+      "speed": 14,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "ice_fang",
+          "name": "Ice Fang",
+          "icon": "sword",
+          "type": "physical",
+          "damage": 1.3,
+          "description": "Freezing bite attack"
+        },
+        {
+          "id": "blizzard_breath",
+          "name": "Blizzard Breath",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "Breathes a devastating blizzard",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ice_armor",
+          "name": "Ice Armor",
+          "icon": "ice",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Encases in thick ice armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 40,
+            "duration": 3
+          }
+        },
+        {
+          "id": "glacial_slam",
+          "name": "Glacial Slam",
+          "icon": "crystal",
+          "type": "physical",
+          "damage": 3,
+          "cooldown": 5,
+          "description": "Slams the ground creating ice spikes"
+        },
+        {
+          "id": "freeze",
+          "name": "Freeze",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Freezes a hero solid in ice",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "frost_heal",
+          "name": "Frost Regeneration",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Absorbs cold to heal wounds",
+          "healPercent": 0.12
+        }
+      ]
+    },
+    "shadow_beast": {
+      "name": "Shadow Beast",
+      "icon": "skull",
+      "color": "#6b21a8",
+      "baseHealth": 800,
+      "baseDamage": 45,
+      "baseDefense": 25,
+      "baseMana": 250,
+      "xpReward": 130,
+      "goldReward": 90,
+      "speed": 15,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "shadow_claw",
+          "name": "Shadow Claw",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.4,
+          "description": "Claws made of living shadow"
+        },
+        {
+          "id": "dark_pulse",
+          "name": "Dark Pulse",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 2.4,
+          "cooldown": 3,
+          "description": "A pulse of dark energy hitting all",
+          "effect": {
+            "type": "dot",
+            "damage": 0.14,
+            "duration": 3
+          }
+        },
+        {
+          "id": "shadow_veil",
+          "name": "Shadow Veil",
+          "icon": "chaos",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Wraps in shadows increasing defense",
+          "effect": {
+            "stat": "defense",
+            "flat": 35,
+            "duration": 3
+          }
+        },
+        {
+          "id": "devour",
+          "name": "Devour",
+          "icon": "fire",
+          "type": "physical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Devours life force from a hero",
+          "drainPercent": 0.4
+        },
+        {
+          "id": "nightmare",
+          "name": "Nightmare",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 5,
+          "description": "Traps a hero in a nightmare",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "shadow_mend",
+          "name": "Shadow Mend",
+          "icon": "skull",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Feeds on darkness to heal",
+          "healPercent": 0.14
+        }
+      ]
+    },
+    "corrupted_grove_keeper": {
+      "name": "Corrupted Grove Keeper",
+      "icon": "crystal",
+      "color": "#16a34a",
+      "baseHealth": 600,
+      "baseDamage": 35,
+      "baseDefense": 20,
+      "baseMana": 300,
+      "xpReward": 100,
+      "goldReward": 70,
+      "speed": 12,
+      "isBoss": true,
+      "bossScale": 3,
+      "abilities": [
+        {
+          "id": "corrupted_bolt",
+          "name": "Corrupted Bolt",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1.3,
+          "description": "A bolt of corrupted nature magic"
+        },
+        {
+          "id": "verdant_stun",
+          "name": "Verdant Stun",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 4,
+          "description": "Entangling roots stun a hero in place",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "grove_fireball",
+          "name": "Grove Fireball",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 2.4,
+          "cooldown": 3,
+          "description": "Hurls a massive green fireball of corrupted energy"
+        },
+        {
+          "id": "resurrect_guardian",
+          "name": "Resurrect Guardian",
+          "icon": "heart",
+          "type": "resurrect",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Channels dark nature magic to resurrect a fallen Guardian",
+          "isResurrect": true
+        },
+        {
+          "id": "dark_bloom",
+          "name": "Dark Bloom",
+          "icon": "nature",
+          "type": "magical",
+          "damage": 1.8,
+          "cooldown": 4,
+          "description": "Dark flowers bloom dealing damage and reducing defense",
+          "effect": {
+            "stat": "defense",
+            "flat": -15,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "void_sentinel": {
+      "name": "Void Sentinel",
+      "icon": "crystal",
+      "color": "#a855f7",
+      "baseHealth": 1000,
+      "baseDamage": 55,
+      "baseDefense": 42,
+      "baseMana": 400,
+      "xpReward": 200,
+      "goldReward": 150,
+      "speed": 13,
+      "isBoss": true,
+      "abilities": [
+        {
+          "id": "void_strike",
+          "name": "Void Strike",
+          "icon": "chaos",
+          "type": "physical",
+          "damage": 1.5,
+          "description": "A strike infused with void energy"
+        },
+        {
+          "id": "reality_rift",
+          "name": "Reality Rift",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 3,
+          "cooldown": 4,
+          "description": "Tears open a rift in reality"
+        },
+        {
+          "id": "void_shield",
+          "name": "Void Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Erects an impenetrable void barrier",
+          "effect": {
+            "stat": "defense",
+            "flat": 50,
+            "duration": 3
+          }
+        },
+        {
+          "id": "entropy_pulse",
+          "name": "Entropy Pulse",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 2,
+          "cooldown": 3,
+          "description": "Radiates entropic energy at all heroes",
+          "effect": {
+            "type": "dot",
+            "damage": 0.14,
+            "duration": 3
+          }
+        },
+        {
+          "id": "dimensional_lock",
+          "name": "Dimensional Lock",
+          "icon": "sparkle",
+          "type": "magical",
+          "damage": 0.8,
+          "cooldown": 5,
+          "description": "Locks a hero between dimensions",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "void_siphon",
+          "name": "Void Siphon",
+          "icon": "skull",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Siphons energy from the void to heal",
+          "healPercent": 0.13
+        },
+        {
+          "id": "null_burst",
+          "name": "Null Burst",
+          "icon": "bomb",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 6,
+          "description": "Unleashes a burst of pure nothingness"
+        }
+      ]
+    },
+    "abyssal_demon": {
+      "name": "Abyssal Demon Lord",
+      "icon": "fire",
+      "color": "#dc2626",
+      "baseHealth": 1600,
+      "baseDamage": 72,
+      "baseDefense": 40,
+      "baseMana": 400,
+      "xpReward": 400,
+      "goldReward": 300,
+      "speed": 15,
+      "isBoss": true,
+      "bossScale": 2.2,
+      "abilities": [
+        {
+          "id": "demon_cleave",
+          "name": "Abyssal Cleave",
+          "icon": "axe",
+          "type": "physical",
+          "damage": 2,
+          "description": "A massive cleave from the abyss"
+        },
+        {
+          "id": "hellfire_eruption",
+          "name": "Hellfire Eruption",
+          "icon": "fire",
+          "type": "magical",
+          "damage": 3.5,
+          "cooldown": 4,
+          "description": "Fire erupts from the ground under all heroes"
+        },
+        {
+          "id": "demon_roar",
+          "name": "Demon Roar",
+          "icon": "skull",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Roars with demonic fury, boosting damage",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 2,
+            "duration": 3
+          }
+        },
+        {
+          "id": "soul_crush",
+          "name": "Soul Crush",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 4,
+          "cooldown": 6,
+          "description": "Crushes the soul of a single hero"
+        },
+        {
+          "id": "abyssal_drain",
+          "name": "Abyssal Drain",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 2,
+          "cooldown": 4,
+          "description": "Drains life through dark magic",
+          "drainPercent": 0.5
+        },
+        {
+          "id": "infernal_shield",
+          "name": "Infernal Shield",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Wraps in hellfire armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 55,
+            "duration": 3
+          }
+        },
+        {
+          "id": "demon_stun",
+          "name": "Abyssal Gaze",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 5,
+          "description": "Paralyzes a hero with demonic gaze",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "eldritch_horror": {
+      "name": "The Eldritch Horror",
+      "icon": "chaos",
+      "color": "#065f46",
+      "baseHealth": 1800,
+      "baseDamage": 68,
+      "baseDefense": 35,
+      "baseMana": 500,
+      "xpReward": 450,
+      "goldReward": 350,
+      "speed": 12,
+      "isBoss": true,
+      "bossScale": 2.5,
+      "abilities": [
+        {
+          "id": "tentacle_lash",
+          "name": "Tentacle Lash",
+          "icon": "skull",
+          "type": "physical",
+          "damage": 1.8,
+          "description": "Lashes out with eldritch tentacles"
+        },
+        {
+          "id": "madness_wave",
+          "name": "Madness Wave",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 3,
+          "cooldown": 4,
+          "description": "A wave of madness washes over all heroes",
+          "effect": {
+            "type": "dot",
+            "damage": 0.16,
+            "duration": 4
+          }
+        },
+        {
+          "id": "eldritch_scream",
+          "name": "Eldritch Scream",
+          "icon": "skull",
+          "type": "magical",
+          "damage": 1.2,
+          "cooldown": 5,
+          "description": "A scream from beyond that stuns with terror",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "void_consumption",
+          "name": "Void Consumption",
+          "icon": "chaos",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "Consumes a hero with void energy",
+          "drainPercent": 0.6
+        },
+        {
+          "id": "cosmic_regeneration",
+          "name": "Cosmic Regeneration",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Regenerates through cosmic energy",
+          "healPercent": 0.16
+        },
+        {
+          "id": "reality_shatter",
+          "name": "Reality Shatter",
+          "icon": "bomb",
+          "type": "magical",
+          "damage": 4.5,
+          "cooldown": 7,
+          "description": "Shatters the fabric of reality itself"
+        },
+        {
+          "id": "abyssal_armor",
+          "name": "Abyssal Armor",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Encases in otherworldly armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 60,
+            "duration": 3
+          }
+        },
+        {
+          "id": "mind_flay",
+          "name": "Mind Flay",
+          "icon": "crystal",
+          "type": "magical",
+          "damage": 2.2,
+          "cooldown": 4,
+          "description": "Flays the mind with psychic torment"
+        }
+      ]
+    },
+    "frost_titan": {
+      "name": "Frost Titan",
+      "icon": "ice",
+      "color": "#67e8f9",
+      "baseHealth": 1500,
+      "baseDamage": 65,
+      "baseDefense": 50,
+      "baseMana": 350,
+      "xpReward": 380,
+      "goldReward": 280,
+      "speed": 10,
+      "isBoss": true,
+      "bossScale": 2,
+      "abilities": [
+        {
+          "id": "frost_smash",
+          "name": "Frost Smash",
+          "icon": "ice",
+          "type": "physical",
+          "damage": 2.2,
+          "description": "A devastating icy smash"
+        },
+        {
+          "id": "absolute_zero",
+          "name": "Absolute Zero",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 3.8,
+          "cooldown": 5,
+          "description": "Drops temperature to absolute zero on all heroes"
+        },
+        {
+          "id": "ice_prison",
+          "name": "Ice Prison",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 1,
+          "cooldown": 4,
+          "description": "Encases a hero in unbreakable ice",
+          "effect": {
+            "type": "stun",
+            "duration": 2
+          }
+        },
+        {
+          "id": "glacial_armor",
+          "name": "Glacial Armor",
+          "icon": "shield",
+          "type": "buff",
+          "damage": 0,
+          "cooldown": 5,
+          "description": "Hardens into impenetrable glacial armor",
+          "effect": {
+            "stat": "defense",
+            "flat": 65,
+            "duration": 3
+          }
+        },
+        {
+          "id": "frost_breath",
+          "name": "Frost Breath",
+          "icon": "ice",
+          "type": "magical",
+          "damage": 2.5,
+          "cooldown": 3,
+          "description": "Breathes devastating frost energy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.14,
+            "duration": 3
+          }
+        },
+        {
+          "id": "permafrost_heal",
+          "name": "Permafrost",
+          "icon": "heart",
+          "type": "heal",
+          "damage": 0,
+          "cooldown": 6,
+          "description": "Draws power from eternal ice to heal",
+          "healPercent": 0.14
+        },
+        {
+          "id": "avalanche",
+          "name": "Avalanche",
+          "icon": "bomb",
+          "type": "physical",
+          "damage": 4,
+          "cooldown": 6,
+          "description": "Summons an avalanche to crush all heroes"
+        }
+      ]
+    }
+  },
+  "totalEnemies": 30,
+  "totalBosses": 21
+}

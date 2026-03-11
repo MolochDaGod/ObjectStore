@@ -2,11 +2,12 @@
   var pages = [
     { label: 'Home', href: './', icon: '🏠' },
     { label: 'API Docs', href: './docs/', icon: '📖' },
-    { label: 'Item Database', href: './GRUDGE_Item_Database.html', icon: '🗃️' },
-    { label: 'Sprite DB', href: './SPRITE_DATABASE.html', icon: '📊' },
-    { label: 'VFX Browser', href: './VFX_BROWSER.html', icon: '✨' },
+    { label: 'Items', href: './GRUDGE_Item_Database.html', icon: '🗃️' },
+    { label: 'Sprites', href: './SPRITE_DATABASE.html', icon: '📊' },
     { label: '2D Models', href: './2D_MODELS.html', icon: '🎨' },
-    { label: 'Item Browser', href: './ItemBrowser.html', icon: '🔍' }
+    { label: 'VFX', href: './VFX_BROWSER.html', icon: '✨' },
+    { label: 'Browser', href: './ItemBrowser.html', icon: '🔍' },
+    { label: 'Icons', href: './tools/icon-generator.html', icon: '🖌️' }
   ];
 
   // Detect if we're in a subdirectory (like docs/)
@@ -44,7 +45,7 @@
   nav.className = 'os-nav';
 
   var faviconPath = inSubdir ? '../favicon.svg' : './favicon.svg';
-  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '"><img src="' + faviconPath + '" alt="">  <span>ObjectStore</span></a>';
+  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '"><img src="' + faviconPath + '" alt=""> <span>ObjectStore</span><span style="font-size:0.6rem;background:rgba(212,168,75,0.15);color:#d4a84b;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600;">v3</span></a>';
 
   for (var i = 0; i < pages.length; i++) {
     var p = pages[i];

@@ -722,6 +722,38 @@ class GrudgeSDK {
   }
 
   // ==========================================
+  // QUESTS & MISSIONS (v3.0.0)
+  // ==========================================
+
+  async getQuests() { return this.fetch('/api/v1/quests.json'); }
+  async getQuestsForZone(zoneId) { const d = await this.getQuests(); return d.zoneQuests[zoneId] || []; }
+  async getMissions() { return this.fetch('/api/v1/missions.json'); }
+  async getDialogue() { return this.fetch('/api/v1/dialogue.json'); }
+  async getCutscenes() { return this.fetch('/api/v1/cutscenes.json'); }
+  async getRandomEvents() { return this.fetch('/api/v1/randomEvents.json'); }
+
+  // ==========================================
+  // WORLD & COMBAT DATA (v3.0.0)
+  // ==========================================
+
+  async getWorldMap() { return this.fetch('/api/v1/worldMap.json'); }
+  async getRegions() { return this.fetch('/api/v1/regions.json'); }
+  async getBattleFormations() { return this.fetch('/api/v1/battleFormations.json'); }
+  async getEquipment() { return this.fetch('/api/v1/equipment.json'); }
+  async getSkillTrees() { return this.fetch('/api/v1/skillTrees.json'); }
+  async getEnemyTemplates() { return this.fetch('/api/v1/enemyTemplates.json'); }
+  async getLore() { return this.fetch('/api/v1/lore.json'); }
+
+  // ==========================================
+  // MEDIA ASSETS (v3.0.0)
+  // ==========================================
+
+  async getAudioRegistry() { return this.fetch('/api/v1/audio.json'); }
+  async getVideoRegistry() { return this.fetch('/api/v1/video.json'); }
+  async getHeroesRegistry() { return this.fetch('/api/v1/heroes.json'); }
+  async getModels3d() { return this.fetch('/api/v1/models3d.json'); }
+
+  // ==========================================
   // GRUDGE UUID UTILITIES
   // ==========================================
 
@@ -791,6 +823,23 @@ class GrudgeSDK {
         effectSprites: `${this.baseUrl}/api/v1/effectSprites.json`,
         abilityEffects: `${this.baseUrl}/api/v1/abilityEffects.json`,
         factionUnits: `${this.baseUrl}/api/v1/factionUnits.json`,
+        // v3.0.0 endpoints
+        quests: `${this.baseUrl}/api/v1/quests.json`,
+        dialogue: `${this.baseUrl}/api/v1/dialogue.json`,
+        missions: `${this.baseUrl}/api/v1/missions.json`,
+        skillTrees: `${this.baseUrl}/api/v1/skillTrees.json`,
+        equipment: `${this.baseUrl}/api/v1/equipment.json`,
+        cutscenes: `${this.baseUrl}/api/v1/cutscenes.json`,
+        worldMap: `${this.baseUrl}/api/v1/worldMap.json`,
+        randomEvents: `${this.baseUrl}/api/v1/randomEvents.json`,
+        battleFormations: `${this.baseUrl}/api/v1/battleFormations.json`,
+        regions: `${this.baseUrl}/api/v1/regions.json`,
+        lore: `${this.baseUrl}/api/v1/lore.json`,
+        enemyTemplates: `${this.baseUrl}/api/v1/enemyTemplates.json`,
+        audio: `${this.baseUrl}/api/v1/audio.json`,
+        video: `${this.baseUrl}/api/v1/video.json`,
+        heroes: `${this.baseUrl}/api/v1/heroes.json`,
+        models3d: `${this.baseUrl}/api/v1/models3d.json`,
       },
       serverlessEndpoints: {
         search: `${this.baseUrl}/api/search`,

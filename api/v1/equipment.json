@@ -1,0 +1,1274 @@
+{
+  "slots": [
+    "weapon",
+    "offhand",
+    "helmet",
+    "armor",
+    "feet",
+    "ring",
+    "relic"
+  ],
+  "tiers": {
+    "1": {
+      "name": "Tier 1",
+      "color": "#9ca3af",
+      "multiplier": 1
+    },
+    "2": {
+      "name": "Tier 2",
+      "color": "#22c55e",
+      "multiplier": 2.5
+    },
+    "3": {
+      "name": "Tier 3",
+      "color": "#3b82f6",
+      "multiplier": 5
+    },
+    "4": {
+      "name": "Tier 4",
+      "color": "#a855f7",
+      "multiplier": 8.5
+    },
+    "5": {
+      "name": "Tier 5",
+      "color": "#f59e0b",
+      "multiplier": 13
+    },
+    "6": {
+      "name": "Tier 6",
+      "color": "#ef4444",
+      "multiplier": 20
+    },
+    "7": {
+      "name": "Tier 7",
+      "color": "#06b6d4",
+      "multiplier": 30
+    },
+    "8": {
+      "name": "Tier 8",
+      "color": "#f472b6",
+      "multiplier": 45
+    }
+  },
+  "tierFlatBonus": {
+    "1": 0,
+    "2": 1,
+    "3": 3,
+    "4": 5,
+    "5": 8,
+    "6": 12,
+    "7": 18,
+    "8": 25
+  },
+  "displayStatMap": {
+    "physicalDamage": {
+      "label": "Damage",
+      "color": "#ef4444",
+      "icon": "sword"
+    },
+    "magicDamage": {
+      "label": "Damage",
+      "color": "#a855f7",
+      "icon": "wand"
+    },
+    "attackSpeed": {
+      "label": "Speed",
+      "color": "#22c55e",
+      "icon": "lightning"
+    },
+    "criticalChance": {
+      "label": "Crit",
+      "color": "#f59e0b",
+      "icon": "target"
+    },
+    "criticalDamage": {
+      "label": "Combo",
+      "color": "#f472b6",
+      "icon": "sparkle"
+    },
+    "block": {
+      "label": "Block",
+      "color": "#3b82f6",
+      "icon": "shield"
+    },
+    "defense": {
+      "label": "Defense",
+      "color": "#06b6d4",
+      "icon": "armor"
+    },
+    "health": {
+      "label": "Health",
+      "color": "#22c55e",
+      "icon": "heart"
+    },
+    "mana": {
+      "label": "Mana",
+      "color": "#3b82f6",
+      "icon": "crystal"
+    },
+    "evasion": {
+      "label": "Evasion",
+      "color": "#a3e635",
+      "icon": "wind"
+    },
+    "resistance": {
+      "label": "Resist",
+      "color": "#c084fc",
+      "icon": "shield"
+    },
+    "armorPenetration": {
+      "label": "Pen",
+      "color": "#fb923c",
+      "icon": "lance"
+    },
+    "drainHealth": {
+      "label": "Drain",
+      "color": "#dc2626",
+      "icon": "skull"
+    },
+    "damageReduction": {
+      "label": "DR",
+      "color": "#64748b",
+      "icon": "shield"
+    },
+    "manaRegen": {
+      "label": "MP Regen",
+      "color": "#60a5fa",
+      "icon": "crystal"
+    },
+    "healthRegen": {
+      "label": "HP Regen",
+      "color": "#4ade80",
+      "icon": "heart"
+    },
+    "cooldownReduction": {
+      "label": "CDR",
+      "color": "#c084fc",
+      "icon": "sparkle"
+    },
+    "stamina": {
+      "label": "Stamina",
+      "color": "#fbbf24",
+      "icon": "energy"
+    }
+  },
+  "upgradeCosts": {
+    "1": 100,
+    "2": 250,
+    "3": 500,
+    "4": 1000,
+    "5": 2500,
+    "6": 5000,
+    "7": 10000
+  },
+  "weaponTypes": {
+    "sword": {
+      "name": "Sword",
+      "icon": "sword",
+      "iconUrl": "/icons/weapons/sword.png",
+      "hand": "1h"
+    },
+    "axe": {
+      "name": "Axe",
+      "icon": "axe",
+      "iconUrl": "/icons/weapons/axe.png",
+      "hand": "1h"
+    },
+    "greatsword": {
+      "name": "Greatsword",
+      "icon": "crossed_swords",
+      "iconUrl": "/icons/weapons/greatsword.png",
+      "hand": "2h"
+    },
+    "greataxe": {
+      "name": "Greataxe",
+      "icon": "axe",
+      "iconUrl": "/icons/weapons/greataxe.png",
+      "hand": "2h"
+    },
+    "hammer2h": {
+      "name": "Warhammer",
+      "icon": "hammer",
+      "iconUrl": "/icons/weapons/hammer2h.png",
+      "hand": "2h"
+    },
+    "hammer1h": {
+      "name": "Hammer",
+      "icon": "hammer",
+      "iconUrl": "/icons/weapons/hammer1h.png",
+      "hand": "1h"
+    },
+    "shield": {
+      "name": "Shield",
+      "icon": "shield",
+      "iconUrl": "/icons/weapons/shield.png",
+      "hand": "1h"
+    },
+    "staff": {
+      "name": "Staff",
+      "icon": "wand",
+      "iconUrl": "/icons/weapons/staff.png",
+      "hand": "2h"
+    },
+    "dagger": {
+      "name": "Dagger",
+      "icon": "sword",
+      "iconUrl": "/icons/weapons/dagger.png",
+      "hand": "1h"
+    },
+    "bow": {
+      "name": "Bow",
+      "icon": "bow",
+      "iconUrl": "/icons/weapons/bow.png",
+      "hand": "2h"
+    },
+    "crossbow": {
+      "name": "Crossbow",
+      "icon": "bow",
+      "iconUrl": "/icons/weapons/crossbow.png",
+      "hand": "2h"
+    },
+    "gun": {
+      "name": "Gun",
+      "icon": "star",
+      "iconUrl": "/icons/weapons/gun.png",
+      "hand": "2h"
+    },
+    "lance": {
+      "name": "Lance",
+      "icon": "lance",
+      "iconUrl": "/icons/weapons/lance.png",
+      "hand": "2h"
+    },
+    "tome": {
+      "name": "Tome",
+      "icon": "book",
+      "iconUrl": "/icons/weapons/tome.png",
+      "hand": "1h"
+    },
+    "relic": {
+      "name": "Relic",
+      "icon": "crystal",
+      "iconUrl": "/icons/weapons/relic.png",
+      "hand": "1h"
+    }
+  },
+  "weaponSkills": {
+    "sword": {
+      "slot1": [
+        {
+          "id": "ws_sword_slash",
+          "name": "Sword Slash",
+          "icon": "crossed_swords",
+          "description": "A swift horizontal slash that restores resources",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_sword_thrust",
+          "name": "Sword Thrust",
+          "icon": "sword",
+          "description": "A piercing thrust aimed at vital points",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 9
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_riposte",
+          "name": "Riposte",
+          "icon": "crossed_swords",
+          "description": "Counter with a precise strike dealing 1.6x damage",
+          "type": "physical",
+          "damage": 1.6,
+          "manaCost": 0,
+          "staminaCost": 18,
+          "cooldown": 2,
+          "target": "enemy"
+        },
+        {
+          "id": "ws_blade_dance",
+          "name": "Blade Dance",
+          "icon": "sparkle",
+          "description": "Rapid slashes that boost attack speed for 2 turns",
+          "type": "physical",
+          "damage": 1.2,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "stat": "attackSpeed",
+            "flat": 15,
+            "duration": 2
+          }
+        },
+        {
+          "id": "ws_mortal_wound",
+          "name": "Mortal Wound",
+          "icon": "target",
+          "description": "A deep cut causing bleed for 3 turns",
+          "type": "physical",
+          "damage": 1.3,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "axe": {
+      "slot1": [
+        {
+          "id": "ws_axe_chop",
+          "name": "Axe Chop",
+          "icon": "axe",
+          "description": "A brutal downward chop restoring resources",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 9
+        },
+        {
+          "id": "ws_axe_hack",
+          "name": "Hack",
+          "icon": "axe",
+          "description": "A savage hack at the enemy",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_rend",
+          "name": "Rend",
+          "icon": "target",
+          "description": "Rip into the enemy causing heavy bleed for 3 turns",
+          "type": "physical",
+          "damage": 1.4,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_whirlwind",
+          "name": "Whirlwind",
+          "icon": "chaos",
+          "description": "Spin your axe hitting all enemies",
+          "type": "physical",
+          "damage": 1.8,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_sunder_armor",
+          "name": "Sunder Armor",
+          "icon": "bomb",
+          "description": "Smash through defenses, reducing enemy damage for 2 turns",
+          "type": "physical",
+          "damage": 1.2,
+          "manaCost": 0,
+          "staminaCost": 18,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 0.7,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "greatsword": {
+      "slot1": [
+        {
+          "id": "ws_gs_sweep",
+          "name": "Great Sweep",
+          "icon": "crossed_swords",
+          "description": "A wide sweeping strike that restores resources",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_gs_overhead",
+          "name": "Overhead Slash",
+          "icon": "crossed_swords",
+          "description": "A powerful overhead swing",
+          "type": "physical",
+          "damage": 1.2,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 6,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_gs_cleave",
+          "name": "Greatsword Cleave",
+          "icon": "bomb",
+          "description": "Massive cleaving strike hitting all enemies",
+          "type": "physical",
+          "damage": 2,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 2,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_gs_whirlwind",
+          "name": "Steel Tempest",
+          "icon": "chaos",
+          "description": "Spin with your greatsword hitting all enemies",
+          "type": "physical",
+          "damage": 1.7,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_gs_execute",
+          "name": "Decapitate",
+          "icon": "skull",
+          "description": "Aim for the neck, dealing bonus damage to low HP targets",
+          "type": "physical",
+          "damage": 1.5,
+          "manaCost": 0,
+          "staminaCost": 28,
+          "cooldown": 4,
+          "target": "enemy",
+          "executeDamage": 2.5,
+          "executeThreshold": 0.3
+        }
+      ]
+    },
+    "greataxe": {
+      "slot1": [
+        {
+          "id": "ws_ga_slam",
+          "name": "Greataxe Slam",
+          "icon": "axe",
+          "description": "Slam your greataxe down with fury",
+          "type": "physical",
+          "damage": 1.2,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 9
+        },
+        {
+          "id": "ws_ga_swing",
+          "name": "Wild Swing",
+          "icon": "axe",
+          "description": "A heavy arcing swing",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 8
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_ga_rampage",
+          "name": "Rampage",
+          "icon": "bomb",
+          "description": "Enter a frenzy, boosting damage by 25% for 3 turns",
+          "type": "buff",
+          "damage": 0,
+          "manaCost": 0,
+          "staminaCost": 28,
+          "cooldown": 5,
+          "target": "self",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 1.25,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_ga_bonecrusher",
+          "name": "Bonecrusher",
+          "icon": "skull",
+          "description": "Crush the enemy with overwhelming force",
+          "type": "physical",
+          "damage": 2.2,
+          "manaCost": 0,
+          "staminaCost": 30,
+          "cooldown": 3,
+          "target": "enemy"
+        },
+        {
+          "id": "ws_ga_bloodrage",
+          "name": "Bloodrage",
+          "icon": "target",
+          "description": "Sacrifice HP for massive damage",
+          "type": "physical",
+          "damage": 2.5,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 4,
+          "target": "enemy"
+        }
+      ]
+    },
+    "hammer2h": {
+      "slot1": [
+        {
+          "id": "ws_h2_smash",
+          "name": "Hammer Smash",
+          "icon": "hammer",
+          "description": "A thunderous downward smash",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 9
+        },
+        {
+          "id": "ws_h2_bash",
+          "name": "Hammer Bash",
+          "icon": "hammer",
+          "description": "Bash with the flat of the hammer",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 8
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_h2_shockwave",
+          "name": "Shockwave",
+          "icon": "bomb",
+          "description": "Slam the ground sending a shockwave hitting all enemies",
+          "type": "physical",
+          "damage": 1.8,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true,
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "ws_h2_pulverize",
+          "name": "Pulverize",
+          "icon": "skull",
+          "description": "Crush the target with immense force",
+          "type": "physical",
+          "damage": 2.3,
+          "manaCost": 0,
+          "staminaCost": 30,
+          "cooldown": 4,
+          "target": "enemy"
+        },
+        {
+          "id": "ws_h2_earthshatter",
+          "name": "Earthshatter",
+          "icon": "fire",
+          "description": "Shatter the earth hitting all enemies and reducing defense for 3 turns",
+          "type": "physical",
+          "damage": 1.5,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true,
+          "effect": {
+            "stat": "defense",
+            "flat": -15,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "hammer1h": {
+      "slot1": [
+        {
+          "id": "ws_h1_strike",
+          "name": "Mace Strike",
+          "icon": "hammer",
+          "description": "A storm-charged mace blow restoring resources",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 6,
+          "staminaGain": 6
+        },
+        {
+          "id": "ws_h1_crack",
+          "name": "Skull Crack",
+          "icon": "hammer",
+          "description": "Crack your mace against the enemy",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_h1_concuss",
+          "name": "Concussive Blow",
+          "icon": "sparkle",
+          "description": "Stun the target with a precise strike",
+          "type": "physical",
+          "damage": 1.2,
+          "manaCost": 0,
+          "staminaCost": 18,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        },
+        {
+          "id": "ws_h1_chain_smash",
+          "name": "Chain Smash",
+          "icon": "battle",
+          "description": "Rapid mace strikes building momentum",
+          "type": "physical",
+          "damage": 1.6,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 2,
+          "target": "enemy"
+        },
+        {
+          "id": "ws_h1_thunderstrike",
+          "name": "Thunderstrike",
+          "icon": "lightning",
+          "description": "Channel storm energy through your mace",
+          "type": "magical",
+          "damage": 1.8,
+          "manaCost": 20,
+          "staminaCost": 0,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.1,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "staff": {
+      "slot1": [
+        {
+          "id": "ws_staff_strike",
+          "name": "Staff Strike",
+          "icon": "wand",
+          "description": "Channel arcane energy through your staff",
+          "type": "magical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 8,
+          "staminaGain": 4
+        },
+        {
+          "id": "ws_staff_pulse",
+          "name": "Arcane Pulse",
+          "icon": "sparkle",
+          "description": "Emit a pulse of raw magic",
+          "type": "magical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 9,
+          "staminaGain": 3
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_staff_nova",
+          "name": "Arcane Nova",
+          "icon": "sparkle",
+          "description": "Release a burst of arcane energy hitting all enemies",
+          "type": "magical",
+          "damage": 2,
+          "manaCost": 30,
+          "staminaCost": 0,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_staff_barrier",
+          "name": "Arcane Barrier",
+          "icon": "shield",
+          "description": "Raise a magical barrier boosting defense for 3 turns",
+          "type": "buff",
+          "damage": 0,
+          "manaCost": 25,
+          "staminaCost": 0,
+          "cooldown": 4,
+          "target": "self",
+          "effect": {
+            "stat": "defense",
+            "flat": 18,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_staff_drain",
+          "name": "Spirit Drain",
+          "icon": "chaos",
+          "description": "Drain life force from the target",
+          "type": "magical",
+          "damage": 1.4,
+          "manaCost": 20,
+          "staminaCost": 0,
+          "cooldown": 3,
+          "target": "enemy",
+          "drainPercent": 0.15
+        }
+      ]
+    },
+    "dagger": {
+      "slot1": [
+        {
+          "id": "ws_dagger_stab",
+          "name": "Quick Stab",
+          "icon": "sword",
+          "description": "A quick dagger stab restoring resources",
+          "type": "physical",
+          "damage": 0.8,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_dagger_slash",
+          "name": "Dagger Slash",
+          "icon": "sword",
+          "description": "A swift slash across the target",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 9
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_backstab",
+          "name": "Backstab",
+          "icon": "sword",
+          "description": "Strike from the shadows for critical damage",
+          "type": "physical",
+          "damage": 2,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "guaranteedCrit": true
+        },
+        {
+          "id": "ws_envenom",
+          "name": "Envenom",
+          "icon": "skull",
+          "description": "Apply deadly poison dealing damage over 4 turns",
+          "type": "physical",
+          "damage": 0.8,
+          "manaCost": 0,
+          "staminaCost": 15,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.18,
+            "duration": 4
+          }
+        },
+        {
+          "id": "ws_fan_of_knives",
+          "name": "Fan of Knives",
+          "icon": "star",
+          "description": "Hurl a fan of knives hitting all enemies",
+          "type": "physical",
+          "damage": 1.7,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        }
+      ]
+    },
+    "bow": {
+      "slot1": [
+        {
+          "id": "ws_bow_shot",
+          "name": "Quick Shot",
+          "icon": "bow",
+          "description": "A swift arrow restoring resources",
+          "type": "physical",
+          "damage": 0.8,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 7
+        },
+        {
+          "id": "ws_bow_aim",
+          "name": "Steady Shot",
+          "icon": "target",
+          "description": "A carefully aimed arrow",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 6
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_bow_volley",
+          "name": "Arrow Volley",
+          "icon": "bow",
+          "description": "Rain arrows on all enemies",
+          "type": "physical",
+          "damage": 2.2,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_bow_pierce",
+          "name": "Piercing Arrow",
+          "icon": "lance",
+          "description": "Fire an armor-piercing arrow",
+          "type": "physical",
+          "damage": 1.8,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 3,
+          "target": "enemy",
+          "armorPiercing": true
+        },
+        {
+          "id": "ws_bow_poison",
+          "name": "Poison Arrow",
+          "icon": "skull",
+          "description": "Arrow tipped with deadly venom",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 15,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.15,
+            "duration": 3
+          }
+        }
+      ]
+    },
+    "crossbow": {
+      "slot1": [
+        {
+          "id": "ws_xbow_bolt",
+          "name": "Bolt Shot",
+          "icon": "bow",
+          "description": "Fire a heavy crossbow bolt",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 3,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_xbow_snap",
+          "name": "Snap Shot",
+          "icon": "bow",
+          "description": "A quick follow-up shot",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_xbow_heavy",
+          "name": "Heavy Bolt",
+          "icon": "bomb",
+          "description": "Fire a heavy bolt that staggers the target",
+          "type": "physical",
+          "damage": 2,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 0.8,
+            "duration": 1
+          }
+        },
+        {
+          "id": "ws_xbow_explosive",
+          "name": "Explosive Bolt",
+          "icon": "bomb",
+          "description": "Fire an explosive bolt that damages all enemies",
+          "type": "physical",
+          "damage": 2.4,
+          "manaCost": 0,
+          "staminaCost": 28,
+          "cooldown": 4,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_xbow_net",
+          "name": "Net Bolt",
+          "icon": "target",
+          "description": "Fire a net bolt that stuns for 1 turn",
+          "type": "physical",
+          "damage": 0.8,
+          "manaCost": 0,
+          "staminaCost": 15,
+          "cooldown": 4,
+          "target": "enemy",
+          "effect": {
+            "type": "stun",
+            "duration": 1
+          }
+        }
+      ]
+    },
+    "gun": {
+      "slot1": [
+        {
+          "id": "ws_gun_shot",
+          "name": "Gunshot",
+          "icon": "star",
+          "description": "Fire a round at the target",
+          "type": "physical",
+          "damage": 1.1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 3,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_gun_hip",
+          "name": "Hip Fire",
+          "icon": "star",
+          "description": "Quick shot from the hip",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_gun_sniper",
+          "name": "Sniper Round",
+          "icon": "target",
+          "description": "A carefully aimed shot that always crits",
+          "type": "physical",
+          "damage": 2,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "guaranteedCrit": true
+        },
+        {
+          "id": "ws_gun_buckshot",
+          "name": "Buckshot",
+          "icon": "bomb",
+          "description": "Blast scattered shot hitting all enemies",
+          "type": "physical",
+          "damage": 2.2,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        },
+        {
+          "id": "ws_gun_suppressive",
+          "name": "Suppressive Fire",
+          "icon": "fire",
+          "description": "Lay down fire on all enemies, reducing damage for 2 turns",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 4,
+          "target": "enemy",
+          "isAoE": true,
+          "effect": {
+            "stat": "damage",
+            "multiplier": 0.65,
+            "duration": 2
+          }
+        }
+      ]
+    },
+    "lance": {
+      "slot1": [
+        {
+          "id": "ws_lance_thrust",
+          "name": "Lance Thrust",
+          "icon": "lance",
+          "description": "Thrust your lance with precision",
+          "type": "physical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 4,
+          "staminaGain": 8
+        },
+        {
+          "id": "ws_lance_jab",
+          "name": "Quick Jab",
+          "icon": "lance",
+          "description": "A rapid lance jab",
+          "type": "physical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 5,
+          "staminaGain": 7
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_lance_charge",
+          "name": "Lance Charge",
+          "icon": "energy",
+          "description": "Charge forward with devastating force",
+          "type": "physical",
+          "damage": 2.2,
+          "manaCost": 0,
+          "staminaCost": 25,
+          "cooldown": 3,
+          "target": "enemy"
+        },
+        {
+          "id": "ws_lance_impale",
+          "name": "Impale",
+          "icon": "skull",
+          "description": "Impale the target causing bleed for 3 turns",
+          "type": "physical",
+          "damage": 1.5,
+          "manaCost": 0,
+          "staminaCost": 20,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.14,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_lance_sweep",
+          "name": "Sweeping Strike",
+          "icon": "chaos",
+          "description": "Sweep your lance hitting all enemies",
+          "type": "physical",
+          "damage": 1.8,
+          "manaCost": 0,
+          "staminaCost": 22,
+          "cooldown": 3,
+          "target": "enemy",
+          "isAoE": true
+        }
+      ]
+    },
+    "tome": {
+      "slot1": [
+        {
+          "id": "ws_tome_bolt",
+          "name": "Arcane Bolt",
+          "icon": "sparkle",
+          "description": "Channel a bolt of arcane energy from your tome",
+          "type": "magical",
+          "damage": 1,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 9,
+          "staminaGain": 3
+        },
+        {
+          "id": "ws_tome_blast",
+          "name": "Eldritch Blast",
+          "icon": "crystal",
+          "description": "Unleash eldritch power from ancient pages",
+          "type": "magical",
+          "damage": 0.9,
+          "manaCost": 0,
+          "staminaCost": 0,
+          "cooldown": 0,
+          "target": "enemy",
+          "manaGain": 8,
+          "staminaGain": 4
+        }
+      ],
+      "slot23": [
+        {
+          "id": "ws_tome_curse",
+          "name": "Curse",
+          "icon": "skull",
+          "description": "Curse the target reducing their damage for 3 turns",
+          "type": "magical",
+          "damage": 1,
+          "manaCost": 25,
+          "staminaCost": 0,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "stat": "damage",
+            "multiplier": 0.65,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_tome_hex",
+          "name": "Hex",
+          "icon": "chaos",
+          "description": "Hex the enemy with dark magic",
+          "type": "magical",
+          "damage": 1.8,
+          "manaCost": 30,
+          "staminaCost": 0,
+          "cooldown": 3,
+          "target": "enemy",
+          "effect": {
+            "type": "dot",
+            "damage": 0.12,
+            "duration": 3
+          }
+        },
+        {
+          "id": "ws_tome_restore",
+          "name": "Tome of Restoration",
+          "icon": "heart",
+          "description": "Read a healing incantation restoring 20% HP",
+          "type": "heal",
+          "damage": 0,
+          "manaCost": 30,
+          "staminaCost": 0,
+          "cooldown": 4,
+          "target": "self",
+          "healPercent": 0.2
+        }
+      ]
+    }
+  }
+}
