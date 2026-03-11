@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>API Documentation - Grudge Studio ObjectStore</title>
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <style>
     :root {
       --bg: #0f1419;
@@ -218,8 +219,12 @@
   </style>
 </head>
 <body>
+  <!-- Grudge Auth SDK -->
+  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
   <nav class="sidebar">
-    <h2>⚔️ ObjectStore</h2>
+    <h2><img src="../favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:4px;">ObjectStore</h2>
     <a href="../">← Back to Home</a>
     
     <div class="section-title">Getting Started</div>
@@ -259,11 +264,18 @@
     <a href="#python-examples">Python Examples</a>
     <a href="#ai-integration">AI Integration</a>
     
+    <div class="section-title">Serverless API</div>
+    <a href="#search-api">Search API</a>
+    <a href="#stats-api">Stats API</a>
+
     <div class="section-title">Resources</div>
     <a href="./DATABASE.md">Database Schema</a>
     <a href="../sdk/grudge-sdk.js">Download SDK</a>
     <a href="../SPRITE_DATABASE.html">Sprite Browser</a>
     <a href="../VFX_BROWSER.html">VFX Browser</a>
+    <a href="../2D_MODELS.html">2D Models Browser</a>
+    <a href="../ItemBrowser.html">Item Browser</a>
+    <a href="../GRUDGE_Item_Database.html">Item Database</a>
   </nav>
 
   <main class="main">
@@ -402,7 +414,7 @@
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="method">GET</span>
-          <span class="endpoint-url">/api/v1/equipment.json</span>
+          <span class="endpoint-url">/api/v1/armor.json</span>
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">Returns 150 armor items (6 sets × 8 slots × 3 material types + gems) with stats, procs, and set bonuses.</p>
@@ -746,6 +758,20 @@
           <p class="endpoint-desc">246 sprite path mappings for weapons and armor icons — maps item IDs to their sprite sheet locations.</p>
         </div>
       </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/sprites2d.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">5,485 2D sprites organized into 13 categories — characters, enemies, bosses, monsters, effects, icons, backgrounds, and more. Sources include RPG-MODULAR, betta-warlords, grudge-angeler, and grudawars.</p>
+          <div class="tip">
+            <div class="tip-title">💡 Live Preview</div>
+            <p>Browse all sprites visually at <a href="../2D_MODELS.html">2D Models Browser</a></p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="faction-units">
@@ -916,6 +942,59 @@ high_tier_ores = [m for m in materials["materials"]
                   if m["category"] == "ore" and m["tier"] >= 5]</code></pre>
     </section>
 
+    <section id="search-api">
+      <h2>Search API (Serverless)</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/search?q={query}&type={type}&limit={limit}</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Serverless search across all ObjectStore data. Searches weapons, armor, materials, consumables, enemies, bosses, skills, and sprites.</p>
+          
+          <h3>Parameters</h3>
+          <table>
+            <tr><th>Param</th><th>Required</th><th>Default</th><th>Description</th></tr>
+            <tr><td><code>q</code></td><td>Yes</td><td>—</td><td>Search query string</td></tr>
+            <tr><td><code>type</code></td><td>No</td><td>all</td><td>Filter by type: weapons, armor, materials, consumables, enemies, bosses, skills, sprites</td></tr>
+            <tr><td><code>limit</code></td><td>No</td><td>50</td><td>Max results (1-200)</td></tr>
+          </table>
+          
+          <h3>Example</h3>
+          <pre><code>GET /api/search?q=iron&type=materials&limit=10
+
+{
+  "query": "iron",
+  "type": "materials",
+  "totalResults": 3,
+  "results": [
+    { "type": "material", "id": "iron-ore", "name": "Iron Ore", "category": "ore", "tier": 2 },
+    { "type": "material", "id": "iron-ingot", "name": "Iron Ingot", "category": "ingot", "tier": 2 }
+  ]
+}</code></pre>
+          <div class="tip">
+            <div class="tip-title">💡 Vercel Only</div>
+            <p>The /api/search and /api/stats endpoints are serverless functions available only when deployed on Vercel. The static JSON files work on both GitHub Pages and Vercel.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stats-api">
+      <h2>Stats API (Serverless)</h2>
+      
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/stats</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns aggregate statistics for all ObjectStore data — total counts by category, available endpoints, and browser pages.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="ai-integration">
       <h2>AI Integration</h2>
       <p>The ObjectStore API is designed for AI agent consumption:</p>
@@ -959,5 +1038,6 @@ function getCraftingRequirements(weaponId, tier) {
       <p>© 2026 Grudge Studio | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
     </footer>
   </main>
+  <script src="../js/nav.js"></script>
 </body>
 </html>
