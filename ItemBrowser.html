@@ -353,15 +353,10 @@
       font-weight: bold;
     }
 
-    /* Emoji fallback in image container */
-    .item-emoji-fallback {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(15, 20, 25, 0.9));
+    /* Fallback image placeholder */
+    .item-image[data-failed] {
+      opacity: 0.7;
+      filter: grayscale(0.3);
     }
 
     /* Selection info bar */
@@ -511,12 +506,63 @@
     let selectedItemId = null;
     let loadErrors = [];
 
-    // ── Icon Resolver ──────────────────────────────────────────────
-    // Armor slot type → pack icon prefix
+    // ── Icon Resolver (Real icons only — no emoji) ─────────────────
     const ARMOR_SLOT_MAP = {
       'Helm': 'Helm', 'Shoulder': 'Shoulder', 'Chest': 'Chest',
       'Hands': 'Gloves', 'Feet': 'Boots', 'Ring': 'Ring',
       'Necklace': 'necklace', 'Relic': 'Back', 'Belt': 'Belt'
+    };
+
+    // Real icon counts per weapon-type prefix in wcs/weapons/
+    const WCS_COUNTS = {
+      'Sword': 61, 'Axe': 50, 'Dagger': 60, 'Hammer': 54,
+      'Spear': 40, 'Bow': 40, 'Crossbow': 10, 'Bolt': 10,
+      'staff': 54, 'Staff': 54, 'Book': 25, 'Scythe': 7,
+      'shield': 51, 'Arrow': 40
+    };
+
+    // Tool name → appropriate weapon icon type
+    const TOOL_ICON_MAP = {
+      'mining-pick': 'Hammer', 'lumber-axe': 'Axe', 'skinning-knife': 'Dagger',
+      'harvesting-sickle': 'Scythe', 'fishing-rod': 'Spear', 'engineers-toolkit': 'Hammer'
+    };
+
+    // Consumable name keywords → real food icon filenames
+    const FOOD_KEYWORDS = [
+      ['steak', 'food_steak_cooked'], ['roast', 'food_steak_cooked'], ['curry', 'food_steak_cooked'],
+      ['feast', 'food_steak_cooked'], ['platter', 'food_steak_cooked'], ['lamb', 'food_steak_cooked'],
+      ['ribs', 'food_steak_rare'], ['venison', 'food_steak_rare'], ['skewer', 'food_steak_rare'],
+      ['cutlet', 'food_steak_rare'], ['bacon', 'food_steak_rare'], ['rabbit', 'food_steak_rare'],
+      ['sausage', 'food_ham'], ['ham', 'food_ham'], ['burger', 'food_ham'], ['chicken', 'food_ham'],
+      ['meat', 'food_meat_raw'], ['boar', 'food_meat_raw'],
+      ['fish', 'food_fish_red'], ['lobster', 'food_crab'], ['crab', 'food_crab'], ['shrimp', 'food_crab'],
+      ['squid', 'food_squid'],
+      ['bread', 'food_bread'], ['pie', 'food_bread'], ['cake', 'food_bread'], ['wrap', 'food_bread'],
+      ['croissant', 'food_croissant'],
+      ['cheese', 'food_cheese'], ['apple', 'food_apple'], ['banana', 'food_banana'],
+      ['mango', 'food_mango'], ['grapes', 'food_grapes'], ['mushroom', 'food_mushroom'],
+      ['carrot', 'food_carrot'], ['wheat', 'food_wheat'],
+      ['beer', 'food_beer'], ['ale', 'food_beer'], ['wine', 'food_beer'],
+      ['salad', 'food_grapes'], ['greens', 'food_grapes']
+    ];
+
+    const HERB_ICONS = [
+      'herb_herb_bouquet', 'herb_herb_branch', 'herb_herb_bundle_berries',
+      'herb_herb_bundle', 'herb_herb_crystalplant', 'herb_herb_grass',
+      'herb_herb_lavender', 'herb_herb_leaf', 'herb_herb_leaves', 'herb_herb_seaweed'
+    ];
+
+    const ALL_FOODS = [
+      'food_steak_cooked', 'food_steak_rare', 'food_ham', 'food_bread',
+      'food_cheese', 'food_fish_red', 'food_mushroom', 'food_meat_raw',
+      'food_apple', 'food_banana', 'food_crab', 'food_grapes'
+    ];
+
+    // Material category → fallback icon if named icon missing
+    const MAT_FALLBACK = {
+      'cloth': 'wool-thread', 'leather': 'hardened-leather',
+      'ore': 'iron-ore', 'ingots': 'iron-ingot', 'wood': 'oak-log',
+      'gems': 'fine-gem', 'essence': 'greater-essence'
     };
 
     function hashStr(s) {
@@ -525,40 +571,89 @@
       return Math.abs(h);
     }
 
+    function pad2(n) { return String(n).padStart(2, '0'); }
+
+    // Primary icon URL (specific named icon)
     function getIconUrl(item) {
       var baseId = String(item.id).replace(/-t\d+$/, '');
-
-      if (item.type === 'weapon') {
-        return './icons/weapons/' + baseId + '.png';
-      }
-      if (item.type === 'material') {
-        return './icons/materials/' + baseId + '.png';
-      }
-      if (item.type === 'armor') {
-        var slot = item.slotType || 'Chest';
-        var prefix = ARMOR_SLOT_MAP[slot] || 'Chest';
-        var num = (hashStr(baseId) % 20) + 1;
-        return './icons/pack/armor/' + prefix + '_' + String(num).padStart(2, '0') + '.png';
-      }
-      if (item.type === 'consumable') {
-        var name = (item.name || '').toLowerCase();
-        if (name.includes('potion') || name.includes('elixir') || name.includes('brew') || name.includes('tincture') || name.includes('flask')) {
-          var pNum = (hashStr(baseId) % 48) + 1;
-          return './icons/consumables/potion_' + pNum + '.png';
-        }
-        if (name.includes('tea') || name.includes('salve') || name.includes('herb') || name.includes('salad') || name.includes('wrap') || name.includes('greens') || name.includes('stew')) {
-          return './icons/consumables/herb_herb_leaf.png';
-        }
-        return './icons/consumables/food_steak_cooked.png';
-      }
-      return null;
+      if (item.type === 'weapon') return './icons/weapons/' + baseId + '.png';
+      if (item.type === 'material') return './icons/materials/' + baseId + '.png';
+      if (item.type === 'armor') return getArmorIcon(item, baseId);
+      if (item.type === 'consumable') return getConsumableIcon(item, baseId);
+      return './icons/pack/resources/Loot_01.png';
     }
 
-    function onImgError(img, item) {
-      var fallback = document.createElement('div');
-      fallback.className = 'item-emoji-fallback';
-      fallback.textContent = item.emoji || '📦';
-      img.replaceWith(fallback);
+    // Fallback icon URL (pack-based, always exists)
+    function getFallbackUrl(item) {
+      var baseId = String(item.id).replace(/-t\d+$/, '');
+      if (item.type === 'weapon') return getWeaponPackIcon(item, baseId);
+      if (item.type === 'material') return getMaterialFallback(item, baseId);
+      if (item.type === 'armor') return './icons/pack/armor/Chest_01.png';
+      if (item.type === 'consumable') return './icons/consumables/alchemy_1.png';
+      return './icons/pack/resources/Loot_01.png';
+    }
+
+    function getArmorIcon(item, baseId) {
+      var slot = item.slotType || 'Chest';
+      var prefix = ARMOR_SLOT_MAP[slot] || 'Chest';
+      var num = (hashStr(baseId) % 20) + 1;
+      return './icons/pack/armor/' + prefix + '_' + pad2(num) + '.png';
+    }
+
+    function getWeaponPackIcon(item, baseId) {
+      // For tools, map to an appropriate weapon type
+      var iconBase = TOOL_ICON_MAP[baseId] || item.iconBase || 'Sword';
+      var count = WCS_COUNTS[iconBase] || 40;
+      var num = (hashStr(baseId) % count) + 1;
+      return './icons/wcs/weapons/' + iconBase + '_' + pad2(num) + '.png';
+    }
+
+    function getMaterialFallback(item, baseId) {
+      var cat = (item.category || '').toLowerCase();
+      var fallbackName = MAT_FALLBACK[cat];
+      if (fallbackName) return './icons/materials/' + fallbackName + '.png';
+      var lootNum = (hashStr(baseId) % 120) + 1;
+      return './icons/pack/resources/Loot_' + pad2(lootNum) + '.png';
+    }
+
+    function getConsumableIcon(item, baseId) {
+      var name = (item.name || '').toLowerCase();
+      var cat = (item.category || '').toLowerCase();
+
+      // Potions & alchemy
+      if (name.includes('potion') || name.includes('elixir') || name.includes('flask') ||
+          name.includes('tincture') || name.includes('brew') || name.includes('vial') ||
+          cat.includes('potion') || cat.includes('mystic')) {
+        if (name.includes('health')) return './icons/consumables/health_potion.png';
+        if (name.includes('mana')) return './icons/consumables/mana_potion.png';
+        var pNum = (hashStr(baseId) % 48) + 1;
+        return './icons/consumables/potion_' + pNum + '.png';
+      }
+
+      // Engineer consumables → alchemy icons
+      if (cat.includes('engineer')) {
+        var aNum = (hashStr(baseId) % 48) + 1;
+        return './icons/consumables/alchemy_' + aNum + '.png';
+      }
+
+      // Herbs / salves / teas / green foods
+      if (name.includes('herb') || name.includes('salve') || name.includes('balm') ||
+          name.includes('tonic') || name.includes('remedy') || name.includes('tea') ||
+          cat.includes('green')) {
+        var hIdx = hashStr(baseId) % HERB_ICONS.length;
+        return './icons/consumables/' + HERB_ICONS[hIdx] + '.png';
+      }
+
+      // Food — match by keyword
+      for (var i = 0; i < FOOD_KEYWORDS.length; i++) {
+        if (name.includes(FOOD_KEYWORDS[i][0])) {
+          return './icons/consumables/' + FOOD_KEYWORDS[i][1] + '.png';
+        }
+      }
+
+      // Default: deterministic food icon
+      var fIdx = hashStr(baseId) % ALL_FOODS.length;
+      return './icons/consumables/' + ALL_FOODS[fIdx] + '.png';
     }
 
     // ── Selection ───────────────────────────────────────────────────
@@ -607,7 +702,7 @@
           if (catData.items) {
             for (const item of catData.items) {
               for (let tier = 1; tier <= 8; tier++) {
-                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier }, category, 'weapon');
+                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier, iconBase: catData.iconBase || 'Sword' }, category, 'weapon');
               }
             }
           }
@@ -749,13 +844,9 @@
       var tier = item.tier || 1;
       var safeId = escapeAttr(item.id);
       var iconUrl = getIconUrl(item);
-      var imgHtml;
-      if (iconUrl) {
-        imgHtml = '<img class="item-image" src="' + escapeAttr(iconUrl) + '" alt="' + escapeAttr(item.name) +
-          '" loading="lazy" onerror="this.outerHTML=\'<div class=item-emoji-fallback>' + (item.emoji || '📦') + '</div>\'">';
-      } else {
-        imgHtml = '<div class="item-emoji-fallback">' + (item.emoji || '📦') + '</div>';
-      }
+      var fallbackUrl = escapeAttr(getFallbackUrl(item));
+      var imgHtml = '<img class="item-image" src="' + escapeAttr(iconUrl) + '" alt="' + escapeAttr(item.name) +
+        '" loading="lazy" onerror="this.onerror=null;this.dataset.failed=1;this.src=\'' + fallbackUrl + '\'">';
       return '<div class="item-card" data-tier="' + tier + '" data-item-id="' + safeId + '">' +
         '<div class="item-image-container">' +
           imgHtml +
@@ -771,9 +862,8 @@
       var tier = item.tier || 1;
       var tierColor = 'var(--tier-' + tier + ')';
       var iconUrl = getIconUrl(item);
-      var iconInner = iconUrl
-        ? '<img src="' + escapeAttr(iconUrl) + '" style="width:100%;height:100%;object-fit:contain;" onerror="this.outerHTML=\'' + (item.emoji || '📦') + '\'">'  
-        : (item.emoji || '📦');
+      var fallbackUrl = escapeAttr(getFallbackUrl(item));
+      var iconInner = '<img src="' + escapeAttr(iconUrl) + '" style="width:100%;height:100%;object-fit:contain;" onerror="this.onerror=null;this.src=\'' + fallbackUrl + '\'">';
       var html = '<div class="modal-header">' +
         '<div class="modal-icon" style="background:linear-gradient(135deg,' + tierColor + ',rgba(0,0,0,0.3));border:2px solid ' + tierColor + ';overflow:hidden;">' +
           iconInner +
