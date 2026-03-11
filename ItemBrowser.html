@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -125,6 +125,28 @@
       100% { transform: rotate(360deg); }
     }
     
+    /* Error State */
+    .error-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #ff4d4d;
+      background: rgba(255, 77, 77, 0.1);
+      border: 1px solid rgba(255, 77, 77, 0.3);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .error-state button {
+      margin-top: 12px;
+      padding: 8px 20px;
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    
     /* Progress Bar for Image Generation */
     .progress-bar {
       width: 100%;
@@ -176,18 +198,148 @@
       margin-bottom: 16px;
       opacity: 0.3;
     }
+
+    /* Item Detail Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 32px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .modal-close:hover {
+      color: var(--text-primary);
+      background: var(--bg-dark);
+    }
+    .modal-header {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .modal-icon {
+      width: 80px; height: 80px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .modal-subtitle {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    .modal-section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+    .modal-section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .modal-lore {
+      font-style: italic;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+    .stat-chip {
+      background: var(--bg-dark);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .stat-chip-label {
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+    .stat-chip-value {
+      font-weight: 600;
+      color: var(--tier-7);
+    }
+    .ability-list {
+      list-style: none;
+      padding: 0;
+    }
+    .ability-list li {
+      padding: 6px 0;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(61, 61, 61, 0.3);
+    }
+    .ability-list li:last-child { border-bottom: none; }
+    .signature-ability {
+      background: linear-gradient(135deg, rgba(212, 168, 75, 0.15), rgba(240, 216, 144, 0.05));
+      padding: 10px 14px;
+      border-radius: 8px;
+      border-left: 3px solid var(--tier-7);
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+    .passive-tag {
+      display: inline-block;
+      background: rgba(74, 158, 255, 0.15);
+      color: var(--tier-3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin: 3px 4px 3px 0;
+    }
   </style>
 </head>
 <body>
   <!-- Grudge Auth SDK -->
   <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', function() { GrudgeAuth.renderAuthBar(); });</script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
 
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>⚔️ Grudge Studio Item Browser</h1>
-      <p class="subtitle">AI-Generated Images • Tier-Based System • Single Source of Truth</p>
+      <h1>&#9876;&#65039; Grudge Studio Item Browser</h1>
+      <p class="subtitle">AI-Generated Images &bull; Tier-Based System &bull; Single Source of Truth</p>
       
       <!-- Stats Bar -->
       <div class="stats-bar">
@@ -198,6 +350,10 @@
         <div class="stat-item">
           <div class="stat-label">Weapons</div>
           <div class="stat-value" id="weaponCount">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Armor</div>
+          <div class="stat-value" id="armorCount">-</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Materials</div>
@@ -214,17 +370,17 @@
       </div>
     </div>
     
+    <!-- Error State -->
+    <div class="error-state" id="errorState">
+      <p id="errorMessage">Failed to load item data.</p>
+      <button onclick="location.reload()">Retry</button>
+    </div>
+
     <!-- Controls -->
     <div class="controls">
-      <input 
-        type="text" 
-        class="search-box" 
-        id="searchBox" 
-        placeholder="🔍 Search items by name, stat, or description..."
-      >
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search items by name, stat, or description...">
       
       <div class="filter-row">
-        <!-- Type Filter -->
         <div class="toggle-group">
           <button class="toggle-btn active" data-type="all">All</button>
           <button class="toggle-btn" data-type="weapon">Weapons</button>
@@ -233,7 +389,6 @@
           <button class="toggle-btn" data-type="consumable">Consumables</button>
         </div>
         
-        <!-- Tier Filter -->
         <div class="tier-filter">
           <span style="color: var(--text-dim); font-size: 0.85rem; margin-right: 8px;">Tier:</span>
           <button class="tier-filter-btn active" data-tier="all">All</button>
@@ -247,12 +402,10 @@
           <button class="tier-filter-btn" data-tier="8">8</button>
         </div>
         
-        <!-- Image Generation Controls -->
-        <button class="filter-btn" id="generateImagesBtn">🎨 Generate Images</button>
-        <button class="filter-btn" id="clearCacheBtn">🗑️ Clear Cache</button>
+        <button class="filter-btn" id="generateImagesBtn">&#127912; Generate Images</button>
+        <button class="filter-btn" id="clearCacheBtn">&#128465;&#65039; Clear Cache</button>
       </div>
       
-      <!-- Progress Bar -->
       <div class="progress-bar" id="progressBar" style="display: none;">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -275,9 +428,17 @@
     
     <!-- Empty State -->
     <div class="empty-state" id="emptyState" style="display: none;">
-      <div class="empty-state-icon">🔍</div>
+      <div class="empty-state-icon">&#128269;</div>
       <h3>No items found</h3>
       <p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+
+  <!-- Item Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div id="modalBody"></div>
     </div>
   </div>
 
@@ -285,244 +446,356 @@
     import { imageGenerator } from './utils/image-generator.js';
     import { itemRegistry } from './utils/item-registry.js';
 
-    // State
-    let currentFilters = {
-      search: '',
-      type: 'all',
-      tier: 'all'
-    };
+    let currentFilters = { search: '', type: 'all', tier: 'all' };
+    let loadErrors = [];
 
-    // Initialize
     async function init() {
-      console.log('🚀 Initializing Grudge Studio Item Browser...');
-      
-      // Load all data
+      console.log('Initializing Grudge Studio Item Browser...');
       await loadAllData();
-      
-      // Setup event listeners
       setupEventListeners();
-      
-      // Initial render
       renderItems();
-      
-      // Update stats
       updateStats();
-      
-      console.log('✅ Initialization complete!');
+      if (loadErrors.length > 0) {
+        showError('Partial load: ' + loadErrors.join(', ') + ' failed to load.');
+      }
+      console.log('Initialization complete!');
     }
 
     async function loadAllData() {
+      // Load weapons
       try {
-        // Load weapons
-        const weaponsRes = await fetch('./api/v1/weapons.json');
-        const weaponsData = await weaponsRes.json();
-        
-        for (const [category, catData] of Object.entries(weaponsData.categories)) {
+        const res = await fetch('./api/v1/weapons.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        for (const [category, catData] of Object.entries(data.categories)) {
           if (catData.items) {
             for (const item of catData.items) {
-              // For T1-T8, register 8 versions of each item
               for (let tier = 1; tier <= 8; tier++) {
-                itemRegistry.register({
-                  ...item,
-                  tier,
-                  id: `${item.id}-t${tier}`
-                }, category, 'weapon');
+                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier }, category, 'weapon');
               }
             }
           }
         }
+      } catch (e) { console.error('Error loading weapons:', e); loadErrors.push('Weapons'); }
 
-        // Load materials
-        const materialsRes = await fetch('./api/v1/materials.json');
-        const materialsData = await materialsRes.json();
-        
-        for (const [category, catData] of Object.entries(materialsData.categories)) {
-          if (catData.items) {
-            itemRegistry.registerBatch(catData.items, category, 'material');
+      // Load armor
+      try {
+        const res = await fetch('./api/v1/armor.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        for (const [material, matData] of Object.entries(data.materials)) {
+          if (matData.items) {
+            for (const item of matData.items) {
+              for (let tier = 1; tier <= 8; tier++) {
+                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier, material }, material, 'armor');
+              }
+            }
           }
         }
+      } catch (e) { console.error('Error loading armor:', e); loadErrors.push('Armor'); }
 
-        // Load consumables
-        const consumablesRes = await fetch('./api/v1/consumables.json');
-        const consumablesData = await consumablesRes.json();
-        
-        for (const [category, catData] of Object.entries(consumablesData.categories)) {
-          if (catData.items) {
-            itemRegistry.registerBatch(catData.items, category, 'consumable');
-          }
+      // Load materials
+      try {
+        const res = await fetch('./api/v1/materials.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        for (const [category, catData] of Object.entries(data.categories)) {
+          if (catData.items) itemRegistry.registerBatch(catData.items, category, 'material');
         }
+      } catch (e) { console.error('Error loading materials:', e); loadErrors.push('Materials'); }
 
-        console.log('✅ Loaded all data:', itemRegistry.getStats());
-
-        // Validate data integrity
-        const validation = itemRegistry.validate();
-        if (!validation.valid) {
-          console.warn('⚠️ Data validation issues:', validation.issues);
+      // Load consumables
+      try {
+        const res = await fetch('./api/v1/consumables.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        for (const [category, catData] of Object.entries(data.categories)) {
+          if (catData.items) itemRegistry.registerBatch(catData.items, category, 'consumable');
         }
+      } catch (e) { console.error('Error loading consumables:', e); loadErrors.push('Consumables'); }
 
-      } catch (error) {
-        console.error('❌ Error loading data:', error);
-      }
+      console.log('Loaded data:', itemRegistry.getStats());
+      const validation = itemRegistry.validate();
+      if (!validation.valid) console.warn('Data validation issues:', validation.issues);
+    }
+
+    function showError(message) {
+      document.getElementById('errorMessage').textContent = message;
+      document.getElementById('errorState').style.display = 'block';
     }
 
     function setupEventListeners() {
-      // Search
-      document.getElementById('searchBox').addEventListener('input', debounce((e) => {
+      document.getElementById('searchBox').addEventListener('input', debounce(function(e) {
         currentFilters.search = e.target.value;
         renderItems();
       }, 300));
 
-      // Type filters
-      document.querySelectorAll('[data-type]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-type]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('[data-type]').forEach(function(b) { b.classList.remove('active'); });
           btn.classList.add('active');
           currentFilters.type = btn.dataset.type;
           renderItems();
         });
       });
 
-      // Tier filters
-      document.querySelectorAll('[data-tier]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('[data-tier]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-tier]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('[data-tier]').forEach(function(b) { b.classList.remove('active'); });
           btn.classList.add('active');
           currentFilters.tier = btn.dataset.tier;
           renderItems();
         });
       });
 
-      // Generate images button
-      document.getElementById('generateImagesBtn').addEventListener('click', () => {
+      document.getElementById('generateImagesBtn').addEventListener('click', function() {
         generateImagesForCurrentView();
       });
 
-      // Clear cache button
-      document.getElementById('clearCacheBtn').addEventListener('click', () => {
+      document.getElementById('clearCacheBtn').addEventListener('click', function() {
         if (confirm('Clear all cached images?')) {
           imageGenerator.clearCache();
           updateStats();
           renderItems();
         }
       });
+
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === e.currentTarget) closeModal();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      document.getElementById('itemsGrid').addEventListener('click', function(e) {
+        var card = e.target.closest('.item-card');
+        if (card) {
+          var item = itemRegistry.getItem(card.dataset.itemId);
+          if (item) openItemModal(item);
+        }
+      });
     }
 
     function renderItems() {
-      const filters = {
+      var filters = {
         type: currentFilters.type === 'all' ? undefined : currentFilters.type,
         tier: currentFilters.tier === 'all' ? undefined : currentFilters.tier
       };
-
-      const results = itemRegistry.search(currentFilters.search, filters);
-      
-      const grid = document.getElementById('itemsGrid');
-      const loadingState = document.getElementById('loadingState');
-      const resultsDiv = document.getElementById('results');
-      const emptyState = document.getElementById('emptyState');
-
-      loadingState.style.display = 'none';
+      var results = itemRegistry.search(currentFilters.search, filters);
+      var grid = document.getElementById('itemsGrid');
+      document.getElementById('loadingState').style.display = 'none';
       
       if (results.length === 0) {
-        resultsDiv.style.display = 'none';
-        emptyState.style.display = 'block';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
         return;
       }
-
-      emptyState.style.display = 'none';
-      resultsDiv.style.display = 'block';
-      
-      document.getElementById('resultsCount').textContent = `${results.length} items`;
-
-      grid.innerHTML = results.map(item => createItemCard(item)).join('');
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('resultsCount').textContent = results.length + ' items';
+      grid.innerHTML = results.map(function(item) { return createItemCard(item); }).join('');
+      restoreCachedImages();
     }
 
     function createItemCard(item) {
-      const tier = item.tier || 1;
-      const tierClass = `tier-${tier}`;
-      
-      return `
-        <div class="item-card" data-tier="${tier}" data-item-id="${item.id}">
-          <div class="item-image-container">
-            <div class="item-image-skeleton" id="img-${item.id}"></div>
-            <span class="tier-badge ${tierClass}">T${tier}</span>
-          </div>
-          <div class="item-name">${item.name}</div>
-          <div class="item-meta">${item.primaryStat || item.category}</div>
-        </div>
-      `;
+      var tier = item.tier || 1;
+      var safeId = escapeAttr(item.id);
+      return '<div class="item-card" data-tier="' + tier + '" data-item-id="' + safeId + '">' +
+        '<div class="item-image-container">' +
+          '<div class="item-image-skeleton" data-img-id="' + safeId + '"></div>' +
+          '<span class="tier-badge tier-' + tier + '">T' + tier + '</span>' +
+        '</div>' +
+        '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
+        '<div class="item-meta">' + escapeHtml(item.primaryStat || item.category) + '</div>' +
+      '</div>';
+    }
+
+    function restoreCachedImages() {
+      document.querySelectorAll('.item-card').forEach(function(card) {
+        var item = itemRegistry.getItem(card.dataset.itemId);
+        if (!item) return;
+        var baseId = item.id.replace(/-t\d+$/, '');
+        var cacheKey = item.type + '-' + baseId;
+        if (imageGenerator.generatedImages.has(cacheKey)) {
+          var url = imageGenerator.generatedImages.get(cacheKey);
+          var skeleton = card.querySelector('[data-img-id]');
+          if (skeleton) {
+            var img = document.createElement('img');
+            img.src = url;
+            img.className = 'item-image';
+            img.alt = item.name;
+            img.loading = 'lazy';
+            skeleton.replaceWith(img);
+          }
+        }
+      });
     }
 
     async function generateImagesForCurrentView() {
-      const visibleCards = document.querySelectorAll('.item-card');
-      if (visibleCards.length === 0) return;
-
-      const btn = document.getElementById('generateImagesBtn');
-      const progressBar = document.getElementById('progressBar');
-      const progressFill = document.getElementById('progressFill');
-      
+      var cards = document.querySelectorAll('.item-card');
+      if (cards.length === 0) return;
+      var btn = document.getElementById('generateImagesBtn');
+      var progressBar = document.getElementById('progressBar');
+      var progressFill = document.getElementById('progressFill');
       btn.disabled = true;
-      btn.textContent = '⏳ Generating...';
+      btn.textContent = 'Generating...';
       progressBar.style.display = 'block';
       progressFill.style.width = '0%';
+      var completed = 0;
+      var total = Math.min(cards.length, 20);
 
-      let completed = 0;
-      const total = Math.min(visibleCards.length, 20); // Limit to first 20 for demo
-
-      for (let i = 0; i < total; i++) {
-        const card = visibleCards[i];
-        const itemId = card.dataset.itemId;
-        const item = itemRegistry.getItem(itemId);
-        
+      for (var i = 0; i < total; i++) {
+        var card = cards[i];
+        var item = itemRegistry.getItem(card.dataset.itemId);
         if (item) {
           try {
-            // Get base item (without tier) for image generation
-            const baseId = item.id.replace(/-t\d+$/, '');
-            const baseItem = { ...item, id: baseId };
-            
-            const imageUrl = await imageGenerator.generateItemImage(baseItem, item.type);
-            const imgContainer = card.querySelector(`#img-${itemId}`);
-            
-            if (imgContainer) {
-              imgContainer.outerHTML = `<img src="${imageUrl}" class="item-image" alt="${item.name}">`;
+            var baseId = item.id.replace(/-t\d+$/, '');
+            var baseItem = Object.assign({}, item, { id: baseId });
+            var url = await imageGenerator.generateItemImage(baseItem, item.type);
+            var skeleton = card.querySelector('[data-img-id]');
+            if (skeleton) {
+              var img = document.createElement('img');
+              img.src = url;
+              img.className = 'item-image';
+              img.alt = item.name;
+              img.loading = 'lazy';
+              skeleton.replaceWith(img);
             }
-          } catch (error) {
-            console.error(`Failed to generate image for ${item.name}:`, error);
+          } catch (err) {
+            console.error('Failed to generate image for ' + item.name + ':', err);
           }
         }
-
         completed++;
-        progressFill.style.width = `${(completed / total) * 100}%`;
+        progressFill.style.width = ((completed / total) * 100) + '%';
       }
-
-      setTimeout(() => {
+      setTimeout(function() {
         btn.disabled = false;
-        btn.textContent = '🎨 Generate Images';
+        btn.textContent = 'Generate Images';
         progressBar.style.display = 'none';
         updateStats();
       }, 500);
     }
 
+    function openItemModal(item) {
+      var tier = item.tier || 1;
+      var tierColor = 'var(--tier-' + tier + ')';
+      var html = '<div class="modal-header">' +
+        '<div class="modal-icon" style="background:linear-gradient(135deg,' + tierColor + ',rgba(0,0,0,0.3));border:2px solid ' + tierColor + ';">' +
+          (item.emoji || '&#128230;') +
+        '</div><div>' +
+          '<div class="modal-title" style="color:' + tierColor + ';">' + escapeHtml(item.name) + '</div>' +
+          '<div class="modal-subtitle">T' + tier + ' ' + capitalize(item.type) + ' &bull; ' + capitalize(item.category) +
+            (item.material ? ' &bull; ' + capitalize(item.material) : '') +
+          '</div></div></div>';
+
+      if (item.lore || item.description) {
+        html += '<div class="modal-section"><div class="modal-section-title">Lore</div>' +
+          '<p class="modal-lore">&ldquo;' + escapeHtml(item.lore || item.description) + '&rdquo;</p></div>';
+      }
+
+      if (item.stats && Object.keys(item.stats).length > 0) {
+        html += '<div class="modal-section"><div class="modal-section-title">Stats (at T' + tier + ')</div><div class="stat-grid">';
+        for (var key in item.stats) {
+          if (key.endsWith('PerTier')) continue;
+          var val = item.stats[key];
+          var ptKey = key.replace('Base', 'PerTier');
+          if (key.endsWith('Base') && item.stats[ptKey] !== undefined) {
+            val = val + (item.stats[ptKey] * (tier - 1));
+          }
+          var label = key.replace('Base', '').replace(/([A-Z])/g, ' ').trim();
+          html += '<div class="stat-chip"><div class="stat-chip-label">' + escapeHtml(label) + '</div>' +
+            '<div class="stat-chip-value">' + (typeof val === 'number' ? (val % 1 ? val.toFixed(1) : val) : val) + '</div></div>';
+        }
+        html += '</div></div>';
+      }
+
+      if (item.primaryStat || item.secondaryStat) {
+        html += '<div class="modal-section"><div class="modal-section-title">Attributes</div><div class="stat-grid">';
+        if (item.primaryStat) html += '<div class="stat-chip"><div class="stat-chip-label">Primary</div><div class="stat-chip-value">' + escapeHtml(item.primaryStat) + '</div></div>';
+        if (item.secondaryStat) html += '<div class="stat-chip"><div class="stat-chip-label">Secondary</div><div class="stat-chip-value">' + escapeHtml(item.secondaryStat) + '</div></div>';
+        html += '</div></div>';
+      }
+
+      if (item.abilities && item.abilities.length > 0) {
+        html += '<div class="modal-section"><div class="modal-section-title">Abilities</div>';
+        if (item.basicAbility) html += '<p style="margin-bottom:8px;font-size:0.9rem;"><strong>Basic:</strong> ' + escapeHtml(item.basicAbility) + '</p>';
+        html += '<ul class="ability-list">';
+        item.abilities.forEach(function(a) { html += '<li>&#9889; ' + escapeHtml(a) + '</li>'; });
+        html += '</ul>';
+        if (item.signatureAbility) html += '<div class="signature-ability"><strong>&#11088; Signature:</strong> ' + escapeHtml(item.signatureAbility) + '</div>';
+        html += '</div>';
+      }
+
+      if (item.passives && item.passives.length > 0) {
+        html += '<div class="modal-section"><div class="modal-section-title">Passives</div>';
+        item.passives.forEach(function(p) { html += '<span class="passive-tag">' + escapeHtml(p) + '</span>'; });
+        html += '</div>';
+      }
+
+      if (item.passive || item.effect || item.proc || item.setBonus) {
+        html += '<div class="modal-section"><div class="modal-section-title">Equipment Effects</div><div class="stat-grid">';
+        if (item.passive) html += '<div class="stat-chip"><div class="stat-chip-label">Passive</div><div class="stat-chip-value">' + escapeHtml(item.passive) + '</div></div>';
+        if (item.attribute) html += '<div class="stat-chip"><div class="stat-chip-label">Attribute</div><div class="stat-chip-value">' + escapeHtml(item.attribute) + '</div></div>';
+        if (item.effect) html += '<div class="stat-chip"><div class="stat-chip-label">Effect</div><div class="stat-chip-value">' + escapeHtml(item.effect) + '</div></div>';
+        if (item.proc) html += '<div class="stat-chip"><div class="stat-chip-label">Proc</div><div class="stat-chip-value">' + escapeHtml(item.proc) + '</div></div>';
+        if (item.setBonus) html += '<div class="stat-chip"><div class="stat-chip-label">Set Bonus</div><div class="stat-chip-value">' + escapeHtml(item.setBonus) + '</div></div>';
+        html += '</div></div>';
+      }
+
+      if (item.craftedBy || item.gatheredBy) {
+        html += '<div class="modal-section"><div class="modal-section-title">Source</div>';
+        if (item.craftedBy) html += '<p style="font-size:0.9rem;">Crafted by: <strong>' + escapeHtml(item.craftedBy) + '</strong></p>';
+        if (item.gatheredBy) html += '<p style="font-size:0.9rem;">Gathered by: <strong>' + escapeHtml(item.gatheredBy) + '</strong></p>';
+        html += '</div>';
+      }
+
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modalContent').style.borderColor = tierColor;
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
     function updateStats() {
-      const stats = itemRegistry.getStats();
-      
+      var stats = itemRegistry.getStats();
       document.getElementById('totalCount').textContent = stats.totalItems;
       document.getElementById('weaponCount').textContent = stats.byType.weapon || 0;
+      document.getElementById('armorCount').textContent = stats.byType.armor || 0;
       document.getElementById('materialCount').textContent = stats.byType.material || 0;
       document.getElementById('consumableCount').textContent = stats.byType.consumable || 0;
-      
-      const imageStats = imageGenerator.getCacheStats();
-      document.getElementById('imageCacheCount').textContent = imageStats.cached;
+      document.getElementById('imageCacheCount').textContent = imageGenerator.getCacheStats().cached;
     }
 
     function debounce(fn, delay) {
-      let timeout;
-      return (...args) => {
+      var timeout;
+      return function() {
+        var args = arguments;
+        var ctx = this;
         clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
+        timeout = setTimeout(function() { fn.apply(ctx, args); }, delay);
       };
     }
 
-    // Start the app
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function escapeAttr(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function capitalize(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     init();
   </script>
 </body>

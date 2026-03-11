@@ -11,6 +11,30 @@ class GrudgeImageGenerator {
     this.cache = new Map();
     this.generatedImages = new Map();
     this.pendingRequests = new Map();
+    this._restoreFromStorage();
+  }
+
+  /**
+   * Restore previously generated images from localStorage
+   */
+  _restoreFromStorage() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('grudge-img-')) {
+          const cacheKey = key.replace('grudge-img-', '');
+          const imageUrl = localStorage.getItem(key);
+          if (imageUrl) {
+            this.generatedImages.set(cacheKey, imageUrl);
+          }
+        }
+      }
+      if (this.generatedImages.size > 0) {
+        console.log(`📦 Restored ${this.generatedImages.size} cached images from localStorage`);
+      }
+    } catch (e) {
+      console.warn('Failed to restore images from localStorage:', e);
+    }
   }
 
   /**
