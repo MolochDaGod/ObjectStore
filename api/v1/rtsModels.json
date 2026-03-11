@@ -1,0 +1,467 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-03-10",
+  "description": "3D GLB models for Grudge Warlords RTS - characters, cavalry, siege, equipment, vehicles organized by race",
+  "totalModels": 31,
+  "baseUrl": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts",
+  "objectStoreApi": "https://molochdagod.github.io/ObjectStore/api/v1",
+  "auth": {
+    "sdk": "https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js",
+    "method": "GrudgeAuth.loginWithDiscord()",
+    "tokenHeader": "Authorization: Bearer <grudge_auth_token>",
+    "note": "Models are public read. Auth required for write/save operations."
+  },
+  "races": {
+    "barbarian": {
+      "id": "barbarian",
+      "name": "Barbarian",
+      "faction": "crusade",
+      "color": "#f43f5e",
+      "emoji": "🪓",
+      "objectStoreRace": "barbarian",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-brb-chars-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_Characters",
+          "displayName": "Barbarian Characters (Customizable)",
+          "file": "barbarian/BRB_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 366185,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "barbarian", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-brb-cav-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_Cavalry",
+          "displayName": "Barbarian Cavalry (Customizable)",
+          "file": "barbarian/BRB_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 392145,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "barbarian", "cavalry", "mount", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-brb-wpn-hammer-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_weapon_hammer",
+          "displayName": "Barbarian Hammer",
+          "file": "barbarian/equipment/BRB_weapon_hammer.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 6845,
+          "tags": ["rts", "barbarian", "weapon", "hammer", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-brb-wpn-spear-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_weapon_spear",
+          "displayName": "Barbarian Spear",
+          "file": "barbarian/equipment/BRB_weapon_spear.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 5977,
+          "tags": ["rts", "barbarian", "weapon", "spear", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-brb-wpn-staff-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_weapon_staff",
+          "displayName": "Barbarian Staff",
+          "file": "barbarian/equipment/BRB_weapon_staff.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 6349,
+          "tags": ["rts", "barbarian", "weapon", "staff", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-brb-wpn-sword-001",
+          "grudgeType": "rts_model",
+          "name": "BRB_weapon_sword",
+          "displayName": "Barbarian Sword",
+          "file": "barbarian/equipment/BRB_weapon_sword.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 6065,
+          "tags": ["rts", "barbarian", "weapon", "sword", "equipment"]
+        }
+      ]
+    },
+    "dwarf": {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "faction": "fabled",
+      "color": "#f59e0b",
+      "emoji": "⛏️",
+      "objectStoreRace": "dwarf",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-dwf-chars-001",
+          "grudgeType": "rts_model",
+          "name": "DWF_Characters",
+          "displayName": "Dwarf Characters (Customizable)",
+          "file": "dwarf/DWF_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 372885,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "dwarf", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-dwf-cav-001",
+          "grudgeType": "rts_model",
+          "name": "DWF_Cavalry",
+          "displayName": "Dwarf Cavalry (Customizable)",
+          "file": "dwarf/DWF_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 398889,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "dwarf", "cavalry", "mount", "customizable"]
+        }
+      ]
+    },
+    "elf": {
+      "id": "elf",
+      "name": "Elf",
+      "faction": "fabled",
+      "color": "#22d3ee",
+      "emoji": "🧝",
+      "objectStoreRace": "elf",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-elf-chars-001",
+          "grudgeType": "rts_model",
+          "name": "ELF_Characters",
+          "displayName": "Elf Characters (Customizable)",
+          "file": "elf/ELF_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 441417,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "elf", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-elf-cav-001",
+          "grudgeType": "rts_model",
+          "name": "ELF_Cavalry",
+          "displayName": "Elf Cavalry (Customizable)",
+          "file": "elf/ELF_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 472753,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "elf", "cavalry", "mount", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-elf-siege-001",
+          "grudgeType": "rts_model",
+          "name": "ELF_BoltThrower",
+          "displayName": "Elf Bolt Thrower",
+          "file": "elf/ELF_BoltThrower.glb",
+          "category": "siege",
+          "unitType": "siege",
+          "sizeBytes": 51553,
+          "hasAnimations": true,
+          "tags": ["rts", "elf", "siege", "boltthrower", "ranged"]
+        },
+        {
+          "grudgeId": "rts-mdl-elf-wpn-spear-001",
+          "grudgeType": "rts_model",
+          "name": "ELF_weapon_spear",
+          "displayName": "Elf Spear",
+          "file": "elf/equipment/ELF_weapon_spear.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 3985,
+          "tags": ["rts", "elf", "weapon", "spear", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-elf-wpn-staff-001",
+          "grudgeType": "rts_model",
+          "name": "ELF_weapon_staff",
+          "displayName": "Elf Staff",
+          "file": "elf/equipment/ELF_weapon_staff.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 8177,
+          "tags": ["rts", "elf", "weapon", "staff", "equipment"]
+        }
+      ]
+    },
+    "human": {
+      "id": "human",
+      "name": "Human",
+      "faction": "crusade",
+      "color": "#94a3b8",
+      "emoji": "🧑",
+      "objectStoreRace": "human",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-wk-chars-001",
+          "grudgeType": "rts_model",
+          "name": "WK_Characters",
+          "displayName": "Human Characters (Customizable)",
+          "file": "human/WK_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 253469,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "human", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-wk-cav-001",
+          "grudgeType": "rts_model",
+          "name": "WK_Cavalry",
+          "displayName": "Human Cavalry (Customizable)",
+          "file": "human/WK_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 284713,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "human", "cavalry", "mount", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-wk-siege-001",
+          "grudgeType": "rts_model",
+          "name": "WK_Catapult",
+          "displayName": "Human Catapult",
+          "file": "human/WK_Catapult.glb",
+          "category": "siege",
+          "unitType": "siege",
+          "sizeBytes": 60065,
+          "hasAnimations": false,
+          "tags": ["rts", "human", "siege", "catapult"]
+        },
+        {
+          "grudgeId": "rts-mdl-wk-wpn-staff-001",
+          "grudgeType": "rts_model",
+          "name": "WK_weapon_staff",
+          "displayName": "Human Staff",
+          "file": "human/equipment/WK_weapon_staff.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 5365,
+          "tags": ["rts", "human", "weapon", "staff", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-wk-wpn-sword-001",
+          "grudgeType": "rts_model",
+          "name": "WK_weapon_sword",
+          "displayName": "Human Sword",
+          "file": "human/equipment/WK_weapon_sword.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 3373,
+          "tags": ["rts", "human", "weapon", "sword", "equipment"]
+        }
+      ]
+    },
+    "orc": {
+      "id": "orc",
+      "name": "Orc",
+      "faction": "legion",
+      "color": "#65a30d",
+      "emoji": "👹",
+      "objectStoreRace": "orc",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-orc-chars-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_Characters",
+          "displayName": "Orc Characters (Customizable)",
+          "file": "orc/ORC_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 349621,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "orc", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-orc-cav-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_Cavalry",
+          "displayName": "Orc Cavalry (Customizable)",
+          "file": "orc/ORC_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 368785,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "orc", "cavalry", "mount", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-orc-siege-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_Catapult",
+          "displayName": "Orc Catapult",
+          "file": "orc/ORC_Catapult.glb",
+          "category": "siege",
+          "unitType": "siege",
+          "sizeBytes": 61249,
+          "hasAnimations": false,
+          "tags": ["rts", "orc", "siege", "catapult"]
+        },
+        {
+          "grudgeId": "rts-mdl-orc-wpn-shield-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_Shield",
+          "displayName": "Orc Shield",
+          "file": "orc/equipment/ORC_Shield.glb",
+          "category": "equipment",
+          "unitType": "shield",
+          "sizeBytes": 6353,
+          "tags": ["rts", "orc", "shield", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-orc-wpn-axe-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_weapon_axe",
+          "displayName": "Orc Axe",
+          "file": "orc/equipment/ORC_weapon_axe.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 3565,
+          "tags": ["rts", "orc", "weapon", "axe", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-orc-wpn-staff-001",
+          "grudgeType": "rts_model",
+          "name": "ORC_weapon_staff",
+          "displayName": "Orc Staff",
+          "file": "orc/equipment/ORC_weapon_staff.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 6545,
+          "tags": ["rts", "orc", "weapon", "staff", "equipment"]
+        }
+      ]
+    },
+    "undead": {
+      "id": "undead",
+      "name": "Undead",
+      "faction": "legion",
+      "color": "#a78bfa",
+      "emoji": "💀",
+      "objectStoreRace": "undead",
+      "models": [
+        {
+          "grudgeId": "rts-mdl-ud-chars-001",
+          "grudgeType": "rts_model",
+          "name": "UD_Characters",
+          "displayName": "Undead Characters (Customizable)",
+          "file": "undead/UD_Characters.glb",
+          "category": "character",
+          "unitType": "infantry",
+          "sizeBytes": 346901,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "undead", "infantry", "character", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-ud-cav-001",
+          "grudgeType": "rts_model",
+          "name": "UD_Cavalry",
+          "displayName": "Undead Cavalry (Customizable)",
+          "file": "undead/UD_Cavalry.glb",
+          "category": "mount",
+          "unitType": "cavalry",
+          "sizeBytes": 377241,
+          "hasAnimations": false,
+          "customizable": true,
+          "tags": ["rts", "undead", "cavalry", "mount", "customizable"]
+        },
+        {
+          "grudgeId": "rts-mdl-ud-wpn-shield-001",
+          "grudgeType": "rts_model",
+          "name": "UD_Shield",
+          "displayName": "Undead Shield",
+          "file": "undead/equipment/UD_Shield.glb",
+          "category": "equipment",
+          "unitType": "shield",
+          "sizeBytes": 4929,
+          "tags": ["rts", "undead", "shield", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-ud-wpn-spear-001",
+          "grudgeType": "rts_model",
+          "name": "UD_weapon_spear",
+          "displayName": "Undead Spear",
+          "file": "undead/equipment/UD_weapon_spear.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 3817,
+          "tags": ["rts", "undead", "weapon", "spear", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-ud-wpn-staff-001",
+          "grudgeType": "rts_model",
+          "name": "UD_weapon_staff",
+          "displayName": "Undead Staff",
+          "file": "undead/equipment/UD_weapon_staff.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 8381,
+          "tags": ["rts", "undead", "weapon", "staff", "equipment"]
+        },
+        {
+          "grudgeId": "rts-mdl-ud-wpn-sword-001",
+          "grudgeType": "rts_model",
+          "name": "UD_weapon_sword",
+          "displayName": "Undead Sword",
+          "file": "undead/equipment/UD_weapon_sword.glb",
+          "category": "equipment",
+          "unitType": "weapon",
+          "sizeBytes": 5021,
+          "tags": ["rts", "undead", "weapon", "sword", "equipment"]
+        }
+      ]
+    }
+  },
+  "vehicles": [
+    {
+      "grudgeId": "rts-mdl-veh-boat-001",
+      "grudgeType": "rts_model",
+      "name": "Boat",
+      "displayName": "Sailing Boat",
+      "file": "vehicles/Boat.glb",
+      "category": "vehicle",
+      "unitType": "naval",
+      "sizeBytes": 48321,
+      "tags": ["rts", "vehicle", "boat", "naval", "water"]
+    }
+  ],
+  "stats": {
+    "totalByRace": {
+      "barbarian": 6,
+      "dwarf": 2,
+      "elf": 5,
+      "human": 5,
+      "orc": 6,
+      "undead": 6
+    },
+    "totalByCategory": {
+      "character": 6,
+      "mount": 6,
+      "siege": 3,
+      "equipment": 15,
+      "vehicle": 1
+    },
+    "totalSizeBytes": 4313748,
+    "format": "GLB (Binary glTF 2.0)",
+    "convertedFrom": "FBX",
+    "conversionTool": "FBX2glTF v0.9.7"
+  }
+}
