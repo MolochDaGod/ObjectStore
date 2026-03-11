@@ -1,7 +1,7 @@
 {
-  "name": "@grudgstudio/core",
-  "version": "2.2.0",
-  "description": "Unified integration layer for all Grudge Studio projects - ObjectStore, Arsenal, Puter, and game clients",
+  "name": "@grudge-studio/objectstore",
+  "version": "2.3.0",
+  "description": "Grudge Studio ObjectStore — Public game data API, SDK, MCP server, and asset browser for Grudge Warlords",
   "main": "./integrations/grudge-studio-core.js",
   "module": "./integrations/grudge-studio-core.js",
   "types": "./types/index.d.ts",
@@ -19,6 +19,9 @@
     },
     "./integrations": {
       "import": "./integrations/grudge-studio-core.js"
+    },
+    "./mcp": {
+      "import": "./mcp/objectstore-server.js"
     }
   },
   "files": [
@@ -27,6 +30,10 @@
     "utils/",
     "types/",
     "css/",
+    "js/",
+    "mcp/",
+    "api/",
+    "openapi.yaml",
     "README.md",
     "LICENSE"
   ],
@@ -37,9 +44,14 @@
     "validate": "echo 'Validating package...'",
 
     "generate:registry": "node ./scripts/generate-asset-registry.mjs",
+    "generate:sprites": "node ./scripts/organize-rpg-modular.mjs",
+    "generate:changelog": "node ./scripts/generate-changelog.mjs",
+    "optimize:images": "node ./scripts/optimize-images.mjs",
+    "validate:schemas": "node ./scripts/validate-schemas.mjs",
     "audit:puter": "node ./scripts/puter-audit.mjs",
     "audit:puter:save": "node ./scripts/puter-audit.mjs --output docs/reports/puter-audit-report.json",
-    "sync": "node ./scripts/sync-all.js"
+    "sync": "node ./scripts/sync-all.js",
+    "mcp": "node ./mcp/objectstore-server.js"
 
   },
   "repository": {
@@ -87,6 +99,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "sharp": "^0.33.0",
     "typescript": "^5.0.0"
   },
   "engines": {

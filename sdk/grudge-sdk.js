@@ -458,6 +458,137 @@ class GrudgeSDK {
   }
 
   // ==========================================
+  // WEAPON SKILLS
+  // ==========================================
+
+  /** Get all weapon skills (473 skills across 24 types) */
+  async getWeaponSkills() {
+    return this.fetch('/api/v1/weaponSkills.json');
+  }
+
+  /** Get weapon skills by weapon type (e.g. 'Sword', 'Bow', 'Fire Staff') */
+  async getWeaponSkillsByType(weaponType) {
+    const data = await this.getWeaponSkills();
+    return (data.weaponTypes || []).find(wt => wt.weaponType === weaponType) || null;
+  }
+
+  /** Get a specific weapon skill by ID */
+  async getWeaponSkill(skillId) {
+    const data = await this.getWeaponSkills();
+    for (const wt of data.weaponTypes || []) {
+      const skill = (wt.skills || []).find(s => s.id === skillId);
+      if (skill) return { ...skill, weaponType: wt.weaponType };
+    }
+    return null;
+  }
+
+  // ==========================================
+  // ENEMIES & BOSSES
+  // ==========================================
+
+  /** Get all enemies (38 across 8 tiers) */
+  async getEnemies() {
+    return this.fetch('/api/v1/enemies.json');
+  }
+
+  /** Get a specific enemy by ID */
+  async getEnemy(enemyId) {
+    const data = await this.getEnemies();
+    return (data.enemies || []).find(e => e.id === enemyId) || null;
+  }
+
+  /** Get enemies by tier */
+  async getEnemiesByTier(tier) {
+    const data = await this.getEnemies();
+    return (data.enemies || []).filter(e => e.tier === tier);
+  }
+
+  /** Get all bosses (12 with multi-phase mechanics) */
+  async getBosses() {
+    return this.fetch('/api/v1/bosses.json');
+  }
+
+  /** Get a specific boss by ID */
+  async getBoss(bossId) {
+    const data = await this.getBosses();
+    return (data.bosses || []).find(b => b.id === bossId) || null;
+  }
+
+  // ==========================================
+  // 2D SPRITES
+  // ==========================================
+
+  /** Get all 2D sprites (5,485 across 13 categories) */
+  async getSprites2d() {
+    return this.fetch('/api/v1/sprites2d.json');
+  }
+
+  /** Get sprites by category (e.g. 'characters', 'enemies', 'icons', 'backgrounds') */
+  async getSpritesByCategory(category) {
+    const data = await this.getSprites2d();
+    return data.categories?.[category] || null;
+  }
+
+  /** Search sprites by name */
+  async searchSprites(query) {
+    const data = await this.getSprites2d();
+    const lower = query.toLowerCase();
+    const results = [];
+    for (const [cat, catData] of Object.entries(data.categories || {})) {
+      for (const item of catData.items || []) {
+        if (item.name?.toLowerCase().includes(lower) || item.path?.toLowerCase().includes(lower)) {
+          results.push({ ...item, category: cat });
+        }
+      }
+    }
+    return results;
+  }
+
+  // ==========================================
+  // VFX & EFFECTS
+  // ==========================================
+
+  /** Get all VFX effect sprites (147 sprite sheets) */
+  async getEffectSprites() {
+    return this.fetch('/api/v1/effectSprites.json');
+  }
+
+  /** Get all battle ability effects (209 abilities) */
+  async getAbilityEffects() {
+    return this.fetch('/api/v1/abilityEffects.json');
+  }
+
+  // ==========================================
+  // FACTION UNITS (RTS)
+  // ==========================================
+
+  /** Get all RTS faction units (19 units across 3 factions) */
+  async getFactionUnits() {
+    return this.fetch('/api/v1/factionUnits.json');
+  }
+
+  // ==========================================
+  // SERVERLESS API (Vercel only)
+  // ==========================================
+
+  /**
+   * Search across all game data via serverless API.
+   * Only available when deployed on Vercel.
+   * @param {string} query - Search query
+   * @param {string} type - Filter by type: weapons, armor, materials, etc. Default: 'all'
+   * @param {number} limit - Max results (1-200). Default: 50
+   */
+  async serverlessSearch(query, type = 'all', limit = 50) {
+    const params = new URLSearchParams({ q: query, type, limit: String(limit) });
+    return this.fetch(`/api/search?${params}`);
+  }
+
+  /** Get aggregate stats from serverless API (Vercel only) */
+  async getServerlessStats() {
+    return this.fetch('/api/stats');
+  }
+
+  // ==========================================
   // ICONS
   // ==========================================
   
@@ -644,15 +775,34 @@ class GrudgeSDK {
       },
       publicEndpoints: {
         weapons: `${this.baseUrl}/api/v1/weapons.json`,
-        materials: `${this.baseUrl}/api/v1/materials.json`,
         armor: `${this.baseUrl}/api/v1/armor.json`,
+        materials: `${this.baseUrl}/api/v1/materials.json`,
         consumables: `${this.baseUrl}/api/v1/consumables.json`,
         skills: `${this.baseUrl}/api/v1/skills.json`,
+        weaponSkills: `${this.baseUrl}/api/v1/weaponSkills.json`,
         professions: `${this.baseUrl}/api/v1/professions.json`,
         races: `${this.baseUrl}/api/v1/races.json`,
         classes: `${this.baseUrl}/api/v1/classes.json`,
         factions: `${this.baseUrl}/api/v1/factions.json`,
         attributes: `${this.baseUrl}/api/v1/attributes.json`,
+        enemies: `${this.baseUrl}/api/v1/enemies.json`,
+        bosses: `${this.baseUrl}/api/v1/bosses.json`,
+        sprites2d: `${this.baseUrl}/api/v1/sprites2d.json`,
+        effectSprites: `${this.baseUrl}/api/v1/effectSprites.json`,
+        abilityEffects: `${this.baseUrl}/api/v1/abilityEffects.json`,
+        factionUnits: `${this.baseUrl}/api/v1/factionUnits.json`,
+      },
+      serverlessEndpoints: {
+        search: `${this.baseUrl}/api/search`,
+        stats: `${this.baseUrl}/api/stats`,
+        export: `${this.baseUrl}/api/export`,
+      },
+      browsers: {
+        itemDatabase: `${this.baseUrl}/GRUDGE_Item_Database.html`,
+        spriteDatabase: `${this.baseUrl}/SPRITE_DATABASE.html`,
+        vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`,
+        models2d: `${this.baseUrl}/2D_MODELS.html`,
+        itemBrowser: `${this.baseUrl}/ItemBrowser.html`,
       },
       docs: `${this.baseUrl}/docs/`,
     };

@@ -62,4 +62,23 @@
   } else {
     document.body.appendChild(nav);
   }
+
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    var swPath = inSubdir ? '../sw.js' : './sw.js';
+    navigator.serviceWorker.register(swPath).catch(function() {});
+  }
+
+  // Vercel Analytics (only when deployed on Vercel)
+  if (window.location.hostname.includes('vercel.app')) {
+    var s = document.createElement('script');
+    s.src = 'https://va.vercel-scripts.com/v1/script.js';
+    s.defer = true;
+    s.dataset.sdkn = '@vercel/analytics';
+    document.head.appendChild(s);
+    var si = document.createElement('script');
+    si.src = 'https://va.vercel-scripts.com/v1/speed-insights/script.js';
+    si.defer = true;
+    document.head.appendChild(si);
+  }
 })();

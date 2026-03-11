@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: Grudge Studio ObjectStore API
+  description: Public API for Grudge Warlords game data — weapons, armor, materials, sprites, VFX, and more.
+  version: 2.3.0
+  contact:
+    name: Grudge Studio
+    url: https://grudgewarlords.com
+    email: contact@grudgewarlords.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://molochdagod.github.io/ObjectStore
+    description: GitHub Pages (static JSON)
+  - url: https://objectstore.vercel.app
+    description: Vercel (static + serverless)
+
+tags:
+  - name: Core
+    description: Core game data (weapons, armor, materials, consumables)
+  - name: Combat
+    description: Skills, enemies, bosses, abilities
+  - name: Sprites
+    description: 2D sprites, VFX effects, sprite maps
+  - name: World
+    description: Classes, races, factions, professions, attributes
+  - name: Engine
+    description: Game engine data (units, maps, AI, animations)
+  - name: Serverless
+    description: Vercel-only dynamic endpoints
+
+paths:
+  /api/v1/weapons.json:
+    get:
+      tags: [Core]
+      summary: Get all weapons
+      description: 119 weapons across 17 categories with stats, lore, abilities, passives
+      responses:
+        '200':
+          description: Weapons data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version: { type: string }
+                  categories:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        craftedBy: { type: string }
+                        category: { type: string }
+                        items:
+                          type: array
+                          items: { $ref: '#/components/schemas/Weapon' }
+
+  /api/v1/armor.json:
+    get:
+      tags: [Core]
+      summary: Get all armor
+      description: 150 armor items (6 sets × 8 slots × 3 materials + gems) with stats, procs, set bonuses
+      responses:
+        '200': { description: Armor data }
+
+  /api/v1/materials.json:
+    get:
+      tags: [Core]
+      summary: Get all crafting materials
+      description: 112 materials (ore, wood, cloth, leather, gems, herbs)
+      responses:
+        '200': { description: Materials data }
+
+  /api/v1/consumables.json:
+    get:
+      tags: [Core]
+      summary: Get all consumables
+      description: 132 consumables — Chef foods, potions, engineer items
+      responses:
+        '200': { description: Consumables data }
+
+  /api/v1/weaponSkills.json:
+    get:
+      tags: [Combat]
+      summary: Get all weapon skills
+      description: 473 weapon skills across 24 types with icons, cooldowns, effects
+      responses:
+        '200': { description: Weapon skills data }
+
+  /api/v1/skills.json:
+    get:
+      tags: [Combat]
+      summary: Get combat skills (legacy)
+      description: 47 weapon skills with cooldowns, mana costs
+      responses:
+        '200': { description: Skills data }
+
+  /api/v1/enemies.json:
+    get:
+      tags: [Combat]
+      summary: Get all enemies
+      description: 38 enemies across 8 tiers with abilities, drops, 3D asset paths
+      responses:
+        '200': { description: Enemies data }
+
+  /api/v1/bosses.json:
+    get:
+      tags: [Combat]
+      summary: Get all bosses
+      description: 12 bosses with multi-phase mechanics, drops, Gouldstone chances
+      responses:
+        '200': { description: Bosses data }
+
+  /api/v1/effectSprites.json:
+    get:
+      tags: [Sprites]
+      summary: Get VFX effect sprites
+      description: 147 VFX sprite sheets with frame data, categories, blend modes
+      responses:
+        '200': { description: Effect sprites data }
+
+  /api/v1/abilityEffects.json:
+    get:
+      tags: [Sprites]
+      summary: Get ability effects
+      description: 209 abilities with effect chains and follow-ups
+      responses:
+        '200': { description: Ability effects data }
+
+  /api/v1/sprites.json:
+    get:
+      tags: [Sprites]
+      summary: Get sprite database
+      description: 500+ icon paths organized by category
+      responses:
+        '200': { description: Sprites data }
+
+  /api/v1/sprites2d.json:
+    get:
+      tags: [Sprites]
+      summary: Get 2D sprites registry
+      description: 5,485 2D sprites across 13 categories from RPG-MODULAR, betta-warlords, grudge-angeler, grudawars
+      responses:
+        '200':
+          description: 2D sprites data
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sprites2DResponse' }
+
+  /api/v1/spriteMaps.json:
+    get:
+      tags: [Sprites]
+      summary: Get sprite path mappings
+      description: 246 sprite path mappings for weapons and armor icons
+      responses:
+        '200': { description: Sprite maps }
+
+  /api/v1/classes.json:
+    get:
+      tags: [World]
+      summary: Get all classes
+      description: 4 classes — Warrior, Mage Priest, Worge, Ranger
+      responses:
+        '200': { description: Classes data }
+
+  /api/v1/races.json:
+    get:
+      tags: [World]
+      summary: Get all races
+      description: 6 races — Human, Orc, Elf, Undead, Barbarian, Dwarf
+      responses:
+        '200': { description: Races data }
+
+  /api/v1/factions.json:
+    get:
+      tags: [World]
+      summary: Get all factions
+      description: 3 factions — Crusade, Legion, Fabled
+      responses:
+        '200': { description: Factions data }
+
+  /api/v1/attributes.json:
+    get:
+      tags: [World]
+      summary: Get all attributes
+      description: 8 attributes with formulas — STR, INT, VIT, DEX, END, WIS, AGI, TAC
+      responses:
+        '200': { description: Attributes data }
+
+  /api/v1/professions.json:
+    get:
+      tags: [World]
+      summary: Get all professions
+      description: 5 crafting + 6 gathering professions, skill trees, 363+ recipes
+      responses:
+        '200': { description: Professions data }
+
+  /api/v1/factionUnits.json:
+    get:
+      tags: [Engine]
+      summary: Get faction units
+      description: 19 RTS faction units across 3 factions
+      responses:
+        '200': { description: Faction units data }
+
+  /api/v1/nodeUpgrades.json:
+    get:
+      tags: [Engine]
+      summary: Get node upgrades
+      responses:
+        '200': { description: Node upgrades data }
+
+  /api/v1/tileMaps.json:
+    get:
+      tags: [Engine]
+      summary: Get tile maps
+      responses:
+        '200': { description: Tile maps data }
+
+  /api/v1/animations.json:
+    get:
+      tags: [Engine]
+      summary: Get animations
+      responses:
+        '200': { description: Animations data }
+
+  /api/v1/rendering.json:
+    get:
+      tags: [Engine]
+      summary: Get rendering config
+      responses:
+        '200': { description: Rendering data }
+
+  /api/v1/controllers.json:
+    get:
+      tags: [Engine]
+      summary: Get camera/controller presets
+      responses:
+        '200': { description: Controllers data }
+
+  /api/v1/terrain.json:
+    get:
+      tags: [Engine]
+      summary: Get terrain presets
+      responses:
+        '200': { description: Terrain data }
+
+  /api/v1/ai.json:
+    get:
+      tags: [Engine]
+      summary: Get AI behavior trees
+      responses:
+        '200': { description: AI data }
+
+  /api/v1/ecs.json:
+    get:
+      tags: [Engine]
+      summary: Get ECS components
+      responses:
+        '200': { description: ECS data }
+
+  /api/search:
+    get:
+      tags: [Serverless]
+      summary: Search all game data
+      description: Serverless search endpoint (Vercel only)
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string }
+          description: Search query
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [all, weapons, armor, materials, consumables, enemies, bosses, skills, sprites]
+            default: all
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 200 }
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SearchResponse' }
+
+  /api/stats:
+    get:
+      tags: [Serverless]
+      summary: Get aggregate stats
+      description: Returns total counts for all data categories (Vercel only)
+      responses:
+        '200': { description: Stats data }
+
+  /api/export:
+    get:
+      tags: [Serverless]
+      summary: Bulk data export
+      description: Download filtered game data as JSON or CSV (Vercel only)
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema: { type: string, enum: [weapons, armor, materials, consumables, enemies, bosses, skills] }
+        - name: tier
+          in: query
+          schema: { type: integer }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: format
+          in: query
+          schema: { type: string, enum: [json, csv], default: json }
+      responses:
+        '200': { description: Exported data }
+
+components:
+  schemas:
+    Weapon:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string }
+        lore: { type: string }
+        stats:
+          type: object
+          properties:
+            damageBase: { type: number }
+            damagePerTier: { type: number }
+            speedBase: { type: number }
+            critBase: { type: number }
+        basicAbility: { type: string }
+        abilities: { type: array, items: { type: string } }
+        signatureAbility: { type: string }
+        passives: { type: array, items: { type: string } }
+
+    Sprites2DResponse:
+      type: object
+      properties:
+        totalSprites: { type: integer }
+        generatedAt: { type: string }
+        categories:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              count: { type: integer }
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    path: { type: string }
+                    category: { type: string }
+                    subcategory: { type: string }
+                    source: { type: string }
+
+    SearchResponse:
+      type: object
+      properties:
+        query: { type: string }
+        type: { type: string }
+        totalResults: { type: integer }
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              type: { type: string }
+              id: { type: string }
+              name: { type: string }
