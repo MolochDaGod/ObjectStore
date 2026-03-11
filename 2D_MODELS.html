@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -28,27 +28,33 @@
     .results-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; }
     .results-title { font-size: 1.3rem; color: var(--tier-4); }
     .results-count { color: var(--text-dim); font-size: 0.85rem; }
-    .sprite-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-    .sprite-card { background: var(--card-bg); border-radius: 10px; padding: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; overflow: hidden; }
-    .sprite-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
-    .sprite-thumb { width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
-    .sprite-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
-    .sprite-name { font-size: 0.75rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sprite-meta { font-size: 0.65rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .char-card { background: var(--card-bg); border-radius: 12px; padding: 10px; cursor: default; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; overflow: hidden; }
+    .char-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
+    .sprite-viewport { width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.4); position: relative; image-rendering: pixelated; cursor: pointer; }
+    .sprite-viewport canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+    .char-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-top: 8px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-meta { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 6px; }
+    .anim-select { width: 100%; padding: 5px 8px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.75rem; cursor: pointer; text-transform: capitalize; }
+    .anim-select:focus { outline: none; border-color: var(--tier-4); }
+    .frame-info { font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; text-align: center; }
     .loading { text-align: center; padding: 60px; color: var(--text-dim); }
     .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--tier-4); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
     @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
     .empty-state-icon { font-size: 4rem; margin-bottom: 12px; opacity: 0.3; }
-    /* Modal */
     .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center; padding:20px; }
     .modal-overlay.active { display:flex; }
-    .modal { background:var(--card-bg); border:2px solid var(--tier-4); border-radius:16px; max-width:700px; width:100%; max-height:85vh; overflow-y:auto; padding:32px; position:relative; }
+    .modal { background:var(--card-bg); border:2px solid var(--tier-4); border-radius:16px; max-width:800px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; }
     .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer; padding:4px 8px; border-radius:4px; }
     .modal-close:hover { color:var(--text-primary); background:var(--bg-dark); }
-    .modal-preview { width:100%; max-height:400px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); border-radius:12px; padding:20px; margin-bottom:20px; }
-    .modal-preview img { max-width:100%; max-height:360px; object-fit:contain; image-rendering:pixelated; }
-    .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:4px; }
+    .modal-preview { width:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); border-radius:12px; padding:20px; margin-bottom:20px; }
+    .modal-preview canvas { max-width:100%; image-rendering:pixelated; }
+    .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:4px; text-transform:capitalize; }
+    .modal-anim-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .modal-anim-btn { padding:6px 14px; background:var(--bg-dark); border:2px solid var(--border-color); border-radius:8px; color:var(--text-primary); cursor:pointer; font-size:0.8rem; text-transform:capitalize; transition:all 0.2s; }
+    .modal-anim-btn:hover { border-color:var(--tier-4); }
+    .modal-anim-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; font-weight:600; }
     .modal-info { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
     .modal-info-item { background:var(--bg-dark); padding:8px 12px; border-radius:8px; font-size:0.85rem; }
     .modal-info-label { color:var(--text-dim); font-size:0.7rem; text-transform:uppercase; }
@@ -56,12 +62,13 @@
     .modal-path { margin-top:12px; padding:10px; background:var(--bg-dark); border-radius:8px; font-family:monospace; font-size:0.8rem; color:var(--tier-7); word-break:break-all; cursor:pointer; }
     .modal-path:hover { color:var(--tier-8); }
     .copy-toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--tier-4); color:#000; padding:10px 24px; border-radius:8px; font-weight:600; z-index:2000; display:none; }
-    /* Pagination */
-    .pagination { display:flex; gap:8px; justify-content:center; margin-top:24px; }
+    .pagination { display:flex; gap:8px; justify-content:center; margin-top:24px; flex-wrap:wrap; }
     .page-btn { padding:8px 14px; background:var(--card-bg); border:2px solid var(--border-color); border-radius:8px; color:var(--text-primary); cursor:pointer; font-size:0.85rem; }
     .page-btn:hover { border-color:var(--tier-4); }
     .page-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; }
     .page-btn:disabled { opacity:0.4; cursor:default; }
+    .play-pause { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.6); border:none; color:#fff; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+    .sprite-viewport:hover .play-pause { opacity:1; }
   </style>
 </head>
 <body>
@@ -71,12 +78,12 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">2D Models Browser</h1>
-      <p class="subtitle">All sprites from Betta Warlords, Grudge-Angeler, GrudaWars &amp; RPG-MODULAR</p>
+      <p class="subtitle">Animated sprite browser — Betta Warlords, Grudge-Angeler, GrudaWars &amp; RPG-MODULAR</p>
       <div class="stats-bar" id="statsBar"></div>
     </div>
 
     <div class="controls">
-      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search sprites by name...">
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search characters by name...">
       <div class="filter-row">
         <span class="filter-label">Category:</span>
         <div id="categoryFilters"></div>
@@ -85,24 +92,20 @@
         <span class="filter-label">Source:</span>
         <div id="sourceFilters"></div>
       </div>
-      <div class="filter-row">
-        <span class="filter-label">Subcategory:</span>
-        <div id="subcategoryFilters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-      </div>
     </div>
 
     <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading sprite data...</p></div>
     <div id="resultsArea" style="display:none;">
       <div class="results-header">
-        <h2 class="results-title" id="resultsTitle">Sprites</h2>
-        <span class="results-count" id="resultsCount">0 sprites</span>
+        <h2 class="results-title" id="resultsTitle">Characters</h2>
+        <span class="results-count" id="resultsCount">0 characters</span>
       </div>
-      <div class="sprite-grid" id="spriteGrid"></div>
+      <div class="char-grid" id="charGrid"></div>
       <div class="pagination" id="pagination"></div>
     </div>
     <div class="empty-state" id="emptyState" style="display:none;">
       <div class="empty-state-icon">&#128269;</div>
-      <h3>No sprites found</h3>
+      <h3>No characters found</h3>
       <p>Try adjusting your search or filters</p>
     </div>
   </div>
@@ -118,10 +121,14 @@
   <script src="./js/nav.js"></script>
   <script>
     var allSprites = [];
-    var filteredSprites = [];
+    var charGroups = [];
+    var filteredGroups = [];
     var currentPage = 0;
-    var PAGE_SIZE = 200;
-    var filters = { search: '', category: 'all', source: 'all', subcategory: 'all' };
+    var PAGE_SIZE = 60;
+    var filters = { search: '', category: 'all', source: 'all' };
+    var activeAnimators = {};
+    var observer;
+    var ANIM_CATS = ['characters','enemies','monsters','bosses','effects','fish','npcs','companions','projectiles'];
 
     async function init() {
       try {
@@ -132,78 +139,88 @@
           var items = data.categories[cat].items;
           for (var i = 0; i < items.length; i++) allSprites.push(items[i]);
         }
+        buildCharGroups();
         renderStats(data);
         buildFilters(data);
         setupEvents();
+        setupObserver();
         applyFilters();
       } catch(e) {
         console.error('Failed to load sprites2d.json:', e);
-        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load sprite data.</p>';
+        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load sprite data: ' + e.message + '</p>';
       }
+    }
+
+    function buildCharGroups() {
+      var map = {};
+      allSprites.forEach(function(s) {
+        if (ANIM_CATS.indexOf(s.category) === -1) return;
+        var key = s.category + '::' + s.subcategory;
+        if (!map[key]) {
+          map[key] = { name: s.subcategory, category: s.category, source: s.source, animations: [] };
+        }
+        map[key].animations.push({ id: s.id, name: s.name, path: s.path, filename: s.filename });
+      });
+      charGroups = Object.values(map);
+      charGroups.forEach(function(g) {
+        g.animations.sort(function(a, b) {
+          if (a.id === 'idle') return -1;
+          if (b.id === 'idle') return 1;
+          return a.name.localeCompare(b.name);
+        });
+      });
+      charGroups.sort(function(a, b) { return a.name.localeCompare(b.name); });
     }
 
     function renderStats(data) {
       var bar = document.getElementById('statsBar');
-      var html = '<div class="stat-item"><div class="stat-label">Total</div><div class="stat-value">' + data.totalSprites + '</div></div>';
-      for (var cat in data.categories) {
-        html += '<div class="stat-item"><div class="stat-label">' + cat + '</div><div class="stat-value">' + data.categories[cat].count + '</div></div>';
+      var html = '<div class="stat-item"><div class="stat-label">Characters</div><div class="stat-value">' + charGroups.length + '</div></div>';
+      html += '<div class="stat-item"><div class="stat-label">Total Sprites</div><div class="stat-value">' + data.totalSprites + '</div></div>';
+      var animCats = {};
+      charGroups.forEach(function(g) { animCats[g.category] = (animCats[g.category] || 0) + 1; });
+      for (var c in animCats) {
+        html += '<div class="stat-item"><div class="stat-label">' + c + '</div><div class="stat-value">' + animCats[c] + '</div></div>';
       }
       bar.innerHTML = html;
     }
 
     function buildFilters(data) {
-      var cats = Object.keys(data.categories);
+      var cats = {};
+      charGroups.forEach(function(g) { cats[g.category] = true; });
+      var catKeys = Object.keys(cats).sort();
       var catHtml = '<button class="filter-btn active" data-cat="all">All</button>';
-      cats.forEach(function(c) { catHtml += '<button class="filter-btn" data-cat="' + c + '">' + c.charAt(0).toUpperCase() + c.slice(1) + '</button>'; });
+      catKeys.forEach(function(c) {
+        catHtml += '<button class="filter-btn" data-cat="' + c + '">' + c.charAt(0).toUpperCase() + c.slice(1) + '</button>';
+      });
       document.getElementById('categoryFilters').innerHTML = catHtml;
-
       var sources = {};
-      allSprites.forEach(function(s) { sources[s.source] = true; });
+      charGroups.forEach(function(g) { sources[g.source] = true; });
       var srcHtml = '<button class="filter-btn active" data-src="all">All</button>';
-      Object.keys(sources).forEach(function(s) { srcHtml += '<button class="filter-btn" data-src="' + s + '">' + s + '</button>'; });
+      Object.keys(sources).sort().forEach(function(s) {
+        srcHtml += '<button class="filter-btn" data-src="' + s + '">' + s + '</button>';
+      });
       document.getElementById('sourceFilters').innerHTML = srcHtml;
-    }
-
-    function buildSubcategoryFilters() {
-      var subs = {};
-      var base = filters.category === 'all' ? allSprites : allSprites.filter(function(s) { return s.category === filters.category; });
-      base.forEach(function(s) { subs[s.subcategory] = (subs[s.subcategory] || 0) + 1; });
-      var sorted = Object.entries(subs).sort(function(a,b) { return b[1] - a[1]; });
-      var html = '<button class="filter-btn ' + (filters.subcategory === 'all' ? 'active' : '') + '" data-sub="all">All</button>';
-      sorted.forEach(function(e) {
-        html += '<button class="filter-btn ' + (filters.subcategory === e[0] ? 'active' : '') + '" data-sub="' + e[0] + '">' + e[0] + ' (' + e[1] + ')</button>';
-      });
-      document.getElementById('subcategoryFilters').innerHTML = html;
-      document.querySelectorAll('[data-sub]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('[data-sub]').forEach(function(b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          filters.subcategory = btn.dataset.sub;
-          currentPage = 0;
-          applyFilters();
-        });
-      });
     }
 
     function setupEvents() {
       var debounceTimer;
       document.getElementById('searchBox').addEventListener('input', function(e) {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(function() { filters.search = e.target.value.toLowerCase(); currentPage = 0; applyFilters(); }, 250);
+        debounceTimer = setTimeout(function() {
+          filters.search = e.target.value.toLowerCase();
+          currentPage = 0;
+          applyFilters();
+        }, 250);
       });
-
       document.getElementById('categoryFilters').addEventListener('click', function(e) {
         var btn = e.target.closest('[data-cat]');
         if (!btn) return;
         document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         filters.category = btn.dataset.cat;
-        filters.subcategory = 'all';
         currentPage = 0;
-        buildSubcategoryFilters();
         applyFilters();
       });
-
       document.getElementById('sourceFilters').addEventListener('click', function(e) {
         var btn = e.target.closest('[data-src]');
         if (!btn) return;
@@ -213,60 +230,289 @@
         currentPage = 0;
         applyFilters();
       });
-
       document.getElementById('modalClose').addEventListener('click', closeModal);
       document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(); });
       document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+    }
 
-      document.getElementById('spriteGrid').addEventListener('click', function(e) {
-        var card = e.target.closest('.sprite-card');
-        if (card) openModal(card.dataset.idx);
-      });
+    function setupObserver() {
+      observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var id = entry.target.dataset.animId;
+          var anim = activeAnimators[id];
+          if (!anim) return;
+          if (entry.isIntersecting) {
+            if (!anim.playing) startAnimation(id);
+          } else {
+            stopAnimation(id);
+          }
+        });
+      }, { rootMargin: '100px' });
     }
 
     function applyFilters() {
-      filteredSprites = allSprites.filter(function(s) {
-        if (filters.category !== 'all' && s.category !== filters.category) return false;
-        if (filters.source !== 'all' && s.source !== filters.source) return false;
-        if (filters.subcategory !== 'all' && s.subcategory !== filters.subcategory) return false;
-        if (filters.search && !s.name.toLowerCase().includes(filters.search) && !s.id.toLowerCase().includes(filters.search) && !s.subcategory.toLowerCase().includes(filters.search)) return false;
+      filteredGroups = charGroups.filter(function(g) {
+        if (filters.category !== 'all' && g.category !== filters.category) return false;
+        if (filters.source !== 'all' && g.source !== filters.source) return false;
+        if (filters.search && g.name.toLowerCase().indexOf(filters.search) === -1) return false;
         return true;
       });
-      buildSubcategoryFilters();
       renderPage();
     }
 
     function renderPage() {
+      Object.keys(activeAnimators).forEach(function(id) { stopAnimation(id); });
+      activeAnimators = {};
       document.getElementById('loadingState').style.display = 'none';
-      if (filteredSprites.length === 0) {
+      if (filteredGroups.length === 0) {
         document.getElementById('resultsArea').style.display = 'none';
         document.getElementById('emptyState').style.display = 'block';
         return;
       }
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('resultsArea').style.display = 'block';
-      document.getElementById('resultsCount').textContent = filteredSprites.length + ' sprites';
-
+      document.getElementById('resultsCount').textContent = filteredGroups.length + ' characters';
       var start = currentPage * PAGE_SIZE;
-      var end = Math.min(start + PAGE_SIZE, filteredSprites.length);
-      var page = filteredSprites.slice(start, end);
-
-      var grid = document.getElementById('spriteGrid');
+      var end = Math.min(start + PAGE_SIZE, filteredGroups.length);
+      var page = filteredGroups.slice(start, end);
+      var grid = document.getElementById('charGrid');
       var html = '';
       for (var i = 0; i < page.length; i++) {
-        var s = page[i];
-        var globalIdx = start + i;
-        html += '<div class="sprite-card" data-idx="' + globalIdx + '">' +
-          '<div class="sprite-thumb"><img src=".' + esc(s.path) + '" alt="' + esc(s.name) + '" loading="lazy" onerror="this.parentElement.innerHTML=\'&#10060;\'"></div>' +
-          '<div class="sprite-name">' + esc(s.name) + '</div>' +
-          '<div class="sprite-meta">' + esc(s.subcategory) + '</div></div>';
+        var g = page[i];
+        var gIdx = start + i;
+        var animId = 'anim-' + gIdx;
+        var opts = '';
+        for (var a = 0; a < g.animations.length; a++) {
+          var anim = g.animations[a];
+          opts += '<option value="' + a + '"' + (a === 0 ? ' selected' : '') + '>' + esc(anim.name) + '</option>';
+        }
+        html += '<div class="char-card" data-gidx="' + gIdx + '">' +
+          '<div class="sprite-viewport" data-anim-id="' + animId + '">' +
+            '<canvas id="' + animId + '" width="128" height="128"></canvas>' +
+            '<button class="play-pause" data-anim-id="' + animId + '" title="Play/Pause">&#9646;&#9646;</button>' +
+          '</div>' +
+          '<div class="char-name" title="' + esc(g.name) + '">' + esc(g.name.replace(/-/g, ' ').replace(/_/g, ' ')) + '</div>' +
+          '<div class="char-meta">' + esc(g.category) + ' &middot; ' + g.animations.length + ' anims</div>' +
+          '<select class="anim-select" data-anim-id="' + animId + '" data-gidx="' + gIdx + '">' + opts + '</select>' +
+          '<div class="frame-info" id="info-' + animId + '">Loading...</div>' +
+        '</div>';
       }
       grid.innerHTML = html;
+      for (var i = 0; i < page.length; i++) {
+        var gIdx = start + i;
+        var animId = 'anim-' + gIdx;
+        initAnimator(animId, filteredGroups[gIdx], 0);
+      }
+      grid.querySelectorAll('.anim-select').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          var aid = this.dataset.animId;
+          var gi = parseInt(this.dataset.gidx);
+          var ai = parseInt(this.value);
+          stopAnimation(aid);
+          initAnimator(aid, filteredGroups[gi], ai);
+        });
+      });
+      grid.querySelectorAll('.play-pause').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var aid = this.dataset.animId;
+          var anim = activeAnimators[aid];
+          if (!anim) return;
+          if (anim.playing) {
+            stopAnimation(aid);
+            this.innerHTML = '&#9654;';
+          } else {
+            startAnimation(aid);
+            this.innerHTML = '&#9646;&#9646;';
+          }
+        });
+      });
+      grid.querySelectorAll('.sprite-viewport').forEach(function(vp) {
+        vp.addEventListener('click', function(e) {
+          if (e.target.closest('.play-pause')) return;
+          var card = this.closest('.char-card');
+          if (card) openModal(parseInt(card.dataset.gidx));
+        });
+      });
       renderPagination();
     }
 
+    function initAnimator(animId, group, animIdx) {
+      var canvas = document.getElementById(animId);
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var animData = group.animations[animIdx];
+      var img = new Image();
+      activeAnimators[animId] = {
+        img: img, canvas: canvas, ctx: ctx,
+        frame: 0, frameCount: 1, frameW: 128, frameH: 128,
+        playing: false, raf: null, fps: 8, lastTime: 0
+      };
+      img.onload = function() {
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        var frameCount = Math.max(1, Math.round(w / h));
+        var frameW = Math.round(w / frameCount);
+        var frameH = h;
+        var anim = activeAnimators[animId];
+        if (!anim) return;
+        anim.frameCount = frameCount;
+        anim.frameW = frameW;
+        anim.frameH = frameH;
+        anim.frame = 0;
+        canvas.width = frameW;
+        canvas.height = frameH;
+        var info = document.getElementById('info-' + animId);
+        if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH;
+        ctx.clearRect(0, 0, frameW, frameH);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+        var viewport = canvas.parentElement;
+        if (viewport) observer.observe(viewport);
+      };
+      img.onerror = function() {
+        var info = document.getElementById('info-' + animId);
+        if (info) info.textContent = 'Failed to load';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff4d4d';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('\u274C', canvas.width / 2, canvas.height / 2);
+      };
+      img.src = '.' + animData.path;
+    }
+
+    function startAnimation(animId) {
+      var anim = activeAnimators[animId];
+      if (!anim || anim.playing) return;
+      anim.playing = true;
+      anim.lastTime = performance.now();
+      function tick(now) {
+        if (!anim.playing) return;
+        var elapsed = now - anim.lastTime;
+        var interval = 1000 / anim.fps;
+        if (elapsed >= interval) {
+          anim.frame = (anim.frame + 1) % anim.frameCount;
+          anim.lastTime = now - (elapsed % interval);
+          var ctx = anim.ctx;
+          ctx.clearRect(0, 0, anim.frameW, anim.frameH);
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(anim.img, anim.frame * anim.frameW, 0, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
+        }
+        anim.raf = requestAnimationFrame(tick);
+      }
+      anim.raf = requestAnimationFrame(tick);
+    }
+
+    function stopAnimation(animId) {
+      var anim = activeAnimators[animId];
+      if (!anim) return;
+      anim.playing = false;
+      if (anim.raf) {
+        cancelAnimationFrame(anim.raf);
+        anim.raf = null;
+      }
+    }
+
+    var modalAnim = null;
+
+    function openModal(gIdx) {
+      var g = filteredGroups[gIdx];
+      if (!g) return;
+      var html = '<div class="modal-preview"><canvas id="modal-canvas" width="256" height="256"></canvas></div>' +
+        '<div class="modal-title">' + esc(g.name.replace(/-/g, ' ').replace(/_/g, ' ')) + '</div>' +
+        '<div class="char-meta">' + esc(g.category) + ' &middot; ' + esc(g.source) + ' &middot; ' + g.animations.length + ' animations</div>' +
+        '<div class="modal-anim-row" id="modalAnimBtns"></div>' +
+        '<div class="modal-info" id="modalInfo"></div>' +
+        '<div class="frame-info" id="modal-frame-info" style="margin-top:8px;font-size:0.85rem;"></div>';
+      document.getElementById('modalBody').innerHTML = html;
+      var btns = '';
+      g.animations.forEach(function(a, idx) {
+        btns += '<button class="modal-anim-btn' + (idx === 0 ? ' active' : '') + '" data-aidx="' + idx + '">' + esc(a.name) + '</button>';
+      });
+      document.getElementById('modalAnimBtns').innerHTML = btns;
+      loadModalAnim(g, 0);
+      document.getElementById('modalAnimBtns').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-aidx]');
+        if (!btn) return;
+        document.querySelectorAll('.modal-anim-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        loadModalAnim(g, parseInt(btn.dataset.aidx));
+      });
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function loadModalAnim(group, animIdx) {
+      if (modalAnim && modalAnim.raf) cancelAnimationFrame(modalAnim.raf);
+      var canvas = document.getElementById('modal-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var animData = group.animations[animIdx];
+      var img = new Image();
+      modalAnim = { img: img, canvas: canvas, ctx: ctx, frame: 0, frameCount: 1, frameW: 256, frameH: 256, raf: null, fps: 8, lastTime: 0 };
+      img.onload = function() {
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        var frameCount = Math.max(1, Math.round(w / h));
+        var frameW = Math.round(w / frameCount);
+        var frameH = h;
+        modalAnim.frameCount = frameCount;
+        modalAnim.frameW = frameW;
+        modalAnim.frameH = frameH;
+        canvas.width = frameW;
+        canvas.height = frameH;
+        var info = document.getElementById('modal-frame-info');
+        if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH + 'px per frame \u00b7 ' + w + 'x' + h + ' total';
+        var infoDiv = document.getElementById('modalInfo');
+        if (infoDiv) {
+          infoDiv.innerHTML =
+            '<div class="modal-info-item"><div class="modal-info-label">Animation</div><div class="modal-info-value">' + esc(animData.name) + '</div></div>' +
+            '<div class="modal-info-item"><div class="modal-info-label">Frames</div><div class="modal-info-value">' + frameCount + '</div></div>' +
+            '<div class="modal-info-item"><div class="modal-info-label">Frame Size</div><div class="modal-info-value">' + frameW + 'x' + frameH + '</div></div>' +
+            '<div class="modal-info-item"><div class="modal-info-label">Sheet Size</div><div class="modal-info-value">' + w + 'x' + h + '</div></div>' +
+            '<div class="modal-path" onclick="copyPath(this)" title="Click to copy">' + esc(animData.path) + '</div>';
+        }
+        ctx.clearRect(0, 0, frameW, frameH);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+        modalAnim.frame = 0;
+        modalAnim.lastTime = performance.now();
+        function tick(now) {
+          var elapsed = now - modalAnim.lastTime;
+          var interval = 1000 / modalAnim.fps;
+          if (elapsed >= interval) {
+            modalAnim.frame = (modalAnim.frame + 1) % modalAnim.frameCount;
+            modalAnim.lastTime = now - (elapsed % interval);
+            ctx.clearRect(0, 0, frameW, frameH);
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, modalAnim.frame * frameW, 0, frameW, frameH, 0, 0, frameW, frameH);
+          }
+          modalAnim.raf = requestAnimationFrame(tick);
+        }
+        modalAnim.raf = requestAnimationFrame(tick);
+      };
+      img.onerror = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff4d4d';
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('\u274C Load failed', canvas.width / 2, canvas.height / 2);
+      };
+      img.src = '.' + animData.path;
+    }
+
+    function closeModal() {
+      if (modalAnim && modalAnim.raf) {
+        cancelAnimationFrame(modalAnim.raf);
+        modalAnim = null;
+      }
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
     function renderPagination() {
-      var totalPages = Math.ceil(filteredSprites.length / PAGE_SIZE);
+      var totalPages = Math.ceil(filteredGroups.length / PAGE_SIZE);
       if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
       var html = '<button class="page-btn" onclick="goPage(0)" ' + (currentPage === 0 ? 'disabled' : '') + '>&laquo;</button>';
       html += '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '>&lsaquo;</button>';
@@ -281,34 +527,12 @@
     }
 
     window.goPage = function(p) {
-      var totalPages = Math.ceil(filteredSprites.length / PAGE_SIZE);
+      var totalPages = Math.ceil(filteredGroups.length / PAGE_SIZE);
       if (p < 0 || p >= totalPages) return;
       currentPage = p;
       renderPage();
       window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
     };
-
-    function openModal(idx) {
-      var s = filteredSprites[parseInt(idx)];
-      if (!s) return;
-      var html = '<div class="modal-preview"><img src=".' + esc(s.path) + '" alt="' + esc(s.name) + '"></div>' +
-        '<div class="modal-title">' + esc(s.name) + '</div>' +
-        '<div class="modal-info">' +
-          '<div class="modal-info-item"><div class="modal-info-label">Category</div><div class="modal-info-value">' + esc(s.category) + '</div></div>' +
-          '<div class="modal-info-item"><div class="modal-info-label">Subcategory</div><div class="modal-info-value">' + esc(s.subcategory) + '</div></div>' +
-          '<div class="modal-info-item"><div class="modal-info-label">Source</div><div class="modal-info-value">' + esc(s.source) + '</div></div>' +
-          '<div class="modal-info-item"><div class="modal-info-label">Format</div><div class="modal-info-value">' + esc(s.ext) + '</div></div>' +
-        '</div>' +
-        '<div class="modal-path" onclick="copyPath(this)" title="Click to copy">' + esc(s.path) + '</div>';
-      document.getElementById('modalBody').innerHTML = html;
-      document.getElementById('modalOverlay').classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
-      document.body.style.overflow = '';
-    }
 
     window.copyPath = function(el) {
       navigator.clipboard.writeText(el.textContent).then(function() {
