@@ -3,12 +3,17 @@
   "updated": "2026-03-10",
   "description": "3D GLB models for Grudge Warlords RTS - characters, cavalry, siege, equipment, vehicles organized by race",
   "totalModels": 31,
+  "total": 31,
   "baseUrl": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts",
   "objectStoreApi": "https://molochdagod.github.io/ObjectStore/api/v1",
   "auth": {
     "sdk": "https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js",
     "method": "GrudgeAuth.loginWithDiscord()",
-    "tokenHeader": "Authorization: Bearer <grudge_auth_token>",
+    "tokenHeader": {
+      "headerName": "Authorization",
+      "scheme": "Bearer",
+      "tokenPlaceholder": "<grudge_auth_token>"
+    },
     "note": "Models are public read. Auth required for write/save operations."
   },
   "races": {
@@ -31,7 +36,8 @@
           "sizeBytes": 366185,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "barbarian", "infantry", "character", "customizable"]
+          "tags": ["rts", "barbarian", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/BRB_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-brb-cav-001",
@@ -44,7 +50,8 @@
           "sizeBytes": 392145,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "barbarian", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "barbarian", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/BRB_Cavalry.glb"
         },
         {
           "grudgeId": "rts-mdl-brb-wpn-hammer-001",
@@ -55,7 +62,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 6845,
-          "tags": ["rts", "barbarian", "weapon", "hammer", "equipment"]
+          "tags": ["rts", "barbarian", "weapon", "hammer", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/equipment/BRB_weapon_hammer.glb"
         },
         {
           "grudgeId": "rts-mdl-brb-wpn-spear-001",
@@ -66,7 +74,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 5977,
-          "tags": ["rts", "barbarian", "weapon", "spear", "equipment"]
+          "tags": ["rts", "barbarian", "weapon", "spear", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/equipment/BRB_weapon_spear.glb"
         },
         {
           "grudgeId": "rts-mdl-brb-wpn-staff-001",
@@ -77,7 +86,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 6349,
-          "tags": ["rts", "barbarian", "weapon", "staff", "equipment"]
+          "tags": ["rts", "barbarian", "weapon", "staff", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/equipment/BRB_weapon_staff.glb"
         },
         {
           "grudgeId": "rts-mdl-brb-wpn-sword-001",
@@ -88,7 +98,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 6065,
-          "tags": ["rts", "barbarian", "weapon", "sword", "equipment"]
+          "tags": ["rts", "barbarian", "weapon", "sword", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/barbarian/equipment/BRB_weapon_sword.glb"
         }
       ]
     },
@@ -111,7 +122,8 @@
           "sizeBytes": 372885,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "dwarf", "infantry", "character", "customizable"]
+          "tags": ["rts", "dwarf", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/dwarf/DWF_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-dwf-cav-001",
@@ -124,7 +136,8 @@
           "sizeBytes": 398889,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "dwarf", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "dwarf", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/dwarf/DWF_Cavalry.glb"
         }
       ]
     },
@@ -147,7 +160,8 @@
           "sizeBytes": 441417,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "elf", "infantry", "character", "customizable"]
+          "tags": ["rts", "elf", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/elf/ELF_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-elf-cav-001",
@@ -160,7 +174,8 @@
           "sizeBytes": 472753,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "elf", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "elf", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/elf/ELF_Cavalry.glb"
         },
         {
           "grudgeId": "rts-mdl-elf-siege-001",
@@ -172,7 +187,8 @@
           "unitType": "siege",
           "sizeBytes": 51553,
           "hasAnimations": true,
-          "tags": ["rts", "elf", "siege", "boltthrower", "ranged"]
+          "tags": ["rts", "elf", "siege", "boltthrower", "ranged"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/elf/ELF_BoltThrower.glb"
         },
         {
           "grudgeId": "rts-mdl-elf-wpn-spear-001",
@@ -183,7 +199,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 3985,
-          "tags": ["rts", "elf", "weapon", "spear", "equipment"]
+          "tags": ["rts", "elf", "weapon", "spear", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/elf/equipment/ELF_weapon_spear.glb"
         },
         {
           "grudgeId": "rts-mdl-elf-wpn-staff-001",
@@ -194,7 +211,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 8177,
-          "tags": ["rts", "elf", "weapon", "staff", "equipment"]
+          "tags": ["rts", "elf", "weapon", "staff", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/elf/equipment/ELF_weapon_staff.glb"
         }
       ]
     },
@@ -217,7 +235,8 @@
           "sizeBytes": 253469,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "human", "infantry", "character", "customizable"]
+          "tags": ["rts", "human", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/human/WK_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-wk-cav-001",
@@ -230,7 +249,8 @@
           "sizeBytes": 284713,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "human", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "human", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/human/WK_Cavalry.glb"
         },
         {
           "grudgeId": "rts-mdl-wk-siege-001",
@@ -242,7 +262,8 @@
           "unitType": "siege",
           "sizeBytes": 60065,
           "hasAnimations": false,
-          "tags": ["rts", "human", "siege", "catapult"]
+          "tags": ["rts", "human", "siege", "catapult"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/human/WK_Catapult.glb"
         },
         {
           "grudgeId": "rts-mdl-wk-wpn-staff-001",
@@ -253,7 +274,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 5365,
-          "tags": ["rts", "human", "weapon", "staff", "equipment"]
+          "tags": ["rts", "human", "weapon", "staff", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/human/equipment/WK_weapon_staff.glb"
         },
         {
           "grudgeId": "rts-mdl-wk-wpn-sword-001",
@@ -264,7 +286,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 3373,
-          "tags": ["rts", "human", "weapon", "sword", "equipment"]
+          "tags": ["rts", "human", "weapon", "sword", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/human/equipment/WK_weapon_sword.glb"
         }
       ]
     },
@@ -287,7 +310,8 @@
           "sizeBytes": 349621,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "orc", "infantry", "character", "customizable"]
+          "tags": ["rts", "orc", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/ORC_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-orc-cav-001",
@@ -300,7 +324,8 @@
           "sizeBytes": 368785,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "orc", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "orc", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/ORC_Cavalry.glb"
         },
         {
           "grudgeId": "rts-mdl-orc-siege-001",
@@ -312,7 +337,8 @@
           "unitType": "siege",
           "sizeBytes": 61249,
           "hasAnimations": false,
-          "tags": ["rts", "orc", "siege", "catapult"]
+          "tags": ["rts", "orc", "siege", "catapult"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/ORC_Catapult.glb"
         },
         {
           "grudgeId": "rts-mdl-orc-wpn-shield-001",
@@ -323,7 +349,8 @@
           "category": "equipment",
           "unitType": "shield",
           "sizeBytes": 6353,
-          "tags": ["rts", "orc", "shield", "equipment"]
+          "tags": ["rts", "orc", "shield", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/equipment/ORC_Shield.glb"
         },
         {
           "grudgeId": "rts-mdl-orc-wpn-axe-001",
@@ -334,7 +361,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 3565,
-          "tags": ["rts", "orc", "weapon", "axe", "equipment"]
+          "tags": ["rts", "orc", "weapon", "axe", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/equipment/ORC_weapon_axe.glb"
         },
         {
           "grudgeId": "rts-mdl-orc-wpn-staff-001",
@@ -345,7 +373,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 6545,
-          "tags": ["rts", "orc", "weapon", "staff", "equipment"]
+          "tags": ["rts", "orc", "weapon", "staff", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/orc/equipment/ORC_weapon_staff.glb"
         }
       ]
     },
@@ -368,7 +397,8 @@
           "sizeBytes": 346901,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "undead", "infantry", "character", "customizable"]
+          "tags": ["rts", "undead", "infantry", "character", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/UD_Characters.glb"
         },
         {
           "grudgeId": "rts-mdl-ud-cav-001",
@@ -381,7 +411,8 @@
           "sizeBytes": 377241,
           "hasAnimations": false,
           "customizable": true,
-          "tags": ["rts", "undead", "cavalry", "mount", "customizable"]
+          "tags": ["rts", "undead", "cavalry", "mount", "customizable"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/UD_Cavalry.glb"
         },
         {
           "grudgeId": "rts-mdl-ud-wpn-shield-001",
@@ -392,7 +423,8 @@
           "category": "equipment",
           "unitType": "shield",
           "sizeBytes": 4929,
-          "tags": ["rts", "undead", "shield", "equipment"]
+          "tags": ["rts", "undead", "shield", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/equipment/UD_Shield.glb"
         },
         {
           "grudgeId": "rts-mdl-ud-wpn-spear-001",
@@ -403,7 +435,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 3817,
-          "tags": ["rts", "undead", "weapon", "spear", "equipment"]
+          "tags": ["rts", "undead", "weapon", "spear", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/equipment/UD_weapon_spear.glb"
         },
         {
           "grudgeId": "rts-mdl-ud-wpn-staff-001",
@@ -414,7 +447,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 8381,
-          "tags": ["rts", "undead", "weapon", "staff", "equipment"]
+          "tags": ["rts", "undead", "weapon", "staff", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/equipment/UD_weapon_staff.glb"
         },
         {
           "grudgeId": "rts-mdl-ud-wpn-sword-001",
@@ -425,7 +459,8 @@
           "category": "equipment",
           "unitType": "weapon",
           "sizeBytes": 5021,
-          "tags": ["rts", "undead", "weapon", "sword", "equipment"]
+          "tags": ["rts", "undead", "weapon", "sword", "equipment"],
+          "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/undead/equipment/UD_weapon_sword.glb"
         }
       ]
     }
@@ -440,7 +475,8 @@
       "category": "vehicle",
       "unitType": "naval",
       "sizeBytes": 48321,
-      "tags": ["rts", "vehicle", "boat", "naval", "water"]
+      "tags": ["rts", "vehicle", "boat", "naval", "water"],
+      "url": "https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/vehicles/Boat.glb"
     }
   ],
   "stats": {
