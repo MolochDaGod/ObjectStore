@@ -365,6 +365,86 @@ export function parseGrudgeUuid(uuid: string): ParsedUUID | null;
 export function isValidGrudgeUuid(uuid: string): boolean;
 
 // ==========================================
+// NEW DATA TYPES
+// ==========================================
+
+export interface WeaponSkill {
+  id: string;
+  name: string;
+  slot: 'Attack' | 'Core' | 'Defense' | 'Special' | 'Ultimate';
+  cooldown: number;
+  manaCost: number;
+  description: string;
+  effect: string;
+  icon: string;
+}
+
+export interface WeaponSkillType {
+  weaponType: string;
+  skillCount: number;
+  skills: WeaponSkill[];
+}
+
+export interface Enemy {
+  id: string;
+  name: string;
+  tier: number;
+  abilities?: string[];
+  drops?: string[];
+  assetPath?: string;
+}
+
+export interface Boss {
+  id: string;
+  name: string;
+  phases?: any[];
+  drops?: string[];
+  gouldstoneChance?: number;
+}
+
+export interface Sprite2D {
+  name: string;
+  path: string;
+  category: string;
+  subcategory: string;
+  source: string;
+  filename: string;
+}
+
+export interface Sprites2DData {
+  totalSprites: number;
+  categories: Record<string, { count: number; items: Sprite2D[] }>;
+}
+
+export interface EffectSprite {
+  key: string;
+  name: string;
+  category: string;
+  frameWidth: number;
+  frameHeight: number;
+  cols: number;
+  rows: number;
+  totalFrames: number;
+  blendMode: string;
+  src: string;
+}
+
+export interface ServerlessSearchResult {
+  query: string;
+  type: string;
+  totalResults: number;
+  results: Array<{ type: string; id?: string; name: string; [key: string]: any }>;
+}
+
+export interface ServerlessStats {
+  version: string;
+  generated: string;
+  totals: Record<string, number>;
+  endpoints: { static: number; serverless: string[] };
+  browsers: Array<{ name: string; path: string }>;
+}
+
+// ==========================================
 // LEGACY SDK
 // ==========================================
 
@@ -411,12 +491,43 @@ export class GrudgeSDK {
   getAttributes(): Promise<any>;
   getAttribute(attributeId: string): Promise<any>;
 
+  // Weapon Skills
+  getWeaponSkills(): Promise<{ totalSkills: number; weaponTypes: WeaponSkillType[] }>;
+  getWeaponSkillsByType(weaponType: string): Promise<WeaponSkillType | null>;
+  getWeaponSkill(skillId: string): Promise<(WeaponSkill & { weaponType: string }) | null>;
+
+  // Enemies & Bosses
+  getEnemies(): Promise<{ enemies: Enemy[] }>;
+  getEnemy(enemyId: string): Promise<Enemy | null>;
+  getEnemiesByTier(tier: number): Promise<Enemy[]>;
+  getBosses(): Promise<{ bosses: Boss[] }>;
+  getBoss(bossId: string): Promise<Boss | null>;
+
+  // 2D Sprites
+  getSprites2d(): Promise<Sprites2DData>;
+  getSpritesByCategory(category: string): Promise<{ count: number; items: Sprite2D[] } | null>;
+  searchSprites(query: string): Promise<(Sprite2D & { category: string })[]>;
+
+  // VFX & Effects
+  getEffectSprites(): Promise<any>;
+  getAbilityEffects(): Promise<any>;
+
+  // Faction Units
+  getFactionUnits(): Promise<any>;
+
+  // Serverless API (Vercel only)
+  serverlessSearch(query: string, type?: string, limit?: number): Promise<ServerlessSearchResult>;
+  getServerlessStats(): Promise<ServerlessStats>;
+
   // Search & Icons
   search(query: string): Promise<SearchResults & { armor: Armor[] }>;
   getWeaponIconUrl(category: string, index: number, tier?: number): string | null;
   getArmorIconUrl(slot: string, tier?: number): string | null;
   getMaterialIconUrl(category: string, tier?: number): string | null;
   
+  // Database info
+  getDatabaseInfo(): any;
+
   // UUID utilities
   static generateGrudgeUuid(entityType: string, metadata?: string): string;
   static parseGrudgeUuid(uuid: string): ParsedUUID | null;

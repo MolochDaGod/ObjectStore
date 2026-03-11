@@ -13,7 +13,7 @@ No authentication required. Perfect for AI agents.
 
 ### Base URL
 ```
-https://grudge-studio.github.io/ObjectStore
+https://molochdagod.github.io/ObjectStore
 ```
 
 ### Endpoints
@@ -27,7 +27,7 @@ https://grudge-studio.github.io/ObjectStore
 
 ### Example Usage
 ```javascript
-const weapons = await fetch('https://grudge-studio.github.io/ObjectStore/api/v1/weapons.json')
+const weapons = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json')
   .then(r => r.json());
 
 // Get all sword names
@@ -114,7 +114,7 @@ import requests
 
 # Get all weapons
 weapons = requests.get(
-    'https://grudge-studio.github.io/ObjectStore/api/v1/weapons.json'
+    'https://molochdagod.github.io/ObjectStore/api/v1/weapons.json'
 ).json()
 
 # Find a specific weapon

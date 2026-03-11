@@ -7,7 +7,7 @@
 <meta name="description" content="Visual database of all sprites and icons for Grudge Warlords game objects">
   <!-- Grudge Auth SDK -->
   <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', function() { GrudgeAuth.renderAuthBar(); });</script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
   <style>
     :root {
       --bg: #0f1419;
@@ -1772,5 +1772,6 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       }
     });
   </script>
+  <script src="./js/nav.js"></script>
 </body>
 </html>

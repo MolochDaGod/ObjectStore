@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grudge Studio ObjectStore - Game Data API</title>
   <meta name="description" content="Public API for Grudge Warlords game data - weapons, materials, armor, icons">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
     :root {
       --bg: #0f1419;
@@ -100,10 +101,10 @@
 <body>
   <!-- Grudge Auth SDK -->
   <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', function() { GrudgeAuth.renderAuthBar(); });</script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
 
   <div class="container">
-    <h1>⚔️ Grudge Studio ObjectStore</h1>
+    <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">Grudge Studio ObjectStore</h1>
     <p class="subtitle">Public API for Grudge Warlords game data — weapons, materials, armor, VFX effects, and battle abilities</p>
 
     <div class="card">
@@ -132,13 +133,8 @@
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
-        <span class="url">/api/v1/equipment.json</span>
-        <span class="desc">150 armor items (6 sets × 8 slots × 3 materials + gems) with stats, procs, set bonuses</span>
-      </div>
-      <div class="endpoint">
-        <span class="method">GET</span>
         <span class="url">/api/v1/armor.json</span>
-        <span class="desc">Armor slot definitions, tier colors (T1-T8)</span>
+        <span class="desc">150 armor items (6 sets × 8 slots × 3 materials + gems) with stats, procs, set bonuses</span>
       </div>
       <div class="endpoint">
         <span class="method">GET</span>
@@ -199,6 +195,11 @@
         <span class="method">GET</span>
         <span class="url">/api/v1/sprites.json</span>
         <span class="desc">Full sprite database — 500+ icon paths organized by category</span>
+      </div>
+      <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="url">/api/v1/sprites2d.json</span>
+        <span class="desc">5,485 2D sprites — characters, enemies, bosses, effects, icons, backgrounds</span>
       </div>
 
       <div class="endpoint">
@@ -288,7 +289,7 @@ const iconUrl = sdk.getMaterialIconUrl('ore', 3);</code></pre>
       <h2>🤖 For AI Agents</h2>
       <p style="margin-bottom: 16px;">Use this data in your AI agents without authentication:</p>
       <pre><code>// Fetch weapons directly
-const response = await fetch('https://grudge-studio.github.io/ObjectStore/api/v1/weapons.json');
+const response = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json');
 const weapons = await response.json();
 
 // Example: Get all T8 swords
@@ -323,7 +324,11 @@ const t8Swords = weapons.categories.swords.items.map(w => ({
         <li>🔧 <a href="./sdk/grudge-sdk.js">Download SDK</a></li>
         <li>📊 <a href="./SPRITE_DATABASE.html">Sprite Database (Visual)</a></li>
         <li>✨ <a href="./VFX_BROWSER.html">VFX Effects Browser (Animated)</a></li>
-        <li>💻 <a href="https://github.com/grudge-studio/ObjectStore">GitHub Repository</a></li>
+        <li>🎨 <a href="./2D_MODELS.html">2D Models Browser (5,485 Sprites)</a></li>
+        <li>💻 <a href="https://github.com/MolochDaGod/ObjectStore">GitHub Repository</a></li>
+        <li>🔍 <a href="./ItemBrowser.html">Item Browser (AI Images)</a></li>
+        <li>🗃️ <a href="./GRUDGE_Item_Database.html">Full Item Database</a></li>
+        <li>🎨 <a href="./tools/icon-generator.html">Icon Generator (Puter AI)</a></li>
       </ul>
     </div>
 
@@ -331,5 +336,6 @@ const t8Swords = weapons.categories.swords.items.map(w => ({
       <p>© 2026 Grudge Studio | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
     </footer>
   </div>
+  <script src="./js/nav.js"></script>
 </body>
 </html>

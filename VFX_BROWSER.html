@@ -66,10 +66,14 @@
   </style>
 </head>
 <body>
+  <!-- Grudge Auth SDK -->
+  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
   <header class="header">
     <div class="header-inner">
       <a href="./" class="back-link">← Back to ObjectStore</a>
-      <h1>✨ VFX Effects Browser</h1>
+      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">VFX Effects Browser</h1>
       <p class="subtitle">Animated battle effect sprites from GRUDA-Wars</p>
       <div class="controls">
         <input type="text" class="search-box" id="search" placeholder="Search effects...">
@@ -100,6 +104,7 @@
     <p>© 2026 Grudge Studio | <a href="./">ObjectStore</a> | <a href="./SPRITE_DATABASE.html">Item Sprites</a> | <a href="./api/v1/effectSprites.json">API JSON</a></p>
   </footer>
 
+  <script src="./js/nav.js"></script>
   <script>
     const BASE = './api/v1';
     const SRC_BASE = 'https://grudgewarlords.com';
