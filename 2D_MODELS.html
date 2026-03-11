@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Studio 2D Models Browser</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tier-system.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1600px; margin: 0 auto; }
+    .header { margin-bottom: 32px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; }
+    .header h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--tier-3), var(--tier-4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+    .subtitle { color: var(--text-dim); font-size: 1.1rem; }
+    .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+    .stat-item { background: var(--card-bg); padding: 10px 16px; border-radius: 8px; border-left: 3px solid var(--tier-4); }
+    .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+    .stat-value { font-size: 1.3rem; font-weight: bold; color: var(--tier-4); }
+    .controls { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+    .search-box { width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 12px; }
+    .search-box:focus { outline: none; border-color: var(--tier-4); }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .filter-btn { padding: 6px 14px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--tier-4); }
+    .filter-btn.active { background: var(--tier-4); border-color: var(--tier-4); color: #000; font-weight: 600; }
+    .filter-label { color: var(--text-dim); font-size: 0.8rem; margin-right: 4px; }
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; }
+    .results-title { font-size: 1.3rem; color: var(--tier-4); }
+    .results-count { color: var(--text-dim); font-size: 0.85rem; }
+    .sprite-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    .sprite-card { background: var(--card-bg); border-radius: 10px; padding: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; overflow: hidden; }
+    .sprite-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
+    .sprite-thumb { width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+    .sprite-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
+    .sprite-name { font-size: 0.75rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sprite-meta { font-size: 0.65rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .loading { text-align: center; padding: 60px; color: var(--text-dim); }
+    .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--tier-4); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+    .empty-state-icon { font-size: 4rem; margin-bottom: 12px; opacity: 0.3; }
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center; padding:20px; }
+    .modal-overlay.active { display:flex; }
+    .modal { background:var(--card-bg); border:2px solid var(--tier-4); border-radius:16px; max-width:700px; width:100%; max-height:85vh; overflow-y:auto; padding:32px; position:relative; }
+    .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer; padding:4px 8px; border-radius:4px; }
+    .modal-close:hover { color:var(--text-primary); background:var(--bg-dark); }
+    .modal-preview { width:100%; max-height:400px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); border-radius:12px; padding:20px; margin-bottom:20px; }
+    .modal-preview img { max-width:100%; max-height:360px; object-fit:contain; image-rendering:pixelated; }
+    .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:4px; }
+    .modal-info { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+    .modal-info-item { background:var(--bg-dark); padding:8px 12px; border-radius:8px; font-size:0.85rem; }
+    .modal-info-label { color:var(--text-dim); font-size:0.7rem; text-transform:uppercase; }
+    .modal-info-value { color:var(--tier-4); font-weight:600; }
+    .modal-path { margin-top:12px; padding:10px; background:var(--bg-dark); border-radius:8px; font-family:monospace; font-size:0.8rem; color:var(--tier-7); word-break:break-all; cursor:pointer; }
+    .modal-path:hover { color:var(--tier-8); }
+    .copy-toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--tier-4); color:#000; padding:10px 24px; border-radius:8px; font-weight:600; z-index:2000; display:none; }
+    /* Pagination */
+    .pagination { display:flex; gap:8px; justify-content:center; margin-top:24px; }
+    .page-btn { padding:8px 14px; background:var(--card-bg); border:2px solid var(--border-color); border-radius:8px; color:var(--text-primary); cursor:pointer; font-size:0.85rem; }
+    .page-btn:hover { border-color:var(--tier-4); }
+    .page-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; }
+    .page-btn:disabled { opacity:0.4; cursor:default; }
+  </style>
+</head>
+<body>
+  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
+  <div class="container">
+    <div class="header">
+      <h1>&#127912; 2D Models Browser</h1>
+      <p class="subtitle">All sprites from Betta Warlords, Grudge-Angeler, GrudaWars &amp; RPG-MODULAR</p>
+      <div class="stats-bar" id="statsBar"></div>
+    </div>
+
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search sprites by name...">
+      <div class="filter-row">
+        <span class="filter-label">Category:</span>
+        <div id="categoryFilters"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Source:</span>
+        <div id="sourceFilters"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Subcategory:</span>
+        <div id="subcategoryFilters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading sprite data...</p></div>
+    <div id="resultsArea" style="display:none;">
+      <div class="results-header">
+        <h2 class="results-title" id="resultsTitle">Sprites</h2>
+        <span class="results-count" id="resultsCount">0 sprites</span>
+      </div>
+      <div class="sprite-grid" id="spriteGrid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="empty-state-icon">&#128269;</div>
+      <h3>No sprites found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div class="copy-toast" id="copyToast">Path copied!</div>
+
+  <script>
+    var allSprites = [];
+    var filteredSprites = [];
+    var currentPage = 0;
+    var PAGE_SIZE = 200;
+    var filters = { search: '', category: 'all', source: 'all', subcategory: 'all' };
+
+    async function init() {
+      try {
+        var res = await fetch('./api/v1/sprites2d.json');
+        var data = await res.json();
+        allSprites = [];
+        for (var cat in data.categories) {
+          var items = data.categories[cat].items;
+          for (var i = 0; i < items.length; i++) allSprites.push(items[i]);
+        }
+        renderStats(data);
+        buildFilters(data);
+        setupEvents();
+        applyFilters();
+      } catch(e) {
+        console.error('Failed to load sprites2d.json:', e);
+        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load sprite data.</p>';
+      }
+    }
+
+    function renderStats(data) {
+      var bar = document.getElementById('statsBar');
+      var html = '<div class="stat-item"><div class="stat-label">Total</div><div class="stat-value">' + data.totalSprites + '</div></div>';
+      for (var cat in data.categories) {
+        html += '<div class="stat-item"><div class="stat-label">' + cat + '</div><div class="stat-value">' + data.categories[cat].count + '</div></div>';
+      }
+      bar.innerHTML = html;
+    }
+
+    function buildFilters(data) {
+      var cats = Object.keys(data.categories);
+      var catHtml = '<button class="filter-btn active" data-cat="all">All</button>';
+      cats.forEach(function(c) { catHtml += '<button class="filter-btn" data-cat="' + c + '">' + c.charAt(0).toUpperCase() + c.slice(1) + '</button>'; });
+      document.getElementById('categoryFilters').innerHTML = catHtml;
+
+      var sources = {};
+      allSprites.forEach(function(s) { sources[s.source] = true; });
+      var srcHtml = '<button class="filter-btn active" data-src="all">All</button>';
+      Object.keys(sources).forEach(function(s) { srcHtml += '<button class="filter-btn" data-src="' + s + '">' + s + '</button>'; });
+      document.getElementById('sourceFilters').innerHTML = srcHtml;
+    }
+
+    function buildSubcategoryFilters() {
+      var subs = {};
+      var base = filters.category === 'all' ? allSprites : allSprites.filter(function(s) { return s.category === filters.category; });
+      base.forEach(function(s) { subs[s.subcategory] = (subs[s.subcategory] || 0) + 1; });
+      var sorted = Object.entries(subs).sort(function(a,b) { return b[1] - a[1]; });
+      var html = '<button class="filter-btn ' + (filters.subcategory === 'all' ? 'active' : '') + '" data-sub="all">All</button>';
+      sorted.forEach(function(e) {
+        html += '<button class="filter-btn ' + (filters.subcategory === e[0] ? 'active' : '') + '" data-sub="' + e[0] + '">' + e[0] + ' (' + e[1] + ')</button>';
+      });
+      document.getElementById('subcategoryFilters').innerHTML = html;
+      document.querySelectorAll('[data-sub]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('[data-sub]').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          filters.subcategory = btn.dataset.sub;
+          currentPage = 0;
+          applyFilters();
+        });
+      });
+    }
+
+    function setupEvents() {
+      var debounceTimer;
+      document.getElementById('searchBox').addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() { filters.search = e.target.value.toLowerCase(); currentPage = 0; applyFilters(); }, 250);
+      });
+
+      document.getElementById('categoryFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cat]');
+        if (!btn) return;
+        document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        filters.category = btn.dataset.cat;
+        filters.subcategory = 'all';
+        currentPage = 0;
+        buildSubcategoryFilters();
+        applyFilters();
+      });
+
+      document.getElementById('sourceFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-src]');
+        if (!btn) return;
+        document.querySelectorAll('[data-src]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        filters.source = btn.dataset.src;
+        currentPage = 0;
+        applyFilters();
+      });
+
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+      document.getElementById('spriteGrid').addEventListener('click', function(e) {
+        var card = e.target.closest('.sprite-card');
+        if (card) openModal(card.dataset.idx);
+      });
+    }
+
+    function applyFilters() {
+      filteredSprites = allSprites.filter(function(s) {
+        if (filters.category !== 'all' && s.category !== filters.category) return false;
+        if (filters.source !== 'all' && s.source !== filters.source) return false;
+        if (filters.subcategory !== 'all' && s.subcategory !== filters.subcategory) return false;
+        if (filters.search && !s.name.toLowerCase().includes(filters.search) && !s.id.toLowerCase().includes(filters.search) && !s.subcategory.toLowerCase().includes(filters.search)) return false;
+        return true;
+      });
+      buildSubcategoryFilters();
+      renderPage();
+    }
+
+    function renderPage() {
+      document.getElementById('loadingState').style.display = 'none';
+      if (filteredSprites.length === 0) {
+        document.getElementById('resultsArea').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('resultsArea').style.display = 'block';
+      document.getElementById('resultsCount').textContent = filteredSprites.length + ' sprites';
+
+      var start = currentPage * PAGE_SIZE;
+      var end = Math.min(start + PAGE_SIZE, filteredSprites.length);
+      var page = filteredSprites.slice(start, end);
+
+      var grid = document.getElementById('spriteGrid');
+      var html = '';
+      for (var i = 0; i < page.length; i++) {
+        var s = page[i];
+        var globalIdx = start + i;
+        html += '<div class="sprite-card" data-idx="' + globalIdx + '">' +
+          '<div class="sprite-thumb"><img src=".' + esc(s.path) + '" alt="' + esc(s.name) + '" loading="lazy" onerror="this.parentElement.innerHTML=\'&#10060;\'"></div>' +
+          '<div class="sprite-name">' + esc(s.name) + '</div>' +
+          '<div class="sprite-meta">' + esc(s.subcategory) + '</div></div>';
+      }
+      grid.innerHTML = html;
+      renderPagination();
+    }
+
+    function renderPagination() {
+      var totalPages = Math.ceil(filteredSprites.length / PAGE_SIZE);
+      if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+      var html = '<button class="page-btn" onclick="goPage(0)" ' + (currentPage === 0 ? 'disabled' : '') + '>&laquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '>&lsaquo;</button>';
+      var startP = Math.max(0, currentPage - 3);
+      var endP = Math.min(totalPages, startP + 7);
+      for (var p = startP; p < endP; p++) {
+        html += '<button class="page-btn ' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + (p + 1) + '</button>';
+      }
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&rsaquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (totalPages - 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&raquo;</button>';
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    window.goPage = function(p) {
+      var totalPages = Math.ceil(filteredSprites.length / PAGE_SIZE);
+      if (p < 0 || p >= totalPages) return;
+      currentPage = p;
+      renderPage();
+      window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
+    };
+
+    function openModal(idx) {
+      var s = filteredSprites[parseInt(idx)];
+      if (!s) return;
+      var html = '<div class="modal-preview"><img src=".' + esc(s.path) + '" alt="' + esc(s.name) + '"></div>' +
+        '<div class="modal-title">' + esc(s.name) + '</div>' +
+        '<div class="modal-info">' +
+          '<div class="modal-info-item"><div class="modal-info-label">Category</div><div class="modal-info-value">' + esc(s.category) + '</div></div>' +
+          '<div class="modal-info-item"><div class="modal-info-label">Subcategory</div><div class="modal-info-value">' + esc(s.subcategory) + '</div></div>' +
+          '<div class="modal-info-item"><div class="modal-info-label">Source</div><div class="modal-info-value">' + esc(s.source) + '</div></div>' +
+          '<div class="modal-info-item"><div class="modal-info-label">Format</div><div class="modal-info-value">' + esc(s.ext) + '</div></div>' +
+        '</div>' +
+        '<div class="modal-path" onclick="copyPath(this)" title="Click to copy">' + esc(s.path) + '</div>';
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.copyPath = function(el) {
+      navigator.clipboard.writeText(el.textContent).then(function() {
+        var toast = document.getElementById('copyToast');
+        toast.style.display = 'block';
+        setTimeout(function() { toast.style.display = 'none'; }, 1500);
+      });
+    };
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    init();
+  </script>
+</body>
+</html>
