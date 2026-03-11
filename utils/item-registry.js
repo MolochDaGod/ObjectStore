@@ -36,18 +36,20 @@ class ItemRegistry {
     }
 
     // Ensure item has all required fields
+    // Spread item first, then override with normalized fields to prevent
+    // item's own 'type'/'category' from overwriting registry values
     const normalizedItem = {
+      ...item, // Include any additional fields (spread first)
       id: itemId,
       name: item.name,
       category,
       type,
       tier: item.tier || null,
-      emoji: item.emoji || this._getDefaultEmoji(type),
+      emoji: item.emoji || item.icon || this._getDefaultEmoji(type),
       primaryStat: item.primaryStat || null,
       secondaryStat: item.secondaryStat || null,
       stats: item.stats || {},
-      description: item.description || item.desc || '',
-      ...item // Include any additional fields
+      description: item.description || item.desc || ''
     };
 
     // Store item

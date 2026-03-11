@@ -510,7 +510,14 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         for (const [category, catData] of Object.entries(data.categories)) {
-          if (catData.items) itemRegistry.registerBatch(catData.items, category, 'consumable');
+          if (catData.items) {
+            // Fix: consumable categories share numeric IDs (1,2,3..)
+            // Prefix category to make each item ID unique
+            const fixedItems = catData.items.map(function(item) {
+              return { ...item, id: category + '-' + String(item.id), emoji: item.icon || item.emoji };
+            });
+            itemRegistry.registerBatch(fixedItems, category, 'consumable');
+          }
         }
       } catch (e) { console.error('Error loading consumables:', e); loadErrors.push('Consumables'); }
 
