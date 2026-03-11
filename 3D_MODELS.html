@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Studio 3D Models Browser</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tier-system.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; }
+    .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    .header { margin-bottom: 32px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; }
+    .header h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--tier-3), var(--tier-4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+    .subtitle { color: var(--text-dim); font-size: 1.1rem; }
+    .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+    .stat-item { background: var(--card-bg); padding: 10px 16px; border-radius: 8px; border-left: 3px solid var(--tier-4); }
+    .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+    .stat-value { font-size: 1.3rem; font-weight: bold; color: var(--tier-4); }
+    .controls { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+    .search-box { width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 12px; }
+    .search-box:focus { outline: none; border-color: var(--tier-4); }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .filter-btn { padding: 6px 14px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--tier-4); }
+    .filter-btn.active { background: var(--tier-4); border-color: var(--tier-4); color: #000; font-weight: 600; }
+    .filter-label { color: var(--text-dim); font-size: 0.8rem; margin-right: 4px; }
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; }
+    .results-title { font-size: 1.3rem; color: var(--tier-4); }
+    .results-count { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* Model card grid */
+    .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .model-card { background: var(--card-bg); border-radius: 12px; padding: 14px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; }
+    .model-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
+    .model-icon { width: 100%; aspect-ratio: 1; border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 8px; position: relative; overflow: hidden; }
+    .model-icon .format-badge { position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .format-glb { background: #22c55e; color: #000; }
+    .format-gltf { background: #3b82f6; color: #fff; }
+    .format-fbx { background: #f97316; color: #000; }
+    .format-obj { background: #a855f7; color: #fff; }
+    .model-name { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .model-meta { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* 3D Viewer */
+    .viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 1000; }
+    .viewer-overlay.active { display: flex; flex-direction: column; }
+    .viewer-header { display: flex; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-color); gap: 12px; flex-shrink: 0; }
+    .viewer-title { font-size: 1.1rem; font-weight: 700; color: var(--tier-4); flex: 1; }
+    .viewer-info { font-size: 0.8rem; color: var(--text-dim); }
+    .viewer-close { background: none; border: 2px solid var(--border-color); color: var(--text-primary); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+    .viewer-close:hover { border-color: var(--tier-4); color: var(--tier-4); }
+    .viewer-canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+    .viewer-canvas-wrap canvas { width: 100% !important; height: 100% !important; display: block; }
+    .viewer-controls { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-color); flex-shrink: 0; flex-wrap: wrap; }
+    .viewer-btn { padding: 6px 14px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .viewer-btn:hover { border-color: var(--tier-4); }
+    .viewer-btn.active { background: var(--tier-4); color: #000; border-color: var(--tier-4); }
+    .anim-select-3d { padding: 6px 10px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.8rem; }
+
+    /* Drop zone */
+    .drop-zone { border: 3px dashed var(--border-color); border-radius: 16px; padding: 40px 20px; text-align: center; margin-bottom: 24px; transition: all 0.3s; cursor: pointer; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--tier-4); background: rgba(212,168,75,0.05); }
+    .drop-zone-icon { font-size: 3rem; margin-bottom: 8px; opacity: 0.4; }
+    .drop-zone-text { color: var(--text-dim); font-size: 0.9rem; }
+    .drop-zone-formats { color: var(--text-dim); font-size: 0.75rem; margin-top: 4px; }
+
+    /* Loading */
+    .loading { text-align: center; padding: 60px; color: var(--text-dim); }
+    .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--tier-4); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+    .viewer-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; color: var(--text-dim); z-index: 10; }
+    .viewer-loading .spinner { width: 40px; height: 40px; }
+
+    /* Pagination */
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .page-btn { padding: 8px 14px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; }
+    .page-btn:hover { border-color: var(--tier-4); }
+    .page-btn.active { background: var(--tier-4); border-color: var(--tier-4); color: #000; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* Best practices info */
+    .bp-banner { background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+    .bp-banner-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .bp-banner-text { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+    .bp-banner-text strong { color: var(--text-primary); }
+  </style>
+
+  <!-- Three.js ES Module Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
+  <div class="container">
+    <div class="header">
+      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
+      <p class="subtitle">471 models — GLB, GLTF, FBX, OBJ — powered by Three.js</p>
+      <div class="stats-bar" id="statsBar"></div>
+    </div>
+
+    <div class="bp-banner">
+      <span class="bp-banner-icon">&#9889;</span>
+      <div class="bp-banner-text">
+        <strong>Best Practices:</strong> GLB/GLTF is the recommended format (GPU-ready, smaller files, animation support).
+        Three.js handles GLB/GLTF natively. FBX requires an additional loader. OBJ is legacy — no animations or PBR materials.
+        For production, convert FBX/OBJ to GLB using <code>gltf-pipeline</code> or Blender.
+      </div>
+    </div>
+
+    <!-- Drop Zone for local files -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">&#128230;</div>
+      <div class="drop-zone-text">Drag &amp; drop a 3D model to preview instantly</div>
+      <div class="drop-zone-formats">Supports: .glb .gltf .fbx .obj</div>
+      <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj" style="display:none;">
+    </div>
+
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search models by name...">
+      <div class="filter-row">
+        <span class="filter-label">Format:</span>
+        <div id="formatFilters"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Category:</span>
+        <div id="categoryFilters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading model catalog...</p></div>
+    <div id="resultsArea" style="display:none;">
+      <div class="results-header">
+        <h2 class="results-title">Models</h2>
+        <span class="results-count" id="resultsCount">0 models</span>
+      </div>
+      <div class="model-grid" id="modelGrid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div style="font-size:4rem;margin-bottom:12px;opacity:0.3;">&#128269;</div>
+      <h3>No models found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+
+  <!-- 3D Viewer Overlay -->
+  <div class="viewer-overlay" id="viewerOverlay">
+    <div class="viewer-header">
+      <span class="viewer-title" id="viewerTitle">Model Viewer</span>
+      <span class="viewer-info" id="viewerInfo"></span>
+      <button class="viewer-close" id="viewerClose">&times; Close</button>
+    </div>
+    <div class="viewer-canvas-wrap" id="viewerCanvasWrap">
+      <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model...</p></div>
+    </div>
+    <div class="viewer-controls" id="viewerControls">
+      <button class="viewer-btn" id="btnWireframe">Wireframe</button>
+      <button class="viewer-btn" id="btnGrid">Grid</button>
+      <button class="viewer-btn active" id="btnAutoRotate">Auto Rotate</button>
+      <button class="viewer-btn" id="btnResetCam">Reset Camera</button>
+      <select class="anim-select-3d" id="animSelect" style="display:none;">
+        <option value="-1">No Animation</option>
+      </select>
+      <span class="viewer-info" id="viewerStats"></span>
+    </div>
+  </div>
+
+  <script src="./js/nav.js"></script>
+
+  <!-- Three.js Viewer Module -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+    /* ===== Viewer State ===== */
+    let scene, camera, renderer, controls, mixer, clock, gridHelper;
+    let currentModel = null;
+    let animActions = [];
+    let activeAction = null;
+    let isViewerOpen = false;
+    let autoRotate = true;
+    let showWireframe = false;
+    let showGrid = true;
+
+    /* ===== Draco Decoder (for compressed GLTF) ===== */
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+
+    /* ===== Init Three.js Scene ===== */
+    function initViewer() {
+      const wrap = document.getElementById('viewerCanvasWrap');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x1a1a2e);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.01, 1000);
+      camera.position.set(3, 2, 5);
+
+      // Renderer — best practices: antialias, toneMapping, outputColorSpace
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap at 2x for perf
+      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.2;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      wrap.appendChild(renderer.domElement);
+
+      // Controls
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.autoRotate = autoRotate;
+      controls.autoRotateSpeed = 1.5;
+      controls.maxPolarAngle = Math.PI * 0.85;
+
+      // Lighting — 3-point studio setup
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      scene.add(ambientLight);
+
+      const hemiLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.5);
+      scene.add(hemiLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      keyLight.position.set(5, 8, 5);
+      keyLight.castShadow = true;
+      keyLight.shadow.mapSize.set(1024, 1024);
+      keyLight.shadow.camera.near = 0.1;
+      keyLight.shadow.camera.far = 50;
+      keyLight.shadow.camera.left = -10;
+      keyLight.shadow.camera.right = 10;
+      keyLight.shadow.camera.top = 10;
+      keyLight.shadow.camera.bottom = -10;
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
+      fillLight.position.set(-5, 3, -3);
+      scene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
+      rimLight.position.set(0, 5, -8);
+      scene.add(rimLight);
+
+      // Ground plane
+      const groundGeo = new THREE.PlaneGeometry(50, 50);
+      const groundMat = new THREE.ShadowMaterial({ opacity: 0.15 });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // Grid
+      gridHelper = new THREE.GridHelper(20, 20, 0x444466, 0x222244);
+      scene.add(gridHelper);
+
+      clock = new THREE.Clock();
+
+      // Resize handler
+      const resizeObserver = new ResizeObserver(() => {
+        if (!isViewerOpen) return;
+        camera.aspect = wrap.clientWidth / wrap.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      });
+      resizeObserver.observe(wrap);
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        if (!isViewerOpen) return;
+        const delta = clock.getDelta();
+        if (mixer) mixer.update(delta);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    /* ===== Load Model ===== */
+    function clearModel() {
+      if (currentModel) {
+        scene.remove(currentModel);
+        currentModel.traverse(function(child) {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+            else child.material.dispose();
+          }
+        });
+        currentModel = null;
+      }
+      if (mixer) { mixer.stopAllAction(); mixer = null; }
+      animActions = [];
+      activeAction = null;
+      document.getElementById('animSelect').style.display = 'none';
+      document.getElementById('animSelect').innerHTML = '<option value="-1">No Animation</option>';
+    }
+
+    function frameModel(object) {
+      const box = new THREE.Box3().setFromObject(object);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const fov = camera.fov * (Math.PI / 180);
+      let cameraZ = maxDim / (2 * Math.tan(fov / 2));
+      cameraZ *= 1.8;
+
+      camera.position.set(center.x + cameraZ * 0.5, center.y + cameraZ * 0.3, center.z + cameraZ);
+      controls.target.copy(center);
+      camera.near = maxDim / 100;
+      camera.far = maxDim * 100;
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+
+    function setupAnimations(animations, object) {
+      if (!animations || animations.length === 0) return;
+      mixer = new THREE.AnimationMixer(object);
+      animActions = animations.map(clip => mixer.clipAction(clip));
+
+      const select = document.getElementById('animSelect');
+      select.innerHTML = '<option value="-1">No Animation</option>';
+      animations.forEach(function(clip, i) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = clip.name || ('Animation ' + (i + 1));
+        select.appendChild(opt);
+      });
+      select.style.display = 'inline-block';
+
+      // Auto-play first animation
+      if (animActions.length > 0) {
+        activeAction = animActions[0];
+        activeAction.play();
+        select.value = '0';
+      }
+    }
+
+    function applyWireframe(obj, wireframe) {
+      obj.traverse(function(child) {
+        if (child.isMesh && child.material) {
+          if (Array.isArray(child.material)) child.material.forEach(m => { m.wireframe = wireframe; });
+          else child.material.wireframe = wireframe;
+        }
+      });
+    }
+
+    function getModelStats(obj) {
+      let verts = 0, tris = 0, meshes = 0;
+      obj.traverse(function(child) {
+        if (child.isMesh && child.geometry) {
+          meshes++;
+          const geo = child.geometry;
+          if (geo.index) tris += geo.index.count / 3;
+          else if (geo.attributes.position) tris += geo.attributes.position.count / 3;
+          if (geo.attributes.position) verts += geo.attributes.position.count;
+        }
+      });
+      return { verts: verts, tris: Math.round(tris), meshes: meshes };
+    }
+
+    async function loadModelFromURL(url, format) {
+      clearModel();
+      document.getElementById('viewerLoading').style.display = 'block';
+
+      try {
+        let loader;
+        if (format === 'GLB' || format === 'GLTF') {
+          loader = new GLTFLoader();
+          loader.setDRACOLoader(dracoLoader);
+          const gltf = await loader.loadAsync(url);
+          currentModel = gltf.scene;
+          currentModel.traverse(c => { if (c.isMesh) c.castShadow = true; });
+          scene.add(currentModel);
+          frameModel(currentModel);
+          setupAnimations(gltf.animations, currentModel);
+        } else if (format === 'FBX') {
+          loader = new FBXLoader();
+          const fbx = await loader.loadAsync(url);
+          fbx.traverse(c => { if (c.isMesh) c.castShadow = true; });
+          currentModel = fbx;
+          scene.add(currentModel);
+          frameModel(currentModel);
+          setupAnimations(fbx.animations, fbx);
+        } else if (format === 'OBJ') {
+          loader = new OBJLoader();
+          const obj = await loader.loadAsync(url);
+          obj.traverse(c => {
+            if (c.isMesh) {
+              c.castShadow = true;
+              if (!c.material || c.material.type === 'MeshBasicMaterial') {
+                c.material = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.6, metalness: 0.2 });
+              }
+            }
+          });
+          currentModel = obj;
+          scene.add(currentModel);
+          frameModel(currentModel);
+        }
+
+        if (showWireframe && currentModel) applyWireframe(currentModel, true);
+
+        const stats = currentModel ? getModelStats(currentModel) : null;
+        if (stats) {
+          document.getElementById('viewerStats').textContent =
+            stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        }
+      } catch (err) {
+        console.error('Model load error:', err);
+        document.getElementById('viewerStats').textContent = 'Error: ' + err.message;
+      }
+
+      document.getElementById('viewerLoading').style.display = 'none';
+    }
+
+    function loadModelFromFile(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const format = { glb: 'GLB', gltf: 'GLTF', fbx: 'FBX', obj: 'OBJ' }[ext];
+      if (!format) { alert('Unsupported format: .' + ext); return; }
+
+      const url = URL.createObjectURL(file);
+      openViewer(file.name, format, '');
+      loadModelFromURL(url, format);
+    }
+
+    /* ===== Viewer Open/Close ===== */
+    function openViewer(name, format, path) {
+      if (!renderer) initViewer();
+      isViewerOpen = true;
+      document.getElementById('viewerOverlay').classList.add('active');
+      document.getElementById('viewerTitle').textContent = name;
+      document.getElementById('viewerInfo').textContent = format + (path ? ' \u00b7 ' + path : '');
+      document.getElementById('viewerStats').textContent = '';
+      document.body.style.overflow = 'hidden';
+      // Resize
+      const wrap = document.getElementById('viewerCanvasWrap');
+      camera.aspect = wrap.clientWidth / wrap.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+    }
+
+    function closeViewer() {
+      isViewerOpen = false;
+      clearModel();
+      document.getElementById('viewerOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    /* ===== Viewer Controls ===== */
+    document.getElementById('viewerClose').addEventListener('click', closeViewer);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
+
+    document.getElementById('btnWireframe').addEventListener('click', function() {
+      showWireframe = !showWireframe;
+      this.classList.toggle('active', showWireframe);
+      if (currentModel) applyWireframe(currentModel, showWireframe);
+    });
+
+    document.getElementById('btnGrid').addEventListener('click', function() {
+      showGrid = !showGrid;
+      this.classList.toggle('active', showGrid);
+      if (gridHelper) gridHelper.visible = showGrid;
+    });
+    document.getElementById('btnGrid').classList.add('active');
+
+    document.getElementById('btnAutoRotate').addEventListener('click', function() {
+      autoRotate = !autoRotate;
+      this.classList.toggle('active', autoRotate);
+      if (controls) controls.autoRotate = autoRotate;
+    });
+
+    document.getElementById('btnResetCam').addEventListener('click', function() {
+      if (currentModel) frameModel(currentModel);
+    });
+
+    document.getElementById('animSelect').addEventListener('change', function() {
+      const idx = parseInt(this.value);
+      if (activeAction) { activeAction.fadeOut(0.3); }
+      if (idx >= 0 && animActions[idx]) {
+        activeAction = animActions[idx];
+        activeAction.reset().fadeIn(0.3).play();
+      } else {
+        activeAction = null;
+      }
+    });
+
+    /* ===== Drag & Drop ===== */
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', function() { if (this.files[0]) loadModelFromFile(this.files[0]); });
+
+    dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) loadModelFromFile(e.dataTransfer.files[0]);
+    });
+
+    /* ===== Expose to catalog script ===== */
+    window._3dViewer = { openViewer, loadModelFromURL, closeViewer };
+  </script>
+
+  <!-- Catalog Script (non-module) -->
+  <script>
+    var allModels = [];
+    var filteredModels = [];
+    var currentPage = 0;
+    var PAGE_SIZE = 80;
+    var filters = { search: '', format: 'all', category: 'all' };
+
+    // Configurable base URL for hosted models (update when models are on R2 or repo)
+    var MODEL_BASE_URL = '';
+
+    async function init() {
+      try {
+        var res = await fetch('./api/v1/models3d.json');
+        var data = await res.json();
+        allModels = data.models || [];
+        // Normalize paths (Windows backslashes -> forward slashes)
+        allModels.forEach(function(m) { m.path = m.path.replace(/\\\\/g, '/').replace(/\\/g, '/'); });
+        renderStats(data);
+        buildFilters(data);
+        setupEvents();
+        applyFilters();
+      } catch(e) {
+        console.error('Failed to load models3d.json:', e);
+        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load model data: ' + e.message + '</p>';
+      }
+    }
+
+    function renderStats(data) {
+      var bar = document.getElementById('statsBar');
+      var html = '<div class="stat-item"><div class="stat-label">Total</div><div class="stat-value">' + (data.totalModels || allModels.length) + '</div></div>';
+      if (data.byFormat) {
+        for (var f in data.byFormat) {
+          html += '<div class="stat-item"><div class="stat-label">' + f + '</div><div class="stat-value">' + data.byFormat[f] + '</div></div>';
+        }
+      }
+      bar.innerHTML = html;
+    }
+
+    function buildFilters(data) {
+      var formats = {};
+      allModels.forEach(function(m) { formats[m.format] = (formats[m.format] || 0) + 1; });
+      var fmtHtml = '<button class="filter-btn active" data-fmt="all">All</button>';
+      Object.keys(formats).sort().forEach(function(f) {
+        fmtHtml += '<button class="filter-btn" data-fmt="' + f + '">' + f + ' (' + formats[f] + ')</button>';
+      });
+      document.getElementById('formatFilters').innerHTML = fmtHtml;
+
+      var cats = {};
+      allModels.forEach(function(m) { cats[m.category || 'uncategorized'] = (cats[m.category || 'uncategorized'] || 0) + 1; });
+      var catHtml = '<button class="filter-btn active" data-cat="all">All</button>';
+      Object.entries(cats).sort(function(a,b) { return b[1] - a[1]; }).forEach(function(e) {
+        catHtml += '<button class="filter-btn" data-cat="' + e[0] + '">' + e[0] + ' (' + e[1] + ')</button>';
+      });
+      document.getElementById('categoryFilters').innerHTML = catHtml;
+    }
+
+    function setupEvents() {
+      var debounceTimer;
+      document.getElementById('searchBox').addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() { filters.search = e.target.value.toLowerCase(); currentPage = 0; applyFilters(); }, 250);
+      });
+      document.getElementById('formatFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-fmt]'); if (!btn) return;
+        document.querySelectorAll('[data-fmt]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active'); filters.format = btn.dataset.fmt; currentPage = 0; applyFilters();
+      });
+      document.getElementById('categoryFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cat]'); if (!btn) return;
+        document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active'); filters.category = btn.dataset.cat; currentPage = 0; applyFilters();
+      });
+    }
+
+    function applyFilters() {
+      filteredModels = allModels.filter(function(m) {
+        if (filters.format !== 'all' && m.format !== filters.format) return false;
+        if (filters.category !== 'all' && (m.category || 'uncategorized') !== filters.category) return false;
+        if (filters.search && m.name.toLowerCase().indexOf(filters.search) === -1 && (m.category || '').toLowerCase().indexOf(filters.search) === -1) return false;
+        return true;
+      });
+      renderPage();
+    }
+
+    function renderPage() {
+      document.getElementById('loadingState').style.display = 'none';
+      if (filteredModels.length === 0) {
+        document.getElementById('resultsArea').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('resultsArea').style.display = 'block';
+      document.getElementById('resultsCount').textContent = filteredModels.length + ' models';
+
+      var start = currentPage * PAGE_SIZE;
+      var end = Math.min(start + PAGE_SIZE, filteredModels.length);
+      var page = filteredModels.slice(start, end);
+      var grid = document.getElementById('modelGrid');
+      var icons = { GLB: '\uD83D\uDFE2', GLTF: '\uD83D\uDD35', FBX: '\uD83D\uDFE0', OBJ: '\uD83D\uDFE3' };
+      var html = '';
+      for (var i = 0; i < page.length; i++) {
+        var m = page[i];
+        var fclass = 'format-' + m.format.toLowerCase();
+        var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : '';
+        html += '<div class="model-card" data-idx="' + (start + i) + '">' +
+          '<div class="model-icon">' + (icons[m.format] || '\uD83D\uDCE6') +
+            '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span></div>' +
+          '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
+          '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
+        '</div>';
+      }
+      grid.innerHTML = html;
+
+      // Click handlers
+      grid.querySelectorAll('.model-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var idx = parseInt(this.dataset.idx);
+          var m = filteredModels[idx];
+          if (!m) return;
+          if (MODEL_BASE_URL) {
+            window._3dViewer.openViewer(m.name, m.format, m.path);
+            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + m.path, m.format);
+          } else {
+            window._3dViewer.openViewer(m.name, m.format, m.path);
+            // Try loading from repo root
+            window._3dViewer.loadModelFromURL('./' + m.path, m.format);
+          }
+        });
+      });
+      renderPagination();
+    }
+
+    function renderPagination() {
+      var totalPages = Math.ceil(filteredModels.length / PAGE_SIZE);
+      if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+      var html = '<button class="page-btn" onclick="goPage(0)" ' + (currentPage === 0 ? 'disabled' : '') + '>&laquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '>&lsaquo;</button>';
+      var sp = Math.max(0, currentPage - 3), ep = Math.min(totalPages, sp + 7);
+      for (var p = sp; p < ep; p++) {
+        html += '<button class="page-btn ' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + (p + 1) + '</button>';
+      }
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&rsaquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (totalPages - 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&raquo;</button>';
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    window.goPage = function(p) {
+      var totalPages = Math.ceil(filteredModels.length / PAGE_SIZE);
+      if (p < 0 || p >= totalPages) return;
+      currentPage = p; renderPage();
+      window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
+    };
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    init();
+  </script>
+</body>
+</html>
