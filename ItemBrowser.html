@@ -603,9 +603,13 @@
     function getWeaponPackIcon(item, baseId) {
       // For tools, map to an appropriate weapon type
       var iconBase = TOOL_ICON_MAP[baseId] || item.iconBase || 'Sword';
-      var count = WCS_COUNTS[iconBase] || 40;
-      var num = (hashStr(baseId) % count) + 1;
-      return './icons/wcs/weapons/' + iconBase + '_' + pad2(num) + '.png';
+      var offset = item.iconOffset || 0;
+      var max = item.iconMax || WCS_COUNTS[iconBase] || 40;
+      // Slice size: use iconMax when it defines a small per-element range, else cap at 10
+      var sliceSize = Math.min(max, 10);
+      var num = (hashStr(baseId) % sliceSize) + offset + 1;
+      var numStr = item.noPad ? String(num) : pad2(num);
+      return './icons/wcs/weapons/' + iconBase + '_' + numStr + '.png';
     }
 
     function getMaterialFallback(item, baseId) {
@@ -702,7 +706,7 @@
           if (catData.items) {
             for (const item of catData.items) {
               for (let tier = 1; tier <= 8; tier++) {
-                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier, iconBase: catData.iconBase || 'Sword' }, category, 'weapon');
+                itemRegistry.register({ ...item, tier, id: item.id + '-t' + tier, iconBase: catData.iconBase || 'Sword', noPad: catData.noPad || false, iconOffset: catData.iconOffset || 0, iconMax: catData.iconMax || 0 }, category, 'weapon');
               }
             }
           }
