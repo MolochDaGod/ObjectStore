@@ -341,7 +341,7 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      padding: 20px 16px;
+      padding: 0 0 16px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -351,9 +351,26 @@
       transition: all 0.2s;
     }
     .tool-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-    .tool-card .tool-icon { font-size: 1.6rem; margin-bottom: 2px; }
-    .tool-card .tool-name { font-weight: 700; font-size: 0.88rem; }
-    .tool-card .tool-desc { font-size: 0.75rem; color: var(--text-dim); }
+    .tool-card .tool-thumb {
+      width: 100%;
+      height: 90px;
+      background-size: cover;
+      background-position: center;
+      border-radius: var(--radius) var(--radius) 0 0;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tool-card .tool-thumb::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(transparent, var(--card));
+    }
+    .tool-card .tool-name { font-weight: 700; font-size: 0.88rem; padding: 0 12px; }
+    .tool-card .tool-desc { font-size: 0.75rem; color: var(--text-dim); padding: 0 12px 4px; }
 
     /* ── Footer ── */
     footer {
@@ -422,37 +439,37 @@
       </div>
       <div class="tool-grid">
         <a href="./GRUDGE_Item_Database.html" class="tool-card">
-          <span class="tool-icon">&#128451;&#65039;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/camp_shop.png')"></div>
           <span class="tool-name">Item Database</span>
           <span class="tool-desc">Full searchable item database</span>
         </a>
         <a href="./SPRITE_DATABASE.html" class="tool-card">
-          <span class="tool-icon">&#128202;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/arena.png')"></div>
           <span class="tool-name">Sprite Database</span>
           <span class="tool-desc">Visual icon & sprite browser</span>
         </a>
         <a href="./2D_MODELS.html" class="tool-card">
-          <span class="tool-icon">&#127912;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/character_create.png')"></div>
           <span class="tool-name">2D Models</span>
           <span class="tool-desc">Animated sprite browser — 7,324</span>
         </a>
         <a href="./3D_MODELS.html" class="tool-card">
-          <span class="tool-icon">&#129482;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/crystal_caves.png')"></div>
           <span class="tool-name">3D Models</span>
           <span class="tool-desc">471 models — Three.js viewer</span>
         </a>
         <a href="./VFX_BROWSER.html" class="tool-card">
-          <span class="tool-icon">&#10024;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/magic_portal.jpg')"></div>
           <span class="tool-name">VFX Browser</span>
           <span class="tool-desc">Animated effect previews</span>
         </a>
         <a href="./ItemBrowser.html" class="tool-card">
-          <span class="tool-icon">&#128269;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/scene_trading.png')"></div>
           <span class="tool-name">Item Browser</span>
           <span class="tool-desc">AI-generated item images</span>
         </a>
         <a href="./tools/icon-generator.html" class="tool-card">
-          <span class="tool-icon">&#128396;&#65039;</span>
+          <div class="tool-thumb" style="background-image:url('./backgrounds/enchanted_stones.jpg')"></div>
           <span class="tool-name">Icon Generator</span>
           <span class="tool-desc">Puter AI icon creation</span>
         </a>
@@ -468,7 +485,7 @@
       <p class="section-desc">10,000+ production-ready assets collected from GrudgeWars, Warlord-Crafting-Suite, and GDevelopAssistant.</p>
       <div class="asset-grid">
         <a href="./2D_MODELS.html" class="asset-card">
-          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1028, #0d1520);" id="sprite-preview">
+          <div class="asset-preview" style="background: url('./backgrounds/arena_battle.png') center/cover, linear-gradient(135deg, #1a1028, #0d1520);" id="sprite-preview">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -477,7 +494,7 @@
           </div>
         </a>
         <a href="./SPRITE_DATABASE.html" class="asset-card">
-          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1510, #101820);" id="icon-preview">
+          <div class="asset-preview" style="background: url('./backgrounds/tavern_bg.png') center/cover, linear-gradient(135deg, #1a1510, #101820);" id="icon-preview">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -486,8 +503,7 @@
           </div>
         </a>
         <div class="asset-card">
-          <div class="asset-preview" style="background: linear-gradient(135deg, #0d1a15, #101520);">
-            <div style="text-align:center;color:var(--text-dim);font-size:2.5rem;opacity:0.5;">&#128266;</div>
+          <div class="asset-preview" style="background: url('./backgrounds/shadow_citadel.png') center/cover, linear-gradient(135deg, #0d1a15, #101520);">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -496,8 +512,7 @@
           </div>
         </div>
         <a href="./3D_MODELS.html" class="asset-card">
-          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1020, #0d1520);">
-            <div style="text-align:center;color:var(--text-dim);font-size:2.5rem;opacity:0.5;">&#129482;</div>
+          <div class="asset-preview" style="background: url('./backgrounds/dragon_peaks.png') center/cover, linear-gradient(135deg, #1a1020, #0d1520);">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">

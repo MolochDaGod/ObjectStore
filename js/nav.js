@@ -6,6 +6,7 @@
     { label: 'Sprites', href: './SPRITE_DATABASE.html', icon: '📊' },
     { label: '2D Models', href: './2D_MODELS.html', icon: '🎨' },
     { label: 'VFX', href: './VFX_BROWSER.html', icon: '✨' },
+    { label: '3D Models', href: './3D_MODELS.html', icon: '🧱' },
     { label: 'Browser', href: './ItemBrowser.html', icon: '🔍' },
     { label: 'Icons', href: './tools/icon-generator.html', icon: '🖌️' }
   ];

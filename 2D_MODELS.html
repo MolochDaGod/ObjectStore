@@ -162,7 +162,7 @@
         return { frameCount: fc2, frameW: Math.round(w / fc2), frameH: h, layout: 'horizontal' };
       }
       if (ratio < 0.8) {
-        var vr = height / width;
+        var vr = h / w;
         var vfc = Math.max(1, Math.round(vr));
         return { frameCount: vfc, frameW: w, frameH: Math.round(h / vfc), layout: 'vertical' };
       }

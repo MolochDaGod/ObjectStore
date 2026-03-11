@@ -633,7 +633,7 @@
       }
       grid.innerHTML = html;
 
-      // Click handlers
+      // Click handlers — models are a registry (files not hosted in repo)
       grid.querySelectorAll('.model-card').forEach(function(card) {
         card.addEventListener('click', function() {
           var idx = parseInt(this.dataset.idx);
@@ -643,9 +643,7 @@
             window._3dViewer.openViewer(m.name, m.format, m.path);
             window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + m.path, m.format);
           } else {
-            window._3dViewer.openViewer(m.name, m.format, m.path);
-            // Try loading from repo root
-            window._3dViewer.loadModelFromURL('./' + m.path, m.format);
+            showModelInfo(m);
           }
         });
       });
@@ -672,6 +670,49 @@
       currentPage = p; renderPage();
       window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
     };
+
+    /* === Model Info Modal (when models aren't hosted) === */
+    function showModelInfo(m) {
+      var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : 'Unknown';
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      var fclass = 'format-' + m.format.toLowerCase();
+      var html = '<div style="background:var(--card-bg);border:2px solid var(--tier-4);border-radius:16px;max-width:500px;width:100%;padding:32px;position:relative;">' +
+        '<button onclick="this.closest(\'.model-info-overlay\').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text-dim);font-size:1.5rem;cursor:pointer;">&times;</button>' +
+        '<div style="text-align:center;font-size:3rem;margin-bottom:12px;">&#129482;</div>' +
+        '<h3 style="font-size:1.2rem;margin-bottom:4px;color:var(--text-primary);">' + esc(m.name) + '</h3>' +
+        '<p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:16px;">' + esc(m.category || 'uncategorized') + '</p>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">' +
+          '<div style="background:var(--bg-dark);padding:8px 12px;border-radius:8px;"><div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;">Format</div><div style="color:var(--tier-4);font-weight:600;">' + esc(m.format) + '</div></div>' +
+          '<div style="background:var(--bg-dark);padding:8px 12px;border-radius:8px;"><div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;">Size</div><div style="color:var(--tier-4);font-weight:600;">' + sizeStr + '</div></div>' +
+        '</div>' +
+        '<div style="background:var(--bg-dark);padding:10px;border-radius:8px;font-family:monospace;font-size:0.75rem;color:var(--tier-7);word-break:break-all;margin-bottom:16px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent)" title="Click to copy path">' + esc(m.path) + '</div>' +
+        '<p style="color:var(--text-dim);font-size:0.78rem;margin-bottom:12px;text-align:center;">This model is in the registry but not hosted in the repo.<br>Load the file from your machine to preview it in 3D:</p>' +
+        '<div style="text-align:center;"><button class="viewer-btn" style="padding:10px 24px;font-size:0.9rem;" id="modelInfoLoadBtn">&#128194; Load ' + esc(m.format) + ' File to Preview</button></div>' +
+      '</div>';
+      overlay.className = 'model-info-overlay';
+      overlay.innerHTML = html;
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      document.body.appendChild(overlay);
+      // Wire up load button
+      document.getElementById('modelInfoLoadBtn').addEventListener('click', function() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.' + m.format.toLowerCase();
+        input.onchange = function() {
+          if (input.files[0]) {
+            overlay.remove();
+            var url = URL.createObjectURL(input.files[0]);
+            window._3dViewer.openViewer(m.name, m.format, m.path);
+            window._3dViewer.loadModelFromURL(url, m.format);
+          }
+        };
+        input.click();
+      });
+      // ESC to close
+      function escHandler(e) { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', escHandler); } }
+      document.addEventListener('keydown', escHandler);
+    }
 
     function esc(str) {
       if (!str) return '';
