@@ -130,6 +130,45 @@
     var observer;
     var ANIM_CATS = ['characters','enemies','monsters','bosses','effects','fish','npcs','companions','projectiles'];
 
+    /* === Detect frame layout from image dimensions (fallback when no JSON metadata) === */
+    function detectFrameLayout(w, h) {
+      var ratio = w / h;
+      if (ratio >= 0.8 && ratio <= 1.2) {
+        return { frameCount: 1, frameW: w, frameH: h, layout: 'single' };
+      }
+      if (ratio > 1.2) {
+        // Horizontal strip — try common frame counts for best square-ish fit
+        var best = null;
+        var counts = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,20,24];
+        for (var ci = 0; ci < counts.length; ci++) {
+          var fc = counts[ci];
+          var fw = w / fc;
+          if (fw === Math.floor(fw)) {
+            var fr = fw / h;
+            if (fr >= 0.3 && fr <= 3.0) {
+              var score = Math.abs(1 - fr);
+              if (!best || score < best.score) best = { frameCount: fc, frameW: fw, frameH: h, score: score };
+            }
+          }
+        }
+        var sq = Math.round(w / h);
+        if (sq > 1 && sq <= 30) {
+          var sqfw = w / sq;
+          var sqScore = Math.abs(1 - sqfw / h);
+          if (!best || sqScore < best.score) best = { frameCount: sq, frameW: sqfw, frameH: h, score: sqScore };
+        }
+        if (best) return { frameCount: best.frameCount, frameW: Math.round(best.frameW), frameH: h, layout: 'horizontal' };
+        var fc2 = Math.max(1, Math.round(ratio));
+        return { frameCount: fc2, frameW: Math.round(w / fc2), frameH: h, layout: 'horizontal' };
+      }
+      if (ratio < 0.8) {
+        var vr = height / width;
+        var vfc = Math.max(1, Math.round(vr));
+        return { frameCount: vfc, frameW: w, frameH: Math.round(h / vfc), layout: 'vertical' };
+      }
+      return { frameCount: 1, frameW: w, frameH: h, layout: 'unknown' };
+    }
+
     async function init() {
       try {
         var res = await fetch('./api/v1/sprites2d.json');
@@ -159,7 +198,11 @@
         if (!map[key]) {
           map[key] = { name: s.subcategory, category: s.category, source: s.source, animations: [] };
         }
-        map[key].animations.push({ id: s.id, name: s.name, path: s.path, filename: s.filename });
+        map[key].animations.push({
+          id: s.id, name: s.name, path: s.path, filename: s.filename,
+          frameCount: s.frameCount, frameW: s.frameW, frameH: s.frameH,
+          layout: s.layout, width: s.width, height: s.height
+        });
       });
       charGroups = Object.values(map);
       charGroups.forEach(function(g) {
@@ -346,27 +389,48 @@
       activeAnimators[animId] = {
         img: img, canvas: canvas, ctx: ctx,
         frame: 0, frameCount: 1, frameW: 128, frameH: 128,
-        playing: false, raf: null, fps: 8, lastTime: 0
+        playing: false, raf: null, fps: 8, lastTime: 0,
+        layout: 'horizontal'
       };
       img.onload = function() {
         var w = img.naturalWidth;
         var h = img.naturalHeight;
-        var frameCount = Math.max(1, Math.round(w / h));
-        var frameW = Math.round(w / frameCount);
-        var frameH = h;
+        var frameCount, frameW, frameH, layout;
+
+        // Use metadata from enriched JSON when available
+        if (animData.frameCount && animData.frameCount > 0) {
+          frameCount = animData.frameCount;
+          frameW = animData.frameW || Math.round(w / frameCount);
+          frameH = animData.frameH || h;
+          layout = animData.layout || 'horizontal';
+        } else {
+          // Fallback: detect from image dimensions
+          var detected = detectFrameLayout(w, h);
+          frameCount = detected.frameCount;
+          frameW = detected.frameW;
+          frameH = detected.frameH;
+          layout = detected.layout;
+        }
+
         var anim = activeAnimators[animId];
         if (!anim) return;
         anim.frameCount = frameCount;
         anim.frameW = frameW;
         anim.frameH = frameH;
         anim.frame = 0;
+        anim.layout = layout;
         canvas.width = frameW;
         canvas.height = frameH;
         var info = document.getElementById('info-' + animId);
         if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH;
         ctx.clearRect(0, 0, frameW, frameH);
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+        // Draw first frame based on layout
+        if (layout === 'vertical') {
+          ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+        } else {
+          ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+        }
         var viewport = canvas.parentElement;
         if (viewport) observer.observe(viewport);
       };
@@ -397,7 +461,11 @@
           var ctx = anim.ctx;
           ctx.clearRect(0, 0, anim.frameW, anim.frameH);
           ctx.imageSmoothingEnabled = false;
-          ctx.drawImage(anim.img, anim.frame * anim.frameW, 0, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
+          if (anim.layout === 'vertical') {
+            ctx.drawImage(anim.img, 0, anim.frame * anim.frameH, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
+          } else {
+            ctx.drawImage(anim.img, anim.frame * anim.frameW, 0, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
+          }
         }
         anim.raf = requestAnimationFrame(tick);
       }
@@ -450,27 +518,42 @@
       var ctx = canvas.getContext('2d');
       var animData = group.animations[animIdx];
       var img = new Image();
-      modalAnim = { img: img, canvas: canvas, ctx: ctx, frame: 0, frameCount: 1, frameW: 256, frameH: 256, raf: null, fps: 8, lastTime: 0 };
+      modalAnim = { img: img, canvas: canvas, ctx: ctx, frame: 0, frameCount: 1, frameW: 256, frameH: 256, raf: null, fps: 8, lastTime: 0, layout: 'horizontal' };
       img.onload = function() {
         var w = img.naturalWidth;
         var h = img.naturalHeight;
-        var frameCount = Math.max(1, Math.round(w / h));
-        var frameW = Math.round(w / frameCount);
-        var frameH = h;
+        var frameCount, frameW, frameH, layout;
+
+        // Use metadata from enriched JSON when available
+        if (animData.frameCount && animData.frameCount > 0) {
+          frameCount = animData.frameCount;
+          frameW = animData.frameW || Math.round(w / frameCount);
+          frameH = animData.frameH || h;
+          layout = animData.layout || 'horizontal';
+        } else {
+          var detected = detectFrameLayout(w, h);
+          frameCount = detected.frameCount;
+          frameW = detected.frameW;
+          frameH = detected.frameH;
+          layout = detected.layout;
+        }
+
         modalAnim.frameCount = frameCount;
         modalAnim.frameW = frameW;
         modalAnim.frameH = frameH;
+        modalAnim.layout = layout;
         canvas.width = frameW;
         canvas.height = frameH;
         var info = document.getElementById('modal-frame-info');
         if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH + 'px per frame \u00b7 ' + w + 'x' + h + ' total';
+        var layoutLabel = layout === 'vertical' ? 'Vertical Strip' : layout === 'horizontal' ? 'Horizontal Strip' : layout === 'single' ? 'Single Frame' : layout;
         var infoDiv = document.getElementById('modalInfo');
         if (infoDiv) {
           infoDiv.innerHTML =
             '<div class="modal-info-item"><div class="modal-info-label">Animation</div><div class="modal-info-value">' + esc(animData.name) + '</div></div>' +
             '<div class="modal-info-item"><div class="modal-info-label">Frames</div><div class="modal-info-value">' + frameCount + '</div></div>' +
             '<div class="modal-info-item"><div class="modal-info-label">Frame Size</div><div class="modal-info-value">' + frameW + 'x' + frameH + '</div></div>' +
-            '<div class="modal-info-item"><div class="modal-info-label">Sheet Size</div><div class="modal-info-value">' + w + 'x' + h + '</div></div>' +
+            '<div class="modal-info-item"><div class="modal-info-label">Layout</div><div class="modal-info-value">' + layoutLabel + '</div></div>' +
             '<div class="modal-path" onclick="copyPath(this)" title="Click to copy">' + esc(animData.path) + '</div>';
         }
         ctx.clearRect(0, 0, frameW, frameH);
@@ -486,7 +569,11 @@
             modalAnim.lastTime = now - (elapsed % interval);
             ctx.clearRect(0, 0, frameW, frameH);
             ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(img, modalAnim.frame * frameW, 0, frameW, frameH, 0, 0, frameW, frameH);
+            if (modalAnim.layout === 'vertical') {
+              ctx.drawImage(img, 0, modalAnim.frame * frameH, frameW, frameH, 0, 0, frameW, frameH);
+            } else {
+              ctx.drawImage(img, modalAnim.frame * frameW, 0, frameW, frameH, 0, 0, frameW, frameH);
+            }
           }
           modalAnim.raf = requestAnimationFrame(tick);
         }
