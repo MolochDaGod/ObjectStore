@@ -46,7 +46,19 @@ const API_ENDPOINTS = [
   './api/v1/audio.json',
   './api/v1/video.json',
   './api/v1/heroes.json',
-  './api/v1/models3d.json'
+  './api/v1/models3d.json',
+  // v3.0.0 — Additional systems
+  './api/v1/ai.json',
+  './api/v1/animations.json',
+  './api/v1/asset-registry.json',
+  './api/v1/controllers.json',
+  './api/v1/ecs.json',
+  './api/v1/nodeUpgrades.json',
+  './api/v1/rendering.json',
+  './api/v1/rtsModels.json',
+  './api/v1/spriteMaps.json',
+  './api/v1/terrain.json',
+  './api/v1/tileMaps.json'
 ];
 
 self.addEventListener('install', event => {

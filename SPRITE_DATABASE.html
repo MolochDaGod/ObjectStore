@@ -333,6 +333,76 @@
     }
     footer a { color: var(--gold); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+    /* Sprite animations */
+    .sprite-anim {
+      image-rendering: pixelated;
+      margin: 0 auto 8px;
+      background-repeat: no-repeat;
+    }
+    .sprite-display-scale {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80px;
+    }
+    .anim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .anim-cell {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 6px 6px;
+      text-align: center;
+    }
+    .anim-cell .anim-label {
+      font-size: 0.65rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .anim-cell .anim-frames {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    .enemy-stats-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .enemy-stat {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: var(--bg);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .enemy-stat b { color: var(--gold); }
+    .boss-phase {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .boss-phase-name {
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .boss-ability {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      padding: 3px 0;
+    }
+    .boss-ability b { color: var(--text); }
     /* Responsive */
     @media (max-width: 768px) {
       .header { padding: 20px; }
@@ -1479,23 +1549,101 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       renderEnemies();
     }
 
+    // Sprite animation helper: returns HTML for an animated sprite
+    function spriteAnimHTML(sd, animKey, uniqueId, scale) {
+      if (!sd || !sd.animations || !sd.animations[animKey]) return null;
+      const a = sd.animations[animKey];
+      const fw = sd.frameWidth;
+      const fh = sd.frameHeight;
+      const frames = a.frames;
+      const totalW = fw * frames;
+      const src = `${sd.folder}/${a.file}`;
+      const s = scale || 1;
+      const dur = Math.max(frames * 0.1, 0.4);
+      const name = `sa-${uniqueId}-${animKey}`;
+      return `<div class="sprite-anim" style="width:${fw*s}px;height:${fh*s}px;background:url('${src}') 0 0 no-repeat;background-size:${totalW*s}px ${fh*s}px;animation:${name} ${dur}s steps(${frames}) infinite"></div><style>@keyframes ${name}{to{background-position:-${totalW*s}px 0}}</style>`;
+    }
+
+    // Flat lookup for enemy detail click
+    let enemyLookup = {};
+
     function renderEnemies() {
       const data = allData.enemies;
       if (!data) return;
       document.getElementById('enemies-loading').style.display = 'none';
       const container = document.getElementById('enemies-content');
-      let html = '<h2 class="section-title">👹 Enemies Database</h2>';
       const categoryNames = { beasts: '🐺 Beasts', spiders: '🕷️ Spiders & Arachnids', trolls: '👹 Trolls', orcs: '👺 Orcs & Goblins', undead: '💀 Undead & Dark', golems: '🗿 Golems', minotaurs: '🐂 Minotaurs', dragons: '🐉 Dragons & Wyrms', egyptians: '🏛️ Egyptian Horrors', titans: '⚡ Titans & Giants', reptiles: '🦎 Reptiles', elementals: '🔥 Elementals' };
+      let html = '<h2 class="section-title">👹 Enemies Database — Animated Sprites</h2>';
+      let styleBlock = '';
+      enemyLookup = {};
+
       for (const [catKey, catData] of Object.entries(data.categories)) {
         if (!catData.items || catData.items.length === 0) continue;
         html += `<div class="category-group" data-category="${catKey}"><h3 class="category-title">${categoryNames[catKey] || catKey}<span class="category-count">${catData.items.length} enemies</span></h3><div class="items-grid">`;
         for (const item of catData.items) {
-          html += `<div class="item-card" data-name="${item.name.toLowerCase()}" data-tier="${item.tier}"><span class="tier-badge tier-${item.tier}">T${item.tier}</span><span class="item-icon">${item.emoji}</span><div class="item-name">${item.name}</div><div class="item-meta">${item.zone} • HP: ${item.hp}</div></div>`;
+          enemyLookup[item.id] = item;
+          const sd = item.spriteData;
+          let iconHtml;
+          if (sd && sd.animations && sd.animations.idle) {
+            // Determine scale to fit ~80px display
+            const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+            const s = maxDim > 80 ? 80 / maxDim : maxDim < 40 ? 80 / maxDim : 1;
+            iconHtml = `<div class="sprite-display-scale">${spriteAnimHTML(sd, 'idle', item.id, s)}</div>`;
+          } else {
+            iconHtml = `<span class="item-icon">${item.emoji}</span>`;
+          }
+          html += `<div class="item-card" data-name="${item.name.toLowerCase()}" data-tier="${item.tier}" onclick="showEnemyDetail('${item.id}')">`;
+          html += `<span class="tier-badge tier-${item.tier}">T${item.tier}</span>`;
+          html += iconHtml;
+          html += `<div class="item-name">${item.name}</div>`;
+          html += `<div class="item-meta">${item.zone} • HP: ${item.hp}</div></div>`;
         }
         html += '</div></div>';
       }
       container.innerHTML = html;
       updateTotalCount();
+    }
+
+    function showEnemyDetail(id) {
+      const item = enemyLookup[id];
+      if (!item) return;
+      const sd = item.spriteData;
+      let iconHtml;
+      if (sd && sd.animations && sd.animations.idle) {
+        const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+        const s = maxDim > 96 ? 96 / maxDim : maxDim < 48 ? 96 / maxDim : 1.5;
+        iconHtml = spriteAnimHTML(sd, 'idle', 'modal-' + id, s) || `<span class="modal-icon">${item.emoji}</span>`;
+      } else {
+        iconHtml = `<span class="modal-icon">${item.emoji}</span>`;
+      }
+      document.getElementById('modalIcon').innerHTML = iconHtml;
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `Tier ${item.tier} ${item.type} • ${item.zone}`;
+
+      let details = '';
+      details += `<div class="detail-row"><span class="detail-label">HP</span><span class="detail-value">${item.hp}</span></div>`;
+      details += `<div class="detail-row"><span class="detail-label">Damage</span><span class="detail-value">${item.damage}</span></div>`;
+      details += `<div class="detail-row"><span class="detail-label">Abilities</span><span class="detail-value">${(item.abilities||[]).join(', ')}</span></div>`;
+      details += `<div class="detail-row"><span class="detail-label">Drops</span><span class="detail-value">${(item.drops||[]).join(', ')}</span></div>`;
+      if (sd) details += `<div class="detail-row"><span class="detail-label">Sprite</span><span class="detail-value">${sd.spriteKey} (${sd.frameWidth}x${sd.frameHeight})</span></div>`;
+
+      // Show all animation states
+      if (sd && sd.animations) {
+        details += `<div style="margin-top:14px;color:var(--gold);font-weight:600;font-size:0.85rem">Animation States</div>`;
+        details += `<div class="anim-grid">`;
+        for (const [animKey, animData] of Object.entries(sd.animations)) {
+          const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+          const s = maxDim > 64 ? 64 / maxDim : maxDim < 32 ? 64 / maxDim : 1;
+          const animHtml = spriteAnimHTML(sd, animKey, 'detail-' + id + '-' + animKey, s);
+          if (animHtml) {
+            details += `<div class="anim-cell"><div class="anim-label">${animKey}</div><div class="sprite-display-scale">${animHtml}</div><div class="anim-frames">${animData.frames} frames</div></div>`;
+          }
+        }
+        details += '</div>';
+      }
+
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
     }
 
     // Load bosses
@@ -1509,14 +1657,29 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       renderBosses();
     }
 
+    let bossLookup = {};
+
     function renderBosses() {
       const data = allData.bosses;
       if (!data) return;
       document.getElementById('bosses-loading').style.display = 'none';
       const container = document.getElementById('bosses-content');
-      let html = '<h2 class="section-title">💀 Boss Encounters</h2>';
+      let html = '<h2 class="section-title">💀 Boss Encounters — Animated Sprites</h2>';
+      bossLookup = {};
+
       for (const boss of data.bosses) {
-        html += `<div class="category-group"><h3 class="category-title">${boss.emoji} ${boss.name} <span class="category-count">T${boss.tier} • ${boss.zone} • ${boss.phases} phases • ${boss.hp.toLocaleString()} HP</span></h3>`;
+        bossLookup[boss.id] = boss;
+        const sd = boss.spriteData;
+        let spriteHtml = '';
+        if (sd && sd.animations && sd.animations.idle) {
+          const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+          const s = maxDim > 96 ? 96 / maxDim : maxDim < 48 ? 96 / maxDim : 1.2;
+          spriteHtml = `<div style="float:right;margin-left:16px">${spriteAnimHTML(sd, 'idle', 'boss-' + boss.id, s)}</div>`;
+        }
+
+        html += `<div class="category-group" style="cursor:pointer" onclick="showBossDetail('${boss.id}')">`;
+        html += spriteHtml;
+        html += `<h3 class="category-title">${boss.emoji} ${boss.name} <span class="category-count">T${boss.tier} • ${boss.zone} • ${boss.phases} phases • ${boss.hp.toLocaleString()} HP</span></h3>`;
         html += `<p style="color: var(--text-dim); margin-bottom: 12px; font-style: italic;">${boss.title}</p>`;
         html += '<div class="items-grid">';
         for (const [phaseKey, phase] of Object.entries(boss.mechanics)) {
@@ -1531,6 +1694,55 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       }
       container.innerHTML = html;
       updateTotalCount();
+    }
+
+    function showBossDetail(id) {
+      const boss = bossLookup[id];
+      if (!boss) return;
+      const sd = boss.spriteData;
+      let iconHtml;
+      if (sd && sd.animations && sd.animations.idle) {
+        const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+        const s = maxDim > 96 ? 96 / maxDim : maxDim < 48 ? 96 / maxDim : 1.5;
+        iconHtml = spriteAnimHTML(sd, 'idle', 'bmodal-' + id, s) || `<span class="modal-icon">${boss.emoji}</span>`;
+      } else {
+        iconHtml = `<span class="modal-icon">${boss.emoji}</span>`;
+      }
+      document.getElementById('modalIcon').innerHTML = iconHtml;
+      document.getElementById('modalTitle').textContent = boss.name;
+      document.getElementById('modalSubtitle').textContent = `${boss.title} • T${boss.tier} • ${boss.zone} • ${boss.hp.toLocaleString()} HP`;
+
+      let details = '';
+      // Phases
+      for (const [phaseKey, phase] of Object.entries(boss.mechanics)) {
+        details += `<div class="boss-phase">`;
+        details += `<div class="boss-phase-name">${phase.name} (${phase.hp_threshold})</div>`;
+        for (const ab of phase.abilities) {
+          details += `<div class="boss-ability"><b>${ab.name}</b> ${ab.damage > 0 ? '(' + ab.damage + ' dmg)' : ''} — ${ab.desc}</div>`;
+        }
+        details += '</div>';
+      }
+      // Drops
+      details += `<div style="margin-top:14px;color:var(--gold);font-weight:600;font-size:0.85rem">Loot Table</div>`;
+      for (const d of boss.drops) {
+        details += `<div class="detail-row"><span class="detail-label">${d.name}</span><span class="detail-value">${(d.dropRate*100).toFixed(0)}% (${d.type})</span></div>`;
+      }
+      // All animation states
+      if (sd && sd.animations) {
+        details += `<div style="margin-top:14px;color:var(--gold);font-weight:600;font-size:0.85rem">Animation States</div>`;
+        details += `<div class="anim-grid">`;
+        for (const [animKey, animData] of Object.entries(sd.animations)) {
+          const maxDim = Math.max(sd.frameWidth, sd.frameHeight);
+          const s = maxDim > 64 ? 64 / maxDim : maxDim < 32 ? 64 / maxDim : 1;
+          const animHtml = spriteAnimHTML(sd, animKey, 'bdetail-' + id + '-' + animKey, s);
+          if (animHtml) {
+            details += `<div class="anim-cell"><div class="anim-label">${animKey}</div><div class="sprite-display-scale">${animHtml}</div><div class="anim-frames">${animData.frames} frames</div></div>`;
+          }
+        }
+        details += '</div>';
+      }
+      document.getElementById('modalDetails').innerHTML = details;
+      document.getElementById('detailModal').classList.add('active');
     }
 
     // Load skills (weapon skills v2 with real icons)
