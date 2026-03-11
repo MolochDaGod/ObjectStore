@@ -110,6 +110,17 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/video.json` | 6 cinematic video registry |
 | `/api/v1/heroes.json` | 36 hero portrait + effect images |
 | `/api/v1/models3d.json` | 471 3D model registry (GLB/GLTF/FBX/OBJ) |
+| `/api/v1/ai.json` | AI agent configuration and prompts |
+| `/api/v1/animations.json` | Animation definitions |
+| `/api/v1/asset-registry.json` | Master asset registry |
+| `/api/v1/controllers.json` | Controller configurations |
+| `/api/v1/ecs.json` | Entity Component System definitions |
+| `/api/v1/nodeUpgrades.json` | Node upgrade paths |
+| `/api/v1/rendering.json` | Rendering configuration |
+| `/api/v1/rtsModels.json` | RTS model registry |
+| `/api/v1/spriteMaps.json` | Sprite map definitions |
+| `/api/v1/terrain.json` | Terrain configuration |
+| `/api/v1/tileMaps.json` | Tile map definitions |
 
 ## 🔗 Supported Projects
 
@@ -304,12 +315,24 @@ See [GRUDA-Wars README](https://github.com/MolochDaGod/StandaloneGrudge) for ful
 
 ## 🎨 Icons
 
-Icons are hosted at:
-- Weapons: `/icons/weapons/{Type}_{##}.png`
-- Armor: `/icons/armor/{Slot}_{##}.png`
-- Resources: `/icons/resources/Res_{##}.png`
+All items display real icon assets — no emoji or placeholder images.
 
-Example: `/icons/weapons/Sword_01.png`
+### Icon Resolution
+- **Weapons**: Named icons at `/icons/weapons/{id}.png` (e.g. `bloodfeud-blade.png`), with automatic fallback to `/icons/wcs/weapons/{Type}_{##}.png` pack (502 real weapon sprites)
+- **Armor**: `/icons/pack/armor/{Slot}_{##}.png` (Helm, Chest, Boots, Gloves, etc.)
+- **Materials**: Named icons at `/icons/materials/{id}.png` with category-matched fallback
+- **Consumables**: Smart matching — 18 food icons, 10 herb icons, 48 potion icons, 48 alchemy icons
+- **Tools**: Mapped to appropriate weapon-type icons (pick→hammer, axe→axe, knife→dagger)
+
+### Icon Packs Available
+- `/icons/weapons/` — 82 named weapon icons
+- `/icons/wcs/weapons/` — 502 weapon sprites (Sword, Axe, Dagger, Hammer, Spear, Bow, etc.)
+- `/icons/pack/armor/` — Armor slot icons (Helm, Chest, Boots, Belt, Ring, etc.)
+- `/icons/consumables/` — Food, herbs, potions, alchemy items
+- `/icons/materials/` — 79 crafting material icons
+- `/icons/skills/` — Class-based skill icons (aeromancer, pirate, swordsman, warlock)
+- `/icons/abilities/` — 28 ability icons
+- `/icons/spells/` — Spell effect icons with color variants
 
 ## 📁 Project Structure
 

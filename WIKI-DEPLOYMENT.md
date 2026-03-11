@@ -2,7 +2,7 @@
 
 Complete guide for deploying ObjectStore and creating releases across the Grudge Studio ecosystem.
 
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-03-11
 
 ---
 
@@ -400,9 +400,9 @@ Projects that should update:
 
 ---
 
-## 🎯 Current Release: v2.1.0
+## 🎯 Current Release: v3.0.1
 
-**Deployed**: 2026-02-27
+**Deployed**: 2026-03-11
 **Status**: ✅ Live
 **URL**: https://molochdagod.github.io/ObjectStore
 
@@ -410,8 +410,8 @@ Projects that should update:
 
 | Project | Status | Version | Notes |
 |---------|--------|---------|-------|
-| ObjectStore | ✅ Live | 2.1.0 | Core API |
-| Warlord-Crafting-Suite | 🚧 Pending | - | Update in progress |
+| ObjectStore | ✅ Live | 3.0.1 | Core API — 45 endpoints, real icons, SW caching |
+| Warlord-Crafting-Suite | 🚧 Pending | - | Skill-tree page port in progress |
 | GrudgeStudioNPM | 📋 Planned | - | Awaiting publish |
 | GrudgeWarlords | 📋 Planned | - | Integration needed |
 | WebGL Builds | 📋 Planned | - | Batch update |

@@ -1,6 +1,6 @@
-const CACHE_NAME = 'objectstore-v3';
-const API_CACHE = 'objectstore-api-v3';
-const ASSET_CACHE = 'objectstore-assets-v3';
+const CACHE_NAME = 'objectstore-v3.1';
+const API_CACHE = 'objectstore-api-v3.1';
+const ASSET_CACHE = 'objectstore-assets-v3.1';
 
 const PRECACHE_URLS = [
   './',
