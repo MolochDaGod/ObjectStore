@@ -1,0 +1,29 @@
+# ─── ObjectStore Cloudflare Worker ───────────────────────────────────
+# API for asset upload, metadata search, and serving via R2 + D1
+# Docs: workers/README.md
+# ─────────────────────────────────────────────────────────────────────
+
+name = "objectstore-api"
+main = "workers/src/index.js"
+compatibility_date = "2024-12-01"
+
+# ── Environment variables ───────────────────────────────────────────
+[vars]
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://grudge-studio.com"
+MAX_UPLOAD_SIZE = "104857600"   # 100 MB
+
+# ── R2 Object Storage ──────────────────────────────────────────────
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "objectstore-assets"
+
+# ── D1 SQL Database ────────────────────────────────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "objectstore-meta"
+database_id = ""   # ← fill after: wrangler d1 create objectstore-meta
+
+# ── Custom domain (uncomment after connecting in Cloudflare dash) ──
+# [routes]
+# pattern = "objectstore.grudge-studio.com/*"
+# custom_domain = true

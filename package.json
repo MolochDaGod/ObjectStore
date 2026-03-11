@@ -55,7 +55,11 @@
     "audit:puter": "node ./scripts/puter-audit.mjs",
     "audit:puter:save": "node ./scripts/puter-audit.mjs --output docs/reports/puter-audit-report.json",
     "sync": "node ./scripts/sync-all.js",
-    "mcp": "node ./mcp/objectstore-server.js"
+    "mcp": "node ./mcp/objectstore-server.js",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "worker:tail": "wrangler tail",
+    "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql"
   },
   "repository": {
     "type": "git",
