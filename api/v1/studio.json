@@ -1,0 +1,109 @@
+{
+  "name": "Grudge Studio ObjectStore",
+  "version": "4.0.0",
+  "description": "Public game data API, sprite browser, asset management, and storage for Grudge Warlords",
+  "homepage": "https://molochdagod.github.io/ObjectStore",
+  "repository": "https://github.com/MolochDaGod/ObjectStore",
+  "organization": "Grudge Studio",
+  "services": {
+    "spriteRegistry": {
+      "description": "2D sprite pipeline with UUIDs, frame detection, and character grouping",
+      "endpoints": {
+        "sprites": "/api/v1/sprites2d.json",
+        "characters": "/api/v1/sprite-characters.json"
+      },
+      "api": {
+        "listSprites": "GET /api/v1/sprites?category={cat}&page={n}&limit={n}",
+        "searchSprites": "GET /api/v1/sprites/search?q={query}&category={cat}",
+        "getSprite": "GET /api/v1/sprites/{uuid}",
+        "listCharacters": "GET /api/v1/characters?category={cat}",
+        "getCharacter": "GET /api/v1/characters/{uuid}",
+        "stats": "GET /api/v1/stats"
+      },
+      "stats": {
+        "totalSprites": 1449,
+        "totalCharacters": 103,
+        "uuidFormat": "SPRT-{8hex}-{6hex}"
+      }
+    },
+    "gameData": {
+      "description": "Static JSON game data for Grudge Warlords",
+      "endpoints": {
+        "weapons": "/api/v1/weapons.json",
+        "armor": "/api/v1/armor.json",
+        "materials": "/api/v1/materials.json",
+        "consumables": "/api/v1/consumables.json",
+        "skills": "/api/v1/skills.json",
+        "weaponSkills": "/api/v1/weaponSkills.json",
+        "professions": "/api/v1/professions.json",
+        "races": "/api/v1/races.json",
+        "classes": "/api/v1/classes.json",
+        "factions": "/api/v1/factions.json",
+        "attributes": "/api/v1/attributes.json",
+        "enemies": "/api/v1/enemies.json",
+        "bosses": "/api/v1/bosses.json",
+        "quests": "/api/v1/quests.json",
+        "dialogue": "/api/v1/dialogue.json",
+        "missions": "/api/v1/missions.json",
+        "skillTrees": "/api/v1/skillTrees.json",
+        "equipment": "/api/v1/equipment.json",
+        "worldMap": "/api/v1/worldMap.json",
+        "regions": "/api/v1/regions.json",
+        "lore": "/api/v1/lore.json",
+        "audio": "/api/v1/audio.json",
+        "video": "/api/v1/video.json",
+        "heroes": "/api/v1/heroes.json",
+        "models3d": "/api/v1/models3d.json"
+      }
+    },
+    "storage": {
+      "description": "File upload/download with S3 bridge and local fallback",
+      "api": {
+        "upload": "POST /api/storage/upload",
+        "uploadMulti": "POST /api/storage/upload-multi",
+        "uploadZip": "POST /api/storage/upload-zip",
+        "delete": "DELETE /api/storage/{key}",
+        "list": "GET /api/storage/list?prefix={prefix}"
+      },
+      "adapters": ["local", "s3"],
+      "s3Config": {
+        "envVars": ["S3_ENDPOINT", "S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY", "S3_REGION", "S3_PUBLIC_URL"]
+      }
+    },
+    "assetRegistry": {
+      "description": "Legacy asset registry with UUID lookup",
+      "endpoints": {
+        "categories": "/api/assets/categories",
+        "search": "/api/assets/search?q={query}",
+        "getByUuid": "/api/assets/{uuid}"
+      }
+    }
+  },
+  "pages": {
+    "home": "/index.html",
+    "spriteBrowser": "/2D_MODELS.html",
+    "itemDatabase": "/GRUDGE_Item_Database.html",
+    "spriteDatabase": "/SPRITE_DATABASE.html",
+    "vfxBrowser": "/VFX_BROWSER.html",
+    "itemBrowser": "/ItemBrowser.html",
+    "admin": "/admin.html"
+  },
+  "sdk": {
+    "path": "/sdk/grudge-sdk.js",
+    "npm": "@grudge-studio/objectstore",
+    "methods": [
+      "getSprites()", "getSprite(uuid)", "searchSprites(query, opts)",
+      "getCharacters(opts)", "getCharacter(uuid)", "getAnimationUrl(charUuid, animName)",
+      "getWeapons()", "getArmor()", "getMaterials()", "getConsumables()",
+      "getSkills()", "getProfessions()", "getRaces()", "getClasses()",
+      "getFactions()", "getEnemies()", "getBosses()"
+    ]
+  },
+  "scripts": {
+    "start": "node server.js",
+    "rebuild:sprites2d": "node scripts/rebuild-sprites2d.mjs",
+    "dedup:sprites": "node scripts/dedup-sprites.mjs",
+    "generate:registry": "node scripts/generate-asset-registry.mjs"
+  },
+  "updated": "2026-03-12"
+}

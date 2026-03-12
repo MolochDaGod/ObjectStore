@@ -42,10 +42,14 @@
     "LICENSE"
   ],
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "build": "echo 'No build needed - pure ES modules'",
     "test": "echo 'Tests coming soon'",
     "prepublishOnly": "npm run validate",
     "validate": "echo 'Validating package...'",
+    "rebuild:sprites2d": "node ./scripts/rebuild-sprites2d.mjs",
+    "dedup:sprites": "node ./scripts/dedup-sprites.mjs",
     "generate:registry": "node ./scripts/generate-asset-registry.mjs",
     "generate:sprites": "node ./scripts/organize-rpg-modular.mjs",
     "generate:changelog": "node ./scripts/generate-changelog.mjs",
@@ -119,5 +123,10 @@
   "funding": {
     "type": "individual",
     "url": "https://grudgewarlords.com/support"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
   }
 }

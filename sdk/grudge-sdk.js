@@ -754,6 +754,91 @@ class GrudgeSDK {
   async getModels3d() { return this.fetch('/api/v1/models3d.json'); }
 
   // ==========================================
+  // SPRITES & CHARACTERS (v4)
+  // ==========================================
+
+  /**
+   * Get all sprites (flat list from sprites2d.json)
+   */
+  async getSprites() {
+    return this.fetch('/api/v1/sprites2d.json');
+  }
+
+  /**
+   * Get a single sprite by UUID
+   * @param {string} uuid - e.g. 'SPRT-884C9D8D-252F0E'
+   */
+  async getSprite(uuid) {
+    const data = await this.getSprites();
+    for (const cat of Object.values(data.categories)) {
+      const spr = cat.items.find(s => s.uuid === uuid);
+      if (spr) return spr;
+    }
+    return null;
+  }
+
+  /**
+   * Search sprites by name, category, or UUID substring
+   * @param {string} query
+   * @param {object} opts - { category, limit }
+   */
+  async searchSprites(query, opts = {}) {
+    const q = (query || '').toLowerCase();
+    const data = await this.getSprites();
+    let results = [];
+    for (const cat of Object.values(data.categories)) {
+      results.push(...cat.items);
+    }
+    if (opts.category) results = results.filter(s => s.category === opts.category);
+    if (q) results = results.filter(s =>
+      s.name.toLowerCase().includes(q) || s.category.includes(q) ||
+      (s.uuid || '').toLowerCase().includes(q) || (s.subcategory || '').includes(q)
+    );
+    return results.slice(0, opts.limit || 50);
+  }
+
+  /**
+   * Get all animated characters (from sprite-characters.json)
+   * @param {object} opts - { category }
+   */
+  async getCharacters(opts = {}) {
+    const data = await this.fetch('/api/v1/sprite-characters.json');
+    let chars = data.characters || [];
+    if (opts.category) chars = chars.filter(c => c.category === opts.category);
+    return chars;
+  }
+
+  /**
+   * Get a single character by UUID
+   * @param {string} uuid
+   */
+  async getCharacter(uuid) {
+    const data = await this.fetch('/api/v1/sprite-characters.json');
+    return (data.characters || []).find(c => c.uuid === uuid) || null;
+  }
+
+  /**
+   * Build the full URL for a character's animation spritesheet
+   * @param {string} charUuid - Character UUID
+   * @param {string} animName - Animation name (e.g. 'idle', 'attack1')
+   * @returns {Promise<string|null>} Full URL or null
+   */
+  async getAnimationUrl(charUuid, animName) {
+    const ch = await this.getCharacter(charUuid);
+    if (!ch) return null;
+    const anim = ch.animations.find(a => a.name === animName || a.id === animName);
+    if (!anim) return null;
+    return `${this.baseUrl}${anim.path}`;
+  }
+
+  /**
+   * Get studio manifest
+   */
+  async getStudioManifest() {
+    return this.fetch('/api/v1/studio.json');
+  }
+
+  // ==========================================
   // GRUDGE UUID UTILITIES
   // ==========================================
 
@@ -852,6 +937,22 @@ class GrudgeSDK {
         vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`,
         models2d: `${this.baseUrl}/2D_MODELS.html`,
         itemBrowser: `${this.baseUrl}/ItemBrowser.html`,
+        admin: `${this.baseUrl}/admin.html`,
+      },
+      spriteApi: {
+        sprites: `${this.baseUrl}/api/v1/sprites2d.json`,
+        characters: `${this.baseUrl}/api/v1/sprite-characters.json`,
+        listSprites: `${this.baseUrl}/api/v1/sprites`,
+        searchSprites: `${this.baseUrl}/api/v1/sprites/search`,
+        listCharacters: `${this.baseUrl}/api/v1/characters`,
+        stats: `${this.baseUrl}/api/v1/stats`,
+        studio: `${this.baseUrl}/api/v1/studio.json`,
+      },
+      storage: {
+        upload: `${this.baseUrl}/api/storage/upload`,
+        uploadMulti: `${this.baseUrl}/api/storage/upload-multi`,
+        uploadZip: `${this.baseUrl}/api/storage/upload-zip`,
+        list: `${this.baseUrl}/api/storage/list`,
       },
       docs: `${this.baseUrl}/docs/`,
     };

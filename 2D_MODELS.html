@@ -28,34 +28,47 @@
     .results-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; }
     .results-title { font-size: 1.3rem; color: var(--tier-4); }
     .results-count { color: var(--text-dim); font-size: 0.85rem; }
-    .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
-    .char-card { background: var(--card-bg); border-radius: 12px; padding: 10px; cursor: default; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; overflow: hidden; }
+    .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .char-card { background: var(--card-bg); border-radius: 12px; padding: 12px; cursor: default; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; overflow: hidden; }
     .char-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
     .sprite-viewport { width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.4); position: relative; image-rendering: pixelated; cursor: pointer; }
     .sprite-viewport canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
-    .char-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-top: 8px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .char-meta { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 6px; }
-    .anim-select { width: 100%; padding: 5px 8px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.75rem; cursor: pointer; text-transform: capitalize; }
+    .char-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-top: 8px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-meta { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; }
+    .char-uuid { font-size: 0.55rem; color: var(--tier-7); font-family: monospace; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-uuid:hover { opacity: 1; color: var(--tier-4); }
+    .anim-select { width: 100%; padding: 5px 8px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.75rem; cursor: pointer; text-transform: capitalize; margin-top: 4px; }
     .anim-select:focus { outline: none; border-color: var(--tier-4); }
     .frame-info { font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; text-align: center; }
     .loading { text-align: center; padding: 60px; color: var(--text-dim); }
     .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--tier-4); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
     @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
-    .empty-state-icon { font-size: 4rem; margin-bottom: 12px; opacity: 0.3; }
+    .play-pause { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.6); border:none; color:#fff; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+    .sprite-viewport:hover .play-pause { opacity:1; }
+    .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+    .dot-ok { background:#4caf50; } .dot-warn { background:#ff9800; } .dot-err { background:#f44336; }
     .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center; padding:20px; }
     .modal-overlay.active { display:flex; }
-    .modal { background:var(--card-bg); border:2px solid var(--tier-4); border-radius:16px; max-width:800px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; }
-    .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer; padding:4px 8px; border-radius:4px; }
-    .modal-close:hover { color:var(--text-primary); background:var(--bg-dark); }
-    .modal-preview { width:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); border-radius:12px; padding:20px; margin-bottom:20px; }
-    .modal-preview canvas { max-width:100%; image-rendering:pixelated; }
+    .modal { background:var(--card-bg); border:2px solid var(--tier-4); border-radius:16px; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; }
+    .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer; }
+    .modal-close:hover { color:var(--text-primary); }
+    .modal-preview { width:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); border-radius:12px; padding:20px; margin-bottom:20px; min-height:200px; overflow:auto; }
+    .modal-preview canvas { image-rendering:pixelated; }
     .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:4px; text-transform:capitalize; }
+    .modal-uuid { font-family:monospace; font-size:0.75rem; color:var(--tier-7); cursor:pointer; padding:4px 8px; background:var(--bg-dark); border-radius:4px; display:inline-block; margin-bottom:8px; }
+    .modal-uuid:hover { color:var(--tier-4); }
     .modal-anim-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
     .modal-anim-btn { padding:6px 14px; background:var(--bg-dark); border:2px solid var(--border-color); border-radius:8px; color:var(--text-primary); cursor:pointer; font-size:0.8rem; text-transform:capitalize; transition:all 0.2s; }
     .modal-anim-btn:hover { border-color:var(--tier-4); }
     .modal-anim-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; font-weight:600; }
-    .modal-info { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+    .modal-controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:12px 0; padding:12px; background:var(--bg-dark); border-radius:8px; }
+    .modal-controls label { font-size:0.8rem; color:var(--text-dim); display:flex; align-items:center; gap:6px; }
+    .modal-controls input[type=range] { width:100px; accent-color:var(--tier-4); }
+    .modal-controls button { padding:4px 10px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer; font-size:0.75rem; }
+    .modal-controls button:hover { border-color:var(--tier-4); color:var(--tier-4); }
+    .modal-controls button.active { background:var(--tier-4); color:#000; }
+    .modal-info { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
     .modal-info-item { background:var(--bg-dark); padding:8px 12px; border-radius:8px; font-size:0.85rem; }
     .modal-info-label { color:var(--text-dim); font-size:0.7rem; text-transform:uppercase; }
     .modal-info-value { color:var(--tier-4); font-weight:600; }
@@ -67,574 +80,317 @@
     .page-btn:hover { border-color:var(--tier-4); }
     .page-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; }
     .page-btn:disabled { opacity:0.4; cursor:default; }
-    .play-pause { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.6); border:none; color:#fff; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
-    .sprite-viewport:hover .play-pause { opacity:1; }
+    @media(max-width:768px) { .modal-info { grid-template-columns:1fr 1fr; } .char-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
   </style>
 </head>
 <body>
   <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
-
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">2D Models Browser</h1>
-      <p class="subtitle">Animated sprite browser — Betta Warlords, Grudge-Angeler, GrudaWars &amp; RPG-MODULAR</p>
+      <p class="subtitle">Animated sprite browser with UUIDs &mdash; Grudge Studio ObjectStore v2</p>
       <div class="stats-bar" id="statsBar"></div>
     </div>
-
     <div class="controls">
-      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search characters by name...">
-      <div class="filter-row">
-        <span class="filter-label">Category:</span>
-        <div id="categoryFilters"></div>
-      </div>
-      <div class="filter-row">
-        <span class="filter-label">Source:</span>
-        <div id="sourceFilters"></div>
-      </div>
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search by name, category, or UUID...">
+      <div class="filter-row"><span class="filter-label">Category:</span><div id="catFilters"></div></div>
+      <div class="filter-row"><span class="filter-label">Source:</span><div id="srcFilters"></div></div>
     </div>
-
     <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading sprite data...</p></div>
     <div id="resultsArea" style="display:none;">
-      <div class="results-header">
-        <h2 class="results-title" id="resultsTitle">Characters</h2>
-        <span class="results-count" id="resultsCount">0 characters</span>
-      </div>
+      <div class="results-header"><h2 class="results-title">Sprites</h2><span class="results-count" id="resultsCount"></span></div>
       <div class="char-grid" id="charGrid"></div>
       <div class="pagination" id="pagination"></div>
     </div>
     <div class="empty-state" id="emptyState" style="display:none;">
-      <div class="empty-state-icon">&#128269;</div>
-      <h3>No characters found</h3>
-      <p>Try adjusting your search or filters</p>
+      <div style="font-size:4rem;margin-bottom:12px;opacity:0.3;">&#128269;</div>
+      <h3>No characters found</h3><p>Try adjusting your search or filters</p>
     </div>
   </div>
-
   <div class="modal-overlay" id="modalOverlay">
-    <div class="modal" id="modalContent">
-      <button class="modal-close" id="modalClose">&times;</button>
-      <div id="modalBody"></div>
-    </div>
+    <div class="modal"><button class="modal-close" id="modalClose">&times;</button><div id="modalBody"></div></div>
   </div>
-  <div class="copy-toast" id="copyToast">Path copied!</div>
-
+  <div class="copy-toast" id="copyToast">Copied!</div>
   <script src="./js/nav.js"></script>
   <script>
-    var allSprites = [];
-    var charGroups = [];
-    var filteredGroups = [];
-    var currentPage = 0;
-    var PAGE_SIZE = 60;
-    var filters = { search: '', category: 'all', source: 'all' };
-    var activeAnimators = {};
-    var observer;
-    var ANIM_CATS = ['characters','enemies','monsters','bosses','effects','fish','npcs','companions','projectiles'];
-
-    /* === Detect frame layout from image dimensions (fallback when no JSON metadata) === */
-    function detectFrameLayout(w, h) {
-      var ratio = w / h;
-      if (ratio >= 0.8 && ratio <= 1.2) {
-        return { frameCount: 1, frameW: w, frameH: h, layout: 'single' };
-      }
-      if (ratio > 1.2) {
-        // Horizontal strip — try common frame counts for best square-ish fit
-        var best = null;
-        var counts = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,20,24];
-        for (var ci = 0; ci < counts.length; ci++) {
-          var fc = counts[ci];
-          var fw = w / fc;
-          if (fw === Math.floor(fw)) {
-            var fr = fw / h;
-            if (fr >= 0.3 && fr <= 3.0) {
-              var score = Math.abs(1 - fr);
-              if (!best || score < best.score) best = { frameCount: fc, frameW: fw, frameH: h, score: score };
-            }
-          }
-        }
-        var sq = Math.round(w / h);
-        if (sq > 1 && sq <= 30) {
-          var sqfw = w / sq;
-          var sqScore = Math.abs(1 - sqfw / h);
-          if (!best || sqScore < best.score) best = { frameCount: sq, frameW: sqfw, frameH: h, score: sqScore };
-        }
-        if (best) return { frameCount: best.frameCount, frameW: Math.round(best.frameW), frameH: h, layout: 'horizontal' };
-        var fc2 = Math.max(1, Math.round(ratio));
-        return { frameCount: fc2, frameW: Math.round(w / fc2), frameH: h, layout: 'horizontal' };
-      }
-      if (ratio < 0.8) {
-        var vr = h / w;
-        var vfc = Math.max(1, Math.round(vr));
-        return { frameCount: vfc, frameW: w, frameH: Math.round(h / vfc), layout: 'vertical' };
-      }
-      return { frameCount: 1, frameW: w, frameH: h, layout: 'unknown' };
-    }
+  (function() {
+    'use strict';
+    var chars = [], filtered = [], page = 0, SIZE = 48;
+    var filters = { q: '', cat: 'all', src: 'all' };
+    var anims = {}, obs, BASE = '.';
 
     async function init() {
       try {
-        var res = await fetch('./api/v1/sprites2d.json');
-        var data = await res.json();
-        allSprites = [];
-        for (var cat in data.categories) {
-          var items = data.categories[cat].items;
-          for (var i = 0; i < items.length; i++) allSprites.push(items[i]);
-        }
-        buildCharGroups();
-        renderStats(data);
-        buildFilters(data);
-        setupEvents();
-        setupObserver();
-        applyFilters();
+        var r = await fetch(BASE + '/api/v1/sprite-characters.json');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        chars = d.characters || [];
+        stats(d); buildFilters(); events(); setupObs(); apply();
       } catch(e) {
-        console.error('Failed to load sprites2d.json:', e);
-        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load sprite data: ' + e.message + '</p>';
+        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed: ' + e.message + '</p>';
       }
     }
 
-    function buildCharGroups() {
-      var map = {};
-      allSprites.forEach(function(s) {
-        if (ANIM_CATS.indexOf(s.category) === -1) return;
-        var key = s.category + '::' + s.subcategory;
-        if (!map[key]) {
-          map[key] = { name: s.subcategory, category: s.category, source: s.source, animations: [] };
-        }
-        map[key].animations.push({
-          id: s.id, name: s.name, path: s.path, filename: s.filename,
-          frameCount: s.frameCount, frameW: s.frameW, frameH: s.frameH,
-          layout: s.layout, width: s.width, height: s.height
-        });
-      });
-      charGroups = Object.values(map);
-      charGroups.forEach(function(g) {
-        g.animations.sort(function(a, b) {
-          if (a.id === 'idle') return -1;
-          if (b.id === 'idle') return 1;
-          return a.name.localeCompare(b.name);
-        });
-      });
-      charGroups.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    function stats(d) {
+      var m = {}; chars.forEach(function(c) { m[c.category] = (m[c.category]||0)+1; });
+      var h = '<div class="stat-item"><div class="stat-label">Characters</div><div class="stat-value">'+d.totalCharacters+'</div></div>';
+      h += '<div class="stat-item"><div class="stat-label">Animations</div><div class="stat-value">'+d.totalAnimations+'</div></div>';
+      for (var k in m) h += '<div class="stat-item"><div class="stat-label">'+k+'</div><div class="stat-value">'+m[k]+'</div></div>';
+      document.getElementById('statsBar').innerHTML = h;
     }
 
-    function renderStats(data) {
-      var bar = document.getElementById('statsBar');
-      var html = '<div class="stat-item"><div class="stat-label">Characters</div><div class="stat-value">' + charGroups.length + '</div></div>';
-      html += '<div class="stat-item"><div class="stat-label">Total Sprites</div><div class="stat-value">' + data.totalSprites + '</div></div>';
-      var animCats = {};
-      charGroups.forEach(function(g) { animCats[g.category] = (animCats[g.category] || 0) + 1; });
-      for (var c in animCats) {
-        html += '<div class="stat-item"><div class="stat-label">' + c + '</div><div class="stat-value">' + animCats[c] + '</div></div>';
-      }
-      bar.innerHTML = html;
+    function buildFilters() {
+      var cs = {}, ss = {};
+      chars.forEach(function(c) { cs[c.category]=1; ss[c.source]=1; });
+      var h = '<button class="filter-btn active" data-v="all">All</button>';
+      Object.keys(cs).sort().forEach(function(c) { h += '<button class="filter-btn" data-v="'+c+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'</button>'; });
+      document.getElementById('catFilters').innerHTML = h;
+      h = '<button class="filter-btn active" data-v="all">All</button>';
+      Object.keys(ss).sort().forEach(function(s) { h += '<button class="filter-btn" data-v="'+s+'">'+s+'</button>'; });
+      document.getElementById('srcFilters').innerHTML = h;
     }
 
-    function buildFilters(data) {
-      var cats = {};
-      charGroups.forEach(function(g) { cats[g.category] = true; });
-      var catKeys = Object.keys(cats).sort();
-      var catHtml = '<button class="filter-btn active" data-cat="all">All</button>';
-      catKeys.forEach(function(c) {
-        catHtml += '<button class="filter-btn" data-cat="' + c + '">' + c.charAt(0).toUpperCase() + c.slice(1) + '</button>';
-      });
-      document.getElementById('categoryFilters').innerHTML = catHtml;
-      var sources = {};
-      charGroups.forEach(function(g) { sources[g.source] = true; });
-      var srcHtml = '<button class="filter-btn active" data-src="all">All</button>';
-      Object.keys(sources).sort().forEach(function(s) {
-        srcHtml += '<button class="filter-btn" data-src="' + s + '">' + s + '</button>';
-      });
-      document.getElementById('sourceFilters').innerHTML = srcHtml;
-    }
-
-    function setupEvents() {
-      var debounceTimer;
+    function events() {
+      var t;
       document.getElementById('searchBox').addEventListener('input', function(e) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(function() {
-          filters.search = e.target.value.toLowerCase();
-          currentPage = 0;
-          applyFilters();
-        }, 250);
+        clearTimeout(t); t = setTimeout(function() { filters.q = e.target.value.toLowerCase(); page=0; apply(); }, 200);
       });
-      document.getElementById('categoryFilters').addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-cat]');
-        if (!btn) return;
-        document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        filters.category = btn.dataset.cat;
-        currentPage = 0;
-        applyFilters();
+      document.getElementById('catFilters').addEventListener('click', function(e) {
+        var b = e.target.closest('[data-v]'); if (!b) return;
+        this.querySelectorAll('[data-v]').forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
+        filters.cat = b.dataset.v; page=0; apply();
       });
-      document.getElementById('sourceFilters').addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-src]');
-        if (!btn) return;
-        document.querySelectorAll('[data-src]').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        filters.source = btn.dataset.src;
-        currentPage = 0;
-        applyFilters();
+      document.getElementById('srcFilters').addEventListener('click', function(e) {
+        var b = e.target.closest('[data-v]'); if (!b) return;
+        this.querySelectorAll('[data-v]').forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
+        filters.src = b.dataset.v; page=0; apply();
       });
       document.getElementById('modalClose').addEventListener('click', closeModal);
-      document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+      document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target===e.currentTarget) closeModal(); });
+      document.addEventListener('keydown', function(e) { if (e.key==='Escape') closeModal(); });
     }
 
-    function setupObserver() {
-      observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          var id = entry.target.dataset.animId;
-          var anim = activeAnimators[id];
-          if (!anim) return;
-          if (entry.isIntersecting) {
-            if (!anim.playing) startAnimation(id);
-          } else {
-            stopAnimation(id);
-          }
+    function setupObs() {
+      obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(en) {
+          var id = en.target.dataset.animId, a = anims[id]; if (!a) return;
+          if (en.isIntersecting) { if (!a.playing) startA(id); } else stopA(id);
         });
-      }, { rootMargin: '100px' });
+      }, { rootMargin: '200px' });
     }
 
-    function applyFilters() {
-      filteredGroups = charGroups.filter(function(g) {
-        if (filters.category !== 'all' && g.category !== filters.category) return false;
-        if (filters.source !== 'all' && g.source !== filters.source) return false;
-        if (filters.search && g.name.toLowerCase().indexOf(filters.search) === -1) return false;
+    function apply() {
+      filtered = chars.filter(function(c) {
+        if (filters.cat!=='all' && c.category!==filters.cat) return false;
+        if (filters.src!=='all' && c.source!==filters.src) return false;
+        if (filters.q) {
+          var q = filters.q;
+          if (c.name.toLowerCase().indexOf(q)===-1 && c.category.indexOf(q)===-1 && (c.uuid||'').toLowerCase().indexOf(q)===-1) return false;
+        }
         return true;
       });
-      renderPage();
+      render();
     }
 
-    function renderPage() {
-      Object.keys(activeAnimators).forEach(function(id) { stopAnimation(id); });
-      activeAnimators = {};
+    function render() {
+      Object.keys(anims).forEach(stopA); anims = {};
       document.getElementById('loadingState').style.display = 'none';
-      if (filteredGroups.length === 0) {
-        document.getElementById('resultsArea').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'block';
-        return;
-      }
-      document.getElementById('emptyState').style.display = 'none';
-      document.getElementById('resultsArea').style.display = 'block';
-      document.getElementById('resultsCount').textContent = filteredGroups.length + ' characters';
-      var start = currentPage * PAGE_SIZE;
-      var end = Math.min(start + PAGE_SIZE, filteredGroups.length);
-      var page = filteredGroups.slice(start, end);
-      var grid = document.getElementById('charGrid');
-      var html = '';
-      for (var i = 0; i < page.length; i++) {
-        var g = page[i];
-        var gIdx = start + i;
-        var animId = 'anim-' + gIdx;
-        var opts = '';
-        for (var a = 0; a < g.animations.length; a++) {
-          var anim = g.animations[a];
-          opts += '<option value="' + a + '"' + (a === 0 ? ' selected' : '') + '>' + esc(anim.name) + '</option>';
-        }
-        html += '<div class="char-card" data-gidx="' + gIdx + '">' +
-          '<div class="sprite-viewport" data-anim-id="' + animId + '">' +
-            '<canvas id="' + animId + '" width="128" height="128"></canvas>' +
-            '<button class="play-pause" data-anim-id="' + animId + '" title="Play/Pause">&#9646;&#9646;</button>' +
-          '</div>' +
-          '<div class="char-name" title="' + esc(g.name) + '">' + esc(g.name.replace(/-/g, ' ').replace(/_/g, ' ')) + '</div>' +
-          '<div class="char-meta">' + esc(g.category) + ' &middot; ' + g.animations.length + ' anims</div>' +
-          '<select class="anim-select" data-anim-id="' + animId + '" data-gidx="' + gIdx + '">' + opts + '</select>' +
-          '<div class="frame-info" id="info-' + animId + '">Loading...</div>' +
+      if (!filtered.length) { document.getElementById('resultsArea').style.display='none'; document.getElementById('emptyState').style.display='block'; return; }
+      document.getElementById('emptyState').style.display='none';
+      document.getElementById('resultsArea').style.display='block';
+      document.getElementById('resultsCount').textContent = filtered.length + ' characters';
+      var s = page*SIZE, e = Math.min(s+SIZE, filtered.length), pg = filtered.slice(s,e);
+      var grid = document.getElementById('charGrid'), h = '';
+      for (var i=0; i<pg.length; i++) {
+        var c=pg[i], gi=s+i, aid='a-'+gi;
+        var opts=''; for (var j=0;j<c.animations.length;j++) opts+='<option value="'+j+'"'+(j===0?' selected':'')+'>'+esc(c.animations[j].name)+'</option>';
+        var dot = c.animations.some(function(x){return x.layout==='horizontal-guess'||x.layout==='unknown';}) ? 'dot-warn' : 'dot-ok';
+        h += '<div class="char-card" data-gi="'+gi+'">'+
+          '<div class="sprite-viewport" data-anim-id="'+aid+'">'+
+            '<canvas id="'+aid+'" width="128" height="128"></canvas>'+
+            '<button class="play-pause" data-aid="'+aid+'">&#9646;&#9646;</button>'+
+          '</div>'+
+          '<div class="char-name"><span class="dot '+dot+'"></span>'+esc(c.name.replace(/[-_]/g,' '))+'</div>'+
+          '<div class="char-meta">'+esc(c.category)+' &middot; '+c.animationCount+' anims</div>'+
+          '<div class="char-uuid" onclick="copyText(\''+esc(c.uuid)+'\')">'+esc(c.uuid)+'</div>'+
+          '<select class="anim-select" data-aid="'+aid+'" data-gi="'+gi+'">'+opts+'</select>'+
+          '<div class="frame-info" id="fi-'+aid+'">Loading...</div>'+
         '</div>';
       }
-      grid.innerHTML = html;
-      for (var i = 0; i < page.length; i++) {
-        var gIdx = start + i;
-        var animId = 'anim-' + gIdx;
-        initAnimator(animId, filteredGroups[gIdx], 0);
-      }
+      grid.innerHTML = h;
+      for (var i=0;i<pg.length;i++) initA('a-'+(s+i), filtered[s+i], 0);
       grid.querySelectorAll('.anim-select').forEach(function(sel) {
-        sel.addEventListener('change', function() {
-          var aid = this.dataset.animId;
-          var gi = parseInt(this.dataset.gidx);
-          var ai = parseInt(this.value);
-          stopAnimation(aid);
-          initAnimator(aid, filteredGroups[gi], ai);
-        });
+        sel.addEventListener('change', function() { stopA(this.dataset.aid); initA(this.dataset.aid, filtered[+this.dataset.gi], +this.value); });
       });
       grid.querySelectorAll('.play-pause').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          var aid = this.dataset.animId;
-          var anim = activeAnimators[aid];
-          if (!anim) return;
-          if (anim.playing) {
-            stopAnimation(aid);
-            this.innerHTML = '&#9654;';
-          } else {
-            startAnimation(aid);
-            this.innerHTML = '&#9646;&#9646;';
-          }
-        });
+        btn.addEventListener('click', function(ev) { ev.stopPropagation(); var a=anims[this.dataset.aid]; if(!a)return; if(a.playing){stopA(this.dataset.aid);this.innerHTML='&#9654;';}else{startA(this.dataset.aid);this.innerHTML='&#9646;&#9646;';} });
       });
       grid.querySelectorAll('.sprite-viewport').forEach(function(vp) {
-        vp.addEventListener('click', function(e) {
-          if (e.target.closest('.play-pause')) return;
-          var card = this.closest('.char-card');
-          if (card) openModal(parseInt(card.dataset.gidx));
-        });
+        vp.addEventListener('click', function(ev) { if(ev.target.closest('.play-pause'))return; var card=this.closest('.char-card'); if(card)openModal(+card.dataset.gi); });
       });
-      renderPagination();
+      renderPag();
     }
 
-    function initAnimator(animId, group, animIdx) {
-      var canvas = document.getElementById(animId);
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var animData = group.animations[animIdx];
-      var img = new Image();
-      activeAnimators[animId] = {
-        img: img, canvas: canvas, ctx: ctx,
-        frame: 0, frameCount: 1, frameW: 128, frameH: 128,
-        playing: false, raf: null, fps: 8, lastTime: 0,
-        layout: 'horizontal'
-      };
+    // ─── Canvas animation ───
+    function initA(id, ch, ai) {
+      var cv = document.getElementById(id); if(!cv) return;
+      var ctx = cv.getContext('2d'), ad = ch.animations[ai], img = new Image();
+      img.crossOrigin = 'anonymous';
+      anims[id] = { img:img, cv:cv, ctx:ctx, f:0, fc:ad.frameCount||1, fw:ad.frameW||128, fh:ad.frameH||128, playing:false, raf:null, fps:8, lt:0, layout:ad.layout||'horizontal' };
       img.onload = function() {
-        var w = img.naturalWidth;
-        var h = img.naturalHeight;
-        var frameCount, frameW, frameH, layout;
-
-        // Use metadata from enriched JSON when available
-        if (animData.frameCount && animData.frameCount > 0) {
-          frameCount = animData.frameCount;
-          frameW = animData.frameW || Math.round(w / frameCount);
-          frameH = animData.frameH || h;
-          layout = animData.layout || 'horizontal';
-        } else {
-          // Fallback: detect from image dimensions
-          var detected = detectFrameLayout(w, h);
-          frameCount = detected.frameCount;
-          frameW = detected.frameW;
-          frameH = detected.frameH;
-          layout = detected.layout;
-        }
-
-        var anim = activeAnimators[animId];
-        if (!anim) return;
-        anim.frameCount = frameCount;
-        anim.frameW = frameW;
-        anim.frameH = frameH;
-        anim.frame = 0;
-        anim.layout = layout;
-        canvas.width = frameW;
-        canvas.height = frameH;
-        var info = document.getElementById('info-' + animId);
-        if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH;
-        ctx.clearRect(0, 0, frameW, frameH);
+        var a = anims[id]; if(!a) return;
+        cv.width = a.fw; cv.height = a.fh;
+        var fi = document.getElementById('fi-'+id);
+        if(fi) fi.textContent = a.fc+' frames \u00b7 '+a.fw+'x'+a.fh;
         ctx.imageSmoothingEnabled = false;
-        // Draw first frame based on layout
-        if (layout === 'vertical') {
-          ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
-        } else {
-          ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
-        }
-        var viewport = canvas.parentElement;
-        if (viewport) observer.observe(viewport);
+        drawF(a, 0);
+        var vp = cv.parentElement; if(vp) obs.observe(vp);
       };
       img.onerror = function() {
-        var info = document.getElementById('info-' + animId);
-        if (info) info.textContent = 'Failed to load';
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#ff4d4d';
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('\u274C', canvas.width / 2, canvas.height / 2);
-      };
-      img.src = '.' + animData.path;
-    }
-
-    function startAnimation(animId) {
-      var anim = activeAnimators[animId];
-      if (!anim || anim.playing) return;
-      anim.playing = true;
-      anim.lastTime = performance.now();
-      function tick(now) {
-        if (!anim.playing) return;
-        var elapsed = now - anim.lastTime;
-        var interval = 1000 / anim.fps;
-        if (elapsed >= interval) {
-          anim.frame = (anim.frame + 1) % anim.frameCount;
-          anim.lastTime = now - (elapsed % interval);
-          var ctx = anim.ctx;
-          ctx.clearRect(0, 0, anim.frameW, anim.frameH);
-          ctx.imageSmoothingEnabled = false;
-          if (anim.layout === 'vertical') {
-            ctx.drawImage(anim.img, 0, anim.frame * anim.frameH, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
-          } else {
-            ctx.drawImage(anim.img, anim.frame * anim.frameW, 0, anim.frameW, anim.frameH, 0, 0, anim.frameW, anim.frameH);
-          }
+        if (!img.dataset.retry) {
+          img.dataset.retry = '1';
+          // Try alternate path (flat structure)
+          var alt = ad.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish)\//, '/sprites/');
+          img.src = BASE + alt;
+        } else {
+          var fi = document.getElementById('fi-'+id);
+          if(fi) fi.textContent = 'Failed';
+          ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+          ctx.fillText('\u274C',cv.width/2,cv.height/2);
         }
-        anim.raf = requestAnimationFrame(tick);
-      }
-      anim.raf = requestAnimationFrame(tick);
+      };
+      img.src = BASE + ad.path;
     }
 
-    function stopAnimation(animId) {
-      var anim = activeAnimators[animId];
-      if (!anim) return;
-      anim.playing = false;
-      if (anim.raf) {
-        cancelAnimationFrame(anim.raf);
-        anim.raf = null;
-      }
+    function drawF(a, f) {
+      a.ctx.clearRect(0,0,a.fw,a.fh); a.ctx.imageSmoothingEnabled=false;
+      if (a.layout==='vertical') a.ctx.drawImage(a.img, 0, f*a.fh, a.fw, a.fh, 0, 0, a.fw, a.fh);
+      else a.ctx.drawImage(a.img, f*a.fw, 0, a.fw, a.fh, 0, 0, a.fw, a.fh);
     }
 
-    var modalAnim = null;
+    function startA(id) {
+      var a=anims[id]; if(!a||a.playing||a.fc<=1) return;
+      a.playing=true; a.lt=performance.now();
+      function tick(now) { if(!a.playing)return; if(now-a.lt>=1000/a.fps){a.f=(a.f+1)%a.fc;a.lt=now;drawF(a,a.f);} a.raf=requestAnimationFrame(tick); }
+      a.raf=requestAnimationFrame(tick);
+    }
+    function stopA(id) { var a=anims[id]; if(!a)return; a.playing=false; if(a.raf){cancelAnimationFrame(a.raf);a.raf=null;} }
 
-    function openModal(gIdx) {
-      var g = filteredGroups[gIdx];
-      if (!g) return;
-      var html = '<div class="modal-preview"><canvas id="modal-canvas" width="256" height="256"></canvas></div>' +
-        '<div class="modal-title">' + esc(g.name.replace(/-/g, ' ').replace(/_/g, ' ')) + '</div>' +
-        '<div class="char-meta">' + esc(g.category) + ' &middot; ' + esc(g.source) + ' &middot; ' + g.animations.length + ' animations</div>' +
-        '<div class="modal-anim-row" id="modalAnimBtns"></div>' +
-        '<div class="modal-info" id="modalInfo"></div>' +
-        '<div class="frame-info" id="modal-frame-info" style="margin-top:8px;font-size:0.85rem;"></div>';
-      document.getElementById('modalBody').innerHTML = html;
-      var btns = '';
-      g.animations.forEach(function(a, idx) {
-        btns += '<button class="modal-anim-btn' + (idx === 0 ? ' active' : '') + '" data-aidx="' + idx + '">' + esc(a.name) + '</button>';
+    // ─── Modal ───
+    var mA = null, mGrid = false;
+
+    function openModal(gi) {
+      var c = filtered[gi]; if(!c) return;
+      var h = '<div class="modal-preview" id="mPrev"><canvas id="mCv" width="256" height="256"></canvas></div>'+
+        '<div class="modal-title">'+esc(c.name.replace(/[-_]/g,' '))+'</div>'+
+        '<div class="modal-uuid" onclick="copyText(\''+esc(c.uuid)+'\')">'+esc(c.uuid)+'</div>'+
+        '<div class="char-meta">'+esc(c.category)+' &middot; '+esc(c.source)+' &middot; '+c.animationCount+' animations</div>'+
+        '<div class="modal-anim-row" id="mBtns"></div>'+
+        '<div class="modal-controls">'+
+          '<label>FPS <input type="range" id="mFps" min="1" max="30" value="8"><span id="mFpsV">8</span></label>'+
+          '<label>Frame <input type="range" id="mScrub" min="0" max="1" value="0"><span id="mScrubV">0</span></label>'+
+          '<button id="mGridBtn">Grid</button>'+
+          '<button id="mSheetBtn">Sheet</button>'+
+          '<button id="mExportBtn">Export</button>'+
+          '<label>Zoom <input type="range" id="mZoom" min="1" max="5" value="2" step="0.5"><span id="mZoomV">2x</span></label>'+
+        '</div>'+
+        '<div class="modal-info" id="mInfo"></div>'+
+        '<div class="modal-path" id="mPath" onclick="copyText(this.textContent)"></div>';
+      document.getElementById('modalBody').innerHTML = h;
+      var btns = ''; c.animations.forEach(function(a,i) { btns += '<button class="modal-anim-btn'+(i===0?' active':'')+'" data-i="'+i+'">'+esc(a.name)+'</button>'; });
+      document.getElementById('mBtns').innerHTML = btns;
+      loadMA(c, 0);
+      document.getElementById('mBtns').addEventListener('click', function(e) {
+        var b=e.target.closest('[data-i]'); if(!b) return;
+        this.querySelectorAll('[data-i]').forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
+        loadMA(c, +b.dataset.i);
       });
-      document.getElementById('modalAnimBtns').innerHTML = btns;
-      loadModalAnim(g, 0);
-      document.getElementById('modalAnimBtns').addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-aidx]');
-        if (!btn) return;
-        document.querySelectorAll('.modal-anim-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        loadModalAnim(g, parseInt(btn.dataset.aidx));
-      });
+      document.getElementById('mFps').addEventListener('input', function() { if(mA)mA.fps=+this.value; document.getElementById('mFpsV').textContent=this.value; });
+      document.getElementById('mScrub').addEventListener('input', function() { if(!mA)return; mA.f=+this.value; document.getElementById('mScrubV').textContent=this.value; if(!mA.playing) drawMF(mA.f); });
+      document.getElementById('mGridBtn').addEventListener('click', function() { mGrid=!mGrid; this.classList.toggle('active',mGrid); if(mA&&!mA.playing) drawMF(mA.f); });
+      document.getElementById('mSheetBtn').addEventListener('click', showSheet);
+      document.getElementById('mExportBtn').addEventListener('click', exportF);
+      document.getElementById('mZoom').addEventListener('input', function() { document.getElementById('mZoomV').textContent=this.value+'x'; if(mA){document.getElementById('mCv').style.width=(mA.fw*+this.value)+'px';} });
       document.getElementById('modalOverlay').classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
-    function loadModalAnim(group, animIdx) {
-      if (modalAnim && modalAnim.raf) cancelAnimationFrame(modalAnim.raf);
-      var canvas = document.getElementById('modal-canvas');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var animData = group.animations[animIdx];
-      var img = new Image();
-      modalAnim = { img: img, canvas: canvas, ctx: ctx, frame: 0, frameCount: 1, frameW: 256, frameH: 256, raf: null, fps: 8, lastTime: 0, layout: 'horizontal' };
+    function loadMA(ch, ai) {
+      if (mA&&mA.raf) cancelAnimationFrame(mA.raf);
+      var cv=document.getElementById('mCv'); if(!cv) return;
+      var ctx=cv.getContext('2d'), ad=ch.animations[ai], img=new Image();
+      img.crossOrigin='anonymous';
+      mA = { img:img, cv:cv, ctx:ctx, f:0, fc:1, fw:256, fh:256, raf:null, fps:+(document.getElementById('mFps').value)||8, lt:0, layout:'horizontal', ad:ad };
       img.onload = function() {
-        var w = img.naturalWidth;
-        var h = img.naturalHeight;
-        var frameCount, frameW, frameH, layout;
-
-        // Use metadata from enriched JSON when available
-        if (animData.frameCount && animData.frameCount > 0) {
-          frameCount = animData.frameCount;
-          frameW = animData.frameW || Math.round(w / frameCount);
-          frameH = animData.frameH || h;
-          layout = animData.layout || 'horizontal';
-        } else {
-          var detected = detectFrameLayout(w, h);
-          frameCount = detected.frameCount;
-          frameW = detected.frameW;
-          frameH = detected.frameH;
-          layout = detected.layout;
-        }
-
-        modalAnim.frameCount = frameCount;
-        modalAnim.frameW = frameW;
-        modalAnim.frameH = frameH;
-        modalAnim.layout = layout;
-        canvas.width = frameW;
-        canvas.height = frameH;
-        var info = document.getElementById('modal-frame-info');
-        if (info) info.textContent = frameCount + ' frames \u00b7 ' + frameW + 'x' + frameH + 'px per frame \u00b7 ' + w + 'x' + h + ' total';
-        var layoutLabel = layout === 'vertical' ? 'Vertical Strip' : layout === 'horizontal' ? 'Horizontal Strip' : layout === 'single' ? 'Single Frame' : layout;
-        var infoDiv = document.getElementById('modalInfo');
-        if (infoDiv) {
-          infoDiv.innerHTML =
-            '<div class="modal-info-item"><div class="modal-info-label">Animation</div><div class="modal-info-value">' + esc(animData.name) + '</div></div>' +
-            '<div class="modal-info-item"><div class="modal-info-label">Frames</div><div class="modal-info-value">' + frameCount + '</div></div>' +
-            '<div class="modal-info-item"><div class="modal-info-label">Frame Size</div><div class="modal-info-value">' + frameW + 'x' + frameH + '</div></div>' +
-            '<div class="modal-info-item"><div class="modal-info-label">Layout</div><div class="modal-info-value">' + layoutLabel + '</div></div>' +
-            '<div class="modal-path" onclick="copyPath(this)" title="Click to copy">' + esc(animData.path) + '</div>';
-        }
-        ctx.clearRect(0, 0, frameW, frameH);
-        ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(img, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
-        modalAnim.frame = 0;
-        modalAnim.lastTime = performance.now();
-        function tick(now) {
-          var elapsed = now - modalAnim.lastTime;
-          var interval = 1000 / modalAnim.fps;
-          if (elapsed >= interval) {
-            modalAnim.frame = (modalAnim.frame + 1) % modalAnim.frameCount;
-            modalAnim.lastTime = now - (elapsed % interval);
-            ctx.clearRect(0, 0, frameW, frameH);
-            ctx.imageSmoothingEnabled = false;
-            if (modalAnim.layout === 'vertical') {
-              ctx.drawImage(img, 0, modalAnim.frame * frameH, frameW, frameH, 0, 0, frameW, frameH);
-            } else {
-              ctx.drawImage(img, modalAnim.frame * frameW, 0, frameW, frameH, 0, 0, frameW, frameH);
-            }
-          }
-          modalAnim.raf = requestAnimationFrame(tick);
-        }
-        modalAnim.raf = requestAnimationFrame(tick);
+        mA.fc=ad.frameCount||1; mA.fw=ad.frameW||img.naturalWidth; mA.fh=ad.frameH||img.naturalHeight; mA.layout=ad.layout||'horizontal';
+        cv.width=mA.fw; cv.height=mA.fh;
+        var z=+(document.getElementById('mZoom').value)||2; cv.style.width=(mA.fw*z)+'px';
+        var sc=document.getElementById('mScrub'); sc.max=Math.max(0,mA.fc-1); sc.value=0; document.getElementById('mScrubV').textContent='0';
+        var ll = mA.layout==='vertical'?'Vertical':mA.layout==='horizontal'?'Horizontal':mA.layout==='single'?'Single':mA.layout;
+        var sd = (ad.layout==='horizontal-guess'||ad.layout==='unknown') ? '<span class="dot dot-warn"></span>' : '<span class="dot dot-ok"></span>';
+        document.getElementById('mInfo').innerHTML =
+          '<div class="modal-info-item"><div class="modal-info-label">Animation</div><div class="modal-info-value">'+esc(ad.name)+'</div></div>'+
+          '<div class="modal-info-item"><div class="modal-info-label">UUID</div><div class="modal-info-value" style="font-size:0.6rem;cursor:pointer;" onclick="copyText(\''+esc(ad.uuid)+'\')">'+esc(ad.uuid)+'</div></div>'+
+          '<div class="modal-info-item"><div class="modal-info-label">Frames</div><div class="modal-info-value">'+mA.fc+'</div></div>'+
+          '<div class="modal-info-item"><div class="modal-info-label">Frame Size</div><div class="modal-info-value">'+mA.fw+'x'+mA.fh+'</div></div>'+
+          '<div class="modal-info-item"><div class="modal-info-label">Sheet</div><div class="modal-info-value">'+ad.width+'x'+ad.height+'</div></div>'+
+          '<div class="modal-info-item"><div class="modal-info-label">Layout</div><div class="modal-info-value">'+sd+ll+'</div></div>';
+        document.getElementById('mPath').textContent = ad.path;
+        drawMF(0);
+        if (mA.fc>1) { mA.playing=true; mA.lt=performance.now(); function tick(now){if(!mA||!mA.playing)return;if(now-mA.lt>=1000/mA.fps){mA.f=(mA.f+1)%mA.fc;mA.lt=now;drawMF(mA.f);document.getElementById('mScrub').value=mA.f;document.getElementById('mScrubV').textContent=mA.f;}mA.raf=requestAnimationFrame(tick);}mA.raf=requestAnimationFrame(tick); }
       };
-      img.onerror = function() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#ff4d4d';
-        ctx.font = '20px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('\u274C Load failed', canvas.width / 2, canvas.height / 2);
-      };
-      img.src = '.' + animData.path;
+      img.onerror = function() { ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='18px sans-serif'; ctx.textAlign='center'; ctx.fillText('\u274C Load failed',cv.width/2,cv.height/2); };
+      img.src = BASE + ad.path;
     }
 
-    function closeModal() {
-      if (modalAnim && modalAnim.raf) {
-        cancelAnimationFrame(modalAnim.raf);
-        modalAnim = null;
-      }
-      document.getElementById('modalOverlay').classList.remove('active');
-      document.body.style.overflow = '';
+    function drawMF(f) {
+      if(!mA) return; var ctx=mA.ctx, fw=mA.fw, fh=mA.fh;
+      ctx.clearRect(0,0,fw,fh); ctx.imageSmoothingEnabled=false;
+      if(mA.layout==='vertical') ctx.drawImage(mA.img, 0, f*fh, fw, fh, 0, 0, fw, fh);
+      else ctx.drawImage(mA.img, f*fw, 0, fw, fh, 0, 0, fw, fh);
+      if (mGrid) { ctx.strokeStyle='rgba(212,168,75,0.5)'; ctx.lineWidth=1; ctx.strokeRect(.5,.5,fw-1,fh-1); ctx.setLineDash([4,4]); ctx.beginPath();ctx.moveTo(fw/2,0);ctx.lineTo(fw/2,fh);ctx.stroke(); ctx.beginPath();ctx.moveTo(0,fh/2);ctx.lineTo(fw,fh/2);ctx.stroke(); ctx.setLineDash([]); }
     }
 
-    function renderPagination() {
-      var totalPages = Math.ceil(filteredGroups.length / PAGE_SIZE);
-      if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
-      var html = '<button class="page-btn" onclick="goPage(0)" ' + (currentPage === 0 ? 'disabled' : '') + '>&laquo;</button>';
-      html += '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '>&lsaquo;</button>';
-      var startP = Math.max(0, currentPage - 3);
-      var endP = Math.min(totalPages, startP + 7);
-      for (var p = startP; p < endP; p++) {
-        html += '<button class="page-btn ' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + (p + 1) + '</button>';
-      }
-      html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&rsaquo;</button>';
-      html += '<button class="page-btn" onclick="goPage(' + (totalPages - 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&raquo;</button>';
-      document.getElementById('pagination').innerHTML = html;
+    function showSheet() {
+      if(!mA||!mA.img.complete) return;
+      var cv=document.getElementById('mCv'), ctx=cv.getContext('2d'), img=mA.img;
+      cv.width=img.naturalWidth; cv.height=img.naturalHeight;
+      var z=+(document.getElementById('mZoom').value)||2; cv.style.width=(img.naturalWidth*z)+'px';
+      ctx.imageSmoothingEnabled=false; ctx.drawImage(img,0,0);
+      ctx.strokeStyle='rgba(212,168,75,0.4)'; ctx.lineWidth=1;
+      for(var i=1;i<mA.fc;i++){if(mA.layout==='vertical'){var y=i*mA.fh;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(img.naturalWidth,y);ctx.stroke();}else{var x=i*mA.fw;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,img.naturalHeight);ctx.stroke();}}
+      if(mA.raf){cancelAnimationFrame(mA.raf);mA.raf=null;mA.playing=false;}
     }
 
-    window.goPage = function(p) {
-      var totalPages = Math.ceil(filteredGroups.length / PAGE_SIZE);
-      if (p < 0 || p >= totalPages) return;
-      currentPage = p;
-      renderPage();
-      window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
-    };
-
-    window.copyPath = function(el) {
-      navigator.clipboard.writeText(el.textContent).then(function() {
-        var toast = document.getElementById('copyToast');
-        toast.style.display = 'block';
-        setTimeout(function() { toast.style.display = 'none'; }, 1500);
-      });
-    };
-
-    function esc(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    function exportF() {
+      if(!mA||!mA.img.complete) return;
+      var ec=document.createElement('canvas'); ec.width=mA.fw; ec.height=mA.fh;
+      var ctx=ec.getContext('2d'); ctx.imageSmoothingEnabled=false;
+      if(mA.layout==='vertical') ctx.drawImage(mA.img, 0, mA.f*mA.fh, mA.fw, mA.fh, 0, 0, mA.fw, mA.fh);
+      else ctx.drawImage(mA.img, mA.f*mA.fw, 0, mA.fw, mA.fh, 0, 0, mA.fw, mA.fh);
+      var link=document.createElement('a'); link.download=(mA.ad.id||'frame')+'_'+mA.f+'.png'; link.href=ec.toDataURL('image/png'); link.click();
     }
+
+    function closeModal() { if(mA){if(mA.raf)cancelAnimationFrame(mA.raf);mA=null;} document.getElementById('modalOverlay').classList.remove('active'); document.body.style.overflow=''; }
+
+    function renderPag() {
+      var t=Math.ceil(filtered.length/SIZE); if(t<=1){document.getElementById('pagination').innerHTML='';return;}
+      var h='<button class="page-btn" onclick="goPage(0)" '+(page===0?'disabled':'')+'>&laquo;</button>';
+      h+='<button class="page-btn" onclick="goPage('+(page-1)+')" '+(page===0?'disabled':'')+'>&lsaquo;</button>';
+      var s=Math.max(0,page-3),e=Math.min(t,s+7);
+      for(var p=s;p<e;p++) h+='<button class="page-btn '+(p===page?'active':'')+'" onclick="goPage('+p+')">'+(p+1)+'</button>';
+      h+='<button class="page-btn" onclick="goPage('+(page+1)+')" '+(page>=t-1?'disabled':'')+'>&rsaquo;</button>';
+      h+='<button class="page-btn" onclick="goPage('+(t-1)+')" '+(page>=t-1?'disabled':'')+'>&raquo;</button>';
+      document.getElementById('pagination').innerHTML = h;
+    }
+
+    window.goPage = function(p) { var t=Math.ceil(filtered.length/SIZE); if(p<0||p>=t)return; page=p; render(); window.scrollTo({top:document.getElementById('resultsArea').offsetTop-20,behavior:'smooth'}); };
+    window.copyText = function(txt) { navigator.clipboard.writeText(txt).then(function() { var t=document.getElementById('copyToast'); t.style.display='block'; setTimeout(function(){t.style.display='none';},1200); }); };
+    function esc(s) { return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'):''; }
 
     init();
+  })();
   </script>
 </body>
 </html>
