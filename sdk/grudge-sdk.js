@@ -10,6 +10,8 @@
  *   const weapons = await sdk.getWeapons();
  */
 
+import { ObjectStoreR2Client, DEFAULT_WORKER_URL } from './r2-client.js';
+
 const DEFAULT_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
 
 // ==========================================
@@ -118,10 +120,25 @@ function isValidGrudgeUuid(uuid) {
 // ==========================================
 
 class GrudgeSDK {
-  constructor(baseUrl = DEFAULT_BASE_URL) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+  /**
+   * @param {string|object} opts - Base URL string (backward compat) or options object
+   * @param {string} [opts.baseUrl]   - GitHub Pages base URL
+   * @param {string} [opts.workerUrl] - Cloudflare Worker URL for R2 storage
+   * @param {string} [opts.apiKey]    - Optional API key for authenticated Worker routes
+   */
+  constructor(opts = DEFAULT_BASE_URL) {
+    if (typeof opts === 'string') {
+      opts = { baseUrl: opts };
+    }
+    this.baseUrl = (opts.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
     this.cache = new Map();
     this.cacheExpiry = 5 * 60 * 1000; // 5 minutes
+
+    // R2 storage client
+    this.r2 = new ObjectStoreR2Client({
+      workerUrl: opts.workerUrl || DEFAULT_WORKER_URL,
+      apiKey: opts.apiKey,
+    });
   }
 
   /**
@@ -839,6 +856,48 @@ class GrudgeSDK {
   }
 
   // ==========================================
+  // R2 STORAGE CONVENIENCE METHODS
+  // ==========================================
+
+  /**
+   * Upload a 3D model to R2 storage via Worker
+   * @param {File|Blob} file
+   * @param {object} meta - { name, category, tags[], description }
+   * @returns {Promise<object>}
+   */
+  async upload3DModel(file, meta = {}) {
+    return this.r2.upload3DModel(file, meta);
+  }
+
+  /**
+   * Get a direct file URL for a 3D model stored in R2
+   * @param {string} key - Asset key in R2
+   * @returns {string}
+   */
+  getModelFileUrl(key) {
+    return this.r2.getModelFileUrl(key);
+  }
+
+  /**
+   * List 3D models stored in R2
+   * @param {object} [query]
+   * @returns {Promise<object>}
+   */
+  async list3DModels(query = {}) {
+    return this.r2.list3DModels(query);
+  }
+
+  /**
+   * Upload any asset to R2 storage
+   * @param {File|Blob} file
+   * @param {object} meta
+   * @returns {Promise<object>}
+   */
+  async uploadAsset(file, meta = {}) {
+    return this.r2.uploadAsset(file, meta);
+  }
+
+  // ==========================================
   // GRUDGE UUID UTILITIES
   // ==========================================
 
@@ -954,6 +1013,12 @@ class GrudgeSDK {
         uploadZip: `${this.baseUrl}/api/storage/upload-zip`,
         list: `${this.baseUrl}/api/storage/list`,
       },
+      r2Worker: {
+        base: this.r2.workerUrl,
+        assets: `${this.r2.workerUrl}/v1/assets`,
+        health: `${this.r2.workerUrl}/v1/health`,
+        models: `${this.r2.workerUrl}/v1/assets?prefix=models/`,
+      },
       docs: `${this.baseUrl}/docs/`,
     };
   }
@@ -961,13 +1026,14 @@ class GrudgeSDK {
 
 // Export for different module systems
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { GrudgeSDK, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid, PREFIX_MAP };
+  module.exports = { GrudgeSDK, ObjectStoreR2Client, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid, PREFIX_MAP };
 } else if (typeof window !== 'undefined') {
   window.GrudgeSDK = GrudgeSDK;
+  window.ObjectStoreR2Client = ObjectStoreR2Client;
   window.generateGrudgeUuid = generateGrudgeUuid;
   window.parseGrudgeUuid = parseGrudgeUuid;
   window.isValidGrudgeUuid = isValidGrudgeUuid;
   window.PREFIX_MAP = PREFIX_MAP;
 }
 
-export { GrudgeSDK, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid, PREFIX_MAP };
+export { GrudgeSDK, ObjectStoreR2Client, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid, PREFIX_MAP };
