@@ -2,6 +2,6 @@
 All notable changes to the ObjectStore API and assets.
 
 ## 2026-03-11
-### Added
-- feat: ObjectStore v4 — Sprite pipeline rebuild + Express API + Admin dashboard (f7208c1)
+### Changed
+- Import 61 3D models, 9 textures, 6 world snapshots, 13 terrain files from WebClient (526e1ce)
 
