@@ -85,6 +85,33 @@
     .bp-banner-icon { font-size: 1.4rem; flex-shrink: 0; }
     .bp-banner-text { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
     .bp-banner-text strong { color: var(--text-primary); }
+
+    /* R2 status indicator */
+    .r2-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .r2-status.online { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .r2-status.offline { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .r2-status.checking { background: rgba(234,179,8,0.15); color: #eab308; }
+    .r2-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .r2-status.online .r2-dot { background: #22c55e; }
+    .r2-status.offline .r2-dot { background: #ef4444; }
+    .r2-status.checking .r2-dot { background: #eab308; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Source badge on model cards */
+    .source-badge { position: absolute; bottom: 6px; left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+    .source-r2 { background: #22c55e; color: #000; }
+    .source-static { background: #6366f1; color: #fff; }
+
+    /* Upload to R2 button */
+    .upload-r2-btn { padding: 8px 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 8px; color: #fff; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .upload-r2-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+    .upload-r2-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
+
+    /* Viewer control groups */
+    .ctrl-group { display: flex; gap: 4px; padding: 0 8px; border-right: 1px solid var(--border-color); }
+    .ctrl-group:last-child { border-right: none; }
+    .ctrl-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-right: 4px; align-self: center; }
+    .env-select { padding: 6px 10px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.8rem; }
   </style>
 
   <!-- Three.js ES Module Import Map -->
@@ -104,7 +131,9 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-      <p class="subtitle">471 models — GLB, GLTF, FBX, OBJ — powered by Three.js</p>
+      <p class="subtitle">471 models — GLB, GLTF, FBX, OBJ — powered by Three.js
+        <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
+      </p>
       <div class="stats-bar" id="statsBar"></div>
     </div>
 
@@ -123,6 +152,13 @@
       <div class="drop-zone-text">Drag &amp; drop a 3D model to preview instantly</div>
       <div class="drop-zone-formats">Supports: .glb .gltf .fbx .obj</div>
       <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj" style="display:none;">
+    </div>
+
+    <!-- Upload to R2 -->
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
+      <button class="upload-r2-btn" id="uploadR2Btn" disabled>&#9729; Upload to R2 Storage</button>
+      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj" style="display:none;">
+      <span id="uploadR2Status" style="font-size:0.8rem;color:var(--text-dim);"></span>
     </div>
 
     <div class="controls">
@@ -164,13 +200,55 @@
       <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model...</p></div>
     </div>
     <div class="viewer-controls" id="viewerControls">
-      <button class="viewer-btn" id="btnWireframe">Wireframe</button>
-      <button class="viewer-btn" id="btnGrid">Grid</button>
-      <button class="viewer-btn active" id="btnAutoRotate">Auto Rotate</button>
-      <button class="viewer-btn" id="btnResetCam">Reset Camera</button>
-      <select class="anim-select-3d" id="animSelect" style="display:none;">
-        <option value="-1">No Animation</option>
-      </select>
+      <!-- Display -->
+      <div class="ctrl-group">
+        <button class="viewer-btn" id="btnWireframe">Wireframe</button>
+        <button class="viewer-btn active" id="btnGrid">Grid</button>
+        <button class="viewer-btn active" id="btnAutoRotate">Auto Rotate</button>
+      </div>
+      <!-- Camera presets -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Cam</span>
+        <button class="viewer-btn" data-cam="front">Front</button>
+        <button class="viewer-btn" data-cam="back">Back</button>
+        <button class="viewer-btn" data-cam="left">Left</button>
+        <button class="viewer-btn" data-cam="right">Right</button>
+        <button class="viewer-btn" data-cam="top">Top</button>
+        <button class="viewer-btn" data-cam="iso">Iso</button>
+        <button class="viewer-btn" id="btnResetCam">Reset</button>
+      </div>
+      <!-- Lighting -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Light</span>
+        <button class="viewer-btn active" data-light="key">Key</button>
+        <button class="viewer-btn active" data-light="fill">Fill</button>
+        <button class="viewer-btn active" data-light="rim">Rim</button>
+      </div>
+      <!-- Environment -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Env</span>
+        <select class="env-select" id="envSelect">
+          <option value="none">None</option>
+          <option value="studio">Studio</option>
+          <option value="sunset">Sunset</option>
+          <option value="night">Night</option>
+        </select>
+      </div>
+      <!-- Quality -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Quality</span>
+        <select class="env-select" id="qualitySelect">
+          <option value="1">1×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2" selected>2×</option>
+        </select>
+      </div>
+      <!-- Actions -->
+      <div class="ctrl-group">
+        <select class="anim-select-3d" id="animSelect" style="display:none;"><option value="-1">No Animation</option></select>
+        <button class="viewer-btn" id="btnScreenshot">&#128247; Screenshot</button>
+        <button class="viewer-btn" id="btnExportGLB">&#128190; Export GLB</button>
+      </div>
       <span class="viewer-info" id="viewerStats"></span>
     </div>
   </div>
@@ -185,9 +263,11 @@
     import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+    import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
     /* ===== Viewer State ===== */
     let scene, camera, renderer, controls, mixer, clock, gridHelper;
+    let keyLight, fillLight, rimLight; // light refs for toggle
     let currentModel = null;
     let animActions = [];
     let activeAction = null;
@@ -236,7 +316,7 @@
       const hemiLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.5);
       scene.add(hemiLight);
 
-      const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
       keyLight.position.set(5, 8, 5);
       keyLight.castShadow = true;
       keyLight.shadow.mapSize.set(1024, 1024);
@@ -248,11 +328,11 @@
       keyLight.shadow.camera.bottom = -10;
       scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
+      fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
       fillLight.position.set(-5, 3, -3);
       scene.add(fillLight);
 
-      const rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
+      rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
       rimLight.position.set(0, 5, -8);
       scene.add(rimLight);
 
@@ -499,6 +579,88 @@
       }
     });
 
+    /* ===== Camera Presets ===== */
+    function setCameraPreset(preset) {
+      if (!currentModel) return;
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const dist = Math.max(size.x, size.y, size.z) * 2;
+      const positions = {
+        front: [center.x, center.y, center.z + dist],
+        back:  [center.x, center.y, center.z - dist],
+        left:  [center.x - dist, center.y, center.z],
+        right: [center.x + dist, center.y, center.z],
+        top:   [center.x, center.y + dist, center.z + 0.01],
+        iso:   [center.x + dist * 0.6, center.y + dist * 0.6, center.z + dist * 0.6],
+      };
+      const pos = positions[preset];
+      if (!pos) return;
+      camera.position.set(pos[0], pos[1], pos[2]);
+      controls.target.copy(center);
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+    document.querySelectorAll('[data-cam]').forEach(btn => {
+      btn.addEventListener('click', () => setCameraPreset(btn.dataset.cam));
+    });
+
+    /* ===== Lighting Toggles ===== */
+    const lightMap = { key: () => keyLight, fill: () => fillLight, rim: () => rimLight };
+    document.querySelectorAll('[data-light]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const light = lightMap[this.dataset.light]?.();
+        if (!light) return;
+        light.visible = !light.visible;
+        this.classList.toggle('active', light.visible);
+      });
+    });
+
+    /* ===== Environment Selector ===== */
+    const envPresets = {
+      none:   { bg: 0x1a1a2e, ambient: 0.4, exposure: 1.2 },
+      studio: { bg: 0x2a2a3e, ambient: 0.6, exposure: 1.4 },
+      sunset: { bg: 0x1a0a0a, ambient: 0.3, exposure: 1.0 },
+      night:  { bg: 0x0a0a1a, ambient: 0.15, exposure: 0.7 },
+    };
+    document.getElementById('envSelect').addEventListener('change', function() {
+      const p = envPresets[this.value] || envPresets.none;
+      if (scene) scene.background = new THREE.Color(p.bg);
+      if (renderer) {
+        renderer.toneMappingExposure = p.exposure;
+      }
+    });
+
+    /* ===== Quality Selector ===== */
+    document.getElementById('qualitySelect').addEventListener('change', function() {
+      const dpr = Math.min(parseFloat(this.value), window.devicePixelRatio);
+      if (renderer) renderer.setPixelRatio(dpr);
+    });
+
+    /* ===== Screenshot ===== */
+    document.getElementById('btnScreenshot').addEventListener('click', function() {
+      if (!renderer || !isViewerOpen) return;
+      renderer.render(scene, camera);
+      const dataUrl = renderer.domElement.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'grudge-3d-screenshot.png';
+      a.click();
+    });
+
+    /* ===== Export GLB ===== */
+    document.getElementById('btnExportGLB').addEventListener('click', async function() {
+      if (!currentModel) return;
+      const exporter = new GLTFExporter();
+      const data = await exporter.parseAsync(currentModel, { binary: true });
+      const blob = new Blob([data], { type: 'model/gltf-binary' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
     /* ===== Drag & Drop ===== */
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -521,21 +683,120 @@
   <!-- Catalog Script (non-module) -->
   <script>
     var allModels = [];
+    var r2Models = [];
     var filteredModels = [];
     var currentPage = 0;
     var PAGE_SIZE = 80;
     var filters = { search: '', format: 'all', category: 'all' };
+    var r2Available = false;
+
+    // R2 Worker URL
+    var R2_WORKER_URL = 'https://objectstore.grudge-studio.com';
 
     // Configurable base URL for hosted models (update when models are on R2 or repo)
     var MODEL_BASE_URL = '';
 
+    /* === R2 Status Check === */
+    async function checkR2Status() {
+      var el = document.getElementById('r2Status');
+      try {
+        var res = await fetch(R2_WORKER_URL + '/v1/health', { signal: AbortSignal.timeout(5000) });
+        if (res.ok) {
+          r2Available = true;
+          el.className = 'r2-status online';
+          el.innerHTML = '<span class="r2-dot"></span> R2 Online';
+          document.getElementById('uploadR2Btn').disabled = false;
+        } else { throw new Error('not ok'); }
+      } catch(e) {
+        r2Available = false;
+        el.className = 'r2-status offline';
+        el.innerHTML = '<span class="r2-dot"></span> R2 Offline';
+      }
+    }
+
+    /* === Load R2 models === */
+    async function loadR2Models() {
+      if (!r2Available) return;
+      try {
+        var res = await fetch(R2_WORKER_URL + '/v1/assets?prefix=models/&limit=500');
+        var data = await res.json();
+        r2Models = (data.assets || []).map(function(a) {
+          var parts = a.key.split('/');
+          var fname = parts[parts.length - 1];
+          var ext = fname.split('.').pop().toUpperCase();
+          return {
+            name: fname,
+            path: a.key,
+            format: ext === 'GLB' || ext === 'GLTF' || ext === 'FBX' || ext === 'OBJ' ? ext : 'GLB',
+            category: parts.length > 2 ? parts[1] : 'r2-uploaded',
+            sizeKB: a.size ? Math.round(a.size / 1024) : 0,
+            _source: 'r2',
+            _r2Url: R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(a.key) + '/file'
+          };
+        });
+      } catch(e) {
+        console.warn('Could not load R2 models:', e);
+        r2Models = [];
+      }
+    }
+
+    /* === R2 Upload Handler === */
+    (function() {
+      var btn = document.getElementById('uploadR2Btn');
+      var fileIn = document.getElementById('r2FileInput');
+      var statusEl = document.getElementById('uploadR2Status');
+      btn.addEventListener('click', function() { fileIn.click(); });
+      fileIn.addEventListener('change', async function() {
+        var file = this.files[0];
+        if (!file) return;
+        statusEl.textContent = 'Uploading ' + file.name + '...';
+        btn.disabled = true;
+        try {
+          var ext = file.name.split('.').pop().toLowerCase();
+          var key = 'models/uploaded/' + Date.now() + '-' + file.name;
+          var fd = new FormData();
+          fd.append('file', file);
+          fd.append('key', key);
+          fd.append('category', '3d-models');
+          fd.append('tags', JSON.stringify([ext, '3d']));
+          var res = await fetch(R2_WORKER_URL + '/v1/assets', { method: 'POST', body: fd });
+          if (res.ok) {
+            statusEl.textContent = 'Uploaded! Reloading...';
+            await loadR2Models();
+            mergeAndRefresh();
+            statusEl.textContent = 'Uploaded ' + file.name;
+          } else {
+            statusEl.textContent = 'Upload failed: ' + res.status;
+          }
+        } catch(e) {
+          statusEl.textContent = 'Upload error: ' + e.message;
+        }
+        btn.disabled = !r2Available;
+        fileIn.value = '';
+      });
+    })();
+
+    function mergeAndRefresh() {
+      // Tag static models
+      allModels.forEach(function(m) { if (!m._source) m._source = 'static'; });
+      // Remove dupes from r2Models that match static paths
+      var staticPaths = new Set(allModels.map(function(m) { return m.path; }));
+      var unique = r2Models.filter(function(m) { return !staticPaths.has(m.path); });
+      allModels = unique.concat(allModels);
+      applyFilters();
+    }
+
     async function init() {
+      // Start R2 check in parallel with static catalog load
+      var r2Promise = checkR2Status();
       try {
         var res = await fetch('./api/v1/models3d.json');
         var data = await res.json();
-        allModels = data.models || [];
-        // Normalize paths (Windows backslashes -> forward slashes)
-        allModels.forEach(function(m) { m.path = m.path.replace(/\\\\/g, '/').replace(/\\/g, '/'); });
+        allModels = (data.models || []).map(function(m) {
+          m.path = m.path.replace(/\\\\/g, '/').replace(/\\/g, '/');
+          m._source = 'static';
+          return m;
+        });
         renderStats(data);
         buildFilters(data);
         setupEvents();
@@ -543,6 +804,12 @@
       } catch(e) {
         console.error('Failed to load models3d.json:', e);
         document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load model data: ' + e.message + '</p>';
+      }
+      // After R2 check, merge R2 models
+      await r2Promise;
+      if (r2Available) {
+        await loadR2Models();
+        mergeAndRefresh();
       }
     }
 
@@ -624,22 +891,27 @@
         var m = page[i];
         var fclass = 'format-' + m.format.toLowerCase();
         var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : '';
+        var srcBadge = m._source === 'r2' ? '<span class="source-badge source-r2">R2</span>' : '<span class="source-badge source-static">Static</span>';
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
           '<div class="model-icon">' + (icons[m.format] || '\uD83D\uDCE6') +
-            '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span></div>' +
+            '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span>' + srcBadge + '</div>' +
           '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
           '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
         '</div>';
       }
       grid.innerHTML = html;
 
-      // Click handlers — models are a registry (files not hosted in repo)
+      // Click handlers — R2 models load directly, static models try R2 first
       grid.querySelectorAll('.model-card').forEach(function(card) {
         card.addEventListener('click', function() {
           var idx = parseInt(this.dataset.idx);
           var m = filteredModels[idx];
           if (!m) return;
-          if (MODEL_BASE_URL) {
+          // R2 models have a direct URL
+          if (m._source === 'r2' && m._r2Url) {
+            window._3dViewer.openViewer(m.name, m.format, m.path);
+            window._3dViewer.loadModelFromURL(m._r2Url, m.format);
+          } else if (MODEL_BASE_URL) {
             window._3dViewer.openViewer(m.name, m.format, m.path);
             window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + m.path, m.format);
           } else {

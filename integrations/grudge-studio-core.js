@@ -9,7 +9,7 @@
  */
 
 // Re-export all core systems
-export { GrudgeSDK, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid } from '../sdk/grudge-sdk.js';
+export { GrudgeSDK, ObjectStoreR2Client, generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid } from '../sdk/grudge-sdk.js';
 export { itemRegistry, ItemRegistry } from '../utils/item-registry.js';
 export { imageGenerator, GrudgeImageGenerator } from '../utils/image-generator.js';
 export { aiBackend, AIBackendClient } from './grudge-ai-backend.js';
@@ -25,6 +25,8 @@ export class GrudgeStudioAPI {
       arsenalUrl: config.arsenalUrl || 'https://warlord-crafting-suite.vercel.app',
       aiBackendUrl: config.aiBackendUrl || 'http://localhost:3000/api/ai',
       gameApiUrl: config.gameApiUrl || 'http://localhost:4000/api/gruda',
+      workerUrl: config.workerUrl || 'https://objectstore.grudge-studio.com',
+      apiKey: config.apiKey || null,
       puterEnabled: config.puterEnabled !== false,
       cacheEnabled: config.cacheEnabled !== false,
       debug: config.debug || false,
@@ -35,6 +37,7 @@ export class GrudgeStudioAPI {
     this.objectStore = new ObjectStoreClient(this.config);
     this.arsenal = new ArsenalClient(this.config);
     this.puter = new PuterClient(this.config);
+    this.r2 = new R2StorageClient(this.config);
     this.ai = null; // Lazy initialization
     this.uuid = new UUIDManager(this.config);
     
@@ -158,6 +161,7 @@ export class GrudgeStudioAPI {
     return {
       objectStore: await this.objectStore.getStatus(),
       arsenal: await this.arsenal.getStatus(),
+      r2: await this.r2.getStatus(),
       puter: this.puter.getStatus(),
       ai: this.ai ? this.ai.getStatus() : { available: false },
       timestamp: new Date().toISOString()
@@ -493,6 +497,47 @@ class UUIDManager {
       parseInt(ts.slice(10, 12)),
       parseInt(ts.slice(12, 14))
     );
+  }
+}
+
+/**
+ * R2 Storage Client wrapper for core integration
+ * Uses lazy dynamic import to avoid circular deps
+ */
+class R2StorageClient {
+  constructor(config) {
+    this.workerUrl = config.workerUrl;
+    this.apiKey = config.apiKey;
+    this._client = null;
+  }
+
+  async _getClient() {
+    if (!this._client) {
+      const { ObjectStoreR2Client } = await import('../sdk/r2-client.js');
+      this._client = new ObjectStoreR2Client({
+        workerUrl: this.workerUrl,
+        apiKey: this.apiKey,
+      });
+    }
+    return this._client;
+  }
+
+  async listAssets(query) { return (await this._getClient()).listAssets(query); }
+  async getAsset(key) { return (await this._getClient()).getAsset(key); }
+  getAssetFileUrl(key) { return `${this.workerUrl}/v1/assets/${encodeURIComponent(key)}/file`; }
+  async uploadAsset(file, meta) { return (await this._getClient()).uploadAsset(file, meta); }
+  async upload3DModel(file, meta) { return (await this._getClient()).upload3DModel(file, meta); }
+  async list3DModels(query) { return (await this._getClient()).list3DModels(query); }
+  async deleteAsset(key) { return (await this._getClient()).deleteAsset(key); }
+
+  async getStatus() {
+    try {
+      const client = await this._getClient();
+      const health = await client.healthCheck();
+      return { available: true, url: this.workerUrl, ...health };
+    } catch (e) {
+      return { available: false, url: this.workerUrl, error: e.message };
+    }
   }
 }
 
