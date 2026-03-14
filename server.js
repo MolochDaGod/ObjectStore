@@ -34,13 +34,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ─── Middleware ───
-app.use(cors());
+app.use(cors({
+  origin: [
+    /\.grudgestudio\.com$/,
+    /\.grudgewarlords\.com$/,
+    /\.vercel\.app$/,
+    /\.github\.io$/,
+    /localhost/,
+  ],
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // ─── Data loading ───
 let spriteData = null;
 let characterData = null;
 let assetRegistry = null;
+let gdevelopManifest = null;
 let spriteIndex = [];
 
 function loadData() {
@@ -71,6 +81,11 @@ function loadData() {
     assetRegistry = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/asset-registry.json'), 'utf-8'));
     console.log(`📦 Legacy registry loaded: ${assetRegistry.totalAssets} assets`);
   } catch (e) { /* optional */ }
+
+  try {
+    gdevelopManifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/gdevelop-assets.json'), 'utf-8'));
+    console.log(`🎮 GDevelop manifest loaded: ${gdevelopManifest.totalAssets} assets`);
+  } catch (e) { /* optional — run npm run build:gdevelop */ }
 }
 
 // ─── Helpers ───
@@ -149,6 +164,36 @@ app.get('/api/v1/stats', (req, res) => {
     characters: characterData ? { total: characterData.totalCharacters, totalAnimations: characterData.totalAnimations } : null,
     legacy: assetRegistry ? { totalAssets: assetRegistry.totalAssets, totalCategories: assetRegistry.totalCategories } : null
   });
+});
+
+// ═══════════════════════════════════
+//  GDEVELOP ASSET MANIFEST API
+// ═══════════════════════════════════
+
+app.get('/api/v1/gdevelop-assets', (req, res) => {
+  if (!gdevelopManifest) return jsonErr(res, 503, 'GDevelop manifest not loaded. Run: npm run build:gdevelop');
+  const { type, category, search, page = 1, limit = 200 } = req.query;
+  let assets = gdevelopManifest.assets;
+  if (type) assets = assets.filter(a => a.type === type);
+  if (category) assets = assets.filter(a => a.category === category);
+  if (search) {
+    const q = search.toLowerCase();
+    assets = assets.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.category.toLowerCase().includes(q) ||
+      (a.tags || []).some(t => t.toLowerCase().includes(q))
+    );
+  }
+  const total = assets.length;
+  const p = Math.max(1, parseInt(page) || 1);
+  const l = Math.min(500, Math.max(1, parseInt(limit) || 200));
+  const start = (p - 1) * l;
+  jsonOk(res, { total, page: p, limit: l, types: gdevelopManifest.types, assets: assets.slice(start, start + l) });
+});
+
+app.get('/api/v1/gdevelop-assets/categories', (req, res) => {
+  if (!gdevelopManifest) return jsonErr(res, 503, 'GDevelop manifest not loaded');
+  jsonOk(res, { total: gdevelopManifest.totalAssets, types: gdevelopManifest.types, categories: gdevelopManifest.categories });
 });
 
 // ═══════════════════════════════════
@@ -344,5 +389,8 @@ app.listen(PORT, () => {
   console.log(`   POST   /api/storage/upload-zip`);
   console.log(`   DELETE /api/storage/:key`);
   console.log(`   GET    /api/storage/list?prefix=...`);
+  console.log(`\n🎮 GDevelop API:`);
+  console.log(`   GET  /api/v1/gdevelop-assets?type=icon&search=sword&page=1`);
+  console.log(`   GET  /api/v1/gdevelop-assets/categories`);
   console.log(`\n✨ Press Ctrl+C to stop`);
 });
