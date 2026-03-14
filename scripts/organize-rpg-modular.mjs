@@ -15,37 +15,49 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT = join(__dirname, '..');
 
-const SRC = process.argv[2] || 'C:\\Users\\nugye\\Documents\\RPG-MODULAR-TEMP\\RPG-MODULAR\\public';
+const SRC = process.argv[2] || 'C:\\Users\\nugye\\Documents\\RPG-MODULAR\\RPG-MODULAR\\public';
 
 // Category classification for sprite folders
 const CHARACTER_FOLDERS = new Set([
   'arcane-archer','archer','armored-axeman','barbarian-mage','barbarian-ranger',
-  'barbarian-warrior','dark-knight','demon-sword','dwarf-ranger','elf-ranger',
-  'fantasy-warrior','fire-knight','forest-guardian','frost-guardian','human-ranger',
-  'knight','knight-templar','lancer','leaf-ranger','loreon-knight','martial-hero',
-  'medieval-warrior-3','necromancer','nightborne','orc','orc-rider','priest',
+  'barbarian-warrior','dark-knight','demon-sword','dwarf-mage','dwarf-ranger','dwarf-worge',
+  'elf-ranger','Elf-mage','elf_warrior','elite-orc',
+  'fantasy-warrior','fire-knight','fire-wizard','forest-guardian','free-knight','frost-guardian',
+  'gunslinger','human-mage','human-ranger',
+  'knight','knight-templar','lancer','leaf-ranger','lightning-mage','loreon-knight',
+  'martial-hero','medieval-warrior-3','necromancer','nightborne',
+  'orc','orc-rider','priest',
   'shadow-warrior','soldier','swordsman','water-priestess','werebear','werewolf',
-  'wind-hashashin','wizard','crystal-mauler','spirit_boxer','heroes'
+  'white-priest','wind-hashashin','wizard','wizard-new','wizard-pack',
+  'crystal-mauler','spirit_boxer','heroes'
 ]);
 
 const ENEMY_FOLDERS = new Set([
-  'armored-orc','armored-skeleton','elite-orc','evil-wizard','evil-wizard-2',
+  'armored-orc','armored-skeleton','evil-wizard','evil-wizard-2','evil-wizard-3',
   'greatsword-skeleton','skeleton','skeleton-archer','skeleton-enemy','slime',
+  'bandit-necro','black-priest','crossbowman','demon-minion1','demon-minion2',
+  'desert-deceased','desert-hyena','desert-mummy','desert-scorpio','desert-snake','desert-vulture',
+  'knight-enemy','shardsoul-slayer','shock-sweeper',
+  'skeleton-spearman','skeleton-warrior','stormhead','undead-ranger',
   'enemies'
 ]);
 
 const BOSS_FOLDERS = new Set([
-  'boss-demon','boss-demon-slime','bosses','cthulu-boss',
+  'boss-demon','boss-demon-slime','bosses','cthulu-boss','ogre-boss',
+  'dragon-red','dragon-white',
   'gorgon_siren_1','gorgon_siren_2','gorgon_siren_3'
 ]);
 
 const MONSTER_FOLDERS = new Set([
   'monsters','predators','nature-elemental','water-elemental',
   'baby_boxer','barrel_bomb','barrel_bomber','barrel_trap',
-  'shield_droid','shock_sweeper','toaster_bot'
+  'shield_droid','toaster_bot',
+  'mine-amphibian','mine-arachnid','mine-elemental',
+  'demon-summoner','bot-wheel',
+  'steampunk-airship','steampunk-mech'
 ]);
 
-const NPC_FOLDERS = new Set(['npcs','merchant']);
+const NPC_FOLDERS = new Set(['npcs','merchant','companions','training-dummy','pirate-captain']);
 const FISH_FOLDERS = new Set(['fish']);
 
 const IMAGE_EXTENSIONS = new Set(['.png','.jpg','.jpeg','.gif','.webp','.svg']);
