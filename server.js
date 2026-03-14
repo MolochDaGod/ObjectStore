@@ -288,9 +288,9 @@ app.post('/api/storage/upload-zip', memUpload.single('file'), async (req, res) =
   } catch (e) { console.error('Zip upload error:', e.message); jsonErr(res, 500, 'ZIP upload failed'); }
 });
 
-app.delete('/api/storage/*', async (req, res) => {
+app.delete('/api/storage/{*key}', async (req, res) => {
   try {
-    const key = req.params[0];
+    const key = req.params.key;
     if (!key) return jsonErr(res, 400, 'Key required');
     const adapter = getAdapter();
     if (adapter.type === 's3') {
