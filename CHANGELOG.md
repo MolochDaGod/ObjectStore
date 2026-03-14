@@ -2,6 +2,6 @@
 All notable changes to the ObjectStore API and assets.
 
 ## 2026-03-14
-### Changed
-- Merge branch 'main' of https://github.com/MolochDaGod/ObjectStore (81033ff)
+### Added
+- feat: add GDevelop asset manifest builder (8,386 assets) (e7a5c9e)
 
