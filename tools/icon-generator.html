@@ -6,9 +6,48 @@
   <title>GRUDGE Icon Generator - Puter AI</title>
   <script src="https://js.puter.com/v2/"></script>
   <style>
-    :root { --bg: #0f0f0f; --surface: #1a1a2e; --border: #333; --gold: #f59e0b; --text: #e2e8f0; --text-dim: #94a3b8; --accent: #6366f1; --success: #22c55e; --error: #ef4444; }
+    :root { --bg: #0a0e14; --surface: #151d2b; --border: #1e2a3a; --gold: #d4a84b; --gold-light: #f0d890; --gold-dim: rgba(212,168,75,0.15); --text: #e8e6e3; --text-dim: #7a7877; --accent: #6366f1; --success: #22c55e; --error: #ef4444; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+    /* ── Top Nav ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #111821;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      overflow-x: auto;
+    }
+    .top-nav .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      margin-right: 12px;
+      padding-right: 12px;
+      border-right: 1px solid var(--border);
+    }
+    .top-nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .top-nav a:hover { color: var(--gold); background: var(--gold-dim); }
+    .top-nav a.active { color: var(--gold); background: var(--gold-dim); font-weight: 600; }
+    .page-content { padding: 24px; }
     h1 { color: var(--gold); margin-bottom: 8px; }
     .subtitle { color: var(--text-dim); margin-bottom: 24px; }
     .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
@@ -42,6 +81,19 @@
   </style>
 </head>
 <body>
+  <nav class="top-nav">
+    <a href="../" class="nav-brand">⚔️ ObjectStore</a>
+    <a href="../SPRITE_DATABASE.html">Sprites</a>
+    <a href="../VFX_BROWSER.html">VFX</a>
+    <a href="../2D_MODELS.html">2D Models</a>
+    <a href="../3D_MODELS.html">3D Models</a>
+    <a href="../ItemBrowser.html">Items</a>
+    <a href="../GRUDGE_Item_Database.html">Database</a>
+    <a href="../docs/">API Docs</a>
+    <a href="./icon-generator.html" class="active">Icon Generator</a>
+  </nav>
+
+  <div class="page-content">
   <h1>⚔️ GRUDGE Icon Generator</h1>
   <p class="subtitle">Generate game asset icons using Puter's free AI (FLUX model). Icons save to Puter cloud storage.</p>
 
@@ -306,5 +358,6 @@
 
     log('Ready. Select a category and click Load Items.', 'info');
   </script>
+  </div>
 </body>
 </html>
