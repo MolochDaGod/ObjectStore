@@ -80,6 +80,13 @@
     .page-btn:hover { border-color:var(--tier-4); }
     .page-btn.active { background:var(--tier-4); border-color:var(--tier-4); color:#000; }
     .page-btn:disabled { opacity:0.4; cursor:default; }
+    .source-badge { display:inline-block; font-size:0.55rem; padding:2px 6px; border-radius:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; margin-left:4px; }
+    .source-badge.rpg-modular { background:rgba(76,175,80,0.2); color:#4caf50; }
+    .source-badge.grudge-angeler { background:rgba(33,150,243,0.2); color:#2196f3; }
+    .source-badge.gdevelop-assistant { background:rgba(255,152,0,0.2); color:#ff9800; }
+    .hero-class { font-size:0.6rem; color:var(--tier-4); font-style:italic; }
+    .alias-tag { font-size:0.55rem; color:var(--text-dim); opacity:0.7; }
+    .char-desc { font-size:0.6rem; color:var(--text-dim); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     @media(max-width:768px) { .modal-info { grid-template-columns:1fr 1fr; } .char-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
   </style>
 </head>
@@ -89,7 +96,7 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">2D Models Browser</h1>
-      <p class="subtitle">Animated sprite browser with UUIDs &mdash; Grudge Studio ObjectStore v2</p>
+      <p class="subtitle">Animated sprite browser with UUIDs &mdash; Grudge Studio ObjectStore v3</p>
       <div class="stats-bar" id="statsBar"></div>
     </div>
     <div class="controls">
@@ -180,13 +187,18 @@
       }, { rootMargin: '200px' });
     }
 
+    function charDisplayName(c) {
+      return c.displayName || c.name.replace(/[-_]/g, ' ');
+    }
+
     function apply() {
       filtered = chars.filter(function(c) {
         if (filters.cat!=='all' && c.category!==filters.cat) return false;
         if (filters.src!=='all' && c.source!==filters.src) return false;
         if (filters.q) {
           var q = filters.q;
-          if (c.name.toLowerCase().indexOf(q)===-1 && c.category.indexOf(q)===-1 && (c.uuid||'').toLowerCase().indexOf(q)===-1) return false;
+          var haystack = [c.name, c.category, c.uuid||'', c.displayName||'', c.heroClass||'', c.description||'', c.aliasOf||''].join(' ').toLowerCase();
+          if (haystack.indexOf(q) === -1) return false;
         }
         return true;
       });
@@ -206,13 +218,20 @@
         var c=pg[i], gi=s+i, aid='a-'+gi;
         var opts=''; for (var j=0;j<c.animations.length;j++) opts+='<option value="'+j+'"'+(j===0?' selected':'')+'>'+esc(c.animations[j].name)+'</option>';
         var dot = c.animations.some(function(x){return x.layout==='horizontal-guess'||x.layout==='unknown';}) ? 'dot-warn' : 'dot-ok';
+        var srcClass = (c.source||'rpg-modular').replace(/[^a-z-]/g,'');
+        var nameLabel = esc(charDisplayName(c));
+        var heroTag = c.heroClass ? '<div class="hero-class">'+esc(c.heroClass)+' Class</div>' : '';
+        var aliasTag = c.aliasOf ? '<div class="alias-tag">&#8594; '+esc(c.aliasOf)+'</div>' : '';
+        var descTag = c.description ? '<div class="char-desc" title="'+esc(c.description)+'">'+esc(c.description)+'</div>' : '';
         h += '<div class="char-card" data-gi="'+gi+'">'+
           '<div class="sprite-viewport" data-anim-id="'+aid+'">'+
             '<canvas id="'+aid+'" width="128" height="128"></canvas>'+
             '<button class="play-pause" data-aid="'+aid+'">&#9646;&#9646;</button>'+
           '</div>'+
-          '<div class="char-name"><span class="dot '+dot+'"></span>'+esc(c.name.replace(/[-_]/g,' '))+'</div>'+
+          '<div class="char-name"><span class="dot '+dot+'"></span>'+nameLabel+'<span class="source-badge '+srcClass+'">'+esc(c.source)+'</span></div>'+
+          heroTag + aliasTag +
           '<div class="char-meta">'+esc(c.category)+' &middot; '+c.animationCount+' anims</div>'+
+          descTag +
           '<div class="char-uuid" onclick="copyText(\''+esc(c.uuid)+'\')">'+esc(c.uuid)+'</div>'+
           '<select class="anim-select" data-aid="'+aid+'" data-gi="'+gi+'">'+opts+'</select>'+
           '<div class="frame-info" id="fi-'+aid+'">Loading...</div>'+
@@ -282,9 +301,14 @@
 
     function openModal(gi) {
       var c = filtered[gi]; if(!c) return;
+      var srcClass = (c.source||'rpg-modular').replace(/[^a-z-]/g,'');
+      var heroInfo = c.heroClass ? '<div class="hero-class" style="font-size:0.9rem;margin-bottom:4px;">'+esc(c.heroClass)+' Class'+(c.factionId?' &middot; '+esc(c.factionId)+' faction':'')+'</div>' : '';
+      var aliasInfo = c.aliasOf ? '<div class="alias-tag" style="font-size:0.75rem;margin-bottom:8px;">Sprite alias of <strong>'+esc(c.aliasOf)+'</strong></div>' : '';
+      var descInfo = c.description ? '<div style="color:var(--text-dim);font-size:0.85rem;margin-bottom:8px;">'+esc(c.description)+'</div>' : '';
       var h = '<div class="modal-preview" id="mPrev"><canvas id="mCv" width="256" height="256"></canvas></div>'+
-        '<div class="modal-title">'+esc(c.name.replace(/[-_]/g,' '))+'</div>'+
+        '<div class="modal-title">'+esc(charDisplayName(c))+' <span class="source-badge '+srcClass+'">'+esc(c.source)+'</span></div>'+
         '<div class="modal-uuid" onclick="copyText(\''+esc(c.uuid)+'\')">'+esc(c.uuid)+'</div>'+
+        heroInfo + aliasInfo + descInfo +
         '<div class="char-meta">'+esc(c.category)+' &middot; '+esc(c.source)+' &middot; '+c.animationCount+' animations</div>'+
         '<div class="modal-anim-row" id="mBtns"></div>'+
         '<div class="modal-controls">'+

@@ -21,6 +21,26 @@ const OUT_CHARS = join(ROOT, 'api', 'v1', 'sprite-characters.json');
 const OVERRIDES_PATH = join(ROOT, 'api', 'v1', 'sprite-overrides.json');
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
+const HERO_ALIASES_PATH = join(ROOT, 'api', 'v1', 'gdevelop-hero-aliases.json');
+
+// ─── Source detection based on directory path ───
+// Fish subdirectories with spritesheets from Grudge Angeler
+const ANGELER_FISH = new Set([
+  'abyssal-bass','anglerfish','bass','blue-crab','blue-ring-octopus','butterfly-fish',
+  'catfish','celestial-whale','clownfish-salt-uncommon','crimson-crab','cyan-crab',
+  'dark-crab','deep-sea-angler','eel','electric-eel','frost-catfish','giant-octopus',
+  'giant-squid','gold-crab','golden-salmon','green-crab','hammerhead-shark','jellyfish',
+  'kraken','lionfish','minnow','moray-eel','neon-eel','octopus','perch','phantom-minnow',
+  'pink-crab','pink-jellyfish','pufferfish-salt-rare','purple-crab','purple-jellyfish',
+  'red-crab','salmon','sea-devil','sea-urchin','seal-at-the-seam','shadow-crab',
+  'shadow-leviathan','shark','stingray','storm-swordfish','swordfish','volcanic-perch','whale',
+]);
+
+function detectSource(category, subcategory, relPath) {
+  // Fish species from Grudge Angeler
+  if (category === 'fish' && ANGELER_FISH.has(subcategory)) return 'grudge-angeler';
+  return 'rpg-modular';
+}
 
 // Category classification by top-level folder under sprites/
 const CATEGORY_MAP = {
@@ -276,6 +296,7 @@ async function main() {
       if (ov.rows) frameData.rows = ov.rows;
     }
 
+    const source = detectSource(category, subcategory, relFromRoot);
     const sprite = {
       uuid,
       id,
@@ -284,7 +305,7 @@ async function main() {
       filename,
       category,
       subcategory,
-      source: 'rpg-modular',
+      source,
       ext: extname(filename).slice(1),
       width,
       height,
@@ -403,6 +424,47 @@ async function main() {
     totalAnimations: characters.reduce((sum, c) => sum + c.animationCount, 0),
     characters,
   };
+
+  // ── Inject GDevelop Assistant hero aliases ──
+  try {
+    if (existsSync(HERO_ALIASES_PATH)) {
+      const aliases = JSON.parse(readFileSync(HERO_ALIASES_PATH, 'utf8'));
+      let aliasCount = 0;
+      for (const alias of aliases.heroes || []) {
+        // Find the source character this alias points to
+        const srcChar = characters.find(c => c.name === alias.mapsTo);
+        if (!srcChar) {
+          console.warn(`   ⚠️ Alias ${alias.name} → ${alias.mapsTo}: source not found, skipping`);
+          continue;
+        }
+        // Create alias entry reusing same animations but with new identity
+        const aliasChar = {
+          name: alias.id,
+          displayName: alias.name,
+          category: alias.category || 'characters',
+          source: 'gdevelop-assistant',
+          aliasOf: alias.mapsTo,
+          animations: srcChar.animations.map(a => ({ ...a })),
+          uuid: generateUUID('gdevelop', alias.id, '__CHARACTER__'),
+          animationCount: srcChar.animationCount,
+          description: alias.description || '',
+          heroClass: alias.heroClass || alias.name,
+          factionId: alias.factionId || null,
+        };
+        characters.push(aliasChar);
+        aliasCount++;
+      }
+      console.log(`   ✅ Injected ${aliasCount} GDevelop Assistant hero aliases`);
+    }
+  } catch (e) {
+    console.warn('   ⚠️ Could not load hero aliases:', e.message);
+  }
+
+  characters.sort((a, b) => a.name.localeCompare(b.name));
+
+  charRegistry.totalCharacters = characters.length;
+  charRegistry.totalAnimations = characters.reduce((sum, c) => sum + c.animationCount, 0);
+  charRegistry.characters = characters;
 
   writeFileSync(OUT_CHARS, JSON.stringify(charRegistry, null, 2), 'utf8');
   console.log(`✅ Written ${OUT_CHARS}`);
