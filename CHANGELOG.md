@@ -2,6 +2,6 @@
 All notable changes to the ObjectStore API and assets.
 
 ## 2026-03-15
-### Added
-- feat: Add Grudge Angeler fish species + GDevelop Assistant hero sprites to 2D Models Browser (0be61e6)
+### Changed
+- Add Craftpix Fantasy UI (218 PNGs) + Magic Effects (10 sheets, 20 icons) (92c64e0)
 
