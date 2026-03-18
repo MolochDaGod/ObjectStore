@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grudge 3DFX — Effect Viewer & Editor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#12121e;--surface2:#1a1a2e;--border:#2a2a44;--text:#e0e0f0;--text2:#8888aa;--accent:#aa44ff;--accent2:#ff44aa;--fire:#ff4400;--ice:#00ccff;--lightning:#ffff00;--magic:#aa44ff;--impact:#ff6600;--aura:#ffdd44;--portal:#4488ff;--combat:#ff2222;--env:#44aa44}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+.app{display:grid;grid-template-columns:280px 1fr 320px;grid-template-rows:48px 1fr 200px;height:100vh}
+/* Header */
+.header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:10}
+.header h1{font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .stats{font-size:11px;color:var(--text2)}
+.header-actions{display:flex;gap:8px}
+.header-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;transition:all .15s}
+.header-actions button:hover{border-color:var(--accent);background:rgba(170,68,255,.1)}
+.header-actions button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+/* Sidebar */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;grid-row:2/4}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.search{padding:8px;position:sticky;top:0;background:var(--surface);z-index:5}
+.search input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-size:12px;outline:none}
+.search input:focus{border-color:var(--accent)}
+.categories{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}
+.cat-btn{padding:3px 8px;border-radius:12px;font-size:10px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.cat-btn:hover,.cat-btn.active{border-color:var(--accent);color:var(--text);background:rgba(170,68,255,.15)}
+.effect-list{padding:4px 8px}
+.effect-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:2px}
+.effect-item:hover{background:var(--surface2);border-color:var(--border)}
+.effect-item.active{background:rgba(170,68,255,.12);border-color:var(--accent)}
+.effect-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.effect-name{font-size:12px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.effect-cat{font-size:9px;color:var(--text2);text-transform:uppercase}
+.effect-src{font-size:8px;color:var(--text2);opacity:.6}
+/* Viewport */
+.viewport{position:relative;background:#050508;overflow:hidden}
+.viewport canvas{width:100%!important;height:100%!important;display:block}
+.vp-overlay{position:absolute;top:8px;left:8px;display:flex;gap:6px}
+.vp-overlay button{background:rgba(18,18,30,.8);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(4px)}
+.vp-overlay button:hover,.vp-overlay button.active{color:var(--text);border-color:var(--accent);background:rgba(170,68,255,.2)}
+.vp-info{position:absolute;bottom:8px;left:8px;font-size:10px;color:var(--text2);background:rgba(10,10,18,.8);padding:4px 8px;border-radius:4px;backdrop-filter:blur(4px)}
+.vp-effect-name{position:absolute;top:8px;right:8px;font-size:13px;font-weight:600;color:var(--text);background:rgba(10,10,18,.8);padding:6px 12px;border-radius:6px;backdrop-filter:blur(4px)}
+/* Inspector */
+.inspector{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;grid-row:2/4}
+.inspector::-webkit-scrollbar{width:4px}
+.inspector::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.insp-section{padding:8px 12px;border-bottom:1px solid var(--border)}
+.insp-title{font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text2);margin-bottom:8px;letter-spacing:.5px}
+.insp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.insp-label{font-size:11px;color:var(--text2);flex-shrink:0;width:90px}
+.insp-value{flex:1;display:flex;align-items:center;gap:4px}
+.insp-value input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.insp-value input[type=number]{width:50px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:11px;text-align:center}
+.insp-value input[type=color]{width:28px;height:22px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:transparent;padding:0}
+.insp-value select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:3px 6px;border-radius:4px;font-size:11px;flex:1}
+.insp-toggle{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.insp-toggle label{font-size:11px;color:var(--text2);cursor:pointer;flex:1}
+.insp-toggle input[type=checkbox]{accent-color:var(--accent)}
+/* Timeline */
+.timeline{grid-column:2/3;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px;display:flex;flex-direction:column;gap:6px}
+.tl-controls{display:flex;align-items:center;gap:8px}
+.tl-controls button{background:var(--surface2);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+.tl-controls button:hover{border-color:var(--accent)}
+.tl-controls button.playing{background:var(--accent);border-color:var(--accent)}
+.tl-time{font-size:11px;color:var(--text2);font-variant-numeric:tabular-nums;min-width:60px}
+.tl-track{flex:1;height:24px;background:var(--surface2);border-radius:4px;position:relative;cursor:pointer;overflow:hidden}
+.tl-progress{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .05s linear}
+.tl-speed{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.tl-speed select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 6px;border-radius:4px;font-size:11px}
+/* Shader Editor */
+.shader-editor{display:none;grid-column:2/3;grid-row:3/4;background:var(--surface);border-top:1px solid var(--border);overflow:hidden}
+.shader-editor.open{display:flex;flex-direction:column}
+.shader-tabs{display:flex;border-bottom:1px solid var(--border)}
+.shader-tabs button{background:transparent;border:none;color:var(--text2);padding:6px 12px;font-size:11px;cursor:pointer;border-bottom:2px solid transparent}
+.shader-tabs button.active{color:var(--text);border-bottom-color:var(--accent)}
+.shader-code{flex:1;overflow:auto;padding:8px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;line-height:1.5;color:#c8d0e0;background:#0d0d18;white-space:pre;tab-size:2;outline:none}
+.shader-code::-webkit-scrollbar{width:4px;height:4px}
+.shader-code::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--accent);color:var(--text);padding:8px 16px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+@media(max-width:1024px){.app{grid-template-columns:220px 1fr 260px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <h1>⚡ GRUDGE 3DFX</h1>
+      <span class="stats" id="stats">Loading effects...</span>
+    </div>
+    <div class="header-actions">
+      <button onclick="toggleShaderEditor()" id="btn-shader">✎ Shader</button>
+      <button onclick="exportEffect()">↓ Export</button>
+      <button onclick="saveToR2()" class="primary">☁ Save to R2</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="search"><input type="text" id="search" placeholder="Search effects..." oninput="filterEffects()"></div>
+    <div class="categories" id="categories"></div>
+    <div class="effect-list" id="effectList"></div>
+  </div>
+
+  <!-- Viewport -->
+  <div class="viewport" id="viewport">
+    <div class="vp-overlay">
+      <button onclick="toggleGrid()" id="btn-grid" class="active" title="Grid">⊞</button>
+      <button onclick="toggleAutoRotate()" id="btn-rotate" class="active" title="Auto Rotate">↻</button>
+      <button onclick="resetCamera()" title="Reset Camera">⌂</button>
+      <button onclick="toggleGizmo('translate')" id="btn-move" title="Move">✥</button>
+      <button onclick="toggleGizmo('rotate')" id="btn-rot" title="Rotate">↺</button>
+      <button onclick="toggleGizmo('scale')" id="btn-scale" title="Scale">⇲</button>
+    </div>
+    <div class="vp-effect-name" id="effectNameDisplay">Select an effect</div>
+    <div class="vp-info" id="vpInfo">FPS: -- | Particles: 0</div>
+  </div>
+
+  <!-- Inspector -->
+  <div class="inspector">
+    <div class="insp-section">
+      <div class="insp-title">Colors</div>
+      <div class="insp-row"><span class="insp-label">Primary</span><div class="insp-value"><input type="color" id="color1" value="#ff4400" onchange="updateColors()"><input type="text" id="color1Hex" value="#ff4400" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:10px" onchange="document.getElementById('color1').value=this.value;updateColors()"></div></div>
+      <div class="insp-row"><span class="insp-label">Secondary</span><div class="insp-value"><input type="color" id="color2" value="#ffcc00" onchange="updateColors()"><input type="text" id="color2Hex" value="#ffcc00" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:10px" onchange="document.getElementById('color2').value=this.value;updateColors()"></div></div>
+    </div>
+    <div class="insp-section">
+      <div class="insp-title">Effect</div>
+      <div class="insp-row"><span class="insp-label">Intensity</span><div class="insp-value"><input type="range" id="intensity" min="0" max="5" step="0.1" value="1.5" oninput="updateParam('intensity')"><input type="number" id="intensityNum" value="1.5" step="0.1" onchange="syncSlider('intensity')"></div></div>
+      <div class="insp-row"><span class="insp-label">Scale</span><div class="insp-value"><input type="range" id="scale" min="0.1" max="5" step="0.1" value="1" oninput="updateParam('scale')"><input type="number" id="scaleNum" value="1" step="0.1" onchange="syncSlider('scale')"></div></div>
+      <div class="insp-row"><span class="insp-label">Speed</span><div class="insp-value"><input type="range" id="speed" min="0.1" max="3" step="0.1" value="1" oninput="updateParam('speed')"><input type="number" id="speedNum" value="1" step="0.1" onchange="syncSlider('speed')"></div></div>
+      <div class="insp-row"><span class="insp-label">Particles</span><div class="insp-value"><input type="range" id="particleCount" min="10" max="2000" step="10" value="500" oninput="updateParam('particleCount')"><input type="number" id="particleCountNum" value="500" step="10" onchange="syncSlider('particleCount')"></div></div>
+      <div class="insp-row"><span class="insp-label">Particle Size</span><div class="insp-value"><input type="range" id="particleSize" min="0.01" max="1" step="0.01" value="0.1" oninput="updateParam('particleSize')"><input type="number" id="particleSizeNum" value="0.1" step="0.01" onchange="syncSlider('particleSize')"></div></div>
+    </div>
+    <div class="insp-section">
+      <div class="insp-title">Bloom</div>
+      <div class="insp-row"><span class="insp-label">Strength</span><div class="insp-value"><input type="range" id="bloomStrength" min="0" max="5" step="0.1" value="1.5" oninput="updateBloom()"><input type="number" id="bloomStrengthNum" value="1.5" step="0.1" onchange="syncSlider('bloomStrength');updateBloom()"></div></div>
+      <div class="insp-row"><span class="insp-label">Radius</span><div class="insp-value"><input type="range" id="bloomRadius" min="0" max="1" step="0.05" value="0.4" oninput="updateBloom()"><input type="number" id="bloomRadiusNum" value="0.4" step="0.05" onchange="syncSlider('bloomRadius');updateBloom()"></div></div>
+      <div class="insp-row"><span class="insp-label">Threshold</span><div class="insp-value"><input type="range" id="bloomThreshold" min="0" max="1" step="0.05" value="0.2" oninput="updateBloom()"><input type="number" id="bloomThresholdNum" value="0.2" step="0.05" onchange="syncSlider('bloomThreshold');updateBloom()"></div></div>
+    </div>
+    <div class="insp-section">
+      <div class="insp-title">Environment</div>
+      <div class="insp-row"><span class="insp-label">Background</span><div class="insp-value"><input type="color" id="bgColor" value="#0a0a12" onchange="updateEnv()"></div></div>
+      <div class="insp-row"><span class="insp-label">Ambient</span><div class="insp-value"><input type="range" id="ambientIntensity" min="0" max="3" step="0.1" value="0.5" oninput="updateEnv()"><input type="number" id="ambientIntensityNum" value="0.5" step="0.1" onchange="syncSlider('ambientIntensity');updateEnv()"></div></div>
+      <div class="insp-row"><span class="insp-label">Dir Light</span><div class="insp-value"><input type="range" id="dirIntensity" min="0" max="5" step="0.1" value="0.3" oninput="updateEnv()"><input type="number" id="dirIntensityNum" value="0.3" step="0.1" onchange="syncSlider('dirIntensity');updateEnv()"></div></div>
+      <div class="insp-toggle"><input type="checkbox" id="fogEnabled" onchange="updateEnv()"><label for="fogEnabled">Fog</label></div>
+      <div class="insp-row"><span class="insp-label">Fog Density</span><div class="insp-value"><input type="range" id="fogDensity" min="0" max="0.1" step="0.005" value="0.02" oninput="updateEnv()"></div></div>
+    </div>
+    <div class="insp-section">
+      <div class="insp-title">Transform</div>
+      <div class="insp-row"><span class="insp-label">Pos X</span><div class="insp-value"><input type="range" id="posX" min="-5" max="5" step="0.1" value="0" oninput="updateTransform()"></div></div>
+      <div class="insp-row"><span class="insp-label">Pos Y</span><div class="insp-value"><input type="range" id="posY" min="-5" max="5" step="0.1" value="0" oninput="updateTransform()"></div></div>
+      <div class="insp-row"><span class="insp-label">Pos Z</span><div class="insp-value"><input type="range" id="posZ" min="-5" max="5" step="0.1" value="0" oninput="updateTransform()"></div></div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline" id="timeline">
+    <div class="tl-controls">
+      <button onclick="togglePlay()" id="btn-play" class="playing" title="Play/Pause">▶</button>
+      <button onclick="restartEffect()" title="Restart">⟲</button>
+      <span class="tl-time" id="timeDisplay">0.00s / 2.00s</span>
+      <div class="tl-track" id="tlTrack" onclick="seekTimeline(event)"><div class="tl-progress" id="tlProgress" style="width:0%"></div></div>
+      <div class="tl-speed"><span>Speed:</span><select id="speedSelect" onchange="setPlaybackSpeed()"><option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="1.5">1.5x</option><option value="2">2x</option></select></div>
+      <div class="insp-toggle" style="margin:0"><input type="checkbox" id="loopToggle" checked onchange="toggleLoop()"><label for="loopToggle" style="font-size:11px;color:var(--text2)">Loop</label></div>
+    </div>
+  </div>
+
+  <!-- Shader Editor (hidden by default) -->
+  <div class="shader-editor" id="shaderEditor">
+    <div class="shader-tabs">
+      <button class="active" onclick="switchShaderTab('vertex')">Vertex</button>
+      <button onclick="switchShaderTab('fragment')">Fragment</button>
+    </div>
+    <div class="shader-code" id="shaderCode" contenteditable="true" spellcheck="false"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
+
+const REGISTRY_URL = './api/v1/3dfx-registry.json';
+const OBJECTSTORE_BASE = 'https://molochdagod.github.io/ObjectStore';
+const R2_URL = 'https://objectstore.grudge-studio.com';
+
+let registry = null;
+let scene, camera, renderer, composer, bloomPass, controls, transformControls;
+let clock = new THREE.Clock();
+let effectGroup = new THREE.Group();
+let shaderMaterials = [];
+let particleSystems = [];
+let pointLights = [];
+let gridHelper, ambientLight, dirLight;
+let currentEffect = null;
+let isPlaying = true;
+let playbackSpeed = 1;
+let looping = true;
+let effectTime = 0;
+let fps = 0, frameCount = 0, lastFpsTime = 0;
+let currentShaderTab = 'vertex';
+let loadedShaders = {};
+let shaderEditorOpen = false;
+
+// ── Init Three.js ──
+function initScene() {
+  const vp = document.getElementById('viewport');
+  const w = vp.clientWidth, h = vp.clientHeight;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a12);
+
+  camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
+  camera.position.set(5, 4, 8);
+  camera.lookAt(0, 1, 0);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.5;
+  vp.appendChild(renderer.domElement);
+
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 1.5, 0.4, 0.2);
+  composer.addPass(bloomPass);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.target.set(0, 1, 0);
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.5;
+
+  transformControls = new TransformControls(camera, renderer.domElement);
+  transformControls.addEventListener('dragging-changed', e => { controls.enabled = !e.value; });
+  scene.add(transformControls);
+
+  ambientLight = new THREE.AmbientLight(0x222233, 0.5);
+  scene.add(ambientLight);
+
+  dirLight = new THREE.DirectionalLight(0x8888ff, 0.3);
+  dirLight.position.set(5, 10, 5);
+  scene.add(dirLight);
+
+  gridHelper = new THREE.GridHelper(20, 40, 0x333355, 0x222244);
+  scene.add(gridHelper);
+
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(30, 30),
+    new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.9, metalness: 0.1 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.01;
+  scene.add(ground);
+
+  scene.add(effectGroup);
+
+  window.addEventListener('resize', () => {
+    const w2 = vp.clientWidth, h2 = vp.clientHeight;
+    camera.aspect = w2 / h2;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w2, h2);
+    composer.setSize(w2, h2);
+  });
+}
+
+// ── Shader cache ──
+const SHADER_SOURCES = {
+  fire: {
+    vertex: `varying vec2 vUv;varying float vTime;uniform float uTime;void main(){vUv=uv;vTime=uTime;vec3 pos=position;pos.y+=sin(uTime*3.0+position.x*5.0)*0.1;pos.x+=cos(uTime*2.0+position.y*4.0)*0.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying float vTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float noise(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0;float a=0.5;for(int i=0;i<4;i++){v+=a*noise(p);p=p*2.0;a*=0.5;}return v;}void main(){vec2 uv=vUv;uv.y-=vTime*0.5;float n=fbm(uv*4.0+vTime);float flame=1.0-vUv.y;flame=pow(flame,1.5);flame*=n;flame*=smoothstep(0.0,0.3,vUv.y);flame*=smoothstep(1.0,0.7,abs(vUv.x-0.5)*2.0);vec3 color=mix(uColor2,uColor1,flame);float alpha=flame*uIntensity*2.0;gl_FragColor=vec4(color,alpha);}`
+  },
+  lightning: {
+    vertex: `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float wave=sin(uTime*20.0+position.y*10.0)*0.1;pos.x+=wave*(1.0-vUv.y);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){float centerDist=abs(vUv.x-0.5)*2.0;float glow=1.0-pow(centerDist,0.5);glow*=1.0-vUv.y*0.3;float flicker=0.8+0.2*sin(uTime*50.0);glow*=flicker;vec3 color=mix(uColor2,uColor1,glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
+  },
+  shockwave: {
+    vertex: `varying vec2 vUv;uniform float uProgress;void main(){vUv=uv;vec3 pos=position;float scale=1.0+uProgress*3.0;pos.xz*=scale;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform float uProgress;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float ring=smoothstep(0.4,0.5,dist)*smoothstep(0.6,0.5,dist);float alpha=ring*(1.0-uProgress);gl_FragColor=vec4(uColor1,alpha);}`
+  },
+  magic: {
+    vertex: `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float spiral=sin(uTime*2.0+atan(position.x,position.z)*3.0)*0.1;pos.y+=spiral;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float angle=atan(vUv.y-0.5,vUv.x-0.5);float spiral=sin(angle*5.0-uTime*3.0+dist*10.0);spiral=smoothstep(0.0,1.0,spiral);float glow=1.0-dist;glow=pow(glow,2.0);vec3 color=mix(uColor2,uColor1,spiral*glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
+  }
+};
+
+// ── Build Effect ──
+function clearEffect() {
+  shaderMaterials = [];
+  particleSystems = [];
+  pointLights.forEach(l => effectGroup.remove(l));
+  pointLights = [];
+  while (effectGroup.children.length) effectGroup.remove(effectGroup.children[0]);
+  transformControls.detach();
+  effectTime = 0;
+}
+
+function buildEffect(def) {
+  clearEffect();
+  currentEffect = def;
+
+  const c1 = new THREE.Color(def.colors.primary);
+  const c2 = new THREE.Color(def.colors.secondary);
+  const intensity = def.uniforms?.uIntensity?.value || 1.5;
+  const pConfig = def.particles || {};
+  const gConfig = def.geometry || {};
+
+  // Update inspector
+  document.getElementById('color1').value = def.colors.primary;
+  document.getElementById('color1Hex').value = def.colors.primary;
+  document.getElementById('color2').value = def.colors.secondary;
+  document.getElementById('color2Hex').value = def.colors.secondary;
+  if (def.bloom) {
+    document.getElementById('bloomStrength').value = def.bloom.strength;
+    document.getElementById('bloomStrengthNum').value = def.bloom.strength;
+    document.getElementById('bloomRadius').value = def.bloom.radius;
+    document.getElementById('bloomRadiusNum').value = def.bloom.radius;
+    document.getElementById('bloomThreshold').value = def.bloom.threshold;
+    document.getElementById('bloomThresholdNum').value = def.bloom.threshold;
+    bloomPass.strength = def.bloom.strength;
+    bloomPass.radius = def.bloom.radius;
+    bloomPass.threshold = def.bloom.threshold;
+  }
+  if (pConfig.count) { document.getElementById('particleCount').value = pConfig.count; document.getElementById('particleCountNum').value = pConfig.count; }
+  if (pConfig.size) { document.getElementById('particleSize').value = pConfig.size; document.getElementById('particleSizeNum').value = pConfig.size; }
+  document.getElementById('intensity').value = intensity;
+  document.getElementById('intensityNum').value = intensity;
+  document.getElementById('speed').value = def.timing?.speed || 1;
+  document.getElementById('speedNum').value = def.timing?.speed || 1;
+  document.getElementById('effectNameDisplay').textContent = def.name;
+
+  // Build shader meshes
+  if (def.shader && SHADER_SOURCES[def.shader]) {
+    const src = SHADER_SOURCES[def.shader];
+    const uniforms = {
+      uTime: { value: 0 },
+      uColor1: { value: c1.clone() },
+      uColor2: { value: c2.clone() },
+      uIntensity: { value: intensity },
+      uProgress: { value: 0 }
+    };
+
+    const mat = new THREE.ShaderMaterial({
+      vertexShader: src.vertex,
+      fragmentShader: src.fragment,
+      uniforms,
+      transparent: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    shaderMaterials.push(mat);
+
+    const instances = gConfig.instances || 1;
+    const geoW = gConfig.width || 2, geoH = gConfig.height || 3;
+    const segs = gConfig.segments || [16, 16];
+
+    if (gConfig.type === 'ring' || gConfig.type === 'torus') {
+      const innerR = gConfig.innerRadius || 0.5, outerR = gConfig.outerRadius || 2;
+      const ringGeo = new THREE.RingGeometry(innerR, outerR, gConfig.segments || 64);
+      const ring = new THREE.Mesh(ringGeo, mat);
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = 0.1;
+      effectGroup.add(ring);
+    } else if (gConfig.type === 'sphere') {
+      const sGeo = new THREE.SphereGeometry(gConfig.radius || 0.4, gConfig.segments || 16, gConfig.segments || 16);
+      const sMat = new THREE.MeshStandardMaterial({ color: c1, emissive: c1, emissiveIntensity: gConfig.emissiveIntensity || 0.5, transparent: true, opacity: gConfig.opacity || 0.7 });
+      const s = new THREE.Mesh(sGeo, sMat);
+      s.position.y = 1;
+      effectGroup.add(s);
+    } else {
+      const geo = new THREE.PlaneGeometry(geoW, geoH, segs[0], segs[1]);
+      for (let i = 0; i < instances; i++) {
+        const m = new THREE.Mesh(geo, mat.clone());
+        shaderMaterials.push(m.material);
+        if (gConfig.layout === 'circular') {
+          const angle = (i / instances) * Math.PI * 2;
+          const r = gConfig.layoutRadius || 0.5;
+          m.position.set(Math.cos(angle) * r, geoH / 2, Math.sin(angle) * r);
+          m.rotation.y = -angle + Math.PI / 2;
+        } else {
+          m.position.y = geoH / 2;
+          m.rotation.y = (i / instances) * Math.PI * 2;
+        }
+        effectGroup.add(m);
+      }
+    }
+  } else if (gConfig.type === 'sphere') {
+    const sGeo = new THREE.SphereGeometry(gConfig.radius || 0.4, gConfig.segments || 16, gConfig.segments || 16);
+    const sMat = new THREE.MeshStandardMaterial({ color: c1, emissive: c1, emissiveIntensity: gConfig.emissiveIntensity || 0.5, transparent: true, opacity: gConfig.opacity || 0.7, metalness: gConfig.metalness || 0, roughness: gConfig.roughness ?? 0.5 });
+    const s = new THREE.Mesh(sGeo, sMat);
+    s.position.y = 1;
+    effectGroup.add(s);
+  } else if (gConfig.type === 'torus') {
+    const tGeo = new THREE.TorusGeometry(gConfig.radius || 1, gConfig.tube || 0.15, 16, 32);
+    const tMat = new THREE.MeshStandardMaterial({ color: c1, emissive: c1, emissiveIntensity: 0.5, transparent: true, opacity: 0.6 });
+    const t = new THREE.Mesh(tGeo, tMat);
+    t.position.y = 1.5;
+    effectGroup.add(t);
+    if (gConfig.innerDisc) {
+      const dGeo = new THREE.CircleGeometry(gConfig.radius || 1, 32);
+      const dMat = new THREE.MeshBasicMaterial({ color: c1, transparent: true, opacity: gConfig.innerOpacity || 0.3, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+      const d = new THREE.Mesh(dGeo, dMat);
+      d.position.y = 1.5;
+      effectGroup.add(d);
+    }
+  } else if (gConfig.type === 'compound') {
+    // Aura spheres, rings, etc.
+    if (gConfig.elements?.includes('outer_sphere')) {
+      const sg = new THREE.SphereGeometry(1.5, 32, 32);
+      const sm = new THREE.MeshBasicMaterial({ color: c1, transparent: true, opacity: 0.2, side: THREE.BackSide, blending: THREE.AdditiveBlending });
+      const s = new THREE.Mesh(sg, sm);
+      s.position.y = 1.5;
+      effectGroup.add(s);
+    }
+    if (gConfig.elements?.includes('inner_sphere')) {
+      const sg = new THREE.SphereGeometry(1.2, 32, 32);
+      const sm = new THREE.MeshBasicMaterial({ color: c2, transparent: true, opacity: 0.15, side: THREE.BackSide, blending: THREE.AdditiveBlending });
+      const s = new THREE.Mesh(sg, sm);
+      s.position.y = 1.5;
+      effectGroup.add(s);
+    }
+    if (gConfig.elements?.includes('rings')) {
+      for (let i = 0; i < 3; i++) {
+        const rg = new THREE.TorusGeometry(1.3 + i * 0.2, 0.02, 8, 64);
+        const rm = new THREE.MeshBasicMaterial({ color: c1, transparent: true, opacity: 0.4 - i * 0.1, blending: THREE.AdditiveBlending });
+        const r = new THREE.Mesh(rg, rm);
+        r.position.y = 1.5;
+        r.rotation.x = Math.PI / 2 + i * 0.3;
+        effectGroup.add(r);
+      }
+    }
+    if (gConfig.elements?.includes('shockwave_ring') && def.shader) {
+      const src = SHADER_SOURCES.shockwave;
+      const swMat = new THREE.ShaderMaterial({
+        vertexShader: src.vertex, fragmentShader: src.fragment,
+        uniforms: { uColor1: { value: c1.clone() }, uProgress: { value: 0 } },
+        transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+      });
+      shaderMaterials.push(swMat);
+      const swGeo = new THREE.RingGeometry(1, 4, 64);
+      const sw = new THREE.Mesh(swGeo, swMat);
+      sw.rotation.x = -Math.PI / 2;
+      sw.position.y = 0.1;
+      effectGroup.add(sw);
+    }
+    if (gConfig.elements?.includes('fire_planes') && SHADER_SOURCES.fire) {
+      const src = SHADER_SOURCES.fire;
+      for (let i = 0; i < 6; i++) {
+        const fMat = new THREE.ShaderMaterial({
+          vertexShader: src.vertex, fragmentShader: src.fragment,
+          uniforms: { uTime: { value: 0 }, uColor1: { value: c1.clone() }, uColor2: { value: c2.clone() }, uIntensity: { value: intensity } },
+          transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+        });
+        shaderMaterials.push(fMat);
+        const fGeo = new THREE.PlaneGeometry(2, 3, 16, 16);
+        const f = new THREE.Mesh(fGeo, fMat);
+        const angle = (i / 6) * Math.PI * 2;
+        f.position.set(Math.cos(angle) * 0.5, 1.5, Math.sin(angle) * 0.5);
+        f.rotation.y = -angle + Math.PI / 2;
+        effectGroup.add(f);
+      }
+    }
+  }
+
+  // Build particles
+  const pCount = pConfig.count || 200;
+  const pGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(pCount * 3);
+  const velocities = new Float32Array(pCount * 3);
+  const radius = pConfig.radius || 1;
+
+  for (let i = 0; i < pCount; i++) {
+    const dist = pConfig.distribution || 'sphere';
+    if (dist === 'circular' || dist === 'ring') {
+      const a = Math.random() * Math.PI * 2;
+      const r = radius * (0.5 + Math.random() * 0.5);
+      positions[i*3] = Math.cos(a) * r;
+      positions[i*3+1] = Math.random() * 0.5;
+      positions[i*3+2] = Math.sin(a) * r;
+    } else if (dist === 'spiral') {
+      const a = Math.random() * Math.PI * 2;
+      const r = 0.5 + Math.random() * radius;
+      const h = Math.random() * (pConfig.height || 3);
+      positions[i*3] = Math.cos(a) * r;
+      positions[i*3+1] = h;
+      positions[i*3+2] = Math.sin(a) * r;
+    } else if (dist === 'volume') {
+      const w = pConfig.width || 10, h = pConfig.height || 5;
+      positions[i*3] = (Math.random() - 0.5) * w;
+      positions[i*3+1] = Math.random() * h;
+      positions[i*3+2] = (Math.random() - 0.5) * w;
+    } else if (dist === 'explosion') {
+      positions[i*3] = 0;
+      positions[i*3+1] = 0;
+      positions[i*3+2] = 0;
+    } else {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = radius * Math.random();
+      positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i*3+1] = 1 + r * Math.cos(phi);
+      positions[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+    }
+
+    const vy = pConfig.velocityY || [0, 1];
+    velocities[i*3] = (Math.random() - 0.5) * 0.5;
+    velocities[i*3+1] = vy[0] + Math.random() * (vy[1] - vy[0]);
+    velocities[i*3+2] = (Math.random() - 0.5) * 0.5;
+  }
+
+  pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  const pMat = new THREE.PointsMaterial({
+    color: c1,
+    size: pConfig.size || 0.1,
+    transparent: true,
+    opacity: pConfig.opacity || 0.8,
+    blending: pConfig.blending === 'additive' ? THREE.AdditiveBlending : THREE.NormalBlending,
+    depthWrite: false
+  });
+
+  const pts = new THREE.Points(pGeo, pMat);
+  pts.userData = { velocities, config: pConfig, initPositions: new Float32Array(positions) };
+  effectGroup.add(pts);
+  particleSystems.push(pts);
+
+  // Point lights
+  if (def.light) {
+    const pl = new THREE.PointLight(new THREE.Color(def.light.color), def.light.intensity || 2, def.light.distance || 8);
+    pl.position.y = 1.5;
+    effectGroup.add(pl);
+    pointLights.push(pl);
+  }
+
+  // Load shader code for editor
+  if (def.shader && SHADER_SOURCES[def.shader]) {
+    loadedShaders = { vertex: SHADER_SOURCES[def.shader].vertex, fragment: SHADER_SOURCES[def.shader].fragment };
+    updateShaderEditor();
+  } else {
+    loadedShaders = { vertex: '// No custom shader', fragment: '// No custom shader' };
+    updateShaderEditor();
+  }
+}
+
+// ── Animation Loop ──
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+
+  frameCount++;
+  const now = performance.now();
+  if (now - lastFpsTime > 1000) {
+    fps = Math.round(frameCount * 1000 / (now - lastFpsTime));
+    frameCount = 0;
+    lastFpsTime = now;
+  }
+
+  if (isPlaying && currentEffect) {
+    effectTime += delta * playbackSpeed * (currentEffect.timing?.speed || 1);
+    const dur = currentEffect.timing?.duration || 2;
+
+    if (!looping && effectTime >= dur) {
+      effectTime = dur;
+      isPlaying = false;
+      document.getElementById('btn-play').classList.remove('playing');
+      document.getElementById('btn-play').textContent = '▶';
+    } else if (looping) {
+      effectTime = effectTime % dur;
+    }
+
+    const progress = Math.min(effectTime / dur, 1);
+    document.getElementById('tlProgress').style.width = (progress * 100) + '%';
+    document.getElementById('timeDisplay').textContent = `${effectTime.toFixed(2)}s / ${dur.toFixed(2)}s`;
+
+    // Update shaders
+    shaderMaterials.forEach(mat => {
+      if (mat.uniforms.uTime) mat.uniforms.uTime.value = effectTime;
+      if (mat.uniforms.uProgress) mat.uniforms.uProgress.value = (effectTime % 2) / 2;
+    });
+
+    // Update particles
+    particleSystems.forEach(ps => {
+      const pos = ps.geometry.attributes.position.array;
+      const vel = ps.userData.velocities;
+      const init = ps.userData.initPositions;
+      const cfg = ps.userData.config;
+      const pCount = pos.length / 3;
+      const dist = cfg.distribution || 'sphere';
+
+      for (let i = 0; i < pCount; i++) {
+        if (dist === 'circular' || dist === 'ring') {
+          const lt = (effectTime + i * 0.01) % 2;
+          pos[i*3+1] = lt * vel[i*3+1];
+          pos[i*3] = Math.cos((effectTime + i) * 0.5) * 0.3 + vel[i*3] * lt * 0.5;
+          pos[i*3+2] = Math.sin((effectTime + i) * 0.5) * 0.3 + vel[i*3+2] * lt * 0.5;
+        } else if (dist === 'spiral') {
+          const angle = effectTime * 0.5 + i * 0.02;
+          const r = 0.5 + (i % 10) * 0.15;
+          pos[i*3] = Math.cos(angle) * r;
+          pos[i*3+2] = Math.sin(angle) * r;
+          pos[i*3+1] = ((effectTime * 0.5 + i * 0.01) % 1) * (cfg.height || 3);
+        } else if (dist === 'explosion') {
+          const phase = effectTime % 3;
+          pos[i*3] = vel[i*3] * phase;
+          pos[i*3+1] = vel[i*3+1] * phase + (cfg.gravity || 0) * 0.5 * phase * phase;
+          pos[i*3+2] = vel[i*3+2] * phase;
+          if (pos[i*3+1] < 0) pos[i*3+1] = 0;
+        } else if (dist === 'volume') {
+          pos[i*3+1] = init[i*3+1] + vel[i*3+1] * (effectTime % 5);
+          if (pos[i*3+1] < -1) pos[i*3+1] = (cfg.height || 5);
+        } else {
+          // sphere orbit
+          pos[i*3] = init[i*3] * Math.cos(effectTime * 0.2) - init[i*3+2] * Math.sin(effectTime * 0.2);
+          pos[i*3+2] = init[i*3] * Math.sin(effectTime * 0.2) + init[i*3+2] * Math.cos(effectTime * 0.2);
+        }
+      }
+      ps.geometry.attributes.position.needsUpdate = true;
+    });
+
+    // Rotate effect group rings/runes
+    effectGroup.children.forEach(child => {
+      if (child.geometry?.type === 'TorusGeometry') {
+        child.rotation.z += delta * 0.5;
+      }
+    });
+
+    // Flicker lights
+    pointLights.forEach(pl => {
+      if (currentEffect.light?.flicker) {
+        pl.intensity = (currentEffect.light.intensity || 2) * (0.8 + 0.4 * Math.sin(effectTime * 20));
+      }
+    });
+  }
+
+  const totalP = particleSystems.reduce((s, ps) => s + ps.geometry.attributes.position.count, 0);
+  document.getElementById('vpInfo').textContent = `FPS: ${fps} | Particles: ${totalP} | Objects: ${effectGroup.children.length}`;
+
+  controls.update();
+  composer.render();
+}
+
+// ── UI Functions ──
+function loadRegistry() {
+  fetch(REGISTRY_URL).then(r => r.json()).then(data => {
+    registry = data;
+    document.getElementById('stats').textContent = `${data.totalEffects} effects | ${Object.keys(data.categories).length} categories | ${Object.keys(data.shaderFiles).length} shaders`;
+    buildCategoryButtons(data.categories);
+    buildEffectList(data.effects);
+    // Auto-select first effect
+    const firstId = Object.keys(data.effects)[0];
+    if (firstId) selectEffect(firstId);
+  }).catch(err => {
+    console.error('Failed to load registry:', err);
+    document.getElementById('stats').textContent = 'Failed to load registry';
+  });
+}
+
+function buildCategoryButtons(cats) {
+  const el = document.getElementById('categories');
+  el.innerHTML = `<button class="cat-btn active" onclick="filterCategory('all')">All</button>`;
+  for (const [key, cat] of Object.entries(cats)) {
+    el.innerHTML += `<button class="cat-btn" onclick="filterCategory('${key}')" style="--cat-color:${cat.color}">${cat.name} (${cat.count})</button>`;
+  }
+}
+
+function buildEffectList(effects, filter = null, search = '') {
+  const el = document.getElementById('effectList');
+  el.innerHTML = '';
+  const catColors = registry?.categories || {};
+
+  for (const [id, fx] of Object.entries(effects)) {
+    if (filter && filter !== 'all' && fx.category !== filter) continue;
+    if (search && !fx.name.toLowerCase().includes(search) && !fx.tags?.some(t => t.includes(search))) continue;
+
+    const color = catColors[fx.category]?.color || '#888';
+    const srcLabel = fx.source?.replace('gdevelop-effects-playground', 'GDevelop').replace('unity-ummorp-casting', 'Unity Cast').replace('unity-arpg-effects', 'Unity ARPG').replace('unity-new-effects', 'Unity NEW').replace('unity-ummorp-skills', 'Unity Skill') || '';
+    el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')">
+      <div class="effect-dot" style="background:${color}"></div>
+      <div style="flex:1;overflow:hidden">
+        <div class="effect-name">${fx.name}</div>
+        <div style="display:flex;gap:6px"><span class="effect-cat">${fx.category}</span><span class="effect-src">${srcLabel}</span></div>
+      </div>
+    </div>`;
+  }
+}
+
+window.selectEffect = function(id) {
+  if (!registry?.effects[id]) return;
+  document.querySelectorAll('.effect-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+  buildEffect(registry.effects[id]);
+  effectTime = 0;
+  isPlaying = true;
+  document.getElementById('btn-play').classList.add('playing');
+  document.getElementById('btn-play').textContent = '⏸';
+};
+
+let currentCatFilter = 'all';
+window.filterCategory = function(cat) {
+  currentCatFilter = cat;
+  document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && cat === 'all') || b.textContent.toLowerCase().startsWith(cat)));
+  buildEffectList(registry.effects, cat, document.getElementById('search').value.toLowerCase());
+};
+
+window.filterEffects = function() {
+  const q = document.getElementById('search').value.toLowerCase();
+  buildEffectList(registry.effects, currentCatFilter, q);
+};
+
+window.togglePlay = function() {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('btn-play');
+  btn.classList.toggle('playing', isPlaying);
+  btn.textContent = isPlaying ? '⏸' : '▶';
+};
+
+window.restartEffect = function() {
+  effectTime = 0;
+  isPlaying = true;
+  document.getElementById('btn-play').classList.add('playing');
+  document.getElementById('btn-play').textContent = '⏸';
+};
+
+window.seekTimeline = function(e) {
+  if (!currentEffect) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  effectTime = pct * (currentEffect.timing?.duration || 2);
+};
+
+window.setPlaybackSpeed = function() {
+  playbackSpeed = parseFloat(document.getElementById('speedSelect').value);
+};
+
+window.toggleLoop = function() {
+  looping = document.getElementById('loopToggle').checked;
+};
+
+window.toggleGrid = function() {
+  gridHelper.visible = !gridHelper.visible;
+  document.getElementById('btn-grid').classList.toggle('active', gridHelper.visible);
+};
+
+window.toggleAutoRotate = function() {
+  controls.autoRotate = !controls.autoRotate;
+  document.getElementById('btn-rotate').classList.toggle('active', controls.autoRotate);
+};
+
+window.resetCamera = function() {
+  camera.position.set(5, 4, 8);
+  controls.target.set(0, 1, 0);
+  controls.update();
+};
+
+window.toggleGizmo = function(mode) {
+  if (effectGroup.children.length === 0) return;
+  if (transformControls.object && transformControls.mode === mode) {
+    transformControls.detach();
+    document.querySelectorAll('#btn-move,#btn-rot,#btn-scale').forEach(b => b.classList.remove('active'));
+    return;
+  }
+  transformControls.attach(effectGroup);
+  transformControls.setMode(mode);
+  document.querySelectorAll('#btn-move,#btn-rot,#btn-scale').forEach(b => b.classList.remove('active'));
+  document.getElementById(mode === 'translate' ? 'btn-move' : mode === 'rotate' ? 'btn-rot' : 'btn-scale').classList.add('active');
+};
+
+window.updateColors = function() {
+  const c1 = document.getElementById('color1').value;
+  const c2 = document.getElementById('color2').value;
+  document.getElementById('color1Hex').value = c1;
+  document.getElementById('color2Hex').value = c2;
+  const tc1 = new THREE.Color(c1), tc2 = new THREE.Color(c2);
+  shaderMaterials.forEach(m => {
+    if (m.uniforms.uColor1) m.uniforms.uColor1.value = tc1.clone();
+    if (m.uniforms.uColor2) m.uniforms.uColor2.value = tc2.clone();
+  });
+  particleSystems.forEach(ps => { ps.material.color = tc1.clone(); });
+  pointLights.forEach(pl => { pl.color = tc1.clone(); });
+};
+
+window.updateParam = function(param) {
+  const val = parseFloat(document.getElementById(param).value);
+  document.getElementById(param + 'Num').value = val;
+  if (param === 'intensity') shaderMaterials.forEach(m => { if (m.uniforms.uIntensity) m.uniforms.uIntensity.value = val; });
+  if (param === 'scale') effectGroup.scale.setScalar(val);
+  if (param === 'particleSize') particleSystems.forEach(ps => { ps.material.size = val; });
+};
+
+window.syncSlider = function(id) {
+  document.getElementById(id).value = document.getElementById(id + 'Num').value;
+};
+
+window.updateBloom = function() {
+  bloomPass.strength = parseFloat(document.getElementById('bloomStrength').value);
+  bloomPass.radius = parseFloat(document.getElementById('bloomRadius').value);
+  bloomPass.threshold = parseFloat(document.getElementById('bloomThreshold').value);
+  document.getElementById('bloomStrengthNum').value = bloomPass.strength;
+  document.getElementById('bloomRadiusNum').value = bloomPass.radius;
+  document.getElementById('bloomThresholdNum').value = bloomPass.threshold;
+};
+
+window.updateEnv = function() {
+  scene.background = new THREE.Color(document.getElementById('bgColor').value);
+  ambientLight.intensity = parseFloat(document.getElementById('ambientIntensity').value);
+  dirLight.intensity = parseFloat(document.getElementById('dirIntensity').value);
+  document.getElementById('ambientIntensityNum').value = ambientLight.intensity;
+  document.getElementById('dirIntensityNum').value = dirLight.intensity;
+  if (document.getElementById('fogEnabled').checked) {
+    scene.fog = new THREE.FogExp2(scene.background.getHex(), parseFloat(document.getElementById('fogDensity').value));
+  } else {
+    scene.fog = null;
+  }
+};
+
+window.updateTransform = function() {
+  effectGroup.position.set(
+    parseFloat(document.getElementById('posX').value),
+    parseFloat(document.getElementById('posY').value),
+    parseFloat(document.getElementById('posZ').value)
+  );
+};
+
+window.toggleShaderEditor = function() {
+  shaderEditorOpen = !shaderEditorOpen;
+  const el = document.getElementById('shaderEditor');
+  const tl = document.getElementById('timeline');
+  el.classList.toggle('open', shaderEditorOpen);
+  tl.style.display = shaderEditorOpen ? 'none' : '';
+  document.getElementById('btn-shader').classList.toggle('active', shaderEditorOpen);
+};
+
+window.switchShaderTab = function(tab) {
+  currentShaderTab = tab;
+  document.querySelectorAll('.shader-tabs button').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === tab));
+  updateShaderEditor();
+};
+
+function updateShaderEditor() {
+  const code = document.getElementById('shaderCode');
+  code.textContent = loadedShaders[currentShaderTab] || '// No shader';
+}
+
+window.exportEffect = function() {
+  if (!currentEffect) return;
+  const json = JSON.stringify(currentEffect, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentEffect.id}.3dfx.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${currentEffect.name}`);
+};
+
+window.saveToR2 = async function() {
+  if (!currentEffect) return;
+  const json = JSON.stringify(currentEffect, null, 2);
+  try {
+    const res = await fetch(`${R2_URL}/v1/assets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/octet-stream', 'X-Filename': `${currentEffect.id}.3dfx.json`, 'X-Category': '3DFX', 'X-Tags': JSON.stringify(currentEffect.tags || []) },
+      body: json
+    });
+    if (res.ok) showToast(`Saved ${currentEffect.name} to R2`);
+    else showToast(`Error: ${res.status}`);
+  } catch (err) {
+    showToast(`R2 save failed: ${err.message}`);
+  }
+};
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ── Boot ──
+initScene();
+animate();
+loadRegistry();
+</script>
+</body>
+</html>

@@ -154,40 +154,52 @@ function detectFrameLayout(width, height) {
 
   // Horizontal strip
   if (ratio > 1.4) {
-    // Try common frame counts, pick the one giving the most square-ish frames
-    const candidates = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 24, 25, 27, 28, 29, 30];
+    // Build candidate frame counts 2..50
+    const candidates = [];
+    for (let fc = 2; fc <= 50; fc++) candidates.push(fc);
+
     let best = null;
 
     for (const fc of candidates) {
-      const fw = width / fc;
-      if (Math.abs(fw - Math.round(fw)) > 0.5) continue; // must divide evenly (ish)
-      const roundedFw = Math.round(fw);
-      const frameRatio = roundedFw / height;
+      const fw = Math.floor(width / fc);
+      if (fw < 1) continue;
+      const frameRatio = fw / height;
       if (frameRatio < 0.3 || frameRatio > 3.0) continue;
-      const score = Math.abs(1 - frameRatio);
+
+      // Score: prefer frames closer to square (ratio=1)
+      let score = Math.abs(1 - frameRatio);
+      // Bonus for exact division (no leftover pixels)
+      const exact = (width % fc === 0);
+      if (exact) score -= 0.001;
+
       if (!best || score < best.score) {
-        best = { frameCount: fc, frameW: roundedFw, frameH: height, score, layout: 'horizontal', cols: fc, rows: 1 };
+        best = { frameCount: fc, frameW: fw, frameH: height, score, layout: 'horizontal', cols: fc, rows: 1 };
       }
     }
 
-    // Also try width/height ratio as frame count
-    const autoFc = Math.round(ratio);
-    if (autoFc > 1 && autoFc <= 40) {
-      const autoFw = Math.round(width / autoFc);
-      const autoScore = Math.abs(1 - autoFw / height);
-      if (!best || autoScore < best.score) {
-        best = { frameCount: autoFc, frameW: autoFw, frameH: height, score: autoScore, layout: 'horizontal', cols: autoFc, rows: 1 };
+    // Also try using height as frameW directly (common in pixel art)
+    if (width % height === 0) {
+      const hfc = width / height;
+      if (hfc >= 2 && hfc <= 50) {
+        const hScore = -0.002; // perfect square frames = best
+        if (!best || hScore < best.score) {
+          best = { frameCount: hfc, frameW: height, frameH: height, score: hScore, layout: 'horizontal', cols: hfc, rows: 1 };
+        }
       }
     }
 
     if (best) return best;
-    return { frameCount: 1, frameW: width, frameH: height, layout: 'horizontal-guess', cols: 1, rows: 1 };
+    // Fallback: use height as frame width guess
+    const fallbackFc = Math.max(1, Math.floor(width / height));
+    const fallbackFw = Math.floor(width / fallbackFc);
+    return { frameCount: fallbackFc, frameW: fallbackFw, frameH: height, layout: 'horizontal', cols: fallbackFc, rows: 1 };
   }
 
   // Vertical strip
   if (ratio < 0.7) {
     const vfc = Math.max(1, Math.round(height / width));
-    return { frameCount: vfc, frameW: width, frameH: Math.round(height / vfc), layout: 'vertical', cols: 1, rows: vfc };
+    const fh = Math.floor(height / vfc);
+    return { frameCount: vfc, frameW: width, frameH: fh, layout: 'vertical', cols: 1, rows: vfc };
   }
 
   return { frameCount: 1, frameW: width, frameH: height, layout: 'unknown', cols: 1, rows: 1 };

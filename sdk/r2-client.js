@@ -203,6 +203,63 @@ export class ObjectStoreR2Client {
   getModelFileUrl(key) {
     return this.getAssetFileUrl(key);
   }
+
+  // ─── 3DFX Effect helpers ────────────────────────────────────────────
+
+  /**
+   * Upload a 3DFX effect definition JSON
+   * @param {object} effectDef - The effect definition object
+   * @param {object} [meta] - { tags[] }
+   * @returns {Promise<object>}
+   */
+  async upload3DFX(effectDef, meta = {}) {
+    const id = effectDef.id || `effect-${Date.now()}`;
+    const key = `3dfx/definitions/${id}.3dfx.json`;
+    const body = JSON.stringify(effectDef, null, 2);
+    return this.uploadRaw(key, body, 'application/json');
+  }
+
+  /**
+   * List all 3DFX effect definitions (prefix = 3dfx/)
+   * @param {object} [query] - { limit, cursor }
+   * @returns {Promise<object>}
+   */
+  async list3DFX(query = {}) {
+    return this.listAssets({ ...query, prefix: '3dfx/', category: '3DFX' });
+  }
+
+  /**
+   * Get a specific 3DFX effect definition by ID
+   * @param {string} effectId
+   * @returns {Promise<object>} Parsed effect definition JSON
+   */
+  async get3DFXDefinition(effectId) {
+    const key = `3dfx/definitions/${effectId}.3dfx.json`;
+    return this._fetch(`/v1/assets/${encodeURIComponent(key)}/file`);
+  }
+
+  /**
+   * Upload a GLSL shader file
+   * @param {string} name - Shader name (e.g. 'fire.vert')
+   * @param {string} source - GLSL source code
+   * @returns {Promise<object>}
+   */
+  async uploadShader(name, source) {
+    const key = `3dfx/shaders/${name}.glsl`;
+    return this.uploadRaw(key, source, 'text/plain');
+  }
+
+  /**
+   * Get a GLSL shader file
+   * @param {string} name - Shader name (e.g. 'fire.vert')
+   * @returns {Promise<string>} GLSL source
+   */
+  async getShader(name) {
+    const key = `3dfx/shaders/${name}.glsl`;
+    const res = await this._fetch(`/v1/assets/${encodeURIComponent(key)}/file`);
+    if (res instanceof Response) return res.text();
+    return res;
+  }
 }
 
 // ─── Module exports ─────────────────────────────────────────────────

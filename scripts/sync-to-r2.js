@@ -39,10 +39,11 @@ const SYNC_EXTENSIONS = new Set([
   '.ws', '.trn',                                // World data
   '.mp3', '.ogg', '.wav',                       // Audio
   '.json',                                      // Data (in asset dirs only)
+  '.glsl',                                      // GLSL shaders
 ]);
 
 // Directories that contain uploadable assets
-const ASSET_DIRS = ['models', 'textures', 'sprites', 'icons', 'worlds', 'vfx', 'audio'];
+const ASSET_DIRS = ['models', 'textures', 'sprites', 'icons', 'worlds', 'vfx', 'audio', '3dfx'];
 
 // ── Helpers ─────────────────────────────────────────────────────────
 function walk(dir) {
@@ -78,6 +79,11 @@ function inferCategory(relPath) {
   if (parts[0] === 'icons') return 'Icons';
   if (parts[0] === 'worlds') return 'Worlds';
   if (parts[0] === 'vfx') return 'VFX';
+  if (parts[0] === '3dfx') {
+    if (parts[1] === 'shaders') return '3DFX Shaders';
+    if (parts[1] === 'definitions') return '3DFX';
+    return '3DFX';
+  }
   return 'uncategorized';
 }
 

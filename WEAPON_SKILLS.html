@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weapon Skills — Warlord Crafting Suite</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Spectral+SC:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English+SC&family=MedievalSharp&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: hsl(43 85% 55%);
+      --gold-light: hsl(43 90% 70%);
+      --gold-dark: hsl(43 70% 35%);
+      --bg-dark: hsl(225 30% 8%);
+      --bg-card: hsl(225 25% 12%);
+      --bg-card-hover: hsl(225 25% 16%);
+      --border-gold: hsl(43 60% 30%);
+      --border-gold-hover: hsl(43 60% 45%);
+      --text-light: hsl(45 30% 90%);
+      --text-muted: hsl(45 15% 60%);
+      --text-gold: hsl(43 85% 65%);
+      --stone: hsl(220 15% 25%);
+      --crimson: hsl(0 65% 40%);
+      --font-heading: 'Cinzel Decorative', 'Cinzel', serif;
+      --font-body: 'Spectral SC', 'IM Fell English SC', serif;
+      --font-uncial: 'Uncial Antiqua', cursive;
+      --primary-color: hsl(38 80% 50%);
+      --secondary-color: hsl(210 70% 50%);
+      --ability-color: hsl(270 60% 55%);
+      --ultimate-color: hsl(0 65% 50%);
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text-light);
+      background:
+        radial-gradient(ellipse at top, hsl(225 30% 12%) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, hsl(225 25% 6%) 0%, transparent 50%),
+        linear-gradient(180deg, hsl(225 30% 6%) 0%, hsl(225 28% 10%) 50%, hsl(225 30% 6%) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 48px 20px 40px;
+      background: linear-gradient(180deg, hsl(225 28% 14%) 0%, hsl(225 30% 8%) 100%);
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%, transparent 100%) 1;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+    }
+    .header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.8em;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    }
+    .header p {
+      font-family: var(--font-uncial);
+      font-size: 1.15em;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* Weapon Type Tabs */
+    .weapon-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 24px 20px;
+      background: linear-gradient(180deg, hsl(225 25% 10%) 0%, hsl(225 28% 8%) 100%);
+      border-bottom: 1px solid hsl(43 40% 20%);
+    }
+    .weapon-tab {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      font-family: var(--font-heading);
+      font-size: 0.95em;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      background: linear-gradient(180deg, hsl(225 25% 18%) 0%, hsl(225 28% 12%) 100%);
+      color: var(--text-gold);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .weapon-tab:hover {
+      background: linear-gradient(180deg, hsl(225 25% 22%) 0%, hsl(225 28% 16%) 100%);
+      border-color: var(--border-gold-hover);
+      color: var(--gold-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(212,175,55,0.2);
+    }
+    .weapon-tab.active {
+      background: linear-gradient(180deg, hsl(43 70% 45%) 0%, hsl(38 65% 32%) 100%);
+      border-color: hsl(43 50% 50%);
+      color: hsl(225 30% 10%);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 8px rgba(212,175,55,0.35);
+    }
+    .weapon-tab img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      border-radius: 2px;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    /* Tier Selector */
+    .tier-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .tier-label {
+      font-family: var(--font-heading);
+      color: var(--text-gold);
+      font-size: 1em;
+      letter-spacing: 0.05em;
+    }
+    .tier-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 4px;
+      border: 2px solid var(--border-gold);
+      background: linear-gradient(180deg, hsl(225 25% 18%) 0%, hsl(225 28% 12%) 100%);
+      color: var(--text-muted);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tier-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .tier-btn.active {
+      background: linear-gradient(180deg, hsl(43 70% 50%) 0%, hsl(38 65% 35%) 100%);
+      border-color: var(--gold);
+      color: hsl(225 30% 10%);
+      box-shadow: 0 0 12px rgba(212,175,55,0.3);
+    }
+    .tier-btn.unlocked {
+      border-color: hsl(43 50% 40%);
+      color: var(--text-gold);
+      background: linear-gradient(180deg, hsl(43 40% 22%) 0%, hsl(43 30% 15%) 100%);
+    }
+
+    /* Action Bar Preview */
+    .action-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .action-slot {
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      border: 3px solid var(--stone);
+      background: hsl(225 28% 10%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .action-slot img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+    .action-slot .slot-num {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: hsl(225 30% 8%);
+      border: 2px solid var(--gold);
+      font-family: var(--font-heading);
+      font-size: 0.7em;
+      font-weight: 700;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .action-slot[data-type="primary"] { border-color: var(--primary-color); }
+    .action-slot[data-type="secondary"] { border-color: var(--secondary-color); }
+    .action-slot[data-type="ability"] { border-color: var(--ability-color); }
+    .action-slot[data-type="ultimate"] { border-color: var(--ultimate-color); }
+    .action-slot .slot-label {
+      position: absolute;
+      bottom: -20px;
+      font-family: var(--font-heading);
+      font-size: 0.6em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .action-slot[data-type="primary"] .slot-label { color: var(--primary-color); }
+    .action-slot[data-type="secondary"] .slot-label { color: var(--secondary-color); }
+    .action-slot[data-type="ability"] .slot-label { color: var(--ability-color); }
+    .action-slot[data-type="ultimate"] .slot-label { color: var(--ultimate-color); }
+
+    /* Slot Columns */
+    .slot-columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 36px;
+    }
+    .slot-column {
+      position: relative;
+    }
+    .slot-header {
+      text-align: center;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+      border: 2px solid;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.9em;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .slot-header[data-type="primary"] {
+      border-color: var(--primary-color);
+      background: hsla(38, 80%, 50%, 0.1);
+      color: var(--primary-color);
+    }
+    .slot-header[data-type="secondary"] {
+      border-color: var(--secondary-color);
+      background: hsla(210, 70%, 50%, 0.1);
+      color: var(--secondary-color);
+    }
+    .slot-header[data-type="ability"] {
+      border-color: var(--ability-color);
+      background: hsla(270, 60%, 55%, 0.1);
+      color: var(--ability-color);
+    }
+    .slot-header[data-type="ultimate"] {
+      border-color: var(--ultimate-color);
+      background: hsla(0, 65%, 50%, 0.1);
+      color: var(--ultimate-color);
+    }
+    .slot-header .unlock-tag {
+      display: block;
+      font-size: 0.7em;
+      opacity: 0.7;
+      margin-top: 4px;
+      font-family: var(--font-body);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* Skill Card */
+    .skill-card {
+      position: relative;
+      background: linear-gradient(180deg, hsl(225 25% 14%) 0%, hsl(225 28% 10%) 50%, hsl(225 25% 8%) 100%);
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 4px 12px rgba(0,0,0,0.5);
+    }
+    .skill-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 2px; padding: 1px;
+      background: linear-gradient(180deg, rgba(212,175,55,0.15) 0%, rgba(160,120,40,0.03) 50%, rgba(100,80,30,0.1) 100%);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .skill-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-gold-hover);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 0 16px rgba(212,175,55,0.15),
+        0 8px 20px rgba(0,0,0,0.4);
+    }
+    .skill-card.selected {
+      box-shadow:
+        0 0 20px rgba(212,175,55,0.3),
+        0 4px 12px rgba(0,0,0,0.5);
+    }
+    .skill-card.selected[data-slot="primary"] { border-color: var(--primary-color); box-shadow: 0 0 16px hsla(38,80%,50%,0.3); }
+    .skill-card.selected[data-slot="secondary"] { border-color: var(--secondary-color); box-shadow: 0 0 16px hsla(210,70%,50%,0.3); }
+    .skill-card.selected[data-slot="ability"] { border-color: var(--ability-color); box-shadow: 0 0 16px hsla(270,60%,55%,0.3); }
+    .skill-card.selected[data-slot="ultimate"] { border-color: var(--ultimate-color); box-shadow: 0 0 16px hsla(0,65%,50%,0.3); }
+
+    .skill-card.locked {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .skill-card.locked:hover {
+      transform: none;
+      border-color: var(--border-gold);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .skill-card .selected-check {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7em;
+      font-weight: 700;
+      color: hsl(225 30% 8%);
+    }
+    .skill-card[data-slot="primary"] .selected-check { background: var(--primary-color); }
+    .skill-card[data-slot="secondary"] .selected-check { background: var(--secondary-color); }
+    .skill-card[data-slot="ability"] .selected-check { background: var(--ability-color); }
+    .skill-card[data-slot="ultimate"] .selected-check { background: var(--ultimate-color); }
+
+    .skill-icon-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .skill-icon {
+      width: 48px;
+      height: 48px;
+      background: hsl(225 28% 8%);
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    .skill-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 2px;
+    }
+    .skill-card.locked .skill-icon img {
+      filter: grayscale(100%) brightness(0.5);
+    }
+    .skill-name {
+      font-family: var(--font-heading);
+      font-size: 0.95em;
+      font-weight: 600;
+      color: var(--text-gold);
+    }
+    .skill-tier-tag {
+      font-size: 0.7em;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: hsl(225 25% 18%);
+      color: var(--text-muted);
+      font-family: var(--font-heading);
+      margin-left: auto;
+    }
+    .skill-desc {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .skill-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.8em;
+    }
+    .skill-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .skill-stat .label { color: var(--text-muted); }
+    .skill-stat .value { font-weight: 700; }
+    .skill-stat .value.dmg { color: hsl(0 70% 60%); }
+    .skill-stat .value.heal { color: hsl(140 60% 55%); }
+    .skill-stat .value.cd { color: hsl(210 70% 60%); }
+    .skill-effects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .effect-tag {
+      font-size: 0.7em;
+      padding: 3px 8px;
+      border-radius: 3px;
+      background: hsl(140 30% 15%);
+      color: hsl(140 60% 60%);
+      font-family: var(--font-body);
+    }
+
+    /* Detail Panel */
+    .detail-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, hsl(225 28% 14%) 0%, hsl(225 30% 8%) 100%);
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%, transparent 100%) 1;
+      padding: 20px 28px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
+      z-index: 100;
+      display: none;
+      transition: all 0.3s;
+    }
+    .detail-panel.visible { display: flex; align-items: center; gap: 24px; }
+    .detail-panel .detail-icon {
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    .detail-panel .detail-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .detail-panel .detail-info { flex: 1; }
+    .detail-panel .detail-name {
+      font-family: var(--font-heading);
+      font-size: 1.3em;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+    .detail-panel .detail-desc {
+      color: var(--text-muted);
+      font-size: 0.95em;
+      margin-bottom: 8px;
+    }
+    .detail-panel .detail-stats {
+      display: flex;
+      gap: 24px;
+    }
+    .detail-panel .detail-stat {
+      text-align: center;
+      padding: 8px 16px;
+      background: hsl(225 28% 10%);
+      border-radius: 4px;
+      border: 1px solid hsl(225 20% 20%);
+    }
+    .detail-panel .detail-stat .stat-label {
+      font-size: 0.7em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: var(--font-heading);
+    }
+    .detail-panel .detail-stat .stat-val {
+      font-size: 1.2em;
+      font-weight: 700;
+    }
+    .detail-panel .close-detail {
+      padding: 8px 16px;
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      background: hsl(225 25% 15%);
+      color: var(--text-gold);
+      cursor: pointer;
+      font-family: var(--font-heading);
+      transition: all 0.2s;
+    }
+    .detail-panel .close-detail:hover {
+      background: hsl(225 25% 20%);
+      border-color: var(--gold);
+    }
+
+    /* Reset Button */
+    .reset-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .reset-btn {
+      padding: 10px 24px;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.9em;
+      border: 2px solid hsl(0 50% 35%);
+      border-radius: 4px;
+      background: linear-gradient(180deg, hsl(0 40% 20%) 0%, hsl(0 35% 14%) 100%);
+      color: hsl(0 60% 65%);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover {
+      background: linear-gradient(180deg, hsl(0 40% 28%) 0%, hsl(0 35% 18%) 100%);
+      border-color: hsl(0 60% 50%);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .slot-columns { grid-template-columns: repeat(2, 1fr); }
+      .header h1 { font-size: 1.8em; }
+    }
+    @media (max-width: 600px) {
+      .slot-columns { grid-template-columns: 1fr; }
+      .weapon-tab { padding: 8px 14px; font-size: 0.8em; }
+      .weapon-tab img { width: 24px; height: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚔ Weapon Skills</h1>
+  <p>Equip combat abilities for each weapon type</p>
+</div>
+
+<div class="weapon-tabs" id="weaponTabs"></div>
+
+<div class="main-content">
+  <div class="tier-bar" id="tierBar"></div>
+  <div class="reset-bar">
+    <button class="reset-btn" onclick="resetSelections()">↺ Reset Selections</button>
+  </div>
+  <div class="action-bar" id="actionBar"></div>
+  <div class="slot-columns" id="slotColumns"></div>
+</div>
+
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-icon" id="detailIcon"></div>
+  <div class="detail-info">
+    <div class="detail-name" id="detailName"></div>
+    <div class="detail-desc" id="detailDesc"></div>
+    <div class="detail-stats" id="detailStats"></div>
+    <div class="skill-effects" id="detailEffects" style="margin-top:8px;"></div>
+  </div>
+  <button class="close-detail" onclick="closeDetail()">✕</button>
+</div>
+
+<script>
+// ===== WEAPON SKILL DATA =====
+const WEAPON_TYPE_DEFINITIONS = {
+  SWORD: {
+    id: "SWORD", name: "Sword", icon: "/icons/pack/weapons/Sword_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "sword_vengeful_slash", name: "Vengeful Slash", description: "Single-target slash, builds 1 Grudge Mark stack, max 3", icon: "/icons/pack/weapons/Sword_01.png", tier: 1, damage: 45, cooldown: 0, effects: ["Builds Grudge Mark"] },
+        { id: "sword_lunging_strike", name: "Lunging Strike", description: "Ranged thrust attack", icon: "/icons/pack/weapons/Sword_02.png", tier: 2, damage: 55, cooldown: 2, effects: ["Extended Range"] },
+        { id: "sword_fearful_swipe", name: "Fearful Swipe", description: "AoE fear attack", icon: "/icons/pack/misc/Chaos.png", tier: 3, damage: 40, cooldown: 4, effects: ["AoE Fear 2s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "sword_blood_rush", name: "Blood Rush", description: "Dash forward 8m, AoE damage", icon: "/icons/pack/misc/Flow.png", tier: 1, damage: 35, cooldown: 8, effects: ["Dash 8m", "AoE Damage"] },
+        { id: "sword_iron_grudge", name: "Iron Grudge", description: "3s damage reduction + reflect", icon: "/icons/pack/weapons/shield_01.png", tier: 2, damage: 0, cooldown: 12, effects: ["30% DR", "Reflect 20%"] },
+        { id: "sword_clan_charge", name: "Clan Charge", description: "Gap-closer charge + 1s stun", icon: "/icons/pack/misc/Power.png", tier: 3, damage: 40, cooldown: 10, effects: ["Charge", "Stun 1s"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "sword_heroic_cleave", name: "Heroic Cleave", description: "Cone AoE clear", icon: "/icons/pack/misc/Slash_07.png", tier: 1, damage: 60, cooldown: 6, effects: ["Cone AoE"] },
+        { id: "sword_parry_counter", name: "Parry Counter", description: "Block + counter damage", icon: "/icons/pack/misc/Electro.png", tier: 2, damage: 80, cooldown: 8, effects: ["Block", "Counter Attack"] },
+        { id: "sword_deep_wound", name: "Deep Wound", description: "Apply bleed stack", icon: "/icons/pack/misc/Burns.png", tier: 3, damage: 30, cooldown: 4, effects: ["Bleed 5s"] },
+        { id: "sword_shadow_edge", name: "Shadow Edge", description: "Dash + stun", icon: "/icons/pack/misc/smoke.png", tier: 4, damage: 55, cooldown: 10, effects: ["Dash", "Stun 1.5s"] },
+        { id: "sword_execute", name: "Execute", description: "Bonus dmg below 30% HP", icon: "/icons/pack/misc/Chaos_2.png", tier: 5, damage: 150, cooldown: 15, effects: ["2x dmg <30% HP"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "sword_crimson_reprisal", name: "Crimson Reprisal", description: "Large AoE slash, heals per enemy hit", icon: "/icons/pack/misc/Effect.png", tier: 1, damage: 150, cooldown: 45, effects: ["Large AoE", "Lifesteal"] },
+        { id: "sword_nights_judgment", name: "Night's Judgment", description: "Teleport behind + bleed DoT", icon: "/icons/pack/misc/Glow.png", tier: 4, damage: 200, cooldown: 60, effects: ["Teleport", "Bleed DoT"] },
+      ]}
+    ]
+  },
+  AXE: {
+    id: "AXE", name: "Axe", icon: "/icons/pack/weapons/Axe_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "axe_rending_chop", name: "Rending Chop", description: "Single target, applies Bleed stack", icon: "/icons/pack/weapons/Axe_01.png", tier: 1, damage: 50, cooldown: 0, effects: ["Applies Bleed"] },
+        { id: "axe_lunging_chop", name: "Lunging Chop", description: "Extended range chop", icon: "/icons/pack/weapons/Axe_02.png", tier: 2, damage: 55, cooldown: 2, effects: ["Extended Range"] },
+        { id: "axe_ground_slam", name: "Ground Slam", description: "AoE slow attack", icon: "/icons/pack/misc/Power.png", tier: 3, damage: 45, cooldown: 4, effects: ["AoE Slow 30%"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "axe_adrenaline_surge", name: "Adrenaline Surge", description: "+Attack speed buff", icon: "/icons/pack/misc/Electro.png", tier: 1, damage: 0, cooldown: 15, effects: ["+30% Atk Speed 5s"] },
+        { id: "axe_whirl_pain", name: "Whirl of Pain", description: "Channeled AoE spin", icon: "/icons/pack/misc/Flow.png", tier: 2, damage: 80, cooldown: 10, effects: ["Channel 3s", "360° AoE"] },
+        { id: "axe_bloodletting", name: "Bloodletting", description: "AoE bleed apply", icon: "/icons/pack/misc/Burns.png", tier: 3, damage: 40, cooldown: 8, effects: ["AoE Bleed 6s"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "axe_carnage_spin", name: "Carnage Spin", description: "360 AoE refresh bleed", icon: "/icons/pack/misc/Effect.png", tier: 1, damage: 70, cooldown: 12, effects: ["Refresh all bleeds"] },
+        { id: "axe_headcracker", name: "Headcracker", description: "Single stun attack", icon: "/icons/pack/weapons/Hammer_01.png", tier: 2, damage: 65, cooldown: 8, effects: ["Stun 2s"] },
+        { id: "axe_veinreaver", name: "Veinreaver", description: "AoE lifesteal attack", icon: "/icons/pack/misc/Life.png", tier: 3, damage: 55, cooldown: 10, effects: ["Lifesteal 25%"] },
+        { id: "axe_frenzied_chop", name: "Frenzied Chop", description: "High burst, self-damage", icon: "/icons/pack/misc/Chaos.png", tier: 4, damage: 120, cooldown: 15, effects: ["Take 10% max HP"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "axe_apocalypse_cleave", name: "Apocalypse Cleave", description: "Large knockback AoE", icon: "/icons/pack/misc/Chaos_2.png", tier: 1, damage: 180, cooldown: 50, effects: ["Huge AoE", "Knockback"] },
+        { id: "axe_blood_harvest", name: "Blood Harvest", description: "AoE heal on hit", icon: "/icons/pack/misc/Burns.png", tier: 4, damage: 150, cooldown: 60, effects: ["Heal 30% per hit"] },
+      ]}
+    ]
+  },
+  BOW: {
+    id: "BOW", name: "Bow", icon: "/icons/pack/weapons/Bow_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "bow_quick_shot", name: "Quick Shot", description: "Basic arrow shot", icon: "/icons/pack/weapons/Arrow_01.png", tier: 1, damage: 45, cooldown: 0, effects: ["Range 25m"] },
+        { id: "bow_aimed_shot", name: "Aimed Shot", description: "Charged precision shot", icon: "/icons/pack/weapons/Arrow_04.png", tier: 2, damage: 80, cooldown: 2, effects: ["Guaranteed Crit"] },
+        { id: "bow_fire_arrow", name: "Fire Arrow", description: "Ignites target for DoT", icon: "/icons/pack/misc/Fires.png", tier: 3, damage: 40, cooldown: 10, effects: ["Burn 6s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "bow_multishot", name: "Multishot", description: "Fire 3 arrows at once", icon: "/icons/pack/weapons/Arrow_05.png", tier: 1, damage: 35, cooldown: 8, effects: ["3 Arrows", "Cone"] },
+        { id: "bow_piercing", name: "Piercing Shot", description: "Arrow pierces through enemies", icon: "/icons/pack/weapons/Arrow_06.png", tier: 3, damage: 60, cooldown: 6, effects: ["Pierce All"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "bow_bear_trap", name: "Bear Trap", description: "Place trap that roots enemies", icon: "/icons/pack/misc/Effect.png", tier: 1, damage: 20, cooldown: 15, effects: ["Root 3s"] },
+        { id: "bow_swift_quiver", name: "Swift Quiver", description: "+50% attack speed for 6s", icon: "/icons/pack/misc/Electro.png", tier: 4, damage: 0, cooldown: 20, effects: ["+50% Atk Speed"] },
+        { id: "bow_poison_arrow", name: "Poison Arrow", description: "Spread poison DoT", icon: "/icons/pack/misc/Naturecircle.png", tier: 5, damage: 30, cooldown: 12, effects: ["Poison 8s"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "bow_arrow_rain", name: "Arrow Rain", description: "Rain arrows on large area", icon: "/icons/pack/weapons/Arrow_08.png", tier: 1, damage: 150, cooldown: 45, effects: ["AoE 10m", "5s Duration"] },
+        { id: "bow_sniper_shot", name: "Sniper Shot", description: "Long range massive damage", icon: "/icons/pack/weapons/Bow_05.png", tier: 4, damage: 350, cooldown: 60, effects: ["50m Range", "Ignore Armor"] },
+      ]}
+    ]
+  },
+  CROSSBOW: {
+    id: "CROSSBOW", name: "Crossbow", icon: "/icons/pack/weapons/Crossbow_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "xbow_heavy_bolt", name: "Heavy Bolt", description: "Single shot, builds Mark", icon: "/icons/pack/weapons/Bolt_01.png", tier: 1, damage: 55, cooldown: 0, effects: ["Builds Mark"] },
+        { id: "xbow_rapid_fire", name: "Rapid Fire", description: "Quick successive shots", icon: "/icons/pack/misc/Electro.png", tier: 2, damage: 30, cooldown: 3, effects: ["3 Rapid Shots"] },
+        { id: "xbow_explosive_round", name: "Explosive Round", description: "AoE explosion on hit", icon: "/icons/pack/misc/fire_05.png", tier: 3, damage: 50, cooldown: 6, effects: ["AoE 3m"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "xbow_knockback_bolt", name: "Knockback Bolt", description: "Push enemy back", icon: "/icons/pack/misc/Flow.png", tier: 1, damage: 40, cooldown: 8, effects: ["Knockback 5m"] },
+        { id: "xbow_trap_bolt", name: "Trap Bolt", description: "Root trap on ground", icon: "/icons/pack/misc/Effect.png", tier: 2, damage: 25, cooldown: 12, effects: ["Root 2s"] },
+        { id: "xbow_sniper_shot", name: "Sniper Shot", description: "Long range precision", icon: "/icons/pack/weapons/Crossbow_05.png", tier: 3, damage: 90, cooldown: 10, effects: ["30m Range"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "xbow_barrage", name: "Barrage of Vengeance", description: "Channeled 5 bolts", icon: "/icons/pack/weapons/Bolt_05.png", tier: 1, damage: 120, cooldown: 15, effects: ["Channel 2s"] },
+        { id: "xbow_headshot", name: "Headshot", description: "Silence single target", icon: "/icons/pack/weapons/Crossbow_03.png", tier: 2, damage: 80, cooldown: 10, effects: ["Silence 3s"] },
+        { id: "xbow_crimson_bolt", name: "Crimson Bolt", description: "Bleed AoE damage", icon: "/icons/pack/misc/Burns.png", tier: 3, damage: 45, cooldown: 8, effects: ["Bleed AoE"] },
+        { id: "xbow_shrapnel", name: "Shrapnel Burst", description: "Armor break AoE", icon: "/icons/pack/misc/Chaos.png", tier: 4, damage: 70, cooldown: 12, effects: ["-30% Armor 6s"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "xbow_sweeping_bolt", name: "Sweeping Bolt", description: "Piercing AoE line", icon: "/icons/pack/weapons/Bolt_08.png", tier: 1, damage: 200, cooldown: 50, effects: ["Pierce Line", "Full Width"] },
+        { id: "xbow_noise_eraser", name: "Noise Eraser", description: "Massive silence burst", icon: "/icons/pack/misc/smoke.png", tier: 4, damage: 180, cooldown: 60, effects: ["AoE Silence 5s"] },
+      ]}
+    ]
+  },
+  GUN: {
+    id: "GUN", name: "Gun", icon: "/icons/pack/misc/Power.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "gun_grudge_shot", name: "Grudge Shot", description: "Single shot, builds Powder Mark", icon: "/icons/pack/misc/Power.png", tier: 1, damage: 60, cooldown: 0, effects: ["Builds Mark"] },
+        { id: "gun_quick_reload", name: "Quick Reload", description: "+Attack speed buff", icon: "/icons/pack/misc/Electro.png", tier: 2, damage: 0, cooldown: 15, effects: ["+40% Atk Speed 4s"] },
+        { id: "gun_smoke_shot", name: "Smoke Shot", description: "AoE blind effect", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 30, cooldown: 12, effects: ["Blind 3s", "AoE 4m"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "gun_explosive_round", name: "Explosive Round", description: "AoE burst damage", icon: "/icons/pack/misc/fire_05.png", tier: 1, damage: 70, cooldown: 8, effects: ["AoE 4m"] },
+        { id: "gun_flame_burst", name: "Flame Burst", description: "DoT AoE fire", icon: "/icons/pack/misc/Fires.png", tier: 2, damage: 50, cooldown: 10, effects: ["Burn 5s", "AoE"] },
+        { id: "gun_sniper_round", name: "Sniper Round", description: "Long range high damage", icon: "/icons/pack/misc/Effect.png", tier: 3, damage: 120, cooldown: 12, effects: ["40m Range"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "gun_hellfire_barrage", name: "Hellfire Barrage", description: "Channeled AoE fire", icon: "/icons/pack/misc/Lava.png", tier: 1, damage: 100, cooldown: 18, effects: ["Channel 3s", "Large AoE"] },
+        { id: "gun_crimson_blast", name: "Crimson Blast", description: "Lifesteal AoE", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 80, cooldown: 15, effects: ["Lifesteal 30%"] },
+        { id: "gun_shadow_shot", name: "Shadow Shot", description: "Silence AoE", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 60, cooldown: 12, effects: ["Silence 4s", "AoE"] },
+        { id: "gun_cannon_execute", name: "Cannon Execute", description: "Low HP burst", icon: "/icons/pack/misc/Chaos_2.png", tier: 4, damage: 200, cooldown: 20, effects: ["3x dmg <25% HP"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "gun_demon_blast", name: "Demon Blast", description: "Massive knockback explosion", icon: "/icons/pack/misc/Chaos.png", tier: 1, damage: 250, cooldown: 55, effects: ["Knockback 10m", "AoE 8m"] },
+        { id: "gun_thunder_blast", name: "Thunder Blast", description: "Ultimate storm attack", icon: "/icons/pack/misc/Lighting.png", tier: 4, damage: 300, cooldown: 70, effects: ["Lightning Storm", "Stun 2s"] },
+      ]}
+    ]
+  },
+  DAGGER: {
+    id: "DAGGER", name: "Dagger", icon: "/icons/pack/weapons/Dagger_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "dagger_shadow_stab", name: "Shadow Stab", description: "Single stab, builds Mark", icon: "/icons/pack/weapons/Dagger_01.png", tier: 1, damage: 40, cooldown: 0, effects: ["Builds Mark"] },
+        { id: "dagger_chain_slash", name: "Chain Slash", description: "Rapid burst combo", icon: "/icons/pack/weapons/Dagger_02.png", tier: 2, damage: 35, cooldown: 3, effects: ["3 Hit Combo"] },
+        { id: "dagger_poison_shiv", name: "Poison Shiv", description: "Apply DoT poison", icon: "/icons/pack/misc/Naturecircle.png", tier: 3, damage: 25, cooldown: 6, effects: ["Poison 8s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "dagger_phantom_dash", name: "Phantom Dash", description: "Dash through enemies", icon: "/icons/pack/misc/Flow.png", tier: 1, damage: 45, cooldown: 8, effects: ["Dash 6m", "Invincible"] },
+        { id: "dagger_assassin_focus", name: "Assassin's Focus", description: "+Attack speed buff", icon: "/icons/pack/misc/Glow.png", tier: 2, damage: 0, cooldown: 15, effects: ["+50% Atk Speed 5s"] },
+        { id: "dagger_lunging_stabs", name: "Lunging Stabs", description: "Burst mobility combo", icon: "/icons/pack/weapons/Dagger_03.png", tier: 3, damage: 60, cooldown: 10, effects: ["Dash + 4 Stabs"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "dagger_vengeful_ambush", name: "Vengeful Ambush", description: "Teleport behind burst", icon: "/icons/pack/misc/smoke.png", tier: 1, damage: 80, cooldown: 12, effects: ["Teleport Behind", "+50% Dmg"] },
+        { id: "dagger_crimson_stab", name: "Crimson Stab", description: "Heavy bleed burst", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 50, cooldown: 8, effects: ["Bleed 6s", "High DoT"] },
+        { id: "dagger_shadow_strike", name: "Shadow Strike", description: "AoE silence attack", icon: "/icons/pack/misc/smokes_01.png", tier: 3, damage: 55, cooldown: 10, effects: ["Silence 3s", "AoE"] },
+        { id: "dagger_flame_dagger", name: "Flame Dagger", description: "DoT AoE fire", icon: "/icons/pack/misc/Fires.png", tier: 4, damage: 40, cooldown: 8, effects: ["Burn 5s", "AoE"] },
+        { id: "dagger_bloodletter_rage", name: "Bloodletter Rage", description: "Heal burst frenzy", icon: "/icons/pack/misc/Chaos.png", tier: 5, damage: 100, cooldown: 18, effects: ["Heal 40%", "Frenzy"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "dagger_deathgiver", name: "Deathgiver's Fatal", description: "Execute low HP targets", icon: "/icons/pack/misc/Chaos_2.png", tier: 1, damage: 200, cooldown: 50, effects: ["Instant Kill <20%"] },
+        { id: "dagger_death_blossom", name: "Death Blossom", description: "360 spin attack", icon: "/icons/pack/misc/NatureFlower.png", tier: 4, damage: 180, cooldown: 45, effects: ["360° AoE", "Rapid Hits"] },
+      ]}
+    ]
+  },
+  STAFF: {
+    id: "STAFF", name: "Staff", icon: "/icons/pack/weapons/staff_1.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "staff_fire_bolt", name: "Fire Bolt", description: "Single-target, builds Burn stack", icon: "/icons/pack/misc/fire_05.png", tier: 1, damage: 50, cooldown: 0, effects: ["Builds Burn Stack"] },
+        { id: "staff_frost_bolt", name: "Frost Bolt", description: "Single-target, builds Chill", icon: "/icons/pack/misc/frozen.png", tier: 2, damage: 45, cooldown: 0, effects: ["Slow 30%"] },
+        { id: "staff_holy_light", name: "Holy Light", description: "Heal single ally", icon: "/icons/pack/misc/Glow.png", tier: 3, damage: -60, cooldown: 2, effects: ["Heal Ally"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "staff_flame_wave", name: "Flame Wave", description: "Cone AoE DoT", icon: "/icons/pack/misc/Fires.png", tier: 1, damage: 60, cooldown: 8, effects: ["Cone", "Burn 4s"] },
+        { id: "staff_ice_nova", name: "Ice Nova", description: "AoE slow around caster", icon: "/icons/pack/misc/frozen.png", tier: 2, damage: 55, cooldown: 10, effects: ["AoE 6m", "Slow 50%"] },
+        { id: "staff_divine_wave", name: "Divine Wave", description: "AoE heal allies", icon: "/icons/pack/misc/Lights.png", tier: 3, damage: -80, cooldown: 12, effects: ["Heal All Allies"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "staff_inferno_shield", name: "Inferno Shield", description: "Reflect damage", icon: "/icons/pack/misc/Firestar.png", tier: 1, damage: 0, cooldown: 15, effects: ["Absorb 200", "Reflect 30%"] },
+        { id: "staff_glacial_shield", name: "Glacial Shield", description: "Absorb + slow attackers", icon: "/icons/pack/misc/AquaCore.png", tier: 2, damage: 0, cooldown: 15, effects: ["Absorb 250", "Slow Attackers"] },
+        { id: "staff_meteor_strike", name: "Meteor Strike", description: "Delayed massive burst", icon: "/icons/pack/misc/Lava.png", tier: 3, damage: 150, cooldown: 18, effects: ["Delay 1.5s", "AoE 5m"] },
+        { id: "staff_blizzard", name: "Blizzard", description: "Channeled freeze zone", icon: "/icons/pack/misc/AquaCircle.png", tier: 4, damage: 100, cooldown: 20, effects: ["Channel", "Freeze Chance"] },
+        { id: "staff_radiant_heal", name: "Radiant Salvation", description: "AoE heal + cleanse", icon: "/icons/pack/misc/Life.png", tier: 5, damage: -120, cooldown: 25, effects: ["Cleanse Debuffs"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "staff_hellstorm", name: "Hellstorm", description: "Large AoE DoT", icon: "/icons/pack/misc/Lava.png", tier: 1, damage: 250, cooldown: 50, effects: ["AoE 12m", "Burn 8s"] },
+        { id: "staff_absolute_zero", name: "Absolute Zero", description: "Mass freeze all enemies", icon: "/icons/pack/misc/CircleW.png", tier: 4, damage: 180, cooldown: 60, effects: ["Freeze 4s", "AoE 15m"] },
+      ]}
+    ]
+  },
+  HAMMER: {
+    id: "HAMMER", name: "Hammer", icon: "/icons/pack/weapons/Hammer_01.png",
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "hammer_earthshatter", name: "Earthshatter", description: "AoE, applies Slow", icon: "/icons/pack/weapons/Hammer_01.png", tier: 1, damage: 55, cooldown: 0, effects: ["Slow 30%", "AoE 3m"] },
+        { id: "hammer_skullbash", name: "Skullbash", description: "Single target slow", icon: "/icons/pack/weapons/Hammer_02.png", tier: 2, damage: 60, cooldown: 2, effects: ["Slow 50%"] },
+        { id: "hammer_ground_pound", name: "Ground Pound", description: "Armor break attack", icon: "/icons/pack/misc/Power.png", tier: 3, damage: 50, cooldown: 4, effects: ["-25% Armor 5s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "hammer_thunderous_charge", name: "Thunderous Charge", description: "Charge stun", icon: "/icons/pack/misc/Electro.png", tier: 1, damage: 45, cooldown: 10, effects: ["Charge 8m", "Stun 1.5s"] },
+        { id: "hammer_quake_strike", name: "Quake Strike", description: "Knockup AoE", icon: "/icons/pack/misc/Effect.png", tier: 2, damage: 70, cooldown: 12, effects: ["Knockup 1s", "AoE 4m"] },
+        { id: "hammer_iron_skin", name: "Iron Skin", description: "Damage reduction", icon: "/icons/pack/weapons/shield_01.png", tier: 3, damage: 0, cooldown: 18, effects: ["40% DR 5s"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "hammer_cataclysm_blow", name: "Cataclysm Blow", description: "AoE stun attack", icon: "/icons/pack/misc/Lighting.png", tier: 1, damage: 80, cooldown: 15, effects: ["Stun 2s", "AoE 5m"] },
+        { id: "hammer_crimson_smash", name: "Crimson Smash", description: "Bleed AoE", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 65, cooldown: 10, effects: ["Bleed 5s", "AoE"] },
+        { id: "hammer_shockwave", name: "Shockwave", description: "Knockback AoE", icon: "/icons/pack/misc/Flow.png", tier: 3, damage: 55, cooldown: 12, effects: ["Knockback 6m", "AoE 6m"] },
+        { id: "hammer_titan_crush", name: "Titan Crush", description: "Massive single target", icon: "/icons/pack/weapons/Hammer_05.png", tier: 4, damage: 150, cooldown: 18, effects: ["Armor Break 50%"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "hammer_seismic_slam", name: "Seismic Slam", description: "Large stun AoE", icon: "/icons/pack/misc/Chaos.png", tier: 1, damage: 220, cooldown: 55, effects: ["Stun 3s", "AoE 10m"] },
+        { id: "hammer_mjolnir_strike", name: "Mjolnir Strike", description: "Lightning AoE storm", icon: "/icons/pack/misc/Lighting.png", tier: 4, damage: 280, cooldown: 65, effects: ["Lightning Storm", "Chain"] },
+      ]}
+    ]
+  }
+};
+
+// ===== STATE =====
+let activeWeapon = 'SWORD';
+let playerTier = 3;
+let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
+
+// ===== RENDER =====
+function render() {
+  renderWeaponTabs();
+  renderTierBar();
+  renderActionBar();
+  renderSlotColumns();
+}
+
+function renderWeaponTabs() {
+  const container = document.getElementById('weaponTabs');
+  container.innerHTML = '';
+  for (const [key, weapon] of Object.entries(WEAPON_TYPE_DEFINITIONS)) {
+    const tab = document.createElement('button');
+    tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
+    tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}`;
+    tab.onclick = () => {
+      activeWeapon = key;
+      selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
+      closeDetail();
+      render();
+    };
+    container.appendChild(tab);
+  }
+}
+
+function renderTierBar() {
+  const container = document.getElementById('tierBar');
+  container.innerHTML = '<span class="tier-label">Player Tier:</span>';
+  for (let t = 1; t <= 8; t++) {
+    const btn = document.createElement('button');
+    btn.className = 'tier-btn' + (t === playerTier ? ' active' : t <= playerTier ? ' unlocked' : '');
+    btn.textContent = 'T' + t;
+    btn.onclick = () => { playerTier = t; render(); };
+    container.appendChild(btn);
+  }
+}
+
+function renderActionBar() {
+  const container = document.getElementById('actionBar');
+  container.innerHTML = '';
+  const weapon = WEAPON_TYPE_DEFINITIONS[activeWeapon];
+  const slotTypes = ['primary', 'secondary', 'ability', 'ultimate'];
+
+  slotTypes.forEach((type, i) => {
+    const slot = weapon.slots.find(s => s.type === type);
+    const slotEl = document.createElement('div');
+    slotEl.className = 'action-slot';
+    slotEl.setAttribute('data-type', type);
+
+    const isUnlocked = slot && playerTier >= slot.unlockTier;
+    if (!isUnlocked) { slotEl.style.opacity = '0.4'; }
+
+    const selectedId = selectedSkills[type];
+    let skillData = null;
+    if (selectedId && slot) {
+      skillData = slot.skills.find(s => s.id === selectedId);
+    }
+
+    slotEl.innerHTML = `
+      <div class="slot-num">${i + 1}</div>
+      ${skillData ? `<img src="${skillData.icon}" alt="${skillData.name}" onerror="this.parentElement.innerHTML+='?'">` : `<span style="color:var(--text-muted);font-size:1.5em;">${isUnlocked ? '—' : '🔒'}</span>`}
+      <div class="slot-label">${type}</div>
+    `;
+    container.appendChild(slotEl);
+  });
+
+  // Empty slots 5 & 6
+  for (let i = 5; i <= 6; i++) {
+    const slotEl = document.createElement('div');
+    slotEl.className = 'action-slot';
+    slotEl.style.opacity = '0.3';
+    slotEl.style.borderColor = 'var(--stone)';
+    slotEl.innerHTML = `<div class="slot-num">${i}</div><span style="color:var(--text-muted);font-size:1.2em;">—</span>`;
+    container.appendChild(slotEl);
+  }
+}
+
+function renderSlotColumns() {
+  const container = document.getElementById('slotColumns');
+  container.innerHTML = '';
+  const weapon = WEAPON_TYPE_DEFINITIONS[activeWeapon];
+
+  weapon.slots.forEach(slot => {
+    const col = document.createElement('div');
+    col.className = 'slot-column';
+
+    const isSlotUnlocked = playerTier >= slot.unlockTier;
+
+    col.innerHTML = `<div class="slot-header" data-type="${slot.type}">
+      ${slot.label}
+      <span class="unlock-tag">${isSlotUnlocked ? '✓ Unlocked' : `Requires Tier ${slot.unlockTier}`}</span>
+    </div>`;
+
+    slot.skills.forEach(skill => {
+      const isSkillUnlocked = isSlotUnlocked && playerTier >= skill.tier;
+      const isSelected = selectedSkills[slot.type] === skill.id;
+
+      const card = document.createElement('div');
+      card.className = 'skill-card' + (isSelected ? ' selected' : '') + (!isSkillUnlocked ? ' locked' : '');
+      card.setAttribute('data-slot', slot.type);
+
+      const dmgText = skill.damage < 0
+        ? `<span class="value heal">Heal ${Math.abs(skill.damage)}</span>`
+        : skill.damage > 0
+        ? `<span class="value dmg">${skill.damage}</span>`
+        : `<span class="value" style="color:var(--text-muted);">—</span>`;
+
+      card.innerHTML = `
+        ${isSelected ? '<div class="selected-check">✓</div>' : ''}
+        <div class="skill-icon-row">
+          <div class="skill-icon"><img src="${skill.icon}" alt="${skill.name}" onerror="this.style.display='none'"></div>
+          <span class="skill-name">${skill.name}</span>
+          <span class="skill-tier-tag">T${skill.tier}</span>
+        </div>
+        <div class="skill-desc">${skill.description}</div>
+        <div class="skill-stats">
+          <div class="skill-stat"><span class="label">DMG</span> ${dmgText}</div>
+          <div class="skill-stat"><span class="label">CD</span> <span class="value cd">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</span></div>
+        </div>
+        <div class="skill-effects">${skill.effects.map(e => `<span class="effect-tag">${e}</span>`).join('')}</div>
+      `;
+
+      if (isSkillUnlocked) {
+        card.onclick = () => {
+          if (selectedSkills[slot.type] === skill.id) {
+            selectedSkills[slot.type] = null;
+            closeDetail();
+          } else {
+            selectedSkills[slot.type] = skill.id;
+            showDetail(skill, slot.type);
+          }
+          render();
+        };
+      }
+
+      col.appendChild(card);
+    });
+
+    // Placeholder for future tiers
+    const placeholder = document.createElement('div');
+    placeholder.style.cssText = 'border:2px dashed hsl(220 15% 25%);border-radius:4px;padding:16px;text-align:center;color:var(--text-muted);font-size:0.8em;margin-top:8px;';
+    placeholder.textContent = 'More skills at higher tiers…';
+    col.appendChild(placeholder);
+
+    container.appendChild(col);
+  });
+}
+
+function showDetail(skill, slotType) {
+  const panel = document.getElementById('detailPanel');
+  document.getElementById('detailIcon').innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailName').textContent = skill.name;
+  document.getElementById('detailDesc').textContent = skill.description;
+
+  const dmgLabel = skill.damage < 0 ? 'Heal' : 'Damage';
+  const dmgVal = Math.abs(skill.damage);
+  const dmgColor = skill.damage < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
+
+  document.getElementById('detailStats').innerHTML = `
+    <div class="detail-stat">
+      <div class="stat-label">${dmgLabel}</div>
+      <div class="stat-val" style="color:${dmgColor}">${dmgVal || '—'}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="stat-label">Cooldown</div>
+      <div class="stat-val" style="color:hsl(210 70% 60%)">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="stat-label">Slot</div>
+      <div class="stat-val" style="color:var(--text-gold)">${slotType.toUpperCase()}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="stat-label">Tier</div>
+      <div class="stat-val" style="color:var(--gold)">T${skill.tier}</div>
+    </div>
+  `;
+
+  document.getElementById('detailEffects').innerHTML = skill.effects.map(e => `<span class="effect-tag">${e}</span>`).join('');
+  panel.classList.add('visible');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+}
+
+function resetSelections() {
+  selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
+  closeDetail();
+  render();
+}
+
+// Init
+render();
+</script>
+</body>
+</html>

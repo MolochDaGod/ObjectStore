@@ -112,6 +112,60 @@
     .ctrl-group:last-child { border-right: none; }
     .ctrl-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-right: 4px; align-self: center; }
     .env-select { padding: 6px 10px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.8rem; }
+
+    /* ===== Toolbar ===== */
+    .viewer-toolbar { display: flex; gap: 2px; padding: 6px 12px; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .toolbar-tab { padding: 6px 16px; background: transparent; border: 1px solid transparent; border-radius: 6px 6px 0 0; color: var(--text-dim); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
+    .toolbar-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .toolbar-tab.active { color: var(--tier-4); border-color: var(--border-color); border-bottom-color: transparent; background: rgba(212,168,75,0.08); }
+    .toolbar-spacer { flex: 1; }
+    .mode-toggle { display: flex; gap: 2px; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 2px; }
+    .mode-btn { padding: 4px 12px; border: none; border-radius: 4px; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+    .mode-btn.active { background: var(--tier-4); color: #000; }
+
+    /* ===== Viewer Body with Inspector ===== */
+    .viewer-body { display: flex; flex: 1; overflow: hidden; }
+    .viewer-canvas-area { flex: 1; position: relative; overflow: hidden; }
+    .viewer-canvas-area canvas { width: 100% !important; height: 100% !important; display: block; }
+    .viewer-inspector { width: 300px; background: rgba(20,20,30,0.95); border-left: 1px solid var(--border-color); overflow-y: auto; flex-shrink: 0; display: none; }
+    .viewer-inspector.open { display: flex; flex-direction: column; }
+    .inspector-section { padding: 10px 12px; border-bottom: 1px solid var(--border-color); }
+    .inspector-section h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.5px; }
+
+    /* ===== Add-to-scene button on cards ===== */
+    .model-card .add-scene-btn { position: absolute; bottom: 6px; right: 6px; padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; background: var(--tier-4); color: #000; border: none; cursor: pointer; opacity: 0; transition: opacity 0.2s; text-transform: uppercase; }
+    .model-card:hover .add-scene-btn { opacity: 1; }
+
+    /* ===== Convert progress ===== */
+    .convert-progress { padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8rem; color: var(--text-dim); margin-top: 8px; }
+    .convert-progress-bar { height: 4px; background: var(--border-color); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+    .convert-progress-fill { height: 100%; background: var(--tier-4); border-radius: 2px; transition: width 0.3s; }
+
+    /* ===== Material Editor ===== */
+    .mat-section { border-bottom: 1px solid var(--border-color); padding: 8px 10px; }
+    .mat-header { font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+    .mat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.78rem; color: var(--text-dim); }
+    .mat-row label { min-width: 80px; }
+    .mat-row input[type="range"] { flex: 1; accent-color: var(--tier-4); }
+    .mat-row input[type="color"] { width: 36px; height: 24px; border: 1px solid var(--border-color); border-radius: 4px; padding: 0; cursor: pointer; }
+    .mat-row input[type="checkbox"] { accent-color: var(--tier-4); }
+    .mat-maps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .mat-map-slot { padding: 3px 6px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.65rem; cursor: pointer; display: flex; gap: 4px; align-items: center; }
+    .mat-map-slot.has-map { border-color: var(--tier-4); color: var(--tier-4); }
+    .mat-map-slot:hover { border-color: var(--tier-4); }
+    .mat-upgrade-btn { width: 100%; padding: 6px; background: var(--tier-4); color: #000; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+    .mat-upgrade-btn:hover { opacity: 0.85; }
+
+    /* ===== Texture Browser ===== */
+    .tex-title { font-size: 0.85rem; font-weight: 600; padding: 10px 12px; color: var(--text-primary); }
+    .tex-category { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); padding: 4px 12px; letter-spacing: 0.5px; }
+    .tex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 6px 12px; }
+    .tex-thumb { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; cursor: pointer; text-align: center; }
+    .tex-thumb:hover { border-color: var(--tier-4); }
+    .tex-thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
+    .tex-thumb span { font-size: 0.7rem; color: var(--text-dim); }
+    .tex-drop-zone { margin: 8px 12px; padding: 16px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; color: var(--text-dim); font-size: 0.8rem; }
+    .tex-drop-zone:hover, .tex-drop-zone.drag-over { border-color: var(--tier-4); }
   </style>
 
   <!-- Three.js ES Module Import Map -->
@@ -125,13 +179,13 @@
   </script>
 </head>
 <body>
-  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
 
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-      <p class="subtitle">471 models — GLB, GLTF, FBX, OBJ — powered by Three.js
+      <p class="subtitle">580+ models — GLB, GLTF, FBX, OBJ — powered by Three.js
         <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
       </p>
       <div class="stats-bar" id="statsBar"></div>
@@ -196,17 +250,58 @@
       <span class="viewer-info" id="viewerInfo"></span>
       <button class="viewer-close" id="viewerClose">&times; Close</button>
     </div>
-    <div class="viewer-canvas-wrap" id="viewerCanvasWrap">
-      <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model...</p></div>
+    <!-- Toolbar -->
+    <div class="viewer-toolbar" id="viewerToolbar">
+      <button class="toolbar-tab active" data-tab="scene">Scene</button>
+      <button class="toolbar-tab" data-tab="materials">Materials</button>
+      <button class="toolbar-tab" data-tab="textures">Textures</button>
+      <button class="toolbar-tab" data-tab="animate">Animate</button>
+      <button class="toolbar-tab" data-tab="convert">Convert</button>
+      <div class="toolbar-spacer"></div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="viewer">Viewer</button>
+        <button class="mode-btn" data-mode="playcanvas">Play Canvas</button>
+      </div>
     </div>
+    <!-- Body: canvas + inspector -->
+    <div class="viewer-body">
+      <div class="viewer-canvas-area" id="viewerCanvasWrap">
+        <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model...</p></div>
+      </div>
+      <div class="viewer-inspector" id="viewerInspector">
+        <!-- Scene tab -->
+        <div class="inspector-panel" id="panelScene">
+          <div class="inspector-section"><h4>Scene Hierarchy</h4><div id="sceneTree" style="font-size:0.8rem;color:var(--text-dim);">No model loaded</div></div>
+        </div>
+        <!-- Materials tab -->
+        <div class="inspector-panel" id="panelMaterials" style="display:none;"></div>
+        <!-- Textures tab -->
+        <div class="inspector-panel" id="panelTextures" style="display:none;"></div>
+        <!-- Animate tab -->
+        <div class="inspector-panel" id="panelAnimate" style="display:none;"></div>
+        <!-- Convert tab -->
+        <div class="inspector-panel" id="panelConvert" style="display:none;">
+          <div class="inspector-section">
+            <h4>Convert Model</h4>
+            <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">Convert FBX/OBJ/GLTF to optimized GLB</p>
+            <input type="file" id="convertFileInput" accept=".fbx,.obj,.gltf,.glb" style="display:none;">
+            <button class="viewer-btn" id="btnPickConvert" style="width:100%;margin-bottom:6px;">&#128194; Pick File to Convert</button>
+            <button class="viewer-btn" id="btnConvertCurrent" style="width:100%;margin-bottom:6px;">Convert Current Model</button>
+            <div id="convertStatus" class="convert-progress" style="display:none;">
+              <span id="convertMsg">Ready</span>
+              <div class="convert-progress-bar"><div class="convert-progress-fill" id="convertFill" style="width:0%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom controls -->
     <div class="viewer-controls" id="viewerControls">
-      <!-- Display -->
       <div class="ctrl-group">
         <button class="viewer-btn" id="btnWireframe">Wireframe</button>
         <button class="viewer-btn active" id="btnGrid">Grid</button>
         <button class="viewer-btn active" id="btnAutoRotate">Auto Rotate</button>
       </div>
-      <!-- Camera presets -->
       <div class="ctrl-group">
         <span class="ctrl-label">Cam</span>
         <button class="viewer-btn" data-cam="front">Front</button>
@@ -217,14 +312,12 @@
         <button class="viewer-btn" data-cam="iso">Iso</button>
         <button class="viewer-btn" id="btnResetCam">Reset</button>
       </div>
-      <!-- Lighting -->
       <div class="ctrl-group">
         <span class="ctrl-label">Light</span>
         <button class="viewer-btn active" data-light="key">Key</button>
         <button class="viewer-btn active" data-light="fill">Fill</button>
         <button class="viewer-btn active" data-light="rim">Rim</button>
       </div>
-      <!-- Environment -->
       <div class="ctrl-group">
         <span class="ctrl-label">Env</span>
         <select class="env-select" id="envSelect">
@@ -234,20 +327,19 @@
           <option value="night">Night</option>
         </select>
       </div>
-      <!-- Quality -->
       <div class="ctrl-group">
         <span class="ctrl-label">Quality</span>
         <select class="env-select" id="qualitySelect">
-          <option value="1">1×</option>
-          <option value="1.5">1.5×</option>
-          <option value="2" selected>2×</option>
+          <option value="1">1&times;</option>
+          <option value="1.5">1.5&times;</option>
+          <option value="2" selected>2&times;</option>
         </select>
       </div>
-      <!-- Actions -->
       <div class="ctrl-group">
         <select class="anim-select-3d" id="animSelect" style="display:none;"><option value="-1">No Animation</option></select>
         <button class="viewer-btn" id="btnScreenshot">&#128247; Screenshot</button>
         <button class="viewer-btn" id="btnExportGLB">&#128190; Export GLB</button>
+        <button class="viewer-btn" id="btnToggleInspector">Inspector</button>
       </div>
       <span class="viewer-info" id="viewerStats"></span>
     </div>
@@ -255,7 +347,7 @@
 
   <script src="./js/nav.js"></script>
 
-  <!-- Three.js Viewer Module -->
+  <!-- Three.js Viewer Module — imports modular pipeline -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -265,9 +357,18 @@
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
-    /* ===== Viewer State ===== */
+    // Modular pipeline imports
+    import { RenderPipeline } from './js/viewer/RenderPipeline.js';
+    import { PlayCanvas } from './js/viewer/PlayCanvas.js';
+    import { ViewerAPI } from './js/viewer/ViewerAPI.js';
+    import { MaterialEditor } from './js/viewer/MaterialEditor.js';
+    import { TextureManager } from './js/viewer/TextureManager.js';
+    import { ModelConverter } from './js/viewer/ModelConverter.js';
+    import { AnimationManager } from './js/viewer/AnimationManager.js';
+
+    /* ═══════════════ State ═══════════════ */
     let scene, camera, renderer, controls, mixer, clock, gridHelper;
-    let keyLight, fillLight, rimLight; // light refs for toggle
+    let keyLight, fillLight, rimLight;
     let currentModel = null;
     let animActions = [];
     let activeAction = null;
@@ -275,24 +376,30 @@
     let autoRotate = true;
     let showWireframe = false;
     let showGrid = true;
+    let currentMode = 'viewer'; // 'viewer' | 'playcanvas'
 
-    /* ===== Draco Decoder (for compressed GLTF) ===== */
+    // Module instances (lazy-init)
+    let renderPipeline = null;
+    let playCanvas = null;
+    let materialEditor = null;
+    let textureManager = null;
+    let modelConverter = null;
+    let animationManager = null;
+
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
 
-    /* ===== Init Three.js Scene ===== */
+    /* ═══════════════ Init ═══════════════ */
     function initViewer() {
       const wrap = document.getElementById('viewerCanvasWrap');
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x1a1a2e);
 
-      // Camera
       camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.01, 1000);
       camera.position.set(3, 2, 5);
 
-      // Renderer — best practices: antialias, toneMapping, outputColorSpace
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap at 2x for perf
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(wrap.clientWidth, wrap.clientHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -301,7 +408,6 @@
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       wrap.appendChild(renderer.domElement);
 
-      // Controls
       controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.08;
@@ -309,86 +415,82 @@
       controls.autoRotateSpeed = 1.5;
       controls.maxPolarAngle = Math.PI * 0.85;
 
-      // Lighting — 3-point studio setup
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-      scene.add(ambientLight);
-
-      const hemiLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.5);
-      scene.add(hemiLight);
-
+      // 3-point lighting
+      scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+      scene.add(new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.5));
       keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
       keyLight.position.set(5, 8, 5);
       keyLight.castShadow = true;
       keyLight.shadow.mapSize.set(1024, 1024);
-      keyLight.shadow.camera.near = 0.1;
-      keyLight.shadow.camera.far = 50;
-      keyLight.shadow.camera.left = -10;
-      keyLight.shadow.camera.right = 10;
-      keyLight.shadow.camera.top = 10;
-      keyLight.shadow.camera.bottom = -10;
+      keyLight.shadow.camera.near = 0.1; keyLight.shadow.camera.far = 50;
+      keyLight.shadow.camera.left = -10; keyLight.shadow.camera.right = 10;
+      keyLight.shadow.camera.top = 10; keyLight.shadow.camera.bottom = -10;
       scene.add(keyLight);
-
       fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
       fillLight.position.set(-5, 3, -3);
       scene.add(fillLight);
-
       rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
       rimLight.position.set(0, 5, -8);
       scene.add(rimLight);
 
-      // Ground plane
-      const groundGeo = new THREE.PlaneGeometry(50, 50);
-      const groundMat = new THREE.ShadowMaterial({ opacity: 0.15 });
-      const ground = new THREE.Mesh(groundGeo, groundMat);
-      ground.rotation.x = -Math.PI / 2;
-      ground.receiveShadow = true;
+      // Ground + grid
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.ShadowMaterial({ opacity: 0.15 }));
+      ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true;
       scene.add(ground);
-
-      // Grid
       gridHelper = new THREE.GridHelper(20, 20, 0x444466, 0x222244);
       scene.add(gridHelper);
-
       clock = new THREE.Clock();
 
-      // Resize handler
-      const resizeObserver = new ResizeObserver(() => {
+      // Resize
+      new ResizeObserver(() => {
         if (!isViewerOpen) return;
         camera.aspect = wrap.clientWidth / wrap.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-      });
-      resizeObserver.observe(wrap);
+      }).observe(wrap);
 
-      // Animation loop
+      // Init modules
+      modelConverter = new ModelConverter();
+      animationManager = new AnimationManager(null);
+      materialEditor = new MaterialEditor();
+      textureManager = new TextureManager();
+
+      // Build inspector panels
+      materialEditor.buildUI(document.getElementById('panelMaterials'));
+      textureManager.buildUI(document.getElementById('panelTextures'));
+      animationManager.buildUI(document.getElementById('panelAnimate'));
+      initConverterUI();
+
+      // Render loop
       function animate() {
         requestAnimationFrame(animate);
         if (!isViewerOpen) return;
         const delta = clock.getDelta();
         if (mixer) mixer.update(delta);
+        if (animationManager) animationManager.update();
         controls.update();
         renderer.render(scene, camera);
       }
       animate();
     }
 
-    /* ===== Load Model ===== */
+    /* ═══════════════ Model Loading ═══════════════ */
     function clearModel() {
       if (currentModel) {
         scene.remove(currentModel);
-        currentModel.traverse(function(child) {
+        currentModel.traverse(child => {
           if (child.geometry) child.geometry.dispose();
           if (child.material) {
-            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
-            else child.material.dispose();
+            (Array.isArray(child.material) ? child.material : [child.material]).forEach(m => m.dispose());
           }
         });
         currentModel = null;
       }
       if (mixer) { mixer.stopAllAction(); mixer = null; }
-      animActions = [];
-      activeAction = null;
+      animActions = []; activeAction = null;
       document.getElementById('animSelect').style.display = 'none';
       document.getElementById('animSelect').innerHTML = '<option value="-1">No Animation</option>';
+      document.getElementById('sceneTree').textContent = 'No model loaded';
     }
 
     function frameModel(object) {
@@ -397,13 +499,10 @@
       const size = box.getSize(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
       const fov = camera.fov * (Math.PI / 180);
-      let cameraZ = maxDim / (2 * Math.tan(fov / 2));
-      cameraZ *= 1.8;
-
+      let cameraZ = maxDim / (2 * Math.tan(fov / 2)) * 1.8;
       camera.position.set(center.x + cameraZ * 0.5, center.y + cameraZ * 0.3, center.z + cameraZ);
       controls.target.copy(center);
-      camera.near = maxDim / 100;
-      camera.far = maxDim * 100;
+      camera.near = maxDim / 100; camera.far = maxDim * 100;
       camera.updateProjectionMatrix();
       controls.update();
     }
@@ -412,37 +511,30 @@
       if (!animations || animations.length === 0) return;
       mixer = new THREE.AnimationMixer(object);
       animActions = animations.map(clip => mixer.clipAction(clip));
-
       const select = document.getElementById('animSelect');
       select.innerHTML = '<option value="-1">No Animation</option>';
-      animations.forEach(function(clip, i) {
+      animations.forEach((clip, i) => {
         const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = clip.name || ('Animation ' + (i + 1));
+        opt.value = i; opt.textContent = clip.name || ('Animation ' + (i + 1));
         select.appendChild(opt);
       });
       select.style.display = 'inline-block';
-
-      // Auto-play first animation
-      if (animActions.length > 0) {
-        activeAction = animActions[0];
-        activeAction.play();
-        select.value = '0';
-      }
+      if (animActions.length > 0) { activeAction = animActions[0]; activeAction.play(); select.value = '0'; }
+      // Bind to AnimationManager
+      if (animationManager) animationManager.bind(object, animations);
     }
 
     function applyWireframe(obj, wireframe) {
-      obj.traverse(function(child) {
+      obj.traverse(child => {
         if (child.isMesh && child.material) {
-          if (Array.isArray(child.material)) child.material.forEach(m => { m.wireframe = wireframe; });
-          else child.material.wireframe = wireframe;
+          (Array.isArray(child.material) ? child.material : [child.material]).forEach(m => { m.wireframe = wireframe; });
         }
       });
     }
 
     function getModelStats(obj) {
       let verts = 0, tris = 0, meshes = 0;
-      obj.traverse(function(child) {
+      obj.traverse(child => {
         if (child.isMesh && child.geometry) {
           meshes++;
           const geo = child.geometry;
@@ -451,60 +543,65 @@
           if (geo.attributes.position) verts += geo.attributes.position.count;
         }
       });
-      return { verts: verts, tris: Math.round(tris), meshes: meshes };
+      return { verts, tris: Math.round(tris), meshes };
+    }
+
+    function buildSceneTree(obj) {
+      const tree = document.getElementById('sceneTree');
+      if (!tree) return;
+      let html = '';
+      let depth = 0;
+      obj.traverse(child => {
+        const indent = '&nbsp;'.repeat(depth * 2);
+        const icon = child.isMesh ? '&#9632;' : child.isGroup ? '&#9654;' : '&#9679;';
+        const name = child.name || child.type;
+        html += `<div style="padding:1px 0;">${indent}${icon} <span style="color:#ccc;">${name}</span></div>`;
+        depth++;
+      });
+      tree.innerHTML = html || 'No model loaded';
     }
 
     async function loadModelFromURL(url, format) {
       clearModel();
       document.getElementById('viewerLoading').style.display = 'block';
-
       try {
         let loader;
         if (format === 'GLB' || format === 'GLTF') {
-          loader = new GLTFLoader();
-          loader.setDRACOLoader(dracoLoader);
+          loader = new GLTFLoader(); loader.setDRACOLoader(dracoLoader);
           const gltf = await loader.loadAsync(url);
           currentModel = gltf.scene;
           currentModel.traverse(c => { if (c.isMesh) c.castShadow = true; });
-          scene.add(currentModel);
-          frameModel(currentModel);
+          scene.add(currentModel); frameModel(currentModel);
           setupAnimations(gltf.animations, currentModel);
         } else if (format === 'FBX') {
           loader = new FBXLoader();
           const fbx = await loader.loadAsync(url);
           fbx.traverse(c => { if (c.isMesh) c.castShadow = true; });
-          currentModel = fbx;
-          scene.add(currentModel);
-          frameModel(currentModel);
+          currentModel = fbx; scene.add(currentModel); frameModel(currentModel);
           setupAnimations(fbx.animations, fbx);
         } else if (format === 'OBJ') {
           loader = new OBJLoader();
           const obj = await loader.loadAsync(url);
           obj.traverse(c => {
-            if (c.isMesh) {
-              c.castShadow = true;
-              if (!c.material || c.material.type === 'MeshBasicMaterial') {
+            if (c.isMesh) { c.castShadow = true;
+              if (!c.material || c.material.type === 'MeshBasicMaterial')
                 c.material = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.6, metalness: 0.2 });
-              }
             }
           });
-          currentModel = obj;
-          scene.add(currentModel);
-          frameModel(currentModel);
+          currentModel = obj; scene.add(currentModel); frameModel(currentModel);
         }
-
         if (showWireframe && currentModel) applyWireframe(currentModel, true);
-
-        const stats = currentModel ? getModelStats(currentModel) : null;
-        if (stats) {
-          document.getElementById('viewerStats').textContent =
-            stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        if (currentModel) {
+          const stats = getModelStats(currentModel);
+          document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+          buildSceneTree(currentModel);
+          // Update material editor with loaded model
+          if (materialEditor) materialEditor.inspect(currentModel);
         }
       } catch (err) {
         console.error('Model load error:', err);
         document.getElementById('viewerStats').textContent = 'Error: ' + err.message;
       }
-
       document.getElementById('viewerLoading').style.display = 'none';
     }
 
@@ -512,13 +609,12 @@
       const ext = file.name.split('.').pop().toLowerCase();
       const format = { glb: 'GLB', gltf: 'GLTF', fbx: 'FBX', obj: 'OBJ' }[ext];
       if (!format) { alert('Unsupported format: .' + ext); return; }
-
       const url = URL.createObjectURL(file);
       openViewer(file.name, format, '');
       loadModelFromURL(url, format);
     }
 
-    /* ===== Viewer Open/Close ===== */
+    /* ═══════════════ Viewer Open/Close ═══════════════ */
     function openViewer(name, format, path) {
       if (!renderer) initViewer();
       isViewerOpen = true;
@@ -527,7 +623,6 @@
       document.getElementById('viewerInfo').textContent = format + (path ? ' \u00b7 ' + path : '');
       document.getElementById('viewerStats').textContent = '';
       document.body.style.overflow = 'hidden';
-      // Resize
       const wrap = document.getElementById('viewerCanvasWrap');
       camera.aspect = wrap.clientWidth / wrap.clientHeight;
       camera.updateProjectionMatrix();
@@ -535,51 +630,38 @@
     }
 
     function closeViewer() {
-      isViewerOpen = false;
-      clearModel();
+      isViewerOpen = false; clearModel();
       document.getElementById('viewerOverlay').classList.remove('active');
       document.body.style.overflow = '';
     }
 
-    /* ===== Viewer Controls ===== */
+    /* ═══════════════ Controls ═══════════════ */
     document.getElementById('viewerClose').addEventListener('click', closeViewer);
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
 
     document.getElementById('btnWireframe').addEventListener('click', function() {
-      showWireframe = !showWireframe;
-      this.classList.toggle('active', showWireframe);
+      showWireframe = !showWireframe; this.classList.toggle('active', showWireframe);
       if (currentModel) applyWireframe(currentModel, showWireframe);
     });
-
     document.getElementById('btnGrid').addEventListener('click', function() {
-      showGrid = !showGrid;
-      this.classList.toggle('active', showGrid);
+      showGrid = !showGrid; this.classList.toggle('active', showGrid);
       if (gridHelper) gridHelper.visible = showGrid;
     });
     document.getElementById('btnGrid').classList.add('active');
-
     document.getElementById('btnAutoRotate').addEventListener('click', function() {
-      autoRotate = !autoRotate;
-      this.classList.toggle('active', autoRotate);
+      autoRotate = !autoRotate; this.classList.toggle('active', autoRotate);
       if (controls) controls.autoRotate = autoRotate;
     });
-
-    document.getElementById('btnResetCam').addEventListener('click', function() {
-      if (currentModel) frameModel(currentModel);
-    });
+    document.getElementById('btnResetCam').addEventListener('click', () => { if (currentModel) frameModel(currentModel); });
 
     document.getElementById('animSelect').addEventListener('change', function() {
       const idx = parseInt(this.value);
-      if (activeAction) { activeAction.fadeOut(0.3); }
-      if (idx >= 0 && animActions[idx]) {
-        activeAction = animActions[idx];
-        activeAction.reset().fadeIn(0.3).play();
-      } else {
-        activeAction = null;
-      }
+      if (activeAction) activeAction.fadeOut(0.3);
+      if (idx >= 0 && animActions[idx]) { activeAction = animActions[idx]; activeAction.reset().fadeIn(0.3).play(); }
+      else activeAction = null;
     });
 
-    /* ===== Camera Presets ===== */
+    /* ═══════════════ Camera Presets ═══════════════ */
     function setCameraPreset(preset) {
       if (!currentModel) return;
       const box = new THREE.Box3().setFromObject(currentModel);
@@ -594,29 +676,22 @@
         top:   [center.x, center.y + dist, center.z + 0.01],
         iso:   [center.x + dist * 0.6, center.y + dist * 0.6, center.z + dist * 0.6],
       };
-      const pos = positions[preset];
-      if (!pos) return;
+      const pos = positions[preset]; if (!pos) return;
       camera.position.set(pos[0], pos[1], pos[2]);
-      controls.target.copy(center);
-      camera.updateProjectionMatrix();
-      controls.update();
+      controls.target.copy(center); camera.updateProjectionMatrix(); controls.update();
     }
-    document.querySelectorAll('[data-cam]').forEach(btn => {
-      btn.addEventListener('click', () => setCameraPreset(btn.dataset.cam));
-    });
+    document.querySelectorAll('[data-cam]').forEach(btn => btn.addEventListener('click', () => setCameraPreset(btn.dataset.cam)));
 
-    /* ===== Lighting Toggles ===== */
+    /* ═══════════════ Lighting ═══════════════ */
     const lightMap = { key: () => keyLight, fill: () => fillLight, rim: () => rimLight };
     document.querySelectorAll('[data-light]').forEach(btn => {
       btn.addEventListener('click', function() {
-        const light = lightMap[this.dataset.light]?.();
-        if (!light) return;
-        light.visible = !light.visible;
-        this.classList.toggle('active', light.visible);
+        const light = lightMap[this.dataset.light]?.(); if (!light) return;
+        light.visible = !light.visible; this.classList.toggle('active', light.visible);
       });
     });
 
-    /* ===== Environment Selector ===== */
+    /* ═══════════════ Environment ═══════════════ */
     const envPresets = {
       none:   { bg: 0x1a1a2e, ambient: 0.4, exposure: 1.2 },
       studio: { bg: 0x2a2a3e, ambient: 0.6, exposure: 1.4 },
@@ -626,30 +701,24 @@
     document.getElementById('envSelect').addEventListener('change', function() {
       const p = envPresets[this.value] || envPresets.none;
       if (scene) scene.background = new THREE.Color(p.bg);
-      if (renderer) {
-        renderer.toneMappingExposure = p.exposure;
-      }
+      if (renderer) renderer.toneMappingExposure = p.exposure;
     });
 
-    /* ===== Quality Selector ===== */
     document.getElementById('qualitySelect').addEventListener('change', function() {
       const dpr = Math.min(parseFloat(this.value), window.devicePixelRatio);
       if (renderer) renderer.setPixelRatio(dpr);
     });
 
-    /* ===== Screenshot ===== */
-    document.getElementById('btnScreenshot').addEventListener('click', function() {
+    /* ═══════════════ Screenshot & Export ═══════════════ */
+    document.getElementById('btnScreenshot').addEventListener('click', () => {
       if (!renderer || !isViewerOpen) return;
       renderer.render(scene, camera);
-      const dataUrl = renderer.domElement.toDataURL('image/png');
       const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = 'grudge-3d-screenshot.png';
-      a.click();
+      a.href = renderer.domElement.toDataURL('image/png');
+      a.download = 'grudge-3d-screenshot.png'; a.click();
     });
 
-    /* ===== Export GLB ===== */
-    document.getElementById('btnExportGLB').addEventListener('click', async function() {
+    document.getElementById('btnExportGLB').addEventListener('click', async () => {
       if (!currentModel) return;
       const exporter = new GLTFExporter();
       const data = await exporter.parseAsync(currentModel, { binary: true });
@@ -657,27 +726,119 @@
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
-      a.click();
-      URL.revokeObjectURL(a.href);
+      a.click(); URL.revokeObjectURL(a.href);
     });
 
-    /* ===== Drag & Drop ===== */
+    /* ═══════════════ Drag & Drop ═══════════════ */
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', function() { if (this.files[0]) loadModelFromFile(this.files[0]); });
-
     dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
     dropZone.addEventListener('drop', function(e) {
-      e.preventDefault();
-      this.classList.remove('drag-over');
+      e.preventDefault(); this.classList.remove('drag-over');
       if (e.dataTransfer.files[0]) loadModelFromFile(e.dataTransfer.files[0]);
     });
 
-    /* ===== Expose to catalog script ===== */
-    window._3dViewer = { openViewer, loadModelFromURL, closeViewer };
+    /* ═══════════════ Toolbar & Inspector ═══════════════ */
+    const inspector = document.getElementById('viewerInspector');
+    const panels = { scene: 'panelScene', materials: 'panelMaterials', textures: 'panelTextures', animate: 'panelAnimate', convert: 'panelConvert' };
+
+    document.querySelectorAll('.toolbar-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.toolbar-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const panelId = panels[this.dataset.tab];
+        document.querySelectorAll('.inspector-panel').forEach(p => p.style.display = 'none');
+        if (panelId) document.getElementById(panelId).style.display = '';
+        // Open inspector when a tab is clicked
+        inspector.classList.add('open');
+        // Resize canvas
+        setTimeout(() => {
+          if (renderer && camera) {
+            const wrap = document.getElementById('viewerCanvasWrap');
+            camera.aspect = wrap.clientWidth / wrap.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+          }
+        }, 50);
+      });
+    });
+
+    document.getElementById('btnToggleInspector').addEventListener('click', () => {
+      inspector.classList.toggle('open');
+      setTimeout(() => {
+        if (renderer && camera) {
+          const wrap = document.getElementById('viewerCanvasWrap');
+          camera.aspect = wrap.clientWidth / wrap.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+        }
+      }, 50);
+    });
+
+    /* ═══════════════ Mode Toggle (Viewer / Play Canvas) ═══════════════ */
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentMode = this.dataset.mode;
+        if (currentMode === 'playcanvas') {
+          controls.autoRotate = false;
+          document.getElementById('btnAutoRotate').classList.remove('active');
+          // Enable gizmo-like interaction in Play Canvas mode
+          console.log('[PlayCanvas] Mode active — multi-model scene editing enabled');
+        } else {
+          controls.autoRotate = autoRotate;
+          document.getElementById('btnAutoRotate').classList.toggle('active', autoRotate);
+        }
+      });
+    });
+
+    /* ═══════════════ Converter Panel ═══════════════ */
+    function initConverterUI() {
+      const fileIn = document.getElementById('convertFileInput');
+      const msgEl = document.getElementById('convertMsg');
+      const fillEl = document.getElementById('convertFill');
+      const statusEl = document.getElementById('convertStatus');
+
+      modelConverter.onProgress((stage, pct, msg) => {
+        statusEl.style.display = '';
+        msgEl.textContent = msg;
+        fillEl.style.width = pct + '%';
+      });
+
+      document.getElementById('btnPickConvert').addEventListener('click', () => fileIn.click());
+      fileIn.addEventListener('change', async function() {
+        if (!this.files[0]) return;
+        try {
+          const result = await modelConverter.convertToGLB(this.files[0]);
+          modelConverter.downloadBlob(result.blob, result.name);
+          msgEl.textContent = `Done: ${result.name} (${result.meshes} meshes, ${result.verts} verts, ${result.animations} anims)`;
+        } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
+        this.value = '';
+      });
+
+      document.getElementById('btnConvertCurrent').addEventListener('click', async () => {
+        if (!currentModel) { msgEl.textContent = 'No model loaded'; statusEl.style.display = ''; return; }
+        statusEl.style.display = '';
+        msgEl.textContent = 'Exporting current model...';
+        try {
+          const exporter = new GLTFExporter();
+          const data = await exporter.parseAsync(currentModel, { binary: true });
+          const blob = new Blob([data], { type: 'model/gltf-binary' });
+          const name = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
+          modelConverter.downloadBlob(blob, name);
+          msgEl.textContent = 'Downloaded: ' + name;
+          fillEl.style.width = '100%';
+        } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
+      });
+    }
+
+    /* ═══════════════ Expose to catalog ═══════════════ */
+    window._3dViewer = { openViewer, loadModelFromURL, closeViewer, loadModelFromFile };
+    window.GrudgeViewer = { scene: () => scene, camera: () => camera, renderer: () => renderer, currentModel: () => currentModel };
   </script>
 
   <!-- Catalog Script (non-module) -->
@@ -690,54 +851,103 @@
     var filters = { search: '', format: 'all', category: 'all' };
     var r2Available = false;
 
-    // R2 Worker URL
-    var R2_WORKER_URL = 'https://objectstore.grudge-studio.com';
+    // R2 Worker URLs (objectstore preferred, assets as fallback — same worker)
+    var R2_URLS = [
+      'https://objectstore.grudge-studio.com',
+      'https://assets.grudge-studio.com'
+    ];
+    var R2_WORKER_URL = R2_URLS[0]; // resolved after health check
 
     // Configurable base URL for hosted models (update when models are on R2 or repo)
     var MODEL_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
 
-    /* === R2 Status Check === */
+    /* === R2 Status Check (with fallback) === */
     async function checkR2Status() {
       var el = document.getElementById('r2Status');
-      try {
-        var res = await fetch(R2_WORKER_URL + '/v1/health', { signal: AbortSignal.timeout(5000) });
-        if (res.ok) {
-          r2Available = true;
-          el.className = 'r2-status online';
-          el.innerHTML = '<span class="r2-dot"></span> R2 Online';
-          document.getElementById('uploadR2Btn').disabled = false;
-        } else { throw new Error('not ok'); }
-      } catch(e) {
-        r2Available = false;
-        el.className = 'r2-status offline';
-        el.innerHTML = '<span class="r2-dot"></span> R2 Offline';
+      for (var i = 0; i < R2_URLS.length; i++) {
+        try {
+          var res = await fetch(R2_URLS[i] + '/v1/health', { signal: AbortSignal.timeout(5000) });
+          if (res.ok) {
+            R2_WORKER_URL = R2_URLS[i];
+            r2Available = true;
+            el.className = 'r2-status online';
+            el.innerHTML = '<span class="r2-dot"></span> R2 Online';
+            document.getElementById('uploadR2Btn').disabled = false;
+            console.log('R2 connected via ' + R2_WORKER_URL);
+            return;
+          }
+        } catch(e) { /* try next */ }
       }
+      r2Available = false;
+      el.className = 'r2-status offline';
+      el.innerHTML = '<span class="r2-dot"></span> R2 Offline';
     }
 
-    /* === Load R2 models === */
+    /* === Load ALL R2 3D models (multiple prefixes, paginated) === */
+    var R2_3D_EXTENSIONS = new Set(['GLB','GLTF','FBX','OBJ','GLB','BLEND']);
+
+    function detectR2Category(key) {
+      var parts = key.split('/');
+      // e.g. effects/spells/Fireball.glb -> 'Spell Effects'
+      if (parts[0] === 'effects' && parts[1] === 'spells') return 'Spell Effects';
+      if (parts[0] === 'effects') return 'Effects';
+      if (parts[0] === 'models' && parts.length > 2) {
+        // models/characters/... -> Characters, models/ships/... -> Ships
+        return parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+      }
+      if (parts[0] === 'animations') return 'Animations';
+      if (parts.length > 2) return parts[1];
+      return 'r2-uploaded';
+    }
+
+    async function fetchR2Page(prefix, limit, cursor) {
+      var url = R2_WORKER_URL + '/v1/assets?limit=' + limit;
+      if (prefix) url += '&prefix=' + encodeURIComponent(prefix);
+      if (cursor) url += '&cursor=' + encodeURIComponent(cursor);
+      var res = await fetch(url);
+      return res.json();
+    }
+
     async function loadR2Models() {
       if (!r2Available) return;
-      try {
-        var res = await fetch(R2_WORKER_URL + '/v1/assets?prefix=models/&limit=500');
-        var data = await res.json();
-        r2Models = (data.assets || []).map(function(a) {
-          var parts = a.key.split('/');
-          var fname = parts[parts.length - 1];
-          var ext = fname.split('.').pop().toUpperCase();
-          return {
-            name: fname,
-            path: a.key,
-            format: ext === 'GLB' || ext === 'GLTF' || ext === 'FBX' || ext === 'OBJ' ? ext : 'GLB',
-            category: parts.length > 2 ? parts[1] : 'r2-uploaded',
-            sizeKB: a.size ? Math.round(a.size / 1024) : 0,
-            _source: 'r2',
-            _r2Url: R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(a.key) + '/file'
-          };
-        });
-      } catch(e) {
-        console.warn('Could not load R2 models:', e);
-        r2Models = [];
+      r2Models = [];
+
+      // Fetch from multiple prefixes to catch ALL 3D content
+      var prefixes = ['models/', 'effects/', 'animations/', 'assets/', ''];
+      var seenKeys = new Set();
+
+      for (var pi = 0; pi < prefixes.length; pi++) {
+        try {
+          var cursor = null;
+          var hasMore = true;
+          while (hasMore) {
+            var data = await fetchR2Page(prefixes[pi], 1000, cursor);
+            var assets = data.assets || [];
+            for (var ai = 0; ai < assets.length; ai++) {
+              var a = assets[ai];
+              if (seenKeys.has(a.key)) continue;
+              var fname = a.key.split('/').pop();
+              var ext = fname.split('.').pop().toUpperCase();
+              if (!R2_3D_EXTENSIONS.has(ext)) continue;
+              seenKeys.add(a.key);
+              r2Models.push({
+                name: fname,
+                path: a.key,
+                format: ext,
+                category: detectR2Category(a.key),
+                sizeKB: a.size ? Math.round(a.size / 1024) : 0,
+                _source: 'r2',
+                _r2Url: R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(a.key) + '/file'
+              });
+            }
+            cursor = data.cursor || null;
+            hasMore = !!cursor && assets.length > 0;
+          }
+        } catch(e) {
+          console.warn('R2 fetch error for prefix "' + prefixes[pi] + '":', e);
+        }
       }
+      console.log('Loaded ' + r2Models.length + ' 3D models from R2');
     }
 
     /* === R2 Upload Handler === */
@@ -783,6 +993,14 @@
       var staticPaths = new Set(allModels.map(function(m) { return m.path; }));
       var unique = r2Models.filter(function(m) { return !staticPaths.has(m.path); });
       allModels = unique.concat(allModels);
+      // Rebuild filters and stats to include R2 models
+      var mergedData = { totalModels: allModels.length, byFormat: {}, byCategory: {} };
+      allModels.forEach(function(m) {
+        mergedData.byFormat[m.format] = (mergedData.byFormat[m.format] || 0) + 1;
+        mergedData.byCategory[m.category || 'uncategorized'] = (mergedData.byCategory[m.category || 'uncategorized'] || 0) + 1;
+      });
+      renderStats(mergedData);
+      buildFilters(mergedData);
       applyFilters();
     }
 

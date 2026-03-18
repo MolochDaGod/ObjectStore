@@ -6,7 +6,7 @@
   <title>Sprite Database - Grudge Warlords ObjectStore</title>
 <meta name="description" content="Visual database of all sprites and icons for Grudge Warlords game objects">
   <!-- Grudge Auth SDK -->
-  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
   <style>
     :root {
@@ -604,8 +604,9 @@
 const weapons = await fetch(`${BASE}/api/v1/weapons.json`).then(r => r.json());
 const swords = weapons.categories.swords.items;
 
-// Get icon URL by slug
-const iconUrl = `${BASE}/icons/weapons_full/Sword_01.png`;
+// Get named icon (primary) or pack fallback
+const iconUrl = `${BASE}/icons/weapons/bloodfeud-blade.png`;
+const fallback = `${BASE}/icons/wcs/weapons/Sword_01.png`;
 
 // Resolve sprite from sprites.json
 const sprites = await fetch(`${BASE}/api/v1/sprites.json`).then(r => r.json());
@@ -641,8 +642,8 @@ var api = new GrudgeStudioAPI(
 var sword = await api.GetWeapon("swords/bloodfeud-blade");
 Debug.Log(sword.name); // Bloodfeud Blade
 
-// Load sprite texture
-var tex = await api.LoadIcon("weapons_full/Sword_01.png");
+// Load sprite texture (named icon with pack fallback)
+var tex = await api.LoadIcon("weapons/bloodfeud-blade.png");
 renderer.sprite = Sprite.Create(tex, ...);</pre>
           </div>
           <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
@@ -658,8 +659,9 @@ const enemies = await fetch(`${BASE}/api/v1/enemies.json`)
 const boss = enemies.categories.dragons
   .items.find(e => e.id === 'fire-dragon');
 
-// Use sprite path directly in Sprite object
-const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
+// Use named weapon icon, fallback to pack icon
+const spriteSrc = `${BASE}/icons/weapons/bloodfeud-cleaver.png`;
+const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
           </div>
         </div>
       </div>
@@ -682,7 +684,7 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
           </div>
           <div style="border-left:3px solid var(--success);padding-left:16px;">
             <h4 style="color:var(--success);margin-bottom:4px;">✅ Tier-aware icon loading</h4>
-            <p style="color:var(--text-dim);font-size:0.9rem;">Weapon icons cycle through <code style="color:var(--gold-light);">weapons_full/{Type}_{NN}.png</code>. Use the <code style="color:var(--gold-light);">iconBase</code> and <code style="color:var(--gold-light);">iconMax</code> fields from each weapon category to resolve the correct icon file.</p>
+            <p style="color:var(--text-dim);font-size:0.9rem;">Named weapon icons live at <code style="color:var(--gold-light);">icons/weapons/{item-id}.png</code>. Fallback pack icons use <code style="color:var(--gold-light);">icons/wcs/weapons/{iconBase}_{NN}.png</code>. Use the <code style="color:var(--gold-light);">iconBase</code>, <code style="color:var(--gold-light);">iconOffset</code>, and <code style="color:var(--gold-light);">noPad</code> fields from each weapon category to resolve the correct fallback file.</p>
           </div>
           <div style="border-left:3px solid var(--success);padding-left:16px;">
             <h4 style="color:var(--success);margin-bottom:4px;">✅ Sprites are pixelated — use CSS</h4>
@@ -736,7 +738,21 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
     let allData = { weapons: null, materials: null, armor: null, consumables: null, enemies: null, bosses: null, skills: null };
     let iconIndex = null;
     let currentTab = 'weapons';
-    let weaponIconCounter = {}; // Track icon indices per category
+    // Deterministic hash for icon selection (matches ItemBrowser)
+    function hashStr(s) {
+      var h = 0;
+      for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+      return Math.abs(h);
+    }
+    function pad2(n) { return String(n).padStart(2, '0'); }
+
+    // WCS pack icon counts per weapon type prefix
+    const WCS_COUNTS = {
+      'Sword': 61, 'Axe': 50, 'Dagger': 60, 'Hammer': 54,
+      'Spear': 40, 'Bow': 40, 'Crossbow': 10, 'Bolt': 10,
+      'staff': 54, 'Staff': 54, 'Book': 25, 'Scythe': 7,
+      'shield': 51, 'Arrow': 40, 'Res': 50
+    };
 
     // Load icon index
     async function loadIconIndex() {
@@ -938,6 +954,12 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
         lightningStaves: '⚡ Lightning Staves',
         arcaneStaves: '🔮 Arcane Staves',
         natureStaves: '🌿 Nature Staves',
+        fireTomes: '🔥 Fire Tomes',
+        frostTomes: '❄️ Frost Tomes',
+        natureTomes: '🌿 Nature Tomes',
+        holyTomes: '✨ Holy Tomes',
+        arcaneTomes: '🔮 Arcane Tomes',
+        lightningTomes: '⚡ Lightning Tomes',
         tools: '🔧 Tools'
       };
 
@@ -1211,22 +1233,25 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
       return `${ICONS_URL}/496_rpg_icons/E_Metal03.png`;
     }
 
+    // Primary icon: named weapon image (icons/weapons/{id}.png)
+    // Fallback icon: WCS pack icon (icons/wcs/weapons/{Base}_{NN}.png)
+    function getWeaponIconPrimary(itemId) {
+      return `${ICONS_URL}/weapons/${itemId}.png`;
+    }
+
+    function getWeaponIconFallback(itemId, iconBase, iconOffset, noPad) {
+      const base = iconBase || 'Sword';
+      const max = WCS_COUNTS[base] || 40;
+      const sliceSize = Math.min(max, 10);
+      const num = (hashStr(itemId) % sliceSize) + (iconOffset || 0) + 1;
+      const numStr = noPad ? String(num) : pad2(num);
+      return `${ICONS_URL}/wcs/weapons/${base}_${numStr}.png`;
+    }
+
     function getIconPath(type, category, itemId, tier, iconBase, iconMax, iconOffset = 0, noPad = false) {
-      if (type === 'weapon' && iconBase) {
-        // Initialize counter for this category if not exists
-        if (!weaponIconCounter[category]) weaponIconCounter[category] = 1;
-        
-        // Get next icon number and wrap around if exceeds max
-        let iconNum = weaponIconCounter[category];
-        weaponIconCounter[category] = (weaponIconCounter[category] % iconMax) + 1;
-        
-        // Apply offset if specified (for greatswords, etc.)
-        iconNum += iconOffset;
-        
-        // Format: Axe_01.png, staff_1.png (noPad), Book_5.png (noPad), etc.
-        const numStr = noPad ? String(iconNum) : String(iconNum).padStart(2, '0');
-        const iconFile = `${iconBase}_${numStr}.png`;
-        return `${ICONS_URL}/weapons_full/${iconFile}`;
+      if (type === 'weapon') {
+        // Return primary named icon — onerror in createItemCard handles fallback
+        return getWeaponIconPrimary(itemId);
       }
       
       if (type === 'material') {
@@ -1263,20 +1288,17 @@ const spriteSrc = `${BASE}/icons/weapons_full/Axe_03.png`;</pre>
 
     // Card creators
     function createItemCard(item, type, category, categoryData) {
-      const iconPath = getIconPath(
-        'weapon', 
-        category, 
-        item.id, 
-        null, 
-        categoryData?.iconBase, 
-        categoryData?.iconMax, 
+      const primaryIcon = getWeaponIconPrimary(item.id);
+      const fallbackIcon = getWeaponIconFallback(
+        item.id,
+        categoryData?.iconBase,
         categoryData?.iconOffset || 0,
         categoryData?.noPad || false
       );
-      const iconHtml = createIconElement(iconPath, item.emoji || '⚔️');
+      const imgHtml = `<img src="${primaryIcon}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackIcon}'">`;
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="${type}" onclick="showDetail('${type}', '${item.id}', '${category}')">
-          ${iconHtml}
+          ${imgHtml}
           <div class="item-name">${item.name}</div>
           <div class="item-meta">${item.primaryStat || ''}</div>
         </div>

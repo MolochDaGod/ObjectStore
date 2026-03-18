@@ -91,7 +91,7 @@
   </style>
 </head>
 <body>
-  <script src="https://auth-gateway-flax.vercel.app/grudge-auth-sdk.js"></script>
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
   <div class="container">
     <div class="header">
@@ -284,8 +284,12 @@
 
     function drawF(a, f) {
       a.ctx.clearRect(0,0,a.fw,a.fh); a.ctx.imageSmoothingEnabled=false;
-      if (a.layout==='vertical') a.ctx.drawImage(a.img, 0, f*a.fh, a.fw, a.fh, 0, 0, a.fw, a.fh);
-      else a.ctx.drawImage(a.img, f*a.fw, 0, a.fw, a.fh, 0, 0, a.fw, a.fh);
+      var sx, sy, sw, sh, iw = a.img.naturalWidth, ih = a.img.naturalHeight;
+      if (a.layout==='vertical') { sx=0; sy=f*a.fh; sw=a.fw; sh=a.fh; }
+      else { sx=f*a.fw; sy=0; sw=a.fw; sh=a.fh; }
+      if (sx+sw>iw) sw=Math.max(0,iw-sx);
+      if (sy+sh>ih) sh=Math.max(0,ih-sy);
+      if (sw>0&&sh>0) a.ctx.drawImage(a.img, sx, sy, sw, sh, 0, 0, sw, sh);
     }
 
     function startA(id) {
@@ -371,8 +375,12 @@
     function drawMF(f) {
       if(!mA) return; var ctx=mA.ctx, fw=mA.fw, fh=mA.fh;
       ctx.clearRect(0,0,fw,fh); ctx.imageSmoothingEnabled=false;
-      if(mA.layout==='vertical') ctx.drawImage(mA.img, 0, f*fh, fw, fh, 0, 0, fw, fh);
-      else ctx.drawImage(mA.img, f*fw, 0, fw, fh, 0, 0, fw, fh);
+      var sx, sy, sw, sh, iw=mA.img.naturalWidth, ih=mA.img.naturalHeight;
+      if(mA.layout==='vertical') { sx=0; sy=f*fh; sw=fw; sh=fh; }
+      else { sx=f*fw; sy=0; sw=fw; sh=fh; }
+      if(sx+sw>iw) sw=Math.max(0,iw-sx);
+      if(sy+sh>ih) sh=Math.max(0,ih-sy);
+      if(sw>0&&sh>0) ctx.drawImage(mA.img, sx, sy, sw, sh, 0, 0, sw, sh);
       if (mGrid) { ctx.strokeStyle='rgba(212,168,75,0.5)'; ctx.lineWidth=1; ctx.strokeRect(.5,.5,fw-1,fh-1); ctx.setLineDash([4,4]); ctx.beginPath();ctx.moveTo(fw/2,0);ctx.lineTo(fw/2,fh);ctx.stroke(); ctx.beginPath();ctx.moveTo(0,fh/2);ctx.lineTo(fw,fh/2);ctx.stroke(); ctx.setLineDash([]); }
     }
 
@@ -391,8 +399,12 @@
       if(!mA||!mA.img.complete) return;
       var ec=document.createElement('canvas'); ec.width=mA.fw; ec.height=mA.fh;
       var ctx=ec.getContext('2d'); ctx.imageSmoothingEnabled=false;
-      if(mA.layout==='vertical') ctx.drawImage(mA.img, 0, mA.f*mA.fh, mA.fw, mA.fh, 0, 0, mA.fw, mA.fh);
-      else ctx.drawImage(mA.img, mA.f*mA.fw, 0, mA.fw, mA.fh, 0, 0, mA.fw, mA.fh);
+      var sx, sy, sw, sh, iw=mA.img.naturalWidth, ih=mA.img.naturalHeight;
+      if(mA.layout==='vertical') { sx=0; sy=mA.f*mA.fh; sw=mA.fw; sh=mA.fh; }
+      else { sx=mA.f*mA.fw; sy=0; sw=mA.fw; sh=mA.fh; }
+      if(sx+sw>iw) sw=Math.max(0,iw-sx);
+      if(sy+sh>ih) sh=Math.max(0,ih-sy);
+      if(sw>0&&sh>0) ctx.drawImage(mA.img, sx, sy, sw, sh, 0, 0, sw, sh);
       var link=document.createElement('a'); link.download=(mA.ad.id||'frame')+'_'+mA.f+'.png'; link.href=ec.toDataURL('image/png'); link.click();
     }
 
