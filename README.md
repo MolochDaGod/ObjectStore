@@ -124,6 +124,7 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/sprite-characters.json` | 208 animated characters grouped by name with animations |
 | `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
 | `/api/v1/gdevelop-hero-aliases.json` | 25 hero class → sprite mappings for GDevelop Assistant |
+| `/api/v1/items-database.json` | Unified item database — 3,425 items with icon URLs, stats, tooltips (8 categories) |
 | `/api/v1/terrain.json` | Terrain configuration |
 | `/api/v1/tileMaps.json` | Tile map definitions |
 
@@ -137,6 +138,7 @@ ObjectStore integrates with all Grudge Studio repositories:
 - **GrudgeStudioNPM** — NPM package aggregator for all Grudge modules
 
 ### Medium Priority
+- **[Grudge Crafting (Puter)](https://grudge-crafting.puter.site)** — Puter-hosted crafting suite, fetches items-database.json for Item Database tab and real icons
 - **grudge-warlords** — Voxel RPG with ItemRegistry integration
 - **PuterGrudge** — Backend server with AI image generation endpoints
 - **GrudgeGameIslands** — WebGL island exploration with materials system
@@ -373,12 +375,13 @@ npm run rebuild:sprites2d   # Regenerate sprite-characters.json + sprites2d.json
 
 ```
 ObjectStore/
-├── api/v1/                   # 48+ Static JSON API endpoints
+├── api/v1/                   # 49+ Static JSON API endpoints
 │   ├── weapons.json         # 17 categories, 816+ items
 │   ├── armor.json           # Helm, chest, boots, etc.
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
 │   ├── sprite-characters.json # 208 animated characters (3 sources)
 │   ├── sprites2d.json       # 2,388 unique 2D sprites (flat)
+│   ├── items-database.json  # 3,425 items with icons, stats, categories
 │   ├── gdevelop-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
 │   ├── missions.json        # Story + arena templates
@@ -410,6 +413,7 @@ ObjectStore/
 ├── sdk/grudge-sdk.js         # SDK with 30+ methods
 ├── mcp/                      # MCP server for AI agents
 ├── scripts/                  # Build + extraction tools
+│   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
 ├── openapi.yaml              # OpenAPI 3.0.3 spec
 ├── sw.js                     # Service worker
 ├── package.json              # @grudge-studio/objectstore v3.0.0
