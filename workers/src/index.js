@@ -17,53 +17,72 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const method = request.method;
+    const origin = request.headers.get('Origin') || '';
 
     // ── CORS preflight ─────────────────────────────────────────────
     if (method === 'OPTIONS') {
-      return corsResponse(env, new Response(null, { status: 204 }));
+      return corsResponse(env, new Response(null, { status: 204 }), origin);
     }
 
     try {
       // ── Router ─────────────────────────────────────────────────
-      if (url.pathname === '/health') {
-        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api' }));
+      if (url.pathname === '/health' || url.pathname === '/v1/health') {
+        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '1.1.0' }), origin);
       }
 
+      // ── 3D Model routes (/v1/models) ─────────────────────────────
+      const modelFileMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/file$/);
+      if (modelFileMatch && method === 'GET') {
+        return corsResponse(env, await handleModelDownload(modelFileMatch[1], env), origin);
+      }
+      const modelThumbMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/thumbnail$/);
+      if (modelThumbMatch && method === 'GET') {
+        return corsResponse(env, await handleModelThumbnail(modelThumbMatch[1], env), origin);
+      }
+      const modelIdMatch = url.pathname.match(/^\/v1\/models\/([^/]+)$/);
+      if (modelIdMatch && method === 'GET') {
+        return corsResponse(env, await handleGetModel(modelIdMatch[1], env, url), origin);
+      }
+      if (url.pathname === '/v1/models' && method === 'GET') {
+        return corsResponse(env, await handleListModels(url, env), origin);
+      }
+
+      // ── Asset routes (/v1/assets) ────────────────────────────────
       // Asset file download  GET /v1/assets/:id/file
       const fileMatch = url.pathname.match(/^\/v1\/assets\/([^/]+)\/file$/);
       if (fileMatch && method === 'GET') {
-        return corsResponse(env, await handleDownload(fileMatch[1], env));
+        return corsResponse(env, await handleDownload(fileMatch[1], env), origin);
       }
 
       // Single asset         GET /v1/assets/:id
       const idMatch = url.pathname.match(/^\/v1\/assets\/([^/]+)$/);
       if (idMatch && method === 'GET') {
-        return corsResponse(env, await handleGetAsset(idMatch[1], env, url));
+        return corsResponse(env, await handleGetAsset(idMatch[1], env, url), origin);
       }
 
       // Delete asset         DELETE /v1/assets/:id
       if (idMatch && method === 'DELETE') {
         const authErr = requireAuth(request, env);
-        if (authErr) return corsResponse(env, authErr);
-        return corsResponse(env, await handleDelete(idMatch[1], env));
+        if (authErr) return corsResponse(env, authErr, origin);
+        return corsResponse(env, await handleDelete(idMatch[1], env), origin);
       }
 
       // List / search        GET /v1/assets
       if (url.pathname === '/v1/assets' && method === 'GET') {
-        return corsResponse(env, await handleList(url, env));
+        return corsResponse(env, await handleList(url, env), origin);
       }
 
       // Upload               POST /v1/assets
       if (url.pathname === '/v1/assets' && method === 'POST') {
         const authErr = requireAuth(request, env);
-        if (authErr) return corsResponse(env, authErr);
-        return corsResponse(env, await handleUpload(request, env));
+        if (authErr) return corsResponse(env, authErr, origin);
+        return corsResponse(env, await handleUpload(request, env), origin);
       }
 
-      return corsResponse(env, json({ error: 'Not found' }, 404));
+      return corsResponse(env, json({ error: 'Not found' }, 404), origin);
     } catch (err) {
       console.error('Unhandled error:', err);
-      return corsResponse(env, json({ error: 'Internal server error', detail: err.message }, 500));
+      return corsResponse(env, json({ error: 'Internal server error', detail: err.message }, 500), origin);
     }
   },
 };
@@ -212,6 +231,112 @@ async function handleDelete(id, env) {
 }
 
 // ════════════════════════════════════════════════════════════════════
+//  3D Model Handlers
+// ════════════════════════════════════════════════════════════════════
+
+const MODEL_MIME = {
+  glb: 'model/gltf-binary', gltf: 'model/gltf+json',
+  fbx: 'application/octet-stream', obj: 'application/octet-stream',
+};
+
+/** GET /v1/models — list 3D models with filters */
+async function handleListModels(url, env) {
+  const category = url.searchParams.get('category');
+  const format = url.searchParams.get('format');       // glb, fbx, obj
+  const animated = url.searchParams.get('animated');    // true/false
+  const q = url.searchParams.get('q');
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200);
+  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+
+  let where = ["visibility = 'public'", "category = '3d-models'"];
+  const params = [];
+
+  if (q)        { where.push('filename LIKE \'%\' || ? || \'%\''); params.push(q); }
+  if (format)   { where.push('filename LIKE \'%.\' || ?'); params.push(format.toLowerCase()); }
+  if (animated === 'true')  { where.push("tags LIKE '%animated%'"); }
+  if (animated === 'false') { where.push("tags NOT LIKE '%animated%'"); }
+
+  params.push(limit, offset);
+
+  const sql = `SELECT id, key, filename, mime, size, category, tags, metadata, created_at
+               FROM assets
+               WHERE ${where.join(' AND ')}
+               ORDER BY created_at DESC
+               LIMIT ? OFFSET ?`;
+
+  const { results } = await env.DB.prepare(sql).bind(...params).all();
+  const items = results.map(r => ({
+    ...r,
+    tags: JSON.parse(r.tags || '[]'),
+    metadata: JSON.parse(r.metadata || '{}'),
+    file_url: `/v1/models/${r.id}/file`,
+    thumbnail_url: `/v1/models/${r.id}/thumbnail`,
+  }));
+
+  // Get total count
+  const countWhere = where.slice();
+  const countParams = params.slice(0, -2); // remove limit/offset
+  const countSql = `SELECT COUNT(*) as total FROM assets WHERE ${countWhere.join(' AND ')}`;
+  const countResult = await env.DB.prepare(countSql).bind(...countParams).first();
+
+  return json({ models: items, count: items.length, total: countResult?.total || 0, limit, offset });
+}
+
+/** GET /v1/models/:id — single model metadata */
+async function handleGetModel(id, env, url) {
+  const row = await env.DB.prepare('SELECT * FROM assets WHERE id = ?').bind(id).first();
+  if (!row) return json({ error: 'Model not found' }, 404);
+
+  row.tags = JSON.parse(row.tags || '[]');
+  row.metadata = JSON.parse(row.metadata || '{}');
+  row.file_url = `${url.origin}/v1/models/${id}/file`;
+  row.thumbnail_url = `${url.origin}/v1/models/${id}/thumbnail`;
+
+  return json(row);
+}
+
+/** GET /v1/models/:id/file — download 3D model from R2 */
+async function handleModelDownload(id, env) {
+  const row = await env.DB.prepare('SELECT key, mime, filename FROM assets WHERE id = ?').bind(id).first();
+  if (!row) return json({ error: 'Model not found' }, 404);
+
+  const obj = await env.BUCKET.get(row.key);
+  if (!obj) return json({ error: 'File missing from storage' }, 404);
+
+  return new Response(obj.body, {
+    headers: {
+      'Content-Type': row.mime || 'model/gltf-binary',
+      'Content-Disposition': `inline; filename="${row.filename}"`,
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
+}
+
+/** GET /v1/models/:id/thumbnail — serve pre-rendered thumbnail from R2 */
+async function handleModelThumbnail(id, env) {
+  // Try to fetch thumbnail from R2 at thumbnails/{id}.png
+  const thumbKey = `thumbnails/${id}.png`;
+  const obj = await env.BUCKET.get(thumbKey);
+  if (!obj) {
+    // No thumbnail — return a 1x1 transparent PNG placeholder
+    const pixel = new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,6,0,0,0,31,21,196,137,0,0,0,10,73,68,65,84,120,156,98,0,0,0,2,0,1,226,33,188,51,0,0,0,0,73,69,78,68,174,66,96,130]);
+    return new Response(pixel, {
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+  }
+
+  return new Response(obj.body, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
 //  Utilities
 // ════════════════════════════════════════════════════════════════════
 
@@ -228,14 +353,26 @@ function requireAuth(request, env) {
   return null;
 }
 
-/** CORS wrapper */
-function corsResponse(env, response) {
+/** CORS wrapper — reflects the request Origin if it matches the allowed list */
+function corsResponse(env, response, requestOrigin = '') {
   const allowed = (env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
   const headers = new Headers(response.headers);
-  headers.set('Access-Control-Allow-Origin', allowed[0] || '*');
-  headers.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility');
+
+  // Match request origin against allowed origins; fall back to wildcard
+  let origin = '*';
+  if (allowed.includes('*')) {
+    origin = '*';
+  } else if (requestOrigin && allowed.some(a => requestOrigin === a || requestOrigin.endsWith(a.replace(/^https?:\/\//, '')))) {
+    origin = requestOrigin;
+  } else if (allowed.length > 0) {
+    origin = allowed[0];
+  }
+
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility, Authorization');
   headers.set('Access-Control-Max-Age', '86400');
+  if (origin !== '*') headers.set('Vary', 'Origin');
   return new Response(response.body, { status: response.status, headers });
 }
 

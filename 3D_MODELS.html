@@ -937,7 +937,7 @@
                 category: detectR2Category(a.key),
                 sizeKB: a.size ? Math.round(a.size / 1024) : 0,
                 _source: 'r2',
-                _r2Url: R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(a.key) + '/file'
+                _r2Url: R2_WORKER_URL + '/v1/assets/' + a.key.split('/').map(encodeURIComponent).join('/') + '/file'
               });
             }
             cursor = data.cursor || null;
@@ -1125,13 +1125,20 @@
           var idx = parseInt(this.dataset.idx);
           var m = filteredModels[idx];
           if (!m) return;
-          // R2 models have a direct URL
+
+          var url = null;
           if (m._source === 'r2' && m._r2Url) {
-            window._3dViewer.openViewer(m.name, m.format, m.path);
-            window._3dViewer.loadModelFromURL(m._r2Url, m.format);
+            url = m._r2Url;
+          } else if (r2Available) {
+            // Try loading static model from R2 using its path as the asset key
+            url = R2_WORKER_URL + '/v1/assets/' + m.path.split('/').map(encodeURIComponent).join('/') + '/file';
           } else if (MODEL_BASE_URL) {
+            url = MODEL_BASE_URL + '/' + m.path;
+          }
+
+          if (url) {
             window._3dViewer.openViewer(m.name, m.format, m.path);
-            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + m.path, m.format);
+            window._3dViewer.loadModelFromURL(url, m.format);
           } else {
             showModelInfo(m);
           }
