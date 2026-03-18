@@ -49,7 +49,9 @@ const balanced = await api.ai.balanceItem(item);
 
 ### 📦 Massive Asset Collection
 - **10,000+ assets** collected from GrudgeWars, Warlord-Crafting-Suite, and GDevelopAssistant
-- **108 sprite directories** with 7,324+ indexed 2D sprites
+- **208 animated characters** with 2,388 unique 2D sprites across 3 sources
+- **47 fish species** from Grudge Angeler with full sprite sheets
+- **25 GDevelop Assistant hero aliases** mapped to existing sprites
 - **5,653 icons** across weapons, armor, food, materials, RPG packs
 - **450 audio files** (SFX in wav/mp3/ogg/flac)
 - **471 3D model** registry (GLB, GLTF, FBX, OBJ) organized by race
@@ -119,6 +121,9 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/rendering.json` | Rendering configuration |
 | `/api/v1/rtsModels.json` | RTS model registry |
 | `/api/v1/spriteMaps.json` | Sprite map definitions |
+| `/api/v1/sprite-characters.json` | 208 animated characters grouped by name with animations |
+| `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
+| `/api/v1/gdevelop-hero-aliases.json` | 25 hero class → sprite mappings for GDevelop Assistant |
 | `/api/v1/terrain.json` | Terrain configuration |
 | `/api/v1/tileMaps.json` | Tile map definitions |
 
@@ -334,14 +339,47 @@ All items display real icon assets — no emoji or placeholder images.
 - `/icons/abilities/` — 28 ability icons
 - `/icons/spells/` — Spell effect icons with color variants
 
+## 🎮 2D Sprite Browser
+
+**Live:** [molochdagod.github.io/ObjectStore/2D_MODELS.html](https://molochdagod.github.io/ObjectStore/2D_MODELS.html)
+
+Animated sprite browser with canvas playback, frame scrubbing, zoom, sheet view, and single-frame export.
+
+### Sources
+- **rpg-modular** — Core RPG character/enemy/boss/effect sprites (103 characters)
+- **grudge-angeler** — 47 fish species with animated sprite sheets from [Grudge Angeler](https://grudge-angeler.vercel.app/)
+- **gdevelop-assistant** — 25 hero class aliases mapped from [GDevelop Assistant](https://gdevelop-assistant.vercel.app/) (Archer, Assassin, Barbarian, Knight, Mage, etc.)
+
+### Sprite API
+```javascript
+// Fetch all animated characters
+const res = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/sprite-characters.json');
+const data = await res.json();
+// data.characters[0] = { name, category, source, uuid, animations: [...] }
+
+// Filter by source
+const angelerFish = data.characters.filter(c => c.source === 'grudge-angeler');
+const gdevelopHeroes = data.characters.filter(c => c.source === 'gdevelop-assistant');
+```
+
+### Rebuild Sprites
+```bash
+npm run rebuild:sprites2d   # Regenerate sprite-characters.json + sprites2d.json
+```
+
+---
+
 ## 📁 Project Structure
 
 ```
 ObjectStore/
-├── api/v1/                   # 45+ Static JSON API endpoints
+├── api/v1/                   # 48+ Static JSON API endpoints
 │   ├── weapons.json         # 17 categories, 816+ items
 │   ├── armor.json           # Helm, chest, boots, etc.
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
+│   ├── sprite-characters.json # 208 animated characters (3 sources)
+│   ├── sprites2d.json       # 2,388 unique 2D sprites (flat)
+│   ├── gdevelop-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
 │   ├── missions.json        # Story + arena templates
 │   ├── skillTrees.json      # 4 classes × 5 tiers
@@ -355,7 +393,14 @@ ObjectStore/
 │   ├── heroes.json          # 36 hero portraits
 │   ├── models3d.json        # 471 3D model registry
 │   └── ...                  # + 30 more endpoints
-├── sprites/                  # 108 dirs, 7,324+ 2D sprites
+├── sprites/                  # 208 characters, 2,388 unique sprites
+│   ├── characters/          # Player characters (55 dirs)
+│   ├── enemies/             # Enemy units
+│   ├── bosses/              # Boss encounters
+│   ├── monsters/            # Monster creatures
+│   ├── fish/                # 47 Angeler fish species + generic
+│   ├── effects/             # VFX sprite sheets
+│   └── ...                  # npcs, companions, projectiles, ui
 ├── icons/                    # 5,653 PNG icons
 ├── backgrounds/              # 167 scene backgrounds
 ├── heroes/                   # 36 hero portraits + effects
