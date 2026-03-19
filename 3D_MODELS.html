@@ -33,7 +33,13 @@
     .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
     .model-card { background: var(--card-bg); border-radius: 12px; padding: 14px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; }
     .model-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
-    .model-icon { width: 100%; aspect-ratio: 1; border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 8px; position: relative; overflow: hidden; }
+    .model-icon { width: 100%; aspect-ratio: 1; border-radius: 8px; background: linear-gradient(135deg, rgba(20,20,35,0.9), rgba(30,30,50,0.7)); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 8px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+    .model-icon .cube-svg { width: 55%; height: 55%; opacity: 0.5; transition: opacity 0.3s, transform 0.3s; }
+    .model-card:hover .cube-svg { opacity: 0.8; transform: scale(1.05) rotate(5deg); }
+    .model-icon .thumb-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; z-index: 1; }
+    .model-icon .load-shimmer { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent); animation: shimmer 2s infinite; pointer-events: none; }
+    @keyframes shimmer { 0%{left:-100%} 100%{left:100%} }
+    .model-icon .error-overlay { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: #ef4444; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 3px; z-index: 2; }
     .model-icon .format-badge { position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
     .format-glb { background: #22c55e; color: #000; }
     .format-gltf { background: #3b82f6; color: #fff; }
@@ -600,7 +606,17 @@
         }
       } catch (err) {
         console.error('Model load error:', err);
-        document.getElementById('viewerStats').textContent = 'Error: ' + err.message;
+        document.getElementById('viewerStats').textContent = '\u26A0 Load failed: ' + err.message;
+        // Show helpful error in the canvas area
+        var loadEl = document.getElementById('viewerLoading');
+        loadEl.innerHTML = '<div style="text-align:center;padding:40px;">' +
+          '<div style="font-size:3rem;margin-bottom:12px;opacity:0.3;">\u26A0</div>' +
+          '<p style="color:#ef4444;font-size:1rem;margin-bottom:8px;">Failed to load model</p>' +
+          '<p style="color:var(--text-dim);font-size:0.8rem;max-width:400px;margin:0 auto;">' + err.message + '</p>' +
+          '<p style="color:var(--text-dim);font-size:0.75rem;margin-top:12px;">The model file may not be hosted yet. Try uploading it to R2 storage or loading from your machine.</p>' +
+          '</div>';
+        loadEl.style.display = 'block';
+        return;
       }
       document.getElementById('viewerLoading').style.display = 'none';
     }
@@ -835,6 +851,111 @@
         } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
       });
     }
+
+    /* ═══════════════ Thumbnail Generator ═══════════════ */
+    const thumbRenderer = { _renderer: null, _scene: null, _camera: null, _queue: [], _running: false };
+
+    function initThumbRenderer() {
+      if (thumbRenderer._renderer) return;
+      thumbRenderer._renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      thumbRenderer._renderer.setSize(200, 200);
+      thumbRenderer._renderer.setPixelRatio(1);
+      thumbRenderer._renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      thumbRenderer._renderer.toneMappingExposure = 1.3;
+      thumbRenderer._renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      thumbRenderer._scene = new THREE.Scene();
+      thumbRenderer._scene.background = new THREE.Color(0x1a1a2e);
+      thumbRenderer._scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+      thumbRenderer._scene.add(new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.4));
+      const dl = new THREE.DirectionalLight(0xffffff, 1.0);
+      dl.position.set(3, 5, 4);
+      thumbRenderer._scene.add(dl);
+
+      thumbRenderer._camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
+    }
+
+    async function generateThumbnail(url, format) {
+      initThumbRenderer();
+      const s = thumbRenderer._scene;
+      const c = thumbRenderer._camera;
+      const r = thumbRenderer._renderer;
+
+      let model;
+      try {
+        if (format === 'GLB' || format === 'GLTF') {
+          const loader = new GLTFLoader(); loader.setDRACOLoader(dracoLoader);
+          const gltf = await loader.loadAsync(url);
+          model = gltf.scene;
+        } else if (format === 'FBX') {
+          model = await new FBXLoader().loadAsync(url);
+        } else if (format === 'OBJ') {
+          model = await new OBJLoader().loadAsync(url);
+          model.traverse(ch => { if (ch.isMesh && (!ch.material || ch.material.type === 'MeshBasicMaterial')) ch.material = new THREE.MeshStandardMaterial({color:0xcccccc,roughness:0.6,metalness:0.2}); });
+        } else return null;
+      } catch { return null; }
+
+      s.add(model);
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const dist = maxDim / (2 * Math.tan((40 * Math.PI / 180) / 2)) * 1.6;
+      c.position.set(center.x + dist * 0.5, center.y + dist * 0.3, center.z + dist);
+      c.lookAt(center);
+      c.updateProjectionMatrix();
+
+      r.render(s, c);
+      const dataUrl = r.domElement.toDataURL('image/webp', 0.7);
+
+      // Cleanup
+      s.remove(model);
+      model.traverse(ch => { if (ch.geometry) ch.geometry.dispose(); if (ch.material) { (Array.isArray(ch.material)?ch.material:[ch.material]).forEach(m=>m.dispose()); } });
+
+      return dataUrl;
+    }
+
+    // Process thumbnail queue (max 1 concurrent)
+    async function processThumbQueue() {
+      if (thumbRenderer._running) return;
+      thumbRenderer._running = true;
+      while (thumbRenderer._queue.length > 0) {
+        const item = thumbRenderer._queue.shift();
+        if (!item.el.isConnected) continue; // card scrolled away
+        try {
+          const dataUrl = await generateThumbnail(item.url, item.format);
+          if (dataUrl && item.el.isConnected) {
+            const img = document.createElement('img');
+            img.className = 'thumb-img';
+            img.src = dataUrl;
+            img.loading = 'lazy';
+            item.el.appendChild(img);
+            // Remove shimmer
+            const shimmer = item.el.querySelector('.load-shimmer');
+            if (shimmer) shimmer.remove();
+          }
+        } catch { /* skip failed thumbnails */ }
+      }
+      thumbRenderer._running = false;
+    }
+
+    // IntersectionObserver for lazy thumbnail loading
+    const thumbObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target;
+        const url = el.dataset.modelUrl;
+        const format = el.dataset.format;
+        if (!url || el.dataset.thumbQueued) continue;
+        el.dataset.thumbQueued = '1';
+        thumbObserver.unobserve(el);
+        thumbRenderer._queue.push({ el, url, format });
+        processThumbQueue();
+      }
+    }, { rootMargin: '200px' });
+
+    // Expose thumbnail observer for catalog script
+    window._3dThumbObserver = thumbObserver;
 
     /* ═══════════════ Expose to catalog ═══════════════ */
     window._3dViewer = { openViewer, loadModelFromURL, closeViewer, loadModelFromFile };
@@ -1103,15 +1224,36 @@
       var end = Math.min(start + PAGE_SIZE, filteredModels.length);
       var page = filteredModels.slice(start, end);
       var grid = document.getElementById('modelGrid');
-      var icons = { GLB: '\uD83D\uDFE2', GLTF: '\uD83D\uDD35', FBX: '\uD83D\uDFE0', OBJ: '\uD83D\uDFE3' };
+      // SVG cube icons colored per format
+      var cubeColors = { GLB: '#22c55e', GLTF: '#3b82f6', FBX: '#f97316', OBJ: '#a855f7' };
+      function makeCubeSVG(fmt) {
+        var c = cubeColors[fmt] || '#888';
+        return '<svg class="cube-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
+          '<polygon points="40,8 72,24 72,56 40,72 8,56 8,24" fill="none" stroke="' + c + '" stroke-width="1.5" opacity="0.6"/>' +
+          '<polygon points="40,8 72,24 40,40 8,24" fill="' + c + '" opacity="0.15"/>' +
+          '<polygon points="40,40 72,24 72,56 40,72" fill="' + c + '" opacity="0.25"/>' +
+          '<polygon points="40,40 8,24 8,56 40,72" fill="' + c + '" opacity="0.1"/>' +
+          '<text x="40" y="50" text-anchor="middle" fill="' + c + '" font-size="10" font-weight="bold" opacity="0.7">' + fmt + '</text>' +
+        '</svg>';
+      }
       var html = '';
       for (var i = 0; i < page.length; i++) {
         var m = page[i];
         var fclass = 'format-' + m.format.toLowerCase();
         var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : '';
         var srcBadge = m._source === 'r2' ? '<span class="source-badge source-r2">R2</span>' : '<span class="source-badge source-static">Static</span>';
+        var modelUrl = '';
+        if (m._source === 'r2' && m._r2Url) {
+          modelUrl = m._r2Url;
+        } else if (r2Available && R2_WORKER_URL) {
+          modelUrl = R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file';
+        } else if (MODEL_BASE_URL) {
+          modelUrl = MODEL_BASE_URL + '/' + encodeURI(m.path);
+        }
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
-          '<div class="model-icon">' + (icons[m.format] || '\uD83D\uDCE6') +
+          '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
+            makeCubeSVG(m.format) +
+            '<div class="load-shimmer"></div>' +
             '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span>' + srcBadge + '</div>' +
           '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
           '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
@@ -1119,32 +1261,48 @@
       }
       grid.innerHTML = html;
 
-      // Click handlers — R2 models load directly, static models try R2 first
+      // Click handlers — try R2 first for all models, then static fallback
       grid.querySelectorAll('.model-card').forEach(function(card) {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', async function() {
           var idx = parseInt(this.dataset.idx);
           var m = filteredModels[idx];
           if (!m) return;
+          window._3dViewer.openViewer(m.name, m.format, m.path);
 
-          var url = null;
+          // R2 models have a direct URL
           if (m._source === 'r2' && m._r2Url) {
-            url = m._r2Url;
-          } else if (r2Available) {
-            // Try loading static model from R2 using its path as the asset key
-            url = R2_WORKER_URL + '/v1/assets/' + m.path.split('/').map(encodeURIComponent).join('/') + '/file';
-          } else if (MODEL_BASE_URL) {
-            url = MODEL_BASE_URL + '/' + m.path;
+            window._3dViewer.loadModelFromURL(m._r2Url, m.format);
+            return;
           }
 
-          if (url) {
-            window._3dViewer.openViewer(m.name, m.format, m.path);
-            window._3dViewer.loadModelFromURL(url, m.format);
+          // For static models: try R2 first (models are likely stored there), then fall back to static URL
+          if (r2Available && R2_WORKER_URL) {
+            var r2Url = R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file';
+            try {
+              var headRes = await fetch(r2Url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+              if (headRes.ok) {
+                window._3dViewer.loadModelFromURL(r2Url, m.format);
+                return;
+              }
+            } catch(e) { /* R2 doesn't have it, fall through */ }
+          }
+
+          // Fall back to static hosting with encoded URL
+          if (MODEL_BASE_URL) {
+            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + encodeURI(m.path), m.format);
           } else {
             showModelInfo(m);
           }
         });
       });
       renderPagination();
+
+      // Observe model icons for lazy thumbnail generation
+      if (window._3dThumbObserver) {
+        grid.querySelectorAll('.model-icon[data-model-url]').forEach(function(el) {
+          if (el.dataset.modelUrl) window._3dThumbObserver.observe(el);
+        });
+      }
     }
 
     function renderPagination() {
