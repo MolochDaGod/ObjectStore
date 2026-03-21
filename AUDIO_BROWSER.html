@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio SFX Browser — Grudge Studio ObjectStore</title>
+  <style>
+    :root {
+      --bg: #0a0a12;
+      --card: #12121e;
+      --border: #1e1e30;
+      --gold: #d4af37;
+      --gold-light: #f0d060;
+      --text: #e8e0d0;
+      --text-dim: #a09888;
+      --text-muted: #6a6258;
+      --radius: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { color: var(--gold-light); }
+
+    .header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 24px 32px; border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    .header h1 { font-size: 1.4rem; color: var(--gold); }
+    .header .back { font-size: 0.85rem; color: var(--text-dim); }
+    .header .count { margin-left: auto; font-size: 0.85rem; color: var(--text-dim); }
+
+    .controls {
+      padding: 16px 32px; display: flex; gap: 12px; align-items: center;
+      border-bottom: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .controls input {
+      flex: 1; min-width: 200px; padding: 8px 14px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+      font-size: 0.9rem; outline: none;
+    }
+    .controls input:focus { border-color: var(--gold); }
+    .controls select {
+      padding: 8px 14px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+      font-size: 0.85rem; outline: none; cursor: pointer;
+    }
+
+    .audio-list { padding: 16px 32px; }
+    .audio-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--card);
+      margin-bottom: 6px; transition: border-color 0.2s;
+    }
+    .audio-item:hover { border-color: var(--gold); }
+    .audio-item.playing { border-color: var(--gold); background: #1a1a2e; }
+
+    .play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--gold); background: transparent;
+      color: var(--gold); cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .play-btn:hover { background: var(--gold); color: var(--bg); }
+
+    .audio-info { flex: 1; min-width: 0; }
+    .audio-name { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .audio-meta { font-size: 0.75rem; color: var(--text-dim); display: flex; gap: 12px; margin-top: 2px; }
+    .audio-tag {
+      font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
+      background: #1a1a2e; color: var(--gold); border: 1px solid var(--border);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .audio-progress {
+      width: 160px; height: 4px; background: var(--border); border-radius: 2px;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .audio-progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.1s linear; }
+
+    .empty { text-align: center; padding: 60px 32px; color: var(--text-dim); font-size: 1rem; }
+    .loading { text-align: center; padding: 60px 32px; color: var(--text-dim); }
+    .loading::after { content: ''; display: inline-block; width: 20px; height: 20px; border: 2px solid var(--gold); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-left: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      .header, .controls, .audio-list { padding-left: 16px; padding-right: 16px; }
+      .audio-progress { width: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="./" class="back">&#8592; Back</a>
+    <h1>&#127925; Audio SFX Browser</h1>
+    <span class="count" id="count">Loading...</span>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search audio files..." />
+    <select id="filter-cat">
+      <option value="">All Categories</option>
+    </select>
+    <select id="filter-fmt">
+      <option value="">All Formats</option>
+      <option value=".wav">WAV</option>
+      <option value=".mp3">MP3</option>
+      <option value=".ogg">OGG</option>
+      <option value=".flac">FLAC</option>
+    </select>
+  </div>
+
+  <div id="list" class="audio-list">
+    <div class="loading">Loading audio registry...</div>
+  </div>
+
+  <script>
+    const BASE = 'https://molochdagod.github.io/ObjectStore';
+    let allAudio = [];
+    let currentAudioEl = null;
+    let currentItem = null;
+    let progressInterval = null;
+
+    async function loadAudio() {
+      try {
+        const res = await fetch(`${BASE}/api/v1/audio.json`);
+        const data = await res.json();
+        allAudio = Array.isArray(data) ? data : (data.files || data.audio || Object.values(data).flat());
+        // normalize entries
+        allAudio = allAudio.map(a => {
+          if (typeof a === 'string') return { path: a, name: a.split('/').pop(), category: guessCategory(a), format: '.' + a.split('.').pop() };
+          return { ...a, name: a.name || a.path?.split('/').pop() || 'unknown', category: a.category || guessCategory(a.path || ''), format: a.format || ('.' + (a.path || a.name || '').split('.').pop()) };
+        });
+        populateCategories();
+        render();
+        document.getElementById('count').textContent = allAudio.length + ' files';
+      } catch (e) {
+        document.getElementById('list').innerHTML = '<div class="empty">Failed to load audio registry. <a href="' + BASE + '/api/v1/audio.json">View raw JSON</a></div>';
+        document.getElementById('count').textContent = 'Error';
+      }
+    }
+
+    function guessCategory(path) {
+      if (!path) return 'other';
+      const p = path.toLowerCase();
+      if (p.includes('music') || p.includes('bgm') || p.includes('theme')) return 'music';
+      if (p.includes('sfx') || p.includes('effect')) return 'sfx';
+      if (p.includes('ui') || p.includes('click') || p.includes('button')) return 'ui';
+      if (p.includes('ambient') || p.includes('env')) return 'ambient';
+      if (p.includes('combat') || p.includes('sword') || p.includes('hit') || p.includes('swish') || p.includes('bow')) return 'combat';
+      if (p.includes('voice') || p.includes('grunt') || p.includes('scream')) return 'voice';
+      return 'other';
+    }
+
+    function populateCategories() {
+      const cats = [...new Set(allAudio.map(a => a.category))].sort();
+      const sel = document.getElementById('filter-cat');
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c; opt.textContent = c.charAt(0).toUpperCase() + c.slice(1);
+        sel.appendChild(opt);
+      });
+    }
+
+    function getFiltered() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const cat = document.getElementById('filter-cat').value;
+      const fmt = document.getElementById('filter-fmt').value;
+      return allAudio.filter(a => {
+        if (q && !a.name.toLowerCase().includes(q) && !(a.category || '').toLowerCase().includes(q)) return false;
+        if (cat && a.category !== cat) return false;
+        if (fmt && !a.name.toLowerCase().endsWith(fmt) && a.format !== fmt) return false;
+        return true;
+      });
+    }
+
+    function render() {
+      const filtered = getFiltered();
+      const list = document.getElementById('list');
+      if (filtered.length === 0) { list.innerHTML = '<div class="empty">No audio files match your search.</div>'; return; }
+      list.innerHTML = filtered.map((a, i) => `
+        <div class="audio-item" data-idx="${i}" id="item-${i}">
+          <button class="play-btn" onclick="togglePlay(${i})" id="btn-${i}">&#9654;</button>
+          <div class="audio-info">
+            <div class="audio-name">${escHtml(a.name)}</div>
+            <div class="audio-meta">
+              <span>${a.format?.toUpperCase().replace('.', '') || '?'}</span>
+              ${a.category ? '<span>' + a.category + '</span>' : ''}
+              ${a.path ? '<span>' + a.path.split('/').slice(0, -1).join('/') + '</span>' : ''}
+            </div>
+          </div>
+          <span class="audio-tag">${a.category || 'audio'}</span>
+          <div class="audio-progress" id="prog-${i}"><div class="audio-progress-bar" id="bar-${i}"></div></div>
+        </div>
+      `).join('');
+    }
+
+    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function togglePlay(idx) {
+      const filtered = getFiltered();
+      const a = filtered[idx];
+      const url = a.url || (a.path?.startsWith('http') ? a.path : BASE + '/' + (a.path || 'audio/' + a.name));
+
+      // stop current
+      if (currentAudioEl) {
+        currentAudioEl.pause();
+        currentAudioEl = null;
+        if (currentItem !== null) {
+          const oldBtn = document.getElementById('btn-' + currentItem);
+          const oldEl = document.getElementById('item-' + currentItem);
+          const oldBar = document.getElementById('bar-' + currentItem);
+          if (oldBtn) oldBtn.innerHTML = '&#9654;';
+          if (oldEl) oldEl.classList.remove('playing');
+          if (oldBar) oldBar.style.width = '0%';
+        }
+        clearInterval(progressInterval);
+        if (currentItem === idx) { currentItem = null; return; }
+      }
+
+      currentItem = idx;
+      currentAudioEl = new Audio(url);
+      const btn = document.getElementById('btn-' + idx);
+      const el = document.getElementById('item-' + idx);
+      const bar = document.getElementById('bar-' + idx);
+      btn.innerHTML = '&#9646;&#9646;';
+      el.classList.add('playing');
+
+      currentAudioEl.play().catch(() => { btn.innerHTML = '&#9888;'; });
+      progressInterval = setInterval(() => {
+        if (currentAudioEl && currentAudioEl.duration) {
+          bar.style.width = (currentAudioEl.currentTime / currentAudioEl.duration * 100) + '%';
+        }
+      }, 100);
+      currentAudioEl.onended = () => {
+        btn.innerHTML = '&#9654;';
+        el.classList.remove('playing');
+        bar.style.width = '0%';
+        clearInterval(progressInterval);
+        currentAudioEl = null;
+        currentItem = null;
+      };
+    }
+
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('filter-cat').addEventListener('change', render);
+    document.getElementById('filter-fmt').addEventListener('change', render);
+
+    loadAudio();
+  </script>
+</body>
+</html>
