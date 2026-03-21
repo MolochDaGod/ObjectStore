@@ -1,137 +1,80 @@
 {
   "version": "2.0.0",
-  "description": "Animation system definitions — battle sprite states, VFX timing, controller config, transition rules",
-  "commonAnimations": {
-    "IDLE": "idle",
-    "WALK": "walk",
-    "RUN": "run",
-    "ATTACK": "attack",
-    "ATTACK_MELEE": "attack_melee",
-    "ATTACK_RANGED": "attack_ranged",
-    "DIE": "die",
-    "DEATH": "death",
-    "HIT": "hit",
-    "HURT": "hurt",
-    "JUMP": "jump",
-    "FALL": "fall",
-    "GATHER": "gather",
-    "BUILD": "build",
-    "CAST": "cast",
-    "SPELL": "spell",
-    "VICTORY": "victory",
-    "DEFEAT": "defeat"
-  },
-  "battleAnimationStates": {
-    "description": "GRUDA-Wars battle sprite animation states used in BattleScreen combat",
-    "states": {
-      "idle": { "loop": true, "frameInterval": 120, "priority": 0 },
-      "attack1": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
-      "attack2": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
-      "attack3": { "loop": false, "frameInterval": 80, "priority": 5, "returnTo": "idle" },
-      "hurt": { "loop": false, "frameInterval": 100, "priority": 8, "returnTo": "idle" },
-      "death": { "loop": false, "frameInterval": 120, "priority": 10, "returnTo": null },
-      "cast": { "loop": false, "frameInterval": 100, "priority": 5, "returnTo": "idle" },
-      "heal": { "loop": false, "frameInterval": 100, "priority": 5, "returnTo": "idle" },
-      "block": { "loop": false, "frameInterval": 100, "priority": 6, "returnTo": "idle" },
-      "roll": { "loop": false, "frameInterval": 70, "priority": 7, "returnTo": "idle" },
-      "runAttack": { "loop": false, "frameInterval": 70, "priority": 6, "returnTo": "idle" },
-      "jump": { "loop": false, "frameInterval": 80, "priority": 6, "returnTo": "idle" },
-      "charge": { "loop": false, "frameInterval": 90, "priority": 5, "returnTo": "idle" }
+  "total": 210,
+  "description": "Grudge Warlords animation library. 210+ humanoid animations with retargeting support across 7 skeleton conventions.",
+  "skeletonConventions": ["mixamo", "character_armature", "human_armature", "animal_armature", "monster_armature", "blender_lr", "custom"],
+  "riggingGuide": {
+    "overview": "Any humanoid skeleton works. The retarget system auto-detects naming convention and remaps bone tracks.",
+    "minimumBones": ["Hips","Spine","Spine1","Spine2","Neck","Head","LeftShoulder","LeftArm","LeftForeArm","LeftHand","RightShoulder","RightArm","RightForeArm","RightHand","LeftUpLeg","LeftLeg","LeftFoot","RightUpLeg","RightLeg","RightFoot"],
+    "fullBoneCount": 46,
+    "pipeline": {
+      "fbxToGlb": "npx gltf-pipeline -i model.fbx -o model.glb",
+      "blender": "Export glTF 2.0 (.glb) with Skinning + Animation checked",
+      "mixamo": "Upload mesh → download animation-only FBX (Without Skin) → retarget remaps mixamorig: prefix",
+      "audit": "node scripts/audit-rigs.mjs validates bone coverage"
     },
-    "classFallbacks": {
-      "warrior": { "charge": "attack3", "roll": "block" },
-      "mage": { "charge": "attack2", "roll": "block", "runAttack": "attack3" },
-      "ranger": { "charge": "attack2", "runAttack": "attack3" },
-      "worge": { "runAttack": "attack3" }
+    "skeletonOptions": {
+      "65_full": "Full Mixamo with 5-finger chains",
+      "49_3chain": "3 finger chains per hand",
+      "41_2chain": "2 finger chains per hand",
+      "25_no_fingers": "No finger bones"
     }
   },
-  "vfxTiming": {
-    "description": "Default timing parameters for VFX effect rendering",
-    "effectFrameInterval": 35,
-    "followUpBaseDelay": 150,
-    "effectCleanupBuffer": 200,
-    "critEffectDuration": 1500,
-    "slashImpactDuration": 500,
-    "castingEffectDuration": 2500,
-    "dodgeFlashDuration": 700,
-    "weaponContactDuration": 900,
-    "damageFloatDuration": 1800,
-    "healFloatDuration": 1500,
-    "buffFloatDuration": 1600,
-    "blendModes": {
-      "default": "screen",
-      "earth": "normal",
-      "smoke": "screen"
-    },
-    "effectMask": "radial-gradient(ellipse at center, black 50%, transparent 80%)"
+  "categories": {
+    "idle": {"count": 12},
+    "movement": {"count": 38},
+    "combat_melee": {"count": 32},
+    "combat_ranged": {"count": 5},
+    "combat_magic": {"count": 8},
+    "combat_reaction": {"count": 12},
+    "dodge": {"count": 6},
+    "block": {"count": 18},
+    "death": {"count": 6},
+    "social": {"count": 18},
+    "harvesting": {"count": 24},
+    "swimming": {"count": 3},
+    "npc_idle": {"count": 12},
+    "mount": {"count": 1},
+    "misc": {"count": 2}
   },
-  "controllerParameters": [
-    "speed",
-    "direction",
-    "intensity",
-    "blend",
-    "custom"
+  "weaponPacks": {
+    "sword_shield": {"prefix":"sns","count":49,"class":"Warrior"},
+    "longbow": {"prefix":"bow","count":12,"class":"Ranger"},
+    "pistol_wand": {"prefix":"pistol","count":21,"class":"Mage/Ranger"},
+    "greatsword": {"prefix":"block.greatsword","count":3,"class":"Warrior"}
+  },
+  "classDefaults": {
+    "Warrior": {"idle":"sns.idle","walk":"sns.walk","run":"sns.run","attack":"sns.attack","block":"sns.block","dodge":"dodge.roll","death":"sns.death"},
+    "Mage": {"idle":"idle.wizard","walk":"move.walk_wizard","run":"move.run","attack":"combat.staff_attack","block":"block.generic","dodge":"dodge.roll","death":"death.wizard"},
+    "Ranger": {"idle":"bow.idle","walk":"bow.walk_forward","run":"bow.run_forward","attack":"combat.archery_shot","block":"block.inward","dodge":"dodge.parkour_vault","death":"death.basic"},
+    "Worg": {"idle":"idle.combat_02","walk":"move.walk","run":"move.run_fast","attack":"combat.dagger_1","block":"block.generic","dodge":"dodge.roll","death":"death.basic"}
+  },
+  "characterModels": [
+    "Animated_Character_Base.glb","Animated_Human.glb","Animated_Wizard.glb","Animated_Woman.glb",
+    "Animated_Zombie.glb","Anne.glb","BarbarianGlad.glb","berserker.glb",
+    "Character_Toon_Animated.glb","crusaders_knight.glb","dwarf_enforcer.glb","elf_enforcer.glb",
+    "ElfRanger.glb","fabledworker.glb","graatorc.glb","humandeathgiver.glb",
+    "orcpeon.glb","Pirate_Captain.glb","siegeman.glb","Skeleton.glb",
+    "skeletong_warrior.glb","survivealtoon.glb","undeadworker.glb","CharcterNoMesh.glb"
   ],
-  "transitionRules": {
-    "idle": ["walk", "run", "jump", "attack1", "attack2", "attack3", "cast", "heal", "block"],
-    "walk": ["idle", "run", "jump", "attack1"],
-    "run": ["idle", "walk", "jump", "runAttack"],
-    "attack1": ["idle", "attack2", "hurt"],
-    "attack2": ["idle", "attack3", "hurt"],
-    "attack3": ["idle", "hurt"],
-    "cast": ["idle", "hurt"],
-    "heal": ["idle", "hurt"],
-    "block": ["idle", "hurt", "attack1"],
-    "hurt": ["idle", "death"],
-    "death": [],
-    "roll": ["idle", "attack1"],
-    "runAttack": ["idle", "hurt"],
-    "jump": ["idle", "attack1", "attack2"],
-    "charge": ["idle", "cast"]
-  },
-  "animationCategories": {
-    "combat": {
-      "keywords": ["attack", "spell", "cast", "charge"],
-      "description": "Combat-related animations",
-      "states": ["attack1", "attack2", "attack3", "cast", "charge", "runAttack"]
-    },
-    "defense": {
-      "keywords": ["block", "dodge", "roll"],
-      "description": "Defensive animations",
-      "states": ["block", "roll"]
-    },
-    "support": {
-      "keywords": ["heal", "buff"],
-      "description": "Support/healing animations",
-      "states": ["heal", "cast"]
-    },
-    "reaction": {
-      "keywords": ["hurt", "death", "hit"],
-      "description": "Damage reaction animations",
-      "states": ["hurt", "death"]
-    },
-    "movement": {
-      "keywords": ["move", "walk", "run", "jump"],
-      "description": "Locomotion animations",
-      "states": ["walk", "run", "jump"]
-    },
-    "idle": {
-      "keywords": ["idle", "stand"],
-      "description": "Idle/standing animations",
-      "states": ["idle"]
+  "animationSources": [
+    {"pack":"CC0 Essential","format":"FBX","path":"animations/","count":5,"skeleton":"mixamo"},
+    {"pack":"Sword+Shield","format":"FBX","path":"animations/weapon-sword-shield/","count":49,"skeleton":"mixamo"},
+    {"pack":"Longbow","format":"FBX","path":"animations/weapon-longbow/","count":12,"skeleton":"mixamo"},
+    {"pack":"Pistol/Wand","format":"FBX","path":"animations/weapon-pistol/","count":21,"skeleton":"mixamo"},
+    {"pack":"Action Adventure","format":"FBX","path":"animations/action-adventure/","count":15,"skeleton":"mixamo"},
+    {"pack":"Gestures","format":"FBX","path":"animations/gestures/","count":14,"skeleton":"mixamo"},
+    {"pack":"Harvesting","format":"FBX","path":"animations/harvesting/","count":24,"skeleton":"mixamo"},
+    {"pack":"Embedded GLB","format":"GLB","path":"characters/","count":60,"skeleton":"mixed"}
+  ],
+  "sprites2d": {
+    "pixelCrawler": {
+      "basePath": "sprites/pixel-crawler",
+      "mobs": ["orc","orc-rogue","orc-shaman","orc-warrior","skeleton-base","skeleton-mage","skeleton-rogue","skeleton-warrior"],
+      "npcs": ["knight","rogue","wizzard"],
+      "anims": ["Idle","Run","Death"],
+      "format": "{basePath}/{type}/{name}/{anim}/{anim}-Sheet.png",
+      "frameSize": [32, 32]
     }
-  },
-  "blendDefaults": {
-    "fadeIn": 0.2,
-    "fadeOut": 0.2,
-    "similarAnimBlendMultiplier": 0.8,
-    "differentAnimBlendMultiplier": 1.2
-  },
-  "debugEventTypes": [
-    "start",
-    "end",
-    "blend",
-    "interrupt",
-    "error"
-  ]
+  }
 }

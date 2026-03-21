@@ -224,9 +224,10 @@ paths:
   /api/v1/animations.json:
     get:
       tags: [Engine]
-      summary: Get animations
+      summary: Get animation library
+      description: 210+ humanoid animations with retargeting support across 7 skeleton conventions. Includes weapon packs (Sword+Shield 49, Longbow 12, Pistol 21), harvesting (24), gestures (14), and rigging/conversion pipeline docs.
       responses:
-        '200': { description: Animations data }
+        '200': { description: Animation library with rigging guide, categories, weapon packs, class defaults, character models, 2D sprite data }
 
   /api/v1/rendering.json:
     get:
