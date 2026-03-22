@@ -1,7 +1,7 @@
 # Grudge Studio ObjectStore
-**Version 3.0.0** | Unified Game Data API, Asset Library & Integration Hub
+**Version 5.0.0** | Unified Game Data API, Backend SDK & Integration Hub
 
-The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, MCP server for AI agents, SDK, OpenAPI spec, and full game data extracted from GrudgeWars.
+The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
 **Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
 
@@ -150,36 +150,60 @@ ObjectStore integrates with all Grudge Studio repositories:
 
 ---
 
-## 📦 Legacy SDK
+## 📦 SDK v5.0 — Unified Client
 
-> **Note**: For new projects, use `@grudge-studio/core` instead. This legacy SDK is maintained for backward compatibility.
+The Grudge SDK provides a single import for **all** backend services + static game data.
 
 ```javascript
 import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
 
-const sdk = new GrudgeSDK();
+const sdk = new GrudgeSDK({ token: '<JWT>' });
 
-// Get all weapons
+// ── Static game data (ObjectStore) ──
 const weapons = await sdk.getWeapons();
-
-// Get weapons by category
-const swords = await sdk.getWeaponsByCategory('swords');
-
-// Get materials by tier
-const t5Materials = await sdk.getMaterialsByTier(5);
-
-// Search across all data
+const swords  = await sdk.getWeaponsByCategory('swords');
 const results = await sdk.search('iron');
+const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5);
 
-// Get icon URLs
-const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5); // Sword icon, tier 5
+// ── Auth (id.grudge-studio.com) ──
+const res = await sdk.auth.login('user', 'pass');
+const me  = await sdk.auth.getMe();
 
-// Get races, classes, factions
-const races = await sdk.getRaces();
-const warrior = await sdk.getClass('warrior');
-const crusade = await sdk.getFaction('crusade');
-const attrs = await sdk.getAttributes();
+// ── Game API (api.grudge-studio.com) ──
+const chars   = await sdk.game.listCharacters();
+const balance = await sdk.game.getBalance(charId);
+await sdk.game.startCraft({ char_id: 1, recipe_key: 'iron-sword' });
+const lobbies = await sdk.game.listLobbies({ mode: 'duel' });
+
+// ── Account API (account.grudge-studio.com) ──
+const profile = await sdk.account.getProfile(grudgeId);
+const friends = await sdk.account.listFriends();
+
+// ── Launcher API (launcher.grudge-studio.com) ──
+const manifest = await sdk.launcher.getManifest();
+
+// ── Asset Service (assets-api.grudge-studio.com) ──
+const assets = await sdk.assets.listAssets({ prefix: 'models/' });
+
+// ── WebSocket (ws.grudge-studio.com) ──
+const gameSocket = sdk.ws.game();
+gameSocket.emit('join-island', { island_key: 'island_1' });
+
+// ── Tier colors ──
+const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }
 ```
+
+### Service Clients
+
+| Client | URL | Description |
+|--------|-----|-------------|
+| `sdk.auth` | id.grudge-studio.com | Login, register, guest, wallet, discord, puter, identity |
+| `sdk.game` | api.grudge-studio.com | Characters, economy, crafting, combat, PvP, islands, missions, crews, inventory, gouldstones, AI |
+| `sdk.account` | account.grudge-studio.com | Profiles, friends, notifications, achievements, sessions |
+| `sdk.launcher` | launcher.grudge-studio.com | Manifest, entitlements, version history |
+| `sdk.assets` | assets-api.grudge-studio.com | Upload, list, delete assets |
+| `sdk.ws` | ws.grudge-studio.com | Socket.IO namespaces: /game, /crew, /global, /pvp |
+| `sdk.r2` | objectstore.grudge-studio.com | R2 storage (3D models, shaders, 3DFX) |
 
 ## 🤖 AI Backend Integration
 
@@ -265,18 +289,22 @@ const request: AIRequest = {
 - No authentication required
 - Hosted on GitHub Pages (free CDN)
 
-### Dynamic Data (GRUDA-Wars API)
-For player-specific data, arena, and accounts — hosted on [grudgewarlords.com](https://grudgewarlords.com):
+### Dynamic Data (Grudge Studio Backend — VPS)
+For player-specific data, economy, PvP, and accounts — self-hosted Docker + Coolify on VPS:
 
-| Resource | Endpoint |
-|----------|----------|
-| Accounts & Auth | `/api/auth/*`, `/api/discord/*` |
-| Characters & Inventory | `/api/db/characters`, `/api/db/inventory` |
-| Arena PvP | `/api/arena/lobby`, `/api/arena/battle/simulate` |
-| Leaderboards | `/api/arena/leaderboard`, `/api/public/leaderboard` |
-| Save/Load | `/api/db/save-game`, `/api/db/load-game` |
+| Service | URL | Description |
+|---------|-----|-------------|
+| Identity / Auth | `id.grudge-studio.com` | JWT auth (Discord, Web3Auth, Puter, guest, wallet) |
+| Game API | `api.grudge-studio.com` | Characters, economy, crafting, combat, PvP, islands, missions, crews |
+| Account API | `account.grudge-studio.com` | Profiles, friends, notifications, achievements |
+| Launcher API | `launcher.grudge-studio.com` | Version manifest, entitlements, launch tokens |
+| WebSocket | `ws.grudge-studio.com` | Real-time events (Socket.IO: /game, /crew, /global, /pvp) |
+| Asset Service | `assets-api.grudge-studio.com` | Upload/manage assets (metadata + conversions) |
+| R2 CDN | `assets.grudge-studio.com` | Public asset delivery (Cloudflare R2 Worker) |
+| Dashboard | `dash.grudge-studio.com` | Admin dashboard (Cloudflare Worker) |
+| Status | `status.grudge-studio.com` | Uptime monitoring (Uptime Kuma) |
 
-See [GRUDA-Wars README](https://github.com/MolochDaGod/StandaloneGrudge) for full API reference.
+See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend) `GRUDGE-STUDIO-CONTEXT.md` for full reference.
 
 ## 📊 Data Structure
 
@@ -410,7 +438,7 @@ ObjectStore/
 ├── audio/                    # 450 SFX (wav/mp3/ogg/flac)
 ├── video/                    # 6 cinematic MP4s
 ├── branding/                 # Favicons + brand assets
-├── sdk/grudge-sdk.js         # SDK with 30+ methods
+├── sdk/grudge-sdk.js         # SDK v5.0 — unified client for all services
 ├── mcp/                      # MCP server for AI agents
 ├── scripts/                  # Build + extraction tools
 │   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json

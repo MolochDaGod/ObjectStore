@@ -1,5 +1,5 @@
 # Grudge Studio Integration Guide
-**Version 2.1.0** | Last Updated: February 2026
+**Version 5.0.0** | Last Updated: March 2026
 
 Complete guide for integrating ObjectStore API across all Grudge Studio projects.
 
@@ -41,23 +41,86 @@ console.log(newItem.uuid); // ITEM-20260225120000-000001-A1B2C3D4
 
 ---
 
+## 🔌 SDK v5.0 — Backend Service Clients
+
+The SDK now provides typed clients for all Grudge Studio backend services alongside static data:
+
+```javascript
+import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
+
+const sdk = new GrudgeSDK({ token: '<JWT>' });
+
+// Auth — id.grudge-studio.com
+const loginRes = await sdk.auth.login('user', 'pass');
+const me = await sdk.auth.getMe();
+await sdk.auth.loginAndStore('login', 'user', 'pass'); // auto-stores token in localStorage
+
+// Game API — api.grudge-studio.com
+const chars = await sdk.game.listCharacters();
+const balance = await sdk.game.getBalance(charId);
+const recipes = await sdk.game.getRecipes({ class: 'warrior', tier: 3 });
+await sdk.game.startCraft({ char_id: 1, recipe_key: 'iron-sword' });
+const lobbies = await sdk.game.listLobbies({ mode: 'duel' });
+const gouldstones = await sdk.game.listGouldstones();
+const mission = await sdk.game.aiGenerateMission({ grudge_id: id, faction: 'Crusade', level: 10 });
+
+// Account API — account.grudge-studio.com
+const profile = await sdk.account.getProfile(grudgeId);
+const friends = await sdk.account.listFriends();
+await sdk.account.sendFriendRequest(otherGrudgeId);
+const achievements = await sdk.account.getMyAchievements();
+
+// Launcher API — launcher.grudge-studio.com
+const manifest = await sdk.launcher.getManifest('stable');
+
+// Asset Service — assets-api.grudge-studio.com
+const assets = await sdk.assets.listAssets({ prefix: 'models/' });
+await sdk.assets.upload(file, { key: 'models/sword.glb', category: '3d-models' });
+
+// WebSocket — ws.grudge-studio.com
+const gameSocket = sdk.ws.game();   // /game namespace
+const pvpSocket = sdk.ws.pvp();     // /pvp namespace
+gameSocket.emit('join-island', { island_key: 'island_1' });
+gameSocket.on('player-joined', data => console.log(data));
+pvpSocket.emit('join_queue', { mode: 'duel' });
+
+// Tier colors
+const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }
+
+// Session management
+sdk.setToken(newToken);   // update token at runtime
+sdk.clearSession();       // logout — clears localStorage
+```
+
+### Exported Constants
+
+```javascript
+import { TIER_COLORS, LS_KEYS, PREFIX_MAP } from './grudge-sdk.js';
+
+TIER_COLORS[5]  // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }
+LS_KEYS.AUTH_TOKEN   // 'grudge_auth_token'
+PREFIX_MAP.item      // 'ITEM'
+```
+
+---
+
 ## 📦 Package Structure
 
 ```
-@grudge-studio/core/
-├── integrations/
-│   ├── grudge-studio-core.js        # Main API client
-│   ├── warlord-crafting-suite-integration.tsx  # React/TypeScript
-│   └── GrudgeWarlords-Unity-Integration.cs     # Unity C#
+ObjectStore/
 ├── sdk/
-│   └── grudge-sdk.js                 # Legacy SDK
+│   ├── grudge-sdk.js          # v5.0 — unified client for all services
+│   └── r2-client.js           # R2 storage client
+├── integrations/
+│   ├── grudge-studio-core.js  # NPM package entry
+│   ├── warlord-crafting-suite-integration.tsx
+│   └── GrudgeWarlords-Unity-Integration.cs
 ├── utils/
-│   ├── item-registry.js              # Single source of truth
-│   └── image-generator.js            # AI image generation
+│   ├── item-registry.js
+│   └── image-generator.js
 ├── css/
-│   └── tier-system.css               # T1-T8 styling
-└── types/
-    └── index.d.ts                    # TypeScript definitions
+│   └── tier-system.css
+└── api/v1/*.json              # 45+ static game data endpoints
 ```
 
 ---
@@ -572,6 +635,6 @@ console.log('Boss dropped:', loot);
 
 ---
 
-**Last Updated**: February 25, 2026  
-**Version**: 2.1.0  
-**Maintained by**: Grudge Studio Team + Oz (oz-agent@warp.dev)
+**Last Updated**: March 22, 2026  
+**Version**: 5.0.0  
+**Maintained by**: Racalvin The Pirate King + Oz (oz-agent@warp.dev)
