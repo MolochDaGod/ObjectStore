@@ -87,6 +87,9 @@
     .hero-class { font-size:0.6rem; color:var(--tier-4); font-style:italic; }
     .alias-tag { font-size:0.55rem; color:var(--text-dim); opacity:0.7; }
     .char-desc { font-size:0.6rem; color:var(--text-dim); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .blend-btn, .bg-btn, .play-mode-btn { padding:4px 10px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer; font-size:0.7rem; transition:all 0.2s; }
+    .blend-btn:hover, .bg-btn:hover, .play-mode-btn:hover { border-color:var(--tier-4); color:var(--tier-4); }
+    .blend-btn.active, .bg-btn.active, .play-mode-btn.active { background:var(--tier-4); color:#000; border-color:var(--tier-4); }
     @media(max-width:768px) { .modal-info { grid-template-columns:1fr 1fr; } .char-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
   </style>
 </head>
@@ -103,7 +106,13 @@
       <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search by name, category, or UUID...">
       <div class="filter-row"><span class="filter-label">Category:</span><div id="catFilters"></div></div>
       <div class="filter-row"><span class="filter-label">Source:</span><div id="srcFilters"></div></div>
+      <div class="filter-row" style="margin-top:8px;border-top:1px solid var(--border-color);padding-top:8px;">
+        <span class="filter-label">Tools:</span>
+        <button class="filter-btn" id="btnValidate" style="font-size:0.7rem;">Validation Report</button>
+        <button class="filter-btn" id="btnRescan" style="font-size:0.7rem;">Re-scan JSON</button>
+      </div>
     </div>
+    <div id="validationReport" style="display:none;background:var(--card-bg);padding:20px;border-radius:12px;margin-bottom:24px;max-height:400px;overflow-y:auto;"></div>
     <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading sprite data...</p></div>
     <div id="resultsArea" style="display:none;">
       <div class="results-header"><h2 class="results-title">Sprites</h2><span class="results-count" id="resultsCount"></span></div>
@@ -176,6 +185,8 @@
       document.getElementById('modalClose').addEventListener('click', closeModal);
       document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target===e.currentTarget) closeModal(); });
       document.addEventListener('keydown', function(e) { if (e.key==='Escape') closeModal(); });
+      document.getElementById('btnValidate').addEventListener('click', runValidation);
+      document.getElementById('btnRescan').addEventListener('click', function() { window.open(BASE+'/api/v1/sprite-characters.json','_blank'); });
     }
 
     function setupObs() {
@@ -256,7 +267,21 @@
       var cv = document.getElementById(id); if(!cv) return;
       var ctx = cv.getContext('2d'), ad = ch.animations[ai], img = new Image();
       img.crossOrigin = 'anonymous';
-      anims[id] = { img:img, cv:cv, ctx:ctx, f:0, fc:ad.frameCount||1, fw:ad.frameW||128, fh:ad.frameH||128, playing:false, raf:null, fps:8, lt:0, layout:ad.layout||'horizontal' };
+      var cols = ad.cols || 1, rows = ad.rows || 1;
+      anims[id] = { img:img, cv:cv, ctx:ctx, f:0, fc:ad.frameCount||1, fw:ad.frameW||128, fh:ad.frameH||128, cols:cols, rows:rows, playing:false, raf:null, fps:8, lt:0, layout:ad.layout||'horizontal', ad:ad, frames:ad.frames||null };
+      // Frame-sequence: load individual frame images
+      if (ad.layout === 'frame-sequence' && ad.frames && ad.frames.length) {
+        var a = anims[id];
+        a.frameImgs = []; a.framesLoaded = 0;
+        ad.frames.forEach(function(fp, idx) {
+          var fi = new Image(); fi.crossOrigin = 'anonymous';
+          fi.onload = function() { a.framesLoaded++; if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) obs.observe(vp); var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; } };
+          fi.onerror = function() { a.framesLoaded++; };
+          fi.src = BASE + fp;
+          a.frameImgs[idx] = fi;
+        });
+        return;
+      }
       img.onload = function() {
         var a = anims[id]; if(!a) return;
         cv.width = a.fw; cv.height = a.fh;
@@ -267,29 +292,50 @@
         var vp = cv.parentElement; if(vp) obs.observe(vp);
       };
       img.onerror = function() {
-        if (!img.dataset.retry) {
+        var retry = +(img.dataset.retry || 0);
+        if (retry === 0) {
           img.dataset.retry = '1';
-          // Try alternate path (flat structure)
-          var alt = ad.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish)\//, '/sprites/');
-          img.src = BASE + alt;
-        } else {
-          var fi = document.getElementById('fi-'+id);
-          if(fi) fi.textContent = 'Failed';
-          ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='12px sans-serif'; ctx.textAlign='center';
-          ctx.fillText('\u274C',cv.width/2,cv.height/2);
+          // Try flat path (strip category subfolder)
+          var alt = ad.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui)\//, '/sprites/');
+          if (alt !== ad.path) { img.src = BASE + alt; return; }
+          img.dataset.retry = '2';
         }
+        if (retry <= 1) {
+          img.dataset.retry = '2';
+          // Try nested path (add category subfolder)
+          var cat = ch.category || 'characters';
+          var nested = ad.path.replace('/sprites/', '/sprites/' + cat + '/');
+          if (nested !== ad.path) { img.src = BASE + nested; return; }
+        }
+        var fi = document.getElementById('fi-'+id);
+        if(fi) fi.textContent = 'Failed';
+        ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('\u274C',cv.width/2,cv.height/2);
       };
       img.src = BASE + ad.path;
     }
 
     function drawF(a, f) {
       a.ctx.clearRect(0,0,a.fw,a.fh); a.ctx.imageSmoothingEnabled=false;
+      // Frame-sequence: draw individual frame image
+      if (a.frameImgs && a.frameImgs[f] && a.frameImgs[f].complete) {
+        a.ctx.drawImage(a.frameImgs[f], 0, 0, a.fw, a.fh);
+        return;
+      }
       var sx, sy, sw, sh, iw = a.img.naturalWidth, ih = a.img.naturalHeight;
-      if (a.layout==='vertical') { sx=0; sy=f*a.fh; sw=a.fw; sh=a.fh; }
-      else { sx=f*a.fw; sy=0; sw=a.fw; sh=a.fh; }
-      if (sx+sw>iw) sw=Math.max(0,iw-sx);
-      if (sy+sh>ih) sh=Math.max(0,ih-sy);
-      if (sw>0&&sh>0) a.ctx.drawImage(a.img, sx, sy, sw, sh, 0, 0, sw, sh);
+      // Grid layout: calculate col/row from frame index
+      if (a.layout === 'grid' || (a.cols > 1 && a.rows > 1)) {
+        var col = f % a.cols, row = Math.floor(f / a.cols);
+        sx = col * a.fw; sy = row * a.fh;
+      } else if (a.layout === 'vertical') {
+        sx = 0; sy = f * a.fh;
+      } else {
+        sx = f * a.fw; sy = 0;
+      }
+      sw = a.fw; sh = a.fh;
+      if (sx+sw > iw) sw = Math.max(0, iw - sx);
+      if (sy+sh > ih) sh = Math.max(0, ih - sy);
+      if (sw > 0 && sh > 0) a.ctx.drawImage(a.img, sx, sy, sw, sh, 0, 0, sw, sh);
     }
 
     function startA(id) {
@@ -301,11 +347,12 @@
     function stopA(id) { var a=anims[id]; if(!a)return; a.playing=false; if(a.raf){cancelAnimationFrame(a.raf);a.raf=null;} }
 
     // ─── Modal ───
-    var mA = null, mGrid = false;
+    var mA = null, mGrid = false, mBlend = 'source-over', mBg = 'dark', mPlayMode = 'loop', mHueShift = 0, mFlipH = false;
 
     function openModal(gi) {
       var c = filtered[gi]; if(!c) return;
       var srcClass = (c.source||'rpg-modular').replace(/[^a-z-]/g,'');
+      var isVFX = c.category === 'effects' || c.category === 'projectiles';
       var heroInfo = c.heroClass ? '<div class="hero-class" style="font-size:0.9rem;margin-bottom:4px;">'+esc(c.heroClass)+' Class'+(c.factionId?' &middot; '+esc(c.factionId)+' faction':'')+'</div>' : '';
       var aliasInfo = c.aliasOf ? '<div class="alias-tag" style="font-size:0.75rem;margin-bottom:8px;">Sprite alias of <strong>'+esc(c.aliasOf)+'</strong></div>' : '';
       var descInfo = c.description ? '<div style="color:var(--text-dim);font-size:0.85rem;margin-bottom:8px;">'+esc(c.description)+'</div>' : '';
@@ -320,28 +367,89 @@
           '<label>Frame <input type="range" id="mScrub" min="0" max="1" value="0"><span id="mScrubV">0</span></label>'+
           '<button id="mGridBtn">Grid</button>'+
           '<button id="mSheetBtn">Sheet</button>'+
-          '<button id="mExportBtn">Export</button>'+
-          '<label>Zoom <input type="range" id="mZoom" min="1" max="5" value="2" step="0.5"><span id="mZoomV">2x</span></label>'+
+          '<button id="mExportBtn">Export Frame</button>'+
+          '<button id="mExportAllBtn">Export All</button>'+
+          '<label>Zoom <input type="range" id="mZoom" min="1" max="8" value="2" step="0.5"><span id="mZoomV">2x</span></label>'+
+        '</div>'+
+        // ── VFX Controls ──
+        '<div class="modal-controls" id="mVfxRow" style="'+(isVFX?'':'display:none')+'">'+
+          '<label style="font-size:0.7rem;color:var(--tier-4);">VFX</label>'+
+          '<button class="blend-btn active" data-blend="source-over">Normal</button>'+
+          '<button class="blend-btn" data-blend="lighter">Additive</button>'+
+          '<button class="blend-btn" data-blend="screen">Screen</button>'+
+          '<button class="blend-btn" data-blend="multiply">Multiply</button>'+
+          '<span style="margin-left:8px;"></span>'+
+          '<button class="bg-btn active" data-bg="dark">Dark</button>'+
+          '<button class="bg-btn" data-bg="light">Light</button>'+
+          '<button class="bg-btn" data-bg="checker">Checker</button>'+
+          '<span style="margin-left:8px;"></span>'+
+          '<button class="play-mode-btn active" data-mode="loop">Loop</button>'+
+          '<button class="play-mode-btn" data-mode="pingpong">Ping-pong</button>'+
+          '<button class="play-mode-btn" data-mode="once">Once</button>'+
+        '</div>'+
+        // ── Sprite Editor ──
+        '<div class="modal-controls" id="mEditorRow">'+
+          '<label style="font-size:0.7rem;color:var(--tier-4);">Edit</label>'+
+          '<label>Hue <input type="range" id="mHue" min="-180" max="180" value="0"><span id="mHueV">0°</span></label>'+
+          '<label>Sat <input type="range" id="mSat" min="0" max="200" value="100"><span id="mSatV">100%</span></label>'+
+          '<label>Bright <input type="range" id="mBright" min="50" max="200" value="100"><span id="mBrightV">100%</span></label>'+
+          '<button id="mFlipBtn">Flip H</button>'+
+          '<button id="mTrimBtn">Auto-Trim</button>'+
+          '<button id="mResetEditBtn">Reset</button>'+
         '</div>'+
         '<div class="modal-info" id="mInfo"></div>'+
         '<div class="modal-path" id="mPath" onclick="copyText(this.textContent)"></div>';
       document.getElementById('modalBody').innerHTML = h;
+      mHueShift = 0; mFlipH = false; mBlend = 'source-over'; mBg = 'dark'; mPlayMode = 'loop';
       var btns = ''; c.animations.forEach(function(a,i) { btns += '<button class="modal-anim-btn'+(i===0?' active':'')+'" data-i="'+i+'">'+esc(a.name)+'</button>'; });
       document.getElementById('mBtns').innerHTML = btns;
       loadMA(c, 0);
+      // Animation buttons
       document.getElementById('mBtns').addEventListener('click', function(e) {
         var b=e.target.closest('[data-i]'); if(!b) return;
         this.querySelectorAll('[data-i]').forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
         loadMA(c, +b.dataset.i);
       });
+      // Playback controls
       document.getElementById('mFps').addEventListener('input', function() { if(mA)mA.fps=+this.value; document.getElementById('mFpsV').textContent=this.value; });
       document.getElementById('mScrub').addEventListener('input', function() { if(!mA)return; mA.f=+this.value; document.getElementById('mScrubV').textContent=this.value; if(!mA.playing) drawMF(mA.f); });
       document.getElementById('mGridBtn').addEventListener('click', function() { mGrid=!mGrid; this.classList.toggle('active',mGrid); if(mA&&!mA.playing) drawMF(mA.f); });
       document.getElementById('mSheetBtn').addEventListener('click', showSheet);
       document.getElementById('mExportBtn').addEventListener('click', exportF);
+      document.getElementById('mExportAllBtn').addEventListener('click', exportAllFrames);
       document.getElementById('mZoom').addEventListener('input', function() { document.getElementById('mZoomV').textContent=this.value+'x'; if(mA){document.getElementById('mCv').style.width=(mA.fw*+this.value)+'px';} });
+      // VFX controls
+      document.getElementById('mVfxRow').addEventListener('click', function(e) {
+        var bl = e.target.closest('.blend-btn');
+        if (bl) { this.querySelectorAll('.blend-btn').forEach(function(x){x.classList.remove('active');}); bl.classList.add('active'); mBlend=bl.dataset.blend; if(mA&&!mA.playing) drawMF(mA.f); }
+        var bg = e.target.closest('.bg-btn');
+        if (bg) { this.querySelectorAll('.bg-btn').forEach(function(x){x.classList.remove('active');}); bg.classList.add('active'); mBg=bg.dataset.bg; updateBg(); if(mA&&!mA.playing) drawMF(mA.f); }
+        var pm = e.target.closest('.play-mode-btn');
+        if (pm) { this.querySelectorAll('.play-mode-btn').forEach(function(x){x.classList.remove('active');}); pm.classList.add('active'); mPlayMode=pm.dataset.mode; }
+      });
+      // Sprite editor controls
+      document.getElementById('mHue').addEventListener('input', function() { mHueShift=+this.value; document.getElementById('mHueV').textContent=this.value+'\u00b0'; if(mA&&!mA.playing) drawMF(mA.f); });
+      document.getElementById('mSat').addEventListener('input', function() { document.getElementById('mSatV').textContent=this.value+'%'; if(mA&&!mA.playing) drawMF(mA.f); });
+      document.getElementById('mBright').addEventListener('input', function() { document.getElementById('mBrightV').textContent=this.value+'%'; if(mA&&!mA.playing) drawMF(mA.f); });
+      document.getElementById('mFlipBtn').addEventListener('click', function() { mFlipH=!mFlipH; this.classList.toggle('active',mFlipH); if(mA&&!mA.playing) drawMF(mA.f); });
+      document.getElementById('mTrimBtn').addEventListener('click', autoTrim);
+      document.getElementById('mResetEditBtn').addEventListener('click', function() {
+        mHueShift=0; mFlipH=false;
+        document.getElementById('mHue').value=0; document.getElementById('mHueV').textContent='0\u00b0';
+        document.getElementById('mSat').value=100; document.getElementById('mSatV').textContent='100%';
+        document.getElementById('mBright').value=100; document.getElementById('mBrightV').textContent='100%';
+        document.getElementById('mFlipBtn').classList.remove('active');
+        if(mA&&!mA.playing) drawMF(mA.f);
+      });
       document.getElementById('modalOverlay').classList.add('active');
       document.body.style.overflow = 'hidden';
+    }
+
+    function updateBg() {
+      var prev = document.getElementById('mPrev'); if(!prev) return;
+      if (mBg==='light') prev.style.background='rgba(200,200,200,0.9)';
+      else if (mBg==='checker') prev.style.background='repeating-conic-gradient(#333 0% 25%, #555 0% 50%) 0 0 / 20px 20px';
+      else prev.style.background='rgba(0,0,0,0.4)';
     }
 
     function loadMA(ch, ai) {
@@ -349,13 +457,14 @@
       var cv=document.getElementById('mCv'); if(!cv) return;
       var ctx=cv.getContext('2d'), ad=ch.animations[ai], img=new Image();
       img.crossOrigin='anonymous';
-      mA = { img:img, cv:cv, ctx:ctx, f:0, fc:1, fw:256, fh:256, raf:null, fps:+(document.getElementById('mFps').value)||8, lt:0, layout:'horizontal', ad:ad };
+      var cols=ad.cols||1, rows=ad.rows||1;
+      mA = { img:img, cv:cv, ctx:ctx, f:0, fc:1, fw:256, fh:256, cols:cols, rows:rows, raf:null, fps:+(document.getElementById('mFps').value)||8, lt:0, layout:'horizontal', ad:ad, ch:ch, dir:1 };
       img.onload = function() {
-        mA.fc=ad.frameCount||1; mA.fw=ad.frameW||img.naturalWidth; mA.fh=ad.frameH||img.naturalHeight; mA.layout=ad.layout||'horizontal';
+        mA.fc=ad.frameCount||1; mA.fw=ad.frameW||img.naturalWidth; mA.fh=ad.frameH||img.naturalHeight; mA.layout=ad.layout||'horizontal'; mA.cols=ad.cols||1; mA.rows=ad.rows||1;
         cv.width=mA.fw; cv.height=mA.fh;
         var z=+(document.getElementById('mZoom').value)||2; cv.style.width=(mA.fw*z)+'px';
         var sc=document.getElementById('mScrub'); sc.max=Math.max(0,mA.fc-1); sc.value=0; document.getElementById('mScrubV').textContent='0';
-        var ll = mA.layout==='vertical'?'Vertical':mA.layout==='horizontal'?'Horizontal':mA.layout==='single'?'Single':mA.layout;
+        var ll = mA.layout==='vertical'?'Vertical':mA.layout==='horizontal'?'Horizontal':mA.layout==='single'?'Single':mA.layout==='grid'?'Grid ('+mA.cols+'x'+mA.rows+')':mA.layout;
         var sd = (ad.layout==='horizontal-guess'||ad.layout==='unknown') ? '<span class="dot dot-warn"></span>' : '<span class="dot dot-ok"></span>';
         document.getElementById('mInfo').innerHTML =
           '<div class="modal-info-item"><div class="modal-info-label">Animation</div><div class="modal-info-value">'+esc(ad.name)+'</div></div>'+
@@ -365,23 +474,114 @@
           '<div class="modal-info-item"><div class="modal-info-label">Sheet</div><div class="modal-info-value">'+ad.width+'x'+ad.height+'</div></div>'+
           '<div class="modal-info-item"><div class="modal-info-label">Layout</div><div class="modal-info-value">'+sd+ll+'</div></div>';
         document.getElementById('mPath').textContent = ad.path;
+        // Show/hide VFX controls based on category
+        var isVFX = ch.category === 'effects' || ch.category === 'projectiles';
+        document.getElementById('mVfxRow').style.display = isVFX ? '' : 'none';
         drawMF(0);
-        if (mA.fc>1) { mA.playing=true; mA.lt=performance.now(); function tick(now){if(!mA||!mA.playing)return;if(now-mA.lt>=1000/mA.fps){mA.f=(mA.f+1)%mA.fc;mA.lt=now;drawMF(mA.f);document.getElementById('mScrub').value=mA.f;document.getElementById('mScrubV').textContent=mA.f;}mA.raf=requestAnimationFrame(tick);}mA.raf=requestAnimationFrame(tick); }
+        if (mA.fc>1) { mA.playing=true; mA.lt=performance.now(); mA.dir=1;
+          function tick(now) {
+            if(!mA||!mA.playing) return;
+            if(now-mA.lt>=1000/mA.fps) {
+              if (mPlayMode==='pingpong') {
+                mA.f+=mA.dir; if(mA.f>=mA.fc-1){mA.dir=-1;mA.f=mA.fc-1;} if(mA.f<=0){mA.dir=1;mA.f=0;}
+              } else if (mPlayMode==='once') {
+                mA.f++; if(mA.f>=mA.fc){mA.f=mA.fc-1;mA.playing=false;}
+              } else {
+                mA.f=(mA.f+1)%mA.fc;
+              }
+              mA.lt=now; drawMF(mA.f);
+              document.getElementById('mScrub').value=mA.f;
+              document.getElementById('mScrubV').textContent=mA.f;
+            }
+            mA.raf=requestAnimationFrame(tick);
+          }
+          mA.raf=requestAnimationFrame(tick);
+        }
       };
       img.onerror = function() { ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='18px sans-serif'; ctx.textAlign='center'; ctx.fillText('\u274C Load failed',cv.width/2,cv.height/2); };
       img.src = BASE + ad.path;
     }
 
+    // ── Get source rect for a frame ──
+    function getFrameSrc(a, f) {
+      var sx, sy, iw=a.img.naturalWidth, ih=a.img.naturalHeight;
+      if (a.layout==='grid' || (a.cols>1 && a.rows>1)) {
+        var col=f%a.cols, row=Math.floor(f/a.cols);
+        sx=col*a.fw; sy=row*a.fh;
+      } else if (a.layout==='vertical') { sx=0; sy=f*a.fh; }
+      else { sx=f*a.fw; sy=0; }
+      var sw=a.fw, sh=a.fh;
+      if(sx+sw>iw) sw=Math.max(0,iw-sx);
+      if(sy+sh>ih) sh=Math.max(0,ih-sy);
+      return {sx:sx,sy:sy,sw:sw,sh:sh};
+    }
+
     function drawMF(f) {
       if(!mA) return; var ctx=mA.ctx, fw=mA.fw, fh=mA.fh;
       ctx.clearRect(0,0,fw,fh); ctx.imageSmoothingEnabled=false;
-      var sx, sy, sw, sh, iw=mA.img.naturalWidth, ih=mA.img.naturalHeight;
-      if(mA.layout==='vertical') { sx=0; sy=f*fh; sw=fw; sh=fh; }
-      else { sx=f*fw; sy=0; sw=fw; sh=fh; }
-      if(sx+sw>iw) sw=Math.max(0,iw-sx);
-      if(sy+sh>ih) sh=Math.max(0,ih-sy);
-      if(sw>0&&sh>0) ctx.drawImage(mA.img, sx, sy, sw, sh, 0, 0, sw, sh);
+      ctx.save();
+      // VFX blending
+      ctx.globalCompositeOperation = mBlend;
+      // Flip
+      if (mFlipH) { ctx.translate(fw, 0); ctx.scale(-1, 1); }
+      var src = getFrameSrc(mA, f);
+      if(src.sw>0&&src.sh>0) ctx.drawImage(mA.img, src.sx, src.sy, src.sw, src.sh, 0, 0, src.sw, src.sh);
+      ctx.restore();
+      // Apply HSL adjustments
+      var hue = mHueShift, sat = +(document.getElementById('mSat')||{value:100}).value, bright = +(document.getElementById('mBright')||{value:100}).value;
+      if (hue !== 0 || sat !== 100 || bright !== 100) {
+        applyHSL(ctx, fw, fh, hue, sat/100, bright/100);
+      }
+      // Grid overlay
       if (mGrid) { ctx.strokeStyle='rgba(212,168,75,0.5)'; ctx.lineWidth=1; ctx.strokeRect(.5,.5,fw-1,fh-1); ctx.setLineDash([4,4]); ctx.beginPath();ctx.moveTo(fw/2,0);ctx.lineTo(fw/2,fh);ctx.stroke(); ctx.beginPath();ctx.moveTo(0,fh/2);ctx.lineTo(fw,fh/2);ctx.stroke(); ctx.setLineDash([]); }
+    }
+
+    // ── HSL pixel manipulation ──
+    function applyHSL(ctx, w, h, hueShift, satMul, brightMul) {
+      var id = ctx.getImageData(0, 0, w, h), d = id.data;
+      for (var i=0; i<d.length; i+=4) {
+        if (d[i+3]===0) continue; // skip transparent
+        var r=d[i]/255, g=d[i+1]/255, b=d[i+2]/255;
+        var max=Math.max(r,g,b), min=Math.min(r,g,b), l=(max+min)/2, s=0, hh=0;
+        if (max!==min) {
+          var dd=max-min; s=l>0.5?dd/(2-max-min):dd/(max+min);
+          if(max===r) hh=((g-b)/dd+(g<b?6:0))/6;
+          else if(max===g) hh=((b-r)/dd+2)/6;
+          else hh=((r-g)/dd+4)/6;
+        }
+        hh = ((hh*360 + hueShift) % 360 + 360) % 360 / 360;
+        s = Math.min(1, Math.max(0, s * satMul));
+        l = Math.min(1, Math.max(0, l * brightMul));
+        // HSL to RGB
+        if (s===0) { d[i]=d[i+1]=d[i+2]=Math.round(l*255); } else {
+          var q=l<0.5?l*(1+s):l+s-l*s, p=2*l-q;
+          d[i]=Math.round(hue2rgb(p,q,hh+1/3)*255);
+          d[i+1]=Math.round(hue2rgb(p,q,hh)*255);
+          d[i+2]=Math.round(hue2rgb(p,q,hh-1/3)*255);
+        }
+      }
+      ctx.putImageData(id, 0, 0);
+    }
+    function hue2rgb(p,q,t) { if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; }
+
+    // ── Auto-trim transparent padding ──
+    function autoTrim() {
+      if(!mA||!mA.img.complete) return;
+      var src=getFrameSrc(mA, mA.f), tc=document.createElement('canvas');
+      tc.width=src.sw; tc.height=src.sh;
+      var tctx=tc.getContext('2d'); tctx.imageSmoothingEnabled=false;
+      tctx.drawImage(mA.img, src.sx, src.sy, src.sw, src.sh, 0, 0, src.sw, src.sh);
+      var id=tctx.getImageData(0,0,src.sw,src.sh), d=id.data;
+      var t=src.sh, b=0, l=src.sw, r=0;
+      for(var y=0;y<src.sh;y++) for(var x=0;x<src.sw;x++) {
+        if(d[(y*src.sw+x)*4+3]>0) { if(y<t)t=y; if(y>b)b=y; if(x<l)l=x; if(x>r)r=x; }
+      }
+      if(b<t) return; // fully transparent
+      var tw=r-l+1, th=b-t+1;
+      var ec=document.createElement('canvas'); ec.width=tw; ec.height=th;
+      var ectx=ec.getContext('2d'); ectx.imageSmoothingEnabled=false;
+      ectx.drawImage(tc, l, t, tw, th, 0, 0, tw, th);
+      var link=document.createElement('a'); link.download=(mA.ad.id||'trimmed')+'_trimmed.png'; link.href=ec.toDataURL('image/png'); link.click();
     }
 
     function showSheet() {
@@ -391,7 +591,13 @@
       var z=+(document.getElementById('mZoom').value)||2; cv.style.width=(img.naturalWidth*z)+'px';
       ctx.imageSmoothingEnabled=false; ctx.drawImage(img,0,0);
       ctx.strokeStyle='rgba(212,168,75,0.4)'; ctx.lineWidth=1;
-      for(var i=1;i<mA.fc;i++){if(mA.layout==='vertical'){var y=i*mA.fh;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(img.naturalWidth,y);ctx.stroke();}else{var x=i*mA.fw;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,img.naturalHeight);ctx.stroke();}}
+      // Draw grid lines for all layouts
+      if (mA.layout==='grid'||(mA.cols>1&&mA.rows>1)) {
+        for(var c=1;c<mA.cols;c++){var x=c*mA.fw;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,img.naturalHeight);ctx.stroke();}
+        for(var r=1;r<mA.rows;r++){var y=r*mA.fh;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(img.naturalWidth,y);ctx.stroke();}
+      } else {
+        for(var i=1;i<mA.fc;i++){if(mA.layout==='vertical'){var y=i*mA.fh;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(img.naturalWidth,y);ctx.stroke();}else{var x=i*mA.fw;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,img.naturalHeight);ctx.stroke();}}
+      }
       if(mA.raf){cancelAnimationFrame(mA.raf);mA.raf=null;mA.playing=false;}
     }
 
@@ -399,13 +605,31 @@
       if(!mA||!mA.img.complete) return;
       var ec=document.createElement('canvas'); ec.width=mA.fw; ec.height=mA.fh;
       var ctx=ec.getContext('2d'); ctx.imageSmoothingEnabled=false;
-      var sx, sy, sw, sh, iw=mA.img.naturalWidth, ih=mA.img.naturalHeight;
-      if(mA.layout==='vertical') { sx=0; sy=mA.f*mA.fh; sw=mA.fw; sh=mA.fh; }
-      else { sx=mA.f*mA.fw; sy=0; sw=mA.fw; sh=mA.fh; }
-      if(sx+sw>iw) sw=Math.max(0,iw-sx);
-      if(sy+sh>ih) sh=Math.max(0,ih-sy);
-      if(sw>0&&sh>0) ctx.drawImage(mA.img, sx, sy, sw, sh, 0, 0, sw, sh);
+      var src=getFrameSrc(mA, mA.f);
+      if(src.sw>0&&src.sh>0) ctx.drawImage(mA.img, src.sx, src.sy, src.sw, src.sh, 0, 0, src.sw, src.sh);
+      // Apply current edits
+      var hue=mHueShift, sat=+(document.getElementById('mSat')||{value:100}).value, bright=+(document.getElementById('mBright')||{value:100}).value;
+      if(hue!==0||sat!==100||bright!==100) applyHSL(ctx,mA.fw,mA.fh,hue,sat/100,bright/100);
+      if(mFlipH){var fc=document.createElement('canvas');fc.width=mA.fw;fc.height=mA.fh;var fctx=fc.getContext('2d');fctx.translate(mA.fw,0);fctx.scale(-1,1);fctx.drawImage(ec,0,0);ec=fc;}
       var link=document.createElement('a'); link.download=(mA.ad.id||'frame')+'_'+mA.f+'.png'; link.href=ec.toDataURL('image/png'); link.click();
+    }
+
+    // ── Export all frames as individual PNGs (bundled download) ──
+    function exportAllFrames() {
+      if(!mA||!mA.img.complete||mA.fc<=0) return;
+      var hue=mHueShift, sat=+(document.getElementById('mSat')||{value:100}).value, bright=+(document.getElementById('mBright')||{value:100}).value;
+      for(var i=0;i<mA.fc;i++) {
+        (function(fi){
+          setTimeout(function(){
+            var ec=document.createElement('canvas'); ec.width=mA.fw; ec.height=mA.fh;
+            var ctx=ec.getContext('2d'); ctx.imageSmoothingEnabled=false;
+            var src=getFrameSrc(mA,fi);
+            if(src.sw>0&&src.sh>0) ctx.drawImage(mA.img,src.sx,src.sy,src.sw,src.sh,0,0,src.sw,src.sh);
+            if(hue!==0||sat!==100||bright!==100) applyHSL(ctx,mA.fw,mA.fh,hue,sat/100,bright/100);
+            var link=document.createElement('a'); link.download=(mA.ad.id||'frame')+'_'+String(fi).padStart(3,'0')+'.png'; link.href=ec.toDataURL('image/png'); link.click();
+          }, fi*100); // stagger downloads
+        })(i);
+      }
     }
 
     function closeModal() { if(mA){if(mA.raf)cancelAnimationFrame(mA.raf);mA=null;} document.getElementById('modalOverlay').classList.remove('active'); document.body.style.overflow=''; }
@@ -424,6 +648,65 @@
     window.goPage = function(p) { var t=Math.ceil(filtered.length/SIZE); if(p<0||p>=t)return; page=p; render(); window.scrollTo({top:document.getElementById('resultsArea').offsetTop-20,behavior:'smooth'}); };
     window.copyText = function(txt) { navigator.clipboard.writeText(txt).then(function() { var t=document.getElementById('copyToast'); t.style.display='block'; setTimeout(function(){t.style.display='none';},1200); }); };
     function esc(s) { return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'):''; }
+
+    // ─── Validation Report ───
+    function runValidation() {
+      var rpt = document.getElementById('validationReport');
+      rpt.style.display = 'block';
+      rpt.innerHTML = '<p style="color:var(--tier-4);">Running validation...</p>';
+      var issues = [], tested = 0, total = 0;
+      chars.forEach(function(c) {
+        // Check for missing animations
+        if (!c.animations || c.animations.length === 0) issues.push({type:'error', msg: esc(c.name)+' has no animations'});
+        // Check for single-frame only characters
+        var allSingle = c.animations && c.animations.every(function(a){return a.frameCount<=1;});
+        if (allSingle && c.category==='characters') issues.push({type:'warn', msg: esc(c.name)+' has only single-frame sprites (no animation)'});
+        // Check frame dimensions
+        c.animations.forEach(function(a) {
+          total++;
+          if (a.frameW > a.width || a.frameH > a.height) issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': frame size ('+a.frameW+'x'+a.frameH+') exceeds sheet ('+a.width+'x'+a.height+')'});
+          if (a.layout==='horizontal' && a.width % a.frameW !== 0) issues.push({type:'warn', msg: esc(c.name)+'/'+esc(a.name)+': sheet width '+a.width+' not divisible by frame width '+a.frameW});
+          if (a.layout==='vertical' && a.height % a.frameH !== 0) issues.push({type:'warn', msg: esc(c.name)+'/'+esc(a.name)+': sheet height '+a.height+' not divisible by frame height '+a.frameH});
+          // Test image loading
+          var img = new Image(); img.crossOrigin='anonymous';
+          img.onload = function() { tested++; checkDone(); };
+          img.onerror = function() {
+            // Try fallback
+            var alt = a.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui)\//, '/sprites/');
+            if (alt !== a.path) {
+              var img2 = new Image(); img2.crossOrigin='anonymous';
+              img2.onload = function() { tested++; checkDone(); };
+              img2.onerror = function() { issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': image failed to load: '+esc(a.path)}); tested++; checkDone(); };
+              img2.src = BASE + alt;
+            } else {
+              issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': image failed to load: '+esc(a.path)}); tested++; checkDone();
+            }
+          };
+          img.src = BASE + a.path;
+        });
+      });
+      function checkDone() {
+        if (tested < total) return;
+        var errors = issues.filter(function(x){return x.type==='error';});
+        var warns = issues.filter(function(x){return x.type==='warn';});
+        var h = '<h3 style="color:var(--tier-4);margin-bottom:12px;">Validation Report</h3>';
+        h += '<p style="margin-bottom:8px;">Tested '+total+' animations across '+chars.length+' characters</p>';
+        h += '<p><span class="dot dot-err"></span> '+errors.length+' errors &nbsp; <span class="dot dot-warn"></span> '+warns.length+' warnings &nbsp; <span class="dot dot-ok"></span> '+(total-errors.length)+' OK</p>';
+        if (issues.length) {
+          h += '<div style="margin-top:12px;font-size:0.8rem;">';
+          issues.forEach(function(is) {
+            var col = is.type==='error'?'#f44336':'#ff9800';
+            h += '<div style="color:'+col+';padding:2px 0;"><span class="dot dot-'+is.type.slice(0,3)+'"></span>'+is.msg+'</div>';
+          });
+          h += '</div>';
+        } else {
+          h += '<p style="color:#4caf50;margin-top:8px;">All sprites valid!</p>';
+        }
+        h += '<button class="filter-btn" style="margin-top:12px;" onclick="document.getElementById(\'validationReport\').style.display=\'none\'">Close</button>';
+        rpt.innerHTML = h;
+      }
+      if (total === 0) { rpt.innerHTML = '<p>No sprites to validate.</p>'; }
+    }
 
     init();
   })();

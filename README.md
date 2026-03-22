@@ -121,7 +121,7 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/rendering.json` | Rendering configuration |
 | `/api/v1/rtsModels.json` | RTS model registry |
 | `/api/v1/spriteMaps.json` | Sprite map definitions |
-| `/api/v1/sprite-characters.json` | 208 animated characters grouped by name with animations |
+| `/api/v1/sprite-characters.json` | 275 animated characters with animations, grid/frame-sequence support |
 | `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
 | `/api/v1/gdevelop-hero-aliases.json` | 25 hero class → sprite mappings for GDevelop Assistant |
 | `/api/v1/items-database.json` | Unified item database — 3,425 items with icon URLs, stats, tooltips (8 categories) |
@@ -369,16 +369,22 @@ All items display real icon assets — no emoji or placeholder images.
 - `/icons/abilities/` — 28 ability icons
 - `/icons/spells/` — Spell effect icons with color variants
 
-## 🎮 2D Sprite Browser
+## 🎮 2D Sprite Browser & Editor
 
 **Live:** [molochdagod.github.io/ObjectStore/2D_MODELS.html](https://molochdagod.github.io/ObjectStore/2D_MODELS.html)
 
-Animated sprite browser with canvas playback, frame scrubbing, zoom, sheet view, and single-frame export.
+Full-featured sprite browser, editor, and validation tool with:
+- **Canvas animation** — horizontal, vertical, grid, and frame-sequence layouts
+- **Sprite editor** — Hue/Saturation/Brightness sliders, horizontal flip, auto-trim transparent padding
+- **VFX preview** — Additive/Screen/Multiply blending modes, Dark/Light/Checkerboard backgrounds, Loop/Ping-pong/Once playback
+- **Export** — Single frame or all frames as individual PNGs (with edits applied)
+- **Validation report** — Tests every sprite for broken images, frame size mismatches, and missing animations
+- **275 characters, 2,220 animations** across 10 categories (characters, enemies, bosses, monsters, effects, fish, npcs, companions, projectiles, ui)
 
 ### Sources
-- **rpg-modular** — Core RPG character/enemy/boss/effect sprites (103 characters)
-- **grudge-angeler** — 47 fish species with animated sprite sheets from [Grudge Angeler](https://grudge-angeler.vercel.app/)
-- **gdevelop-assistant** — 25 hero class aliases mapped from [GDevelop Assistant](https://gdevelop-assistant.vercel.app/) (Archer, Assassin, Barbarian, Knight, Mage, etc.)
+- **rpg-modular** — Core RPG character/enemy/boss/effect sprites
+- **grudge-angeler** — 48 fish species with animated sprite sheets from [Grudge Angeler](https://grudge-angeler.vercel.app/)
+- **objectstore** — Additional sprites from effects, UI, projectiles, companions, and other packs
 
 ### Sprite API
 ```javascript
@@ -386,16 +392,18 @@ Animated sprite browser with canvas playback, frame scrubbing, zoom, sheet view,
 const res = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/sprite-characters.json');
 const data = await res.json();
 // data.characters[0] = { name, category, source, uuid, animations: [...] }
+// Each animation has: uuid, id, name, path, width, height, frameCount, frameW, frameH, layout, cols, rows
 
-// Filter by source
-const angelerFish = data.characters.filter(c => c.source === 'grudge-angeler');
-const gdevelopHeroes = data.characters.filter(c => c.source === 'gdevelop-assistant');
+// Filter by category
+const effects = data.characters.filter(c => c.category === 'effects');
+const bosses = data.characters.filter(c => c.category === 'bosses');
 ```
 
 ### Rebuild Sprites
 ```bash
-npm run rebuild:sprites2d   # Regenerate sprite-characters.json + sprites2d.json
+node tools/scan-sprites.js   # Scan sprites/ directory and regenerate sprite-characters.json
 ```
+The scanner reads PNG headers directly (no external deps), auto-detects frame layouts, deduplicates flat/nested paths, and preserves existing UUIDs.
 
 ---
 
@@ -407,8 +415,8 @@ ObjectStore/
 │   ├── weapons.json         # 17 categories, 816+ items
 │   ├── armor.json           # Helm, chest, boots, etc.
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
-│   ├── sprite-characters.json # 208 animated characters (3 sources)
-│   ├── sprites2d.json       # 2,388 unique 2D sprites (flat)
+│   ├── sprite-characters.json # 275 animated characters (3 sources)
+│   ├── sprites2d.json       # 2,220+ animations across all sprites
 │   ├── items-database.json  # 3,425 items with icons, stats, categories
 │   ├── gdevelop-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
@@ -424,7 +432,7 @@ ObjectStore/
 │   ├── heroes.json          # 36 hero portraits
 │   ├── models3d.json        # 471 3D model registry
 │   └── ...                  # + 30 more endpoints
-├── sprites/                  # 208 characters, 2,388 unique sprites
+├── sprites/                  # 275 characters, 2,220+ animations, 3,500+ PNGs
 │   ├── characters/          # Player characters (55 dirs)
 │   ├── enemies/             # Enemy units
 │   ├── bosses/              # Boss encounters
@@ -442,6 +450,8 @@ ObjectStore/
 ├── mcp/                      # MCP server for AI agents
 ├── scripts/                  # Build + extraction tools
 │   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
+├── tools/                    # Sprite tools
+│   └── scan-sprites.js      # Walk sprites/, auto-detect layouts, regenerate JSON
 ├── openapi.yaml              # OpenAPI 3.0.3 spec
 ├── sw.js                     # Service worker
 ├── package.json              # @grudge-studio/objectstore v3.0.0
