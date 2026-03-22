@@ -976,10 +976,10 @@
     var filters = { search: '', format: 'all', category: 'all' };
     var r2Available = false;
 
-    // R2 Worker URLs (objectstore preferred, assets as fallback — same worker)
+    // R2 Worker URLs (custom domain preferred, workers.dev as reliable fallback)
     var R2_URLS = [
       'https://objectstore.grudge-studio.com',
-      'https://assets.grudge-studio.com'
+      'https://grudgeassets.grudge.workers.dev'
     ];
     var R2_WORKER_URL = R2_URLS[0]; // resolved after health check
 
