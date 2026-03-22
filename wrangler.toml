@@ -23,7 +23,17 @@ binding = "DB"
 database_name = "objectstore-meta"
 database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
 
+# ── Durable Objects ─────────────────────────────────────────────────
+[durable_objects]
+bindings = [
+  { name = "CONVERSION_PIPELINE", class_name = "ConversionPipeline" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["ConversionPipeline"]
+
 # ── Custom domain ──────────────────────────────────────────────────
-[routes]
-pattern = "objectstore.grudge-studio.com/*"
-custom_domain = true
+routes = [
+  { pattern = "objectstore.grudge-studio.com/*", custom_domain = true }
+]

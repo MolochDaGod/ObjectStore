@@ -191,7 +191,7 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-      <p class="subtitle">580+ models — GLB, GLTF, FBX, OBJ — powered by Three.js
+    <p class="subtitle">1350+ models — GLB, GLTF, FBX, OBJ — powered by Three.js
         <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
       </p>
       <div class="stats-bar" id="statsBar"></div>
@@ -216,8 +216,8 @@
 
     <!-- Upload to R2 -->
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
-      <button class="upload-r2-btn" id="uploadR2Btn" disabled>&#9729; Upload to R2 Storage</button>
-      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj" style="display:none;">
+      <button class="upload-r2-btn" id="uploadR2Btn" disabled>&#9729; Convert &amp; Upload to R2</button>
+      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj" multiple style="display:none;">
       <span id="uploadR2Status" style="font-size:0.8rem;color:var(--text-dim);"></span>
     </div>
 
@@ -960,6 +960,10 @@
     /* ═══════════════ Expose to catalog ═══════════════ */
     window._3dViewer = { openViewer, loadModelFromURL, closeViewer, loadModelFromFile };
     window.GrudgeViewer = { scene: () => scene, camera: () => camera, renderer: () => renderer, currentModel: () => currentModel };
+
+    // Expose ModelConverter for the Convert+Upload pipeline (used by non-module catalog script)
+    const _earlyConverter = new ModelConverter();
+    window._modelConverter = _earlyConverter;
   </script>
 
   <!-- Catalog Script (non-module) -->
@@ -981,6 +985,21 @@
 
     // Configurable base URL for hosted models (update when models are on R2 or repo)
     var MODEL_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
+
+    // GitHack CDN — serves raw files from GitHub with proper CORS + content-type
+    var GITHACK_BASE_URL = 'https://raw.githack.com/molochdagod/ObjectStore/main';
+
+    // Properly encode a model path for use in URLs (encodes each segment individually)
+    function encodeModelPath(p) {
+      return p.split('/').map(function(seg) { return encodeURIComponent(seg); }).join('/');
+    }
+
+    // SHA-256 hash of a File (for dedup)
+    async function hashFile(file) {
+      var buffer = await file.arrayBuffer();
+      var hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
 
     /* === R2 Status Check (with fallback) === */
     async function checkR2Status() {
@@ -1071,7 +1090,7 @@
       console.log('Loaded ' + r2Models.length + ' 3D models from R2');
     }
 
-    /* === R2 Upload Handler === */
+    /* === Convert + Upload Pipeline Handler === */
     (function() {
       var btn = document.getElementById('uploadR2Btn');
       var fileIn = document.getElementById('r2FileInput');
@@ -1080,27 +1099,76 @@
       fileIn.addEventListener('change', async function() {
         var file = this.files[0];
         if (!file) return;
-        statusEl.textContent = 'Uploading ' + file.name + '...';
+        var ext = file.name.split('.').pop().toLowerCase();
+        var isGLB = ext === 'glb';
         btn.disabled = true;
+
         try {
-          var ext = file.name.split('.').pop().toLowerCase();
-          var key = 'models/uploaded/' + Date.now() + '-' + file.name;
+          // Step 1: Hash the source file for dedup
+          statusEl.textContent = 'Hashing ' + file.name + '...';
+          var sourceHash = await hashFile(file);
+
+          // Step 2: Dedup check — skip conversion if already done
+          if (r2Available) {
+            try {
+              var checkRes = await fetch(R2_WORKER_URL + '/v1/convert/check?hash=' + sourceHash);
+              var checkData = await checkRes.json();
+              if (checkData.exists) {
+                statusEl.textContent = 'Already converted! ' + checkData.filename;
+                await loadR2Models();
+                mergeAndRefresh();
+                btn.disabled = !r2Available;
+                fileIn.value = '';
+                return;
+              }
+            } catch(e) { /* dedup check failed, continue */ }
+          }
+
+          // Step 3: Convert to GLB if not already GLB (client-side via Three.js)
+          var glbBlob, glbName, meshes = 0, verts = 0, anims = 0;
+          if (isGLB) {
+            statusEl.textContent = 'Uploading ' + file.name + ' (already GLB)...';
+            glbBlob = file;
+            glbName = file.name;
+          } else {
+            statusEl.textContent = 'Converting ' + file.name + ' to GLB...';
+            // Use the module-level ModelConverter (already imported in the viewer)
+            var converterResult = await window._modelConverter.convertToGLB(file);
+            glbBlob = converterResult.blob;
+            glbName = converterResult.name;
+            meshes = converterResult.meshes;
+            verts = converterResult.verts;
+            anims = converterResult.animations;
+            statusEl.textContent = 'Converted! Uploading ' + glbName + '...';
+          }
+
+          // Step 4: Upload via conversion pipeline (Durable Object)
           var fd = new FormData();
-          fd.append('file', file);
-          fd.append('key', key);
-          fd.append('category', '3d-models');
-          fd.append('tags', JSON.stringify([ext, '3d']));
-          var res = await fetch(R2_WORKER_URL + '/v1/assets', { method: 'POST', body: fd });
+          fd.append('file', glbBlob, glbName);
+          fd.append('filename', glbName);
+          fd.append('sourceHash', sourceHash);
+          fd.append('sourceName', file.name);
+          fd.append('sourceFormat', ext);
+          fd.append('sourceSize', String(file.size));
+          fd.append('meshes', String(meshes));
+          fd.append('vertices', String(verts));
+          fd.append('animations', String(anims));
+
+          var res = await fetch(R2_WORKER_URL + '/v1/convert', { method: 'POST', body: fd });
           if (res.ok) {
-            statusEl.textContent = 'Uploaded! Reloading...';
+            var result = await res.json();
+            statusEl.textContent = result.deduplicated
+              ? 'Already exists: ' + glbName
+              : 'Stored: ' + glbName + ' (' + (result.size ? Math.round(result.size / 1024) + ' KB' : '') + ')';
             await loadR2Models();
             mergeAndRefresh();
-            statusEl.textContent = 'Uploaded ' + file.name;
           } else {
-            statusEl.textContent = 'Upload failed: ' + res.status;
+            var errData = await res.json().catch(function() { return {}; });
+            statusEl.textContent = 'Upload failed: ' + (errData.error || res.status);
           }
         } catch(e) {
-          statusEl.textContent = 'Upload error: ' + e.message;
+          statusEl.textContent = 'Error: ' + e.message;
+          console.error('Convert+Upload error:', e);
         }
         btn.disabled = !r2Available;
         fileIn.value = '';
@@ -1248,7 +1316,7 @@
         } else if (r2Available && R2_WORKER_URL) {
           modelUrl = R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file';
         } else if (MODEL_BASE_URL) {
-          modelUrl = MODEL_BASE_URL + '/' + encodeURI(m.path);
+          modelUrl = MODEL_BASE_URL + '/' + encodeModelPath(m.path);
         }
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
           '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
@@ -1287,9 +1355,19 @@
             } catch(e) { /* R2 doesn't have it, fall through */ }
           }
 
-          // Fall back to static hosting with encoded URL
+          // Try GitHack CDN (better CORS + content-type than GitHub Pages)
+          var githackUrl = GITHACK_BASE_URL + '/' + encodeModelPath(m.path);
+          try {
+            var ghRes = await fetch(githackUrl, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
+            if (ghRes.ok) {
+              window._3dViewer.loadModelFromURL(githackUrl, m.format);
+              return;
+            }
+          } catch(e) { /* GitHack doesn't have it, fall through */ }
+
+          // Fall back to GitHub Pages
           if (MODEL_BASE_URL) {
-            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + encodeURI(m.path), m.format);
+            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + encodeModelPath(m.path), m.format);
           } else {
             showModelInfo(m);
           }

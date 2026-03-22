@@ -10,8 +10,16 @@
  *   GET    /v1/assets/:id         Get asset metadata
  *   GET    /v1/assets/:id/file    Download asset file from R2
  *   DELETE /v1/assets/:id         Delete asset + R2 object
+ *   POST   /v1/convert            Convert & upload 3D model (via Durable Object)
+ *   GET    /v1/convert/check      Dedup check by source hash
+ *   GET    /v1/convert/:id        Get conversion job status
+ *   GET    /v1/convert/:id/ws     WebSocket for conversion progress
+ *   GET    /v1/convert/jobs       List recent conversion jobs
  *   GET    /health                Health check
  */
+
+// Re-export the Durable Object class so Wrangler can find it
+export { ConversionPipeline } from './ConversionPipeline.js';
 
 export default {
   async fetch(request, env) {
@@ -30,7 +38,12 @@ export default {
         return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '1.1.0' }), origin);
       }
 
-      // ── 3D Model routes (/v1/models) ─────────────────────────────
+      // ── Conversion pipeline routes (/v1/convert) ─────────────────
+      if (url.pathname.startsWith('/v1/convert')) {
+        return corsResponse(env, await handleConvertRoutes(request, url, method, env), origin);
+      }
+
+      // ── 3D Model routes (/v1/models) ─────────────────────────
       const modelFileMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/file$/);
       if (modelFileMatch && method === 'GET') {
         return corsResponse(env, await handleModelDownload(modelFileMatch[1], env), origin);
@@ -228,6 +241,134 @@ async function handleDelete(id, env) {
   await env.DB.prepare('DELETE FROM assets WHERE id = ?').bind(id).run();
 
   return json({ deleted: true, id });
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Conversion Pipeline Handlers
+// ════════════════════════════════════════════════════════════════════
+
+/** Get the Durable Object stub for the conversion pipeline */
+function getConversionDO(env) {
+  const id = env.CONVERSION_PIPELINE.idFromName('global-pipeline');
+  return env.CONVERSION_PIPELINE.get(id);
+}
+
+/** Route handler for /v1/convert/* */
+async function handleConvertRoutes(request, url, method, env) {
+  const path = url.pathname;
+
+  // POST /v1/convert — Client sends converted GLB + metadata
+  // Flow: hash original → start job (dedup check) → upload GLB → complete job
+  if (path === '/v1/convert' && method === 'POST') {
+    const authErr = requireAuth(request, env);
+    if (authErr) return authErr;
+
+    const form = await request.formData();
+    const file = form.get('file');
+    const sourceHash = form.get('sourceHash');
+    const sourceName = form.get('sourceName');
+    const sourceFormat = form.get('sourceFormat');
+    const sourceSize = form.get('sourceSize');
+    const meshes = form.get('meshes') || '0';
+    const vertices = form.get('vertices') || '0';
+    const animations = form.get('animations') || '0';
+
+    if (!file) return json({ error: 'Missing file (converted GLB)' }, 400);
+    if (!sourceHash) return json({ error: 'Missing sourceHash' }, 400);
+    if (!sourceName) return json({ error: 'Missing sourceName' }, 400);
+
+    const stub = getConversionDO(env);
+
+    // Step 1: Start job (includes dedup check)
+    const startResp = await stub.fetch(new Request('https://do/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sourceHash,
+        sourceName,
+        sourceFormat: sourceFormat || sourceName.split('.').pop(),
+        sourceSize: parseInt(sourceSize || '0', 10),
+      }),
+    }));
+
+    const startData = await startResp.json();
+
+    // If deduplicated, return the existing asset immediately
+    if (startData.deduplicated) {
+      return json(startData);
+    }
+
+    // Step 2: Complete — send the converted GLB to the DO for R2 storage
+    const completeForm = new FormData();
+    completeForm.append('jobId', startData.jobId);
+    completeForm.append('file', file, form.get('filename') || sourceName.replace(/\.[^/.]+$/, '') + '.glb');
+    completeForm.append('filename', form.get('filename') || sourceName.replace(/\.[^/.]+$/, '') + '.glb');
+    completeForm.append('meshes', meshes);
+    completeForm.append('vertices', vertices);
+    completeForm.append('animations', animations);
+
+    const completeResp = await stub.fetch(new Request('https://do/complete', {
+      method: 'POST',
+      body: completeForm,
+    }));
+
+    return new Response(completeResp.body, {
+      status: completeResp.status,
+      headers: completeResp.headers,
+    });
+  }
+
+  // GET /v1/convert/check?hash=<sha256> — Quick dedup check
+  if (path === '/v1/convert/check' && method === 'GET') {
+    const hash = url.searchParams.get('hash');
+    if (!hash) return json({ error: 'Missing hash parameter' }, 400);
+
+    // Check D1 for existing completed conversion with this hash
+    const row = await env.DB.prepare(
+      `SELECT cj.id, cj.output_asset_id, cj.status, a.filename, a.key
+       FROM conversion_jobs cj
+       LEFT JOIN assets a ON a.id = cj.output_asset_id
+       WHERE cj.source_hash = ? AND cj.status = 'done'
+       ORDER BY cj.completed_at DESC LIMIT 1`
+    ).bind(hash).first();
+
+    if (row) {
+      return json({
+        exists: true,
+        jobId: row.id,
+        assetId: row.output_asset_id,
+        filename: row.filename,
+        fileUrl: `/v1/assets/${row.output_asset_id}/file`,
+      });
+    }
+    return json({ exists: false });
+  }
+
+  // GET /v1/convert/jobs — List recent conversion jobs
+  if (path === '/v1/convert/jobs' && method === 'GET') {
+    const stub = getConversionDO(env);
+    const resp = await stub.fetch(new Request('https://do/jobs'));
+    return new Response(resp.body, { status: resp.status, headers: resp.headers });
+  }
+
+  // GET /v1/convert/:id/ws — WebSocket proxy to DO
+  const wsMatch = path.match(/^\/v1\/convert\/([^/]+)\/ws$/);
+  if (wsMatch && request.headers.get('Upgrade') === 'websocket') {
+    const stub = getConversionDO(env);
+    return stub.fetch(new Request('https://do/websocket', {
+      headers: request.headers,
+    }));
+  }
+
+  // GET /v1/convert/:id — Job status
+  const jobMatch = path.match(/^\/v1\/convert\/([^/]+)$/);
+  if (jobMatch && method === 'GET') {
+    const stub = getConversionDO(env);
+    const resp = await stub.fetch(new Request(`https://do/status/${jobMatch[1]}`));
+    return new Response(resp.body, { status: resp.status, headers: resp.headers });
+  }
+
+  return json({ error: 'Not found' }, 404);
 }
 
 // ════════════════════════════════════════════════════════════════════
