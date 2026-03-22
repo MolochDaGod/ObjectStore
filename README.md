@@ -203,9 +203,60 @@ const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: '
 | `sdk.launcher` | launcher.grudge-studio.com | Manifest, entitlements, version history |
 | `sdk.assets` | assets-api.grudge-studio.com | Upload, list, delete assets |
 | `sdk.ws` | ws.grudge-studio.com | Socket.IO namespaces: /game, /crew, /global, /pvp |
+| `sdk.ai` | ai.grudge-studio.com | AI worker — generate sprites/icons, auto-tag, semantic search, game agents |
 | `sdk.r2` | objectstore.grudge-studio.com | R2 storage (3D models, shaders, 3DFX) |
 
-## 🤖 AI Backend Integration
+## 🤖 AI Worker (Cloudflare Workers AI)
+
+**Endpoint:** `https://ai.grudge-studio.com`
+
+The AI Worker runs on Cloudflare's edge with Workers AI, sharing the same R2 bucket and D1 database as the ObjectStore API. It provides:
+- **Sprite generation** — text-to-sprite via Stable Diffusion XL
+- **Icon generation** — tier-aware RPG item icons
+- **Asset description** — image-to-text for any R2 asset
+- **Auto-tagging** — AI-powered tag suggestions for assets
+- **Semantic search** — query expansion + keyword matching across all assets
+- **Game agents** — 6 specialized agents (lore, balance, code, art, mission, QA)
+
+### SDK Usage
+
+```javascript
+import { GrudgeSDK } from './sdk/grudge-sdk.js';
+const sdk = new GrudgeSDK({ token: '<JWT>' });
+
+// Generate a sprite
+const sprite = await sdk.ai.generateSprite('orc warrior with axe', { style: '32x32 RPG character' });
+console.log(sprite.image);   // data:image/png;base64,...
+console.log(sprite.asset);   // { id, key, url } — auto-saved to R2
+
+// Generate a tier-5 weapon icon
+const icon = await sdk.ai.generateIcon('flaming greatsword', { tier: 5, category: 'weapon' });
+
+// Auto-tag an existing asset
+const tags = await sdk.ai.tag('asset-uuid-here');
+
+// Semantic search
+const results = await sdk.ai.search('fire spell effects', { category: 'effects' });
+
+// Chat with game agents
+const lore = await sdk.ai.chat('Create a backstory for the Crusade faction', { agent: 'lore' });
+const balance = await sdk.ai.chat('Is T5 sword damage balanced vs T5 axe?', { agent: 'balance' });
+```
+
+### Deploy
+
+```bash
+# Run D1 migration (one-time)
+wrangler d1 execute objectstore-meta --file=workers/ai/schema.sql
+
+# Deploy
+wrangler deploy --config workers/ai/wrangler.toml
+
+# Local dev
+wrangler dev --config workers/ai/wrangler.toml
+```
+
+## 🤖 AI Backend Integration (VPS)
 
 **NEW in 2.1.0**: Integrated AI agent system with specialized agents for game development.
 
@@ -452,6 +503,10 @@ ObjectStore/
 │   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
 ├── tools/                    # Sprite tools
 │   └── scan-sprites.js      # Walk sprites/, auto-detect layouts, regenerate JSON
+├── workers/ai/               # AI Worker (Cloudflare Workers AI)
+│   ├── index.js             # AI endpoints (generate, tag, search, chat)
+│   ├── wrangler.toml        # Config (R2 + D1 + AI bindings)
+│   └── schema.sql           # D1 migration for ai_jobs table
 ├── openapi.yaml              # OpenAPI 3.0.3 spec
 ├── sw.js                     # Service worker
 ├── package.json              # @grudge-studio/objectstore v3.0.0

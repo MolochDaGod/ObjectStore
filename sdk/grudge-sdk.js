@@ -36,6 +36,7 @@ const DEFAULT_LAUNCHER_URL  = 'https://launcher.grudge-studio.com';
 const DEFAULT_WS_URL        = 'https://ws.grudge-studio.com';
 const DEFAULT_ASSETS_API_URL = 'https://assets-api.grudge-studio.com';
 const DEFAULT_ASSETS_CDN_URL = 'https://assets.grudge-studio.com';
+const DEFAULT_AI_URL        = 'https://ai.grudge-studio.com';
 const DEFAULT_STATUS_URL    = 'https://status.grudge-studio.com';
 
 // ==========================================
@@ -479,6 +480,64 @@ class GrudgeAssetServiceClient {
 // WEBSOCKET CLIENT — ws.grudge-studio.com
 // ==========================================
 
+// ==========================================
+// AI CLIENT — ai.grudge-studio.com
+// ==========================================
+
+class GrudgeAIClient {
+  constructor(baseUrl, getToken) { this._url = baseUrl; this._gt = getToken; }
+
+  async _post(path, body) {
+    const { headers } = _resolveAuth(this._gt());
+    headers['Content-Type'] = 'application/json';
+    const res = await fetch(`${this._url}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(`AI API ${res.status}: ${res.statusText}`);
+    return res.json();
+  }
+
+  /** Describe an asset image — pass asset_id (from R2) or image_url */
+  async describe(opts) { return this._post('/v1/ai/describe', opts); }
+
+  /** Generate a sprite from text prompt */
+  async generateSprite(prompt, opts = {}) { return this._post('/v1/ai/generate-sprite', { prompt, ...opts }); }
+
+  /** Generate an item icon from text prompt */
+  async generateIcon(prompt, opts = {}) { return this._post('/v1/ai/generate-icon', { prompt, ...opts }); }
+
+  /** Auto-tag an asset using AI */
+  async tag(assetId) { return this._post('/v1/ai/tag', { asset_id: assetId }); }
+
+  /** Semantic search across assets */
+  async search(query, opts = {}) { return this._post('/v1/ai/search', { query, ...opts }); }
+
+  /** Chat with a game agent (lore, balance, code, art, mission, qa) */
+  async chat(prompt, opts = {}) { return this._post('/v1/ai/chat', { prompt, ...opts }); }
+
+  /** Chat with conversation history */
+  async chatMessages(messages, opts = {}) { return this._post('/v1/ai/chat', { messages, ...opts }); }
+
+  /** Get AI job status */
+  async getJob(jobId) {
+    const res = await fetch(`${this._url}/v1/ai/jobs/${jobId}`);
+    return res.json();
+  }
+
+  /** List recent AI jobs */
+  async listJobs(opts = {}) {
+    const p = new URLSearchParams();
+    if (opts.type) p.set('type', opts.type);
+    if (opts.limit) p.set('limit', String(opts.limit));
+    const res = await fetch(`${this._url}/v1/ai/jobs${p.toString() ? '?' + p : ''}`);
+    return res.json();
+  }
+
+  /** Health check */
+  async health() {
+    const res = await fetch(`${this._url}/health`);
+    return res.json();
+  }
+}
+
 class GrudgeWSClient {
   constructor(baseUrl, getToken) { this._url = baseUrl; this._gt = getToken; this._sockets = {}; }
 
@@ -548,6 +607,7 @@ class GrudgeSDK {
     this.account  = new GrudgeAccountClient(opts.accountUrl || DEFAULT_ACCOUNT_URL, getToken);
     this.launcher = new GrudgeLauncherClient(opts.launcherUrl || DEFAULT_LAUNCHER_URL, getToken);
     this.assets   = new GrudgeAssetServiceClient(opts.assetsApiUrl || DEFAULT_ASSETS_API_URL, getToken);
+    this.ai       = new GrudgeAIClient(opts.aiUrl || DEFAULT_AI_URL, getToken);
     this.ws       = new GrudgeWSClient(opts.wsUrl || DEFAULT_WS_URL, getToken);
 
     this.assetsCdnUrl = (opts.assetsCdnUrl || DEFAULT_ASSETS_CDN_URL).replace(/\/$/, '');

@@ -1,0 +1,35 @@
+# ─── Grudge AI Worker ────────────────────────────────────────────────
+# AI-powered asset generation, tagging, search, and game agents
+# Shares R2 + D1 with the main ObjectStore worker
+# Deploy: wrangler deploy --config workers/ai/wrangler.toml
+# Dev:    wrangler dev --config workers/ai/wrangler.toml
+# ─────────────────────────────────────────────────────────────────────
+
+name = "grudge-ai"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+# ── Workers AI ──────────────────────────────────────────────────────
+[ai]
+binding = "AI"
+
+# ── Environment variables ───────────────────────────────────────────
+[vars]
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://grudge-studio.com,https://ai.grudge-studio.com,https://dash.grudge-studio.com"
+OBJECTSTORE_URL = "https://objectstore.grudge-studio.com"
+
+# ── R2 Object Storage (same bucket as main worker) ─────────────────
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "objectstore-assets"
+
+# ── D1 SQL Database (same DB as main worker) ───────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "objectstore-meta"
+database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
+
+# ── Custom domain ──────────────────────────────────────────────────
+[routes]
+pattern = "ai.grudge-studio.com/*"
+custom_domain = true
