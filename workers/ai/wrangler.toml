@@ -1,0 +1,51 @@
+# ─── Grudge AI Hub ───────────────────────────────────────────────────────
+# AI worker: game agents, asset generation, R2 storage, VPS proxy
+# Deploy: wrangler deploy --config workers/ai/wrangler.toml
+# Dev:    wrangler dev --config workers/ai/wrangler.toml
+# ─────────────────────────────────────────────────────────────────────
+
+name = "grudge-ai-hub"
+main = "index.js"
+compatibility_date = "2025-03-01"
+
+# ── Workers AI ──────────────────────────────────────────────────────
+[ai]
+binding = "AI"
+
+# ── Environment variables ───────────────────────────────────────────
+# (preserves existing env from the original grudge-ai-hub)
+[vars]
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://grudge-studio.com,https://ai.grudge-studio.com,https://dash.grudge-studio.com"
+OBJECTSTORE_URL = "https://objectstore.grudge-studio.com"
+ENVIRONMENT = "production"
+MAX_PAYLOAD_BYTES = "65536"
+RATE_LIMIT_RPM = "60"
+RATE_LIMIT_RPM_ADMIN = "300"
+VPS_AI_AGENT_URL = "https://api.grudge-studio.com"
+
+# ── R2 Object Storage (shared with ObjectStore worker) ────────────
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "objectstore-assets"
+
+# ── D1: AI jobs database (original grudge-ai-hub DB) ──────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "grudge-ai-hub"
+database_id = "42ada55e-2095-46da-840b-6bb301a57253"
+
+# ── D1: ObjectStore metadata (for asset queries) ─────────────────
+[[d1_databases]]
+binding = "OBJECTSTORE_DB"
+database_name = "objectstore-meta"
+database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
+
+# ── KV: Rate limiting + response cache ───────────────────────────
+[[kv_namespaces]]
+binding = "KV"
+id = "486553dfacdc40b394e630b1cdfa97d6"
+
+# ── Custom domain ────────────────────────────────────────────────────────
+[[routes]]
+pattern = "ai.grudge-studio.com"
+custom_domain = true

@@ -6,14 +6,25 @@
 name = "grudgeassets"
 main = "workers/src/index.js"
 compatibility_date = "2024-12-01"
+workers_dev = true
+
+# ── Custom domain (must be top-level, before [[array]] sections) ───
+routes = [
+  { pattern = "objectstore.grudge-studio.com", custom_domain = true }
+]
 
 # ── Environment variables ───────────────────────────────────────────
 [vars]
-ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://grudge-studio.com"
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://grudge-studio.com,https://grudgeassets.grudge.workers.dev"
 MAX_UPLOAD_SIZE = "104857600"   # 100 MB
 
-# ── R2 Object Storage ────────────────────────────────────────────
-# Consolidated to grudge-assets (has all content; objectstore-assets was empty)
+# ── Durable Objects ─────────────────────────────────────────────────
+[durable_objects]
+bindings = [
+  { name = "CONVERSION_PIPELINE", class_name = "ConversionPipeline" }
+]
+
+# ── R2 Object Storage ──────────────────────────────────────────────
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "grudge-assets"
@@ -24,9 +35,7 @@ binding = "DB"
 database_name = "objectstore-meta"
 database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
 
-# ── Custom domain ──────────────────────────────────────────────────
-# NOTE: objectstore.grudge-studio.com is currently served by grudge-r2-cdn Worker.
-# This route is kept for reference but grudgeassets deploys independently.
-[[routes]]
-pattern = "objectstore.grudge-studio.com/*"
-custom_domain = true
+# ── DO Migrations (must be after all other [[array]] sections) ────
+[[migrations]]
+tag = "v1"
+new_classes = ["ConversionPipeline"]

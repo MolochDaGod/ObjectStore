@@ -2,7 +2,7 @@
 
 > **Purpose**: This document is the authoritative continuation prompt for any AI agent (Oz or successor) working on this repository. Update it whenever a session ends, a milestone completes, or task priorities change.
 >
-> **Last Updated**: 2026-02-28
+> **Last Updated**: 2026-03-22
 
 ---
 
@@ -11,12 +11,12 @@
 | Field | Value |
 |-------|-------|
 | **Repository** | `MolochDaGod/ObjectStore` |
-| **Package** | `@grudgstudio/core` v2.2.0 |
+| **Package** | `@grudgstudio/core` v2.2.0 / SDK v5.0.0 |
 | **Live URL** | https://molochdagod.github.io/ObjectStore |
 | **Primary Role** | Centralized single source of truth for all Grudge Studio game data |
 | **Agent Co-author** | Oz `<oz-agent@warp.dev>` |
 
-ObjectStore exposes a static JSON API (GitHub Pages) for Grudge Warlords weapons, materials, armor, consumables, skills, sprites, races, classes, factions, and attributes. It also ships `@grudgstudio/core` — a cross-platform SDK used by Unity, React/TypeScript, and Node.js clients.
+ObjectStore exposes a static JSON API (GitHub Pages) for Grudge Warlords weapons, materials, armor, consumables, skills, sprites, races, classes, factions, and attributes. The SDK v5.0 (`sdk/grudge-sdk.js`) is the unified client for all Grudge Studio services — static data, auth, game API, account API, launcher, asset service, and WebSocket. All backend services run on a self-hosted VPS (Docker + Coolify) at `grudge-studio.com` subdomains.
 
 ---
 
@@ -33,6 +33,7 @@ The most recent user session progressed through these stages:
    - `docs/reports/puter-remediation-plan-2026-02-28.md` — remediation plan
    - `docs/reports/puter-remediation-checklist.json` — machine-readable checklist
 3. **Agent prompt improvement** — user requested this document be created to encode all context so future agent sessions can resume without losing state.
+4. **SDK v5.0 (2026-03-22)** — Reviewed all frontend apps (GrudgeWars, GDevelop-Assistant, grudge-studio monorepo) and backend services (docker-compose with 8 services). Updated `sdk/grudge-sdk.js` to include full backend API clients: `GrudgeAuthClient`, `GrudgeGameClient`, `GrudgeAccountClient`, `GrudgeLauncherClient`, `GrudgeAssetServiceClient`, `GrudgeWSClient`. Added `TIER_COLORS`, `LS_KEYS`, auto-auth token resolution, updated `getDatabaseInfo()` to MySQL/Redis/VPS. Updated README, CHANGELOG, INTEGRATION-GUIDE.
 
 ---
 
@@ -43,12 +44,15 @@ Priority order based on last session state:
 | # | Task | Status | Priority |
 |---|------|--------|----------|
 | 1 | Improve agent prompt (this file) | ✅ Done | — |
-| 2 | Update ObjectStore wiki (`WIKI-HOME.md`) | 🔄 Partially done | 🔴 High |
-| 3 | Puter audit + integration for Grudge Studio portfolio | ✅ Infrastructure in place | 🟡 Ongoing |
-| 4 | Resolve at-risk projects (Warlord-Crafting-Suite, PuterGrudge) | ⏳ Pending | 🔴 High |
-| 5 | TypeScript definitions (`types/index.d.ts`) | ⏳ Pending | 🟡 Medium |
-| 6 | NPM package publication (`@grudgstudio/core`) | ⏳ Pending | 🟡 Medium |
-| 7 | Auto-generate missing item icons (Puter AI) | ⏳ Pending | 🟢 Low |
+| 2 | SDK v5.0 — backend API clients | ✅ Done (2026-03-22) | — |
+| 3 | Update docs (README, CHANGELOG, INTEGRATION-GUIDE) | ✅ Done (2026-03-22) | — |
+| 4 | Update ObjectStore wiki (`WIKI-HOME.md`) | 🔄 Partially done | 🔴 High |
+| 5 | Migrate frontends to use SDK instead of ad-hoc API clients | ⏳ Pending | 🔴 High |
+| 6 | Puter audit + integration for Grudge Studio portfolio | ✅ Infrastructure in place | 🟡 Ongoing |
+| 7 | Resolve at-risk projects (Warlord-Crafting-Suite, PuterGrudge) | ⏳ Pending | 🔴 High |
+| 8 | TypeScript definitions (`types/index.d.ts`) | ⏳ Pending | 🟡 Medium |
+| 9 | NPM package publication (`@grudgstudio/core`) | ⏳ Pending | 🟡 Medium |
+| 10 | Auto-generate missing item icons (Puter AI) | ⏳ Pending | 🟢 Low |
 
 ---
 
@@ -73,7 +77,7 @@ Priority order based on last session state:
 | `integrations/grudge-studio-core.js` | Main JS/TS API client | ✅ Active |
 | `integrations/warlord-crafting-suite-integration.tsx` | React component for Arsenal tab | ✅ Active |
 | `integrations/GrudgeWarlords-Unity-Integration.cs` | Unity C# MonoBehaviour | ✅ Active |
-| `sdk/grudge-sdk.js` | Legacy SDK (backward compat) | ✅ Maintained |
+| `sdk/grudge-sdk.js` | SDK v5.0 — unified client for all backend services + static data | ✅ Active |
 | `utils/item-registry.js` | Item registry (single source of truth) | ✅ Active |
 | `utils/image-generator.js` | Puter.js AI image generation | ✅ Active |
 | `types/index.d.ts` | TypeScript definitions | ⏳ Incomplete |
@@ -225,4 +229,4 @@ When starting a new agent session on this repository, execute in this order:
 
 ---
 
-**Maintained by**: Grudge Studio Team + Oz `<oz-agent@warp.dev>`
+**Maintained by**: Racalvin The Pirate King + Oz `<oz-agent@warp.dev>`

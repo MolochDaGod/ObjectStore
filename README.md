@@ -1,7 +1,7 @@
 # Grudge Studio ObjectStore
-**Version 3.0.0** | Unified Game Data API, Asset Library & Integration Hub
+**Version 5.0.0** | Unified Game Data API, Backend SDK & Integration Hub
 
-The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, MCP server for AI agents, SDK, OpenAPI spec, and full game data extracted from GrudgeWars.
+The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
 **Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
 
@@ -121,7 +121,7 @@ const balanced = await api.ai.balanceItem(item);
 | `/api/v1/rendering.json` | Rendering configuration |
 | `/api/v1/rtsModels.json` | RTS model registry |
 | `/api/v1/spriteMaps.json` | Sprite map definitions |
-| `/api/v1/sprite-characters.json` | 208 animated characters grouped by name with animations |
+| `/api/v1/sprite-characters.json` | 275 animated characters with animations, grid/frame-sequence support |
 | `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
 | `/api/v1/gdevelop-hero-aliases.json` | 25 hero class → sprite mappings for GDevelop Assistant |
 | `/api/v1/items-database.json` | Unified item database — 3,425 items with icon URLs, stats, tooltips (8 categories) |
@@ -150,38 +150,113 @@ ObjectStore integrates with all Grudge Studio repositories:
 
 ---
 
-## 📦 Legacy SDK
+## 📦 SDK v5.0 — Unified Client
 
-> **Note**: For new projects, use `@grudge-studio/core` instead. This legacy SDK is maintained for backward compatibility.
+The Grudge SDK provides a single import for **all** backend services + static game data.
 
 ```javascript
 import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
 
-const sdk = new GrudgeSDK();
+const sdk = new GrudgeSDK({ token: '<JWT>' });
 
-// Get all weapons
+// ── Static game data (ObjectStore) ──
 const weapons = await sdk.getWeapons();
-
-// Get weapons by category
-const swords = await sdk.getWeaponsByCategory('swords');
-
-// Get materials by tier
-const t5Materials = await sdk.getMaterialsByTier(5);
-
-// Search across all data
+const swords  = await sdk.getWeaponsByCategory('swords');
 const results = await sdk.search('iron');
+const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5);
 
-// Get icon URLs
-const iconUrl = sdk.getWeaponIconUrl('swords', 0, 5); // Sword icon, tier 5
+// ── Auth (id.grudge-studio.com) ──
+const res = await sdk.auth.login('user', 'pass');
+const me  = await sdk.auth.getMe();
 
-// Get races, classes, factions
-const races = await sdk.getRaces();
-const warrior = await sdk.getClass('warrior');
-const crusade = await sdk.getFaction('crusade');
-const attrs = await sdk.getAttributes();
+// ── Game API (api.grudge-studio.com) ──
+const chars   = await sdk.game.listCharacters();
+const balance = await sdk.game.getBalance(charId);
+await sdk.game.startCraft({ char_id: 1, recipe_key: 'iron-sword' });
+const lobbies = await sdk.game.listLobbies({ mode: 'duel' });
+
+// ── Account API (account.grudge-studio.com) ──
+const profile = await sdk.account.getProfile(grudgeId);
+const friends = await sdk.account.listFriends();
+
+// ── Launcher API (launcher.grudge-studio.com) ──
+const manifest = await sdk.launcher.getManifest();
+
+// ── Asset Service (assets-api.grudge-studio.com) ──
+const assets = await sdk.assets.listAssets({ prefix: 'models/' });
+
+// ── WebSocket (ws.grudge-studio.com) ──
+const gameSocket = sdk.ws.game();
+gameSocket.emit('join-island', { island_key: 'island_1' });
+
+// ── Tier colors ──
+const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }
 ```
 
-## 🤖 AI Backend Integration
+### Service Clients
+
+| Client | URL | Description |
+|--------|-----|-------------|
+| `sdk.auth` | id.grudge-studio.com | Login, register, guest, wallet, discord, puter, identity |
+| `sdk.game` | api.grudge-studio.com | Characters, economy, crafting, combat, PvP, islands, missions, crews, inventory, gouldstones, AI |
+| `sdk.account` | account.grudge-studio.com | Profiles, friends, notifications, achievements, sessions |
+| `sdk.launcher` | launcher.grudge-studio.com | Manifest, entitlements, version history |
+| `sdk.assets` | assets-api.grudge-studio.com | Upload, list, delete assets |
+| `sdk.ws` | ws.grudge-studio.com | Socket.IO namespaces: /game, /crew, /global, /pvp |
+| `sdk.ai` | ai.grudge-studio.com | AI worker — generate sprites/icons, auto-tag, semantic search, game agents |
+| `sdk.r2` | objectstore.grudge-studio.com | R2 storage (3D models, shaders, 3DFX) |
+
+## 🤖 AI Worker (Cloudflare Workers AI)
+
+**Endpoint:** `https://ai.grudge-studio.com`
+
+The AI Worker runs on Cloudflare's edge with Workers AI, sharing the same R2 bucket and D1 database as the ObjectStore API. It provides:
+- **Sprite generation** — text-to-sprite via Stable Diffusion XL
+- **Icon generation** — tier-aware RPG item icons
+- **Asset description** — image-to-text for any R2 asset
+- **Auto-tagging** — AI-powered tag suggestions for assets
+- **Semantic search** — query expansion + keyword matching across all assets
+- **Game agents** — 6 specialized agents (lore, balance, code, art, mission, QA)
+
+### SDK Usage
+
+```javascript
+import { GrudgeSDK } from './sdk/grudge-sdk.js';
+const sdk = new GrudgeSDK({ token: '<JWT>' });
+
+// Generate a sprite
+const sprite = await sdk.ai.generateSprite('orc warrior with axe', { style: '32x32 RPG character' });
+console.log(sprite.image);   // data:image/png;base64,...
+console.log(sprite.asset);   // { id, key, url } — auto-saved to R2
+
+// Generate a tier-5 weapon icon
+const icon = await sdk.ai.generateIcon('flaming greatsword', { tier: 5, category: 'weapon' });
+
+// Auto-tag an existing asset
+const tags = await sdk.ai.tag('asset-uuid-here');
+
+// Semantic search
+const results = await sdk.ai.search('fire spell effects', { category: 'effects' });
+
+// Chat with game agents
+const lore = await sdk.ai.chat('Create a backstory for the Crusade faction', { agent: 'lore' });
+const balance = await sdk.ai.chat('Is T5 sword damage balanced vs T5 axe?', { agent: 'balance' });
+```
+
+### Deploy
+
+```bash
+# Run D1 migration (one-time)
+wrangler d1 execute objectstore-meta --file=workers/ai/schema.sql
+
+# Deploy
+wrangler deploy --config workers/ai/wrangler.toml
+
+# Local dev
+wrangler dev --config workers/ai/wrangler.toml
+```
+
+## 🤖 AI Backend Integration (VPS)
 
 **NEW in 2.1.0**: Integrated AI agent system with specialized agents for game development.
 
@@ -265,18 +340,22 @@ const request: AIRequest = {
 - No authentication required
 - Hosted on GitHub Pages (free CDN)
 
-### Dynamic Data (GRUDA-Wars API)
-For player-specific data, arena, and accounts — hosted on [grudgewarlords.com](https://grudgewarlords.com):
+### Dynamic Data (Grudge Studio Backend — VPS)
+For player-specific data, economy, PvP, and accounts — self-hosted Docker + Coolify on VPS:
 
-| Resource | Endpoint |
-|----------|----------|
-| Accounts & Auth | `/api/auth/*`, `/api/discord/*` |
-| Characters & Inventory | `/api/db/characters`, `/api/db/inventory` |
-| Arena PvP | `/api/arena/lobby`, `/api/arena/battle/simulate` |
-| Leaderboards | `/api/arena/leaderboard`, `/api/public/leaderboard` |
-| Save/Load | `/api/db/save-game`, `/api/db/load-game` |
+| Service | URL | Description |
+|---------|-----|-------------|
+| Identity / Auth | `id.grudge-studio.com` | JWT auth (Discord, Web3Auth, Puter, guest, wallet) |
+| Game API | `api.grudge-studio.com` | Characters, economy, crafting, combat, PvP, islands, missions, crews |
+| Account API | `account.grudge-studio.com` | Profiles, friends, notifications, achievements |
+| Launcher API | `launcher.grudge-studio.com` | Version manifest, entitlements, launch tokens |
+| WebSocket | `ws.grudge-studio.com` | Real-time events (Socket.IO: /game, /crew, /global, /pvp) |
+| Asset Service | `assets-api.grudge-studio.com` | Upload/manage assets (metadata + conversions) |
+| R2 CDN | `assets.grudge-studio.com` | Public asset delivery (Cloudflare R2 Worker) |
+| Dashboard | `dash.grudge-studio.com` | Admin dashboard (Cloudflare Worker) |
+| Status | `status.grudge-studio.com` | Uptime monitoring (Uptime Kuma) |
 
-See [GRUDA-Wars README](https://github.com/MolochDaGod/StandaloneGrudge) for full API reference.
+See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend) `GRUDGE-STUDIO-CONTEXT.md` for full reference.
 
 ## 📊 Data Structure
 
@@ -341,16 +420,22 @@ All items display real icon assets — no emoji or placeholder images.
 - `/icons/abilities/` — 28 ability icons
 - `/icons/spells/` — Spell effect icons with color variants
 
-## 🎮 2D Sprite Browser
+## 🎮 2D Sprite Browser & Editor
 
 **Live:** [molochdagod.github.io/ObjectStore/2D_MODELS.html](https://molochdagod.github.io/ObjectStore/2D_MODELS.html)
 
-Animated sprite browser with canvas playback, frame scrubbing, zoom, sheet view, and single-frame export.
+Full-featured sprite browser, editor, and validation tool with:
+- **Canvas animation** — horizontal, vertical, grid, and frame-sequence layouts
+- **Sprite editor** — Hue/Saturation/Brightness sliders, horizontal flip, auto-trim transparent padding
+- **VFX preview** — Additive/Screen/Multiply blending modes, Dark/Light/Checkerboard backgrounds, Loop/Ping-pong/Once playback
+- **Export** — Single frame or all frames as individual PNGs (with edits applied)
+- **Validation report** — Tests every sprite for broken images, frame size mismatches, and missing animations
+- **275 characters, 2,220 animations** across 10 categories (characters, enemies, bosses, monsters, effects, fish, npcs, companions, projectiles, ui)
 
 ### Sources
-- **rpg-modular** — Core RPG character/enemy/boss/effect sprites (103 characters)
-- **grudge-angeler** — 47 fish species with animated sprite sheets from [Grudge Angeler](https://grudge-angeler.vercel.app/)
-- **gdevelop-assistant** — 25 hero class aliases mapped from [GDevelop Assistant](https://gdevelop-assistant.vercel.app/) (Archer, Assassin, Barbarian, Knight, Mage, etc.)
+- **rpg-modular** — Core RPG character/enemy/boss/effect sprites
+- **grudge-angeler** — 48 fish species with animated sprite sheets from [Grudge Angeler](https://grudge-angeler.vercel.app/)
+- **objectstore** — Additional sprites from effects, UI, projectiles, companions, and other packs
 
 ### Sprite API
 ```javascript
@@ -358,16 +443,18 @@ Animated sprite browser with canvas playback, frame scrubbing, zoom, sheet view,
 const res = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/sprite-characters.json');
 const data = await res.json();
 // data.characters[0] = { name, category, source, uuid, animations: [...] }
+// Each animation has: uuid, id, name, path, width, height, frameCount, frameW, frameH, layout, cols, rows
 
-// Filter by source
-const angelerFish = data.characters.filter(c => c.source === 'grudge-angeler');
-const gdevelopHeroes = data.characters.filter(c => c.source === 'gdevelop-assistant');
+// Filter by category
+const effects = data.characters.filter(c => c.category === 'effects');
+const bosses = data.characters.filter(c => c.category === 'bosses');
 ```
 
 ### Rebuild Sprites
 ```bash
-npm run rebuild:sprites2d   # Regenerate sprite-characters.json + sprites2d.json
+node tools/scan-sprites.js   # Scan sprites/ directory and regenerate sprite-characters.json
 ```
+The scanner reads PNG headers directly (no external deps), auto-detects frame layouts, deduplicates flat/nested paths, and preserves existing UUIDs.
 
 ---
 
@@ -379,8 +466,8 @@ ObjectStore/
 │   ├── weapons.json         # 17 categories, 816+ items
 │   ├── armor.json           # Helm, chest, boots, etc.
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
-│   ├── sprite-characters.json # 208 animated characters (3 sources)
-│   ├── sprites2d.json       # 2,388 unique 2D sprites (flat)
+│   ├── sprite-characters.json # 275 animated characters (3 sources)
+│   ├── sprites2d.json       # 2,220+ animations across all sprites
 │   ├── items-database.json  # 3,425 items with icons, stats, categories
 │   ├── gdevelop-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
@@ -396,7 +483,7 @@ ObjectStore/
 │   ├── heroes.json          # 36 hero portraits
 │   ├── models3d.json        # 471 3D model registry
 │   └── ...                  # + 30 more endpoints
-├── sprites/                  # 208 characters, 2,388 unique sprites
+├── sprites/                  # 275 characters, 2,220+ animations, 3,500+ PNGs
 │   ├── characters/          # Player characters (55 dirs)
 │   ├── enemies/             # Enemy units
 │   ├── bosses/              # Boss encounters
@@ -410,10 +497,16 @@ ObjectStore/
 ├── audio/                    # 450 SFX (wav/mp3/ogg/flac)
 ├── video/                    # 6 cinematic MP4s
 ├── branding/                 # Favicons + brand assets
-├── sdk/grudge-sdk.js         # SDK with 30+ methods
+├── sdk/grudge-sdk.js         # SDK v5.0 — unified client for all services
 ├── mcp/                      # MCP server for AI agents
 ├── scripts/                  # Build + extraction tools
 │   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
+├── tools/                    # Sprite tools
+│   └── scan-sprites.js      # Walk sprites/, auto-detect layouts, regenerate JSON
+├── workers/ai/               # AI Worker (Cloudflare Workers AI)
+│   ├── index.js             # AI endpoints (generate, tag, search, chat)
+│   ├── wrangler.toml        # Config (R2 + D1 + AI bindings)
+│   └── schema.sql           # D1 migration for ai_jobs table
 ├── openapi.yaml              # OpenAPI 3.0.3 spec
 ├── sw.js                     # Service worker
 ├── package.json              # @grudge-studio/objectstore v3.0.0
