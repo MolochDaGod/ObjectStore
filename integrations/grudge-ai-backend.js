@@ -16,7 +16,38 @@
  * @version 2.1.0
  */
 
-import puter from 'https://js.puter.com/v2/';
+// Lazy-load Puter to avoid crashing in Node.js / MCP / server contexts
+let _puter = null;
+async function getPuter() {
+  if (_puter) return _puter;
+  try {
+    if (typeof window !== 'undefined' && typeof puter !== 'undefined') {
+      _puter = puter;
+    } else {
+      const mod = await import('https://js.puter.com/v2/');
+      _puter = mod.default || mod;
+    }
+  } catch (e) {
+    console.warn('[AI Backend] Puter.js unavailable:', e.message);
+    _puter = null;
+  }
+  return _puter;
+}
+
+/**
+ * Extract text from a Puter AI chat response (handles all response shapes)
+ */
+function extractChatText(result) {
+  if (typeof result === 'string') return result;
+  if (result?.message?.content) {
+    const c = result.message.content;
+    if (typeof c === 'string') return c;
+    if (Array.isArray(c) && c[0]?.text) return c[0].text;
+    return JSON.stringify(c);
+  }
+  if (result?.text) return result.text;
+  return JSON.stringify(result);
+}
 
 /**
  * AI Agent definitions
@@ -73,7 +104,7 @@ const AI_AGENTS = {
 export class AIBackendClient {
   constructor(config = {}) {
     this.config = {
-      aiBackendUrl: config.aiBackendUrl || 'http://localhost:3000/api/ai',
+      aiBackendUrl: config.aiBackendUrl || 'http://localhost:3001/api/ai',
       gameApiUrl: config.gameApiUrl || 'http://localhost:4000/api/gruda',
       puterEnabled: config.puterEnabled !== false,
       debug: config.debug || false,
@@ -99,14 +130,12 @@ export class AIBackendClient {
     if (this.initialized) return;
 
     try {
-      // Initialize Puter for AI research
+      // Initialize Puter for AI research (lazy, safe in Node.js)
       if (this.config.puterEnabled) {
         try {
-          if (typeof puter !== 'undefined') {
-            this.puter = puter;
-            if (this.config.debug) {
-              console.log('✅ Puter AI initialized');
-            }
+          this.puter = await getPuter();
+          if (this.puter && this.config.debug) {
+            console.log('✅ Puter AI initialized');
           }
         } catch (e) {
           console.warn('⚠️ Puter initialization failed:', e.message);
@@ -218,7 +247,7 @@ export class AIBackendClient {
       return {
         success: true,
         agentType: request.agentType,
-        result: result.message.content,
+        result: extractChatText(result),
         metadata: { source: 'puter-fallback' },
         timestamp: new Date().toISOString()
       };
@@ -272,7 +301,7 @@ export class AIBackendClient {
     
     return {
       query: query.topic,
-      findings: result.message.content,
+      findings: extractChatText(result),
       confidence: 0.7,
       sources: ['puter-ai'],
       suggestions: []

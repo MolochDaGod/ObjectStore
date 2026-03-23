@@ -10,10 +10,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg-dark);
       color: var(--text-primary);
       min-height: 100vh;
       padding: 20px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(212,168,75,0.06) 0%, transparent 45%),
+        radial-gradient(ellipse at 20% 80%, rgba(168,85,247,0.04) 0%, transparent 40%),
+        var(--bg-dark);
+      background-attachment: fixed;
     }
     .container { max-width: 1400px; margin: 0 auto; }
     

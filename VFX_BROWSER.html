@@ -12,7 +12,16 @@
       --text: #e8e6e3; --text-dim: #8b8685; --border: #3d3d3d; --code-bg: #0d1117;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(212,168,75,0.05) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 90%, rgba(239,68,68,0.04) 0%, transparent 45%),
+        var(--bg);
+      background-attachment: fixed;
+    }
     .header { background: linear-gradient(135deg, var(--card), var(--bg)); padding: 24px 32px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
     .header-inner { max-width: 1400px; margin: 0 auto; }
     .back-link { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; }

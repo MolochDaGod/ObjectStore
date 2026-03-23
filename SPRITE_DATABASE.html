@@ -34,10 +34,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
+      background:
+        radial-gradient(ellipse at 30% 0%, rgba(59,130,246,0.05) 0%, transparent 45%),
+        radial-gradient(ellipse at 70% 100%, rgba(212,168,75,0.04) 0%, transparent 40%),
+        var(--bg);
+      background-attachment: fixed;
     }
     /* Push header down for auth bar */
     .header {
