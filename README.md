@@ -1,7 +1,7 @@
 # Grudge Studio ObjectStore
-**Version 5.0.0** | Unified Game Data API, Backend SDK & Integration Hub
+**Version 5.1.0** | Unified Game Data API, Backend SDK & Integration Hub
 
-The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 10,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
+The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
 **Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
 
@@ -45,17 +45,24 @@ const balanced = await api.ai.balanceItem(item);
 
 ---
 
-## ✨ What's New in 3.0.0
+## ✨ What's New in 3.1.0
 
-### 📦 Massive Asset Collection
-- **10,000+ assets** collected from GrudgeWars, Warlord-Crafting-Suite, and GDevelopAssistant
+### 📦 GrudgeWarlords.com Asset Migration
+All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from ObjectStore:
+- **3,024 files migrated** (~306 MB) — icons, sprites, backgrounds, UI, portraits, professions
+- **13,000+ total assets** across all categories
+- Frontend uses `assetUrl()` helper pointing to `https://molochdagod.github.io/ObjectStore`
+- New folders: `images/events/`, `images/portraits/`, `images/professions/`, `images/ui/`, `images/misc/`, `images/lore/`, `sprites/pirate/`
+- CORS headers updated for all new asset paths
+
+### 📦 Full Asset Collection (3.0.0+)
 - **208 animated characters** with 2,388 unique 2D sprites across 3 sources
 - **47 fish species** from Grudge Angeler with full sprite sheets
 - **25 GDevelop Assistant hero aliases** mapped to existing sprites
-- **5,653 icons** across weapons, armor, food, materials, RPG packs
+- **7,400+ icons** across weapons, armor, food, materials, RPG packs, entities, potions, resources
 - **450 audio files** (SFX in wav/mp3/ogg/flac)
 - **471 3D model** registry (GLB, GLTF, FBX, OBJ) organized by race
-- **167 backgrounds**, 36 hero portraits, 6 cinematic videos
+- **170+ backgrounds**, 36 hero portraits, 6 cinematic videos
 
 ### 🗺️ Full Game Data Extraction
 - **12 new JSON API endpoints** extracted from GrudgeWars source:
