@@ -518,8 +518,7 @@ class GrudgeAIClient {
 
   /** Get AI job status */
   async getJob(jobId) {
-    const res = await fetch(`${this._url}/v1/ai/jobs/${jobId}`);
-    return res.json();
+    return _authFetch(this._url, `/v1/ai/jobs/${jobId}`, this._gt());
   }
 
   /** List recent AI jobs */
@@ -527,14 +526,12 @@ class GrudgeAIClient {
     const p = new URLSearchParams();
     if (opts.type) p.set('type', opts.type);
     if (opts.limit) p.set('limit', String(opts.limit));
-    const res = await fetch(`${this._url}/v1/ai/jobs${p.toString() ? '?' + p : ''}`);
-    return res.json();
+    return _authFetch(this._url, `/v1/ai/jobs${p.toString() ? '?' + p : ''}`, this._gt());
   }
 
   /** Health check */
   async health() {
-    const res = await fetch(`${this._url}/health`);
-    return res.json();
+    return _authFetch(this._url, '/health', null);
   }
 }
 
@@ -545,8 +542,8 @@ class GrudgeWSClient {
     if (this._sockets[namespace]) return this._sockets[namespace];
     const io = typeof window !== 'undefined' ? window.io : null;
     if (!io) {
-      try { return require('socket.io-client').io(`${this._url}${namespace}`, { auth: { token: this._gt() } }); }
-      catch { throw new Error('socket.io-client not available'); }
+      // Dynamic import for ESM compatibility (require() fails in ESM mode)
+      throw new Error('socket.io-client not available — load socket.io client script in browser, or use: const { io } = await import("socket.io-client")');
     }
     const socket = io(`${this._url}${namespace}`, { auth: { token: this._gt() }, transports: ['websocket', 'polling'] });
     this._sockets[namespace] = socket;
@@ -754,7 +751,7 @@ class GrudgeSDK {
   async getServerlessStats() { return this.fetch('/api/stats'); }
 
   // ── Icons ──
-  async getIcons() { return this.fetch('/api/v1/icons.json'); }
+  async getIcons() { return this.fetch('/icons/icon-index.json'); }
   getWeaponIconUrl(category, index, tier = 1) {
     const cfgs = { swords: { base: 'Sword', max: 40 }, axes1h: { base: 'Axe', max: 30 }, daggers: { base: 'Dagger', max: 30 }, bows: { base: 'Bow', max: 30 }, crossbows: { base: 'Crossbow', max: 30 }, hammers1h: { base: 'Hammer', max: 25 }, spears: { base: 'Spear', max: 30 }, fireStaves: { base: 'staff', max: 60, lowercase: true }, frostStaves: { base: 'staff', max: 60, lowercase: true, offset: 10 }, holyStaves: { base: 'staff', max: 60, lowercase: true, offset: 20 } };
     const c = cfgs[category]; if (!c) return null;
