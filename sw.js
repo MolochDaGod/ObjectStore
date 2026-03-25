@@ -83,6 +83,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  // Ignore non-http(s) requests (chrome-extension://, blob:, data:, etc.)
+  if (!event.request.url.startsWith('http')) return;
+
   // API JSON: stale-while-revalidate
   if (url.pathname.includes('/api/v1/') && url.pathname.endsWith('.json')) {
     event.respondWith(
