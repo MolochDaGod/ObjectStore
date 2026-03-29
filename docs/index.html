@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Documentation - Grudge Studio ObjectStore</title>
+  <title>API Documentation v5.0 - Grudge Studio ObjectStore</title>
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <style>
@@ -259,11 +259,24 @@
     <div class="section-title">Data Models</div>
     <a href="#tier-system">Tier System</a>
     
-    <div class="section-title">SDK & Tools</div>
-    <a href="#javascript-sdk">JavaScript SDK</a>
+    <div class="section-title">Items &amp; Registries</div>
+    <a href="#items-database">Items Database</a>
+    <a href="#sprite-characters">Sprite Characters</a>
+    <a href="#gdevelop-assets">GDevelop Assets</a>
+    <a href="#voxel-assets">Voxel Assets</a>
+    <a href="#asset-registries">Asset Registries</a>
+
+    <div class="section-title">SDK &amp; Tools</div>
+    <a href="#javascript-sdk">JavaScript SDK v5.0</a>
+    <a href="#backend-clients">Backend Clients</a>
     <a href="#python-examples">Python Examples</a>
     <a href="#ai-integration">AI Integration</a>
     
+    <div class="section-title">Studio &amp; Engine</div>
+    <a href="#gdevelop-assets">GDevelop Assets</a>
+    <a href="#rts-models">RTS Models</a>
+    <a href="#worlds">Worlds</a>
+
     <div class="section-title">Serverless API</div>
     <a href="#search-api">Search API</a>
     <a href="#stats-api">Stats API</a>
@@ -288,7 +301,7 @@
       <h2>Overview</h2>
       <p>The ObjectStore API provides read-only access to all static game data for Grudge Warlords. This includes:</p>
       <ul>
-        <li><strong>119 Weapons</strong> across 17 categories with 8 tiers each</li>
+      <li><strong>816+ Weapons</strong> across 17 categories with 8 tiers each (6 weapons × 17 categories × 8 tiers)</li>
         <li><strong>150 Equipment</strong> items (armor sets, gems, accessories)</li>
         <li><strong>112 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
         <li><strong>132 Consumables</strong> including foods, potions, and engineer items</li>
@@ -297,7 +310,9 @@
         <li><strong>209 Battle Abilities</strong> with effect chains and follow-ups</li>
         <li><strong>5 Professions</strong> with complete skill trees and 363+ recipes</li>
         <li><strong>19 Faction Units</strong> for the RTS game mode</li>
-        <li><strong>27 API Endpoints</strong> total</li>
+        <li><strong>3,425 Unified Items</strong> with icon URLs, stats, and tooltips (items-database.json)</li>
+        <li><strong>275 Animated Characters</strong> with grid/frame-sequence support (sprite-characters.json)</li>
+        <li><strong>58+ API Endpoints</strong> — all static JSON, no auth required</li>
       </ul>
       
       <div class="tip">
@@ -899,25 +914,276 @@
       <p>Stats scale with tier using <code class="inline-code">base + (perTier × (tier - 1))</code></p>
     </section>
 
+    <section id="items-database">
+      <h2>Items Database</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/items-database.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Unified item database with <strong>3,425 items</strong> across 8 categories: weapons, armor, consumables, materials, accessories, relics, capes, and shields. Each item includes an icon URL, stats, tier, tooltip, and category metadata.</p>
+
+          <h3>Response Structure</h3>
+          <pre><code>{
+  "version": "1.0.0",
+  "totalItems": 3425,
+  "categories": ["weapons", "armor", "consumables", "materials", "accessories", "relics", "capes", "shields"],
+  "items": [
+    {
+      "id": "sword-bloodfeud-t5",
+      "name": "Bloodfeud Blade",
+      "category": "weapons",
+      "type": "Sword",
+      "tier": 5,
+      "icon": "/icons/weapons/Sword_01.png",
+      "tooltip": "Forged in endless clan blood feuds",
+      "stats": { "damage": 98, "speed": 100 }
+    }
+  ]
+}</code></pre>
+          <div class="tip">
+            <div class="tip-title">💡 Live Browser</div>
+            <p>Browse all items visually at <a href="../GRUDGE_Item_Database.html">Item Database</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sprite-characters">
+      <h2>Sprite Characters</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/sprite-characters.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">275 animated 2D characters with full animation manifests. Supports grid-based sprite sheets and frame-sequence formats. Sources include RPG-MODULAR, betta-warlords, grudge-angeler, and grudawars.</p>
+
+          <h3>Response Structure</h3>
+          <pre><code>{
+  "version": "2.0.0",
+  "totalCharacters": 275,
+  "characters": [
+    {
+      "id": "warrior_male",
+      "name": "Warrior Male",
+      "source": "RPG-MODULAR",
+      "animations": {
+        "idle":   { "src": "/sprites/Warrior/Idle.png",   "cols": 8, "rows": 1 },
+        "walk":   { "src": "/sprites/Warrior/Walk.png",   "cols": 8, "rows": 1 },
+        "attack": { "src": "/sprites/Warrior/Attack.png", "cols": 6, "rows": 1 }
+      }
+    }
+  ]
+}</code></pre>
+          <div class="tip">
+            <div class="tip-title">💡 Live Preview</div>
+            <p>Browse all sprites at <a href="../2D_MODELS.html">2D Models Browser</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gdevelop-assets">
+      <h2>GDevelop Assets</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/gdevelop-assets.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">GDevelop game asset manifest — sprite objects, animations, and resource paths for use in GDevelop events and scenes.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/gdevelop-hero-aliases.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">25 hero class → sprite mappings for GDevelop Assistant. Maps class/race combinations to their corresponding sprite character IDs.</p>
+
+          <pre><code>{
+  "version": "1.0.0",
+  "totalAliases": 25,
+  "aliases": [
+    { "heroClass": "warrior", "race": "human", "spriteId": "warrior_male", "src": "/sprites/Warrior/Idle.png" }
+  ]
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="voxel-assets">
+      <h2>Voxel Assets</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/voxelAssets.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Voxel model asset registry — .vox and converted GLB/GLTF models for characters, props, and terrain elements.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="asset-registries">
+      <h2>Asset Registries</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/asset-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Master asset registry — aggregated index of all assets served by ObjectStore across all categories.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/backgrounds-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">167 battle and scene background image paths organized by zone/theme.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/effects-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">VFX effects registry — indexed list of all particle and spell effects across the codebase.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/3dfx-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">3D shader and FX registry — GLSL shaders (fire, lightning, magic, shockwave) with metadata for the 3DFX viewer.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/ui-packs.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">UI asset packs — buttons, frames, icons, and HUD elements for use in game interfaces.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="rts-models">
+      <h2>RTS Models</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/rtsModels.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">RTS-specific 3D model registry — buildings, units, and terrain objects for the real-time strategy game mode.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="worlds">
+      <h2>Worlds</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/worlds.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">World definitions for multi-world game modes — island maps, spawn configurations, and biome data.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/studio.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Grudge Studio configuration — service registry, feature flags, and app metadata used by the GDevelop assistant and launcher.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="javascript-sdk">
-      <h2>JavaScript SDK</h2>
-      <p>Download the SDK for easy integration:</p>
-      
-      <pre><code>import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
+      <h2>JavaScript SDK v5.0</h2>
+      <p>Single import for all backend services + static game data:</p>
 
-const sdk = new GrudgeSDK();
+      <pre><code>// CDN
+import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
 
-// Get all weapons
+// or NPM
+// npm install @grudgstudio/core
+import { GrudgeSDK } from '@grudgstudio/core';
+
+const sdk = new GrudgeSDK({ token: '&lt;JWT&gt;' });
+
+// Static game data
 const weapons = await sdk.getWeapons();
-
-// Search across all data
+const swords  = await sdk.getWeaponsByCategory('swords');
+const items   = await sdk.getItemsDatabase();   // 3,425 items
+const chars   = await sdk.getSpriteCharacters(); // 275 animated chars
 const results = await sdk.search('iron');
 
-// Calculate weapon stats at tier
-const t5Stats = sdk.calculateStatsAtTier(weapon, 5);
+// Tier colors
+const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }</code></pre>
+    </section>
 
-// Get material icon URL
-const iconUrl = sdk.getMaterialIconUrl('ore', 3);</code></pre>
+    <section id="backend-clients">
+      <h2>Backend Service Clients (SDK v5.0)</h2>
+      <p>The SDK v5.0 includes authenticated clients for all Grudge Studio VPS services:</p>
+
+      <table>
+        <tr><th>Client</th><th>URL</th><th>Description</th></tr>
+        <tr><td><code>sdk.auth</code></td><td>id.grudge-studio.com</td><td>Login, register, guest, wallet, Discord, Puter auth</td></tr>
+        <tr><td><code>sdk.game</code></td><td>api.grudge-studio.com</td><td>Characters, crafting, combat, lobbies, islands</td></tr>
+        <tr><td><code>sdk.account</code></td><td>account.grudge-studio.com</td><td>Profile, friends, inventory management</td></tr>
+        <tr><td><code>sdk.launcher</code></td><td>launcher.grudge-studio.com</td><td>App manifest, patch notes, update checks</td></tr>
+        <tr><td><code>sdk.assets</code></td><td>assets-api.grudge-studio.com</td><td>R2 asset listing, upload, CDN URL resolution</td></tr>
+        <tr><td><code>sdk.ws</code></td><td>ws.grudge-studio.com</td><td>Real-time WebSocket for islands, PvP, chat</td></tr>
+      </table>
+
+      <pre><code>const sdk = new GrudgeSDK({ token: '&lt;JWT&gt;' });
+
+// Auth
+const res  = await sdk.auth.login('username', 'password');
+const me   = await sdk.auth.getMe();
+
+// Game API
+const chars   = await sdk.game.listCharacters();
+const balance = await sdk.game.getBalance(charId);
+await sdk.game.startCraft({ char_id: 1, recipe_key: 'iron-sword' });
+
+// Account
+const profile = await sdk.account.getProfile(grudgeId);
+const friends = await sdk.account.listFriends();
+
+// Asset Service (R2)
+const assets = await sdk.assets.listAssets({ prefix: 'models/' });
+
+// WebSocket
+const socket = sdk.ws.game();
+socket.emit('join-island', { island_key: 'island_1' });</code></pre>
     </section>
 
     <section id="python-examples">
@@ -1035,7 +1301,7 @@ function getCraftingRequirements(weaponId, tier) {
     </section>
 
     <footer style="text-align: center; color: var(--text-dim); margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);">
-      <p>© 2026 Grudge Studio | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
+      <p>© 2026 Grudge Studio | ObjectStore v5.0.0 | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
     </footer>
   </main>
   <script src="../js/nav.js"></script>

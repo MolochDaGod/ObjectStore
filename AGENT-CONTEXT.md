@@ -2,7 +2,7 @@
 
 > **Purpose**: This document is the authoritative continuation prompt for any AI agent (Oz or successor) working on this repository. Update it whenever a session ends, a milestone completes, or task priorities change.
 >
-> **Last Updated**: 2026-03-22
+> **Last Updated**: 2026-03-29
 
 ---
 
@@ -46,7 +46,7 @@ Priority order based on last session state:
 | 1 | Improve agent prompt (this file) | ✅ Done | — |
 | 2 | SDK v5.0 — backend API clients | ✅ Done (2026-03-22) | — |
 | 3 | Update docs (README, CHANGELOG, INTEGRATION-GUIDE) | ✅ Done (2026-03-22) | — |
-| 4 | Update ObjectStore wiki (`WIKI-HOME.md`) | 🔄 Partially done | 🔴 High |
+|| 4 | Update ObjectStore wiki & site (root, docs) | ✅ Done (2026-03-29) | — |
 | 5 | Migrate frontends to use SDK instead of ad-hoc API clients | ⏳ Pending | 🔴 High |
 | 6 | Puter audit + integration for Grudge Studio portfolio | ✅ Infrastructure in place | 🟡 Ongoing |
 | 7 | Resolve at-risk projects (Warlord-Crafting-Suite, PuterGrudge) | ⏳ Pending | 🔴 High |
@@ -226,6 +226,24 @@ When starting a new agent session on this repository, execute in this order:
 - When adding new API endpoints, update both `README.md` and `WIKI-HOME.md`.
 - Commit messages follow: `<type>: <short description>` (e.g. `feat:`, `fix:`, `docs:`, `chore:`).
 - Co-author commits with: `Co-Authored-By: Oz <oz-agent@warp.dev>`.
+
+---
+
+---
+
+## 11) Session Log
+
+### Session — 2026-03-29
+
+#### Completed
+- Updated `index.html` (root): version badge v3→v5.0.0, stats bar 45+→58+, added "Items & Registries" endpoint group (items-database, sprite-characters, asset-registry, voxelAssets, backgrounds-registry, effects-registry, 3dfx-registry, ui-packs), expanded "Game Engine & Studio" group (gdevelop-assets, gdevelop-hero-aliases, rtsModels, worlds, studio), updated SDK Quick Start to v5.0 backend clients, updated footer version.
+- Updated `docs/index.html`: fixed weapon count (119→816+), fixed endpoint count (27→58+), added 3 new sidebar sections (Items & Registries, Studio & Engine, Backend Clients), added 9 new documented endpoint sections, updated JavaScript SDK section to v5.0 with backend service clients table.
+
+#### Carry Forward
+- Task #5: Migrate frontends to use SDK instead of ad-hoc API clients
+- Task #7: Resolve at-risk projects (Warlord-Crafting-Suite, PuterGrudge)
+- Task #8: TypeScript definitions (`types/index.d.ts`)
+- Task #9: NPM package publication (`@grudgstudio/core`)
 
 ---
 

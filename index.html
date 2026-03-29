@@ -407,7 +407,7 @@
   <!-- Hero -->
   <div class="hero">
     <div class="hero-content">
-      <div class="hero-badge"><span class="dot"></span> v3.0.0 — Asset Library & API</div>
+      <div class="hero-badge"><span class="dot"></span> v5.0.0 — Asset Library & API</div>
       <h1>Grudge Studio ObjectStore</h1>
       <p>The complete data backbone for Grudge Warlords — 45+ API endpoints, 10,000+ game assets, SDK, MCP server for AI agents, and full game data extraction.</p>
       <div class="hero-actions">
@@ -422,7 +422,7 @@
 
     <!-- Stats Bar -->
     <div class="stats-bar">
-      <div class="stat-item"><div class="stat-num" data-count="45">45+</div><div class="stat-label">API Endpoints</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="58">58+</div><div class="stat-label">API Endpoints</div></div>
       <div class="stat-item"><div class="stat-num" data-count="7324">7,324</div><div class="stat-label">2D Sprites</div></div>
       <div class="stat-item"><div class="stat-num" data-count="5653">5,653</div><div class="stat-label">Icons</div></div>
       <div class="stat-item"><div class="stat-num" data-count="471">471</div><div class="stat-label">3D Models</div></div>
@@ -596,10 +596,25 @@
       </div>
 
       <div class="endpoint-group">
-        <div class="group-label">&#127918; Game Engine (GDevelop)</div>
+        <div class="group-label">&#128230; Items &amp; Registries</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/items-database.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/items-database.json</span><span class="ep-desc">3,425 unified items</span></a>
+          <a class="ep" href="./api/v1/sprite-characters.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/sprite-characters.json</span><span class="ep-desc">275 animated chars</span></a>
+          <a class="ep" href="./api/v1/asset-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/asset-registry.json</span><span class="ep-desc">Master asset registry</span></a>
+          <a class="ep" href="./api/v1/voxelAssets.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/voxelAssets.json</span><span class="ep-desc">Voxel model assets</span></a>
+          <a class="ep" href="./api/v1/backgrounds-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/backgrounds-registry.json</span><span class="ep-desc">Background images</span></a>
+          <a class="ep" href="./api/v1/effects-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/effects-registry.json</span><span class="ep-desc">VFX effects registry</span></a>
+          <a class="ep" href="./api/v1/3dfx-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/3dfx-registry.json</span><span class="ep-desc">3D FX shaders</span></a>
+          <a class="ep" href="./api/v1/ui-packs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ui-packs.json</span><span class="ep-desc">UI pack assets</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#127918; Game Engine &amp; Studio</div>
         <div class="endpoint-grid">
           <a class="ep" href="./api/v1/factionUnits.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/factionUnits.json</span><span class="ep-desc">19 RTS units</span></a>
           <a class="ep" href="./api/v1/nodeUpgrades.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/nodeUpgrades.json</span><span class="ep-desc">Unit upgrades</span></a>
+          <a class="ep" href="./api/v1/rtsModels.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/rtsModels.json</span><span class="ep-desc">RTS model registry</span></a>
           <a class="ep" href="./api/v1/tileMaps.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/tileMaps.json</span><span class="ep-desc">2 RTS maps</span></a>
           <a class="ep" href="./api/v1/animations.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/animations.json</span><span class="ep-desc">18 animations</span></a>
           <a class="ep" href="./api/v1/rendering.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/rendering.json</span><span class="ep-desc">Materials + FX</span></a>
@@ -607,6 +622,10 @@
           <a class="ep" href="./api/v1/terrain.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/terrain.json</span><span class="ep-desc">5 biome presets</span></a>
           <a class="ep" href="./api/v1/ai.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ai.json</span><span class="ep-desc">AI behavior trees</span></a>
           <a class="ep" href="./api/v1/ecs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ecs.json</span><span class="ep-desc">ECS components</span></a>
+          <a class="ep" href="./api/v1/gdevelop-assets.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/gdevelop-assets.json</span><span class="ep-desc">GDevelop assets</span></a>
+          <a class="ep" href="./api/v1/gdevelop-hero-aliases.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/gdevelop-hero-aliases.json</span><span class="ep-desc">25 hero aliases</span></a>
+          <a class="ep" href="./api/v1/worlds.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/worlds.json</span><span class="ep-desc">World definitions</span></a>
+          <a class="ep" href="./api/v1/studio.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/studio.json</span><span class="ep-desc">Studio config</span></a>
         </div>
       </div>
     </section>
@@ -620,29 +639,32 @@
       <div class="code-block">
         <div class="code-header">
           <span class="lang-badge">JavaScript</span>
-          <span>grudge-sdk.js — 30+ methods</span>
+          <span>grudge-sdk.js v5.0 — static data + backend services</span>
         </div>
         <pre><code><span class="kw">import</span> { GrudgeSDK } <span class="kw">from</span> <span class="str">'./sdk/grudge-sdk.js'</span>;
 
-<span class="kw">const</span> sdk = <span class="kw">new</span> <span class="fn">GrudgeSDK</span>();
+<span class="kw">const</span> sdk = <span class="kw">new</span> <span class="fn">GrudgeSDK</span>({ token: <span class="str">'&lt;JWT&gt;'</span> });
 
-<span class="cm">// Core data</span>
+<span class="cm">// ── Static game data (ObjectStore) ──</span>
 <span class="kw">const</span> weapons = <span class="kw">await</span> sdk.<span class="fn">getWeapons</span>();
 <span class="kw">const</span> swords  = <span class="kw">await</span> sdk.<span class="fn">getWeaponsByCategory</span>(<span class="str">'swords'</span>);
+<span class="kw">const</span> items   = <span class="kw">await</span> sdk.<span class="fn">getItemsDatabase</span>();
+<span class="kw">const</span> results = <span class="kw">await</span> sdk.<span class="fn">search</span>(<span class="str">'iron'</span>);
 
-<span class="cm">// Game data (NEW in v3)</span>
-<span class="kw">const</span> quests  = <span class="kw">await</span> sdk.<span class="fn">getQuests</span>();
-<span class="kw">const</span> enemies = <span class="kw">await</span> sdk.<span class="fn">getEnemyTemplates</span>();
-<span class="kw">const</span> skills  = <span class="kw">await</span> sdk.<span class="fn">getSkillTrees</span>();
-<span class="kw">const</span> map     = <span class="kw">await</span> sdk.<span class="fn">getWorldMap</span>();
+<span class="cm">// ── Auth (id.grudge-studio.com) ──</span>
+<span class="kw">const</span> res = <span class="kw">await</span> sdk.auth.<span class="fn">login</span>(<span class="str">'user'</span>, <span class="str">'pass'</span>);
+<span class="kw">const</span> me  = <span class="kw">await</span> sdk.auth.<span class="fn">getMe</span>();
 
-<span class="cm">// Asset registries (NEW in v3)</span>
-<span class="kw">const</span> audio   = <span class="kw">await</span> sdk.<span class="fn">getAudioRegistry</span>();
-<span class="kw">const</span> models  = <span class="kw">await</span> sdk.<span class="fn">getModels3d</span>();
-<span class="kw">const</span> heroes  = <span class="kw">await</span> sdk.<span class="fn">getHeroesRegistry</span>();
+<span class="cm">// ── Game API (api.grudge-studio.com) ──</span>
+<span class="kw">const</span> chars   = <span class="kw">await</span> sdk.game.<span class="fn">listCharacters</span>();
+<span class="kw">await</span> sdk.game.<span class="fn">startCraft</span>({ char_id: <span class="str">1</span>, recipe_key: <span class="str">'iron-sword'</span> });
 
-<span class="cm">// Search across everything</span>
-<span class="kw">const</span> results = <span class="kw">await</span> sdk.<span class="fn">search</span>(<span class="str">'iron'</span>);</code></pre>
+<span class="cm">// ── Account &amp; Assets ──</span>
+<span class="kw">const</span> profile = <span class="kw">await</span> sdk.account.<span class="fn">getProfile</span>(grudgeId);
+<span class="kw">const</span> assets  = <span class="kw">await</span> sdk.assets.<span class="fn">listAssets</span>({ prefix: <span class="str">'models/'</span> });
+
+<span class="cm">// ── Tier colors ──</span>
+<span class="kw">const</span> t5 = GrudgeSDK.<span class="fn">getTierColor</span>(<span class="str">5</span>); <span class="cm">// { name: 'Red', hex: '#ff4d4d' }</span></code></pre>
       </div>
     </section>
 
@@ -684,7 +706,7 @@
       <a href="./openapi.yaml">&#128203; OpenAPI Spec</a>
       <a href="./AGENT-CONTEXT.md">&#129302; Agent Context</a>
     </div>
-    <p>&copy; 2026 Grudge Studio &middot; ObjectStore v3.0.0</p>
+    <p>&copy; 2026 Grudge Studio &middot; ObjectStore v5.0.0</p>
   </footer>
 
   <script src="./js/nav.js"></script>
