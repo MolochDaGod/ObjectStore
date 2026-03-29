@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Audio SFX Browser — Grudge Studio ObjectStore</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
   <style>
     :root {
       --bg: #0a0a12;
@@ -17,7 +20,16 @@
       --radius: 8px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 40% 0%, rgba(212,175,55,0.05) 0%, transparent 45%),
+        radial-gradient(ellipse at 80% 80%, rgba(100,100,200,0.04) 0%, transparent 40%),
+        var(--bg);
+      background-attachment: fixed;
+    }
     a { color: var(--gold); text-decoration: none; }
     a:hover { color: var(--gold-light); }
 
@@ -250,5 +262,6 @@
 
     loadAudio();
   </script>
+  <script src="./js/nav.js"></script>
 </body>
 </html>

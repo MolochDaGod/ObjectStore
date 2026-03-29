@@ -258,13 +258,18 @@
     
     <div class="section-title">Data Models</div>
     <a href="#tier-system">Tier System</a>
-    
+
     <div class="section-title">Items &amp; Registries</div>
     <a href="#items-database">Items Database</a>
     <a href="#sprite-characters">Sprite Characters</a>
     <a href="#gdevelop-assets">GDevelop Assets</a>
     <a href="#voxel-assets">Voxel Assets</a>
     <a href="#asset-registries">Asset Registries</a>
+
+    <div class="section-title">AI &amp; Upload Tools</div>
+    <a href="#ai-sprite-editor">AI Sprite Editor</a>
+    <a href="#sprite-uploader">Sprite Uploader</a>
+    <a href="#puter-integration">Puter.js Integration</a>
 
     <div class="section-title">SDK &amp; Tools</div>
     <a href="#javascript-sdk">JavaScript SDK v5.0</a>
@@ -1122,6 +1127,84 @@
         <div class="endpoint-body">
           <p class="endpoint-desc">Grudge Studio configuration — service registry, feature flags, and app metadata used by the GDevelop assistant and launcher.</p>
         </div>
+      </div>
+    </section>
+
+    <section id="ai-sprite-editor">
+      <h2>AI Sprite Editor</h2>
+      <p>The <a href="../2D_MODELS.html">2D Models Browser</a> includes a built-in AI sprite editing assistant powered by <a href="https://puter.com">Puter.js</a>.</p>
+      
+      <div class="card">
+        <h3>Features</h3>
+        <ul>
+          <li><strong>Chat Interface</strong> — Slide-out panel with streaming AI responses. Supports GPT-4o (vision), GPT-5.4 Nano, Gemini 2.5 Flash, Claude Sonnet 4.</li>
+          <li><strong>Vision Analysis</strong> — When a sprite is open in the modal, the AI sees the current canvas frame and can describe it, identify issues, and suggest fixes.</li>
+          <li><strong>Auto-Apply Commands</strong> — AI returns JSON commands (<code class="inline-code">{"action":"hue","value":45}</code>) that instantly apply to the editor controls.</li>
+          <li><strong>Sprite Generation</strong> — Generate new sprites via GPT Image 1.5 directly in the chat.</li>
+          <li><strong>Quick Actions</strong> — One-click buttons for Analyze, Find Issues, Color Suggest, Generate Idle.</li>
+          <li><strong>Persistent Chat</strong> — History saved to Puter KV storage across sessions.</li>
+        </ul>
+      </div>
+
+      <h3>Available AI Commands</h3>
+      <table>
+        <tr><th>Command</th><th>Parameters</th><th>Description</th></tr>
+        <tr><td><code>hue</code></td><td>value: -180 to 180</td><td>Shift hue of sprite</td></tr>
+        <tr><td><code>saturation</code></td><td>value: 0 to 200</td><td>Adjust saturation %</td></tr>
+        <tr><td><code>brightness</code></td><td>value: 50 to 200</td><td>Adjust brightness %</td></tr>
+        <tr><td><code>flip</code></td><td>—</td><td>Flip horizontally</td></tr>
+        <tr><td><code>trim</code></td><td>—</td><td>Auto-trim transparency</td></tr>
+        <tr><td><code>export</code></td><td>—</td><td>Export current frame</td></tr>
+        <tr><td><code>exportAll</code></td><td>—</td><td>Export all frames</td></tr>
+        <tr><td><code>generate</code></td><td>prompt: string</td><td>Generate new sprite</td></tr>
+      </table>
+    </section>
+
+    <section id="sprite-uploader">
+      <h2>Sprite Uploader & Parser</h2>
+      <p>Upload and parse sprite sheets, GIFs, individual PNGs, and Aseprite atlas exports. Available via the <strong>📤 Upload Sprites</strong> button in the 2D Models Browser toolbar.</p>
+
+      <div class="card">
+        <h3>Supported Formats</h3>
+        <table>
+          <tr><th>Format</th><th>Detection</th><th>Notes</th></tr>
+          <tr><td>PNG/WEBP Sprite Sheet</td><td>Auto-detect frame grid via transparent column/row analysis</td><td>Override cols, rows, frameW, frameH manually</td></tr>
+          <tr><td>Animated GIF</td><td>WebCodecs ImageDecoder API (with fallback)</td><td>Extracts all frames as individual canvases</td></tr>
+          <tr><td>Multiple PNGs</td><td>Sorted by filename, treated as frame sequence</td><td>Batch drag-and-drop supported</td></tr>
+          <tr><td>Aseprite JSON + PNG</td><td>Parses .json atlas for frame rects (array or object format)</td><td>Drop both files together</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>AI-Assisted Detection</h3>
+        <p>Click <strong>🤖 AI Detect Layout</strong> to send a thumbnail to GPT-4o vision. The AI identifies the frame grid, character type, and animation type, then pre-fills all parse settings automatically.</p>
+      </div>
+
+      <div class="card">
+        <h3>Save Options</h3>
+        <ul>
+          <li><strong>Save to Browser</strong> — Stores in localStorage with sprite-characters.json compatible format. Shows in gallery after refresh.</li>
+          <li><strong>Save to Puter Cloud</strong> — Uploads PNG + metadata JSON to Puter cloud storage (<code class="inline-code">grudge-sprites/{category}/</code>).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="puter-integration">
+      <h2>Puter.js Integration</h2>
+      <p>The ObjectStore uses <a href="https://puter.com">Puter.js v2</a> for free, serverless AI and cloud storage — no API keys or backend needed.</p>
+      
+      <h3>APIs Used</h3>
+      <table>
+        <tr><th>API</th><th>Purpose</th></tr>
+        <tr><td><code>puter.ai.chat()</code></td><td>Vision analysis, sprite editing chat, streaming responses</td></tr>
+        <tr><td><code>puter.ai.txt2img()</code></td><td>Sprite generation with GPT Image 1.5</td></tr>
+        <tr><td><code>puter.fs.write()</code></td><td>Save sprites to Puter cloud storage</td></tr>
+        <tr><td><code>puter.kv.set()/get()</code></td><td>Persist chat history and user preferences</td></tr>
+      </table>
+
+      <div class="tip">
+        <div class="tip-title">💡 Free for Users</div>
+        <p>Puter.js uses a user-pays model — each user's Puter account covers their own AI usage. Developers pay nothing regardless of scale.</p>
       </div>
     </section>
 

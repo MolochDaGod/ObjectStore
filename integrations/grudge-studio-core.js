@@ -23,7 +23,7 @@ export class GrudgeStudioAPI {
     this.config = {
       objectStoreUrl: config.objectStoreUrl || 'https://molochdagod.github.io/ObjectStore',
       arsenalUrl: config.arsenalUrl || 'https://warlord-crafting-suite.vercel.app',
-      aiBackendUrl: config.aiBackendUrl || 'http://localhost:3000/api/ai',
+      aiBackendUrl: config.aiBackendUrl || 'http://localhost:3001/api/ai',
       gameApiUrl: config.gameApiUrl || 'http://localhost:4000/api/gruda',
       workerUrl: config.workerUrl || 'https://objectstore.grudge-studio.com',
       apiKey: config.apiKey || null,
