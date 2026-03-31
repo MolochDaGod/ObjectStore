@@ -52,8 +52,10 @@
     .model-icon .format-badge { position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
     .format-glb { background: #22c55e; color: #000; }
     .format-gltf { background: #3b82f6; color: #fff; }
-    .format-fbx { background: #f97316; color: #000; }
-    .format-obj { background: #a855f7; color: #fff; }
+    .format-fbx { background: #f97316; color: #000; opacity: 0.7; }
+    .format-obj { background: #a855f7; color: #fff; opacity: 0.7; }
+    .format-blend { background: #e97316; color: #000; opacity: 0.7; }
+    .needs-convert { position: absolute; top: 6px; left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; font-weight: 700; background: #ef4444; color: #fff; text-transform: uppercase; }
     .model-name { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .model-meta { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -183,15 +185,11 @@
     .tex-drop-zone:hover, .tex-drop-zone.drag-over { border-color: var(--tier-4); }
   </style>
 
-  <!-- Three.js ES Module Import Map -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-    }
-  }
-  </script>
+  <!-- Babylon.js UMD CDN (pinned v9.0.0) -->
+  <script src="https://cdn.babylonjs.com/v9.0.0/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/loaders/babylonjs.loaders.min.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/materialsLibrary/babylonjs.materials.min.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/serializers/babylonjs.serializers.min.js"></script>
 </head>
 <body>
   <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
@@ -200,7 +198,7 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-    <p class="subtitle">1350+ models — GLB, GLTF, FBX, OBJ — powered by Three.js
+  <p class="subtitle">1350+ models — GLB pipeline — powered by Babylon.js
         <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
       </p>
       <div class="stats-bar" id="statsBar"></div>
@@ -209,9 +207,9 @@
     <div class="bp-banner">
       <span class="bp-banner-icon">&#9889;</span>
       <div class="bp-banner-text">
-        <strong>Best Practices:</strong> GLB/GLTF is the recommended format (GPU-ready, smaller files, animation support).
-        Three.js handles GLB/GLTF natively. FBX requires an additional loader. OBJ is legacy — no animations or PBR materials.
-        For production, convert FBX/OBJ to GLB using <code>gltf-pipeline</code> or Blender.
+        <strong>Grudge Pipeline:</strong> Drop any 3D format — FBX, OBJ, GLTF, BLEND — and it gets auto-converted to optimised GLB
+        (GPU-ready, PBR materials, Draco compression, skeletal animation, smallest file size).
+        Only GLB is served to GDevelop editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
       </div>
     </div>
 
@@ -219,14 +217,14 @@
     <div class="drop-zone" id="dropZone">
       <div class="drop-zone-icon">&#128230;</div>
       <div class="drop-zone-text">Drag &amp; drop a 3D model to preview instantly</div>
-      <div class="drop-zone-formats">Supports: .glb .gltf .fbx .obj</div>
-      <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj" style="display:none;">
+      <div class="drop-zone-formats">Accepts: .glb .gltf .fbx .obj .blend — auto-converts to GLB</div>
+      <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj,.blend" style="display:none;">
     </div>
 
     <!-- Upload to R2 -->
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
       <button class="upload-r2-btn" id="uploadR2Btn" disabled>&#9729; Convert &amp; Upload to R2</button>
-      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj" multiple style="display:none;">
+      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj,.blend" multiple style="display:none;">
       <span id="uploadR2Status" style="font-size:0.8rem;color:var(--text-dim);"></span>
     </div>
 
@@ -298,8 +296,8 @@
         <div class="inspector-panel" id="panelConvert" style="display:none;">
           <div class="inspector-section">
             <h4>Convert Model</h4>
-            <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">Convert FBX/OBJ/GLTF to optimized GLB</p>
-            <input type="file" id="convertFileInput" accept=".fbx,.obj,.gltf,.glb" style="display:none;">
+            <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">Convert any 3D format to optimised GLB for the Grudge pipeline</p>
+            <input type="file" id="convertFileInput" accept=".glb,.gltf,.fbx,.obj,.blend" style="display:none;">
             <button class="viewer-btn" id="btnPickConvert" style="width:100%;margin-bottom:6px;">&#128194; Pick File to Convert</button>
             <button class="viewer-btn" id="btnConvertCurrent" style="width:100%;margin-bottom:6px;">Convert Current Model</button>
             <div id="convertStatus" class="convert-progress" style="display:none;">
@@ -362,217 +360,265 @@
 
   <script src="./js/nav.js"></script>
 
-  <!-- Three.js Viewer Module — imports modular pipeline -->
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-    import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
-
-    // Modular pipeline imports
-    import { RenderPipeline } from './js/viewer/RenderPipeline.js';
-    import { PlayCanvas } from './js/viewer/PlayCanvas.js';
-    import { ViewerAPI } from './js/viewer/ViewerAPI.js';
-    import { MaterialEditor } from './js/viewer/MaterialEditor.js';
-    import { TextureManager } from './js/viewer/TextureManager.js';
-    import { ModelConverter } from './js/viewer/ModelConverter.js';
-    import { AnimationManager } from './js/viewer/AnimationManager.js';
+  <!-- Babylon.js Viewer (non-module, uses global BABYLON) -->
+  <script src="./js/viewer/RenderPipeline.js"></script>
+  <script src="./js/viewer/MaterialEditor.js"></script>
+  <script src="./js/viewer/TextureManager.js"></script>
+  <script src="./js/viewer/AnimationManager.js"></script>
+  <script src="./js/viewer/ModelConverter.js"></script>
+  <script>
 
     /* ═══════════════ State ═══════════════ */
-    let scene, camera, renderer, controls, mixer, clock, gridHelper;
-    let keyLight, fillLight, rimLight;
-    let currentModel = null;
-    let animActions = [];
-    let activeAction = null;
-    let isViewerOpen = false;
-    let autoRotate = true;
-    let showWireframe = false;
-    let showGrid = true;
-    let currentMode = 'viewer'; // 'viewer' | 'playcanvas'
-
-    // Module instances (lazy-init)
-    let renderPipeline = null;
-    let playCanvas = null;
-    let materialEditor = null;
-    let textureManager = null;
-    let modelConverter = null;
-    let animationManager = null;
-
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+    var engine, scene, camera, gridMesh, shadows;
+    var keyLight, fillLight, rimLight;
+    var currentModel = null;
+    var currentAnimGroups = [];
+    var isViewerOpen = false;
+    var autoRotate = true;
+    var showWireframe = false;
+    var showGrid = true;
+    var currentMode = 'viewer';
+    var materialEditor = null;
+    var textureManager = null;
+    var modelConverter = null;
+    var animationManager = null;
+    var _autoRotateObs = null;
 
     /* ═══════════════ Init ═══════════════ */
     function initViewer() {
-      const wrap = document.getElementById('viewerCanvasWrap');
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x1a1a2e);
+      var wrap = document.getElementById('viewerCanvasWrap');
+      var canvas = document.createElement('canvas');
+      canvas.style.cssText = 'width:100%;height:100%;display:block;';
+      wrap.appendChild(canvas);
 
-      camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.01, 1000);
-      camera.position.set(3, 2, 5);
+      engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, adaptToDeviceRatio: true });
+      scene = new BABYLON.Scene(engine);
+      scene.clearColor = new BABYLON.Color4(0.10, 0.10, 0.18, 1);
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      wrap.appendChild(renderer.domElement);
-
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.08;
-      controls.autoRotate = autoRotate;
-      controls.autoRotateSpeed = 1.5;
-      controls.maxPolarAngle = Math.PI * 0.85;
+      camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5, BABYLON.Vector3.Zero(), scene);
+      camera.lowerRadiusLimit = 0.5; camera.upperRadiusLimit = 500;
+      camera.wheelDeltaPercentage = 0.01;
+      camera.attachControl(canvas, true);
 
       // 3-point lighting
-      scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-      scene.add(new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.5));
-      keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-      keyLight.position.set(5, 8, 5);
-      keyLight.castShadow = true;
-      keyLight.shadow.mapSize.set(1024, 1024);
-      keyLight.shadow.camera.near = 0.1; keyLight.shadow.camera.far = 50;
-      keyLight.shadow.camera.left = -10; keyLight.shadow.camera.right = 10;
-      keyLight.shadow.camera.top = 10; keyLight.shadow.camera.bottom = -10;
-      scene.add(keyLight);
-      fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
-      fillLight.position.set(-5, 3, -3);
-      scene.add(fillLight);
-      rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
-      rimLight.position.set(0, 5, -8);
-      scene.add(rimLight);
+      var hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0, 1, 0), scene);
+      hemi.intensity = 0.5; hemi.groundColor = new BABYLON.Color3(0.1, 0.08, 0.15);
 
-      // Ground + grid
-      const ground = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.ShadowMaterial({ opacity: 0.15 }));
-      ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true;
-      scene.add(ground);
-      gridHelper = new THREE.GridHelper(20, 20, 0x444466, 0x222244);
-      scene.add(gridHelper);
-      clock = new THREE.Clock();
+      keyLight = new BABYLON.DirectionalLight('key', new BABYLON.Vector3(-0.8, -1.2, -0.5), scene);
+      keyLight.position = new BABYLON.Vector3(5, 8, 5); keyLight.intensity = 1.2;
+      shadows = new BABYLON.ShadowGenerator(1024, keyLight);
+      shadows.useBlurExponentialShadowMap = true; shadows.blurKernel = 16;
 
-      // Resize
-      new ResizeObserver(() => {
-        if (!isViewerOpen) return;
-        camera.aspect = wrap.clientWidth / wrap.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-      }).observe(wrap);
+      fillLight = new BABYLON.DirectionalLight('fill', new BABYLON.Vector3(1, -0.3, 1), scene);
+      fillLight.position = new BABYLON.Vector3(-5, 3, -3); fillLight.intensity = 0.4;
+      fillLight.diffuse = new BABYLON.Color3(0.5, 0.5, 1);
 
-      // Init modules
+      rimLight = new BABYLON.PointLight('rim', new BABYLON.Vector3(0, 5, -8), scene);
+      rimLight.diffuse = new BABYLON.Color3(1, 0.85, 0); rimLight.intensity = 20; rimLight.range = 15;
+
+      // Ground
+      var ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 50, height: 50 }, scene);
+      ground.receiveShadows = true;
+      var gMat = new BABYLON.PBRMaterial('gmat', scene);
+      gMat.albedoColor = new BABYLON.Color3(0.08, 0.09, 0.12); gMat.metallic = 0.1; gMat.roughness = 0.9;
+      ground.material = gMat;
+
+      // Grid
+      gridMesh = BABYLON.MeshBuilder.CreateGround('grid', { width: 30, height: 30 }, scene);
+      gridMesh.position.y = 0.002;
+      var gridMat = new BABYLON.GridMaterial('gm', scene);
+      gridMat.majorUnitFrequency = 5; gridMat.minorUnitVisibility = 0.3;
+      gridMat.gridRatio = 0.5; gridMat.mainColor = new BABYLON.Color3(0.3, 0.35, 0.45);
+      gridMat.lineColor = new BABYLON.Color3(0.15, 0.18, 0.25); gridMat.opacity = 0.4;
+      gridMesh.material = gridMat;
+
+      // Post-processing
+      var pip = new BABYLON.DefaultRenderingPipeline('pip', true, scene, [camera]);
+      pip.fxaaEnabled = true; pip.bloomEnabled = true; pip.bloomThreshold = 0.4; pip.bloomWeight = 0.4;
+      pip.imageProcessingEnabled = true;
+      pip.imageProcessing.toneMappingEnabled = true;
+      pip.imageProcessing.toneMappingType = BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;
+      pip.imageProcessing.exposure = 1.2; pip.imageProcessing.contrast = 1.1;
+
+      // Modules
       modelConverter = new ModelConverter();
-      animationManager = new AnimationManager(null);
+      animationManager = new AnimationManager();
       materialEditor = new MaterialEditor();
       textureManager = new TextureManager();
-
-      // Build inspector panels
+      textureManager.setScene(scene);
       materialEditor.buildUI(document.getElementById('panelMaterials'));
       textureManager.buildUI(document.getElementById('panelTextures'));
       animationManager.buildUI(document.getElementById('panelAnimate'));
       initConverterUI();
 
-      // Render loop
-      function animate() {
-        requestAnimationFrame(animate);
-        if (!isViewerOpen) return;
-        const delta = clock.getDelta();
-        if (mixer) mixer.update(delta);
-        if (animationManager) animationManager.update();
-        controls.update();
-        renderer.render(scene, camera);
+      // Auto-rotate
+      _autoRotateObs = scene.onBeforeRenderObservable.add(function() {
+        if (autoRotate && isViewerOpen) camera.alpha += 0.003;
+      });
+
+      // Resize
+      new ResizeObserver(function() { engine.resize(); }).observe(wrap);
+      window.addEventListener('resize', function() { engine.resize(); });
+
+      engine.runRenderLoop(function() {
+        if (isViewerOpen) { animationManager.update(); scene.render(); }
+      });
+
+      // Load default character (Corsair King) so the viewer isn't empty on first open
+      loadDefaultCharacter();
+    }
+
+    /* ═══════════════ Grudge Race → 3D Model Mapping ═══════════════
+     * Canonical mapping — must match Grudge-Builder/client/src/lib/gameData.ts
+     * 6 Races: Human, Barbarian (Crusade) | Undead, Orc (Legion) | Elf, Dwarf (Fabled)
+     * 4 Classes: Worg Shapeshifter, Warrior, Mage Priest, Ranger Scout
+     * All models served from assets.grudge-studio.com (R2 CDN, CORS: *).
+     */
+    var RACE_MODEL_CDN = 'https://assets.grudge-studio.com/models/characters/rts';
+    var GRUDGE_RACE_MODELS = {
+      human:     { file: 'Knight_Male.glb',   label: 'Human',     faction: 'Crusade' },
+      barbarian: { file: 'BarbarianGlad.glb', label: 'Barbarian', faction: 'Crusade' },
+      undead:    { file: 'berserker.glb',     label: 'Undead',    faction: 'Legion' },
+      orc:       { file: 'King.glb',          label: 'Orc',       faction: 'Legion' },
+      elf:       { file: 'Wizard.glb',        label: 'Elf',       faction: 'Fabled' },
+      dwarf:     { file: 'Viking_Male.glb',   label: 'Dwarf',     faction: 'Fabled' },
+    };
+    var DEFAULT_RACE = 'human';
+    // Expose globally so other Grudge apps can import/reference
+    window.GRUDGE_RACE_MODELS = GRUDGE_RACE_MODELS;
+
+    function raceModelUrl(race) {
+      var entry = GRUDGE_RACE_MODELS[(race || '').toLowerCase()] || GRUDGE_RACE_MODELS[DEFAULT_RACE];
+      return RACE_MODEL_CDN + '/' + entry.file;
+    }
+    function raceLabel(race) {
+      var entry = GRUDGE_RACE_MODELS[(race || '').toLowerCase()] || GRUDGE_RACE_MODELS[DEFAULT_RACE];
+      return entry.label;
+    }
+
+    /** Load a character model into the viewer scene */
+    async function loadCharacterModel(url, name, info) {
+      try {
+        var before = scene.animationGroups.length;
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, null, '.glb');
+        currentModel = result.meshes[0];
+        result.meshes.forEach(function(m) { shadows.addShadowCaster(m); m.receiveShadows = true; });
+        frameModel(currentModel);
+        var newGroups = scene.animationGroups.slice(before);
+        setupAnimations(newGroups);
+        var stats = getModelStats(currentModel);
+        document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        buildSceneTree(currentModel);
+        if (materialEditor) materialEditor.inspect(currentModel);
+        if (textureManager) textureManager.setInspectedObject(currentModel);
+        document.getElementById('viewerTitle').textContent = name;
+        document.getElementById('viewerInfo').textContent = info;
+        document.getElementById('viewerLoading').style.display = 'none';
+      } catch (err) {
+        console.warn('Character model load failed:', err);
+        document.getElementById('viewerLoading').style.display = 'none';
       }
-      animate();
+    }
+
+    /** Try to load the player's Grudge character, fall back to default race */
+    async function loadDefaultCharacter() {
+      var token = null;
+      try { token = localStorage.getItem('grudge_auth_token'); } catch(e) {}
+
+      if (token) {
+        try {
+          var res = await fetch('https://api.grudge-studio.com/characters', {
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            signal: AbortSignal.timeout(5000)
+          });
+          if (res.ok) {
+            var chars = await res.json();
+            if (Array.isArray(chars) && chars.length > 0) {
+              var c = chars[0]; // primary character
+              var url = raceModelUrl(c.race);
+              var label = (c.name || 'Character') + ' (' + raceLabel(c.race) + ' ' + (c.class || '') + ')';
+              await loadCharacterModel(url, label, 'GLB \u00b7 Grudge Character \u00b7 Lv.' + (c.level || 1));
+              console.log('Loaded player character:', c.name, c.race, c.class);
+              return;
+            }
+          }
+        } catch (e) { console.warn('Grudge character fetch failed:', e.message); }
+      }
+
+      // No auth or no characters — load default Human
+      await loadCharacterModel(
+        raceModelUrl(DEFAULT_RACE),
+        raceLabel(DEFAULT_RACE) + ' (Default)',
+        'GLB \u00b7 Default Race Model \u00b7 Sign in to load your character'
+      );
     }
 
     /* ═══════════════ Model Loading ═══════════════ */
     function clearModel() {
       if (currentModel) {
-        scene.remove(currentModel);
-        currentModel.traverse(child => {
-          if (child.geometry) child.geometry.dispose();
-          if (child.material) {
-            (Array.isArray(child.material) ? child.material : [child.material]).forEach(m => m.dispose());
-          }
-        });
+        currentModel.getChildMeshes(false).forEach(function(m) { m.dispose(); });
+        currentModel.dispose();
         currentModel = null;
       }
-      if (mixer) { mixer.stopAllAction(); mixer = null; }
-      animActions = []; activeAction = null;
+      currentAnimGroups.forEach(function(g) { g.dispose(); });
+      currentAnimGroups = [];
+      scene.animationGroups.slice().forEach(function(g) { g.dispose(); });
       document.getElementById('animSelect').style.display = 'none';
       document.getElementById('animSelect').innerHTML = '<option value="-1">No Animation</option>';
       document.getElementById('sceneTree').textContent = 'No model loaded';
     }
 
-    function frameModel(object) {
-      const box = new THREE.Box3().setFromObject(object);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * (Math.PI / 180);
-      let cameraZ = maxDim / (2 * Math.tan(fov / 2)) * 1.8;
-      camera.position.set(center.x + cameraZ * 0.5, center.y + cameraZ * 0.3, center.z + cameraZ);
-      controls.target.copy(center);
-      camera.near = maxDim / 100; camera.far = maxDim * 100;
-      camera.updateProjectionMatrix();
-      controls.update();
+    function frameModel(root) {
+      var bounds = root.getHierarchyBoundingVectors(true);
+      var center = bounds.min.add(bounds.max).scale(0.5);
+      var size = bounds.max.subtract(bounds.min);
+      var maxDim = Math.max(size.x, size.y, size.z);
+      camera.setTarget(center);
+      camera.radius = maxDim * 1.8;
+      camera.alpha = -Math.PI / 2; camera.beta = Math.PI / 3;
     }
 
-    function setupAnimations(animations, object) {
-      if (!animations || animations.length === 0) return;
-      mixer = new THREE.AnimationMixer(object);
-      animActions = animations.map(clip => mixer.clipAction(clip));
-      const select = document.getElementById('animSelect');
+    function setupAnimations(groups) {
+      if (!groups || groups.length === 0) return;
+      currentAnimGroups = groups;
+      var select = document.getElementById('animSelect');
       select.innerHTML = '<option value="-1">No Animation</option>';
-      animations.forEach((clip, i) => {
-        const opt = document.createElement('option');
-        opt.value = i; opt.textContent = clip.name || ('Animation ' + (i + 1));
+      groups.forEach(function(g, i) {
+        var opt = document.createElement('option');
+        opt.value = i; opt.textContent = g.name || ('Animation ' + (i + 1));
         select.appendChild(opt);
       });
       select.style.display = 'inline-block';
-      if (animActions.length > 0) { activeAction = animActions[0]; activeAction.play(); select.value = '0'; }
-      // Bind to AnimationManager
-      if (animationManager) animationManager.bind(object, animations);
+      if (groups.length > 0) { groups[0].start(true); select.value = '0'; }
+      animationManager.bind(groups);
     }
 
-    function applyWireframe(obj, wireframe) {
-      obj.traverse(child => {
-        if (child.isMesh && child.material) {
-          (Array.isArray(child.material) ? child.material : [child.material]).forEach(m => { m.wireframe = wireframe; });
-        }
+    function applyWireframe(root, wf) {
+      root.getChildMeshes(false).forEach(function(m) { if (m.material) m.material.wireframe = wf; });
+    }
+
+    function getModelStats(root) {
+      var verts = 0, tris = 0, meshes = 0;
+      root.getChildMeshes(false).forEach(function(m) {
+        meshes++;
+        if (m.getTotalVertices) verts += m.getTotalVertices();
+        if (m.getTotalIndices) tris += m.getTotalIndices() / 3;
       });
+      return { verts: verts, tris: Math.round(tris), meshes: meshes };
     }
 
-    function getModelStats(obj) {
-      let verts = 0, tris = 0, meshes = 0;
-      obj.traverse(child => {
-        if (child.isMesh && child.geometry) {
-          meshes++;
-          const geo = child.geometry;
-          if (geo.index) tris += geo.index.count / 3;
-          else if (geo.attributes.position) tris += geo.attributes.position.count / 3;
-          if (geo.attributes.position) verts += geo.attributes.position.count;
-        }
-      });
-      return { verts, tris: Math.round(tris), meshes };
-    }
-
-    function buildSceneTree(obj) {
-      const tree = document.getElementById('sceneTree');
+    function buildSceneTree(root) {
+      var tree = document.getElementById('sceneTree');
       if (!tree) return;
-      let html = '';
-      let depth = 0;
-      obj.traverse(child => {
-        const indent = '&nbsp;'.repeat(depth * 2);
-        const icon = child.isMesh ? '&#9632;' : child.isGroup ? '&#9654;' : '&#9679;';
-        const name = child.name || child.type;
-        html += `<div style="padding:1px 0;">${indent}${icon} <span style="color:#ccc;">${name}</span></div>`;
-        depth++;
-      });
+      var html = '';
+      function walk(node, depth) {
+        var indent = '&nbsp;'.repeat(depth * 2);
+        var icon = (node.getTotalVertices && node.getTotalVertices() > 0) ? '&#9632;' : '&#9654;';
+        html += '<div style="padding:1px 0;">' + indent + icon + ' <span style="color:#ccc;">' + (node.name || 'node') + '</span></div>';
+        var children = node.getChildren ? node.getChildren() : [];
+        children.forEach(function(c) { walk(c, depth + 1); });
+      }
+      walk(root, 0);
       tree.innerHTML = html || 'No model loaded';
     }
 
@@ -580,49 +626,37 @@
       clearModel();
       document.getElementById('viewerLoading').style.display = 'block';
       try {
-        let loader;
-        if (format === 'GLB' || format === 'GLTF') {
-          loader = new GLTFLoader(); loader.setDRACOLoader(dracoLoader);
-          const gltf = await loader.loadAsync(url);
-          currentModel = gltf.scene;
-          currentModel.traverse(c => { if (c.isMesh) c.castShadow = true; });
-          scene.add(currentModel); frameModel(currentModel);
-          setupAnimations(gltf.animations, currentModel);
-        } else if (format === 'FBX') {
-          loader = new FBXLoader();
-          const fbx = await loader.loadAsync(url);
-          fbx.traverse(c => { if (c.isMesh) c.castShadow = true; });
-          currentModel = fbx; scene.add(currentModel); frameModel(currentModel);
-          setupAnimations(fbx.animations, fbx);
-        } else if (format === 'OBJ') {
-          loader = new OBJLoader();
-          const obj = await loader.loadAsync(url);
-          obj.traverse(c => {
-            if (c.isMesh) { c.castShadow = true;
-              if (!c.material || c.material.type === 'MeshBasicMaterial')
-                c.material = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.6, metalness: 0.2 });
-            }
-          });
-          currentModel = obj; scene.add(currentModel); frameModel(currentModel);
-        }
-        if (showWireframe && currentModel) applyWireframe(currentModel, true);
-        if (currentModel) {
-          const stats = getModelStats(currentModel);
-          document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
-          buildSceneTree(currentModel);
-          // Update material editor with loaded model
-          if (materialEditor) materialEditor.inspect(currentModel);
-        }
+        var ext = '.glb';
+        var before = scene.animationGroups.length;
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, null, ext);
+        currentModel = result.meshes[0];
+
+        // Shadows
+        result.meshes.forEach(function(m) { shadows.addShadowCaster(m); m.receiveShadows = true; });
+
+        // Frame
+        frameModel(currentModel);
+
+        // Animations
+        var newGroups = scene.animationGroups.slice(before);
+        setupAnimations(newGroups);
+
+        if (showWireframe) applyWireframe(currentModel, true);
+
+        var stats = getModelStats(currentModel);
+        document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        buildSceneTree(currentModel);
+        if (materialEditor) materialEditor.inspect(currentModel);
+        if (textureManager) textureManager.setInspectedObject(currentModel);
       } catch (err) {
         console.error('Model load error:', err);
         document.getElementById('viewerStats').textContent = '\u26A0 Load failed: ' + err.message;
-        // Show helpful error in the canvas area
         var loadEl = document.getElementById('viewerLoading');
         loadEl.innerHTML = '<div style="text-align:center;padding:40px;">' +
           '<div style="font-size:3rem;margin-bottom:12px;opacity:0.3;">\u26A0</div>' +
           '<p style="color:#ef4444;font-size:1rem;margin-bottom:8px;">Failed to load model</p>' +
           '<p style="color:var(--text-dim);font-size:0.8rem;max-width:400px;margin:0 auto;">' + err.message + '</p>' +
-          '<p style="color:var(--text-dim);font-size:0.75rem;margin-top:12px;">The model file may not be hosted yet. Try uploading it to R2 storage or loading from your machine.</p>' +
+          '<p style="color:var(--text-dim);font-size:0.75rem;margin-top:12px;">Only GLB/GLTF is supported. All assets must go through the Grudge pipeline. Check R2 or upload from your machine.</p>' +
           '</div>';
         loadEl.style.display = 'block';
         return;
@@ -631,27 +665,28 @@
     }
 
     function loadModelFromFile(file) {
-      const ext = file.name.split('.').pop().toLowerCase();
-      const format = { glb: 'GLB', gltf: 'GLTF', fbx: 'FBX', obj: 'OBJ' }[ext];
-      if (!format) { alert('Unsupported format: .' + ext); return; }
-      const url = URL.createObjectURL(file);
+      var ext = file.name.split('.').pop().toLowerCase();
+      var format = { glb: 'GLB', gltf: 'GLTF' }[ext];
+      if (!format) {
+        // Non-GLB format dropped — send through convert+upload pipeline instead of previewing
+        alert('This .' + ext + ' file will be converted to GLB through the Grudge pipeline.\nUse the "Convert & Upload to R2" button to process it.');
+        return;
+      }
+      var url = URL.createObjectURL(file);
       openViewer(file.name, format, '');
       loadModelFromURL(url, format);
     }
 
     /* ═══════════════ Viewer Open/Close ═══════════════ */
     function openViewer(name, format, path) {
-      if (!renderer) initViewer();
+      if (!engine) initViewer();
       isViewerOpen = true;
       document.getElementById('viewerOverlay').classList.add('active');
       document.getElementById('viewerTitle').textContent = name;
       document.getElementById('viewerInfo').textContent = format + (path ? ' \u00b7 ' + path : '');
       document.getElementById('viewerStats').textContent = '';
       document.body.style.overflow = 'hidden';
-      const wrap = document.getElementById('viewerCanvasWrap');
-      camera.aspect = wrap.clientWidth / wrap.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      setTimeout(function() { engine.resize(); }, 50);
     }
 
     function closeViewer() {
@@ -662,7 +697,7 @@
 
     /* ═══════════════ Controls ═══════════════ */
     document.getElementById('viewerClose').addEventListener('click', closeViewer);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
 
     document.getElementById('btnWireframe').addEventListener('click', function() {
       showWireframe = !showWireframe; this.classList.toggle('active', showWireframe);
@@ -670,94 +705,85 @@
     });
     document.getElementById('btnGrid').addEventListener('click', function() {
       showGrid = !showGrid; this.classList.toggle('active', showGrid);
-      if (gridHelper) gridHelper.visible = showGrid;
+      if (gridMesh) gridMesh.isVisible = showGrid;
     });
-    document.getElementById('btnGrid').classList.add('active');
     document.getElementById('btnAutoRotate').addEventListener('click', function() {
       autoRotate = !autoRotate; this.classList.toggle('active', autoRotate);
-      if (controls) controls.autoRotate = autoRotate;
     });
-    document.getElementById('btnResetCam').addEventListener('click', () => { if (currentModel) frameModel(currentModel); });
+    document.getElementById('btnResetCam').addEventListener('click', function() { if (currentModel) frameModel(currentModel); });
 
     document.getElementById('animSelect').addEventListener('change', function() {
-      const idx = parseInt(this.value);
-      if (activeAction) activeAction.fadeOut(0.3);
-      if (idx >= 0 && animActions[idx]) { activeAction = animActions[idx]; activeAction.reset().fadeIn(0.3).play(); }
-      else activeAction = null;
+      var idx = parseInt(this.value);
+      currentAnimGroups.forEach(function(g) { g.stop(); });
+      if (idx >= 0 && currentAnimGroups[idx]) currentAnimGroups[idx].start(true);
     });
 
     /* ═══════════════ Camera Presets ═══════════════ */
     function setCameraPreset(preset) {
       if (!currentModel) return;
-      const box = new THREE.Box3().setFromObject(currentModel);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const dist = Math.max(size.x, size.y, size.z) * 2;
-      const positions = {
-        front: [center.x, center.y, center.z + dist],
-        back:  [center.x, center.y, center.z - dist],
-        left:  [center.x - dist, center.y, center.z],
-        right: [center.x + dist, center.y, center.z],
-        top:   [center.x, center.y + dist, center.z + 0.01],
-        iso:   [center.x + dist * 0.6, center.y + dist * 0.6, center.z + dist * 0.6],
-      };
-      const pos = positions[preset]; if (!pos) return;
-      camera.position.set(pos[0], pos[1], pos[2]);
-      controls.target.copy(center); camera.updateProjectionMatrix(); controls.update();
+      var bounds = currentModel.getHierarchyBoundingVectors(true);
+      var center = bounds.min.add(bounds.max).scale(0.5);
+      var size = bounds.max.subtract(bounds.min);
+      var dist = Math.max(size.x, size.y, size.z) * 2;
+      camera.setTarget(center); camera.radius = dist;
+      var presets = { front:[0,Math.PI/3], back:[Math.PI,Math.PI/3], left:[-Math.PI/2,Math.PI/3],
+        right:[Math.PI/2,Math.PI/3], top:[0,0.01], iso:[-Math.PI/4,Math.PI/4] };
+      var p = presets[preset]; if (!p) return;
+      camera.alpha = p[0]; camera.beta = p[1];
     }
-    document.querySelectorAll('[data-cam]').forEach(btn => btn.addEventListener('click', () => setCameraPreset(btn.dataset.cam)));
+    document.querySelectorAll('[data-cam]').forEach(function(btn) { btn.addEventListener('click', function() { setCameraPreset(btn.dataset.cam); }); });
 
     /* ═══════════════ Lighting ═══════════════ */
-    const lightMap = { key: () => keyLight, fill: () => fillLight, rim: () => rimLight };
-    document.querySelectorAll('[data-light]').forEach(btn => {
+    var lightMap = { key: function() { return keyLight; }, fill: function() { return fillLight; }, rim: function() { return rimLight; } };
+    document.querySelectorAll('[data-light]').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        const light = lightMap[this.dataset.light]?.(); if (!light) return;
-        light.visible = !light.visible; this.classList.toggle('active', light.visible);
+        var light = lightMap[this.dataset.light](); if (!light) return;
+        light.setEnabled(!light.isEnabled()); this.classList.toggle('active', light.isEnabled());
       });
     });
 
     /* ═══════════════ Environment ═══════════════ */
-    const envPresets = {
-      none:   { bg: 0x1a1a2e, ambient: 0.4, exposure: 1.2 },
-      studio: { bg: 0x2a2a3e, ambient: 0.6, exposure: 1.4 },
-      sunset: { bg: 0x1a0a0a, ambient: 0.3, exposure: 1.0 },
-      night:  { bg: 0x0a0a1a, ambient: 0.15, exposure: 0.7 },
+    var envPresets = {
+      none:   { r:0.10,g:0.10,b:0.18, exposure:1.2 },
+      studio: { r:0.16,g:0.16,b:0.24, exposure:1.4 },
+      sunset: { r:0.10,g:0.04,b:0.04, exposure:1.0 },
+      night:  { r:0.04,g:0.04,b:0.10, exposure:0.7 },
     };
     document.getElementById('envSelect').addEventListener('change', function() {
-      const p = envPresets[this.value] || envPresets.none;
-      if (scene) scene.background = new THREE.Color(p.bg);
-      if (renderer) renderer.toneMappingExposure = p.exposure;
+      var p = envPresets[this.value] || envPresets.none;
+      if (scene) scene.clearColor = new BABYLON.Color4(p.r, p.g, p.b, 1);
     });
 
     document.getElementById('qualitySelect').addEventListener('change', function() {
-      const dpr = Math.min(parseFloat(this.value), window.devicePixelRatio);
-      if (renderer) renderer.setPixelRatio(dpr);
+      var dpr = Math.min(parseFloat(this.value), window.devicePixelRatio);
+      if (engine) engine.setHardwareScalingLevel(1 / dpr);
     });
 
     /* ═══════════════ Screenshot & Export ═══════════════ */
-    document.getElementById('btnScreenshot').addEventListener('click', () => {
-      if (!renderer || !isViewerOpen) return;
-      renderer.render(scene, camera);
-      const a = document.createElement('a');
-      a.href = renderer.domElement.toDataURL('image/png');
-      a.download = 'grudge-3d-screenshot.png'; a.click();
+    document.getElementById('btnScreenshot').addEventListener('click', function() {
+      if (!engine || !isViewerOpen) return;
+      BABYLON.Tools.CreateScreenshot(engine, camera, { width: 1920, height: 1080 }, function(data) {
+        var a = document.createElement('a'); a.href = data; a.download = 'grudge-3d-screenshot.png'; a.click();
+      });
     });
 
-    document.getElementById('btnExportGLB').addEventListener('click', async () => {
-      if (!currentModel) return;
-      const exporter = new GLTFExporter();
-      const data = await exporter.parseAsync(currentModel, { binary: true });
-      const blob = new Blob([data], { type: 'model/gltf-binary' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
-      a.click(); URL.revokeObjectURL(a.href);
+    document.getElementById('btnExportGLB').addEventListener('click', async function() {
+      if (!scene || !currentModel) return;
+      try {
+        var glb = await BABYLON.GLTF2Export.GLBAsync(scene, document.getElementById('viewerTitle').textContent || 'model');
+        var keys = Object.keys(glb.glTFFiles);
+        var blob = glb.glTFFiles[keys[0]];
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
+        a.click(); URL.revokeObjectURL(a.href);
+      } catch (err) { console.error('Export failed:', err); }
     });
 
     /* ═══════════════ Drag & Drop ═══════════════ */
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    dropZone.addEventListener('click', () => fileInput.click());
+    var dropZone = document.getElementById('dropZone');
+    var fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', function() { fileInput.click(); });
     fileInput.addEventListener('change', function() { if (this.files[0]) loadModelFromFile(this.files[0]); });
     dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
@@ -767,212 +793,136 @@
     });
 
     /* ═══════════════ Toolbar & Inspector ═══════════════ */
-    const inspector = document.getElementById('viewerInspector');
-    const panels = { scene: 'panelScene', materials: 'panelMaterials', textures: 'panelTextures', animate: 'panelAnimate', convert: 'panelConvert' };
+    var inspector = document.getElementById('viewerInspector');
+    var panels = { scene: 'panelScene', materials: 'panelMaterials', textures: 'panelTextures', animate: 'panelAnimate', convert: 'panelConvert' };
 
-    document.querySelectorAll('.toolbar-tab').forEach(tab => {
+    document.querySelectorAll('.toolbar-tab').forEach(function(tab) {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('.toolbar-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.toolbar-tab').forEach(function(t) { t.classList.remove('active'); });
         this.classList.add('active');
-        const panelId = panels[this.dataset.tab];
-        document.querySelectorAll('.inspector-panel').forEach(p => p.style.display = 'none');
+        var panelId = panels[this.dataset.tab];
+        document.querySelectorAll('.inspector-panel').forEach(function(p) { p.style.display = 'none'; });
         if (panelId) document.getElementById(panelId).style.display = '';
-        // Open inspector when a tab is clicked
         inspector.classList.add('open');
-        // Resize canvas
-        setTimeout(() => {
-          if (renderer && camera) {
-            const wrap = document.getElementById('viewerCanvasWrap');
-            camera.aspect = wrap.clientWidth / wrap.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-          }
-        }, 50);
+        setTimeout(function() { if (engine) engine.resize(); }, 50);
       });
     });
 
-    document.getElementById('btnToggleInspector').addEventListener('click', () => {
+    document.getElementById('btnToggleInspector').addEventListener('click', function() {
       inspector.classList.toggle('open');
-      setTimeout(() => {
-        if (renderer && camera) {
-          const wrap = document.getElementById('viewerCanvasWrap');
-          camera.aspect = wrap.clientWidth / wrap.clientHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-        }
-      }, 50);
+      setTimeout(function() { if (engine) engine.resize(); }, 50);
     });
 
-    /* ═══════════════ Mode Toggle (Viewer / Play Canvas) ═══════════════ */
-    document.querySelectorAll('.mode-btn').forEach(btn => {
+    /* ═══════════════ Mode Toggle ═══════════════ */
+    document.querySelectorAll('.mode-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
         currentMode = this.dataset.mode;
-        if (currentMode === 'playcanvas') {
-          controls.autoRotate = false;
-          document.getElementById('btnAutoRotate').classList.remove('active');
-          // Enable gizmo-like interaction in Play Canvas mode
-          console.log('[PlayCanvas] Mode active — multi-model scene editing enabled');
-        } else {
-          controls.autoRotate = autoRotate;
-          document.getElementById('btnAutoRotate').classList.toggle('active', autoRotate);
-        }
       });
     });
 
     /* ═══════════════ Converter Panel ═══════════════ */
     function initConverterUI() {
-      const fileIn = document.getElementById('convertFileInput');
-      const msgEl = document.getElementById('convertMsg');
-      const fillEl = document.getElementById('convertFill');
-      const statusEl = document.getElementById('convertStatus');
-
-      modelConverter.onProgress((stage, pct, msg) => {
-        statusEl.style.display = '';
-        msgEl.textContent = msg;
-        fillEl.style.width = pct + '%';
-      });
-
-      document.getElementById('btnPickConvert').addEventListener('click', () => fileIn.click());
+      var fileIn = document.getElementById('convertFileInput');
+      var msgEl = document.getElementById('convertMsg');
+      var fillEl = document.getElementById('convertFill');
+      var statusEl = document.getElementById('convertStatus');
+      modelConverter.onProgress(function(stage, pct, msg) { statusEl.style.display = ''; msgEl.textContent = msg; fillEl.style.width = pct + '%'; });
+      document.getElementById('btnPickConvert').addEventListener('click', function() { fileIn.click(); });
       fileIn.addEventListener('change', async function() {
         if (!this.files[0]) return;
-        try {
-          const result = await modelConverter.convertToGLB(this.files[0]);
-          modelConverter.downloadBlob(result.blob, result.name);
-          msgEl.textContent = `Done: ${result.name} (${result.meshes} meshes, ${result.verts} verts, ${result.animations} anims)`;
-        } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
+        try { var result = await modelConverter.convertToGLB(this.files[0]); modelConverter.downloadBlob(result.blob, result.name); msgEl.textContent = 'Done: ' + result.name; }
+        catch (err) { msgEl.textContent = 'Error: ' + err.message; }
         this.value = '';
       });
-
-      document.getElementById('btnConvertCurrent').addEventListener('click', async () => {
-        if (!currentModel) { msgEl.textContent = 'No model loaded'; statusEl.style.display = ''; return; }
-        statusEl.style.display = '';
-        msgEl.textContent = 'Exporting current model...';
+      document.getElementById('btnConvertCurrent').addEventListener('click', async function() {
+        if (!scene || !currentModel) { msgEl.textContent = 'No model loaded'; statusEl.style.display = ''; return; }
+        statusEl.style.display = ''; msgEl.textContent = 'Exporting current model...';
         try {
-          const exporter = new GLTFExporter();
-          const data = await exporter.parseAsync(currentModel, { binary: true });
-          const blob = new Blob([data], { type: 'model/gltf-binary' });
-          const name = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
-          modelConverter.downloadBlob(blob, name);
-          msgEl.textContent = 'Downloaded: ' + name;
-          fillEl.style.width = '100%';
+          var glb = await BABYLON.GLTF2Export.GLBAsync(scene, 'model');
+          var keys = Object.keys(glb.glTFFiles);
+          modelConverter.downloadBlob(glb.glTFFiles[keys[0]], (document.getElementById('viewerTitle').textContent || 'model') + '.glb');
+          msgEl.textContent = 'Downloaded'; fillEl.style.width = '100%';
         } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
       });
     }
 
-    /* ═══════════════ Thumbnail Generator ═══════════════ */
-    const thumbRenderer = { _renderer: null, _scene: null, _camera: null, _queue: [], _running: false };
+    /* ═══════════════ Thumbnail Generator (BJS offscreen) ═══════════════ */
+    var thumbState = { engine: null, scene: null, camera: null, _queue: [], _running: false };
 
-    function initThumbRenderer() {
-      if (thumbRenderer._renderer) return;
-      thumbRenderer._renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      thumbRenderer._renderer.setSize(200, 200);
-      thumbRenderer._renderer.setPixelRatio(1);
-      thumbRenderer._renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      thumbRenderer._renderer.toneMappingExposure = 1.3;
-      thumbRenderer._renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-      thumbRenderer._scene = new THREE.Scene();
-      thumbRenderer._scene.background = new THREE.Color(0x1a1a2e);
-      thumbRenderer._scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-      thumbRenderer._scene.add(new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 0.4));
-      const dl = new THREE.DirectionalLight(0xffffff, 1.0);
-      dl.position.set(3, 5, 4);
-      thumbRenderer._scene.add(dl);
-
-      thumbRenderer._camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
+    function initThumbEngine() {
+      if (thumbState.engine) return;
+      var c = document.createElement('canvas'); c.width = 200; c.height = 200;
+      thumbState.engine = new BABYLON.Engine(c, true, { preserveDrawingBuffer: true });
+      thumbState.scene = new BABYLON.Scene(thumbState.engine);
+      thumbState.scene.clearColor = new BABYLON.Color4(0.10, 0.10, 0.18, 1);
+      new BABYLON.HemisphericLight('h', new BABYLON.Vector3(0, 1, 0), thumbState.scene).intensity = 0.6;
+      var dl = new BABYLON.DirectionalLight('d', new BABYLON.Vector3(-1, -2, -1), thumbState.scene); dl.intensity = 1;
+      thumbState.camera = new BABYLON.ArcRotateCamera('tc', -Math.PI / 4, Math.PI / 3, 5, BABYLON.Vector3.Zero(), thumbState.scene);
     }
 
     async function generateThumbnail(url, format) {
-      initThumbRenderer();
-      const s = thumbRenderer._scene;
-      const c = thumbRenderer._camera;
-      const r = thumbRenderer._renderer;
-
-      let model;
+      initThumbEngine();
+      var fmt = format.toUpperCase();
+      if (fmt !== 'GLB' && fmt !== 'GLTF') return null; // Only GLB/GLTF
+      var ext = '.glb';
       try {
-        if (format === 'GLB' || format === 'GLTF') {
-          const loader = new GLTFLoader(); loader.setDRACOLoader(dracoLoader);
-          const gltf = await loader.loadAsync(url);
-          model = gltf.scene;
-        } else if (format === 'FBX') {
-          model = await new FBXLoader().loadAsync(url);
-        } else if (format === 'OBJ') {
-          model = await new OBJLoader().loadAsync(url);
-          model.traverse(ch => { if (ch.isMesh && (!ch.material || ch.material.type === 'MeshBasicMaterial')) ch.material = new THREE.MeshStandardMaterial({color:0xcccccc,roughness:0.6,metalness:0.2}); });
-        } else return null;
-      } catch { return null; }
-
-      s.add(model);
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const dist = maxDim / (2 * Math.tan((40 * Math.PI / 180) / 2)) * 1.6;
-      c.position.set(center.x + dist * 0.5, center.y + dist * 0.3, center.z + dist);
-      c.lookAt(center);
-      c.updateProjectionMatrix();
-
-      r.render(s, c);
-      const dataUrl = r.domElement.toDataURL('image/webp', 0.7);
-
-      // Cleanup
-      s.remove(model);
-      model.traverse(ch => { if (ch.geometry) ch.geometry.dispose(); if (ch.material) { (Array.isArray(ch.material)?ch.material:[ch.material]).forEach(m=>m.dispose()); } });
-
-      return dataUrl;
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, thumbState.scene, null, ext);
+        var root = result.meshes[0];
+        var bounds = root.getHierarchyBoundingVectors(true);
+        var center = bounds.min.add(bounds.max).scale(0.5);
+        var size = bounds.max.subtract(bounds.min);
+        var maxDim = Math.max(size.x, size.y, size.z);
+        thumbState.camera.setTarget(center);
+        thumbState.camera.radius = maxDim * 1.6;
+        thumbState.scene.render();
+        var dataUrl = thumbState.engine.getRenderingCanvas().toDataURL('image/webp', 0.7);
+        // Cleanup
+        result.meshes.forEach(function(m) { m.dispose(); });
+        result.skeletons.forEach(function(s) { s.dispose(); });
+        thumbState.scene.animationGroups.slice().forEach(function(g) { g.dispose(); });
+        return dataUrl;
+      } catch (e) { return null; }
     }
 
-    // Process thumbnail queue (max 1 concurrent)
     async function processThumbQueue() {
-      if (thumbRenderer._running) return;
-      thumbRenderer._running = true;
-      while (thumbRenderer._queue.length > 0) {
-        const item = thumbRenderer._queue.shift();
-        if (!item.el.isConnected) continue; // card scrolled away
+      if (thumbState._running) return;
+      thumbState._running = true;
+      while (thumbState._queue.length > 0) {
+        var item = thumbState._queue.shift();
+        if (!item.el.isConnected) continue;
         try {
-          const dataUrl = await generateThumbnail(item.url, item.format);
+          var dataUrl = await generateThumbnail(item.url, item.format);
           if (dataUrl && item.el.isConnected) {
-            const img = document.createElement('img');
-            img.className = 'thumb-img';
-            img.src = dataUrl;
-            img.loading = 'lazy';
+            var img = document.createElement('img'); img.className = 'thumb-img'; img.src = dataUrl; img.loading = 'lazy';
             item.el.appendChild(img);
-            // Remove shimmer
-            const shimmer = item.el.querySelector('.load-shimmer');
-            if (shimmer) shimmer.remove();
+            var shimmer = item.el.querySelector('.load-shimmer'); if (shimmer) shimmer.remove();
           }
-        } catch { /* skip failed thumbnails */ }
+        } catch (e) { /* skip */ }
       }
-      thumbRenderer._running = false;
+      thumbState._running = false;
     }
 
-    // IntersectionObserver for lazy thumbnail loading
-    const thumbObserver = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target;
-        const url = el.dataset.modelUrl;
-        const format = el.dataset.format;
+    var thumbObserver = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (!entries[i].isIntersecting) continue;
+        var el = entries[i].target;
+        var url = el.dataset.modelUrl, format = el.dataset.format;
         if (!url || el.dataset.thumbQueued) continue;
         el.dataset.thumbQueued = '1';
         thumbObserver.unobserve(el);
-        thumbRenderer._queue.push({ el, url, format });
+        thumbState._queue.push({ el: el, url: url, format: format });
         processThumbQueue();
       }
     }, { rootMargin: '200px' });
 
-    // Expose thumbnail observer for catalog script
     window._3dThumbObserver = thumbObserver;
 
     /* ═══════════════ Expose to catalog ═══════════════ */
-    window._3dViewer = { openViewer, loadModelFromURL, closeViewer, loadModelFromFile };
-    window.GrudgeViewer = { scene: () => scene, camera: () => camera, renderer: () => renderer, currentModel: () => currentModel };
-
-    // Expose ModelConverter for the Convert+Upload pipeline (used by non-module catalog script)
-    const _earlyConverter = new ModelConverter();
-    window._modelConverter = _earlyConverter;
+    window._3dViewer = { openViewer: openViewer, loadModelFromURL: loadModelFromURL, closeViewer: closeViewer, loadModelFromFile: loadModelFromFile };
+    window.GrudgeViewer = { scene: function() { return scene; }, camera: function() { return camera; }, engine: function() { return engine; }, currentModel: function() { return currentModel; } };
+    window._modelConverter = new ModelConverter();
   </script>
 
   <!-- Catalog Script (non-module) -->
@@ -985,12 +935,16 @@
     var filters = { search: '', format: 'all', category: 'all' };
     var r2Available = false;
 
-    // R2 Worker URLs (custom domain preferred, workers.dev as reliable fallback)
+    // R2 Worker URLs — workers.dev is currently the only one with a working /v1/health
+    // objectstore.grudge-studio.com is misconfigured (404 on all routes)
     var R2_URLS = [
-      'https://objectstore.grudge-studio.com',
-      'https://grudgeassets.grudge.workers.dev'
+      'https://grudgeassets.grudge.workers.dev',
+      'https://objectstore.grudge-studio.com'
     ];
     var R2_WORKER_URL = R2_URLS[0]; // resolved after health check
+
+    // Direct R2 CDN for model files — has Access-Control-Allow-Origin: *
+    var R2_CDN_URL = 'https://assets.grudge-studio.com';
 
     // Configurable base URL for hosted models (update when models are on R2 or repo)
     var MODEL_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
@@ -1033,7 +987,7 @@
     }
 
     /* === Load ALL R2 3D models (multiple prefixes, paginated) === */
-    var R2_3D_EXTENSIONS = new Set(['GLB','GLTF','FBX','OBJ','GLB','BLEND']);
+    var R2_3D_EXTENSIONS = new Set(['GLB','GLTF','FBX','OBJ','BLEND']);
 
     function detectR2Category(key) {
       var parts = key.split('/');
@@ -1086,6 +1040,7 @@
                 category: detectR2Category(a.key),
                 sizeKB: a.size ? Math.round(a.size / 1024) : 0,
                 _source: 'r2',
+                _cdnUrl: R2_CDN_URL + '/' + a.key.split('/').map(encodeURIComponent).join('/'),
                 _r2Url: R2_WORKER_URL + '/v1/assets/' + a.key.split('/').map(encodeURIComponent).join('/') + '/file'
               });
             }
@@ -1133,22 +1088,34 @@
             } catch(e) { /* dedup check failed, continue */ }
           }
 
-          // Step 3: Convert to GLB if not already GLB (client-side via Three.js)
+          // Step 3: Convert to GLB if needed, then upload
           var glbBlob, glbName, meshes = 0, verts = 0, anims = 0;
           if (isGLB) {
             statusEl.textContent = 'Uploading ' + file.name + ' (already GLB)...';
             glbBlob = file;
             glbName = file.name;
-          } else {
+          } else if (ext === 'gltf' || ext === 'obj') {
+            // Client-side conversion via Babylon.js (GLTF/OBJ supported)
             statusEl.textContent = 'Converting ' + file.name + ' to GLB...';
-            // Use the module-level ModelConverter (already imported in the viewer)
-            var converterResult = await window._modelConverter.convertToGLB(file);
-            glbBlob = converterResult.blob;
-            glbName = converterResult.name;
-            meshes = converterResult.meshes;
-            verts = converterResult.verts;
-            anims = converterResult.animations;
-            statusEl.textContent = 'Converted! Uploading ' + glbName + '...';
+            try {
+              var converterResult = await window._modelConverter.convertToGLB(file);
+              glbBlob = converterResult.blob;
+              glbName = converterResult.name;
+              meshes = converterResult.meshes;
+              verts = converterResult.verts;
+              anims = converterResult.animations;
+              statusEl.textContent = 'Converted! Uploading ' + glbName + '...';
+            } catch (convErr) {
+              // Client-side failed — upload raw for server-side conversion
+              statusEl.textContent = 'Client convert failed, uploading raw for server pipeline...';
+              glbBlob = file;
+              glbName = file.name;
+            }
+          } else {
+            // FBX, BLEND, etc. — upload raw, server-side pipeline converts to GLB
+            statusEl.textContent = 'Uploading ' + file.name + ' for server-side GLB conversion...';
+            glbBlob = file;
+            glbName = file.name;
           }
 
           // Step 4: Upload via conversion pipeline (Durable Object)
@@ -1209,7 +1176,7 @@
         var res = await fetch('./api/v1/models3d.json');
         var data = await res.json();
         allModels = (data.models || []).map(function(m) {
-          m.path = m.path.replace(/\\\\/g, '/').replace(/\\/g, '/');
+          m.path = m.path.replace(/\\/g, '/');
           m._source = 'static';
           return m;
         });
@@ -1302,7 +1269,8 @@
       var page = filteredModels.slice(start, end);
       var grid = document.getElementById('modelGrid');
       // SVG cube icons colored per format
-      var cubeColors = { GLB: '#22c55e', GLTF: '#3b82f6', FBX: '#f97316', OBJ: '#a855f7' };
+      var cubeColors = { GLB: '#22c55e', GLTF: '#3b82f6', FBX: '#f97316', OBJ: '#a855f7', BLEND: '#e97316' };
+      var PIPELINE_READY = new Set(['GLB', 'GLTF']);
       function makeCubeSVG(fmt) {
         var c = cubeColors[fmt] || '#888';
         return '<svg class="cube-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
@@ -1327,10 +1295,12 @@
         } else if (MODEL_BASE_URL) {
           modelUrl = MODEL_BASE_URL + '/' + encodeModelPath(m.path);
         }
+        var needsConvert = !PIPELINE_READY.has(m.format);
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
           '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
             makeCubeSVG(m.format) +
             '<div class="load-shimmer"></div>' +
+            (needsConvert ? '<span class="needs-convert">Needs Convert</span>' : '') +
             '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span>' + srcBadge + '</div>' +
           '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
           '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
@@ -1346,22 +1316,26 @@
           if (!m) return;
           window._3dViewer.openViewer(m.name, m.format, m.path);
 
-          // R2 models have a direct URL
-          if (m._source === 'r2' && m._r2Url) {
-            window._3dViewer.loadModelFromURL(m._r2Url, m.format);
-            return;
-          }
+          // Try R2 CDN first (assets.grudge-studio.com — proper CORS: *)
+          var cdnUrl = m._cdnUrl || (R2_CDN_URL + '/' + encodeModelPath(m.path));
+          try {
+            var cdnRes = await fetch(cdnUrl, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+            if (cdnRes.ok) {
+              window._3dViewer.loadModelFromURL(cdnUrl, m.format);
+              return;
+            }
+          } catch(e) { /* CDN doesn't have it, fall through */ }
 
-          // For static models: try R2 first (models are likely stored there), then fall back to static URL
+          // Fallback: R2 worker API (may have CORS restrictions)
           if (r2Available && R2_WORKER_URL) {
-            var r2Url = R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file';
+            var r2Url = m._r2Url || (R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file');
             try {
               var headRes = await fetch(r2Url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
               if (headRes.ok) {
                 window._3dViewer.loadModelFromURL(r2Url, m.format);
                 return;
               }
-            } catch(e) { /* R2 doesn't have it, fall through */ }
+            } catch(e) { /* R2 worker doesn't have it, fall through */ }
           }
 
           // Try GitHack CDN (better CORS + content-type than GitHub Pages)

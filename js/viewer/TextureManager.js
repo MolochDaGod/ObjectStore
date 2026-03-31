@@ -1,8 +1,7 @@
 /**
- * TextureManager.js — Texture loading, browsing, and PBR slot assignment
+ * TextureManager.js — Babylon.js texture loading, browsing, and slot assignment
+ * Uses global BABYLON namespace (UMD CDN build)
  */
-import * as THREE from 'three';
-
 const KNOWN_TEXTURES = {
   characters: [
     { name: 'Barbarian', path: 'textures/characters/barbarian_texture.png' },
@@ -19,151 +18,102 @@ const KNOWN_TEXTURES = {
   ],
 };
 
-export class TextureManager {
-  /** @param {import('./PlayCanvas.js').PlayCanvas} playCanvas */
-  constructor(playCanvas) {
-    this.canvas = playCanvas;
-    this._loader = new THREE.TextureLoader();
-    /** @type {Map<string, THREE.Texture>} cached textures by URL */
+class TextureManager {
+  constructor() {
     this._cache = new Map();
     this._browserEl = null;
     this._baseUrl = '';
+    this._scene = null;
+    this._inspectedObject = null;
   }
 
-  /** Set the base URL for resolving relative texture paths (e.g. ObjectStore root) */
   setBaseUrl(url) { this._baseUrl = url.replace(/\/$/, ''); }
+  setScene(scene) { this._scene = scene; }
 
-  /** Mount texture browser into a DOM element */
-  mount(containerEl) {
+  buildUI(containerEl) {
     this._browserEl = containerEl;
     this._renderBrowser();
   }
 
   _renderBrowser() {
     if (!this._browserEl) return;
-
     let html = '<div class="tex-title">Texture Library</div>';
-
     for (const [category, textures] of Object.entries(KNOWN_TEXTURES)) {
       html += `<div class="tex-category">${category}</div><div class="tex-grid">`;
       for (const tex of textures) {
         const src = this._baseUrl ? this._baseUrl + '/' + tex.path : tex.path;
         html += `<div class="tex-thumb" data-path="${tex.path}" title="${tex.name}">
-          <img src="${src}" alt="${tex.name}" loading="lazy">
-          <span>${tex.name}</span>
-        </div>`;
+          <img src="${src}" alt="${tex.name}" loading="lazy"><span>${tex.name}</span></div>`;
       }
       html += '</div>';
     }
-
     html += `<div class="tex-category">Load Custom</div>
-      <div class="tex-drop-zone" id="texDropZone">
-        <span>Drop image or click</span>
-        <input type="file" accept="image/*" id="texFileInput" style="display:none">
-      </div>`;
-
+      <div class="tex-drop-zone" id="texDropZone"><span>Drop image or click</span>
+        <input type="file" accept="image/*" id="texFileInput" style="display:none"></div>`;
     this._browserEl.innerHTML = html;
     this._bindBrowserEvents();
   }
 
   _bindBrowserEvents() {
     if (!this._browserEl) return;
-
-    // Thumbnail click → apply to selected model's diffuse map
     this._browserEl.querySelectorAll('.tex-thumb').forEach(el => {
-      el.addEventListener('click', async () => {
+      el.addEventListener('click', () => {
         const path = el.dataset.path;
         const url = this._baseUrl ? this._baseUrl + '/' + path : path;
-        await this.applyToSelected('map', url);
+        this.applyToInspected('albedoTexture', url);
       });
     });
-
-    // File drop zone
     const dropZone = this._browserEl.querySelector('#texDropZone');
     const fileInput = this._browserEl.querySelector('#texFileInput');
     if (dropZone && fileInput) {
       dropZone.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', async () => {
+      fileInput.addEventListener('change', () => {
         if (fileInput.files[0]) {
           const url = URL.createObjectURL(fileInput.files[0]);
-          await this.applyToSelected('map', url);
+          this.applyToInspected('albedoTexture', url);
           setTimeout(() => URL.revokeObjectURL(url), 5000);
         }
       });
       dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
       dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-      dropZone.addEventListener('drop', async e => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault(); dropZone.classList.remove('drag-over');
         if (e.dataTransfer.files[0]) {
           const url = URL.createObjectURL(e.dataTransfer.files[0]);
-          await this.applyToSelected('map', url);
+          this.applyToInspected('albedoTexture', url);
           setTimeout(() => URL.revokeObjectURL(url), 5000);
         }
       });
     }
   }
 
-  /* ═══════════════ Core API ═══════════════ */
-
-  /**
-   * Load a texture (cached)
-   * @param {string} url
-   * @param {boolean} [isSRGB=true]
-   * @returns {Promise<THREE.Texture>}
-   */
-  async loadTexture(url, isSRGB = true) {
+  loadTexture(url) {
     if (this._cache.has(url)) return this._cache.get(url);
-    const texture = await this._loader.loadAsync(url);
-    texture.colorSpace = isSRGB ? THREE.SRGBColorSpace : THREE.LinearSRGBColorSpace;
-    texture.flipY = false;
-    this._cache.set(url, texture);
-    return texture;
+    if (!this._scene) return null;
+    const tex = new BABYLON.Texture(url, this._scene);
+    this._cache.set(url, tex);
+    return tex;
   }
 
-  /**
-   * Apply texture to a specific model + slot
-   * @param {number} modelId
-   * @param {string} slot - 'map'|'normalMap'|'roughnessMap'|etc
-   * @param {string} url
-   */
-  async applyToModel(modelId, slot, url) {
-    if (!this.canvas) return;
-    const entry = this.canvas.getModel(modelId);
-    if (!entry) return;
-    const isSRGB = slot === 'map' || slot === 'emissiveMap';
-    const texture = await this.loadTexture(url, isSRGB);
-    entry.object.traverse(child => {
-      if (child.isMesh && child.material) {
-        const mats = Array.isArray(child.material) ? child.material : [child.material];
-        mats.forEach(m => {
-          if (m[slot] !== undefined || slot === 'map') {
-            m[slot] = texture;
-            m.needsUpdate = true;
-          }
-        });
-      }
+  applyToMesh(mesh, slot, url) {
+    const tex = this.loadTexture(url);
+    if (!tex || !mesh?.material) return;
+    mesh.material[slot] = tex;
+  }
+
+  applyToInspected(slot, url) {
+    if (!this._inspectedObject) return;
+    const tex = this.loadTexture(url);
+    if (!tex) return;
+    const meshes = this._inspectedObject.getChildMeshes ? this._inspectedObject.getChildMeshes(false) : [];
+    meshes.forEach(m => {
+      if (m.material) m.material[slot] = tex;
     });
   }
 
-  /** Apply to currently selected model */
-  async applyToSelected(slot, url) {
-    if (!this.canvas?.selectedId) return;
-    await this.applyToModel(this.canvas.selectedId, slot, url);
-  }
-
-  /** Standalone buildUI — renders the texture browser (no PlayCanvas required) */
-  buildUI(containerEl) {
-    this._browserEl = containerEl;
-    this._renderBrowser();
-  }
-
-  /** Get known texture library */
+  setInspectedObject(obj) { this._inspectedObject = obj; }
   getLibrary() { return KNOWN_TEXTURES; }
-
-  /** Clear texture cache */
-  clearCache() {
-    for (const tex of this._cache.values()) tex.dispose();
-    this._cache.clear();
-  }
+  clearCache() { for (const t of this._cache.values()) t.dispose(); this._cache.clear(); }
 }
+
+window.TextureManager = TextureManager;
