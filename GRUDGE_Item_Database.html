@@ -58036,5 +58036,49 @@
  filterItems();
  }
  </script>
+ <!-- Sync all item icons with shared icon-resolver (single source of truth = ItemBrowser) -->
+ <script type="module">
+ import { getIconUrl, getFallbackUrl } from './utils/icon-resolver.js';
+
+ // Map GRUDGE_Item_Database categories to ItemBrowser types
+ const CAT_TYPE = {
+ 'weapon': 'weapon', 'armor': 'armor', 'relic': 'armor',
+ 'ring': 'armor', 'offhand': 'armor', 'material': 'material',
+ 'consumable': 'consumable', 'skill': 'weapon'
+ };
+
+ // Derive a kebab-case ID from the item name (matches ItemBrowser's item.id pattern)
+ function nameToId(name) {
+ return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+ }
+
+ function escapeAttr(s) {
+ return s ? String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+ }
+
+ document.querySelectorAll('.item-card').forEach(card => {
+ const name = card.getAttribute('data-name');
+ const category = card.getAttribute('data-category') || 'weapon';
+ const img = card.querySelector('.item-icon img');
+ if (!name || !img) return;
+
+ const item = {
+ id: nameToId(name),
+ name: name,
+ type: CAT_TYPE[category] || 'weapon',
+ category: category
+ };
+
+ const primary = getIconUrl(item);
+ const fallback = getFallbackUrl(item);
+
+ // Set primary URL; on error fall back
+ img.onerror = function() {
+ this.onerror = null;
+ this.src = fallback;
+ };
+ img.src = primary;
+ });
+ </script>
 </body>
 </html>
