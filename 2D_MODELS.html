@@ -188,6 +188,7 @@
       <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search by name, category, or UUID...">
       <div class="filter-row"><span class="filter-label">Category:</span><div id="catFilters"></div></div>
       <div class="filter-row"><span class="filter-label">Source:</span><div id="srcFilters"></div></div>
+      <div class="filter-row"><span class="filter-label">Subcategory:</span><select id="subFilters" class="anim-select" style="width:auto;min-width:200px;font-size:0.8rem;"><option value="all">All</option></select></div>
       <div class="filter-row" style="margin-top:8px;border-top:1px solid var(--border-color);padding-top:8px;">
         <span class="filter-label">Tools:</span>
         <button class="filter-btn" id="btnValidate" style="font-size:0.7rem;">Validation Report</button>
@@ -217,7 +218,7 @@
   (function() {
     'use strict';
     var chars = [], filtered = [], page = 0, SIZE = 48;
-    var filters = { q: '', cat: 'all', src: 'all' };
+    var filters = { q: '', cat: 'all', src: 'all', sub: 'all' };
     var anims = {}, obs, BASE = '.';
 
     async function init() {
@@ -241,14 +242,18 @@
     }
 
     function buildFilters() {
-      var cs = {}, ss = {};
-      chars.forEach(function(c) { cs[c.category]=1; ss[c.source]=1; });
+      var cs = {}, ss = {}, subs = {};
+      chars.forEach(function(c) { cs[c.category]=1; ss[c.source]=1; subs[c.name]=(subs[c.name]||0)+1; });
       var h = '<button class="filter-btn active" data-v="all">All</button>';
       Object.keys(cs).sort().forEach(function(c) { h += '<button class="filter-btn" data-v="'+c+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'</button>'; });
       document.getElementById('catFilters').innerHTML = h;
       h = '<button class="filter-btn active" data-v="all">All</button>';
       Object.keys(ss).sort().forEach(function(s) { h += '<button class="filter-btn" data-v="'+s+'">'+s+'</button>'; });
       document.getElementById('srcFilters').innerHTML = h;
+      // Subcategory dropdown
+      var subSel = document.getElementById('subFilters');
+      subSel.innerHTML = '<option value="all">All ('+chars.length+')</option>';
+      Object.keys(subs).sort().forEach(function(s) { subSel.innerHTML += '<option value="'+esc(s)+'">'+esc(s)+' ('+subs[s]+')</option>'; });
     }
 
     function events() {
@@ -265,6 +270,9 @@
         var b = e.target.closest('[data-v]'); if (!b) return;
         this.querySelectorAll('[data-v]').forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
         filters.src = b.dataset.v; page=0; apply();
+      });
+      document.getElementById('subFilters').addEventListener('change', function() {
+        filters.sub = this.value; page=0; apply();
       });
       document.getElementById('modalClose').addEventListener('click', closeModal);
       document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target===e.currentTarget) closeModal(); });
@@ -290,6 +298,7 @@
       filtered = chars.filter(function(c) {
         if (filters.cat!=='all' && c.category!==filters.cat) return false;
         if (filters.src!=='all' && c.source!==filters.src) return false;
+        if (filters.sub!=='all' && c.name!==filters.sub) return false;
         if (filters.q) {
           var q = filters.q;
           var haystack = [c.name, c.category, c.uuid||'', c.displayName||'', c.heroClass||'', c.description||'', c.aliasOf||''].join(' ').toLowerCase();
@@ -379,17 +388,22 @@
         var retry = +(img.dataset.retry || 0);
         if (retry === 0) {
           img.dataset.retry = '1';
-          // Try flat path (strip category subfolder)
-          var alt = ad.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui)\//, '/sprites/');
+          // Try 1: strip category subfolder (categorized → flat)
+          var alt = ad.path.replace(/\/sprites\/[a-zA-Z_-]+\/([a-zA-Z_-]+\/)/, '/sprites/$1');
           if (alt !== ad.path) { img.src = BASE + alt; return; }
-          img.dataset.retry = '2';
         }
         if (retry <= 1) {
           img.dataset.retry = '2';
-          // Try nested path (add category subfolder)
+          // Try 2: add category subfolder (flat → categorized)
           var cat = ch.category || 'characters';
-          var nested = ad.path.replace('/sprites/', '/sprites/' + cat + '/');
-          if (nested !== ad.path) { img.src = BASE + nested; return; }
+          var nested = ad.path.replace(/\/sprites\/(?!characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui|buildings|backgrounds)/, '/sprites/' + cat + '/');
+          if (nested !== ad.path && nested !== img.src.replace(BASE, '')) { img.src = BASE + nested; return; }
+        }
+        if (retry <= 2) {
+          img.dataset.retry = '3';
+          // Try 3: lowercase the filename
+          var lower = ad.path.replace(/\/([^\/]+)$/, function(m, f) { return '/' + f.toLowerCase(); });
+          if (lower !== ad.path) { img.src = BASE + lower; return; }
         }
         var fi = document.getElementById('fi-'+id);
         if(fi) fi.textContent = 'Failed';

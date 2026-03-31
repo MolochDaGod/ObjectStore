@@ -63,40 +63,66 @@ const ROOT_FOLDER_CATEGORY = {
   'barbarian-mage': 'characters', 'barbarian-ranger': 'characters', 'barbarian-warrior': 'characters',
   'black-priest': 'characters', 'crossbowman': 'characters', 'crystal-mauler': 'characters',
   'dark-knight': 'characters', 'demon-sword': 'characters', 'dwarf-ranger': 'characters',
+  'dwarf-mage': 'characters', 'dwarf-worge': 'characters',
   'elf-ranger': 'characters', 'Elf-mage': 'characters', 'elf_warrior': 'characters',
   'fantasy-warrior': 'characters', 'fire-knight': 'characters', 'fire-wizard': 'characters',
-  'forest-guardian': 'characters', 'frost-guardian': 'characters', 'heroes': 'characters',
-  'human-ranger': 'characters', 'knight': 'characters', 'knight-templar': 'characters',
-  'lancer': 'characters', 'leaf-ranger': 'characters', 'loreon-knight': 'characters',
+  'forest-guardian': 'characters', 'free-knight': 'characters', 'frost-guardian': 'characters',
+  'gunslinger': 'characters', 'heroes': 'characters',
+  'human-mage': 'characters', 'human-ranger': 'characters',
+  'knight': 'characters', 'knight-templar': 'characters',
+  'lancer': 'characters', 'leaf-ranger': 'characters', 'lightning-mage': 'characters',
+  'loreon-knight': 'characters',
   'martial-hero': 'characters', 'medieval-warrior-3': 'characters', 'necromancer': 'characters',
   'nightborne': 'characters', 'orc': 'characters', 'orc-rider': 'characters',
+  'pirate': 'characters', 'pirate-captain': 'characters',
   'priest': 'characters', 'shadow-warrior': 'characters', 'soldier': 'characters',
-  'spirit_boxer': 'characters', 'swordsman': 'characters', 'water-priestess': 'characters',
+  'spirit_boxer': 'characters', 'stormhead': 'characters', 'swordsman': 'characters',
+  'water-priestess': 'characters', 'white-priest': 'characters',
   'werebear': 'characters', 'werewolf': 'characters', 'wind-hashashin': 'characters',
-  'wizard': 'characters', 'wizard-pack': 'characters',
+  'wizard': 'characters', 'wizard-new': 'characters', 'wizard-pack': 'characters',
   // enemies
   'armored-orc': 'enemies', 'armored-skeleton': 'enemies', 'elite-orc': 'enemies',
-  'evil-wizard': 'enemies', 'evil-wizard-2': 'enemies', 'greatsword-skeleton': 'enemies',
+  'evil-wizard': 'enemies', 'evil-wizard-2': 'enemies', 'evil-wizard-3': 'enemies',
+  'greatsword-skeleton': 'enemies',
+  'knight-enemy': 'enemies',
   'skeleton': 'enemies', 'skeleton-archer': 'enemies', 'skeleton-enemy': 'enemies',
+  'skeleton-spearman': 'enemies', 'skeleton-warrior': 'enemies',
   'slime': 'enemies', 'bandit-necro': 'enemies', 'demon-minion1': 'enemies',
   'demon-minion2': 'enemies', 'demon-summoner': 'enemies',
+  'undead-ranger': 'enemies',
   // bosses
   'boss-demon': 'bosses', 'boss-demon-slime': 'bosses', 'cthulu-boss': 'bosses',
   'dragon-red': 'bosses', 'dragon-white': 'bosses', 'ogre-boss': 'bosses',
   'gorgon_siren_1': 'bosses', 'gorgon_siren_2': 'bosses', 'gorgon_siren_3': 'bosses',
+  'shardsoul-slayer': 'bosses',
   // monsters
   'baby_boxer': 'monsters', 'barrel_bomb': 'monsters', 'barrel_bomber': 'monsters',
-  'barrel_trap': 'monsters', 'bot-wheel': 'monsters', 'mine-arachnid': 'monsters',
+  'barrel_trap': 'monsters', 'bot-wheel': 'monsters',
+  'mine-amphibian': 'monsters', 'mine-arachnid': 'monsters', 'mine-elemental': 'monsters',
   'nature-elemental': 'monsters', 'water-elemental': 'monsters',
-  'shield_droid': 'monsters', 'shock_sweeper': 'monsters', 'toaster_bot': 'monsters',
-  'stone-guardian': 'monsters',
+  'shield_droid': 'monsters', 'shock-sweeper': 'monsters', 'shock_sweeper': 'monsters',
+  'toaster_bot': 'monsters', 'stone-guardian': 'monsters',
+  'training-dummy': 'monsters',
   // desert
   'desert-deceased': 'enemies', 'desert-hyena': 'enemies', 'desert-mummy': 'enemies',
-  'desert-scorpio': 'enemies', 'desert-snake': 'enemies',
+  'desert-scorpio': 'enemies', 'desert-snake': 'enemies', 'desert-vulture': 'enemies',
   // npcs
   'merchant': 'npcs',
   // fish
   'fish': 'fish',
+  // misc mapped
+  'pixel-crawler': 'characters',
+  'steampunk-airship': 'characters', 'steampunk-mech': 'characters',
+  'lpc_entry': 'characters',
+  'dampdungeons': 'effects', 'fireballs': 'effects',
+  'GrudgeRPGAssets2d': 'characters',
+  'rpg': 'characters',
+  'miniworld': 'ui',
+  'expansion_pack': 'characters',
+  'portraits': 'ui',
+  'arenas': 'ui',
+  'totems': 'monsters',
+  'destructibles': 'monsters',
 };
 
 // ─── UUID generation ───
@@ -152,23 +178,36 @@ function detectFrameLayout(width, height) {
     return { frameCount: 1, frameW: width, frameH: height, layout: 'single', cols: 1, rows: 1 };
   }
 
+  // ── Try grid layout first (multi-row, multi-column) ──
+  // Common in larger sprite sheets where rows ≥ 2 and cols ≥ 2
+  let bestGrid = null;
+  for (let rows = 2; rows <= 20; rows++) {
+    const fh = Math.floor(height / rows);
+    if (fh < 4 || height % rows !== 0) continue;
+    for (let cols = 2; cols <= 50; cols++) {
+      const fw = Math.floor(width / cols);
+      if (fw < 4 || width % cols !== 0) continue;
+      const frameRatio = fw / fh;
+      // Prefer square-ish frames
+      if (frameRatio < 0.4 || frameRatio > 2.5) continue;
+      const score = Math.abs(1 - frameRatio) + (rows * cols > 100 ? 0.5 : 0);
+      if (!bestGrid || score < bestGrid.score) {
+        bestGrid = { frameCount: rows * cols, frameW: fw, frameH: fh, score, layout: 'grid', cols, rows };
+      }
+    }
+  }
+
   // Horizontal strip
   if (ratio > 1.4) {
-    // Build candidate frame counts 2..50
-    const candidates = [];
-    for (let fc = 2; fc <= 50; fc++) candidates.push(fc);
-
     let best = null;
 
-    for (const fc of candidates) {
+    for (let fc = 2; fc <= 50; fc++) {
       const fw = Math.floor(width / fc);
       if (fw < 1) continue;
       const frameRatio = fw / height;
       if (frameRatio < 0.3 || frameRatio > 3.0) continue;
 
-      // Score: prefer frames closer to square (ratio=1)
       let score = Math.abs(1 - frameRatio);
-      // Bonus for exact division (no leftover pixels)
       const exact = (width % fc === 0);
       if (exact) score -= 0.001;
 
@@ -188,8 +227,14 @@ function detectFrameLayout(width, height) {
       }
     }
 
+    // Compare horizontal vs grid — prefer grid only if it produces more square frames
+    if (best && bestGrid && bestGrid.score < best.score - 0.05) {
+      return bestGrid;
+    }
+
     if (best) return best;
-    // Fallback: use height as frame width guess
+    if (bestGrid) return bestGrid;
+
     const fallbackFc = Math.max(1, Math.floor(width / height));
     const fallbackFw = Math.floor(width / fallbackFc);
     return { frameCount: fallbackFc, frameW: fallbackFw, frameH: height, layout: 'horizontal', cols: fallbackFc, rows: 1 };
@@ -197,6 +242,10 @@ function detectFrameLayout(width, height) {
 
   // Vertical strip
   if (ratio < 0.7) {
+    // Check if grid layout is better than vertical strip
+    if (bestGrid && bestGrid.score < 0.5) {
+      return bestGrid;
+    }
     const vfc = Math.max(1, Math.round(height / width));
     const fh = Math.floor(height / vfc);
     return { frameCount: vfc, frameW: width, frameH: fh, layout: 'vertical', cols: 1, rows: vfc };
@@ -244,7 +293,11 @@ function classifyPath(filePath) {
     if (CATEGORY_MAP[topFolder]) {
       return { category: CATEGORY_MAP[topFolder], subcategory: subFolder };
     }
-    // Unknown top folder, try to match subFolder
+    // Check if the top folder itself is a known root-level character folder with subfolders
+    if (ROOT_FOLDER_CATEGORY[topFolder]) {
+      return { category: ROOT_FOLDER_CATEGORY[topFolder], subcategory: topFolder };
+    }
+    // Unknown top folder, treat it as category with subfolder
     return { category: topFolder, subcategory: subFolder };
   }
 
