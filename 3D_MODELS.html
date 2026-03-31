@@ -51,11 +51,10 @@
     .model-icon .error-overlay { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: #ef4444; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 3px; z-index: 2; }
     .model-icon .format-badge { position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
     .format-glb { background: #22c55e; color: #000; }
-    .format-gltf { background: #3b82f6; color: #fff; }
-    .format-fbx { background: #f97316; color: #000; opacity: 0.7; }
-    .format-obj { background: #a855f7; color: #fff; opacity: 0.7; }
-    .format-blend { background: #e97316; color: #000; opacity: 0.7; }
-    .needs-convert { position: absolute; top: 6px; left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; font-weight: 700; background: #ef4444; color: #fff; text-transform: uppercase; }
+    .format-gltf { background: #3b82f6; color: #fff; opacity: 0.55; }
+    .format-fbx { background: #f97316; color: #000; opacity: 0.55; }
+    .format-obj { background: #a855f7; color: #fff; opacity: 0.55; }
+    .format-blend { background: #e97316; color: #000; opacity: 0.55; }
     .model-name { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .model-meta { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -198,7 +197,7 @@
   <div class="container">
     <div class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-  <p class="subtitle">1350+ models — GLB pipeline — powered by Babylon.js
+      <p class="subtitle">GLB-only 3D object storage — powered by Babylon.js
         <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
       </p>
       <div class="stats-bar" id="statsBar"></div>
@@ -209,15 +208,15 @@
       <div class="bp-banner-text">
         <strong>Grudge Pipeline:</strong> Drop any 3D format — FBX, OBJ, GLTF, BLEND — and it gets auto-converted to optimised GLB
         (GPU-ready, PBR materials, Draco compression, skeletal animation, smallest file size).
-        Only GLB is served to GDevelop editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
+        Only GLB is surfaced in this 3D browser and served to GDevelop editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
       </div>
     </div>
 
     <!-- Drop Zone for local files -->
     <div class="drop-zone" id="dropZone">
       <div class="drop-zone-icon">&#128230;</div>
-      <div class="drop-zone-text">Drag &amp; drop a 3D model to preview instantly</div>
-      <div class="drop-zone-formats">Accepts: .glb .gltf .fbx .obj .blend — auto-converts to GLB</div>
+      <div class="drop-zone-text">Drag &amp; drop a 3D model to convert into the GLB pipeline</div>
+      <div class="drop-zone-formats">Accepts source files for conversion, but only GLB is stored and shown here</div>
       <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj,.blend" style="display:none;">
     </div>
 
@@ -987,7 +986,9 @@
     }
 
     /* === Load ALL R2 3D models (multiple prefixes, paginated) === */
-    var R2_3D_EXTENSIONS = new Set(['GLB','GLTF','FBX','OBJ','BLEND']);
+    // Browser is GLB-only. Source formats are accepted by the conversion pipeline,
+    // but only GLB assets are shown in the catalog and considered engine-ready.
+    var R2_3D_EXTENSIONS = new Set(['GLB']);
 
     function detectR2Category(key) {
       var parts = key.split('/');
@@ -1175,13 +1176,15 @@
       try {
         var res = await fetch('./api/v1/models3d.json');
         var data = await res.json();
-        allModels = (data.models || []).map(function(m) {
+        allModels = (data.models || []).filter(function(m) {
+          return String(m.format || '').toUpperCase() === 'GLB';
+        }).map(function(m) {
           m.path = m.path.replace(/\\/g, '/');
           m._source = 'static';
           return m;
         });
-        renderStats(data);
-        buildFilters(data);
+        renderStats();
+        buildFilters();
         setupEvents();
         applyFilters();
       } catch(e) {
@@ -1197,6 +1200,13 @@
     }
 
     function renderStats(data) {
+      if (!data) {
+        data = { totalModels: allModels.length, byFormat: {}, byCategory: {} };
+        allModels.forEach(function(m) {
+          data.byFormat[m.format] = (data.byFormat[m.format] || 0) + 1;
+          data.byCategory[m.category || 'uncategorized'] = (data.byCategory[m.category || 'uncategorized'] || 0) + 1;
+        });
+      }
       var bar = document.getElementById('statsBar');
       var html = '<div class="stat-item"><div class="stat-label">Total</div><div class="stat-value">' + (data.totalModels || allModels.length) + '</div></div>';
       if (data.byFormat) {
@@ -1208,13 +1218,8 @@
     }
 
     function buildFilters(data) {
-      var formats = {};
-      allModels.forEach(function(m) { formats[m.format] = (formats[m.format] || 0) + 1; });
-      var fmtHtml = '<button class="filter-btn active" data-fmt="all">All</button>';
-      Object.keys(formats).sort().forEach(function(f) {
-        fmtHtml += '<button class="filter-btn" data-fmt="' + f + '">' + f + ' (' + formats[f] + ')</button>';
-      });
-      document.getElementById('formatFilters').innerHTML = fmtHtml;
+      // GLB-only browser: keep a single active format indicator instead of exposing legacy source formats
+      document.getElementById('formatFilters').innerHTML = '<button class="filter-btn active" data-fmt="GLB">GLB Only (' + allModels.length + ')</button>';
 
       var cats = {};
       allModels.forEach(function(m) { cats[m.category || 'uncategorized'] = (cats[m.category || 'uncategorized'] || 0) + 1; });
@@ -1234,7 +1239,7 @@
       document.getElementById('formatFilters').addEventListener('click', function(e) {
         var btn = e.target.closest('[data-fmt]'); if (!btn) return;
         document.querySelectorAll('[data-fmt]').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active'); filters.format = btn.dataset.fmt; currentPage = 0; applyFilters();
+        btn.classList.add('active'); filters.format = 'GLB'; currentPage = 0; applyFilters();
       });
       document.getElementById('categoryFilters').addEventListener('click', function(e) {
         var btn = e.target.closest('[data-cat]'); if (!btn) return;
@@ -1245,7 +1250,8 @@
 
     function applyFilters() {
       filteredModels = allModels.filter(function(m) {
-        if (filters.format !== 'all' && m.format !== filters.format) return false;
+        if (String(m.format || '').toUpperCase() !== 'GLB') return false;
+        if (filters.format !== 'all' && filters.format !== 'GLB') return false;
         if (filters.category !== 'all' && (m.category || 'uncategorized') !== filters.category) return false;
         if (filters.search && m.name.toLowerCase().indexOf(filters.search) === -1 && (m.category || '').toLowerCase().indexOf(filters.search) === -1) return false;
         return true;
@@ -1269,8 +1275,7 @@
       var page = filteredModels.slice(start, end);
       var grid = document.getElementById('modelGrid');
       // SVG cube icons colored per format
-      var cubeColors = { GLB: '#22c55e', GLTF: '#3b82f6', FBX: '#f97316', OBJ: '#a855f7', BLEND: '#e97316' };
-      var PIPELINE_READY = new Set(['GLB', 'GLTF']);
+      var cubeColors = { GLB: '#22c55e' };
       function makeCubeSVG(fmt) {
         var c = cubeColors[fmt] || '#888';
         return '<svg class="cube-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
@@ -1295,12 +1300,10 @@
         } else if (MODEL_BASE_URL) {
           modelUrl = MODEL_BASE_URL + '/' + encodeModelPath(m.path);
         }
-        var needsConvert = !PIPELINE_READY.has(m.format);
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
           '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
             makeCubeSVG(m.format) +
             '<div class="load-shimmer"></div>' +
-            (needsConvert ? '<span class="needs-convert">Needs Convert</span>' : '') +
             '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span>' + srcBadge + '</div>' +
           '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
           '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
