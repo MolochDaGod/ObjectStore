@@ -11,7 +11,7 @@
  * Usage: node scripts/rebuild-sprites2d.mjs
  */
 import { readdirSync, statSync, writeFileSync, existsSync, readFileSync } from 'fs';
-import { join, resolve, basename, extname, relative } from 'path';
+import { join, resolve, basename, dirname, extname, relative } from 'path';
 import { createHash } from 'crypto';
 
 const ROOT = resolve(import.meta.dirname, '..');
@@ -228,7 +228,8 @@ function detectFrameLayout(width, height) {
     }
 
     // Compare horizontal vs grid — prefer grid only if it produces more square frames
-    if (best && bestGrid && bestGrid.score < best.score - 0.05) {
+    // AND grid frames are a reasonable size (≥ 40 % of image height) to prevent tiny-tile false-positives
+    if (best && bestGrid && bestGrid.score < best.score - 0.05 && bestGrid.frameH >= height * 0.4) {
       return bestGrid;
     }
 
@@ -252,6 +253,91 @@ function detectFrameLayout(width, height) {
   }
 
   return { frameCount: 1, frameW: width, frameH: height, layout: 'unknown', cols: 1, rows: 1 };
+}
+
+function normalizeDisplayName(id) {
+  return id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function buildFilesByDir(files) {
+  const byDir = new Map();
+  for (const filePath of files) {
+    const dir = dirname(filePath);
+    if (!byDir.has(dir)) byDir.set(dir, []);
+    byDir.get(dir).push(filePath);
+  }
+  return byDir;
+}
+
+function extractFrameSequenceIndex(filePath) {
+  const id = basename(filePath, extname(filePath));
+  const match = id.match(/(?:^|[_-])frame[_-]?(\d+)$/i);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
+function isFrameSequenceFile(filePath) {
+  return extractFrameSequenceIndex(filePath) !== null;
+}
+
+function sortFrameSequenceFiles(files) {
+  return [...files].sort((a, b) => {
+    const aIndex = extractFrameSequenceIndex(a) ?? Number.MAX_SAFE_INTEGER;
+    const bIndex = extractFrameSequenceIndex(b) ?? Number.MAX_SAFE_INTEGER;
+    if (aIndex !== bIndex) return aIndex - bIndex;
+    return a.localeCompare(b);
+  });
+}
+
+function buildFrameRects(path, frameData, width, height) {
+  const rects = [];
+  const frameCount = Math.max(1, frameData.frameCount || 1);
+  const frameW = frameData.frameW || width;
+  const frameH = frameData.frameH || height;
+  const cols = frameData.cols || 1;
+  const rows = frameData.rows || 1;
+
+  for (let i = 0; i < frameCount; i++) {
+    let sx = 0;
+    let sy = 0;
+    if (frameData.layout === 'grid' || (cols > 1 && rows > 1)) {
+      sx = (i % cols) * frameW;
+      sy = Math.floor(i / cols) * frameH;
+    } else if (frameData.layout === 'vertical') {
+      sy = i * frameH;
+    } else {
+      sx = i * frameW;
+    }
+
+    const sw = Math.min(frameW, Math.max(0, width - sx));
+    const sh = Math.min(frameH, Math.max(0, height - sy));
+    if (sw > 0 && sh > 0) {
+      rects.push({ path, sx, sy, sw, sh });
+    }
+  }
+
+  return rects;
+}
+
+function isAggregateSheet(filePath, filesByDir) {
+  const id = basename(filePath, extname(filePath)).toLowerCase();
+  if (!/^all[_-]?frames?$/.test(id)) return false;
+  const dirFiles = filesByDir.get(dirname(filePath)) || [];
+  return dirFiles.some(other => other !== filePath);
+}
+
+function buildFrameSequenceGroups(filesByDir) {
+  const groups = [];
+  const groupedFiles = new Set();
+
+  for (const [dir, files] of filesByDir.entries()) {
+    if (files.length < 2) continue;
+    if (!files.every(isFrameSequenceFile)) continue;
+    const sorted = sortFrameSequenceFiles(files);
+    groups.push({ dir, files: sorted });
+    for (const filePath of sorted) groupedFiles.add(filePath);
+  }
+
+  return { groups, groupedFiles };
 }
 
 // ─── Load overrides ───
@@ -289,16 +375,15 @@ function classifyPath(filePath) {
   if (parts.length >= 3) {
     // e.g. characters/arcane-archer/attack1.png
     const topFolder = parts[0];
-    const subFolder = parts[1];
     if (CATEGORY_MAP[topFolder]) {
-      return { category: CATEGORY_MAP[topFolder], subcategory: subFolder };
+      return { category: CATEGORY_MAP[topFolder], subcategory: parts[parts.length - 2] };
     }
     // Check if the top folder itself is a known root-level character folder with subfolders
     if (ROOT_FOLDER_CATEGORY[topFolder]) {
       return { category: ROOT_FOLDER_CATEGORY[topFolder], subcategory: topFolder };
     }
     // Unknown top folder, treat it as category with subfolder
-    return { category: topFolder, subcategory: subFolder };
+    return { category: topFolder, subcategory: parts[1] };
   }
 
   if (parts.length === 2) {
@@ -325,15 +410,87 @@ async function main() {
   console.log(`   Found ${allFiles.length} image files`);
 
   const overrides = loadOverrides();
+  const deletedCharacters = new Set(Array.isArray(overrides.__deleteCharacters) ? overrides.__deleteCharacters : []);
+  const filesByDir = buildFilesByDir(allFiles);
+  const { groups: frameSequenceGroups, groupedFiles } = buildFrameSequenceGroups(filesByDir);
   const seen = new Map(); // dedup key -> sprite data
   const dupes = [];
   let processed = 0;
 
+  if (frameSequenceGroups.length > 0) {
+    console.log(`   Grouped ${frameSequenceGroups.length} frame-sequence folders`);
+  }
+
+  for (const group of frameSequenceGroups) {
+    const samplePath = group.files[0];
+    const { category, subcategory } = classifyPath(samplePath);
+    if (deletedCharacters.has(`${category}::${subcategory}`)) continue;
+
+    const animId = basename(group.dir);
+    const filename = `${animId}__frame_sequence__.png`;
+    const uuid = generateUUID(category, subcategory, filename);
+    const ov = overrides[uuid];
+    if (ov?.ignore || ov?.delete) continue;
+
+    let totalFileSize = 0;
+    let frameW = 0;
+    let frameH = 0;
+    const frames = [];
+
+    for (const filePath of group.files) {
+      const relFromRoot = relative(ROOT, filePath).replace(/\\/g, '/');
+      const canonicalPath = '/' + relFromRoot;
+      const { width, height } = await getImageDimensions(filePath);
+      const frameData = detectFrameLayout(width, height);
+      totalFileSize += statSync(filePath).size;
+      frameW = Math.max(frameW, frameData.frameW || width);
+      frameH = Math.max(frameH, frameData.frameH || height);
+      frames.push(...buildFrameRects(canonicalPath, frameData, width, height));
+    }
+
+    if (ov?.frameW) frameW = ov.frameW;
+    if (ov?.frameH) frameH = ov.frameH;
+    const frameCount = ov?.frameCount || frames.length;
+    const relFromRoot = relative(ROOT, samplePath).replace(/\\/g, '/');
+    const source = detectSource(category, subcategory, relFromRoot);
+    const sprite = {
+      uuid,
+      id: animId,
+      name: normalizeDisplayName(animId),
+      path: frames[0]?.path || '/' + relFromRoot,
+      filename,
+      category,
+      subcategory,
+      source,
+      ext: extname(samplePath).slice(1),
+      width: frameW * frameCount,
+      height: frameH,
+      fileSize: totalFileSize,
+      frameCount,
+      frameW,
+      frameH,
+      layout: 'frame-sequence',
+      cols: frameCount,
+      rows: 1,
+      frames: frames.slice(0, frameCount),
+    };
+
+    const dedupeKey = `${category}::${subcategory}::${filename.toLowerCase()}`;
+    seen.set(dedupeKey, sprite);
+  }
+
   for (const filePath of allFiles) {
     const { category, subcategory } = classifyPath(filePath);
+    if (deletedCharacters.has(`${category}::${subcategory}`)) continue;
+    if (groupedFiles.has(filePath)) continue;
+    if (isAggregateSheet(filePath, filesByDir)) continue;
+
     const filename = basename(filePath);
     const id = basename(filename, extname(filename));
-    const name = id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const name = normalizeDisplayName(id);
+    const uuid = generateUUID(category, subcategory, filename);
+    const ov = overrides[uuid];
+    if (ov?.ignore || ov?.delete) continue;
 
     // Canonical path relative to ObjectStore root
     const relFromRoot = relative(ROOT, filePath).replace(/\\/g, '/');
@@ -350,9 +507,7 @@ async function main() {
     let frameData = detectFrameLayout(width, height);
 
     // Apply overrides if any
-    const uuid = generateUUID(category, subcategory, filename);
-    if (overrides[uuid]) {
-      const ov = overrides[uuid];
+    if (ov) {
       if (ov.frameCount) frameData.frameCount = ov.frameCount;
       if (ov.frameW) frameData.frameW = ov.frameW;
       if (ov.frameH) frameData.frameH = ov.frameH;
@@ -451,7 +606,7 @@ async function main() {
         animations: [],
       };
     }
-    charMap[key].animations.push({
+    const animEntry = {
       uuid: s.uuid,
       id: s.id,
       name: s.name,
@@ -465,7 +620,9 @@ async function main() {
       layout: s.layout,
       cols: s.cols,
       rows: s.rows,
-    });
+    };
+    if (s.frames) animEntry.frames = s.frames;
+    charMap[key].animations.push(animEntry);
   }
 
   // Sort animations (idle first, then alphabetical)

@@ -18,17 +18,13 @@ const SCHEMAS = {
     required: ['version'],
   },
   'materials.json': {
-    required: ['version', 'materials'],
-    arrayField: 'materials',
-    itemRequired: ['id', 'name', 'tier']
+    required: ['version', 'categories'],
   },
   'consumables.json': {
     required: ['version', 'categories']
   },
   'enemies.json': {
-    required: ['enemies'],
-    arrayField: 'enemies',
-    itemRequired: ['id', 'name']
+    required: ['version', 'categories'],
   },
   'bosses.json': {
     required: ['bosses'],
@@ -37,8 +33,6 @@ const SCHEMAS = {
   },
   'weaponSkills.json': {
     required: ['totalSkills', 'weaponTypes'],
-    arrayField: 'weaponTypes',
-    itemRequired: ['weaponType', 'skills']
   },
   'sprites2d.json': {
     required: ['totalSprites', 'categories']

@@ -365,12 +365,18 @@
       // Frame-sequence: load individual frame images
       if (ad.layout === 'frame-sequence' && ad.frames && ad.frames.length) {
         var a = anims[id];
-        a.frameImgs = []; a.framesLoaded = 0;
+        a.frameImgs = []; a.framesLoaded = 0; a.frameMeta = [];
         ad.frames.forEach(function(fp, idx) {
+          var fpath = (typeof fp === 'string') ? fp : fp.path;
+          var fsx = (typeof fp === 'object' && fp.sx != null) ? fp.sx : 0;
+          var fsy = (typeof fp === 'object' && fp.sy != null) ? fp.sy : 0;
+          var fsw = (typeof fp === 'object' && fp.sw != null) ? fp.sw : null;
+          var fsh = (typeof fp === 'object' && fp.sh != null) ? fp.sh : null;
+          a.frameMeta[idx] = { sx: fsx, sy: fsy, sw: fsw, sh: fsh };
           var fi = new Image(); fi.crossOrigin = 'anonymous';
           fi.onload = function() { a.framesLoaded++; if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) obs.observe(vp); var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; } };
           fi.onerror = function() { a.framesLoaded++; };
-          fi.src = BASE + fp;
+          fi.src = BASE + fpath;
           a.frameImgs[idx] = fi;
         });
         return;
@@ -415,9 +421,15 @@
 
     function drawF(a, f) {
       a.ctx.clearRect(0,0,a.fw,a.fh); a.ctx.imageSmoothingEnabled=false;
-      // Frame-sequence: draw individual frame image
+      // Frame-sequence: draw individual frame image (may use sub-rect from sprite sheet)
       if (a.frameImgs && a.frameImgs[f] && a.frameImgs[f].complete) {
-        a.ctx.drawImage(a.frameImgs[f], 0, 0, a.fw, a.fh);
+        var fm = a.frameMeta && a.frameMeta[f];
+        if (fm && (fm.sx || fm.sy)) {
+          var fsw = fm.sw || a.fw, fsh = fm.sh || a.fh;
+          a.ctx.drawImage(a.frameImgs[f], fm.sx, fm.sy, fsw, fsh, 0, 0, a.fw, a.fh);
+        } else {
+          a.ctx.drawImage(a.frameImgs[f], 0, 0, a.fw, a.fh);
+        }
         return;
       }
       var sx, sy, sw, sh, iw = a.img.naturalWidth, ih = a.img.naturalHeight;

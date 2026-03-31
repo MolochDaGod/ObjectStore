@@ -72,6 +72,53 @@ const MAT_FALLBACK = {
   'gems': 'fine-gem', 'essence': 'greater-essence'
 };
 
+// Skill keyword → real ability icon filename (without ability_ prefix & .png)
+const SKILL_ABILITY_MAP = [
+  // Fire
+  ['fireball', 'fireball'], ['fire nova', 'fire_mastery'], ['flame', 'flame_brand'],
+  ['inferno', 'fire_mastery'], ['meteor', 'meteor_strike'], ['lava', 'flame_brand'],
+  ['ignite', 'ignite_weapon'],
+  // Ice / Frost
+  ['freeze', 'ice_mastery'], ['frost', 'ice_mastery'], ['ice bolt', 'ice_mastery'],
+  ['hail', 'tempest'], ['frozen', 'ice_mastery'], ['blizzard', 'ice_mastery'],
+  // Lightning
+  ['lightning', 'chain_lightning'], ['chain lightning', 'chain_lightning'],
+  ['shock', 'chain_lightning'], ['static', 'storm_touch'], ['thunder', 'tempest'],
+  // Holy / Light
+  ['heal', 'heal'], ['resurrect', 'blessing'], ['smite', 'holy_nova'],
+  ['holy', 'holy_nova'], ['divine', 'divine_shield'], ['blessing', 'blessing'],
+  ['purify', 'purify'],
+  // Nature / Earth
+  ['nature', 'wild_growth'], ['entangle', 'entangle_roots'], ['stone', 'shatter'],
+  ['tornado', 'tempest'], ['rejuv', 'rejuvenate'], ['wild growth', 'wild_growth'],
+  ['bark', 'bark_skin'],
+  // Arcane
+  ['arcane', 'arcane_bolt'], ['blink', 'wind_walk'], ['portal', 'spell_echo'],
+  ['magic missile', 'arcane_bolt'], ['mana', 'mana_flow'], ['spell', 'spellweave'],
+  ['summon', 'bewilderment'],
+  // Shadow / Assassin
+  ['shadow', 'evasion'], ['stealth', 'swift_blade'], ['assassin', 'death_blossom'],
+  ['backstab', 'lacerate'], ['poison', 'venom_edge'], ['venom', 'venom_arrow'],
+  // Warrior / Melee
+  ['shield bash', 'shield_specialist'], ['whirlwind', 'whirlwind'], ['whirl wind', 'whirlwind'],
+  ['war cry', 'war_cry'], ['warcry', 'war_cry'], ['cleave', 'blade_storm'],
+  ['execute', 'execute'], ['charge', 'bloodlust'], ['berserker', 'bloodlust'],
+  ['taunt', 'taunt'], ['bash', 'concussive_blow'], ['sunder', 'sunder_armor'],
+  // Ranged
+  ['arrow', 'arrow_storm'], ['multishot', 'multishot'], ['multi shot', 'multishot'],
+  ['sniper', 'sniper_shot'], ['headshot', 'headshot'], ['volley', 'multishot'],
+  ['piercing', 'piercing_shot'], ['rain of arrows', 'arrow_storm'],
+  ['explosive shot', 'arrow_storm'], ['power shot', 'sniper_shot'],
+  ['crossbow', 'piercing_shot'], ['gun', 'headshot'],
+  // Beast / Worge
+  ['bear form', 'bear_form'], ['raptor', 'evasion'], ['primal', 'primal_roar'],
+  ['feral', 'feral_instinct'], ['howl', 'primal_roar'], ['alpha', 'alpha_predator'],
+  ['blood frenzy', 'bloodlust'], ['savage', 'savage_rend'],
+  // Utility
+  ['sprint', 'wind_walk'], ['speed', 'wind_walk'], ['evasion', 'evasion'],
+  ['trap', 'bear_trap'],
+];
+
 // ── Helpers ──
 export function hashStr(s) {
   var h = 0;
@@ -89,6 +136,7 @@ export function getIconUrl(item, base) {
   if (item.type === 'material') return base + '/icons/materials/' + baseId + '.png';
   if (item.type === 'armor') return getArmorIcon(item, baseId, base);
   if (item.type === 'consumable') return getConsumableIcon(item, baseId, base);
+  if (item.type === 'skill' || (item.category || '').toLowerCase() === 'skill') return getSkillIcon(item, baseId, base);
   return base + '/icons/pack/resources/Loot_01.png';
 }
 
@@ -100,6 +148,7 @@ export function getFallbackUrl(item, base) {
   if (item.type === 'material') return getMaterialFallback(item, baseId, base);
   if (item.type === 'armor') return base + '/icons/pack/armor/Chest_01.png';
   if (item.type === 'consumable') return base + '/icons/consumables/alchemy_1.png';
+  if (item.type === 'skill' || (item.category || '').toLowerCase() === 'skill') return base + '/icons/abilities/ability_quick_strike.png';
   return base + '/icons/pack/resources/Loot_01.png';
 }
 
@@ -126,6 +175,26 @@ function getMaterialFallback(item, baseId, base) {
   if (fallbackName) return base + '/icons/materials/' + fallbackName + '.png';
   var lootNum = (hashStr(baseId) % 120) + 1;
   return base + '/icons/pack/resources/Loot_' + pad2(lootNum) + '.png';
+}
+
+function getSkillIcon(item, baseId, base) {
+  // If the item already has a real ability icon URL, use it
+  if (item.icon && item.icon.includes('/abilities/')) {
+    // Convert absolute URL to relative if needed
+    var match = item.icon.match(/\/icons\/abilities\/.+$/);
+    if (match) return base + match[0];
+  }
+  // Keyword-based matching against real ability icons
+  var name = (item.name || '').toLowerCase();
+  for (var i = 0; i < SKILL_ABILITY_MAP.length; i++) {
+    if (name.includes(SKILL_ABILITY_MAP[i][0])) {
+      return base + '/icons/abilities/ability_' + SKILL_ABILITY_MAP[i][1] + '.png';
+    }
+  }
+  // Deterministic fallback from the ability icon set
+  var abilityFallbacks = ['quick_strike', 'double_strike', 'blade_storm', 'arcane_bolt', 'fireball', 'heal', 'arrow_storm', 'whirlwind'];
+  var idx = hashStr(baseId) % abilityFallbacks.length;
+  return base + '/icons/abilities/ability_' + abilityFallbacks[idx] + '.png';
 }
 
 function getConsumableIcon(item, baseId, base) {
