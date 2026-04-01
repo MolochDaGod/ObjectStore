@@ -29,11 +29,13 @@ bindings = [
 binding = "BUCKET"
 bucket_name = "grudge-assets"
 
-# ── D1 SQL Database ────────────────────────────────────────────────
+# ── D1 SQL Database ────────────────────────────────────────────
+# Consolidated: uses grudge-objectstore (same as backend objectstore-api was using)
+# Old objectstore-meta (58edfe47...) is deprecated — data migrated here
 [[d1_databases]]
 binding = "DB"
-database_name = "objectstore-meta"
-database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
+database_name = "grudge-objectstore"
+database_id = "8fc367a8-9120-490e-a503-b0fcb755c044"
 
 # ── DO Migrations (must be after all other [[array]] sections) ────
 [[migrations]]

@@ -21,6 +21,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const REGISTRY_PATH = path.join(__dirname, '..', 'api', 'v1', 'master-registry.json');
+// Canonical D1 database — shared between ObjectStore worker and backend
 const DB_NAME = process.argv.find(a => a.startsWith('--database='))?.split('=')[1] || 'grudge-objectstore';
 const DRY_RUN = process.argv.includes('--dry-run');
 const BATCH_SIZE = 50; // D1 batch limit
