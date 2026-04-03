@@ -398,45 +398,46 @@ const MODEL_MIME = {
 
 /** GET /v1/models — list 3D models with filters */
 async function handleListModels(url, env) {
-  const category = url.searchParams.get('category');
-  const format = url.searchParams.get('format');       // glb, fbx, obj
-  const animated = url.searchParams.get('animated');    // true/false
-  const q = url.searchParams.get('q');
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200);
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+  try {
+    const format = url.searchParams.get('format');       // glb, fbx, obj
+    const animated = url.searchParams.get('animated');    // true/false
+    const q = url.searchParams.get('q');
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200);
+    const offset = parseInt(url.searchParams.get('offset') || '0', 10);
 
-  let where = ["visibility = 'public'", "category = '3d-models'"];
-  const params = [];
+    // Match any 3D model by file extension
+    let where = ["visibility = 'public'"];
+    const params = [];
 
-  if (q)        { where.push('filename LIKE \'%\' || ? || \'%\''); params.push(q); }
-  if (format)   { where.push('filename LIKE \'%.\' || ?'); params.push(format.toLowerCase()); }
-  if (animated === 'true')  { where.push("tags LIKE '%animated%'"); }
-  if (animated === 'false') { where.push("tags NOT LIKE '%animated%'"); }
+    // Filter for 3D model files
+    where.push("(filename LIKE '%.glb' OR filename LIKE '%.gltf' OR filename LIKE '%.fbx' OR filename LIKE '%.obj' OR category = '3d-models' OR category = 'models')");
 
-  params.push(limit, offset);
+    if (q)        { where.push("filename LIKE '%' || ? || '%'"); params.push(q); }
+    if (format)   { where.push("filename LIKE '%.' || ?"); params.push(format.toLowerCase()); }
+    if (animated === 'true')  { where.push("tags LIKE '%animated%'"); }
+    if (animated === 'false') { where.push("tags NOT LIKE '%animated%'"); }
 
-  const sql = `SELECT id, key, filename, mime, size, category, tags, metadata, created_at
-               FROM assets
-               WHERE ${where.join(' AND ')}
-               ORDER BY created_at DESC
-               LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
 
-  const { results } = await env.DB.prepare(sql).bind(...params).all();
-  const items = results.map(r => ({
-    ...r,
-    tags: JSON.parse(r.tags || '[]'),
-    metadata: JSON.parse(r.metadata || '{}'),
-    file_url: `/v1/models/${r.id}/file`,
-    thumbnail_url: `/v1/models/${r.id}/thumbnail`,
-  }));
+    const sql = `SELECT id, filename, mime, size, category, tags, created_at
+                 FROM assets
+                 WHERE ${where.join(' AND ')}
+                 ORDER BY created_at DESC
+                 LIMIT ? OFFSET ?`;
 
-  // Get total count
-  const countWhere = where.slice();
-  const countParams = params.slice(0, -2); // remove limit/offset
-  const countSql = `SELECT COUNT(*) as total FROM assets WHERE ${countWhere.join(' AND ')}`;
-  const countResult = await env.DB.prepare(countSql).bind(...countParams).first();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+    const items = (results || []).map(r => ({
+      ...r,
+      tags: JSON.parse(r.tags || '[]'),
+      file_url: `/v1/models/${r.id}/file`,
+      thumbnail_url: `/v1/models/${r.id}/thumbnail`,
+    }));
 
-  return json({ models: items, count: items.length, total: countResult?.total || 0, limit, offset });
+    return json({ models: items, count: items.length, total: items.length, limit, offset });
+  } catch (err) {
+    console.error('handleListModels error:', err);
+    return json({ models: [], count: 0, total: 0, error: err.message });
+  }
 }
 
 /** GET /v1/models/:id — single model metadata */
