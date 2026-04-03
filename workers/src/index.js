@@ -34,6 +34,22 @@ export default {
 
     try {
       // ── Router ─────────────────────────────────────────────────
+      if (url.pathname === '/' || url.pathname === '') {
+        return corsResponse(env, json({
+          service: 'objectstore-api',
+          version: '1.1.0',
+          status: 'ok',
+          endpoints: {
+            health: 'GET /health',
+            assets: 'GET /v1/assets',
+            models: 'GET /v1/models',
+            upload: 'POST /v1/assets (API key required)',
+            convert: 'POST /v1/convert (API key required)',
+          },
+          docs: 'https://molochdagod.github.io/ObjectStore/docs',
+        }), origin);
+      }
+
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
         return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '1.1.0' }), origin);
       }
