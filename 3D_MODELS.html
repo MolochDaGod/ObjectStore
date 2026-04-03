@@ -945,8 +945,9 @@
     // Direct R2 CDN for model files — has Access-Control-Allow-Origin: *
     var R2_CDN_URL = 'https://assets.grudge-studio.com';
 
-    // Configurable base URL for hosted models (update when models are on R2 or repo)
-    var MODEL_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
+    // ALL model binaries are in R2, never on GitHub Pages (too large for git)
+    // MODEL_BASE_URL is only used as last resort — R2 worker should always be preferred
+    var MODEL_BASE_URL = null; // disabled — forces R2 or CDN paths
 
     // GitHack CDN — serves raw files from GitHub with proper CORS + content-type
     var GITHACK_BASE_URL = 'https://raw.githack.com/molochdagod/ObjectStore/main';
@@ -1293,12 +1294,17 @@
         var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : '';
         var srcBadge = m._source === 'r2' ? '<span class="source-badge source-r2">R2</span>' : '<span class="source-badge source-static">Static</span>';
         var modelUrl = '';
-        if (m._source === 'r2' && m._r2Url) {
+        if (m._source === 'r2' && m._cdnUrl) {
+          // R2 models: use CDN URL (fastest, has CORS: *)
+          modelUrl = m._cdnUrl;
+        } else if (m._source === 'r2' && m._r2Url) {
           modelUrl = m._r2Url;
         } else if (r2Available && R2_WORKER_URL) {
-          modelUrl = R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file';
-        } else if (MODEL_BASE_URL) {
-          modelUrl = MODEL_BASE_URL + '/' + encodeModelPath(m.path);
+          // Static catalog models: serve via R2 worker asset endpoint
+          modelUrl = R2_CDN_URL + '/' + encodeModelPath(m.path);
+        } else {
+          // Last resort: try CDN directly
+          modelUrl = R2_CDN_URL + '/' + encodeModelPath(m.path);
         }
         html += '<div class="model-card" data-idx="' + (start + i) + '">' +
           '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
