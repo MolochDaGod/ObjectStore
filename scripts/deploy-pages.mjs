@@ -67,50 +67,33 @@ try {
     : `find "${tmpDir}" -mindepth 1 -not -path "${tmpDir}/.git*" -delete`;
   try { execSync(cleanCmd, { stdio: 'pipe' }); } catch {}
 
-  // Files/dirs to include on Pages (lightweight — JSON + HTML + JS + CSS)
-  const includes = [
-    'api/',           // JSON game data (23MB)
-    'sdk/',           // JavaScript SDK
-    'docs/',          // Documentation HTML
-    'css/',           // Stylesheets
-    'js/',            // Client-side JS
-    'mcp/',           // MCP server
-    'integrations/',  // Integration examples
-    'branding/',      // Favicons + logos (3MB)
-    'openapi.yaml',
-    'sw.js',
-    'README.md',
-    'AGENTS.md',
-    'AGENT-CONTEXT.md',
-    'package.json',
-  ];
+  // Dirs to include on Pages (lightweight — JSON + HTML + JS + CSS)
+  const dirs = ['api', 'sdk', 'docs', 'css', 'js', 'mcp', 'integrations', 'branding'];
+  // Files to include
+  const files = ['openapi.yaml', 'sw.js', 'README.md', 'AGENTS.md', 'AGENT-CONTEXT.md', 'package.json'];
 
-  // Copy HTML files from root
-  const robocopyOpts = '/S /NJH /NJS /NP /NFL /NDL';
+  // Copy directories
+  for (const dir of dirs) {
+    const src = join(ROOT, dir);
+    const dest = join(tmpDir, dir);
+    try {
+      execSync(`xcopy "${src}" "${dest}" /E /I /Q /Y`, { cwd: ROOT, stdio: 'pipe' });
+      console.log(`  copied ${dir}/`);
+    } catch { console.log(`  skip ${dir}/ (not found)`); }
+  }
 
-  for (const item of includes) {
-    const src = join(ROOT, item);
-    const dest = join(tmpDir, item);
-    if (item.endsWith('/')) {
-      try {
-        run(`robocopy "${src}" "${dest}" ${robocopyOpts}`, { stdio: 'pipe' });
-      } catch (e) {
-        // robocopy returns non-zero on success (1 = files copied)
-        if (e.status > 7) throw e;
-      }
-    } else {
-      try {
-        run(`copy "${src}" "${dest}"`, { stdio: 'pipe' });
-      } catch {}
-    }
+  // Copy individual files
+  for (const file of files) {
+    try {
+      execSync(`copy "${join(ROOT, file)}" "${join(tmpDir, file)}" /Y`, { cwd: ROOT, stdio: 'pipe' });
+    } catch {}
   }
 
   // Copy HTML files from root
   try {
-    run(`robocopy "${ROOT}" "${tmpDir}" *.html ${robocopyOpts}`, { stdio: 'pipe' });
-  } catch (e) {
-    if (e.status > 7) throw e;
-  }
+    execSync(`copy "${join(ROOT, '*.html')}" "${tmpDir}" /Y`, { cwd: ROOT, stdio: 'pipe' });
+    console.log('  copied *.html');
+  } catch {}
 
   // Commit and push
   run(`git -C "${tmpDir}" add -A`);
