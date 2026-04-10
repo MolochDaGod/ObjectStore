@@ -14,7 +14,7 @@ Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static d
 - `objectstore.grudge-studio.com` — Cloudflare Worker (R2 + D1 CRUD)
 - `grudgeassets.grudge.workers.dev` — same worker, workers.dev fallback
 - `assets.grudge-studio.com` — R2 CDN (direct file serving)
-- `molochdagod.github.io/ObjectStore` — static GitHub Pages (game data JSONs)
+- `molochdagod.github.io/ObjectStore` — GitHub Pages (served from `gh-pages` branch)
 
 ### Worker Routes (workers/src/index.js)
 - `GET /health` — health check
@@ -55,3 +55,5 @@ Every Grudge app reads from ObjectStore:
 - CORS: `wrangler.toml` ALLOWED_ORIGINS must include all Grudge deployment URLs.
 - Deploy worker: `npx wrangler deploy --config wrangler.toml`
 - Regenerate master data: `npm run generate:master`
+- Deploy to GitHub Pages: `npm run deploy:pages` (pushes lightweight files to `gh-pages` branch)
+- GitHub Actions is DISABLED at account level — always use `deploy:pages` for Pages deployments.
