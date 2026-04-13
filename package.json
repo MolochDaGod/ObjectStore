@@ -69,6 +69,8 @@
     "generate:master": "node scripts/generate-master-database.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs",
     "build:gdevelop": "node scripts/build-gdevelop-manifest.mjs",
+    "export:weapon-skills": "node scripts/export-weapon-skills.mjs",
+    "build:all": "npm run export:weapon-skills && npm run build:gdevelop",
     "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql"
   },
   "repository": {

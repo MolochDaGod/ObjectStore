@@ -37,12 +37,14 @@ export default {
       if (url.pathname === '/' || url.pathname === '') {
         return corsResponse(env, json({
           service: 'objectstore-api',
-          version: '1.1.0',
+          version: '2.0.0',
           status: 'ok',
           endpoints: {
             health: 'GET /health',
             assets: 'GET /v1/assets',
             models: 'GET /v1/models',
+            gameData: 'GET /v1/game-data',
+            weaponSkills: 'GET /v1/weapon-skills',
             upload: 'POST /v1/assets (API key required)',
             convert: 'POST /v1/convert (API key required)',
           },
@@ -51,7 +53,12 @@ export default {
       }
 
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
-        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '1.1.0' }), origin);
+        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '2.0.0', timestamp: new Date().toISOString() }), origin);
+      }
+
+      // ── Game data routes (/v1/game-data, /v1/weapon-skills) ───────
+      if (url.pathname.startsWith('/v1/game-data') || url.pathname.startsWith('/v1/weapon-skills')) {
+        return corsResponse(env, await handleGameDataRoutes(url, method, env), origin);
       }
 
       // ── Conversion pipeline routes (/v1/convert) ─────────────────
@@ -388,6 +395,124 @@ async function handleConvertRoutes(request, url, method, env) {
 }
 
 // ════════════════════════════════════════════════════════════════════
+//  Game Data Handlers (JSON collections from R2)
+// ════════════════════════════════════════════════════════════════════
+
+// Known game data collections that can be served
+const GAME_DATA_COLLECTIONS = [
+  'weapons', 'armor', 'materials', 'consumables', 'weaponSkills',
+  'skills', 'enemies', 'bosses', 'classes', 'races', 'factions',
+  'attributes', 'professions', 'heroes', 'equipment', 'missions',
+  'effectSprites', 'abilityEffects', 'sprites', 'spriteMaps',
+  'dialogue', 'lore', 'audio', 'models', 'animations',
+  'factionUnits', 'battleFormations', 'controllers', 'ai',
+  'enemyTemplates', 'cutscenes', 'entities', 'models3d',
+];
+
+const GITHUB_PAGES_BASE = 'https://molochdagod.github.io/ObjectStore/api/v1';
+
+/** Route handler for /v1/game-data/* and /v1/weapon-skills/* */
+async function handleGameDataRoutes(url, method, env) {
+  if (method !== 'GET') return json({ error: 'Method not allowed' }, 405);
+  const path = url.pathname;
+
+  // GET /v1/game-data — list collections
+  if (path === '/v1/game-data') {
+    return json({
+      count: GAME_DATA_COLLECTIONS.length,
+      collections: GAME_DATA_COLLECTIONS.map(name => ({
+        name,
+        url: `/v1/game-data/${name}`,
+        source: `${GITHUB_PAGES_BASE}/${name}.json`,
+      })),
+    });
+  }
+
+  // GET /v1/game-data/:name — serve a collection (from R2 cache or proxy GitHub Pages)
+  const dataMatch = path.match(/^\/v1\/game-data\/([a-zA-Z0-9_-]+)$/);
+  if (dataMatch) {
+    const name = dataMatch[1];
+    if (!GAME_DATA_COLLECTIONS.includes(name)) {
+      return json({ error: `Unknown collection: ${name}`, available: GAME_DATA_COLLECTIONS }, 404);
+    }
+    return await serveGameDataCollection(name, env);
+  }
+
+  // GET /v1/weapon-skills — proxy weaponSkills.json
+  if (path === '/v1/weapon-skills') {
+    return await serveGameDataCollection('weaponSkills', env);
+  }
+
+  // GET /v1/weapon-skills/:type — filter by weapon type
+  const wsMatch = path.match(/^\/v1\/weapon-skills\/([a-zA-Z_-]+)$/);
+  if (wsMatch) {
+    const type = wsMatch[1].toUpperCase();
+    const data = await fetchGameData('weaponSkills', env);
+    if (!data) return json({ error: 'Weapon skills data unavailable' }, 503);
+    const wt = data.weaponTypes?.find(w => w.id === type || w.name.toLowerCase() === wsMatch[1].toLowerCase());
+    if (!wt) return json({ error: `Weapon type not found: ${wsMatch[1]}` }, 404);
+    return json(wt, 200, { 'Cache-Control': 'public, max-age=300' });
+  }
+
+  return json({ error: 'Not found' }, 404);
+}
+
+/** Serve a game data JSON, trying R2 cache first, then GitHub Pages */
+async function serveGameDataCollection(name, env) {
+  const cacheKey = `game-data/${name}.json`;
+
+  // Try R2 first (cached copy)
+  const cached = await env.BUCKET.get(cacheKey);
+  if (cached) {
+    return new Response(cached.body, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        'X-Source': 'r2-cache',
+      },
+    });
+  }
+
+  // Fetch from GitHub Pages
+  const sourceUrl = `${GITHUB_PAGES_BASE}/${name}.json`;
+  try {
+    const resp = await fetch(sourceUrl);
+    if (!resp.ok) return json({ error: `Failed to fetch ${name} from source`, status: resp.status }, 502);
+    const body = await resp.arrayBuffer();
+
+    // Cache in R2 for next time (fire-and-forget)
+    env.BUCKET.put(cacheKey, body, {
+      httpMetadata: { contentType: 'application/json' },
+      customMetadata: { source: 'github-pages', cachedAt: new Date().toISOString() },
+    }).catch(() => {});
+
+    return new Response(body, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        'X-Source': 'github-pages',
+      },
+    });
+  } catch (e) {
+    return json({ error: `Upstream fetch failed: ${e.message}` }, 502);
+  }
+}
+
+/** Fetch and parse game data (for filtering) */
+async function fetchGameData(name, env) {
+  const cacheKey = `game-data/${name}.json`;
+  const cached = await env.BUCKET.get(cacheKey);
+  if (cached) {
+    try { return JSON.parse(await cached.text()); } catch { /* fall through */ }
+  }
+  try {
+    const resp = await fetch(`${GITHUB_PAGES_BASE}/${name}.json`);
+    if (resp.ok) return await resp.json();
+  } catch { /* fall through */ }
+  return null;
+}
+
+// ════════════════════════════════════════════════════════════════════
 //  3D Model Handlers
 // ════════════════════════════════════════════════════════════════════
 
@@ -535,10 +660,10 @@ function corsResponse(env, response, requestOrigin = '') {
 }
 
 /** JSON response helper */
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...extraHeaders },
   });
 }
 

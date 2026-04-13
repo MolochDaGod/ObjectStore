@@ -1,17 +1,23 @@
 /**
- * ObjectStore Express API Server
+ * ObjectStore Express API Server — Production
  *
- * Sprite & asset API with S3 storage bridge:
+ * Grudge Studio game data backbone.
+ * Serves 40+ JSON collections, weapon skills, sprites, and R2 storage bridge.
  *
+ * Core API:
+ *   GET  /health                            → Detailed health check
+ *   GET  /api/v1/weapon-skills              → All 17 weapon types + 207 skills
+ *   GET  /api/v1/weapon-skills/:type        → Skills for a weapon type
+ *   GET  /api/v1/weapon-skills/class/:class → Weapons available to a class
+ *   GET  /api/v1/weapon-skills/search?q=... → Search skills by name/effect
+ *   GET  /api/v1/game-data                  → List available JSON collections
+ *   GET  /api/v1/game-data/:name            → Serve any game data collection
  *   GET  /api/v1/sprites                    → Paginated sprite list
  *   GET  /api/v1/sprites/search?q=...       → Search sprites
  *   GET  /api/v1/sprites/:uuid              → Sprite by UUID
  *   GET  /api/v1/characters                 → All animated characters
  *   GET  /api/v1/characters/:uuid           → Character by UUID
  *   GET  /api/v1/stats                      → Registry statistics
- *   GET  /api/assets/categories             → Legacy asset categories
- *   GET  /api/assets/search?q=...           → Legacy asset search
- *   GET  /api/assets/:uuid                  → Legacy asset by UUID
  *
  * Storage bridge (S3/local):
  *   POST   /api/storage/upload              → Upload single file
@@ -32,14 +38,89 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const API_KEY = process.env.GRUDGE_API_KEY || null;
+const startTime = Date.now();
+let requestCount = 0;
 
-// ─── Middleware ───
+// ─── Rate Limiter (in-memory, per IP) ───
+const rateLimits = new Map();
+const RATE_WINDOW = 60_000; // 1 minute
+const RATE_MAX = parseInt(process.env.RATE_LIMIT || '120', 10);
+
+function rateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  let entry = rateLimits.get(ip);
+  if (!entry || now - entry.windowStart > RATE_WINDOW) {
+    entry = { windowStart: now, count: 0 };
+    rateLimits.set(ip, entry);
+  }
+  entry.count++;
+  res.set('X-RateLimit-Limit', String(RATE_MAX));
+  res.set('X-RateLimit-Remaining', String(Math.max(0, RATE_MAX - entry.count)));
+  res.set('X-RateLimit-Reset', String(Math.ceil((entry.windowStart + RATE_WINDOW) / 1000)));
+  if (entry.count > RATE_MAX) {
+    return res.status(429).json({ error: 'Rate limit exceeded', retryAfter: Math.ceil((entry.windowStart + RATE_WINDOW - now) / 1000) });
+  }
+  next();
+}
+
+// Clean stale rate limit entries every 5 minutes
+setInterval(() => {
+  const cutoff = Date.now() - RATE_WINDOW * 2;
+  for (const [ip, entry] of rateLimits) {
+    if (entry.windowStart < cutoff) rateLimits.delete(ip);
+  }
+}, 300_000);
+
+// ─── Security Headers ───
+function securityHeaders(req, res, next) {
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('X-Frame-Options', 'SAMEORIGIN');
+  res.set('X-XSS-Protection', '1; mode=block');
+  res.set('X-Powered-By', 'Grudge Studio ObjectStore');
+  res.set('Access-Control-Expose-Headers', 'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-Request-Id');
+  res.set('X-Request-Id', crypto.randomUUID());
+  next();
+}
+
+// ─── Request Logger ───
+function requestLogger(req, res, next) {
+  requestCount++;
+  const start = Date.now();
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    if (process.env.NODE_ENV !== 'test') {
+      const status = res.statusCode;
+      const color = status >= 500 ? '\x1b[31m' : status >= 400 ? '\x1b[33m' : '\x1b[32m';
+      console.log(`${color}${req.method} ${req.originalUrl} ${status}\x1b[0m ${ms}ms`);
+    }
+  });
+  next();
+}
+
+// ─── API Key Auth (for write ops) ───
+function requireApiKey(req, res, next) {
+  if (!API_KEY) return next(); // No key configured = dev mode
+  const provided = req.headers['x-api-key'] || req.query.apiKey;
+  if (provided !== API_KEY) {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
+}
+
+// ─── Middleware Stack ───
+app.use(securityHeaders);
+app.use(requestLogger);
+app.use(rateLimit);
 app.use(cors({
   origin: [
+    /\.grudge-studio\.com$/,
     /\.grudgestudio\.com$/,
     /\.grudgewarlords\.com$/,
     /\.vercel\.app$/,
     /\.github\.io$/,
+    /\.puter\.site$/,
     /localhost/,
   ],
   credentials: true,
@@ -51,7 +132,10 @@ let spriteData = null;
 let characterData = null;
 let assetRegistry = null;
 let gdevelopManifest = null;
+let weaponSkillsData = null;
 let spriteIndex = [];
+let weaponSkillIndex = []; // flat index for search
+const gameDataCache = new Map(); // cache for JSON collections
 
 function loadData() {
   try {
@@ -86,6 +170,28 @@ function loadData() {
     gdevelopManifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/gdevelop-assets.json'), 'utf-8'));
     console.log(`🎮 GDevelop manifest loaded: ${gdevelopManifest.totalAssets} assets`);
   } catch (e) { /* optional — run npm run build:gdevelop */ }
+
+  try {
+    weaponSkillsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/weaponSkills.json'), 'utf-8'));
+    // Build flat search index
+    weaponSkillIndex = [];
+    for (const wt of weaponSkillsData.weaponTypes) {
+      for (const slot of wt.slots) {
+        for (const skill of slot.skills) {
+          weaponSkillIndex.push({
+            ...skill,
+            weaponType: wt.id,
+            weaponName: wt.name,
+            slotType: slot.type,
+            _search: `${skill.name} ${skill.description} ${skill.id} ${(skill.effects || []).join(' ')} ${skill.damageType || ''} ${skill.physics || ''}`.toLowerCase(),
+          });
+        }
+      }
+    }
+    console.log(`⚔  Weapon skills loaded: ${weaponSkillsData.totalWeaponTypes} types, ${weaponSkillsData.totalSkills} skills`);
+  } catch (e) {
+    console.warn('⚠️  weaponSkills.json not found. Run: node scripts/export-weapon-skills.mjs');
+  }
 }
 
 // ─── Helpers ───
@@ -106,6 +212,153 @@ function mimeFromExt(filename) {
   };
   return map[ext] || 'application/octet-stream';
 }
+
+// ═══════════════════════════════════
+//  HEALTH CHECK
+// ═══════════════════════════════════
+
+app.get('/health', (req, res) => {
+  const uptimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+  jsonOk(res, {
+    status: 'ok',
+    service: 'objectstore-api',
+    version: '3.1.0',
+    uptime: uptimeSeconds,
+    uptimeHuman: `${Math.floor(uptimeSeconds / 3600)}h ${Math.floor((uptimeSeconds % 3600) / 60)}m`,
+    requestCount,
+    data: {
+      sprites: spriteData ? spriteData.totalSprites : 0,
+      characters: characterData ? characterData.totalCharacters : 0,
+      weaponTypes: weaponSkillsData ? weaponSkillsData.totalWeaponTypes : 0,
+      weaponSkills: weaponSkillsData ? weaponSkillsData.totalSkills : 0,
+      gdevelopAssets: gdevelopManifest ? gdevelopManifest.totalAssets : 0,
+      legacyAssets: assetRegistry ? assetRegistry.totalAssets : 0,
+    },
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ═══════════════════════════════════
+//  WEAPON SKILLS API
+// ═══════════════════════════════════
+
+// GET /api/v1/weapon-skills — All weapon types
+app.get('/api/v1/weapon-skills', (req, res) => {
+  if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded. Run: node scripts/export-weapon-skills.mjs');
+  const { tier, className } = req.query;
+  let types = weaponSkillsData.weaponTypes;
+  if (className) {
+    const allowed = weaponSkillsData.classRestrictions[className];
+    if (allowed) types = types.filter(wt => allowed.includes(wt.id));
+  }
+  jsonOk(res, {
+    version: weaponSkillsData.version,
+    totalWeaponTypes: types.length,
+    totalSkills: types.reduce((s, w) => s + w.totalSkills, 0),
+    classRestrictions: weaponSkillsData.classRestrictions,
+    weaponTypes: types.map(wt => ({
+      id: wt.id, name: wt.name, icon: wt.icon, classes: wt.classes, totalSkills: wt.totalSkills,
+    })),
+  });
+});
+
+// GET /api/v1/weapon-skills/search?q=fire&damageType=fire&slot=ability
+app.get('/api/v1/weapon-skills/search', (req, res) => {
+  if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded');
+  const q = (req.query.q || '').toLowerCase().trim();
+  const damageType = req.query.damageType || null;
+  const slot = req.query.slot || null;
+  const physics = req.query.physics || null;
+  const projectile = req.query.projectile || null;
+  const limit = Math.min(200, parseInt(req.query.limit) || 50);
+  if (!q && !damageType && !slot && !physics && !projectile) {
+    return jsonErr(res, 400, 'Provide at least one filter: q, damageType, slot, physics, projectile');
+  }
+  let results = weaponSkillIndex;
+  if (q) results = results.filter(s => s._search.includes(q));
+  if (damageType) results = results.filter(s => s.damageType === damageType);
+  if (slot) results = results.filter(s => s.slotType === slot);
+  if (physics) results = results.filter(s => s.physics === physics);
+  if (projectile) results = results.filter(s => s.projectile === projectile);
+  jsonOk(res, {
+    query: { q, damageType, slot, physics, projectile },
+    count: results.length,
+    results: results.slice(0, limit).map(({ _search, ...s }) => s),
+  });
+});
+
+// GET /api/v1/weapon-skills/class/:className
+app.get('/api/v1/weapon-skills/class/:className', (req, res) => {
+  if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded');
+  const className = req.params.className;
+  const allowed = weaponSkillsData.classRestrictions[className];
+  if (!allowed) return jsonErr(res, 404, `Unknown class: ${className}. Valid: ${Object.keys(weaponSkillsData.classRestrictions).join(', ')}`);
+  const types = weaponSkillsData.weaponTypes.filter(wt => allowed.includes(wt.id));
+  jsonOk(res, {
+    className,
+    allowedWeapons: allowed,
+    totalWeaponTypes: types.length,
+    totalSkills: types.reduce((s, w) => s + w.totalSkills, 0),
+    weaponTypes: types,
+  });
+});
+
+// GET /api/v1/weapon-skills/:weaponType — Full skill tree for a weapon
+app.get('/api/v1/weapon-skills/:weaponType', (req, res) => {
+  if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded');
+  const wt = weaponSkillsData.weaponTypes.find(
+    w => w.id === req.params.weaponType.toUpperCase() || w.name.toLowerCase() === req.params.weaponType.toLowerCase()
+  );
+  if (!wt) return jsonErr(res, 404, `Weapon type not found: ${req.params.weaponType}`);
+  jsonOk(res, wt);
+});
+
+// ═══════════════════════════════════
+//  GAME DATA API (serve any JSON collection)
+// ═══════════════════════════════════
+
+const GAME_DATA_DIR = path.join(__dirname, 'api', 'v1');
+const GAME_DATA_BLOCKLIST = new Set(['gdevelop-assets', 'asset-registry', 'master-registry']); // too large for unbounded serving
+
+// GET /api/v1/game-data — List available collections
+app.get('/api/v1/game-data', (req, res) => {
+  try {
+    const files = fs.readdirSync(GAME_DATA_DIR).filter(f => f.endsWith('.json') && !GAME_DATA_BLOCKLIST.has(f.replace('.json', '')));
+    const collections = files.map(f => {
+      const name = f.replace('.json', '');
+      const stat = fs.statSync(path.join(GAME_DATA_DIR, f));
+      return { name, file: f, sizeBytes: stat.size, sizeHuman: (stat.size / 1024).toFixed(1) + 'KB', lastModified: stat.mtime.toISOString() };
+    }).sort((a, b) => a.name.localeCompare(b.name));
+    jsonOk(res, { count: collections.length, collections });
+  } catch (e) {
+    jsonErr(res, 500, 'Failed to list game data');
+  }
+});
+
+// GET /api/v1/game-data/:name — Serve a specific collection
+app.get('/api/v1/game-data/:name', (req, res) => {
+  const name = req.params.name.replace(/\.json$/, '');
+  if (GAME_DATA_BLOCKLIST.has(name)) return jsonErr(res, 403, `Collection "${name}" is too large for direct serving. Use specific API endpoints.`);
+  // Check cache
+  if (gameDataCache.has(name)) {
+    res.set('X-Cache', 'HIT');
+    res.set('Cache-Control', 'public, max-age=300');
+    return jsonOk(res, gameDataCache.get(name));
+  }
+  const filePath = path.join(GAME_DATA_DIR, `${name}.json`);
+  if (!fs.existsSync(filePath)) return jsonErr(res, 404, `Collection not found: ${name}`);
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    gameDataCache.set(name, data);
+    // Evict cache after 5 minutes
+    setTimeout(() => gameDataCache.delete(name), 300_000);
+    res.set('X-Cache', 'MISS');
+    res.set('Cache-Control', 'public, max-age=300');
+    jsonOk(res, data);
+  } catch (e) {
+    jsonErr(res, 500, `Failed to parse ${name}.json`);
+  }
+});
 
 // ═══════════════════════════════════
 //  SPRITE API v1
@@ -370,27 +623,58 @@ app.get('/api/storage/list', async (req, res) => {
 // ═══════════════════════════════════
 //  STATIC FILES
 // ═══════════════════════════════════
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+  etag: true,
+}));
+
+// ─── 404 handler ───
+app.use((req, res) => {
+  jsonErr(res, 404, `Not found: ${req.method} ${req.originalUrl}`);
+});
+
+// ─── Error handler ───
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  jsonErr(res, 500, 'Internal server error');
+});
+
+// ─── Graceful shutdown ───
+function shutdown(signal) {
+  console.log(`\n${signal} received. Shutting down...`);
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 5000);
+}
 
 // ─── Start ───
 loadData();
-app.listen(PORT, () => {
-  console.log(`\n🚀 ObjectStore API running at http://localhost:${PORT}/`);
-  console.log(`\n📡 Sprite API:`);
+const server = app.listen(PORT, () => {
+  console.log(`\n🚀 ObjectStore API v3.1.0 — http://localhost:${PORT}/`);
+  console.log(`   Mode: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`   Rate limit: ${RATE_MAX}/min`);
+  console.log(`   API key: ${API_KEY ? 'configured' : 'disabled (dev mode)'}`);
+  console.log(`\n⚔  Weapon Skills:`);
+  console.log(`   GET  /api/v1/weapon-skills`);
+  console.log(`   GET  /api/v1/weapon-skills/SWORD`);
+  console.log(`   GET  /api/v1/weapon-skills/class/Warrior`);
+  console.log(`   GET  /api/v1/weapon-skills/search?q=fire&damageType=fire`);
+  console.log(`\n📁 Game Data:`);
+  console.log(`   GET  /api/v1/game-data`);
+  console.log(`   GET  /api/v1/game-data/weapons`);
+  console.log(`   GET  /api/v1/game-data/armor`);
+  console.log(`\n📡 Sprites:`);
   console.log(`   GET  /api/v1/sprites?category=characters&page=1&limit=50`);
   console.log(`   GET  /api/v1/sprites/search?q=archer`);
-  console.log(`   GET  /api/v1/sprites/SPRT-xxxx-xxxx`);
   console.log(`   GET  /api/v1/characters`);
-  console.log(`   GET  /api/v1/characters/:uuid`);
-  console.log(`   GET  /api/v1/stats`);
   console.log(`\n📦 Storage:`);
   console.log(`   POST   /api/storage/upload`);
-  console.log(`   POST   /api/storage/upload-multi`);
-  console.log(`   POST   /api/storage/upload-zip`);
-  console.log(`   DELETE /api/storage/:key`);
   console.log(`   GET    /api/storage/list?prefix=...`);
-  console.log(`\n🎮 GDevelop API:`);
-  console.log(`   GET  /api/v1/gdevelop-assets?type=icon&search=sword&page=1`);
-  console.log(`   GET  /api/v1/gdevelop-assets/categories`);
-  console.log(`\n✨ Press Ctrl+C to stop`);
+  console.log(`\n❤️  Health: GET /health`);
+  console.log(`✨ Press Ctrl+C to stop\n`);
 });
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
