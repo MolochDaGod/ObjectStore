@@ -398,17 +398,56 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } .nav-links { display:none; } }
 
-    /* Faction emoji icons */
+    /* Game Asset Grids */
     .faction-grid { display: flex; flex-wrap: wrap; gap: 12px; }
     .faction-icon-card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: var(--radius-md); padding: 16px 20px;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
-      transition: all .2s; cursor: default;
+      transition: all .25s; cursor: default; min-width: 100px;
     }
-    .faction-icon-card:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); }
-    .faction-emoji { font-size: 2.2rem; line-height: 1; }
-    .faction-name { font-family: var(--font-heading); font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+    .faction-icon-card:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); transform: translateY(-2px); }
+    .faction-icon-card img { width: 64px; height: 64px; object-fit: contain; border-radius: var(--radius-sm); }
+    .faction-name { font-family: var(--font-heading); font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); text-align: center; }
+    .faction-sublabel { font-family: var(--font-code); font-size: .5rem; color: var(--text-muted); text-align: center; margin-top: -4px; }
+
+    .asset-section { margin-top: 32px; }
+    .asset-title {
+      font-family: var(--font-heading); font-size: .8rem; font-weight: 600;
+      letter-spacing: .1em; color: var(--gold-dim); text-transform: uppercase;
+      margin-bottom: 14px; padding-bottom: 8px;
+      border-bottom: 1px solid rgba(212,175,55,.12);
+    }
+    .race-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .race-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px; transition: all .25s;
+    }
+    .race-card:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); }
+    .race-title {
+      font-family: var(--font-heading); font-size: .85rem; font-weight: 700;
+      color: var(--gold); letter-spacing: .08em; margin-bottom: 14px; text-transform: uppercase;
+    }
+    .race-variants { display: flex; gap: 12px; flex-wrap: wrap; }
+    .race-variant { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .race-variant img {
+      width: 56px; height: 56px; object-fit: contain;
+      border-radius: var(--radius-sm); border: 1px solid var(--border); transition: border-color .2s;
+    }
+    .race-variant:hover img { border-color: var(--gold); }
+    .race-variant .rv-label { font-family: var(--font-code); font-size: .55rem; color: var(--text-muted); }
+
+    .weapon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; }
+    .weapon-icon-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 12px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      transition: all .25s; cursor: default;
+    }
+    .weapon-icon-card:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); transform: translateY(-2px); }
+    .weapon-icon-card img { width: 48px; height: 48px; object-fit: contain; }
+    .weapon-icon-card .wlabel { font-family: var(--font-heading); font-size: .55rem; letter-spacing: .04em; text-transform: uppercase; color: var(--text-dim); text-align: center; }
+    .weapon-icon-card .wclass { font-family: var(--font-code); font-size: .45rem; color: var(--text-muted); text-align: center; }
   </style>
 </head>
 <body>
@@ -422,7 +461,11 @@
     <a href="#logos">Logos</a>
     <a href="#components">Components</a>
     <a href="#vars">CSS Vars</a>
-    <a href="#factions">Factions</a>
+    <a href="#races">Races</a>
+    <a href="#classes">Classes</a>
+    <a href="#professions">Professions</a>
+    <a href="#weapons">Weapons</a>
+    <a href="#attributes">Attributes</a>
   </div>
 </nav>
 
@@ -624,68 +667,78 @@
 
   <div class="divider"></div>
 
-  <!-- ══════════ LOGOS & FAVICONS ══════════ -->
+  <!-- ══════════ LOGOS & BRAND IDENTITY ══════════ -->
   <section id="logos" class="section">
-    <h2 class="section-title">Logos &amp; Favicons</h2>
+    <h2 class="section-title">Logos &amp; Brand Identity</h2>
 
     <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:20px;">
-      Hosted at <code style="font-family:var(--font-code);color:var(--cyan)">grudge-factions-site.vercel.app</code>
-      — click any to open full size.
+      All assets served from local <code style="font-family:var(--font-code);color:var(--cyan)">ObjectStore/branding/</code> — click any to open full size.
     </p>
 
-    <div class="palette-group-label" style="margin-bottom:12px">Full-Size Icons (512, 192, 180)</div>
+    <!-- Primary Logo -->
+    <div class="palette-group-label" style="margin-bottom:12px">Primary Logo</div>
     <div class="logo-grid" style="margin-bottom:24px">
-      <a class="logo-item logo-dark" href="https://grudge-factions-site.vercel.app/favicon-512x512.png" target="_blank">
-        <img src="https://grudge-factions-site.vercel.app/favicon-512x512.png" width="96" height="96" alt="512">
-        <div class="logo-label">512×512<br>favicon-512x512.png</div>
+      <a class="logo-item logo-dark" href="/branding/favicons/grudge-icon-1024x1024.png" target="_blank">
+        <img src="/branding/favicons/grudge-icon-512x512.png" width="128" height="128" alt="Grudge Logo">
+        <div class="logo-label">1024×1024<br>Primary Logo</div>
       </a>
-      <a class="logo-item logo-dark" href="https://grudge-factions-site.vercel.app/favicon-192x192.png" target="_blank">
-        <img src="https://grudge-factions-site.vercel.app/favicon-192x192.png" width="96" height="96" alt="192">
-        <div class="logo-label">192×192<br>favicon-192x192.png</div>
+      <a class="logo-item logo-dark" href="/branding/favicons/grudge-icon-384x384.png" target="_blank">
+        <img src="/branding/favicons/grudge-icon-384x384.png" width="96" height="96" alt="384">
+        <div class="logo-label">384×384<br>Large Icon</div>
       </a>
-      <a class="logo-item logo-dark" href="https://grudge-factions-site.vercel.app/apple-touch-icon.png" target="_blank">
-        <img src="https://grudge-factions-site.vercel.app/apple-touch-icon.png" width="96" height="96" alt="180">
-        <div class="logo-label">180×180<br>apple-touch-icon.png</div>
+      <a class="logo-item logo-dark" href="/branding/favicons/grudge-icon-256x256.png" target="_blank">
+        <img src="/branding/favicons/grudge-icon-256x256.png" width="96" height="96" alt="256">
+        <div class="logo-label">256×256<br>App Icon</div>
+      </a>
+      <a class="logo-item logo-dark" href="/branding/favicons/grudge-icon-192x192.png" target="_blank">
+        <img src="/branding/favicons/grudge-icon-192x192.png" width="96" height="96" alt="192">
+        <div class="logo-label">192×192<br>PWA</div>
+      </a>
+      <a class="logo-item logo-dark" href="/branding/favicons/grudge-icon-180x180.png" target="_blank">
+        <img src="/branding/favicons/grudge-icon-180x180.png" width="96" height="96" alt="180">
+        <div class="logo-label">180×180<br>Apple Touch</div>
       </a>
     </div>
 
-    <div class="palette-group-label" style="margin-bottom:12px">Standard Favicons</div>
+    <!-- Faction Emblems -->
+    <div class="palette-group-label" style="margin-bottom:12px">Faction Emblems</div>
+    <div class="logo-grid" style="margin-bottom:24px">
+      <div class="logo-item logo-dark">
+        <img src="/icons/factiuon images/crusade-emblem.png" width="96" height="96" style="object-fit:contain" alt="Crusade">
+        <div class="logo-label">Crusade<br><span style="font-size:.55rem;color:var(--text-muted)">Holy Order</span></div>
+      </div>
+      <div class="logo-item logo-dark">
+        <img src="/icons/factiuon images/legion-emblem.png" width="96" height="96" style="object-fit:contain" alt="Legion">
+        <div class="logo-label">Legion<br><span style="font-size:.55rem;color:var(--text-muted)">Dark Horde</span></div>
+      </div>
+      <div class="logo-item logo-dark">
+        <img src="/icons/factiuon images/fabled-emblem.png" width="96" height="96" style="object-fit:contain" alt="Fabled">
+        <div class="logo-label">Fabled<br><span style="font-size:.55rem;color:var(--text-muted)">Neutral</span></div>
+      </div>
+    </div>
+
+    <!-- Favicon Set -->
+    <div class="palette-group-label" style="margin-bottom:12px">Favicon Set (14 sizes)</div>
     <div class="favicon-row">
-      <div class="fav-item">
-        <img src="https://grudge-factions-site.vercel.app/favicon-32x32.png" width="32" height="32" alt="32">
-        <div class="fav-label">32px</div>
-      </div>
-      <div class="fav-item">
-        <img src="https://grudge-factions-site.vercel.app/favicon-16x16.png" width="16" height="16" alt="16">
-        <div class="fav-label">16px</div>
-      </div>
+      <div class="fav-item"><img src="/branding/favicons/grudge-icon-96x96.png" width="48" height="48" alt="96"><div class="fav-label">96px</div></div>
+      <div class="fav-item"><img src="/branding/favicons/grudge-icon-64x64.png" width="32" height="32" alt="64"><div class="fav-label">64px</div></div>
+      <div class="fav-item"><img src="/branding/favicons/grudge-icon-48x48.png" width="24" height="24" alt="48"><div class="fav-label">48px</div></div>
+      <div class="fav-item"><img src="/branding/favicons/grudge-icon-32x32.png" width="16" height="16" alt="32"><div class="fav-label">32px</div></div>
+      <div class="fav-item"><img src="/branding/favicons/grudge-icon-16x16.png" width="16" height="16" alt="16"><div class="fav-label">16px</div></div>
       <div style="margin-left:16px;flex:1">
-        <div style="font-family:var(--font-heading);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Full favicon set in WCS repo:</div>
-        <div style="font-family:var(--font-code);font-size:.72rem;color:var(--text-muted);line-height:1.9">
-          /public/grudge-icon-16x16.png<br>
-          /public/grudge-icon-32x32.png<br>
-          /public/grudge-icon-48x48.png<br>
-          /public/grudge-icon-64x64.png<br>
-          /public/grudge-icon-96x96.png<br>
-          /public/grudge-icon-128x128.png<br>
-          /public/grudge-icon-144x144.png<br>
-          /public/grudge-icon-152x152.png<br>
-          /public/grudge-icon-180x180.png<br>
-          /public/grudge-icon-192x192.png<br>
-          /public/grudge-icon-256x256.png<br>
-          /public/grudge-icon-384x384.png<br>
-          /public/grudge-icon-512x512.png<br>
-          /public/grudge-icon-1024x1024.png
+        <div style="font-family:var(--font-heading);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Local Favicon Paths:</div>
+        <div style="font-family:var(--font-code);font-size:.68rem;color:var(--text-muted);line-height:1.8">
+          /branding/favicons/grudge-icon-{16,24,32,36,48,57,60,64,70,72,76,96,114,120,128,144,150,152,180,192,256,310,384,512,1024}.png
         </div>
       </div>
     </div>
 
+    <!-- HTML Snippet -->
     <div style="margin-top:20px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md)">
-      <div style="font-family:var(--font-heading);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px">Standard HTML head snippet</div>
-      <pre style="font-family:var(--font-code);font-size:.75rem;color:var(--text-dim);line-height:1.8;overflow-x:auto"><span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"icon"</span> <span style="color:#d4af37">type</span>=<span style="color:#33aa55">"image/png"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/favicon.png"</span><span style="color:#38bdf8">&gt;</span>
-<span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"icon"</span> <span style="color:#d4af37">sizes</span>=<span style="color:#33aa55">"16x16"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/favicon-16x16.png"</span><span style="color:#38bdf8">&gt;</span>
-<span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"icon"</span> <span style="color:#d4af37">sizes</span>=<span style="color:#33aa55">"32x32"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/favicon-32x32.png"</span><span style="color:#38bdf8">&gt;</span>
-<span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"apple-touch-icon"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/apple-touch-icon.png"</span><span style="color:#38bdf8">&gt;</span></pre>
+      <div style="font-family:var(--font-heading);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px">Standard HTML Head (local)</div>
+      <pre style="font-family:var(--font-code);font-size:.75rem;color:var(--text-dim);line-height:1.8;overflow-x:auto"><span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"icon"</span> <span style="color:#d4af37">type</span>=<span style="color:#33aa55">"image/png"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/branding/favicons/grudge-icon-32x32.png"</span><span style="color:#38bdf8">&gt;</span>
+<span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"icon"</span> <span style="color:#d4af37">sizes</span>=<span style="color:#33aa55">"192x192"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/branding/favicons/grudge-icon-192x192.png"</span><span style="color:#38bdf8">&gt;</span>
+<span style="color:#38bdf8">&lt;link</span> <span style="color:#d4af37">rel</span>=<span style="color:#33aa55">"apple-touch-icon"</span> <span style="color:#d4af37">href</span>=<span style="color:#33aa55">"/branding/favicons/grudge-icon-180x180.png"</span><span style="color:#38bdf8">&gt;</span></pre>
     </div>
   </section>
 
@@ -816,22 +869,188 @@
 
   <div class="divider"></div>
 
-  <!-- ══════════ FACTIONS ══════════ -->
-  <section id="factions" class="section">
-    <h2 class="section-title">Faction &amp; Class Icons</h2>
+  <!-- ══════════ RACES ══════════ -->
+  <section id="races" class="section">
+    <h2 class="section-title">Races — Class Portraits</h2>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:20px;">Each race has 4 class variants. Icons from <code style="font-family:var(--font-code);color:var(--cyan)">/icons/pack/misc/</code></p>
+    <div class="race-grid">
+      <div class="race-card">
+        <div class="race-title">Human</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/Human_Warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/human_mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/human_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/human_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+      <div class="race-card">
+        <div class="race-title">Elf</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/elf_warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/elf_mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/elf_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/elf_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+      <div class="race-card">
+        <div class="race-title">Dwarf</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/dwarf_warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/dwarf_mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/dwarf_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/dwarf_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+      <div class="race-card">
+        <div class="race-title">Orc</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/orc_warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/orc_mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/orc_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/orc_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+      <div class="race-card">
+        <div class="race-title">Undead</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/undead_warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/undead_mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/undead_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/undead_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+      <div class="race-card">
+        <div class="race-title">Barbarian</div>
+        <div class="race-variants">
+          <div class="race-variant"><img src="/icons/pack/misc/barb_warrior.png" alt="Warrior"><div class="rv-label">Warrior</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/barbarian_Mage.png" alt="Mage"><div class="rv-label">Mage</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/barb_archer.png" alt="Ranger"><div class="rv-label">Ranger</div></div>
+          <div class="race-variant"><img src="/icons/pack/misc/barb_paladin.png" alt="Worge"><div class="rv-label">Worge</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════ CLASSES ══════════ -->
+  <section id="classes" class="section">
+    <h2 class="section-title">Classes &amp; Weapon Restrictions</h2>
     <div class="faction-grid">
-      <div class="faction-icon-card"><div class="faction-emoji">⚔️</div><div class="faction-name">Warrior</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🔮</div><div class="faction-name">Mage</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🏹</div><div class="faction-name">Ranger</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🐻</div><div class="faction-name">Worge</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🛡️</div><div class="faction-name">Crusade</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">💀</div><div class="faction-name">Legion</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">⛏️</div><div class="faction-name">Miner</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🌲</div><div class="faction-name">Forester</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🔧</div><div class="faction-name">Engineer</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">🍖</div><div class="faction-name">Chef</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">✨</div><div class="faction-name">Mystic</div></div>
-      <div class="faction-icon-card"><div class="faction-emoji">⚓</div><div class="faction-name">Sailor</div></div>
+      <div class="faction-icon-card">
+        <img src="/icons/pack/misc/Human_Warrior.png" alt="Warrior">
+        <div class="faction-name">Warrior</div>
+        <div class="faction-sublabel">Shields, Swords, 2H Weapons</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/pack/misc/human_mage.png" alt="Mage">
+        <div class="faction-name">Mage</div>
+        <div class="faction-sublabel">Staffs, Tomes, Maces, Wands, Relics</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/pack/misc/human_archer.png" alt="Ranger">
+        <div class="faction-name">Ranger</div>
+        <div class="faction-sublabel">Bows, Crossbows, Guns, Daggers, Spears</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/pack/misc/human_paladin.png" alt="Worge">
+        <div class="faction-name">Worge</div>
+        <div class="faction-sublabel">Staffs, Spears, Daggers, Bows, Hammers, Maces</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════ PROFESSIONS ══════════ -->
+  <section id="professions" class="section">
+    <h2 class="section-title">Professions</h2>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:20px;">5 harvesting professions with unique advancement trees. Icons from <code style="font-family:var(--font-code);color:var(--cyan)">/icons/professions/</code></p>
+    <div class="faction-grid">
+      <div class="faction-icon-card">
+        <img src="/icons/professions/miner_profession_game_icon.png" alt="Miner">
+        <div class="faction-name">Miner</div>
+        <div class="faction-sublabel">Ore &amp; Gems</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/professions/forester_profession_game_icon.png" alt="Forester">
+        <div class="faction-name">Forester</div>
+        <div class="faction-sublabel">Wood &amp; Fiber</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/professions/engineer_profession_game_icon.png" alt="Engineer">
+        <div class="faction-name">Engineer</div>
+        <div class="faction-sublabel">Crafting &amp; Siege</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/professions/chef_profession_game_icon.png" alt="Chef">
+        <div class="faction-name">Chef</div>
+        <div class="faction-sublabel">Food &amp; Buffs</div>
+      </div>
+      <div class="faction-icon-card">
+        <img src="/icons/professions/mystic_profession_game_icon.png" alt="Mystic">
+        <div class="faction-name">Mystic</div>
+        <div class="faction-sublabel">Essence &amp; Enchants</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════ WEAPON TYPES ══════════ -->
+  <section id="weapons" class="section">
+    <h2 class="section-title">Weapon Types (17)</h2>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:20px;">All 17 weapon types with 6 tier variants each. Icons from <code style="font-family:var(--font-code);color:var(--cyan)">/icons/pack/weapons/</code></p>
+
+    <div class="asset-title">Melee — One-Handed</div>
+    <div class="weapon-grid" style="margin-bottom:20px">
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Sword_01.png" alt="Sword"><div class="wlabel">Sword</div><div class="wclass">WAR RNG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Axe_01.png" alt="Axe"><div class="wlabel">Axe</div><div class="wclass">WAR RNG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Dagger_01.png" alt="Dagger"><div class="wlabel">Dagger</div><div class="wclass">RNG WRG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Hammer_21.png" alt="Mace"><div class="wlabel">Mace</div><div class="wclass">MAG WRG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Scythe_01.png" alt="Scythe"><div class="wlabel">Scythe</div><div class="wclass">WRG WAR</div></div>
+    </div>
+
+    <div class="asset-title">Melee — Two-Handed</div>
+    <div class="weapon-grid" style="margin-bottom:20px">
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Sword_27.png" alt="Greatsword"><div class="wlabel">Greatsword</div><div class="wclass">WAR RNG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Axe_30.png" alt="Greataxe"><div class="wlabel">Greataxe</div><div class="wclass">WAR</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Hammer_01.png" alt="Hammer"><div class="wlabel">Hammer</div><div class="wclass">WAR WRG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Spear_01.png" alt="Spear"><div class="wlabel">Spear</div><div class="wclass">RNG WRG</div></div>
+    </div>
+
+    <div class="asset-title">Ranged</div>
+    <div class="weapon-grid" style="margin-bottom:20px">
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Bow_01.png" alt="Bow"><div class="wlabel">Bow</div><div class="wclass">RNG WRG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Crossbow_01.png" alt="Crossbow"><div class="wlabel">Crossbow</div><div class="wclass">RNG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/weapons/blackpowder.png" alt="Gun"><div class="wlabel">Gun</div><div class="wclass">RNG</div></div>
+    </div>
+
+    <div class="asset-title">Magic &amp; Off-Hand</div>
+    <div class="weapon-grid" style="margin-bottom:20px">
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/staff_1.png" alt="Staff"><div class="wlabel">Staff</div><div class="wclass">MAG WRG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/staff_34.png" alt="Wand"><div class="wlabel">Wand</div><div class="wclass">MAG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/Book_1.png" alt="Tome"><div class="wlabel">Tome</div><div class="wclass">MAG</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/weapons/shield_01.png" alt="Shield"><div class="wlabel">Shield</div><div class="wclass">WAR</div></div>
+      <div class="weapon-icon-card"><img src="/icons/pack/misc/runic_tablet_01.png" alt="Relic"><div class="wlabel">Off-Hand Relic</div><div class="wclass">MAG WRG</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════ ATTRIBUTES ══════════ -->
+  <section id="attributes" class="section">
+    <h2 class="section-title">Attributes (8 Stats)</h2>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:20px;">8-attribute system with diminishing returns. Sigil icons from <code style="font-family:var(--font-code);color:var(--cyan)">/icons/sigils/</code></p>
+    <div class="faction-grid">
+      <div class="faction-icon-card"><img src="/icons/sigils/strength.png" alt="STR"><div class="faction-name">Strength</div><div class="faction-sublabel">Melee DMG, Carry</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/agility.png" alt="AGI"><div class="faction-name">Agility</div><div class="faction-sublabel">Atk Speed, Dodge</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/dexterity.png" alt="DEX"><div class="faction-name">Dexterity</div><div class="faction-sublabel">Ranged DMG, Crit</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/intellect.png" alt="INT"><div class="faction-name">Intellect</div><div class="faction-sublabel">Spell DMG, Mana</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/wisdom.png" alt="WIS"><div class="faction-name">Wisdom</div><div class="faction-sublabel">Heal Power, CDR</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/vitality.png" alt="VIT"><div class="faction-name">Vitality</div><div class="faction-sublabel">Max HP, Regen</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/endurance.png" alt="END"><div class="faction-name">Endurance</div><div class="faction-sublabel">Stamina, Armor</div></div>
+      <div class="faction-icon-card"><img src="/icons/sigils/tactics.png" alt="TAC"><div class="faction-name">Tactics</div><div class="faction-sublabel">Crit Rate, Penetration</div></div>
     </div>
   </section>
 
