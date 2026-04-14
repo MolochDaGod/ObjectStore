@@ -73,15 +73,32 @@ const WEAPON_TYPE_MAP = {
   'SMG1.fbx': 'gun', 'SMG2.fbx': 'gun', 'SNIPER.fbx': 'gun',
 };
 
-// Classify FBX files by name pattern if not in explicit map
+// Classify FBX files by name pattern — handles explicit map, tier variants, and fuzzy matching
 function classifyWeapon(filename) {
   if (WEAPON_TYPE_MAP[filename]) return WEAPON_TYPE_MAP[filename];
   const lower = filename.toLowerCase();
+  const base = lower.replace(/\.(fbx|glb|gltf|obj)$/i, '');
+
+  // Tier variant patterns: _sword_1, _axe_10, _arrow_b_1, _dagger_12, _Shield_1, _Cane_1, _polearm_1, _hammer_1
+  if (/^_?sword_\d+/.test(base)) return 'sword';
+  if (/^_?axe_\d+/.test(base)) return 'axe';
+  if (/^_?dagger_\d+/.test(base)) return 'dagger';
+  if (/^_?hammer_\d+/.test(base)) return 'hammer';
+  if (/^_?shield_\d+/.test(base)) return 'shield';
+  if (/^_?cane_\d+/.test(base) || /^_?staff_\d+/.test(base)) return 'staff';
+  if (/^_?polearm_\d+/.test(base)) return 'spear';
+  if (/^_?arrow_[a-z]?_?\d+/.test(base)) return 'bow';        // bow arrows = bow weapon models
+  if (/^_?bow_\d+/.test(base)) return 'bow';
+  if (/^_?arrow_c_\d+/.test(base) || /^_?crossbow_\d+/.test(base)) return 'crossbow';
+
+  // Faction equipment naming: Equipment/xxx.fbx, models/Sword.fbx etc.
   if (lower.includes('sword') || lower.includes('blade')) return 'sword';
+  if (lower.includes('greatsword') || lower.includes('twohanded')) return 'greatsword';
+  if (lower.includes('greataxe')) return 'greataxe';
   if (lower.includes('axe') || lower.includes('cleaver')) return 'axe';
   if (lower.includes('bow') && !lower.includes('crossbow') && !lower.includes('elbow')) return 'bow';
   if (lower.includes('crossbow') || lower.includes('xbow')) return 'crossbow';
-  if (lower.includes('gun') || lower.includes('rifle') || lower.includes('pistol') || lower.includes('smg') || lower.includes('sniper')) return 'gun';
+  if (lower.includes('gun') || lower.includes('rifle') || lower.includes('pistol') || lower.includes('smg') || lower.includes('sniper') || lower.includes('cannon') || lower.includes('musket')) return 'gun';
   if (lower.includes('dagger') || lower.includes('knife') || lower.includes('shiv')) return 'dagger';
   if (lower.includes('staff') || lower.includes('cane') || lower.includes('rod')) return 'staff';
   if (lower.includes('hammer') || lower.includes('maul')) return 'hammer';
@@ -92,20 +109,51 @@ function classifyWeapon(filename) {
   if (lower.includes('scythe') || lower.includes('sythe') || lower.includes('sickle')) return 'scythe';
   if (lower.includes('book') || lower.includes('tome') || lower.includes('spell')) return 'tome';
   if (lower.includes('orb') || lower.includes('relic') || lower.includes('trinket')) return 'offhand_relic';
-  if (lower.includes('greatsword') || lower.includes('twohanded')) return 'greatsword';
-  if (lower.includes('greataxe')) return 'greataxe';
+
+  // Faction character models — classify by parent folder if weapon-like
+  if (lower.includes('catapult') || lower.includes('siege') || lower.includes('bolt_thrower') || lower.includes('boltthrower')) return 'gun'; // siege = gun category
+  if (lower.includes('cavalry_spear') || lower.includes('mounted_spear')) return 'spear';
+  if (lower.includes('cavalry_mage') || lower.includes('mounted_mage')) return 'staff';
+  if (lower.includes('worker') || lower.includes('villager')) return null; // skip non-weapons
+
   return null;
 }
 
 // ── Source directories ──────────────────────────────────────────────────────
 
+const ANIM_BASE = 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons';
+const FACTION_BASE = 'D:\\Games\\Models\\grudgeracecharacters\\factioncharacters';
+
 const SCAN_DIRS = [
-  { dir: 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons\\fantasy_weapons', label: 'Fantasy Weapons' },
-  { dir: 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons\\medieval_collection\\FBX', label: 'Medieval Collection' },
-  { dir: 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons\\pixel_guns_unzipped', label: 'Pixel Guns', recurse: true },
+  // ── Static weapon meshes ────────────────────────────────────────
+  { dir: `${ANIM_BASE}\\fantasy_weapons`, label: 'Fantasy Weapons' },
+  { dir: `${ANIM_BASE}\\medieval_collection\\FBX`, label: 'Medieval Collection' },
   { dir: 'D:\\Games\\Models\\Dungeon-Crawler-Quest\\Dungeon-Crawler-Quest\\public\\assets\\models\\weapons', label: 'Dungeon Crawler' },
-  { dir: 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons\\shields', label: 'Shield Models' },
-  { dir: 'D:\\Games\\Models\\grudgeracecharacters\\animationsweapons\\bow_models_unzipped', label: 'Bow Models', recurse: true },
+
+  // ── Tier variant weapon models (numbered _1 through _24) ───────
+  { dir: `${ANIM_BASE}\\3dswords`, label: '3D Swords (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\axes_1h`, label: '1H Axes (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\axes_2h`, label: '2H Axes (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\daggers`, label: 'Daggers (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\hammers_2h`, label: '2H Hammers (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\shields`, label: 'Shields (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\staffs`, label: 'Staffs (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\staffs_extra`, label: 'Staffs Extra (Polearms)' },
+  { dir: `${ANIM_BASE}\\swords_extra`, label: 'Swords Extra (Tier Variants)' },
+  { dir: `${ANIM_BASE}\\magic_staffs`, label: 'Magic Staffs (Canes)' },
+
+  // ── Ranged weapon models ────────────────────────────────────────
+  { dir: `${ANIM_BASE}\\bows\\fbx`, label: 'Bows (FBX)', recurse: true },
+  { dir: `${ANIM_BASE}\\bows_extra\\fbx`, label: 'Bows Extra', recurse: true },
+  { dir: `${ANIM_BASE}\\crossbows\\fbx`, label: 'Crossbows', recurse: true },
+  { dir: `${ANIM_BASE}\\bow_models_unzipped`, label: 'Bow Models', recurse: true },
+  { dir: `${ANIM_BASE}\\pixel_guns_unzipped`, label: 'Pixel Guns', recurse: true },
+
+  // ── Faction character equipment (weapons on character models) ───
+  { dir: `${FACTION_BASE}\\Crusade`, label: 'Faction: Crusade', recurse: true },
+  { dir: `${FACTION_BASE}\\Legion`, label: 'Faction: Legion', recurse: true },
+  { dir: `${FACTION_BASE}\\Fabled`, label: 'Faction: Fabled', recurse: true },
+  { dir: `${FACTION_BASE}\\ADDITIONAL_MODELS`, label: 'Faction: Additional', recurse: true },
 ];
 
 // ── GLB output directory ────────────────────────────────────────────────────
