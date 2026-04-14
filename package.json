@@ -81,7 +81,9 @@
     "pipeline:dry": "node scripts/gltf-pipeline.mjs all --dry-run",
     "effects:consolidate": "node scripts/consolidate-effects.mjs",
     "effects:manifest": "node scripts/rebuild-effects-manifest.mjs",
-    "effects:all": "node scripts/consolidate-effects.mjs && node scripts/rebuild-effects-manifest.mjs && node scripts/gltf-pipeline.mjs effects && node scripts/gltf-pipeline.mjs validate"
+    "effects:all": "node scripts/consolidate-effects.mjs && node scripts/rebuild-effects-manifest.mjs && node scripts/gltf-pipeline.mjs effects && node scripts/gltf-pipeline.mjs validate",
+    "pipeline:sync": "node scripts/sync-to-r2.js --pipeline",
+    "pipeline:sync:dry": "node scripts/sync-to-r2.js --pipeline --dry-run"
   },
   "repository": {
     "type": "git",

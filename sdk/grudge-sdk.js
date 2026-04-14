@@ -818,6 +818,159 @@ class GrudgeSDK {
   async getAnimations() { return this.fetch('/api/v1/animations.json'); }
   async getEntities() { return this.fetch('/api/v1/entities.json'); }
 
+  // ── glTF Pipeline (optimized 3D assets) ──
+
+  /** Get the glTF manifest with checksums for all optimized GLBs. */
+  async getGltfManifest() { return this.fetch('/api/v1/gltf-manifest.json'); }
+
+  /** Get BabylonJS-ready effect definitions (particle configs per texture). */
+  async getEffectDefinitions() { return this.fetch('/api/v1/effect-definitions.json'); }
+
+  /** Get animation clip registry (GLB retargeting files). */
+  async getAnimationsGltf() { return this.fetch('/api/v1/animations-gltf.json'); }
+
+  /**
+   * Find a specific optimized 3D model by name.
+   * @param {string} name - Model name (e.g. "cantina", "barracks", "xwing")
+   * @returns {Promise<object|null>} Model entry with path, checksum, compression info
+   */
+  async getModel(name) {
+    const d = await this.getModels3d();
+    const q = name.toLowerCase();
+    return (d.models || []).find(m =>
+      m.name.toLowerCase().includes(q) || m.path.toLowerCase().includes(q)
+    ) || null;
+  }
+
+  /**
+   * Get a specific effect definition by id (e.g. "portals/arpg-effects_portal").
+   * @param {string} effectId - Effect id (category/basename)
+   * @returns {Promise<object|null>} Effect with texture path + BabylonJS config
+   */
+  async getEffect(effectId) {
+    const d = await this.getEffectDefinitions();
+    return (d.effects || []).find(e => e.id === effectId) || null;
+  }
+
+  /**
+   * Get the full CDN URL for an optimized model GLB.
+   * Tries R2 CDN first, falls back to GitHub Pages static path.
+   * @param {string} modelPath - Relative model path from models3d.json
+   * @returns {string} Absolute URL to the GLB file
+   */
+  getModelUrl(modelPath) {
+    // Prefer R2/CDN for binary assets
+    if (this.assetsCdnUrl && this.assetsCdnUrl !== 'https://assets.grudge-studio.com') {
+      return `${this.assetsCdnUrl}/${modelPath}`;
+    }
+    return `${this.baseUrl}/${modelPath}`;
+  }
+
+  /**
+   * Get the full CDN URL for an effect texture.
+   * @param {string} texturePath - Relative texture path from effect-definitions.json
+   * @returns {string} Absolute URL to the texture
+   */
+  getEffectTextureUrl(texturePath) {
+    return `${this.baseUrl}/${texturePath}`;
+  }
+
+  /**
+   * Load a complete effect config ready for BabylonJS ParticleSystem.
+   * Returns the BabylonJS params + resolved texture URL + atlas info.
+   * @param {string} effectId - Effect id (e.g. "fire/arpg-effects_fire_16x4")
+   * @returns {Promise<object|null>} { textureUrl, atlas, babylonjs, category, pack }
+   */
+  async loadEffectConfig(effectId) {
+    const effect = await this.getEffect(effectId);
+    if (!effect) return null;
+    return {
+      textureUrl: this.getEffectTextureUrl(effect.texture),
+      atlas: effect.atlas,
+      width: effect.width,
+      height: effect.height,
+      category: effect.category,
+      pack: effect.pack,
+      ...effect.babylonjs,
+    };
+  }
+
+  /**
+   * Search optimized 3D models by name, category, or compression type.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { category, compression, limit }
+   * @returns {Promise<object[]>} Matching model entries with full URLs
+   */
+  async searchModels(query, opts = {}) {
+    const d = await this.getModels3d();
+    const q = (query || '').toLowerCase();
+    let results = d.models || [];
+    if (q) results = results.filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      m.category.toLowerCase().includes(q) ||
+      m.path.toLowerCase().includes(q)
+    );
+    if (opts.category) results = results.filter(m => m.category === opts.category);
+    if (opts.compression) results = results.filter(m => m.compressionType === opts.compression);
+    return results.slice(0, opts.limit || 50).map(m => ({
+      ...m,
+      url: this.getModelUrl(m.path),
+    }));
+  }
+
+  /**
+   * Search effects by name, category, pack, or tags.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { category, pack, limit }
+   * @returns {Promise<object[]>} Matching effects with resolved texture URLs
+   */
+  async searchEffects(query, opts = {}) {
+    const d = await this.getEffectDefinitions();
+    const q = (query || '').toLowerCase();
+    let results = d.effects || [];
+    if (q) results = results.filter(e =>
+      e.id.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q) ||
+      e.pack.toLowerCase().includes(q)
+    );
+    if (opts.category) results = results.filter(e => e.category === opts.category);
+    if (opts.pack) results = results.filter(e => e.pack === opts.pack);
+    return results.slice(0, opts.limit || 50).map(e => ({
+      ...e,
+      textureUrl: this.getEffectTextureUrl(e.texture),
+    }));
+  }
+
+  /**
+   * Get all available effect categories with counts and default BabylonJS configs.
+   * @returns {Promise<object[]>} [{ id, count, defaults }]
+   */
+  async getEffectCategories() {
+    const d = await this.getEffectDefinitions();
+    return d.categories || [];
+  }
+
+  /**
+   * Search animation clips by name or weapon type.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { weaponType, limit }
+   * @returns {Promise<object[]>} Matching animation entries with full URLs
+   */
+  async searchAnimationClips(query, opts = {}) {
+    const d = await this.getAnimationsGltf();
+    const q = (query || '').toLowerCase();
+    let results = d.animations || [];
+    if (q) results = results.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.weaponType.toLowerCase().includes(q)
+    );
+    if (opts.weaponType) results = results.filter(a => a.weaponType === opts.weaponType);
+    return results.slice(0, opts.limit || 50).map(a => ({
+      ...a,
+      url: this.getModelUrl(a.path),
+    }));
+  }
+
   // ── Game Data API (Worker) — generic collection access ──
   async listGameDataCollections() {
     try {
@@ -923,6 +1076,12 @@ class GrudgeSDK {
         classes: `${this.baseUrl}/api/v1/classes.json`, factions: `${this.baseUrl}/api/v1/factions.json`,
         attributes: `${this.baseUrl}/api/v1/attributes.json`, enemies: `${this.baseUrl}/api/v1/enemies.json`,
         bosses: `${this.baseUrl}/api/v1/bosses.json`,
+      },
+      gltfPipeline: {
+        models3d: `${this.baseUrl}/api/v1/models3d.json`,
+        gltfManifest: `${this.baseUrl}/api/v1/gltf-manifest.json`,
+        effectDefinitions: `${this.baseUrl}/api/v1/effect-definitions.json`,
+        animationsGltf: `${this.baseUrl}/api/v1/animations-gltf.json`,
       },
       r2Worker: { base: this.r2.workerUrl, assets: `${this.r2.workerUrl}/v1/assets`, health: `${this.r2.workerUrl}/v1/health` },
       workerApi: {
