@@ -37,7 +37,7 @@ export default {
       if (url.pathname === '/' || url.pathname === '') {
         return corsResponse(env, json({
           service: 'objectstore-api',
-          version: '2.0.0',
+          version: '2.1.0',
           status: 'ok',
           endpoints: {
             health: 'GET /health',
@@ -45,6 +45,9 @@ export default {
             models: 'GET /v1/models',
             gameData: 'GET /v1/game-data',
             weaponSkills: 'GET /v1/weapon-skills',
+            gltfManifest: 'GET /v1/game-data/gltf-manifest',
+            effectDefinitions: 'GET /v1/game-data/effect-definitions',
+            animationsGltf: 'GET /v1/game-data/animations-gltf',
             upload: 'POST /v1/assets (API key required)',
             convert: 'POST /v1/convert (API key required)',
           },
@@ -407,6 +410,8 @@ const GAME_DATA_COLLECTIONS = [
   'dialogue', 'lore', 'audio', 'models', 'animations',
   'factionUnits', 'battleFormations', 'controllers', 'ai',
   'enemyTemplates', 'cutscenes', 'entities', 'models3d',
+  // glTF Pipeline registries
+  'gltf-manifest', 'effect-definitions', 'animations-gltf',
 ];
 
 const GITHUB_PAGES_BASE = 'https://molochdagod.github.io/ObjectStore/api/v1';

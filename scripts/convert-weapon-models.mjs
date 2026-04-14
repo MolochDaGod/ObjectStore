@@ -332,23 +332,35 @@ if (UPLOAD) {
     process.exit(1);
   }
 
+  // Use Node.js File from buffer for proper multipart
+  const { File } = await import('node:buffer');
   let uploaded = 0;
-  for (const type of fs.readdirSync(glbDir)) {
+  let failed = 0;
+  const allTypes = fs.readdirSync(glbDir).filter(t => {
+    const p = path.join(glbDir, t);
+    return fs.existsSync(p) && fs.statSync(p).isDirectory();
+  });
+  const totalFiles = allTypes.reduce((s, t) => s + fs.readdirSync(path.join(glbDir, t)).filter(f => f.endsWith('.glb')).length, 0);
+  console.log(`  Found ${totalFiles} GLB files across ${allTypes.length} weapon types\n`);
+
+  for (const type of allTypes) {
     const typeDir = path.join(glbDir, type);
-    if (!fs.statSync(typeDir).isDirectory()) continue;
     const files = fs.readdirSync(typeDir).filter(f => f.endsWith('.glb'));
 
     for (const file of files) {
       const filePath = path.join(typeDir, file);
       const key = `models/weapons/${type}/${file}`;
+      const fileBuffer = fs.readFileSync(filePath);
+      const sizeKB = Math.round(fileBuffer.length / 1024);
 
-      console.log(`  ☁️  Uploading ${key}...`);
+      process.stdout.write(`  ☁️  [${uploaded + failed + 1}/${totalFiles}] ${key} (${sizeKB}KB)...`);
       try {
+        const fileObj = new File([fileBuffer], file, { type: 'model/gltf-binary' });
         const formData = new FormData();
-        formData.append('file', new Blob([fs.readFileSync(filePath)]), file);
+        formData.append('file', fileObj);
         formData.append('category', `weapons/${type}`);
         formData.append('tags', JSON.stringify(['weapon', type, '3d-model', 'glb']));
-        formData.append('metadata', JSON.stringify({ weaponType: type, source: 'local-conversion' }));
+        formData.append('metadata', JSON.stringify({ weaponType: type, source: 'grudge-pipeline', r2Key: key }));
 
         const res = await fetch(`${OBJECTSTORE_WORKER}/v1/assets`, {
           method: 'POST',
@@ -359,17 +371,23 @@ if (UPLOAD) {
         if (res.ok) {
           uploaded++;
           const data = await res.json();
-          console.log(`    ✅ ${data.id} — ${key}`);
+          console.log(` ✅ ${data.id}`);
         } else {
-          console.warn(`    ❌ ${res.status}: ${await res.text()}`);
+          failed++;
+          const errText = await res.text().catch(() => 'unknown');
+          console.log(` ❌ ${res.status}: ${errText.slice(0, 100)}`);
         }
       } catch (e) {
-        console.warn(`    ❌ Upload failed: ${e.message}`);
+        failed++;
+        console.log(` ❌ ${e.message.split('\n')[0]}`);
       }
+
+      // Small delay to avoid overwhelming the Worker
+      if ((uploaded + failed) % 10 === 0) await new Promise(r => setTimeout(r, 500));
     }
   }
 
-  console.log(`\n✅ Upload complete: ${uploaded} models uploaded to R2`);
+  console.log(`\n✅ Upload complete: ${uploaded} uploaded, ${failed} failed out of ${totalFiles}`);
 }
 
 console.log('\n🏁 Done.');
