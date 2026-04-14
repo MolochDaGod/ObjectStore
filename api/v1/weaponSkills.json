@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "generatedAt": "2026-04-13T21:26:48.190Z",
+  "generatedAt": "2026-04-13T23:32:26.058Z",
   "totalWeaponTypes": 17,
   "totalSkills": 207,
   "classRestrictions": {
@@ -1050,8 +1050,10 @@
     {
       "id": "GUN",
       "name": "Gun",
-      "icon": "/icons/pack/misc/Power.png",
-      "classes": [],
+      "icon": "/icons/weapons/blackpowder.png",
+      "classes": [
+        "Ranger"
+      ],
       "totalSkills": 12,
       "slots": [
         {
@@ -1062,53 +1064,55 @@
             {
               "id": "gun_grudge_shot",
               "name": "Grudge Shot",
-              "description": "Single shot, builds Powder Mark",
-              "icon": "/icons/pack/misc/Power.png",
+              "description": "Single shot, builds Powder Mark. Hitscan 30m range.",
+              "icon": "/icons/weapons/blackpowder.png",
               "tier": 1,
               "damage": 60,
               "cooldown": 0,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
+              "castTime": 0.3,
+              "range": 30,
+              "projectile": "bullet",
               "damageType": "physical",
-              "animation": null,
+              "animation": "gun_fire",
               "physics": null,
               "effects": [
-                "Builds Mark"
+                "Builds Powder Mark",
+                "Hitscan 30m"
               ]
             },
             {
               "id": "gun_quick_reload",
               "name": "Quick Reload",
-              "description": "+Attack speed buff",
-              "icon": "/icons/pack/misc/Electro.png",
+              "description": "Rapidly cycle the chamber, +40% attack speed for 4s",
+              "icon": "/icons/weapons/ironstorm.png",
               "tier": 2,
               "damage": 0,
               "cooldown": 15,
-              "castTime": null,
-              "range": null,
+              "castTime": 0,
+              "range": 0,
               "projectile": null,
               "damageType": "physical",
-              "animation": null,
+              "animation": "gun_reload",
               "physics": null,
               "effects": [
-                "+40% Atk Speed 4s"
+                "+40% Atk Speed 4s",
+                "Self-Buff"
               ]
             },
             {
               "id": "gun_smoke_shot",
               "name": "Smoke Shot",
-              "description": "AoE blind effect",
+              "description": "Fire a flashbang round, blinding enemies in 4m",
               "icon": "/icons/pack/misc/smoke.png",
               "tier": 3,
               "damage": 30,
               "cooldown": 12,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
+              "castTime": 0.2,
+              "range": 25,
+              "projectile": "bullet",
               "damageType": "physical",
-              "animation": null,
-              "physics": null,
+              "animation": "gun_fire",
+              "physics": "blind",
               "effects": [
                 "Blind 3s",
                 "AoE 4m"
@@ -1124,56 +1128,61 @@
             {
               "id": "gun_explosive_round",
               "name": "Explosive Round",
-              "description": "AoE burst damage",
-              "icon": "/icons/pack/misc/fire_05.png",
+              "description": "Fire incendiary shell that explodes on impact",
+              "icon": "/icons/weapons/emberrifle.png",
               "tier": 1,
               "damage": 70,
               "cooldown": 8,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
-              "physics": null,
+              "castTime": 0.4,
+              "range": 25,
+              "projectile": "shell",
+              "damageType": "fire",
+              "animation": "gun_heavy_fire",
+              "physics": "knockback",
               "effects": [
-                "AoE 4m"
+                "AoE 4m",
+                "Knockback 2m",
+                "Burn 3s"
               ]
             },
             {
               "id": "gun_flame_burst",
               "name": "Flame Burst",
-              "description": "DoT AoE fire",
+              "description": "Spray ignited powder in a cone, setting ground ablaze",
               "icon": "/icons/pack/misc/Fires.png",
               "tier": 2,
               "damage": 50,
               "cooldown": 10,
-              "castTime": null,
-              "range": null,
+              "castTime": 0.3,
+              "range": 8,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "fire",
+              "animation": "gun_spray",
               "physics": null,
               "effects": [
+                "Cone 8m",
                 "Burn 5s",
-                "AoE"
+                "Ground Fire 4s"
               ]
             },
             {
               "id": "gun_sniper_round",
               "name": "Sniper Round",
-              "description": "Long range high damage",
-              "icon": "/icons/pack/misc/Effect.png",
+              "description": "Steady aim, charged shot that pierces armor at extreme range",
+              "icon": "/icons/weapons/duskblaster.png",
               "tier": 3,
               "damage": 120,
               "cooldown": 12,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
+              "castTime": 1.2,
+              "range": 50,
+              "projectile": "bullet",
               "damageType": "physical",
-              "animation": null,
+              "animation": "gun_aim_fire",
               "physics": null,
               "effects": [
-                "40m Range"
+                "50m Range",
+                "Ignore 50% Armor",
+                "Guaranteed Crit"
               ]
             }
           ]
@@ -1186,75 +1195,82 @@
             {
               "id": "gun_hellfire_barrage",
               "name": "Hellfire Barrage",
-              "description": "Channeled AoE fire",
-              "icon": "/icons/pack/misc/Lava.png",
+              "description": "Unload entire magazine in sustained fire, AoE incendiary",
+              "icon": "/icons/weapons/bloodcannon.png",
               "tier": 1,
               "damage": 100,
               "cooldown": 18,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "castTime": 0,
+              "range": 20,
+              "projectile": "bullet",
+              "damageType": "fire",
+              "animation": "gun_channel_fire",
               "physics": null,
               "effects": [
                 "Channel 3s",
-                "Large AoE"
+                "AoE 6m",
+                "12 Rounds",
+                "Burn 4s"
               ]
             },
             {
               "id": "gun_crimson_blast",
               "name": "Crimson Blast",
-              "description": "Lifesteal AoE",
+              "description": "Blood-infused shell that heals on hit, AoE splash",
               "icon": "/icons/pack/misc/Burns.png",
               "tier": 2,
               "damage": 80,
               "cooldown": 15,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "castTime": 0.5,
+              "range": 20,
+              "projectile": "shell",
+              "damageType": "shadow",
+              "animation": "gun_heavy_fire",
               "physics": null,
               "effects": [
-                "Lifesteal 30%"
+                "Lifesteal 30%",
+                "AoE 5m",
+                "Bleed 4s"
               ]
             },
             {
               "id": "gun_shadow_shot",
               "name": "Shadow Shot",
-              "description": "Silence AoE",
+              "description": "Void-touched round that silences on impact and leaves darkness",
               "icon": "/icons/pack/misc/smoke.png",
               "tier": 3,
               "damage": 60,
               "cooldown": 12,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "castTime": 0.3,
+              "range": 30,
+              "projectile": "bullet",
+              "damageType": "shadow",
+              "animation": "gun_fire",
               "physics": null,
               "effects": [
                 "Silence 4s",
-                "AoE"
+                "AoE 4m",
+                "Darkness Zone 3s"
               ]
             },
             {
               "id": "gun_cannon_execute",
               "name": "Cannon Execute",
-              "description": "Low HP burst",
-              "icon": "/icons/pack/misc/Chaos_2.png",
+              "description": "Overcharged shot that deals 3x damage to targets below 25% HP",
+              "icon": "/icons/weapons/wraithbarrel.png",
               "tier": 4,
               "damage": 200,
               "cooldown": 20,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
+              "castTime": 0.8,
+              "range": 25,
+              "projectile": "shell",
               "damageType": "physical",
-              "animation": null,
-              "physics": null,
+              "animation": "gun_aim_fire",
+              "physics": "knockback",
               "effects": [
-                "3x dmg <25% HP"
+                "3x dmg <25% HP",
+                "Knockback 6m",
+                "Armor Break"
               ]
             }
           ]
@@ -1267,39 +1283,43 @@
             {
               "id": "gun_demon_blast",
               "name": "Demon Blast",
-              "description": "Massive knockback explosion",
-              "icon": "/icons/pack/misc/Chaos.png",
+              "description": "Channel dark energy into the barrel, releasing a massive explosion that sends enemies flying",
+              "icon": "/icons/weapons/bloodcannon.png",
               "tier": 1,
               "damage": 250,
               "cooldown": 55,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
-              "physics": null,
+              "castTime": 0.8,
+              "range": 15,
+              "projectile": "shell",
+              "damageType": "fire",
+              "animation": "gun_ultimate_fire",
+              "physics": "knockback",
               "effects": [
                 "Knockback 10m",
-                "AoE 8m"
+                "AoE 8m",
+                "Burn 6s",
+                "Stagger All"
               ]
             },
             {
               "id": "gun_thunder_blast",
               "name": "Thunder Blast",
-              "description": "Ultimate storm attack",
+              "description": "Summon a lightning storm through the barrel, chain-electrocuting all enemies in range",
               "icon": "/icons/pack/misc/Lighting.png",
               "tier": 4,
               "damage": 300,
               "cooldown": 70,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": null,
-              "physics": null,
+              "castTime": 1,
+              "range": 20,
+              "projectile": "beam",
+              "damageType": "lightning",
+              "animation": "gun_storm_channel",
+              "physics": "stun",
               "effects": [
-                "Lightning Storm",
-                "Stun 2s"
+                "Lightning Storm 6s",
+                "Chain x5",
+                "Stun 2s",
+                "AoE 12m"
               ]
             }
           ]
