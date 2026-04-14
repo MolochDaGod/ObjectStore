@@ -71,7 +71,17 @@
     "build:gdevelop": "node scripts/build-gdevelop-manifest.mjs",
     "export:weapon-skills": "node scripts/export-weapon-skills.mjs",
     "build:all": "npm run export:weapon-skills && npm run build:gdevelop",
-    "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql"
+    "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql",
+    "pipeline:convert": "node scripts/gltf-pipeline.mjs convert",
+    "pipeline:optimize": "node scripts/gltf-pipeline.mjs optimize",
+    "pipeline:animations": "node scripts/gltf-pipeline.mjs animations",
+    "pipeline:effects": "node scripts/gltf-pipeline.mjs effects",
+    "pipeline:validate": "node scripts/gltf-pipeline.mjs validate",
+    "pipeline:all": "node scripts/gltf-pipeline.mjs all",
+    "pipeline:dry": "node scripts/gltf-pipeline.mjs all --dry-run",
+    "effects:consolidate": "node scripts/consolidate-effects.mjs",
+    "effects:manifest": "node scripts/rebuild-effects-manifest.mjs",
+    "effects:all": "node scripts/consolidate-effects.mjs && node scripts/rebuild-effects-manifest.mjs && node scripts/gltf-pipeline.mjs effects && node scripts/gltf-pipeline.mjs validate"
   },
   "repository": {
     "type": "git",
@@ -117,7 +127,14 @@
     }
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.3.0",
+    "@gltf-transform/core": "^4.3.0",
+    "@gltf-transform/extensions": "^4.3.0",
+    "@gltf-transform/functions": "^4.3.0",
     "@types/node": "^20.0.0",
+    "draco3dgltf": "^1.5.7",
+    "meshoptimizer": "^1.1.0",
+    "obj2gltf": "^3.2.0",
     "sharp": "^0.33.5",
     "typescript": "^5.0.0"
   },

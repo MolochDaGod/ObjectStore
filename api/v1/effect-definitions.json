@@ -1,0 +1,6540 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-14T06:51:39.110Z",
+  "description": "BabylonJS particle system configurations for Grudge effect textures",
+  "totalEffects": 245,
+  "categories": [
+    {
+      "id": "portals",
+      "count": 7,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "fire",
+      "count": 18,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "ice",
+      "count": 4,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.5,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 30,
+        "gravity": [
+          0,
+          -0.3,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": true,
+        "usage": "Frost/crystal effect — slow drift downward with shimmer"
+      }
+    },
+    {
+      "id": "lightning",
+      "count": 8,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "spells",
+      "count": 11,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "projectiles",
+      "count": 5,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "impacts",
+      "count": 8,
+      "defaults": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "shields",
+      "count": 3,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 1.2,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 0.5,
+        "maxSize": 2.5,
+        "emitRate": 15,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.3,
+        "loop": true,
+        "usage": "Shield dome — overlay on character with alpha blend, billboard mode"
+      }
+    },
+    {
+      "id": "buffs",
+      "count": 14,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "auras",
+      "count": 24,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "environment",
+      "count": 21,
+      "defaults": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "ground",
+      "count": 4,
+      "defaults": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 2,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 1,
+        "maxSize": 3,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": false,
+        "usage": "Ground AoE indicator — project onto terrain as decal or flat billboard"
+      }
+    },
+    {
+      "id": "noise",
+      "count": 66,
+      "defaults": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "misc",
+      "count": 52,
+      "defaults": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "id": "auras/aoe-magic-spells_Flare4",
+      "texture": "effects/3d/auras/aoe-magic-spells_Flare4.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/aoe-magic-spells_Flash7",
+      "texture": "effects/3d/auras/aoe-magic-spells_Flash7.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 500,
+      "height": 500,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/aoe-magic-spells_Glow1",
+      "texture": "effects/3d/auras/aoe-magic-spells_Glow1.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/aoe-magic-spells_Point12",
+      "texture": "effects/3d/auras/aoe-magic-spells_Point12.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/aoe-magic-spells_Point19",
+      "texture": "effects/3d/auras/aoe-magic-spells_Point19.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/aoe-magic-spells_Point5",
+      "texture": "effects/3d/auras/aoe-magic-spells_Point5.png",
+      "category": "auras",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_basicglow",
+      "texture": "effects/3d/auras/arpg-effects_basicglow.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_essence",
+      "texture": "effects/3d/auras/arpg-effects_beam_essence.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_green",
+      "texture": "effects/3d/auras/arpg-effects_beam_green.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_modular",
+      "texture": "effects/3d/auras/arpg-effects_beam_modular.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_modular2",
+      "texture": "effects/3d/auras/arpg-effects_beam_modular2.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_orange",
+      "texture": "effects/3d/auras/arpg-effects_beam_orange.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_purple",
+      "texture": "effects/3d/auras/arpg-effects_beam_purple.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beam_red",
+      "texture": "effects/3d/auras/arpg-effects_beam_red.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_beamglow",
+      "texture": "effects/3d/auras/arpg-effects_beamglow.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_character_ring",
+      "texture": "effects/3d/auras/arpg-effects_character_ring.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_chestrays",
+      "texture": "effects/3d/auras/arpg-effects_chestrays.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_chestrays_modular",
+      "texture": "effects/3d/auras/arpg-effects_chestrays_modular.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_iconglow",
+      "texture": "effects/3d/auras/arpg-effects_iconglow.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/arpg-effects_treasure_ray",
+      "texture": "effects/3d/auras/arpg-effects_treasure_ray.png",
+      "category": "auras",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/ktk-effects_Eff_ring_2",
+      "texture": "effects/3d/auras/ktk-effects_Eff_ring_2.png",
+      "category": "auras",
+      "pack": "ktk-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/topdown-effects_DotFlare01",
+      "texture": "effects/3d/auras/topdown-effects_DotFlare01.png",
+      "category": "auras",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/topdown-effects_Flare04",
+      "texture": "effects/3d/auras/topdown-effects_Flare04.png",
+      "category": "auras",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "auras/topdown-effects_HPNoiseStrings03",
+      "texture": "effects/3d/auras/topdown-effects_HPNoiseStrings03.png",
+      "category": "auras",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 0.8,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 40,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": true,
+        "usage": "Character glow/aura — ring around feet or body-hugging particles"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_quest",
+      "texture": "effects/3d/buffs/arpg-effects_icon_quest.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_question",
+      "texture": "effects/3d/buffs/arpg-effects_icon_question.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_w_exclamation",
+      "texture": "effects/3d/buffs/arpg-effects_icon_w_exclamation.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_w_question",
+      "texture": "effects/3d/buffs/arpg-effects_icon_w_question.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_w_speech",
+      "texture": "effects/3d/buffs/arpg-effects_icon_w_speech.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_icon_w_star",
+      "texture": "effects/3d/buffs/arpg-effects_icon_w_star.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_levelup_blast",
+      "texture": "effects/3d/buffs/arpg-effects_levelup_blast.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_levelup_ring",
+      "texture": "effects/3d/buffs/arpg-effects_levelup_ring.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker_blue",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker_blue.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker_green",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker_green.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker_purple",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker_purple.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker_red",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker_red.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker_yellow",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker_yellow.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "buffs/arpg-effects_questmarker2",
+      "texture": "effects/3d/buffs/arpg-effects_questmarker2.png",
+      "category": "buffs",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1.5,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.3,
+        "maxSize": 0.8,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0.5,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Overhead status icon — billboard, float above character head"
+      }
+    },
+    {
+      "id": "environment/aoe-magic-spells_Stone1",
+      "texture": "effects/3d/environment/aoe-magic-spells_Stone1.png",
+      "category": "environment",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brick_ambient",
+      "texture": "effects/3d/environment/arpg-effects_brick_ambient.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brick_base",
+      "texture": "effects/3d/environment/arpg-effects_brick_base.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brick_normal",
+      "texture": "effects/3d/environment/arpg-effects_brick_normal.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brickwall",
+      "texture": "effects/3d/environment/arpg-effects_brickwall.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brickwall_n",
+      "texture": "effects/3d/environment/arpg-effects_brickwall_n.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brickwall_n2",
+      "texture": "effects/3d/environment/arpg-effects_brickwall_n2.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_brickwall_occ",
+      "texture": "effects/3d/environment/arpg-effects_brickwall_occ.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_cloud",
+      "texture": "effects/3d/environment/arpg-effects_cloud.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_cloud_n",
+      "texture": "effects/3d/environment/arpg-effects_cloud_n.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_grass",
+      "texture": "effects/3d/environment/arpg-effects_grass.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_grass_n",
+      "texture": "effects/3d/environment/arpg-effects_grass_n.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_leaf_birch",
+      "texture": "effects/3d/environment/arpg-effects_leaf_birch.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_leaf_birch_2",
+      "texture": "effects/3d/environment/arpg-effects_leaf_birch_2.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_leaf_birch_n",
+      "texture": "effects/3d/environment/arpg-effects_leaf_birch_n.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_rain",
+      "texture": "effects/3d/environment/arpg-effects_rain.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 16,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_stone",
+      "texture": "effects/3d/environment/arpg-effects_stone.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1414,
+      "height": 1414,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_stone 1",
+      "texture": "effects/3d/environment/arpg-effects_stone 1.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1414,
+      "height": 1414,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/arpg-effects_wood",
+      "texture": "effects/3d/environment/arpg-effects_wood.png",
+      "category": "environment",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/kriptofx-v4_Fog5",
+      "texture": "effects/3d/environment/kriptofx-v4_Fog5.png",
+      "category": "environment",
+      "pack": "kriptofx-v4",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "environment/ktk-effects_eff_wind_1",
+      "texture": "effects/3d/environment/ktk-effects_eff_wind_1.tga",
+      "category": "environment",
+      "pack": "ktk-effects",
+      "atlas": null,
+      "width": 0,
+      "height": 0,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "box",
+        "emitterRadius": 10,
+        "minLifeTime": 2,
+        "maxLifeTime": 6,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.02,
+        "maxSize": 0.15,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -2,
+          0
+        ],
+        "rotationSpeed": 0.2,
+        "loop": true,
+        "usage": "Weather/ambient particles — large emitter box covering scene area"
+      }
+    },
+    {
+      "id": "fire/aoe-magic-spells_Fire1",
+      "texture": "effects/3d/fire/aoe-magic-spells_Fire1.png",
+      "category": "fire",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/aoe-magic-spells_Fire13",
+      "texture": "effects/3d/fire/aoe-magic-spells_Fire13.png",
+      "category": "fire",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/aoe-magic-spells_Smoke",
+      "texture": "effects/3d/fire/aoe-magic-spells_Smoke.png",
+      "category": "fire",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/aoe-magic-spells_Smoke24",
+      "texture": "effects/3d/fire/aoe-magic-spells_Smoke24.png",
+      "category": "fire",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/aoe-magic-spells_Smoke3",
+      "texture": "effects/3d/fire/aoe-magic-spells_Smoke3.png",
+      "category": "fire",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/arpg-effects_fire_16x4",
+      "texture": "effects/3d/fire/arpg-effects_fire_16x4.png",
+      "category": "fire",
+      "pack": "arpg-effects",
+      "atlas": {
+        "cols": 16,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/arpg-effects_fire_magic_16x4",
+      "texture": "effects/3d/fire/arpg-effects_fire_magic_16x4.png",
+      "category": "fire",
+      "pack": "arpg-effects",
+      "atlas": {
+        "cols": 16,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/arpg-effects_fire_torch_16x4",
+      "texture": "effects/3d/fire/arpg-effects_fire_torch_16x4.png",
+      "category": "fire",
+      "pack": "arpg-effects",
+      "atlas": {
+        "cols": 16,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/arpg-effects_fire_torch_magic_16x4",
+      "texture": "effects/3d/fire/arpg-effects_fire_torch_magic_16x4.png",
+      "category": "fire",
+      "pack": "arpg-effects",
+      "atlas": {
+        "cols": 16,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/ky-effects_smoke_4x4",
+      "texture": "effects/3d/fire/ky-effects_smoke_4x4.png",
+      "category": "fire",
+      "pack": "ky-effects",
+      "atlas": {
+        "cols": 4,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_BetterEmbers07",
+      "texture": "effects/3d/fire/topdown-effects_BetterEmbers07.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame06_Mask",
+      "texture": "effects/3d/fire/topdown-effects_Flame06_Mask.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame06_Vel",
+      "texture": "effects/3d/fire/topdown-effects_Flame06_Vel.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame12_Mask",
+      "texture": "effects/3d/fire/topdown-effects_Flame12_Mask.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame12_Vel",
+      "texture": "effects/3d/fire/topdown-effects_Flame12_Vel.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame15_Mask",
+      "texture": "effects/3d/fire/topdown-effects_Flame15_Mask.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_Flame15_Vel",
+      "texture": "effects/3d/fire/topdown-effects_Flame15_Vel.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "fire/topdown-effects_NoiseLava01",
+      "texture": "effects/3d/fire/topdown-effects_NoiseLava01.png",
+      "category": "fire",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cone",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.3,
+        "maxLifeTime": 1,
+        "minEmitPower": 1,
+        "maxEmitPower": 3,
+        "minSize": 0.1,
+        "maxSize": 0.6,
+        "emitRate": 80,
+        "gravity": [
+          0,
+          2,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Fire/flame particles — use atlas grid if filename contains NxM pattern"
+      }
+    },
+    {
+      "id": "ground/aoe-magic-spells_Crater15",
+      "texture": "effects/3d/ground/aoe-magic-spells_Crater15.png",
+      "category": "ground",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 2,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 1,
+        "maxSize": 3,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": false,
+        "usage": "Ground AoE indicator — project onto terrain as decal or flat billboard"
+      }
+    },
+    {
+      "id": "ground/aoe-magic-spells_Crater40",
+      "texture": "effects/3d/ground/aoe-magic-spells_Crater40.png",
+      "category": "ground",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 2,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 1,
+        "maxSize": 3,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": false,
+        "usage": "Ground AoE indicator — project onto terrain as decal or flat billboard"
+      }
+    },
+    {
+      "id": "ground/aoe-magic-spells_Crater43",
+      "texture": "effects/3d/ground/aoe-magic-spells_Crater43.png",
+      "category": "ground",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 2,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 1,
+        "maxSize": 3,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": false,
+        "usage": "Ground AoE indicator — project onto terrain as decal or flat billboard"
+      }
+    },
+    {
+      "id": "ground/magic-effects_Circle",
+      "texture": "effects/3d/ground/magic-effects_Circle.png",
+      "category": "ground",
+      "pack": "magic-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 2,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 1.5,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 1,
+        "maxSize": 3,
+        "emitRate": 5,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": false,
+        "usage": "Ground AoE indicator — project onto terrain as decal or flat billboard"
+      }
+    },
+    {
+      "id": "ice/aoe-magic-spells_EGACrystal",
+      "texture": "effects/3d/ice/aoe-magic-spells_EGACrystal.png",
+      "category": "ice",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.5,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 30,
+        "gravity": [
+          0,
+          -0.3,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": true,
+        "usage": "Frost/crystal effect — slow drift downward with shimmer"
+      }
+    },
+    {
+      "id": "ice/aoe-magic-spells_Snow4",
+      "texture": "effects/3d/ice/aoe-magic-spells_Snow4.png",
+      "category": "ice",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.5,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 30,
+        "gravity": [
+          0,
+          -0.3,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": true,
+        "usage": "Frost/crystal effect — slow drift downward with shimmer"
+      }
+    },
+    {
+      "id": "ice/kriptofx-v4_Ice3",
+      "texture": "effects/3d/ice/kriptofx-v4_Ice3.png",
+      "category": "ice",
+      "pack": "kriptofx-v4",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.5,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 30,
+        "gravity": [
+          0,
+          -0.3,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": true,
+        "usage": "Frost/crystal effect — slow drift downward with shimmer"
+      }
+    },
+    {
+      "id": "ice/kriptofx-v4_IceNormal",
+      "texture": "effects/3d/ice/kriptofx-v4_IceNormal.png",
+      "category": "ice",
+      "pack": "kriptofx-v4",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.5,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0.2,
+        "maxEmitPower": 0.8,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 30,
+        "gravity": [
+          0,
+          -0.3,
+          0
+        ],
+        "rotationSpeed": 0.5,
+        "loop": true,
+        "usage": "Frost/crystal effect — slow drift downward with shimmer"
+      }
+    },
+    {
+      "id": "impacts/aoe-magic-spells_Crack4",
+      "texture": "effects/3d/impacts/aoe-magic-spells_Crack4.png",
+      "category": "impacts",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/aoe-magic-spells_Crack5",
+      "texture": "effects/3d/impacts/aoe-magic-spells_Crack5.png",
+      "category": "impacts",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/aoe-magic-spells_Crack7",
+      "texture": "effects/3d/impacts/aoe-magic-spells_Crack7.png",
+      "category": "impacts",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/aoe-magic-spells_Debris2",
+      "texture": "effects/3d/impacts/aoe-magic-spells_Debris2.png",
+      "category": "impacts",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/arpg-effects_questmarker_white",
+      "texture": "effects/3d/impacts/arpg-effects_questmarker_white.png",
+      "category": "impacts",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/arpg-effects_rain_impact",
+      "texture": "effects/3d/impacts/arpg-effects_rain_impact.png",
+      "category": "impacts",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/arpg-effects_roundsmoothitem",
+      "texture": "effects/3d/impacts/arpg-effects_roundsmoothitem.png",
+      "category": "impacts",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "impacts/topdown-effects_Cracks03",
+      "texture": "effects/3d/impacts/topdown-effects_Cracks03.png",
+      "category": "impacts",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "sphere",
+        "emitterRadius": 0.3,
+        "minLifeTime": 0.2,
+        "maxLifeTime": 0.8,
+        "minEmitPower": 2,
+        "maxEmitPower": 5,
+        "minSize": 0.1,
+        "maxSize": 0.8,
+        "emitRate": 200,
+        "gravity": [
+          0,
+          -5,
+          0
+        ],
+        "rotationSpeed": 3,
+        "loop": false,
+        "usage": "Hit/explosion burst — oneshot, high initial emit then stop"
+      }
+    },
+    {
+      "id": "lightning/aoe-magic-spells_HandPaintedLightning2",
+      "texture": "effects/3d/lightning/aoe-magic-spells_HandPaintedLightning2.png",
+      "category": "lightning",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/arpg-effects_sparkle_atlas",
+      "texture": "effects/3d/lightning/arpg-effects_sparkle_atlas.png",
+      "category": "lightning",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/effect-textures_SparkParticle",
+      "texture": "effects/3d/lightning/effect-textures_SparkParticle.png",
+      "category": "lightning",
+      "pack": "effect-textures",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/topdown-effects_LightningSprites09",
+      "texture": "effects/3d/lightning/topdown-effects_LightningSprites09.png",
+      "category": "lightning",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/topdown-effects_LightningSprites12_Packed",
+      "texture": "effects/3d/lightning/topdown-effects_LightningSprites12_Packed.png",
+      "category": "lightning",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/topdown-effects_LightningSprites13_Packed",
+      "texture": "effects/3d/lightning/topdown-effects_LightningSprites13_Packed.png",
+      "category": "lightning",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/topdown-effects_Spark04",
+      "texture": "effects/3d/lightning/topdown-effects_Spark04.png",
+      "category": "lightning",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "lightning/wizard-spells_Lightning_3",
+      "texture": "effects/3d/lightning/wizard-spells_Lightning_3.png",
+      "category": "lightning",
+      "pack": "wizard-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.05,
+        "maxLifeTime": 0.2,
+        "minEmitPower": 5,
+        "maxEmitPower": 10,
+        "minSize": 0.05,
+        "maxSize": 0.4,
+        "emitRate": 120,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 10,
+        "loop": true,
+        "usage": "Electric sparks — short lifetime, high emit power for snappy zaps"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Leave9",
+      "texture": "effects/3d/misc/aoe-magic-spells_Leave9.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Object3",
+      "texture": "effects/3d/misc/aoe-magic-spells_Object3.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_ParticleMesh1",
+      "texture": "effects/3d/misc/aoe-magic-spells_ParticleMesh1.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Trail21",
+      "texture": "effects/3d/misc/aoe-magic-spells_Trail21.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Trail29",
+      "texture": "effects/3d/misc/aoe-magic-spells_Trail29.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Trail55",
+      "texture": "effects/3d/misc/aoe-magic-spells_Trail55.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/aoe-magic-spells_Trail58",
+      "texture": "effects/3d/misc/aoe-magic-spells_Trail58.png",
+      "category": "misc",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_coin_diffuse",
+      "texture": "effects/3d/misc/arpg-effects_coin_diffuse.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_coin_specular",
+      "texture": "effects/3d/misc/arpg-effects_coin_specular.tga",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 0,
+      "height": 0,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_dot",
+      "texture": "effects/3d/misc/arpg-effects_dot.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 32,
+      "height": 32,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_dot4",
+      "texture": "effects/3d/misc/arpg-effects_dot4.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_droplet",
+      "texture": "effects/3d/misc/arpg-effects_droplet.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_droplet_trn",
+      "texture": "effects/3d/misc/arpg-effects_droplet_trn.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_gui_button2",
+      "texture": "effects/3d/misc/arpg-effects_gui_button2.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 32,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/arpg-effects_icon",
+      "texture": "effects/3d/misc/arpg-effects_icon.png",
+      "category": "misc",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 160,
+      "height": 160,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ktk-effects_Eff_Glitter",
+      "texture": "effects/3d/misc/ktk-effects_Eff_Glitter.png",
+      "category": "misc",
+      "pack": "ktk-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ktk-effects_Eff_Glitter2",
+      "texture": "effects/3d/misc/ktk-effects_Eff_Glitter2.png",
+      "category": "misc",
+      "pack": "ktk-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ktk-effects_Eff_par_2",
+      "texture": "effects/3d/misc/ktk-effects_Eff_par_2.png",
+      "category": "misc",
+      "pack": "ktk-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ky-effects_00_4x4",
+      "texture": "effects/3d/misc/ky-effects_00_4x4.png",
+      "category": "misc",
+      "pack": "ky-effects",
+      "atlas": {
+        "cols": 4,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ky-effects_project1_00000_8x2",
+      "texture": "effects/3d/misc/ky-effects_project1_00000_8x2.png",
+      "category": "misc",
+      "pack": "ky-effects",
+      "atlas": {
+        "cols": 8,
+        "rows": 2
+      },
+      "width": 4096,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ky-effects_project1_coreb00000_4x4",
+      "texture": "effects/3d/misc/ky-effects_project1_coreb00000_4x4.png",
+      "category": "misc",
+      "pack": "ky-effects",
+      "atlas": {
+        "cols": 4,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/ky-effects_project2_4x4",
+      "texture": "effects/3d/misc/ky-effects_project2_4x4.png",
+      "category": "misc",
+      "pack": "ky-effects",
+      "atlas": {
+        "cols": 4,
+        "rows": 4
+      },
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/shield-effects_FXV_ActivationPattern1",
+      "texture": "effects/3d/misc/shield-effects_FXV_ActivationPattern1.png",
+      "category": "misc",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 4,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/shield-effects_FXV_ActivationPattern2",
+      "texture": "effects/3d/misc/shield-effects_FXV_ActivationPattern2.png",
+      "category": "misc",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/shield-effects_FXV_Pattern1d",
+      "texture": "effects/3d/misc/shield-effects_FXV_Pattern1d.png",
+      "category": "misc",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 506,
+      "height": 420,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/shield-effects_FXV_Pattern1e",
+      "texture": "effects/3d/misc/shield-effects_FXV_Pattern1e.png",
+      "category": "misc",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 506,
+      "height": 420,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot01",
+      "texture": "effects/3d/misc/topdown-effects_Dot01.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot01Clamp",
+      "texture": "effects/3d/misc/topdown-effects_Dot01Clamp.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot06",
+      "texture": "effects/3d/misc/topdown-effects_Dot06.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot06Clamp",
+      "texture": "effects/3d/misc/topdown-effects_Dot06Clamp.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot07",
+      "texture": "effects/3d/misc/topdown-effects_Dot07.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Dot08",
+      "texture": "effects/3d/misc/topdown-effects_Dot08.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_GeneratedRamp_27694",
+      "texture": "effects/3d/misc/topdown-effects_GeneratedRamp_27694.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_GeneratedRamp_28781",
+      "texture": "effects/3d/misc/topdown-effects_GeneratedRamp_28781.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_GeneratedRamp_39888",
+      "texture": "effects/3d/misc/topdown-effects_GeneratedRamp_39888.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_GeneratedRamp_8284",
+      "texture": "effects/3d/misc/topdown-effects_GeneratedRamp_8284.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_GeneratedRamp_90628",
+      "texture": "effects/3d/misc/topdown-effects_GeneratedRamp_90628.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_IndicatorTex_09_Packed",
+      "texture": "effects/3d/misc/topdown-effects_IndicatorTex_09_Packed.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_IndicatorTex_Circle_01_Packed",
+      "texture": "effects/3d/misc/topdown-effects_IndicatorTex_Circle_01_Packed.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_IndicatorTex_ClearCircle_04_Packed",
+      "texture": "effects/3d/misc/topdown-effects_IndicatorTex_ClearCircle_04_Packed.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp02",
+      "texture": "effects/3d/misc/topdown-effects_Ramp02.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp11",
+      "texture": "effects/3d/misc/topdown-effects_Ramp11.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp13",
+      "texture": "effects/3d/misc/topdown-effects_Ramp13.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp15",
+      "texture": "effects/3d/misc/topdown-effects_Ramp15.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp17",
+      "texture": "effects/3d/misc/topdown-effects_Ramp17.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp18",
+      "texture": "effects/3d/misc/topdown-effects_Ramp18.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp19",
+      "texture": "effects/3d/misc/topdown-effects_Ramp19.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp21",
+      "texture": "effects/3d/misc/topdown-effects_Ramp21.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Ramp24",
+      "texture": "effects/3d/misc/topdown-effects_Ramp24.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Splashes_04_Packed",
+      "texture": "effects/3d/misc/topdown-effects_Splashes_04_Packed.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/topdown-effects_Trail22",
+      "texture": "effects/3d/misc/topdown-effects_Trail22.png",
+      "category": "misc",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "misc/wizard-spells_UIeffect7",
+      "texture": "effects/3d/misc/wizard-spells_UIeffect7.png",
+      "category": "misc",
+      "pack": "wizard-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 1,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1,
+        "minSize": 0.1,
+        "maxSize": 0.5,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "General purpose — adjust per use case"
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Gradient17",
+      "texture": "effects/3d/noise/aoe-magic-spells_Gradient17.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 16,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Gradient3r",
+      "texture": "effects/3d/noise/aoe-magic-spells_Gradient3r.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 32,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Gradient4.3",
+      "texture": "effects/3d/noise/aoe-magic-spells_Gradient4.3.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Gradient8",
+      "texture": "effects/3d/noise/aoe-magic-spells_Gradient8.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Gradient9",
+      "texture": "effects/3d/noise/aoe-magic-spells_Gradient9.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Mask23",
+      "texture": "effects/3d/noise/aoe-magic-spells_Mask23.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Mask41",
+      "texture": "effects/3d/noise/aoe-magic-spells_Mask41.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_MaskForShader",
+      "texture": "effects/3d/noise/aoe-magic-spells_MaskForShader.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Noise1",
+      "texture": "effects/3d/noise/aoe-magic-spells_Noise1.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Noise34",
+      "texture": "effects/3d/noise/aoe-magic-spells_Noise34.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Noise35t",
+      "texture": "effects/3d/noise/aoe-magic-spells_Noise35t.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Noise41",
+      "texture": "effects/3d/noise/aoe-magic-spells_Noise41.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_Noise43",
+      "texture": "effects/3d/noise/aoe-magic-spells_Noise43.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/aoe-magic-spells_NormalMap8",
+      "texture": "effects/3d/noise/aoe-magic-spells_NormalMap8.png",
+      "category": "noise",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_coin_normal",
+      "texture": "effects/3d/noise/arpg-effects_coin_normal.tga",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 0,
+      "height": 0,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_sphere_normal",
+      "texture": "effects/3d/noise/arpg-effects_sphere_normal.png",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_sphere_normal2",
+      "texture": "effects/3d/noise/arpg-effects_sphere_normal2.png",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_verticalgradient",
+      "texture": "effects/3d/noise/arpg-effects_verticalgradient.png",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_verticalgradient2",
+      "texture": "effects/3d/noise/arpg-effects_verticalgradient2.png",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/arpg-effects_verticalgradient3",
+      "texture": "effects/3d/noise/arpg-effects_verticalgradient3.png",
+      "category": "noise",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/shield-effects_FXV_Distortion",
+      "texture": "effects/3d/noise/shield-effects_FXV_Distortion.png",
+      "category": "noise",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/shield-effects_FXV_Noise1",
+      "texture": "effects/3d/noise/shield-effects_FXV_Noise1.png",
+      "category": "noise",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/shield-effects_FXV_Noise2",
+      "texture": "effects/3d/noise/shield-effects_FXV_Noise2.png",
+      "category": "noise",
+      "pack": "shield-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_DistortionFix_01",
+      "texture": "effects/3d/noise/topdown-effects_DistortionFix_01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_HPNoiseOrganic01",
+      "texture": "effects/3d/noise/topdown-effects_HPNoiseOrganic01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCaustic02nomip",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCaustic02nomip.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCaustic03",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCaustic03.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCell01",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCell01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCell01_inverted",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCell01_inverted.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCell01_inverted_nomip",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCell01_inverted_nomip.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCell01_leveled",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCell01_leveled.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseCell02",
+      "texture": "effects/3d/noise/topdown-effects_NoiseCell02.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseClassic01",
+      "texture": "effects/3d/noise/topdown-effects_NoiseClassic01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseICO2_01",
+      "texture": "effects/3d/noise/topdown-effects_NoiseICO2_01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseICO2_02",
+      "texture": "effects/3d/noise/topdown-effects_NoiseICO2_02.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseOrganic03",
+      "texture": "effects/3d/noise/topdown-effects_NoiseOrganic03.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseSmooth01",
+      "texture": "effects/3d/noise/topdown-effects_NoiseSmooth01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseSmooth01nomip",
+      "texture": "effects/3d/noise/topdown-effects_NoiseSmooth01nomip.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseSmooth02",
+      "texture": "effects/3d/noise/topdown-effects_NoiseSmooth02.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseWeird01",
+      "texture": "effects/3d/noise/topdown-effects_NoiseWeird01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_NoiseWeird01nomip",
+      "texture": "effects/3d/noise/topdown-effects_NoiseWeird01nomip.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RadialMask_01v2",
+      "texture": "effects/3d/noise/topdown-effects_RadialMask_01v2.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RadialMask_02",
+      "texture": "effects/3d/noise/topdown-effects_RadialMask_02.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RadialMask_03",
+      "texture": "effects/3d/noise/topdown-effects_RadialMask_03.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RadialMask_04",
+      "texture": "effects/3d/noise/topdown-effects_RadialMask_04.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RadialMask_04v2",
+      "texture": "effects/3d/noise/topdown-effects_RadialMask_04v2.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampComMask03",
+      "texture": "effects/3d/noise/topdown-effects_RampComMask03.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampComMask03_edge",
+      "texture": "effects/3d/noise/topdown-effects_RampComMask03_edge.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampComMask04_edge",
+      "texture": "effects/3d/noise/topdown-effects_RampComMask04_edge.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampMask01",
+      "texture": "effects/3d/noise/topdown-effects_RampMask01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampMask02",
+      "texture": "effects/3d/noise/topdown-effects_RampMask02.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampMask03",
+      "texture": "effects/3d/noise/topdown-effects_RampMask03.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_RampMask04",
+      "texture": "effects/3d/noise/topdown-effects_RampMask04.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 64,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_01",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_01.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_04",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_04.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_05",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_05.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_05Clamp",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_05Clamp.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_05v2",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_05v2.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_05v2Clamp",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_05v2Clamp.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_07",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_07.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_07Clamp",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_07Clamp.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_09v2",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_09v2.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_12",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_12.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_13",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_13.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_13Clamp",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_13Clamp.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "noise/topdown-effects_VertMask_14",
+      "texture": "effects/3d/noise/topdown-effects_VertMask_14.png",
+      "category": "noise",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_STANDARD",
+        "emitterType": null,
+        "usage": "Shader input texture — use as noise/distortion/mask in custom shaders, not as particle",
+        "isShaderTexture": true
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal",
+      "texture": "effects/3d/portals/arpg-effects_portal.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_green",
+      "texture": "effects/3d/portals/arpg-effects_portal_green.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_modular",
+      "texture": "effects/3d/portals/arpg-effects_portal_modular.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_purple",
+      "texture": "effects/3d/portals/arpg-effects_portal_purple.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_rays",
+      "texture": "effects/3d/portals/arpg-effects_portal_rays.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_red",
+      "texture": "effects/3d/portals/arpg-effects_portal_red.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "portals/arpg-effects_portal_yellow",
+      "texture": "effects/3d/portals/arpg-effects_portal_yellow.png",
+      "category": "portals",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 4096,
+      "height": 4096,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1.5,
+        "minLifeTime": 0.8,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.5,
+        "maxEmitPower": 1.5,
+        "minSize": 0.3,
+        "maxSize": 1.2,
+        "emitRate": 60,
+        "gravity": [
+          0,
+          0.2,
+          0
+        ],
+        "rotationSpeed": 2,
+        "loop": true,
+        "usage": "Portal swirl effect — attach to portal mesh, use with additive blend"
+      }
+    },
+    {
+      "id": "projectiles/arpg-effects_arrow",
+      "texture": "effects/3d/projectiles/arpg-effects_arrow.png",
+      "category": "projectiles",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "projectiles/arpg-effects_arrow2",
+      "texture": "effects/3d/projectiles/arpg-effects_arrow2.png",
+      "category": "projectiles",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "projectiles/status-effects_NextPrevArrow",
+      "texture": "effects/3d/projectiles/status-effects_NextPrevArrow.png",
+      "category": "projectiles",
+      "pack": "status-effects",
+      "atlas": null,
+      "width": 128,
+      "height": 128,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "projectiles/topdown-effects_Projectile01v2",
+      "texture": "effects/3d/projectiles/topdown-effects_Projectile01v2.png",
+      "category": "projectiles",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "projectiles/topdown-effects_Projectile03v2",
+      "texture": "effects/3d/projectiles/topdown-effects_Projectile03v2.png",
+      "category": "projectiles",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "point",
+        "emitterRadius": 0,
+        "minLifeTime": 0.1,
+        "maxLifeTime": 0.5,
+        "minEmitPower": 8,
+        "maxEmitPower": 15,
+        "minSize": 0.05,
+        "maxSize": 0.2,
+        "emitRate": 100,
+        "gravity": [
+          0,
+          -1,
+          0
+        ],
+        "rotationSpeed": 0,
+        "loop": true,
+        "usage": "Trail particles for arrows/bullets — attach to projectile transform"
+      }
+    },
+    {
+      "id": "shields/arpg-effects_icon_reward",
+      "texture": "effects/3d/shields/arpg-effects_icon_reward.png",
+      "category": "shields",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 1.2,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 0.5,
+        "maxSize": 2.5,
+        "emitRate": 15,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.3,
+        "loop": true,
+        "usage": "Shield dome — overlay on character with alpha blend, billboard mode"
+      }
+    },
+    {
+      "id": "shields/arpg-effects_shield",
+      "texture": "effects/3d/shields/arpg-effects_shield.png",
+      "category": "shields",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 1.2,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 0.5,
+        "maxSize": 2.5,
+        "emitRate": 15,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.3,
+        "loop": true,
+        "usage": "Shield dome — overlay on character with alpha blend, billboard mode"
+      }
+    },
+    {
+      "id": "shields/wizard-spells_MagicShield_3",
+      "texture": "effects/3d/shields/wizard-spells_MagicShield_3.png",
+      "category": "shields",
+      "pack": "wizard-spells",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "sphere",
+        "emitterRadius": 1.2,
+        "minLifeTime": 1,
+        "maxLifeTime": 3,
+        "minEmitPower": 0,
+        "maxEmitPower": 0.1,
+        "minSize": 0.5,
+        "maxSize": 2.5,
+        "emitRate": 15,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 0.3,
+        "loop": true,
+        "usage": "Shield dome — overlay on character with alpha blend, billboard mode"
+      }
+    },
+    {
+      "id": "spells/aoe-magic-spells_Circle132",
+      "texture": "effects/3d/spells/aoe-magic-spells_Circle132.png",
+      "category": "spells",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/aoe-magic-spells_Circle18",
+      "texture": "effects/3d/spells/aoe-magic-spells_Circle18.png",
+      "category": "spells",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 500,
+      "height": 500,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/aoe-magic-spells_Circle41",
+      "texture": "effects/3d/spells/aoe-magic-spells_Circle41.png",
+      "category": "spells",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 500,
+      "height": 500,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/aoe-magic-spells_Semicircle6",
+      "texture": "effects/3d/spells/aoe-magic-spells_Semicircle6.png",
+      "category": "spells",
+      "pack": "aoe-magic-spells",
+      "atlas": null,
+      "width": 1024,
+      "height": 1024,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/arpg-effects_runeword01",
+      "texture": "effects/3d/spells/arpg-effects_runeword01.png",
+      "category": "spells",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/arpg-effects_runeword02",
+      "texture": "effects/3d/spells/arpg-effects_runeword02.png",
+      "category": "spells",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 512,
+      "height": 512,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/arpg-effects_runeword03",
+      "texture": "effects/3d/spells/arpg-effects_runeword03.png",
+      "category": "spells",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/arpg-effects_runeword04",
+      "texture": "effects/3d/spells/arpg-effects_runeword04.png",
+      "category": "spells",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/arpg-effects_runeword05",
+      "texture": "effects/3d/spells/arpg-effects_runeword05.png",
+      "category": "spells",
+      "pack": "arpg-effects",
+      "atlas": null,
+      "width": 256,
+      "height": 256,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/topdown-effects_IndicatorTex_SpellGround_02_Packed",
+      "texture": "effects/3d/spells/topdown-effects_IndicatorTex_SpellGround_02_Packed.png",
+      "category": "spells",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    },
+    {
+      "id": "spells/topdown-effects_IndicatorTex_SpellGround_04_Packed",
+      "texture": "effects/3d/spells/topdown-effects_IndicatorTex_SpellGround_04_Packed.png",
+      "category": "spells",
+      "pack": "topdown-effects",
+      "atlas": null,
+      "width": 2048,
+      "height": 2048,
+      "babylonjs": {
+        "blendMode": "BLENDMODE_ADD",
+        "emitterType": "cylinder",
+        "emitterRadius": 1,
+        "minLifeTime": 0.5,
+        "maxLifeTime": 2,
+        "minEmitPower": 0.1,
+        "maxEmitPower": 0.5,
+        "minSize": 0.5,
+        "maxSize": 2,
+        "emitRate": 20,
+        "gravity": [
+          0,
+          0,
+          0
+        ],
+        "rotationSpeed": 1,
+        "loop": false,
+        "usage": "Magic circles/runes — display as ground decal or billboard, usually oneshot"
+      }
+    }
+  ]
+}

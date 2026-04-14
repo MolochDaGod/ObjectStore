@@ -1,6 +1,6 @@
 /**
  * Grudge Studio SDK — Unified Client for All Services
- * @version 5.0.0
+ * @version 6.0.0
  *
  * Provides access to:
  *   - ObjectStore static game data (GitHub Pages JSON)
@@ -29,6 +29,7 @@ import { ObjectStoreR2Client, DEFAULT_WORKER_URL } from './r2-client.js';
 // ==========================================
 
 const DEFAULT_BASE_URL      = 'https://molochdagod.github.io/ObjectStore';
+const DEFAULT_WORKER_API    = 'https://objectstore.grudge-studio.com';
 const DEFAULT_ID_URL        = 'https://id.grudge-studio.com';
 const DEFAULT_GAME_URL      = 'https://api.grudge-studio.com';
 const DEFAULT_ACCOUNT_URL   = 'https://account.grudge-studio.com';
@@ -577,6 +578,7 @@ class GrudgeSDK {
    * @param {string} [opts.accountUrl]    - Account API URL
    * @param {string} [opts.launcherUrl]   - Launcher API URL
    * @param {string} [opts.wsUrl]         - WebSocket URL
+   * @param {string} [opts.workerApiUrl]  - ObjectStore Worker API URL
    * @param {string} [opts.assetsApiUrl]  - Asset Service URL
    * @param {string} [opts.assetsCdnUrl]  - R2 CDN URL
    */
@@ -584,6 +586,7 @@ class GrudgeSDK {
     if (typeof opts === 'string') opts = { baseUrl: opts };
 
     this.baseUrl = (opts.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
+    this._workerApi = (opts.workerApiUrl || DEFAULT_WORKER_API).replace(/\/$/, '');
     this.cache = new Map();
     this.cacheExpiry = 5 * 60 * 1000;
 
@@ -687,10 +690,77 @@ class GrudgeSDK {
   async getAttributes() { return this.fetch('/api/v1/attributes.json'); }
   async getAttribute(attributeId) { const d = await this.getAttributes(); return d.attributes.find(a => a.id === attributeId) || null; }
 
-  // ── Weapon Skills ──
+  // ── Weapon Skills (17 types, 207 skills with enhanced combat data) ──
   async getWeaponSkills() { return this.fetch('/api/v1/weaponSkills.json'); }
-  async getWeaponSkillsByType(weaponType) { const d = await this.getWeaponSkills(); return (d.weaponTypes || []).find(wt => wt.weaponType === weaponType) || null; }
-  async getWeaponSkill(skillId) { const d = await this.getWeaponSkills(); for (const wt of d.weaponTypes || []) { const s = (wt.skills || []).find(s => s.id === skillId); if (s) return { ...s, weaponType: wt.weaponType }; } return null; }
+  async getWeaponSkillsByType(weaponType) {
+    // Try Worker API first (filtered, cached)
+    try {
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills/${weaponType}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    const d = await this.getWeaponSkills();
+    return (d.weaponTypes || []).find(wt => wt.id === weaponType.toUpperCase() || wt.name?.toLowerCase() === weaponType.toLowerCase()) || null;
+  }
+  async getWeaponSkillsForClass(className) {
+    // Try Worker API first
+    try {
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills?className=${className}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    const d = await this.getWeaponSkills();
+    const allowed = d.classRestrictions?.[className] || [];
+    return { className, weaponTypes: (d.weaponTypes || []).filter(wt => allowed.includes(wt.id)), classRestrictions: d.classRestrictions };
+  }
+  async getWeaponSkill(skillId) {
+    const d = await this.getWeaponSkills();
+    for (const wt of d.weaponTypes || []) {
+      for (const slot of wt.slots || []) {
+        const s = (slot.skills || []).find(s => s.id === skillId);
+        if (s) return { ...s, weaponType: wt.id, weaponName: wt.name, slotType: slot.type };
+      }
+    }
+    return null;
+  }
+  async searchWeaponSkills(query, filters = {}) {
+    // Try Worker API search endpoint
+    try {
+      const p = new URLSearchParams();
+      if (query) p.set('q', query);
+      if (filters.damageType) p.set('damageType', filters.damageType);
+      if (filters.slot) p.set('slot', filters.slot);
+      if (filters.physics) p.set('physics', filters.physics);
+      if (filters.projectile) p.set('projectile', filters.projectile);
+      if (filters.limit) p.set('limit', String(filters.limit));
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills/search?${p}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    // Client-side fallback
+    const d = await this.getWeaponSkills();
+    const q = (query || '').toLowerCase();
+    const results = [];
+    for (const wt of d.weaponTypes || []) {
+      for (const slot of wt.slots || []) {
+        for (const skill of slot.skills || []) {
+          const text = `${skill.name} ${skill.description} ${(skill.effects || []).join(' ')}`.toLowerCase();
+          if (q && !text.includes(q)) continue;
+          if (filters.damageType && skill.damageType !== filters.damageType) continue;
+          if (filters.slot && slot.type !== filters.slot) continue;
+          if (filters.physics && skill.physics !== filters.physics) continue;
+          if (filters.projectile && skill.projectile !== filters.projectile) continue;
+          results.push({ ...skill, weaponType: wt.id, weaponName: wt.name, slotType: slot.type });
+        }
+      }
+    }
+    return { query, count: results.length, results: results.slice(0, filters.limit || 50) };
+  }
+  getClassWeaponRestrictions() {
+    return {
+      Warrior: ['SWORD','AXE','HAMMER','SHIELD','GREATSWORD','GREATAXE','SCYTHE'],
+      Mage:    ['STAFF','TOME','MACE','WAND','OFFHAND_RELIC'],
+      Ranger:  ['BOW','CROSSBOW','GUN','DAGGER','GREATSWORD','SPEAR'],
+      Worge:   ['STAFF','SPEAR','DAGGER','BOW','HAMMER','MACE','OFFHAND_RELIC','SCYTHE'],
+    };
+  }
 
   // ── Enemies & Bosses ──
   async getEnemies() { return this.fetch('/api/v1/enemies.json'); }
@@ -745,6 +815,33 @@ class GrudgeSDK {
   async getHeroesRegistry() { return this.fetch('/api/v1/heroes.json'); }
   async getModels3d() { return this.fetch('/api/v1/models3d.json'); }
   async getStudioManifest() { return this.fetch('/api/v1/studio.json'); }
+  async getAnimations() { return this.fetch('/api/v1/animations.json'); }
+  async getEntities() { return this.fetch('/api/v1/entities.json'); }
+
+  // ── Game Data API (Worker) — generic collection access ──
+  async listGameDataCollections() {
+    try {
+      const res = await fetch(`${this._workerApi}/v1/game-data`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return null;
+  }
+  async getGameData(name) {
+    try {
+      const res = await fetch(`${this._workerApi}/v1/game-data/${name}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return this.fetch(`/api/v1/${name}.json`);
+  }
+
+  // ── Worker Health ──
+  async getWorkerHealth() {
+    try {
+      const res = await fetch(`${this._workerApi}/health`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return null;
+  }
 
   // ── Serverless API ──
   async serverlessSearch(query, type = 'all', limit = 50) { return this.fetch(`/api/search?${new URLSearchParams({ q: query, type, limit: String(limit) })}`); }
@@ -828,9 +925,16 @@ class GrudgeSDK {
         bosses: `${this.baseUrl}/api/v1/bosses.json`,
       },
       r2Worker: { base: this.r2.workerUrl, assets: `${this.r2.workerUrl}/v1/assets`, health: `${this.r2.workerUrl}/v1/health` },
+      workerApi: {
+        base: this._workerApi,
+        gameData: `${this._workerApi}/v1/game-data`,
+        weaponSkills: `${this._workerApi}/v1/weapon-skills`,
+        health: `${this._workerApi}/health`,
+      },
       browsers: {
         itemDatabase: `${this.baseUrl}/GRUDGE_Item_Database.html`, spriteDatabase: `${this.baseUrl}/SPRITE_DATABASE.html`,
-        vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`, admin: `${this.baseUrl}/admin.html`,
+        vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`, weaponSkills: `${this.baseUrl}/WEAPON_SKILLS.html`,
+        brand: `${this.baseUrl}/brand.html`, admin: `${this.baseUrl}/admin.html`,
       },
       docs: `${this.baseUrl}/docs/`,
     };
