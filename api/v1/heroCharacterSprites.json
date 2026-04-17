@@ -1,0 +1,1184 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-04-17",
+  "description": "Grudge Warlords canonical 2D sprite mapping — every (race, class) combination has a dedicated sprite sheet. Consume this manifest from any 2D Grudge game to render the correct character animation set.",
+  "origin": "https://molochdagod.github.io/ObjectStore",
+  "total": 24,
+  "races": [
+    "human",
+    "orc",
+    "elf",
+    "undead",
+    "barbarian",
+    "dwarf"
+  ],
+  "classes": [
+    "warrior",
+    "mage",
+    "worge",
+    "ranger"
+  ],
+  "mappings": [
+    {
+      "id": "human-warrior",
+      "raceId": "human",
+      "classId": "warrior",
+      "spriteKey": "knight",
+      "props": {
+        "filter": "sepia(0.6) saturate(1.8) brightness(1.15) hue-rotate(15deg)"
+      },
+      "sheet": {
+        "folder": "knight",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/attack2.png",
+          "frames": 10
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/attack3.png",
+          "frames": 11
+        },
+        "attack3_effect": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/attack3_effect.png",
+          "frames": 11
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/cast.png",
+          "frames": 11
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/death.png",
+          "frames": 4
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/block.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/knight/walk.png",
+          "frames": 8
+        },
+        "filter": "sepia(0.6) saturate(1.8) brightness(1.15) hue-rotate(15deg)"
+      }
+    },
+    {
+      "id": "human-mage",
+      "raceId": "human",
+      "classId": "mage",
+      "spriteKey": "human-mage",
+      "props": {},
+      "sheet": {
+        "folder": "human-mage",
+        "frameWidth": 288,
+        "frameHeight": 128,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/idle.png",
+          "frames": 8
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/walk.png",
+          "frames": 10
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/attack2.png",
+          "frames": 21
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/attack3.png",
+          "frames": 27
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/cast.png",
+          "frames": 32
+        },
+        "heal": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/heal.png",
+          "frames": 12
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/block.png",
+          "frames": 12
+        },
+        "surf": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/surf.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/hurt.png",
+          "frames": 7
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-mage/death.png",
+          "frames": 16
+        }
+      }
+    },
+    {
+      "id": "human-worge",
+      "raceId": "human",
+      "classId": "worge",
+      "spriteKey": "wind-hashashin",
+      "props": {},
+      "sheet": {
+        "folder": "wind-hashashin",
+        "frameWidth": 288,
+        "frameHeight": 128,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/idle.png",
+          "frames": 8
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/run.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/attack1.png",
+          "frames": 8
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/attack2.png",
+          "frames": 18
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/attack3.png",
+          "frames": 26
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/special.png",
+          "frames": 30
+        },
+        "special": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/special.png",
+          "frames": 30
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/defend.png",
+          "frames": 8
+        },
+        "roll": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/roll.png",
+          "frames": 6
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/take_hit.png",
+          "frames": 6
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wind-hashashin/death.png",
+          "frames": 19
+        }
+      }
+    },
+    {
+      "id": "human-ranger",
+      "raceId": "human",
+      "classId": "ranger",
+      "spriteKey": "human-ranger",
+      "props": {
+        "scale": 0.7
+      },
+      "sheet": {
+        "folder": "human-ranger",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "scale": 0.7,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/idle.png",
+          "frames": 8
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/walk.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/attack1.png",
+          "frames": 9,
+          "frameWidth": 280
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/attack2.png",
+          "frames": 14,
+          "frameWidth": 256
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/hurt.png",
+          "frames": 4,
+          "frameWidth": 448
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/death.png",
+          "frames": 12,
+          "frameWidth": 256
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/human-ranger/jump.png",
+          "frames": 12
+        }
+      }
+    },
+    {
+      "id": "orc-warrior",
+      "raceId": "orc",
+      "classId": "warrior",
+      "spriteKey": "elite-orc",
+      "props": {},
+      "sheet": {
+        "folder": "elite-orc",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/attack2.png",
+          "frames": 11
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/attack3.png",
+          "frames": 9
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elite-orc/walk.png",
+          "frames": 8
+        }
+      }
+    },
+    {
+      "id": "orc-mage",
+      "raceId": "orc",
+      "classId": "mage",
+      "spriteKey": "wizard-pack",
+      "props": {
+        "filter": "hue-rotate(90deg) saturate(0.7) brightness(0.7) contrast(1.2)",
+        "scale": 0.7
+      },
+      "sheet": {
+        "folder": "wizard-pack",
+        "frameWidth": 231,
+        "frameHeight": 190,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/attack1.png",
+          "frames": 8
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/attack2.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/hit.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/death.png",
+          "frames": 7
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/run.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/run.png",
+          "frames": 8
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/jump.png",
+          "frames": 2
+        },
+        "fall": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-pack/fall.png",
+          "frames": 2
+        },
+        "filter": "hue-rotate(90deg) saturate(0.7) brightness(0.7) contrast(1.2)",
+        "scale": 0.7
+      }
+    },
+    {
+      "id": "orc-worge",
+      "raceId": "orc",
+      "classId": "worge",
+      "spriteKey": "orc",
+      "props": {},
+      "sheet": {
+        "folder": "orc",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/attack1.png",
+          "frames": 6
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/attack2.png",
+          "frames": 6
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/orc/walk.png",
+          "frames": 8
+        }
+      }
+    },
+    {
+      "id": "orc-ranger",
+      "raceId": "orc",
+      "classId": "ranger",
+      "spriteKey": "armored-orc",
+      "props": {
+        "filter": "hue-rotate(60deg) saturate(1.5) brightness(1.05) contrast(1.1)"
+      },
+      "sheet": {
+        "folder": "armored-orc",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/attack2.png",
+          "frames": 8
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/attack3.png",
+          "frames": 9
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/block.png",
+          "frames": 4
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/armored-orc/walk.png",
+          "frames": 8
+        },
+        "filter": "hue-rotate(60deg) saturate(1.5) brightness(1.05) contrast(1.1)"
+      }
+    },
+    {
+      "id": "elf-warrior",
+      "raceId": "elf",
+      "classId": "warrior",
+      "spriteKey": "hero-knight",
+      "props": {
+        "filter": "saturate(0.6) brightness(1.15) hue-rotate(10deg)"
+      },
+      "sheet": {
+        "folder": "elf_warrior",
+        "frameWidth": 180,
+        "frameHeight": 180,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Idle.png",
+          "frames": 11
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Attack2.png",
+          "frames": 7
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Take Hit.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Death.png",
+          "frames": 9
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Run.png",
+          "frames": 8
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Jump.png",
+          "frames": 3
+        },
+        "fall": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf_warrior/Fall.png",
+          "frames": 3
+        },
+        "filter": "saturate(0.6) brightness(1.15) hue-rotate(10deg)"
+      }
+    },
+    {
+      "id": "elf-mage",
+      "raceId": "elf",
+      "classId": "mage",
+      "spriteKey": "evil-wizard-3",
+      "props": {
+        "filter": "saturate(0.15) brightness(1.4) hue-rotate(200deg)"
+      },
+      "sheet": {
+        "folder": "evil-wizard-3",
+        "frameWidth": 140,
+        "frameHeight": 140,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/idle.png",
+          "frames": 10
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/attack.png",
+          "frames": 13
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/attack2.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/hurt.png",
+          "frames": 3
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/death.png",
+          "frames": 10
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/run.png",
+          "frames": 8
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/jump.png",
+          "frames": 3
+        },
+        "fall": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/evil-wizard-3/fall.png",
+          "frames": 3
+        },
+        "filter": "saturate(0.15) brightness(1.4) hue-rotate(200deg)"
+      }
+    },
+    {
+      "id": "elf-worge",
+      "raceId": "elf",
+      "classId": "worge",
+      "spriteKey": "priest",
+      "props": {
+        "filter": "hue-rotate(80deg) saturate(1.4) brightness(1.0) contrast(1.1)"
+      },
+      "sheet": {
+        "folder": "priest",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/attack1.png",
+          "frames": 9
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/attack.png",
+          "frames": 9
+        },
+        "heal": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/heal.png",
+          "frames": 6
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/priest/walk.png",
+          "frames": 8
+        },
+        "filter": "hue-rotate(80deg) saturate(1.4) brightness(1.0) contrast(1.1)"
+      }
+    },
+    {
+      "id": "elf-ranger",
+      "raceId": "elf",
+      "classId": "ranger",
+      "spriteKey": "elf-ranger",
+      "props": {
+        "filter": "sepia(0.3) saturate(1.5) hue-rotate(340deg)"
+      },
+      "sheet": {
+        "folder": "elf-ranger",
+        "frameWidth": 100,
+        "frameHeight": 100,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/attack1.png",
+          "frames": 6
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/attack2.png",
+          "frames": 6
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/elf-ranger/walk.png",
+          "frames": 8
+        },
+        "filter": "sepia(0.3) saturate(1.5) hue-rotate(340deg)"
+      }
+    },
+    {
+      "id": "undead-warrior",
+      "raceId": "undead",
+      "classId": "warrior",
+      "spriteKey": "shadow-warrior",
+      "props": {
+        "filter": "brightness(0.75) saturate(0.5) contrast(1.2)"
+      },
+      "sheet": {
+        "folder": "shadow-warrior",
+        "frameWidth": 128,
+        "frameHeight": 96,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/idle.png",
+          "frames": 4
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/attack1.png",
+          "frames": 12
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/attack2.png",
+          "frames": 7
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/hurt.png",
+          "frames": 3
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/walk.png",
+          "frames": 6
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/shadow-warrior/jump.png",
+          "frames": 5
+        },
+        "filter": "brightness(0.75) saturate(0.5) contrast(1.2)"
+      }
+    },
+    {
+      "id": "undead-mage",
+      "raceId": "undead",
+      "classId": "mage",
+      "spriteKey": "necromancer",
+      "props": {},
+      "sheet": {
+        "folder": "necromancer",
+        "frameWidth": 160,
+        "frameHeight": 128,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/idle.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/attack1.png",
+          "frames": 13
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/attack2.png",
+          "frames": 13
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/cast2.png",
+          "frames": 17
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/hurt.png",
+          "frames": 9
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/death.png",
+          "frames": 5
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/necromancer/walk.png",
+          "frames": 8
+        }
+      }
+    },
+    {
+      "id": "undead-worge",
+      "raceId": "undead",
+      "classId": "worge",
+      "spriteKey": "skeleton",
+      "props": {
+        "filter": "sepia(0.3) hue-rotate(270deg) saturate(1.0) brightness(0.85)"
+      },
+      "sheet": {
+        "folder": "skeleton",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/attack1.png",
+          "frames": 6
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/attack2.png",
+          "frames": 7
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/block.png",
+          "frames": 4
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/skeleton/walk.png",
+          "frames": 8
+        },
+        "filter": "sepia(0.3) hue-rotate(270deg) saturate(1.0) brightness(0.85)"
+      }
+    },
+    {
+      "id": "undead-ranger",
+      "raceId": "undead",
+      "classId": "ranger",
+      "spriteKey": "undead-ranger",
+      "props": {},
+      "sheet": {
+        "folder": "undead-ranger",
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/idle.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/run.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/attack1.png",
+          "frames": 7
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/cast.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/death.png",
+          "frames": 8
+        },
+        "roll": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/Roll.png",
+          "frames": 7
+        },
+        "doublejump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/doublejump.png",
+          "frames": 6
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/jump.png",
+          "frames": 3
+        },
+        "land": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/land.png",
+          "frames": 3
+        },
+        "meleedive": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/Meleedive.png",
+          "frames": 6
+        },
+        "projectile": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/projectile.png",
+          "frames": 1,
+          "frameWidth": 40,
+          "frameHeight": 5
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/undead-ranger/hurt.png",
+          "frames": 4
+        }
+      }
+    },
+    {
+      "id": "barbarian-warrior",
+      "raceId": "barbarian",
+      "classId": "warrior",
+      "spriteKey": "barbarian-warrior",
+      "props": {
+        "filter": "brightness(1.1) contrast(1.05) saturate(0.8)",
+        "scale": 1.35
+      },
+      "sheet": {
+        "folder": "barbarian-warrior",
+        "frameWidth": 175,
+        "frameHeight": 100,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/idle.png",
+          "frames": 16
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/attack1.png",
+          "frames": 30
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/attack2.png",
+          "frames": 30
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/attack2.png",
+          "frames": 30
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/idle.png",
+          "frames": 16
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/hurt.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/hurt.png",
+          "frames": 8
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/death.png",
+          "frames": 40
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/walk.png",
+          "frames": 8
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/idle.png",
+          "frames": 16
+        },
+        "fall": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-warrior/idle.png",
+          "frames": 16
+        },
+        "filter": "brightness(1.1) contrast(1.05) saturate(0.8)",
+        "scale": 1.35
+      }
+    },
+    {
+      "id": "barbarian-mage",
+      "raceId": "barbarian",
+      "classId": "mage",
+      "spriteKey": "barbarian-mage",
+      "props": {
+        "filter": "brightness(1.1) contrast(1.05) saturate(0.8)"
+      },
+      "sheet": {
+        "folder": "barbarian-mage",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/idle.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/attack2.png",
+          "frames": 9
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/magic_sphere.png",
+          "frames": 16
+        },
+        "heal": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/magic_arrow.png",
+          "frames": 6
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/walk.png",
+          "frames": 7
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/run.png",
+          "frames": 8
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/barbarian-mage/jump.png",
+          "frames": 8
+        },
+        "filter": "brightness(1.1) contrast(1.05) saturate(0.8)"
+      }
+    },
+    {
+      "id": "barbarian-worge",
+      "raceId": "barbarian",
+      "classId": "worge",
+      "spriteKey": "soldier",
+      "props": {
+        "filter": "sepia(0.5) saturate(1.2) brightness(0.85)",
+        "scale": 1.35
+      },
+      "sheet": {
+        "folder": "soldier",
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/idle.png",
+          "frames": 6
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/attack1.png",
+          "frames": 6
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/attack2.png",
+          "frames": 6
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/attack3.png",
+          "frames": 9
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/death.png",
+          "frames": 4
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/soldier/walk.png",
+          "frames": 8
+        },
+        "filter": "sepia(0.5) saturate(1.2) brightness(0.85)",
+        "scale": 1.35
+      }
+    },
+    {
+      "id": "barbarian-ranger",
+      "raceId": "barbarian",
+      "classId": "ranger",
+      "spriteKey": "crossbowman",
+      "props": {},
+      "sheet": {
+        "folder": "crossbowman",
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Idle.png",
+          "frames": 6
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Run.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Attack_1.png",
+          "frames": 4
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Attack_2.png",
+          "frames": 4
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Shot_1.png",
+          "frames": 3
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Hurt.png",
+          "frames": 3
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Dead.png",
+          "frames": 4
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Jump.png",
+          "frames": 10
+        },
+        "charge": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crossbowman/Recharge.png",
+          "frames": 8
+        }
+      }
+    },
+    {
+      "id": "dwarf-warrior",
+      "raceId": "dwarf",
+      "classId": "warrior",
+      "spriteKey": "crystal-mauler",
+      "props": {},
+      "sheet": {
+        "folder": "crystal-mauler",
+        "frameWidth": 288,
+        "frameHeight": 128,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/idle.png",
+          "frames": 8
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/run.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/attack1.png",
+          "frames": 7
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/attack2.png",
+          "frames": 7
+        },
+        "attack3": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/attack3.png",
+          "frames": 17
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/special.png",
+          "frames": 15
+        },
+        "block": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/defend.png",
+          "frames": 9
+        },
+        "roll": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/roll.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/take_hit.png",
+          "frames": 6
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/crystal-mauler/death.png",
+          "frames": 15
+        }
+      }
+    },
+    {
+      "id": "dwarf-mage",
+      "raceId": "dwarf",
+      "classId": "mage",
+      "spriteKey": "wizard-hero",
+      "props": {
+        "dwarfTransform": "scaleX(1.3) scaleY(0.75)"
+      },
+      "sheet": {
+        "folder": "wizard-new",
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Idle.png",
+          "frames": 6
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Run.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Attack_1.png",
+          "frames": 5
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Attack_2.png",
+          "frames": 3
+        },
+        "cast": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Shot.png",
+          "frames": 5
+        },
+        "heal": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Special.png",
+          "frames": 7
+        },
+        "charge": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Charge.png",
+          "frames": 6,
+          "frameWidth": 48,
+          "frameHeight": 48
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Hurt.png",
+          "frames": 2
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Dead.png",
+          "frames": 4
+        },
+        "jump": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/wizard-new/Jump.png",
+          "frames": 12
+        },
+        "dwarfTransform": "scaleX(1.3) scaleY(0.75)"
+      }
+    },
+    {
+      "id": "dwarf-worge",
+      "raceId": "dwarf",
+      "classId": "worge",
+      "spriteKey": "bandit-necro",
+      "props": {
+        "facesLeft": false
+      },
+      "sheet": {
+        "folder": "bandit-necro",
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "facesLeft": false,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/idle.png",
+          "frames": 8
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/walk.png",
+          "frames": 8
+        },
+        "run": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/walk.png",
+          "frames": 8
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/attack1.png",
+          "frames": 8
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/attack2.png",
+          "frames": 8
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/hurt.png",
+          "frames": 4
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/bandit-necro/death.png",
+          "frames": 8
+        }
+      }
+    },
+    {
+      "id": "dwarf-ranger",
+      "raceId": "dwarf",
+      "classId": "ranger",
+      "spriteKey": "dwarf-ranger",
+      "props": {},
+      "sheet": {
+        "folder": "dwarf-ranger",
+        "frameWidth": 120,
+        "frameHeight": 80,
+        "idle": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/idle.png",
+          "frames": 10
+        },
+        "attack1": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/attack1.png",
+          "frames": 4
+        },
+        "attack2": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/attack2.png",
+          "frames": 6
+        },
+        "roll": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/roll.png",
+          "frames": 12
+        },
+        "hurt": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/hurt.png",
+          "frames": 3
+        },
+        "death": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/death.png",
+          "frames": 10
+        },
+        "walk": {
+          "src": "https://molochdagod.github.io/ObjectStore/sprites/dwarf-ranger/walk.png",
+          "frames": 10
+        }
+      }
+    }
+  ]
+}
