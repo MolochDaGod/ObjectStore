@@ -198,3 +198,30 @@ Given grudge-wcs migration + ObjectStore rework are already in-flight, the highe
 - **R2 custom domain `assets.grudge-studio.com`** (unblocks the `assetUrl()` refactor in grudge-wcs)
 - **CF Access on `/editors/*`** (locks down admin editors the moment they go live)
 Stream, Queues, Vectorize, Workers AI thumbnail generation, and the SSO-on-Workers migration are larger projects — worth their own milestones.
+---
+## 7. Live state — applied 2026-04-20
+Everything below was actually executed against the Grudge CF account this session. Tokens used: `wrangler` OAuth session (scopes include `pages:write`, `workers:write`, `d1:write`, `ai:write`, `queues:write`, `workers_kv:write`, `workers_routes:write`, `ssl_certs:write`, `zone:read`) + `CLOUDFLARE_USER_API` for DNS edits.
+### Applied
+- **R2: migrated `objectstore-assets/3d-models/…/corsair_king.glb` → `grudge-assets/ships/3d-models/…/corsair_king.glb`** (14.5 MB).
+- **R2: deleted empty duplicate bucket `objectstore-assets`**. Remaining buckets: `grudge-assets`, `babylon-docs`.
+- **R2: uploaded `manifests/v2/index.json`** (4681 assets, 3.2 MB) to `grudge-assets`. Live at `https://assets.grudge-studio.com/manifests/v2/index.json`.
+- **Pages project `grudge-wcs`** created. Placeholder landing deployed. Custom domain `wcs.grudge-studio.com` attached (status initializing → live). Returns 200.
+- **Pages project `grudgedot`** created. Placeholder landing deployed. Custom domain `grudgedot.grudge-studio.com` attached. Returns 200.
+- **DNS: `wcs.grudge-studio.com`** CNAME **updated from `cname.vercel-dns.com` → `grudge-wcs.pages.dev`** (proxied). *If a live Vercel deployment needs to stay online, flag this to revert.*
+- **DNS: `grudgedot.grudge-studio.com`** CNAME added → `grudgedot.pages.dev` (proxied).
+- **DNS: `wcs-api.grudge-studio.com`** CNAME added → `api.grudge-studio.com` (proxied). Backend routing to be set up on VPS Caddy.
+### Still blocked on token scope — need dashboard or rotated token
+The wrangler OAuth session does **not** include `access:edit`, `images:edit`, or `stream:edit`, and the standalone `CLOUDFLARE_USER_API` is zone-DNS-only. For the rest, either:
+- (a) go to `https://dash.cloudflare.com/profile/api-tokens` → create a new token with `Account > Cloudflare Access: Apps and Policies > Edit`, `Account > Cloudflare Images > Edit`, `Account > Cloudflare Stream > Edit`, `Zone > Cache Rules > Edit (grudge-studio.com)`, then set `CLOUDFLARE_API_TOKEN` in the shell; OR
+- (b) do it in the dashboard directly.
+Outstanding:
+1. Enable Cloudflare Images + define variants (`thumb`, `card`, `preview`, `full`).
+2. Enable Cloudflare Stream + upload the `public/videos/*.mp4` set from grudge-wcs.
+3. Enable Tiered Cache (`zones/<id>/argo/tiered_caching` PATCH — returned 403 for all our tokens).
+4. Enable Cache Reserve.
+5. Create CF Access application: domain `objectstore.grudge-studio.com`, path `/editors/*` AND `/admin.html`, policy `Allow @grudge-studio.com emails` via the existing Google IdP (`CF_GOOGLE_IDP_ID` already in env).
+6. Connect Pages projects `grudge-wcs` and `grudgedot` to their GitHub repos (dashboard only — requires CF↔GitHub OAuth handshake; CLI cannot substitute).
+### Notes
+- `grudge-wcs.pages.dev` + custom domain currently serves a minimal placeholder. Real Vite SPA deployment is pending `npm install` + `npm run build` + `wrangler pages deploy ./dist` in `D:\GitHub\grudge-wcs`.
+- `grudgedot.pages.dev` + custom domain currently serves a minimal placeholder. Real build of the Launcher lands here once the GDevelopAssistant repo is connected.
+- `assets.grudge-studio.com` is confirmed bound to `grudge-assets` bucket (verified via probe PUT/GET). The CDN fallback in `2d.html` and `3d.html` uses this URL directly.
