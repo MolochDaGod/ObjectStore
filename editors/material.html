@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Material Editor · Grudge ObjectStore</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="grudge-api" content="">
+<link rel="icon" href="/grudge-logo.png">
+<style>
+  :root { color-scheme: dark; --bg: #0b0d12; --panel: #12151d; --border: rgba(255,255,255,.08); --accent: #f5b21a; --text: #eef0f4; --muted: #8b92a5; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: system-ui, Segoe UI, sans-serif; }
+  body { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+  header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); background: #0d1017; }
+  header h1 { margin: 0; font-size: 15px; }
+  header nav { margin-left: auto; display: flex; gap: 12px; font-size: 13px; }
+  header nav a { color: var(--muted); text-decoration: none; }
+  header nav a:hover { color: var(--text); }
+  .wrap { display: grid; grid-template-columns: 1fr 340px; gap: 12px; padding: 12px; min-height: 0; }
+  grudge-gltf-viewer { width: 100%; height: 100%; min-height: 460px; background: #0b0d12; border: 1px solid var(--border); border-radius: 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }
+  .panel h3 { margin: 0 0 4px; font-size: 14px; }
+  .panel .row { display: grid; grid-template-columns: 90px 1fr; gap: 6px; align-items: center; font-size: 12px; }
+  .panel input, .panel textarea, .panel select {
+    background: #0d1017; color: var(--text); border: 1px solid var(--border);
+    padding: 6px 8px; border-radius: 6px; font-size: 12px;
+  }
+  .panel textarea { min-height: 54px; }
+  .panel button {
+    background: var(--accent); color: #1a0f00; border: 1px solid var(--accent);
+    padding: 8px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; font-weight: 600;
+  }
+  .panel button.secondary { background: #1a1f2b; color: var(--text); border-color: var(--border); font-weight: 400; }
+  .slot {
+    display: grid; grid-template-columns: 70px 1fr auto; gap: 8px;
+    align-items: center; padding: 6px; border: 1px dashed var(--border); border-radius: 6px;
+  }
+  .slot .prev {
+    width: 50px; height: 50px; background: #0a0a0f center/cover; border-radius: 4px;
+    display: grid; place-items: center; color: var(--muted); font-size: 9px;
+  }
+  .slot .name { font-size: 11px; color: var(--muted); }
+  .warn { background: #2a1a0a; border: 1px solid #8a5a1a; color: #ffd27a; padding: 8px 10px; border-radius: 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="/grudge-logo.png" alt="" height="22">
+  <h1>Material Editor</h1>
+  <nav>
+    <a href="/3d.html">Back to 3D</a>
+    <a href="/editors/">All editors</a>
+  </nav>
+</header>
+<div class="wrap">
+  <grudge-gltf-viewer id="v" environment="studio" grid="on"></grudge-gltf-viewer>
+  <aside class="panel">
+    <h3>Asset</h3>
+    <div id="auth" class="warn" hidden>Sign in to save changes.</div>
+    <div class="row"><label>Id</label><input id="fId" readonly></div>
+    <div class="row"><label>Name</label><input id="fName"></div>
+    <div class="row"><label>Tier</label><input id="fTier" type="number" min="1" max="5"></div>
+    <div class="row"><label>Tags</label><input id="fTags" placeholder="comma,separated"></div>
+    <div class="row"><label>License</label><input id="fLicense"></div>
+    <h3>Maps</h3>
+    <div id="slots"></div>
+    <div style="display:flex; gap:8px;">
+      <button id="bSave">Save</button>
+      <button id="bDuplicate" class="secondary">Save as new</button>
+    </div>
+    <p style="font-size: 11px; color: var(--muted); margin: 0;">Drag a PNG/WebP onto a slot to replace. Saves persist to the store via <code>POST /api/assets</code>.</p>
+  </aside>
+</div>
+<script type="module">
+  import '/js/viewer/grudge-viewer.js';
+  import createStoreClient from '/js/store-client.js';
+  const store = createStoreClient();
+  const viewer = document.getElementById('v');
+  const $ = (id) => document.getElementById(id);
+  const slots = ['baseColor', 'normal', 'roughness', 'metallic', 'ao', 'emissive'];
+
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+
+  function renderSlots(material) {
+    $('slots').innerHTML = '';
+    for (const s of slots) {
+      const cur = material?.[s];
+      const div = document.createElement('div');
+      div.className = 'slot';
+      div.innerHTML = `
+        <div class="prev" style="${cur ? `background-image:url(${cur})` : ''}">${cur ? '' : s.slice(0,2).toUpperCase()}</div>
+        <div class="name">${s}</div>
+        <input type="file" accept="image/*" data-slot="${s}" style="width: 120px; font-size: 10px;">
+      `;
+      $('slots').appendChild(div);
+    }
+  }
+
+  async function load() {
+    if (!id) { $('fId').value = '(new)'; renderSlots({}); return; }
+    try {
+      const rec = await store.asset(id);
+      $('fId').value = rec.id;
+      $('fName').value = rec.name || '';
+      $('fTier').value = rec.tier || '';
+      $('fTags').value = (rec.tags || []).join(', ');
+      $('fLicense').value = rec.license || '';
+      renderSlots(rec.material || {});
+      if (rec.kind === 'model3d') viewer.load(store.assetUrl(rec));
+    } catch (e) {
+      alert('Failed to load asset: ' + e.message);
+    }
+  }
+
+  async function save({ asNew = false } = {}) {
+    const payload = {
+      id: asNew ? undefined : ($('fId').value === '(new)' ? undefined : $('fId').value),
+      name: $('fName').value,
+      tier: Number($('fTier').value) || undefined,
+      tags: $('fTags').value.split(',').map((s) => s.trim()).filter(Boolean),
+      license: $('fLicense').value || undefined,
+      kind: 'material',
+    };
+    try {
+      const saved = await store.upsertAsset(payload);
+      alert('Saved ' + saved.id);
+      history.replaceState(null, '', `?id=${encodeURIComponent(saved.id)}`);
+    } catch (e) {
+      alert('Save failed: ' + e.message);
+    }
+  }
+
+  document.getElementById('bSave').addEventListener('click', () => save());
+  document.getElementById('bDuplicate').addEventListener('click', () => save({ asNew: true }));
+  if (!localStorage.getItem('grudge_auth_token')) document.getElementById('auth').hidden = false;
+
+  load();
+</script>
+</body>
+</html>

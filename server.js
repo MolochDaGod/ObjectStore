@@ -368,6 +368,22 @@ app.get('/api/storage/list', async (req, res) => {
 });
 
 // ═══════════════════════════════════
+//  V2 ASSET ROUTES (manifests/v2 + editors + WCS ingest)
+// ═══════════════════════════════════
+// Mounted via dynamic ESM import because routes-v2.js + types/asset-kind.js
+// are ESM while this file is CJS. Safe to fail-soft: if the v2 module can't
+// load, the rest of the server keeps working.
+(async () => {
+  try {
+    const { mountV2Routes } = await import('./api/routes-v2.js');
+    mountV2Routes(app, { manifestPath: path.join(__dirname, 'manifests/v2/index.json') });
+    console.log('🗂️  V2 asset routes mounted (/api/manifest/v2, /api/assets, /api/ingest/wcs)');
+  } catch (err) {
+    console.warn('⚠️  V2 routes failed to mount:', err.message);
+  }
+})();
+
+// ═══════════════════════════════════
 //  STATIC FILES
 // ═══════════════════════════════════
 app.use(express.static(__dirname));
