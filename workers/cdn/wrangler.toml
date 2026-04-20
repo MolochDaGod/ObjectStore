@@ -1,0 +1,27 @@
+# ─── Grudge Asset CDN Worker ─────────────────────────────────────────
+# Smart CDN: R2-first, GitHub Pages fallback, auto-backfill
+#
+# Deploy:  npx wrangler deploy -c workers/cdn/wrangler.toml
+# Test:    npx wrangler dev -c workers/cdn/wrangler.toml
+# ─────────────────────────────────────────────────────────────────────
+
+name = "grudge-asset-cdn"
+main = "index.js"
+compatibility_date = "2025-12-01"
+workers_dev = true
+
+# ── Custom domain ────────────────────────────────────────────────────
+routes = [
+  { pattern = "assets.grudge-studio.com/*", zone_name = "grudge-studio.com" }
+]
+
+# ── R2 Object Storage (shared with main ObjectStore worker) ─────────
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "grudge-assets"
+
+# ── D1 Database (stats tracking — consolidated DB) ──────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "grudge-objectstore"
+database_id = "8fc367a8-9120-490e-a503-b0fcb755c044"

@@ -7,19 +7,11 @@ uploads/
 Thumbs.db
 .vercel
 
-# R2-mirrored bulk asset trees — authoritative copy lives on r2://grudge-assets
-# (synced to assets.grudge-studio.com). Only manifests/* is tracked.
-characters/
-effects/3d/
-effects/models/
-effects/textures/
-environment/
-monsters/
-mounts/
-npcs/
-ships/
-ui/
-weapons/
+# Wrangler build output
+.wrangler/
 
-# Temp conversion dirs (obj→glb pipeline)
-.convert-*/
+# glTF pipeline intermediate/output
+models/_converted/
+models/_optimized/
+tools/bin/FBX2glTF.zip
+tools/bin/FBX2glTF-windows-x86_64/

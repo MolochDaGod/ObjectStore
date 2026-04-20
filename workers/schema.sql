@@ -45,3 +45,15 @@ CREATE TABLE IF NOT EXISTS conversion_jobs (
 CREATE INDEX IF NOT EXISTS idx_jobs_hash   ON conversion_jobs(source_hash);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON conversion_jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_asset  ON conversion_jobs(output_asset_id);
+
+-- ── CDN Stats ────────────────────────────────────────────────────────
+-- Tracks cache hits/misses for monitoring (edge, r2, github, miss)
+
+CREATE TABLE IF NOT EXISTS cdn_stats (
+  id     INTEGER PRIMARY KEY AUTOINCREMENT,
+  source TEXT NOT NULL,    -- edge | r2 | github | miss
+  ts     INTEGER NOT NULL  -- unix timestamp ms
+);
+
+CREATE INDEX IF NOT EXISTS idx_cdn_stats_ts ON cdn_stats(ts);
+CREATE INDEX IF NOT EXISTS idx_cdn_stats_source ON cdn_stats(source);

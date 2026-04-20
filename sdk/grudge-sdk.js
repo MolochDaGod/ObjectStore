@@ -1,6 +1,6 @@
 /**
  * Grudge Studio SDK — Unified Client for All Services
- * @version 5.0.0
+ * @version 6.0.0
  *
  * Provides access to:
  *   - ObjectStore static game data (GitHub Pages JSON)
@@ -29,6 +29,7 @@ import { ObjectStoreR2Client, DEFAULT_WORKER_URL } from './r2-client.js';
 // ==========================================
 
 const DEFAULT_BASE_URL      = 'https://molochdagod.github.io/ObjectStore';
+const DEFAULT_WORKER_API    = 'https://objectstore.grudge-studio.com';
 const DEFAULT_ID_URL        = 'https://id.grudge-studio.com';
 const DEFAULT_GAME_URL      = 'https://api.grudge-studio.com';
 const DEFAULT_ACCOUNT_URL   = 'https://account.grudge-studio.com';
@@ -577,6 +578,7 @@ class GrudgeSDK {
    * @param {string} [opts.accountUrl]    - Account API URL
    * @param {string} [opts.launcherUrl]   - Launcher API URL
    * @param {string} [opts.wsUrl]         - WebSocket URL
+   * @param {string} [opts.workerApiUrl]  - ObjectStore Worker API URL
    * @param {string} [opts.assetsApiUrl]  - Asset Service URL
    * @param {string} [opts.assetsCdnUrl]  - R2 CDN URL
    */
@@ -584,6 +586,7 @@ class GrudgeSDK {
     if (typeof opts === 'string') opts = { baseUrl: opts };
 
     this.baseUrl = (opts.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
+    this._workerApi = (opts.workerApiUrl || DEFAULT_WORKER_API).replace(/\/$/, '');
     this.cache = new Map();
     this.cacheExpiry = 5 * 60 * 1000;
 
@@ -687,10 +690,77 @@ class GrudgeSDK {
   async getAttributes() { return this.fetch('/api/v1/attributes.json'); }
   async getAttribute(attributeId) { const d = await this.getAttributes(); return d.attributes.find(a => a.id === attributeId) || null; }
 
-  // ── Weapon Skills ──
+  // ── Weapon Skills (17 types, 207 skills with enhanced combat data) ──
   async getWeaponSkills() { return this.fetch('/api/v1/weaponSkills.json'); }
-  async getWeaponSkillsByType(weaponType) { const d = await this.getWeaponSkills(); return (d.weaponTypes || []).find(wt => wt.weaponType === weaponType) || null; }
-  async getWeaponSkill(skillId) { const d = await this.getWeaponSkills(); for (const wt of d.weaponTypes || []) { const s = (wt.skills || []).find(s => s.id === skillId); if (s) return { ...s, weaponType: wt.weaponType }; } return null; }
+  async getWeaponSkillsByType(weaponType) {
+    // Try Worker API first (filtered, cached)
+    try {
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills/${weaponType}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    const d = await this.getWeaponSkills();
+    return (d.weaponTypes || []).find(wt => wt.id === weaponType.toUpperCase() || wt.name?.toLowerCase() === weaponType.toLowerCase()) || null;
+  }
+  async getWeaponSkillsForClass(className) {
+    // Try Worker API first
+    try {
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills?className=${className}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    const d = await this.getWeaponSkills();
+    const allowed = d.classRestrictions?.[className] || [];
+    return { className, weaponTypes: (d.weaponTypes || []).filter(wt => allowed.includes(wt.id)), classRestrictions: d.classRestrictions };
+  }
+  async getWeaponSkill(skillId) {
+    const d = await this.getWeaponSkills();
+    for (const wt of d.weaponTypes || []) {
+      for (const slot of wt.slots || []) {
+        const s = (slot.skills || []).find(s => s.id === skillId);
+        if (s) return { ...s, weaponType: wt.id, weaponName: wt.name, slotType: slot.type };
+      }
+    }
+    return null;
+  }
+  async searchWeaponSkills(query, filters = {}) {
+    // Try Worker API search endpoint
+    try {
+      const p = new URLSearchParams();
+      if (query) p.set('q', query);
+      if (filters.damageType) p.set('damageType', filters.damageType);
+      if (filters.slot) p.set('slot', filters.slot);
+      if (filters.physics) p.set('physics', filters.physics);
+      if (filters.projectile) p.set('projectile', filters.projectile);
+      if (filters.limit) p.set('limit', String(filters.limit));
+      const res = await fetch(`${this._workerApi}/v1/weapon-skills/search?${p}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    // Client-side fallback
+    const d = await this.getWeaponSkills();
+    const q = (query || '').toLowerCase();
+    const results = [];
+    for (const wt of d.weaponTypes || []) {
+      for (const slot of wt.slots || []) {
+        for (const skill of slot.skills || []) {
+          const text = `${skill.name} ${skill.description} ${(skill.effects || []).join(' ')}`.toLowerCase();
+          if (q && !text.includes(q)) continue;
+          if (filters.damageType && skill.damageType !== filters.damageType) continue;
+          if (filters.slot && slot.type !== filters.slot) continue;
+          if (filters.physics && skill.physics !== filters.physics) continue;
+          if (filters.projectile && skill.projectile !== filters.projectile) continue;
+          results.push({ ...skill, weaponType: wt.id, weaponName: wt.name, slotType: slot.type });
+        }
+      }
+    }
+    return { query, count: results.length, results: results.slice(0, filters.limit || 50) };
+  }
+  getClassWeaponRestrictions() {
+    return {
+      Warrior: ['SWORD','AXE','HAMMER','SHIELD','GREATSWORD','GREATAXE','SCYTHE'],
+      Mage:    ['STAFF','TOME','MACE','WAND','OFFHAND_RELIC'],
+      Ranger:  ['BOW','CROSSBOW','GUN','DAGGER','GREATSWORD','SPEAR'],
+      Worge:   ['STAFF','SPEAR','DAGGER','BOW','HAMMER','MACE','OFFHAND_RELIC','SCYTHE'],
+    };
+  }
 
   // ── Enemies & Bosses ──
   async getEnemies() { return this.fetch('/api/v1/enemies.json'); }
@@ -745,6 +815,186 @@ class GrudgeSDK {
   async getHeroesRegistry() { return this.fetch('/api/v1/heroes.json'); }
   async getModels3d() { return this.fetch('/api/v1/models3d.json'); }
   async getStudioManifest() { return this.fetch('/api/v1/studio.json'); }
+  async getAnimations() { return this.fetch('/api/v1/animations.json'); }
+  async getEntities() { return this.fetch('/api/v1/entities.json'); }
+
+  // ── glTF Pipeline (optimized 3D assets) ──
+
+  /** Get the glTF manifest with checksums for all optimized GLBs. */
+  async getGltfManifest() { return this.fetch('/api/v1/gltf-manifest.json'); }
+
+  /** Get BabylonJS-ready effect definitions (particle configs per texture). */
+  async getEffectDefinitions() { return this.fetch('/api/v1/effect-definitions.json'); }
+
+  /** Get animation clip registry (GLB retargeting files). */
+  async getAnimationsGltf() { return this.fetch('/api/v1/animations-gltf.json'); }
+
+  /**
+   * Find a specific optimized 3D model by name.
+   * @param {string} name - Model name (e.g. "cantina", "barracks", "xwing")
+   * @returns {Promise<object|null>} Model entry with path, checksum, compression info
+   */
+  async getModel(name) {
+    const d = await this.getModels3d();
+    const q = name.toLowerCase();
+    return (d.models || []).find(m =>
+      m.name.toLowerCase().includes(q) || m.path.toLowerCase().includes(q)
+    ) || null;
+  }
+
+  /**
+   * Get a specific effect definition by id (e.g. "portals/arpg-effects_portal").
+   * @param {string} effectId - Effect id (category/basename)
+   * @returns {Promise<object|null>} Effect with texture path + BabylonJS config
+   */
+  async getEffect(effectId) {
+    const d = await this.getEffectDefinitions();
+    return (d.effects || []).find(e => e.id === effectId) || null;
+  }
+
+  /**
+   * Get the full CDN URL for an optimized model GLB.
+   * Tries R2 CDN first, falls back to GitHub Pages static path.
+   * @param {string} modelPath - Relative model path from models3d.json
+   * @returns {string} Absolute URL to the GLB file
+   */
+  getModelUrl(modelPath) {
+    // Prefer R2/CDN for binary assets
+    if (this.assetsCdnUrl && this.assetsCdnUrl !== 'https://assets.grudge-studio.com') {
+      return `${this.assetsCdnUrl}/${modelPath}`;
+    }
+    return `${this.baseUrl}/${modelPath}`;
+  }
+
+  /**
+   * Get the full CDN URL for an effect texture.
+   * @param {string} texturePath - Relative texture path from effect-definitions.json
+   * @returns {string} Absolute URL to the texture
+   */
+  getEffectTextureUrl(texturePath) {
+    return `${this.baseUrl}/${texturePath}`;
+  }
+
+  /**
+   * Load a complete effect config ready for BabylonJS ParticleSystem.
+   * Returns the BabylonJS params + resolved texture URL + atlas info.
+   * @param {string} effectId - Effect id (e.g. "fire/arpg-effects_fire_16x4")
+   * @returns {Promise<object|null>} { textureUrl, atlas, babylonjs, category, pack }
+   */
+  async loadEffectConfig(effectId) {
+    const effect = await this.getEffect(effectId);
+    if (!effect) return null;
+    return {
+      textureUrl: this.getEffectTextureUrl(effect.texture),
+      atlas: effect.atlas,
+      width: effect.width,
+      height: effect.height,
+      category: effect.category,
+      pack: effect.pack,
+      ...effect.babylonjs,
+    };
+  }
+
+  /**
+   * Search optimized 3D models by name, category, or compression type.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { category, compression, limit }
+   * @returns {Promise<object[]>} Matching model entries with full URLs
+   */
+  async searchModels(query, opts = {}) {
+    const d = await this.getModels3d();
+    const q = (query || '').toLowerCase();
+    let results = d.models || [];
+    if (q) results = results.filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      m.category.toLowerCase().includes(q) ||
+      m.path.toLowerCase().includes(q)
+    );
+    if (opts.category) results = results.filter(m => m.category === opts.category);
+    if (opts.compression) results = results.filter(m => m.compressionType === opts.compression);
+    return results.slice(0, opts.limit || 50).map(m => ({
+      ...m,
+      url: this.getModelUrl(m.path),
+    }));
+  }
+
+  /**
+   * Search effects by name, category, pack, or tags.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { category, pack, limit }
+   * @returns {Promise<object[]>} Matching effects with resolved texture URLs
+   */
+  async searchEffects(query, opts = {}) {
+    const d = await this.getEffectDefinitions();
+    const q = (query || '').toLowerCase();
+    let results = d.effects || [];
+    if (q) results = results.filter(e =>
+      e.id.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q) ||
+      e.pack.toLowerCase().includes(q)
+    );
+    if (opts.category) results = results.filter(e => e.category === opts.category);
+    if (opts.pack) results = results.filter(e => e.pack === opts.pack);
+    return results.slice(0, opts.limit || 50).map(e => ({
+      ...e,
+      textureUrl: this.getEffectTextureUrl(e.texture),
+    }));
+  }
+
+  /**
+   * Get all available effect categories with counts and default BabylonJS configs.
+   * @returns {Promise<object[]>} [{ id, count, defaults }]
+   */
+  async getEffectCategories() {
+    const d = await this.getEffectDefinitions();
+    return d.categories || [];
+  }
+
+  /**
+   * Search animation clips by name or weapon type.
+   * @param {string} query - Search text
+   * @param {object} [opts] - { weaponType, limit }
+   * @returns {Promise<object[]>} Matching animation entries with full URLs
+   */
+  async searchAnimationClips(query, opts = {}) {
+    const d = await this.getAnimationsGltf();
+    const q = (query || '').toLowerCase();
+    let results = d.animations || [];
+    if (q) results = results.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.weaponType.toLowerCase().includes(q)
+    );
+    if (opts.weaponType) results = results.filter(a => a.weaponType === opts.weaponType);
+    return results.slice(0, opts.limit || 50).map(a => ({
+      ...a,
+      url: this.getModelUrl(a.path),
+    }));
+  }
+
+  // ── Game Data API (Worker) — generic collection access ──
+  async listGameDataCollections() {
+    try {
+      const res = await fetch(`${this._workerApi}/v1/game-data`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return null;
+  }
+  async getGameData(name) {
+    try {
+      const res = await fetch(`${this._workerApi}/v1/game-data/${name}`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return this.fetch(`/api/v1/${name}.json`);
+  }
+
+  // ── Worker Health ──
+  async getWorkerHealth() {
+    try {
+      const res = await fetch(`${this._workerApi}/health`);
+      if (res.ok) return res.json();
+    } catch { /* fall through */ }
+    return null;
+  }
 
   // ── Serverless API ──
   async serverlessSearch(query, type = 'all', limit = 50) { return this.fetch(`/api/search?${new URLSearchParams({ q: query, type, limit: String(limit) })}`); }
@@ -827,10 +1077,23 @@ class GrudgeSDK {
         attributes: `${this.baseUrl}/api/v1/attributes.json`, enemies: `${this.baseUrl}/api/v1/enemies.json`,
         bosses: `${this.baseUrl}/api/v1/bosses.json`,
       },
+      gltfPipeline: {
+        models3d: `${this.baseUrl}/api/v1/models3d.json`,
+        gltfManifest: `${this.baseUrl}/api/v1/gltf-manifest.json`,
+        effectDefinitions: `${this.baseUrl}/api/v1/effect-definitions.json`,
+        animationsGltf: `${this.baseUrl}/api/v1/animations-gltf.json`,
+      },
       r2Worker: { base: this.r2.workerUrl, assets: `${this.r2.workerUrl}/v1/assets`, health: `${this.r2.workerUrl}/v1/health` },
+      workerApi: {
+        base: this._workerApi,
+        gameData: `${this._workerApi}/v1/game-data`,
+        weaponSkills: `${this._workerApi}/v1/weapon-skills`,
+        health: `${this._workerApi}/health`,
+      },
       browsers: {
         itemDatabase: `${this.baseUrl}/GRUDGE_Item_Database.html`, spriteDatabase: `${this.baseUrl}/SPRITE_DATABASE.html`,
-        vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`, admin: `${this.baseUrl}/admin.html`,
+        vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`, weaponSkills: `${this.baseUrl}/WEAPON_SKILLS.html`,
+        brand: `${this.baseUrl}/brand.html`, admin: `${this.baseUrl}/admin.html`,
       },
       docs: `${this.baseUrl}/docs/`,
     };

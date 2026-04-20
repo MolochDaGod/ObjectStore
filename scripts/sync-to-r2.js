@@ -43,7 +43,11 @@ const SYNC_EXTENSIONS = new Set([
 ]);
 
 // Directories that contain uploadable assets
-const ASSET_DIRS = ['models', 'textures', 'sprites', 'icons', 'worlds', 'vfx', 'audio', '3dfx'];
+const ASSET_DIRS = ['models', 'textures', 'sprites', 'icons', 'worlds', 'vfx', 'audio', '3dfx', 'effects'];
+
+// Pipeline-specific directories (optimized GLBs + effect textures)
+const PIPELINE_DIRS = ['models/_optimized', 'effects/3d'];
+const PIPELINE_MODE = args.includes('--pipeline');
 
 // ── Helpers ─────────────────────────────────────────────────────────
 function walk(dir) {
@@ -66,6 +70,21 @@ function walk(dir) {
 function inferCategory(relPath) {
   if (CATEGORY) return CATEGORY;
   const parts = relPath.split('/');
+
+  // Pipeline optimized models: models/_optimized/{category}/{file}.glb
+  if (parts[0] === 'models' && parts[1] === '_optimized') {
+    const sub = parts[2] || '';
+    if (sub === 'animations') return 'Optimized Animations';
+    if (sub === 'effects') return `Optimized Effects/${parts[3] || 'misc'}`;
+    return `Optimized Models/${sub || 'misc'}`;
+  }
+
+  // Effect textures: effects/3d/{category}/{file}.png
+  if (parts[0] === 'effects' && parts[1] === '3d') {
+    const sub = parts[2] || 'misc';
+    return `Effect Textures/${sub}`;
+  }
+
   if (parts[0] === 'models') {
     if (parts[1] === 'animations') return 'Animations';
     if (parts[1] === 'characters' && parts[2] === 'kaykit') return 'KayKit Characters';
@@ -79,6 +98,7 @@ function inferCategory(relPath) {
   if (parts[0] === 'icons') return 'Icons';
   if (parts[0] === 'worlds') return 'Worlds';
   if (parts[0] === 'vfx') return 'VFX';
+  if (parts[0] === 'effects') return 'Effects';
   if (parts[0] === '3dfx') {
     if (parts[1] === 'shaders') return '3DFX Shaders';
     if (parts[1] === 'definitions') return '3DFX';
@@ -136,6 +156,9 @@ async function main() {
   let dirs;
   if (TARGET_DIR) {
     dirs = [path.join(ROOT, TARGET_DIR)];
+  } else if (PIPELINE_MODE) {
+    console.log('Pipeline mode: syncing only optimized outputs\n');
+    dirs = PIPELINE_DIRS.map(d => path.join(ROOT, d)).filter(d => fs.existsSync(d));
   } else {
     dirs = ASSET_DIRS.map(d => path.join(ROOT, d)).filter(d => fs.existsSync(d));
   }

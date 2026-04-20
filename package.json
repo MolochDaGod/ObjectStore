@@ -66,8 +66,24 @@
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
     "worker:tail": "wrangler tail",
+    "generate:master": "node scripts/generate-master-database.mjs",
+    "deploy:pages": "node scripts/deploy-gh-pages.mjs",
     "build:gdevelop": "node scripts/build-gdevelop-manifest.mjs",
-    "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql"
+    "export:weapon-skills": "node scripts/export-weapon-skills.mjs",
+    "build:all": "npm run export:weapon-skills && npm run build:gdevelop",
+    "d1:migrate": "wrangler d1 execute objectstore-meta --file=workers/schema.sql",
+    "pipeline:convert": "node scripts/gltf-pipeline.mjs convert",
+    "pipeline:optimize": "node scripts/gltf-pipeline.mjs optimize",
+    "pipeline:animations": "node scripts/gltf-pipeline.mjs animations",
+    "pipeline:effects": "node scripts/gltf-pipeline.mjs effects",
+    "pipeline:validate": "node scripts/gltf-pipeline.mjs validate",
+    "pipeline:all": "node scripts/gltf-pipeline.mjs all",
+    "pipeline:dry": "node scripts/gltf-pipeline.mjs all --dry-run",
+    "effects:consolidate": "node scripts/consolidate-effects.mjs",
+    "effects:manifest": "node scripts/rebuild-effects-manifest.mjs",
+    "effects:all": "node scripts/consolidate-effects.mjs && node scripts/rebuild-effects-manifest.mjs && node scripts/gltf-pipeline.mjs effects && node scripts/gltf-pipeline.mjs validate",
+    "pipeline:sync": "node scripts/sync-to-r2.js --pipeline",
+    "pipeline:sync:dry": "node scripts/sync-to-r2.js --pipeline --dry-run"
   },
   "repository": {
     "type": "git",
@@ -113,7 +129,15 @@
     }
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.3.0",
+    "@gltf-transform/core": "^4.3.0",
+    "@gltf-transform/extensions": "^4.3.0",
+    "@gltf-transform/functions": "^4.3.0",
     "@types/node": "^20.0.0",
+    "draco3dgltf": "^1.5.7",
+    "gh-pages": "^6.3.0",
+    "meshoptimizer": "^1.1.0",
+    "obj2gltf": "^3.2.0",
     "sharp": "^0.33.5",
     "typescript": "^5.0.0"
   },

@@ -22,6 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Prepare deployment
+        run: |
+          # Remove dirs that shouldn't be served on Pages
+          rm -rf node_modules .git .github scripts tools workers .wrangler
+          rm -rf models/_converted models/_optimized
+          rm -f package-lock.json wrangler.toml .env .env.local
+          echo "Deployment size: $(du -sh . | cut -f1)"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

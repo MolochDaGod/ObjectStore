@@ -409,8 +409,9 @@
     }
     .skill-stats {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       font-size: 0.8em;
+      flex-wrap: wrap;
     }
     .skill-stat {
       display: flex;
@@ -422,6 +423,26 @@
     .skill-stat .value.dmg { color: hsl(0 70% 60%); }
     .skill-stat .value.heal { color: hsl(140 60% 55%); }
     .skill-stat .value.cd { color: hsl(210 70% 60%); }
+    .skill-stat .value.cast { color: hsl(43 70% 55%); }
+    .skill-stat .value.range { color: hsl(170 60% 50%); }
+    .skill-meta {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;
+    }
+    .meta-tag {
+      font-size: 0.65em; padding: 2px 6px; border-radius: 3px;
+      font-family: var(--font-body); letter-spacing: 0.02em;
+    }
+    .meta-tag.physical { background: hsl(30 30% 18%); color: hsl(30 60% 65%); }
+    .meta-tag.fire { background: hsl(15 40% 18%); color: hsl(15 80% 60%); }
+    .meta-tag.frost { background: hsl(200 40% 18%); color: hsl(200 70% 65%); }
+    .meta-tag.arcane { background: hsl(270 30% 20%); color: hsl(270 60% 70%); }
+    .meta-tag.holy { background: hsl(50 40% 18%); color: hsl(50 80% 65%); }
+    .meta-tag.shadow { background: hsl(280 25% 16%); color: hsl(280 50% 65%); }
+    .meta-tag.nature { background: hsl(120 30% 16%); color: hsl(120 55% 55%); }
+    .meta-tag.lightning { background: hsl(55 35% 16%); color: hsl(55 80% 60%); }
+    .meta-tag.proj { background: hsl(220 25% 18%); color: hsl(220 60% 65%); }
+    .meta-tag.phys { background: hsl(0 25% 18%); color: hsl(0 55% 65%); }
+    .meta-tag.anim { background: hsl(180 20% 16%); color: hsl(180 50% 60%); }
     .skill-effects {
       display: flex;
       flex-wrap: wrap;
@@ -683,27 +704,28 @@ const WEAPON_TYPE_DEFINITIONS = {
     ]
   },
   GUN: {
-    id: "GUN", name: "Gun", icon: "/icons/pack/misc/Power.png",
+    id: "GUN", name: "Gun", icon: "/icons/weapons/blackpowder.png",
+    classes: ["Ranger"],
     slots: [
       { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
-        { id: "gun_grudge_shot", name: "Grudge Shot", description: "Single shot, builds Powder Mark", icon: "/icons/pack/misc/Power.png", tier: 1, damage: 60, cooldown: 0, effects: ["Builds Mark"] },
-        { id: "gun_quick_reload", name: "Quick Reload", description: "+Attack speed buff", icon: "/icons/pack/misc/Electro.png", tier: 2, damage: 0, cooldown: 15, effects: ["+40% Atk Speed 4s"] },
-        { id: "gun_smoke_shot", name: "Smoke Shot", description: "AoE blind effect", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 30, cooldown: 12, effects: ["Blind 3s", "AoE 4m"] },
+        { id: "gun_grudge_shot", name: "Grudge Shot", description: "Single shot, builds Powder Mark. Hitscan 30m range.", icon: "/icons/weapons/blackpowder.png", tier: 1, damage: 60, cooldown: 0, castTime: 0.3, range: 30, projectile: "bullet", damageType: "physical", animation: "gun_fire", physics: null, effects: ["Builds Powder Mark", "Hitscan 30m"] },
+        { id: "gun_quick_reload", name: "Quick Reload", description: "Rapidly cycle the chamber, +40% attack speed for 4s", icon: "/icons/weapons/ironstorm.png", tier: 2, damage: 0, cooldown: 15, castTime: 0, range: 0, projectile: null, damageType: "physical", animation: "gun_reload", physics: null, effects: ["+40% Atk Speed 4s", "Self-Buff"] },
+        { id: "gun_smoke_shot", name: "Smoke Shot", description: "Fire a flashbang round, blinding enemies in 4m", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 30, cooldown: 12, castTime: 0.2, range: 25, projectile: "bullet", damageType: "physical", animation: "gun_fire", physics: "blind", effects: ["Blind 3s", "AoE 4m"] },
       ]},
       { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
-        { id: "gun_explosive_round", name: "Explosive Round", description: "AoE burst damage", icon: "/icons/pack/misc/fire_05.png", tier: 1, damage: 70, cooldown: 8, effects: ["AoE 4m"] },
-        { id: "gun_flame_burst", name: "Flame Burst", description: "DoT AoE fire", icon: "/icons/pack/misc/Fires.png", tier: 2, damage: 50, cooldown: 10, effects: ["Burn 5s", "AoE"] },
-        { id: "gun_sniper_round", name: "Sniper Round", description: "Long range high damage", icon: "/icons/pack/misc/Effect.png", tier: 3, damage: 120, cooldown: 12, effects: ["40m Range"] },
+        { id: "gun_explosive_round", name: "Explosive Round", description: "Fire incendiary shell that explodes on impact", icon: "/icons/weapons/emberrifle.png", tier: 1, damage: 70, cooldown: 8, castTime: 0.4, range: 25, projectile: "shell", damageType: "fire", animation: "gun_heavy_fire", physics: "knockback", effects: ["AoE 4m", "Knockback 2m", "Burn 3s"] },
+        { id: "gun_flame_burst", name: "Flame Burst", description: "Spray ignited powder in a cone, setting ground ablaze", icon: "/icons/pack/misc/Fires.png", tier: 2, damage: 50, cooldown: 10, castTime: 0.3, range: 8, projectile: null, damageType: "fire", animation: "gun_spray", physics: null, effects: ["Cone 8m", "Burn 5s", "Ground Fire 4s"] },
+        { id: "gun_sniper_round", name: "Sniper Round", description: "Steady aim, charged shot that pierces armor at extreme range", icon: "/icons/weapons/duskblaster.png", tier: 3, damage: 120, cooldown: 12, castTime: 1.2, range: 50, projectile: "bullet", damageType: "physical", animation: "gun_aim_fire", physics: null, effects: ["50m Range", "Ignore 50% Armor", "Guaranteed Crit"] },
       ]},
       { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
-        { id: "gun_hellfire_barrage", name: "Hellfire Barrage", description: "Channeled AoE fire", icon: "/icons/pack/misc/Lava.png", tier: 1, damage: 100, cooldown: 18, effects: ["Channel 3s", "Large AoE"] },
-        { id: "gun_crimson_blast", name: "Crimson Blast", description: "Lifesteal AoE", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 80, cooldown: 15, effects: ["Lifesteal 30%"] },
-        { id: "gun_shadow_shot", name: "Shadow Shot", description: "Silence AoE", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 60, cooldown: 12, effects: ["Silence 4s", "AoE"] },
-        { id: "gun_cannon_execute", name: "Cannon Execute", description: "Low HP burst", icon: "/icons/pack/misc/Chaos_2.png", tier: 4, damage: 200, cooldown: 20, effects: ["3x dmg <25% HP"] },
+        { id: "gun_hellfire_barrage", name: "Hellfire Barrage", description: "Unload entire magazine in sustained fire, AoE incendiary", icon: "/icons/weapons/bloodcannon.png", tier: 1, damage: 100, cooldown: 18, castTime: 0, range: 20, projectile: "bullet", damageType: "fire", animation: "gun_channel_fire", physics: null, effects: ["Channel 3s", "AoE 6m", "12 Rounds", "Burn 4s"] },
+        { id: "gun_crimson_blast", name: "Crimson Blast", description: "Blood-infused shell that heals on hit, AoE splash", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 80, cooldown: 15, castTime: 0.5, range: 20, projectile: "shell", damageType: "shadow", animation: "gun_heavy_fire", physics: null, effects: ["Lifesteal 30%", "AoE 5m", "Bleed 4s"] },
+        { id: "gun_shadow_shot", name: "Shadow Shot", description: "Void-touched round that silences on impact and leaves darkness", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 60, cooldown: 12, castTime: 0.3, range: 30, projectile: "bullet", damageType: "shadow", animation: "gun_fire", physics: null, effects: ["Silence 4s", "AoE 4m", "Darkness Zone 3s"] },
+        { id: "gun_cannon_execute", name: "Cannon Execute", description: "Overcharged shot that deals 3x damage to targets below 25% HP", icon: "/icons/weapons/wraithbarrel.png", tier: 4, damage: 200, cooldown: 20, castTime: 0.8, range: 25, projectile: "shell", damageType: "physical", animation: "gun_aim_fire", physics: "knockback", effects: ["3x dmg <25% HP", "Knockback 6m", "Armor Break"] },
       ]},
       { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
-        { id: "gun_demon_blast", name: "Demon Blast", description: "Massive knockback explosion", icon: "/icons/pack/misc/Chaos.png", tier: 1, damage: 250, cooldown: 55, effects: ["Knockback 10m", "AoE 8m"] },
-        { id: "gun_thunder_blast", name: "Thunder Blast", description: "Ultimate storm attack", icon: "/icons/pack/misc/Lighting.png", tier: 4, damage: 300, cooldown: 70, effects: ["Lightning Storm", "Stun 2s"] },
+        { id: "gun_demon_blast", name: "Demon Blast", description: "Channel dark energy into the barrel, releasing a massive explosion that sends enemies flying", icon: "/icons/weapons/bloodcannon.png", tier: 1, damage: 250, cooldown: 55, castTime: 0.8, range: 15, projectile: "shell", damageType: "fire", animation: "gun_ultimate_fire", physics: "knockback", effects: ["Knockback 10m", "AoE 8m", "Burn 6s", "Stagger All"] },
+        { id: "gun_thunder_blast", name: "Thunder Blast", description: "Summon a lightning storm through the barrel, chain-electrocuting all enemies in range", icon: "/icons/pack/misc/Lighting.png", tier: 4, damage: 300, cooldown: 70, castTime: 1.0, range: 20, projectile: "beam", damageType: "lightning", animation: "gun_storm_channel", physics: "stun", effects: ["Lightning Storm 6s", "Chain x5", "Stun 2s", "AoE 12m"] },
       ]}
     ]
   },
@@ -783,6 +805,261 @@ const WEAPON_TYPE_DEFINITIONS = {
         { id: "hammer_mjolnir_strike", name: "Mjolnir Strike", description: "Lightning AoE storm", icon: "/icons/pack/misc/Lighting.png", tier: 4, damage: 280, cooldown: 65, effects: ["Lightning Storm", "Chain"] },
       ]}
     ]
+  },
+  SHIELD: {
+    id: "SHIELD", name: "Shield", icon: "/icons/pack/weapons/shield_01.png",
+    classes: ["Warrior"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "shield_bash", name: "Shield Bash", description: "Slam shield into target, dazes for 1s", icon: "/icons/pack/weapons/shield_01.png", tier: 1, damage: 35, cooldown: 0, castTime: 0, range: 2, projectile: null, damageType: "physical", animation: "shield_bash", physics: "daze", effects: ["Daze 1s", "Builds Block"] },
+        { id: "shield_slam", name: "Shield Slam", description: "Heavy overhead slam, stuns briefly", icon: "/icons/pack/weapons/shield_03.png", tier: 2, damage: 50, cooldown: 3, castTime: 0.3, range: 2, projectile: null, damageType: "physical", animation: "shield_slam", physics: "stun", effects: ["Stun 0.8s", "Threat+"] },
+        { id: "shield_concussive", name: "Concussive Strike", description: "AoE bash that slows all nearby", icon: "/icons/pack/weapons/shield_05.png", tier: 3, damage: 40, cooldown: 5, castTime: 0.2, range: 3, projectile: null, damageType: "physical", animation: "shield_sweep", physics: "slow", effects: ["AoE 3m", "Slow 40% 3s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "shield_wall", name: "Shield Wall", description: "Raise shield, block 60% damage for 4s", icon: "/icons/pack/weapons/shield_10.png", tier: 1, damage: 0, cooldown: 18, castTime: 0, range: 0, projectile: null, damageType: "physical", animation: "shield_raise", physics: null, effects: ["60% DR 4s", "Immobile"] },
+        { id: "shield_charge", name: "Bulwark Charge", description: "Charge forward 8m, knockback targets", icon: "/icons/pack/misc/Flow.png", tier: 2, damage: 45, cooldown: 12, castTime: 0, range: 8, projectile: null, damageType: "physical", animation: "shield_charge", physics: "knockback", effects: ["Charge 8m", "Knockback 4m"] },
+        { id: "shield_reflect", name: "Aegis Reflect", description: "Reflect next 3 projectiles back", icon: "/icons/pack/weapons/shield_15.png", tier: 3, damage: 0, cooldown: 15, castTime: 0, range: 0, projectile: null, damageType: "physical", animation: "shield_parry", physics: null, effects: ["Reflect 3 Projectiles"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "shield_phalanx", name: "Phalanx Guard", description: "Allies behind you gain 25% DR", icon: "/icons/pack/weapons/shield_20.png", tier: 1, damage: 0, cooldown: 20, castTime: 0, range: 6, projectile: null, damageType: "physical", animation: "shield_stance", physics: null, effects: ["25% DR Allies 6s", "Cone Behind"] },
+        { id: "shield_throw", name: "Shield Throw", description: "Hurl shield, bounces to 3 targets", icon: "/icons/pack/weapons/shield_25.png", tier: 2, damage: 60, cooldown: 10, castTime: 0.4, range: 15, projectile: "thrown", damageType: "physical", animation: "shield_throw", physics: "stun", effects: ["Bounces x3", "Stun 0.5s each"] },
+        { id: "shield_taunt", name: "Grudge Taunt", description: "Force all enemies in 8m to target you", icon: "/icons/pack/misc/Power.png", tier: 3, damage: 0, cooldown: 15, castTime: 0, range: 8, projectile: null, damageType: "physical", animation: "war_cry", physics: null, effects: ["AoE Taunt 4s", "10% DR self"] },
+        { id: "shield_bastion", name: "Iron Bastion", description: "Plant shield, create AoE barrier zone", icon: "/icons/pack/weapons/shield_30.png", tier: 4, damage: 0, cooldown: 25, castTime: 0.5, range: 0, projectile: null, damageType: "physical", animation: "shield_plant", physics: null, effects: ["40% DR Zone 5m", "8s Duration"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "shield_unbreakable", name: "Unbreakable", description: "Become immune for 3s, then AoE knockback", icon: "/icons/pack/weapons/shield_40.png", tier: 1, damage: 100, cooldown: 55, castTime: 0, range: 6, projectile: null, damageType: "physical", animation: "shield_ultimate", physics: "knockback", effects: ["Immune 3s", "AoE Knockback 6m"] },
+        { id: "shield_titan_bulwark", name: "Titan's Bulwark", description: "Group invincibility shield for 4s", icon: "/icons/pack/weapons/shield_50.png", tier: 4, damage: 0, cooldown: 90, castTime: 0.5, range: 8, projectile: null, damageType: "holy", animation: "shield_divine", physics: null, effects: ["Group Invincible 4s", "AoE 8m"] },
+      ]}
+    ]
+  },
+  GREATSWORD: {
+    id: "GREATSWORD", name: "Greatsword", icon: "/icons/pack/weapons/Sword_27.png",
+    classes: ["Warrior", "Ranger"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "gs_cleave", name: "Cleaving Strike", description: "Wide arc slash hitting all in front", icon: "/icons/pack/weapons/Sword_27.png", tier: 1, damage: 55, cooldown: 0, castTime: 0.4, range: 3, projectile: null, damageType: "physical", animation: "2h_slash", physics: null, effects: ["180° Arc", "Builds Momentum"] },
+        { id: "gs_overhead", name: "Overhead Slash", description: "Slow powerful downward strike", icon: "/icons/pack/weapons/Sword_33.png", tier: 2, damage: 80, cooldown: 3, castTime: 0.6, range: 3, projectile: null, damageType: "physical", animation: "2h_overhead", physics: "stagger", effects: ["Stagger 1s", "+50% vs Armor"] },
+        { id: "gs_executioner", name: "Executioner's Swing", description: "Massive hit, bonus on low HP targets", icon: "/icons/pack/weapons/Sword_55.png", tier: 3, damage: 70, cooldown: 5, castTime: 0.7, range: 3, projectile: null, damageType: "physical", animation: "2h_execute", physics: null, effects: ["2x dmg <30% HP", "Armor Break"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "gs_whirlwind", name: "Whirlwind Slash", description: "360° spin dealing AoE damage", icon: "/icons/pack/misc/Slash_07.png", tier: 1, damage: 65, cooldown: 8, castTime: 0, range: 4, projectile: null, damageType: "physical", animation: "2h_spin", physics: null, effects: ["360° AoE 4m", "Mobile"] },
+        { id: "gs_impale", name: "Impaling Thrust", description: "Lunge forward, pin target", icon: "/icons/pack/weapons/Sword_45.png", tier: 2, damage: 70, cooldown: 10, castTime: 0.3, range: 6, projectile: null, damageType: "physical", animation: "2h_thrust", physics: "root", effects: ["Lunge 6m", "Root 1.5s"] },
+        { id: "gs_giant_reach", name: "Giant's Reach", description: "Extended range wave slash", icon: "/icons/pack/misc/Flow.png", tier: 3, damage: 60, cooldown: 8, castTime: 0.5, range: 8, projectile: "wave", damageType: "physical", animation: "2h_wave", physics: null, effects: ["Line 8m", "Pierce All"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "gs_bladestorm", name: "Blade Storm", description: "Channeled rapid spin, 3s", icon: "/icons/pack/misc/Effect.png", tier: 1, damage: 120, cooldown: 15, castTime: 0, range: 4, projectile: null, damageType: "physical", animation: "2h_channel_spin", physics: null, effects: ["Channel 3s", "360° AoE", "Mobile"] },
+        { id: "gs_colossus", name: "Colossus Cleave", description: "Overhead slam creating shockwave", icon: "/icons/pack/misc/Power.png", tier: 2, damage: 90, cooldown: 12, castTime: 0.8, range: 6, projectile: "wave", damageType: "physical", animation: "2h_slam", physics: "knockup", effects: ["Cone 6m", "Knockup 1s"] },
+        { id: "gs_sunder", name: "Sundering Strike", description: "Break target armor permanently", icon: "/icons/pack/misc/Chaos.png", tier: 3, damage: 75, cooldown: 10, castTime: 0.5, range: 3, projectile: null, damageType: "physical", animation: "2h_heavy", physics: null, effects: ["-40% Armor 10s", "Cannot Stack"] },
+        { id: "gs_judgement", name: "Judgement Cut", description: "Teleport slash through enemies in line", icon: "/icons/pack/misc/Glow.png", tier: 4, damage: 110, cooldown: 18, castTime: 0.3, range: 12, projectile: null, damageType: "physical", animation: "2h_teleport_slash", physics: null, effects: ["Teleport 12m", "Line AoE", "Bleed 4s"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "gs_apocalypse", name: "Apocalypse Edge", description: "Massive AoE ground slam with shockwave", icon: "/icons/pack/misc/Chaos_2.png", tier: 1, damage: 220, cooldown: 55, castTime: 1.0, range: 8, projectile: "wave", damageType: "physical", animation: "2h_ultimate_slam", physics: "knockup", effects: ["AoE 8m", "Knockup 2s", "Armor Break"] },
+        { id: "gs_rift", name: "Dimensional Rift", description: "Tear reality with blade, pulling enemies", icon: "/icons/pack/misc/ChaosCircle.png", tier: 4, damage: 280, cooldown: 70, castTime: 1.2, range: 10, projectile: "wave", damageType: "shadow", animation: "2h_rift", physics: "pull", effects: ["Pull 10m", "AoE", "Shadow DoT 6s"] },
+      ]}
+    ]
+  },
+  GREATAXE: {
+    id: "GREATAXE", name: "Greataxe", icon: "/icons/pack/weapons/Axe_30.png",
+    classes: ["Warrior"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "ga_brutal", name: "Brutal Chop", description: "Slow powerful cleave with bleed", icon: "/icons/pack/weapons/Axe_30.png", tier: 1, damage: 60, cooldown: 0, castTime: 0.5, range: 3, projectile: null, damageType: "physical", animation: "2h_axe_chop", physics: null, effects: ["Bleed 4s", "180° Arc"] },
+        { id: "ga_rending", name: "Rending Swing", description: "Wide arc, amplifies existing bleeds", icon: "/icons/pack/weapons/Axe_35.png", tier: 2, damage: 55, cooldown: 2, castTime: 0.4, range: 3, projectile: null, damageType: "physical", animation: "2h_axe_swing", physics: null, effects: ["Refresh Bleeds", "+25% Bleed DMG"] },
+        { id: "ga_skull_split", name: "Skull Splitter", description: "Overhead smash, ignores 50% armor", icon: "/icons/pack/weapons/Axe_40.png", tier: 3, damage: 85, cooldown: 5, castTime: 0.7, range: 3, projectile: null, damageType: "physical", animation: "2h_axe_overhead", physics: "stagger", effects: ["Ignore 50% Armor", "Stagger 1.5s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "ga_primal_rage", name: "Primal Rage", description: "Enter rage, +40% damage, take 15% more", icon: "/icons/pack/misc/Burns.png", tier: 1, damage: 0, cooldown: 20, castTime: 0, range: 0, projectile: null, damageType: "physical", animation: "war_cry", physics: null, effects: ["+40% DMG 8s", "+15% DMG Taken"] },
+        { id: "ga_berserker_charge", name: "Berserker Charge", description: "Unstoppable charge, cleave on arrival", icon: "/icons/pack/misc/Flow.png", tier: 2, damage: 70, cooldown: 12, castTime: 0, range: 10, projectile: null, damageType: "physical", animation: "2h_charge", physics: "knockback", effects: ["Charge 10m", "Unstoppable", "Knockback 3m"] },
+        { id: "ga_war_cry", name: "War Cry", description: "AoE fear, allies gain attack speed", icon: "/icons/pack/misc/Electro.png", tier: 3, damage: 0, cooldown: 18, castTime: 0, range: 8, projectile: null, damageType: "physical", animation: "war_cry", physics: null, effects: ["Fear 2s 8m", "Allies +20% Atk Speed"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "ga_devastate", name: "Devastate", description: "3-hit combo finishing with slam", icon: "/icons/pack/weapons/Axe_45.png", tier: 1, damage: 100, cooldown: 12, castTime: 0, range: 3, projectile: null, damageType: "physical", animation: "2h_axe_combo", physics: "knockdown", effects: ["3-Hit Combo", "Knockdown 1.5s"] },
+        { id: "ga_guillotine", name: "Guillotine", description: "Leap slam, massive single target", icon: "/icons/pack/misc/Chaos.png", tier: 2, damage: 130, cooldown: 15, castTime: 0.3, range: 6, projectile: null, damageType: "physical", animation: "2h_leap_slam", physics: "knockdown", effects: ["Leap 6m", "AoE 3m", "Knockdown"] },
+        { id: "ga_earthshaker", name: "Earthshaker", description: "Ground slam creating quake line", icon: "/icons/pack/misc/Lighting.png", tier: 3, damage: 80, cooldown: 12, castTime: 0.6, range: 10, projectile: "wave", damageType: "physical", animation: "2h_ground_slam", physics: "knockup", effects: ["Line 10m", "Knockup 1s", "Slow 3s"] },
+        { id: "ga_blood_frenzy", name: "Blood Frenzy", description: "Each hit heals, speed increases", icon: "/icons/pack/misc/Burns.png", tier: 4, damage: 60, cooldown: 20, castTime: 0, range: 3, projectile: null, damageType: "physical", animation: "2h_frenzy", physics: null, effects: ["Lifesteal 35% 6s", "+10% Speed/hit"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "ga_ragnarok", name: "Ragnarok Cleave", description: "Massive 360° spin into ground slam", icon: "/icons/pack/weapons/Axe_48.png", tier: 1, damage: 240, cooldown: 55, castTime: 0.8, range: 6, projectile: null, damageType: "physical", animation: "2h_ultimate_spin", physics: "knockback", effects: ["360° AoE 6m", "Knockback 8m", "Bleed 8s"] },
+        { id: "ga_blood_reaper", name: "Blood Reaper", description: "Become death incarnate, chain kills reset CD", icon: "/icons/pack/misc/Chaos_2.png", tier: 4, damage: 180, cooldown: 70, castTime: 0, range: 4, projectile: null, damageType: "physical", animation: "2h_reaper", physics: null, effects: ["Kill = CD Reset", "+60% DMG 10s", "Lifesteal 50%"] },
+      ]}
+    ]
+  },
+  SPEAR: {
+    id: "SPEAR", name: "Spear", icon: "/icons/pack/weapons/Spear_01.png",
+    classes: ["Ranger", "Worge"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "spear_thrust", name: "Quick Thrust", description: "Fast jab with extended reach", icon: "/icons/pack/weapons/Spear_01.png", tier: 1, damage: 40, cooldown: 0, castTime: 0.2, range: 4, projectile: null, damageType: "physical", animation: "spear_thrust", physics: null, effects: ["Range 4m", "Builds Mark"] },
+        { id: "spear_lunge", name: "Piercing Lunge", description: "Lunge forward with armor-piercing stab", icon: "/icons/pack/weapons/Spear_05.png", tier: 2, damage: 55, cooldown: 3, castTime: 0.3, range: 6, projectile: null, damageType: "physical", animation: "spear_lunge", physics: null, effects: ["Lunge 3m", "Ignore 30% Armor"] },
+        { id: "spear_sweep", name: "Sweeping Stab", description: "Low sweep knocking enemies off balance", icon: "/icons/pack/weapons/Spear_10.png", tier: 3, damage: 45, cooldown: 4, castTime: 0.3, range: 4, projectile: null, damageType: "physical", animation: "spear_sweep", physics: "knockdown", effects: ["180° Arc", "Knockdown 1s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "spear_javelin", name: "Javelin Throw", description: "Hurl spear as ranged projectile", icon: "/icons/pack/weapons/Spear_15.png", tier: 1, damage: 65, cooldown: 8, castTime: 0.5, range: 20, projectile: "thrown", damageType: "physical", animation: "spear_throw", physics: null, effects: ["Range 20m", "Pierce First Target"] },
+        { id: "spear_vault", name: "Vaulting Strike", description: "Pole-vault over, strike from above", icon: "/icons/pack/weapons/Spear_20.png", tier: 2, damage: 70, cooldown: 10, castTime: 0.3, range: 8, projectile: null, damageType: "physical", animation: "spear_vault", physics: "stun", effects: ["Vault 8m", "Stun 1s", "AoE 3m"] },
+        { id: "spear_wall", name: "Wall of Spears", description: "Plant spears creating damage zone", icon: "/icons/pack/weapons/Spear_25.png", tier: 3, damage: 40, cooldown: 15, castTime: 0.5, range: 6, projectile: null, damageType: "physical", animation: "spear_plant", physics: "slow", effects: ["Zone 6m", "Slow 50%", "8s Duration"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "spear_impale", name: "Impale", description: "Pin target, dealing DoT", icon: "/icons/pack/weapons/Spear_30.png", tier: 1, damage: 50, cooldown: 10, castTime: 0.4, range: 4, projectile: null, damageType: "physical", animation: "spear_impale", physics: "root", effects: ["Root 2s", "Bleed 6s"] },
+        { id: "spear_cyclone", name: "Cyclone Sweep", description: "Rapid spinning sweep", icon: "/icons/pack/misc/Flow.png", tier: 2, damage: 80, cooldown: 12, castTime: 0, range: 4, projectile: null, damageType: "physical", animation: "spear_spin", physics: "knockback", effects: ["360° AoE", "Knockback 4m"] },
+        { id: "spear_dragon", name: "Dragon Strike", description: "Charged thrust with fire damage", icon: "/icons/pack/misc/Fires.png", tier: 3, damage: 100, cooldown: 14, castTime: 0.8, range: 6, projectile: null, damageType: "fire", animation: "spear_dragon", physics: null, effects: ["Fire DMG", "Burn 5s", "Pierce"] },
+        { id: "spear_phantom", name: "Phantom Lance", description: "Create spectral spear copies", icon: "/icons/pack/misc/Glow.png", tier: 4, damage: 90, cooldown: 16, castTime: 0.5, range: 12, projectile: "spell", damageType: "shadow", animation: "spear_phantom", physics: null, effects: ["3 Phantom Spears", "Homing", "Pierce"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "spear_storm", name: "Storm of Spears", description: "Rain spectral spears on area", icon: "/icons/pack/weapons/Spear_35.png", tier: 1, damage: 200, cooldown: 50, castTime: 0.5, range: 10, projectile: "spell", damageType: "physical", animation: "spear_rain", physics: "slow", effects: ["AoE 10m", "5s Rain", "Slow 60%"] },
+        { id: "spear_dragontail", name: "Dragontail Sweep", description: "360° sweep launching into air combo", icon: "/icons/pack/weapons/Spear_40.png", tier: 4, damage: 260, cooldown: 60, castTime: 0.3, range: 6, projectile: null, damageType: "physical", animation: "spear_ultimate", physics: "knockup", effects: ["360° Sweep", "Knockup 3s", "Air Combo"] },
+      ]}
+    ]
+  },
+  TOME: {
+    id: "TOME", name: "Tome", icon: "/icons/pack/weapons/Book_1.png",
+    classes: ["Mage"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "tome_arcane_bolt", name: "Arcane Bolt", description: "Homing arcane projectile", icon: "/icons/pack/weapons/Book_1.png", tier: 1, damage: 45, cooldown: 0, castTime: 0.5, range: 25, projectile: "spell", damageType: "arcane", animation: "cast_bolt", physics: null, effects: ["Homing", "Range 25m"] },
+        { id: "tome_elemental", name: "Elemental Blast", description: "Charged elemental projectile", icon: "/icons/pack/weapons/Book_5.png", tier: 2, damage: 65, cooldown: 2, castTime: 0.8, range: 20, projectile: "spell", damageType: "arcane", animation: "cast_charge", physics: null, effects: ["AoE 3m on Impact", "Element Varies"] },
+        { id: "tome_spirit_surge", name: "Spirit Surge", description: "Channel spirits from tome pages", icon: "/icons/pack/weapons/Book_10.png", tier: 3, damage: 55, cooldown: 4, castTime: 0.6, range: 15, projectile: "spell", damageType: "holy", animation: "cast_channel", physics: null, effects: ["Heal Allies 30", "DMG Enemies 55"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "tome_mana_shield", name: "Mana Shield", description: "Convert mana to damage absorption", icon: "/icons/pack/weapons/Book_15.png", tier: 1, damage: 0, cooldown: 15, castTime: 0.3, range: 0, projectile: null, damageType: "arcane", animation: "cast_shield", physics: null, effects: ["Absorb 300", "Drains Mana"] },
+        { id: "tome_runic_ward", name: "Runic Ward", description: "Place ward that heals allies in zone", icon: "/icons/pack/misc/runic_tablet_03.png", tier: 2, damage: -50, cooldown: 18, castTime: 0.8, range: 12, projectile: null, damageType: "holy", animation: "cast_ward", physics: null, effects: ["Heal Zone 6m", "10s Duration"] },
+        { id: "tome_knowledge_drain", name: "Knowledge Drain", description: "Steal mana and buff from target", icon: "/icons/pack/weapons/Book_20.png", tier: 3, damage: 40, cooldown: 12, castTime: 0.6, range: 15, projectile: "spell", damageType: "shadow", animation: "cast_drain", physics: null, effects: ["Steal 1 Buff", "Mana Drain 50"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "tome_grimoire", name: "Grimoire Burst", description: "Open tome, release stored energy", icon: "/icons/pack/weapons/Book_7.png", tier: 1, damage: 90, cooldown: 14, castTime: 0.5, range: 8, projectile: "spell", damageType: "arcane", animation: "cast_burst", physics: "knockback", effects: ["AoE 8m", "Knockback 4m"] },
+        { id: "tome_forbidden", name: "Forbidden Page", description: "Read forbidden text, massive DoT", icon: "/icons/pack/weapons/Book_12.png", tier: 2, damage: 120, cooldown: 16, castTime: 1.0, range: 15, projectile: "spell", damageType: "shadow", animation: "cast_dark", physics: null, effects: ["Shadow DoT 8s", "Self-Damage 5%"] },
+        { id: "tome_soul_bind", name: "Soul Bind", description: "Link to target, share damage taken", icon: "/icons/pack/misc/Life.png", tier: 3, damage: 0, cooldown: 20, castTime: 0.5, range: 20, projectile: "spell", damageType: "shadow", animation: "cast_link", physics: "root", effects: ["Share 50% DMG 6s", "Root Both 1s"] },
+        { id: "tome_reality_tear", name: "Reality Tear", description: "Tear space, creating void zone", icon: "/icons/pack/misc/ChaosCircle.png", tier: 4, damage: 80, cooldown: 22, castTime: 1.2, range: 15, projectile: null, damageType: "shadow", animation: "cast_void", physics: "pull", effects: ["Void Zone 5m", "Pull", "DoT 6s"] },
+        { id: "tome_ancient", name: "Ancient Knowledge", description: "Buff all allies with stats", icon: "/icons/pack/weapons/Book_25.png", tier: 5, damage: 0, cooldown: 30, castTime: 1.0, range: 12, projectile: null, damageType: "holy", animation: "cast_buff", physics: null, effects: ["+15% All Stats", "10s", "AoE 12m"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "tome_apocalypse", name: "Apocalypse Tome", description: "Unleash all pages, massive AoE", icon: "/icons/pack/weapons/Book_22.png", tier: 1, damage: 250, cooldown: 55, castTime: 1.5, range: 12, projectile: "spell", damageType: "arcane", animation: "cast_ultimate", physics: "knockup", effects: ["AoE 12m", "Multi-Element", "Knockup 2s"] },
+        { id: "tome_genesis", name: "Genesis", description: "Rewrite reality, full heal allies", icon: "/icons/pack/misc/Lights.png", tier: 4, damage: -500, cooldown: 120, castTime: 2.0, range: 15, projectile: null, damageType: "holy", animation: "cast_divine", physics: null, effects: ["Full Heal Allies", "Cleanse All", "AoE 15m"] },
+      ]}
+    ]
+  },
+  MACE: {
+    id: "MACE", name: "Mace", icon: "/icons/pack/weapons/Hammer_21.png",
+    classes: ["Mage", "Worge"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "mace_holy_strike", name: "Holy Strike", description: "Mace hit infused with holy energy", icon: "/icons/pack/weapons/Hammer_21.png", tier: 1, damage: 45, cooldown: 0, castTime: 0.3, range: 2, projectile: null, damageType: "holy", animation: "1h_mace_swing", physics: null, effects: ["Holy DMG", "Builds Devotion"] },
+        { id: "mace_crushing", name: "Crushing Blow", description: "Overhead smash, stuns briefly", icon: "/icons/pack/weapons/Hammer_23.png", tier: 2, damage: 60, cooldown: 3, castTime: 0.4, range: 2, projectile: null, damageType: "physical", animation: "1h_mace_overhead", physics: "stun", effects: ["Stun 1s", "-20% Armor 4s"] },
+        { id: "mace_judgement", name: "Judgement Smite", description: "Holy-empowered strike with splash", icon: "/icons/pack/weapons/Hammer_25.png", tier: 3, damage: 55, cooldown: 4, castTime: 0.4, range: 3, projectile: null, damageType: "holy", animation: "1h_mace_smite", physics: null, effects: ["Holy Splash 3m", "Heal Self 20"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "mace_sanctify", name: "Sanctify", description: "Bless ground, heal allies in zone", icon: "/icons/pack/misc/Lights.png", tier: 1, damage: -60, cooldown: 12, castTime: 0.5, range: 8, projectile: null, damageType: "holy", animation: "cast_ground", physics: null, effects: ["Heal Zone 6m", "6s Duration"] },
+        { id: "mace_divine_rush", name: "Divine Rush", description: "Dash empowered with holy energy", icon: "/icons/pack/misc/Glow.png", tier: 2, damage: 50, cooldown: 10, castTime: 0, range: 8, projectile: null, damageType: "holy", animation: "1h_charge", physics: "knockback", effects: ["Dash 8m", "Knockback 3m", "Heal 30"] },
+        { id: "mace_consecrate", name: "Consecrate", description: "Create holy ground damaging undead", icon: "/icons/pack/misc/Life.png", tier: 3, damage: 70, cooldown: 15, castTime: 0.6, range: 0, projectile: null, damageType: "holy", animation: "cast_consecrate", physics: null, effects: ["AoE 8m", "2x vs Undead", "8s"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "mace_smite", name: "Smite", description: "Call down holy bolt on target", icon: "/icons/pack/misc/Lighting.png", tier: 1, damage: 80, cooldown: 10, castTime: 0.6, range: 20, projectile: "spell", damageType: "holy", animation: "cast_smite", physics: "stun", effects: ["Range 20m", "Stun 1s"] },
+        { id: "mace_holy_ground", name: "Holy Ground", description: "Create persistent heal/damage zone", icon: "/icons/pack/misc/NautreLight.png", tier: 2, damage: 50, cooldown: 18, castTime: 0.8, range: 12, projectile: null, damageType: "holy", animation: "cast_zone", physics: null, effects: ["Heal Allies 40/s", "DMG Enemies 50/s", "8s"] },
+        { id: "mace_purify", name: "Purifying Light", description: "Cleanse debuffs and heal burst", icon: "/icons/pack/misc/Glow.png", tier: 3, damage: -100, cooldown: 15, castTime: 0.5, range: 10, projectile: null, damageType: "holy", animation: "cast_cleanse", physics: null, effects: ["Cleanse All Debuffs", "Heal 100", "AoE 10m"] },
+        { id: "mace_retribution", name: "Retribution", description: "Store damage taken, release as holy burst", icon: "/icons/pack/misc/Effect.png", tier: 4, damage: 150, cooldown: 20, castTime: 0, range: 6, projectile: null, damageType: "holy", animation: "1h_mace_burst", physics: "knockback", effects: ["Stored DMG x2", "AoE 6m", "Knockback"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "mace_divine_wrath", name: "Divine Wrath", description: "Massive holy explosion", icon: "/icons/pack/misc/Lights.png", tier: 1, damage: 200, cooldown: 55, castTime: 1.0, range: 10, projectile: null, damageType: "holy", animation: "cast_divine_wrath", physics: "knockup", effects: ["AoE 10m", "Knockup 2s", "Heal Allies Full"] },
+        { id: "mace_armageddon", name: "Armageddon", description: "Rain holy fire from sky", icon: "/icons/pack/misc/Lava.png", tier: 4, damage: 300, cooldown: 75, castTime: 1.5, range: 12, projectile: "spell", damageType: "holy", animation: "cast_armageddon", physics: null, effects: ["AoE 12m", "Holy Fire 8s", "6s Rain"] },
+      ]}
+    ]
+  },
+  WAND: {
+    id: "WAND", name: "Wand", icon: "/icons/pack/weapons/staff_34.png",
+    classes: ["Mage"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "wand_missile", name: "Magic Missile", description: "3 homing arcane bolts", icon: "/icons/pack/weapons/staff_34.png", tier: 1, damage: 40, cooldown: 0, castTime: 0.3, range: 25, projectile: "spell", damageType: "arcane", animation: "wand_cast", physics: null, effects: ["3 Missiles", "Homing", "Range 25m"] },
+        { id: "wand_pulse", name: "Arcane Pulse", description: "Charged pulse with AoE splash", icon: "/icons/pack/weapons/staff_46.png", tier: 2, damage: 55, cooldown: 2, castTime: 0.5, range: 20, projectile: "spell", damageType: "arcane", animation: "wand_charge", physics: null, effects: ["AoE 3m Splash", "Mana Efficient"] },
+        { id: "wand_void_bolt", name: "Void Bolt", description: "Shadow bolt that silences", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 50, cooldown: 6, castTime: 0.4, range: 20, projectile: "spell", damageType: "shadow", animation: "wand_dark", physics: null, effects: ["Silence 2s", "Shadow DMG"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "wand_blink", name: "Blink", description: "Instant teleport to target location", icon: "/icons/pack/misc/Flow.png", tier: 1, damage: 0, cooldown: 12, castTime: 0, range: 15, projectile: null, damageType: "arcane", animation: "blink", physics: null, effects: ["Teleport 15m", "Invulnerable 0.5s"] },
+        { id: "wand_barrier", name: "Arcane Barrier", description: "Create damage absorption shield", icon: "/icons/pack/misc/CircleE.png", tier: 2, damage: 0, cooldown: 18, castTime: 0.3, range: 0, projectile: null, damageType: "arcane", animation: "cast_shield", physics: null, effects: ["Absorb 400", "Reflects 15%"] },
+        { id: "wand_time_warp", name: "Time Warp", description: "Slow time in zone, speed allies", icon: "/icons/pack/misc/Electro.png", tier: 3, damage: 0, cooldown: 25, castTime: 0.5, range: 10, projectile: null, damageType: "arcane", animation: "cast_time", physics: "slow", effects: ["Enemies 50% Slow", "Allies +30% Speed", "6s"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "wand_chain", name: "Chain Lightning", description: "Lightning bouncing between enemies", icon: "/icons/pack/misc/Lighting.png", tier: 1, damage: 70, cooldown: 10, castTime: 0.4, range: 20, projectile: "spell", damageType: "lightning", animation: "wand_lightning", physics: null, effects: ["Bounces x5", "-15% per Bounce"] },
+        { id: "wand_polymorph", name: "Polymorph", description: "Turn enemy into harmless creature", icon: "/icons/pack/misc/Naturecircle.png", tier: 2, damage: 0, cooldown: 20, castTime: 0.8, range: 15, projectile: "spell", damageType: "arcane", animation: "wand_transform", physics: null, effects: ["Disable 4s", "Breaks on DMG"] },
+        { id: "wand_gravity", name: "Gravity Well", description: "Create vortex pulling enemies", icon: "/icons/pack/misc/ChaosCircle.png", tier: 3, damage: 60, cooldown: 15, castTime: 0.6, range: 15, projectile: null, damageType: "arcane", animation: "cast_vortex", physics: "pull", effects: ["Pull 8m", "DoT 5s", "AoE 6m"] },
+        { id: "wand_disintegrate", name: "Disintegrate", description: "Channeled beam, massive single-target", icon: "/icons/pack/misc/CircleL.png", tier: 4, damage: 180, cooldown: 18, castTime: 0, range: 20, projectile: "beam", damageType: "arcane", animation: "wand_beam", physics: null, effects: ["Channel 3s", "Beam", "Armor Melt"] },
+        { id: "wand_arcane_explosion", name: "Arcane Explosion", description: "Instant AoE burst around caster", icon: "/icons/pack/misc/CircleE.png", tier: 5, damage: 100, cooldown: 8, castTime: 0, range: 6, projectile: null, damageType: "arcane", animation: "cast_explosion", physics: "knockback", effects: ["Instant", "AoE 6m", "Knockback 4m"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "wand_meteor_shower", name: "Meteor Shower", description: "Rain meteors on large area", icon: "/icons/pack/misc/Lava.png", tier: 1, damage: 250, cooldown: 55, castTime: 1.0, range: 15, projectile: "spell", damageType: "fire", animation: "cast_meteor", physics: "knockdown", effects: ["AoE 12m", "6s Duration", "Burn 8s"] },
+        { id: "wand_singularity", name: "Void Singularity", description: "Black hole pulling all, then explodes", icon: "/icons/pack/misc/Chaos.png", tier: 4, damage: 300, cooldown: 75, castTime: 1.5, range: 15, projectile: null, damageType: "shadow", animation: "cast_void", physics: "pull", effects: ["Pull All 15m", "3s Charge", "Explode"] },
+      ]}
+    ]
+  },
+  OFFHAND_RELIC: {
+    id: "OFFHAND_RELIC", name: "Off-Hand Relic", icon: "/icons/pack/misc/runic_tablet_01.png",
+    classes: ["Mage", "Worge"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "relic_spirit_touch", name: "Spirit Touch", description: "Channel spirit energy at target", icon: "/icons/pack/misc/runic_tablet_01.png", tier: 1, damage: 40, cooldown: 0, castTime: 0.4, range: 15, projectile: "spell", damageType: "shadow", animation: "offhand_cast", physics: null, effects: ["Spirit DMG", "Builds Charge"] },
+        { id: "relic_runic_pulse", name: "Runic Pulse", description: "Emit runic energy wave", icon: "/icons/pack/misc/runic_tablet_03.png", tier: 2, damage: 55, cooldown: 2, castTime: 0.3, range: 10, projectile: "spell", damageType: "arcane", animation: "offhand_pulse", physics: null, effects: ["Cone Wave", "Mana Return 10"] },
+        { id: "relic_essence_drain", name: "Essence Drain", description: "Drain life force from target", icon: "/icons/pack/misc/runic_tablet_05.png", tier: 3, damage: 45, cooldown: 5, castTime: 0.5, range: 15, projectile: "spell", damageType: "shadow", animation: "offhand_drain", physics: null, effects: ["Lifesteal 50%", "Mana Drain 20"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "relic_mystic_shield", name: "Mystic Shield", description: "Create ward absorbing spell damage", icon: "/icons/pack/misc/runic_tablet_07.png", tier: 1, damage: 0, cooldown: 15, castTime: 0.3, range: 0, projectile: null, damageType: "arcane", animation: "offhand_shield", physics: null, effects: ["Absorb 350 Spell DMG", "8s"] },
+        { id: "relic_soul_link", name: "Soul Link", description: "Link to ally, share healing", icon: "/icons/pack/misc/Life.png", tier: 2, damage: 0, cooldown: 20, castTime: 0.5, range: 20, projectile: null, damageType: "holy", animation: "offhand_link", physics: null, effects: ["Share 40% Healing", "Range 20m", "10s"] },
+        { id: "relic_spirit_walk", name: "Spirit Walk", description: "Become ethereal, pass through enemies", icon: "/icons/pack/misc/smoke.png", tier: 3, damage: 0, cooldown: 25, castTime: 0, range: 0, projectile: null, damageType: "shadow", animation: "spirit_walk", physics: null, effects: ["Ethereal 3s", "Immune to Physical", "+40% Speed"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "relic_curse", name: "Curse of Weakness", description: "Reduce target damage output", icon: "/icons/pack/misc/runic_tablet_08.png", tier: 1, damage: 0, cooldown: 12, castTime: 0.5, range: 20, projectile: "spell", damageType: "shadow", animation: "offhand_curse", physics: null, effects: ["-30% DMG 8s", "Range 20m"] },
+        { id: "relic_hex", name: "Hex", description: "Transform enemy, reducing stats", icon: "/icons/pack/misc/runic_tablet_09.png", tier: 2, damage: 30, cooldown: 18, castTime: 0.8, range: 15, projectile: "spell", damageType: "shadow", animation: "offhand_hex", physics: null, effects: ["Disable Abilities 3s", "-25% All Stats"] },
+        { id: "relic_soul_leech", name: "Soul Leech", description: "AoE drain around caster", icon: "/icons/pack/misc/runic_tablet_10.png", tier: 3, damage: 60, cooldown: 14, castTime: 0, range: 6, projectile: null, damageType: "shadow", animation: "offhand_leech", physics: null, effects: ["AoE 6m", "Heal 100% of DMG"] },
+        { id: "relic_doom", name: "Doom", description: "Mark target, explodes after delay", icon: "/icons/pack/misc/runic_tablet_12.png", tier: 4, damage: 200, cooldown: 22, castTime: 0.6, range: 20, projectile: "spell", damageType: "shadow", animation: "offhand_doom", physics: "knockback", effects: ["Delay 3s", "AoE 5m on Explode", "Knockback"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "relic_banshee", name: "Banshee's Wail", description: "Spectral scream, fear + massive DoT", icon: "/icons/pack/misc/Chaos.png", tier: 1, damage: 180, cooldown: 50, castTime: 0.5, range: 10, projectile: null, damageType: "shadow", animation: "offhand_scream", physics: null, effects: ["Fear 3s", "Shadow DoT 8s", "AoE 10m"] },
+        { id: "relic_soul_storm", name: "Soul Storm", description: "Unleash captured souls as projectiles", icon: "/icons/pack/misc/ChaosCircle.png", tier: 4, damage: 280, cooldown: 65, castTime: 1.0, range: 12, projectile: "spell", damageType: "shadow", animation: "offhand_ultimate", physics: "pull", effects: ["12 Soul Projectiles", "Homing", "Heal per Hit"] },
+      ]}
+    ]
+  },
+  SCYTHE: {
+    id: "SCYTHE", name: "Scythe", icon: "/icons/pack/weapons/Scythe_01.png",
+    classes: ["Worge", "Warrior"],
+    slots: [
+      { type: "primary", unlockTier: 1, label: "PRIMARY", skills: [
+        { id: "scythe_reap", name: "Reaping Slash", description: "Wide sweeping arc, builds Soul stacks", icon: "/icons/pack/weapons/Scythe_01.png", tier: 1, damage: 50, cooldown: 0, castTime: 0.4, range: 3, projectile: null, damageType: "shadow", animation: "scythe_slash", physics: null, effects: ["270° Arc", "Builds Soul Stack"] },
+        { id: "scythe_harvest", name: "Soul Harvest", description: "Consume souls for burst damage", icon: "/icons/pack/weapons/Scythe_03.png", tier: 2, damage: 70, cooldown: 3, castTime: 0.3, range: 3, projectile: null, damageType: "shadow", animation: "scythe_harvest", physics: null, effects: ["+20 DMG per Soul", "Consume Stacks"] },
+        { id: "scythe_embrace", name: "Death's Embrace", description: "Pull target in, heavy hit", icon: "/icons/pack/weapons/Scythe_05.png", tier: 3, damage: 65, cooldown: 5, castTime: 0.3, range: 8, projectile: null, damageType: "shadow", animation: "scythe_pull", physics: "pull", effects: ["Pull 8m", "Root 1s"] },
+      ]},
+      { type: "secondary", unlockTier: 2, label: "SECONDARY", skills: [
+        { id: "scythe_shadow_step", name: "Shadow Step", description: "Teleport behind target", icon: "/icons/pack/misc/smoke.png", tier: 1, damage: 40, cooldown: 10, castTime: 0, range: 12, projectile: null, damageType: "shadow", animation: "shadow_step", physics: null, effects: ["Teleport Behind", "+30% Next Hit"] },
+        { id: "scythe_life_drain", name: "Life Drain", description: "Channeled drain, heals self", icon: "/icons/pack/misc/Life.png", tier: 2, damage: 80, cooldown: 12, castTime: 0, range: 10, projectile: "beam", damageType: "shadow", animation: "scythe_drain", physics: null, effects: ["Channel 3s", "Heal 100% of DMG"] },
+        { id: "scythe_chains", name: "Spectral Chains", description: "Root multiple targets in area", icon: "/icons/pack/misc/ChaosCircle.png", tier: 3, damage: 30, cooldown: 15, castTime: 0.5, range: 8, projectile: null, damageType: "shadow", animation: "scythe_chains", physics: "root", effects: ["Root 3s", "AoE 8m", "Shadow DoT"] },
+      ]},
+      { type: "ability", unlockTier: 2, label: "ABILITY", skills: [
+        { id: "scythe_spiral", name: "Death Spiral", description: "Spinning scythe AoE channel", icon: "/icons/pack/weapons/Scythe_06.png", tier: 1, damage: 100, cooldown: 14, castTime: 0, range: 4, projectile: null, damageType: "shadow", animation: "scythe_spin", physics: null, effects: ["Channel 3s", "360° AoE", "Lifesteal 20%"] },
+        { id: "scythe_corpse", name: "Corpse Explosion", description: "Detonate nearby corpses for AoE", icon: "/icons/pack/misc/Burns.png", tier: 2, damage: 90, cooldown: 10, castTime: 0.3, range: 8, projectile: null, damageType: "shadow", animation: "cast_explosion", physics: "knockback", effects: ["Per Corpse +40 DMG", "AoE 5m"] },
+        { id: "scythe_plague", name: "Plague Swarm", description: "Release disease cloud, spreading DoT", icon: "/icons/pack/misc/Naturecircle.png", tier: 3, damage: 60, cooldown: 16, castTime: 0.5, range: 10, projectile: null, damageType: "nature", animation: "cast_plague", physics: "slow", effects: ["Spread on Contact", "DoT 8s", "Slow 30%"] },
+        { id: "scythe_necrotic", name: "Necrotic Wave", description: "Send death wave forward", icon: "/icons/pack/misc/Chaos_2.png", tier: 4, damage: 120, cooldown: 18, castTime: 0.6, range: 12, projectile: "wave", damageType: "shadow", animation: "scythe_wave", physics: null, effects: ["Line 12m", "Heal Reduction 50%", "Pierce"] },
+      ]},
+      { type: "ultimate", unlockTier: 3, label: "ULTIMATE", skills: [
+        { id: "scythe_grim_reaper", name: "Grim Reaper", description: "Transform into Death, AoE execute", icon: "/icons/pack/weapons/Scythe_07.png", tier: 1, damage: 200, cooldown: 55, castTime: 0.5, range: 8, projectile: null, damageType: "shadow", animation: "scythe_ultimate", physics: null, effects: ["Transform 8s", "Execute <25%", "+50% Speed"] },
+        { id: "scythe_apocalypse_harvest", name: "Apocalypse Harvest", description: "Mark all enemies, reap souls after delay", icon: "/icons/pack/misc/Chaos.png", tier: 4, damage: 300, cooldown: 75, castTime: 1.0, range: 15, projectile: null, damageType: "shadow", animation: "scythe_apocalypse", physics: null, effects: ["Mark All 15m", "3s Delay", "Unavoidable"] },
+      ]}
+    ]
+  }
+};
+
+// ===== CLASS RESTRICTIONS =====
+const CLASS_WEAPONS = {
+  Warrior: ['SWORD','AXE','HAMMER','SHIELD','GREATSWORD','GREATAXE','SCYTHE'],
+  Mage:    ['STAFF','TOME','MACE','WAND','OFFHAND_RELIC'],
+  Ranger:  ['BOW','CROSSBOW','GUN','DAGGER','GREATSWORD','SPEAR'],
+  Worge:   ['STAFF','SPEAR','DAGGER','BOW','HAMMER','MACE','OFFHAND_RELIC','SCYTHE']
+};
+
+// ===== GRUDGE STUDIO API CONFIG =====
+const GRUDGE_API = {
+  baseUrl: 'https://api.grudge-studio.com',
+  objectStore: 'https://objects.grudge-studio.com',
+  endpoints: {
+    weaponSkills: '/api/v1/weapon-skills',
+    playerLoadout: '/api/v1/player/loadout',
+    skillUnlock: '/api/v1/skills/unlock',
   }
 };
 
@@ -898,6 +1175,10 @@ function renderSlotColumns() {
         ? `<span class="value dmg">${skill.damage}</span>`
         : `<span class="value" style="color:var(--text-muted);">—</span>`;
 
+      const castText = skill.castTime ? `${skill.castTime}s` : 'Instant';
+      const rangeText = skill.range ? `${skill.range}m` : '—';
+      const dmgTypeClass = skill.damageType || 'physical';
+
       card.innerHTML = `
         ${isSelected ? '<div class="selected-check">✓</div>' : ''}
         <div class="skill-icon-row">
@@ -909,6 +1190,13 @@ function renderSlotColumns() {
         <div class="skill-stats">
           <div class="skill-stat"><span class="label">DMG</span> ${dmgText}</div>
           <div class="skill-stat"><span class="label">CD</span> <span class="value cd">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</span></div>
+          <div class="skill-stat"><span class="label">Cast</span> <span class="value cast">${castText}</span></div>
+          <div class="skill-stat"><span class="label">Range</span> <span class="value range">${rangeText}</span></div>
+        </div>
+        <div class="skill-meta">
+          ${skill.damageType ? `<span class="meta-tag ${dmgTypeClass}">${skill.damageType}</span>` : ''}
+          ${skill.projectile ? `<span class="meta-tag proj">${skill.projectile}</span>` : ''}
+          ${skill.physics ? `<span class="meta-tag phys">${skill.physics}</span>` : ''}
         </div>
         <div class="skill-effects">${skill.effects.map(e => `<span class="effect-tag">${e}</span>`).join('')}</div>
       `;
@@ -949,6 +1237,9 @@ function showDetail(skill, slotType) {
   const dmgVal = Math.abs(skill.damage);
   const dmgColor = skill.damage < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
 
+  const detCast = skill.castTime ? skill.castTime + 's' : 'Instant';
+  const detRange = skill.range ? skill.range + 'm' : '—';
+
   document.getElementById('detailStats').innerHTML = `
     <div class="detail-stat">
       <div class="stat-label">${dmgLabel}</div>
@@ -959,6 +1250,18 @@ function showDetail(skill, slotType) {
       <div class="stat-val" style="color:hsl(210 70% 60%)">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</div>
     </div>
     <div class="detail-stat">
+      <div class="stat-label">Cast</div>
+      <div class="stat-val" style="color:hsl(43 70% 55%)">${detCast}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="stat-label">Range</div>
+      <div class="stat-val" style="color:hsl(170 60% 50%)">${detRange}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="stat-label">Type</div>
+      <div class="stat-val" style="color:var(--text-gold)">${(skill.damageType || 'physical').toUpperCase()}</div>
+    </div>
+    <div class="detail-stat">
       <div class="stat-label">Slot</div>
       <div class="stat-val" style="color:var(--text-gold)">${slotType.toUpperCase()}</div>
     </div>
@@ -966,6 +1269,9 @@ function showDetail(skill, slotType) {
       <div class="stat-label">Tier</div>
       <div class="stat-val" style="color:var(--gold)">T${skill.tier}</div>
     </div>
+    ${skill.projectile ? `<div class="detail-stat"><div class="stat-label">Projectile</div><div class="stat-val" style="color:hsl(220 60% 65%)">${skill.projectile}</div></div>` : ''}
+    ${skill.physics ? `<div class="detail-stat"><div class="stat-label">Physics</div><div class="stat-val" style="color:hsl(0 55% 65%)">${skill.physics}</div></div>` : ''}
+    ${skill.animation ? `<div class="detail-stat"><div class="stat-label">Animation</div><div class="stat-val" style="color:hsl(180 50% 60%)">${skill.animation}</div></div>` : ''}
   `;
 
   document.getElementById('detailEffects').innerHTML = skill.effects.map(e => `<span class="effect-tag">${e}</span>`).join('');
