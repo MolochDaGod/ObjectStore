@@ -54,22 +54,30 @@ function loadWranglerOauth() {
 
 function loadCreds() {
   const envKnown = loadEnvFile('D:/Grudge-Engine-Web/.env');
-  const token =
+  const adminToken =
     process.env.CLOUDFLARE_ADMIN_TOKEN ||
     process.env.CLOUDFLARE_API_TOKEN ||
     envKnown.CLOUDFLARE_ADMIN_TOKEN ||
     envKnown.CLOUDFLARE_API_TOKEN ||
-    loadWranglerOauth() ||
-    envKnown.CLOUDFLARE_USER_API ||
     null;
+  const wranglerToken = loadWranglerOauth();
+  const dnsToken = envKnown.CLOUDFLARE_USER_API || null;
+  // Primary token (for account-level ops: pages, workers, r2, d1, kv, etc.)
+  const token = adminToken || wranglerToken || dnsToken;
+  // Separate DNS token (falls back to primary)
+  const tokenDns = adminToken || dnsToken || wranglerToken;
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || envKnown.CF_ACCOUNT_ID;
   const zoneId   = process.env.CLOUDFLARE_ZONE_ID    || envKnown.CF_ZONE_ID;
   if (!token) throw new Error('No Cloudflare token found. Set CLOUDFLARE_ADMIN_TOKEN.');
-  return { token, accountId, zoneId };
+  return { token, tokenDns, accountId, zoneId };
 }
 
 function makeClient(token) {
   return new Cloudflare({ apiToken: token });
+}
+
+function makeDnsClient({ tokenDns }) {
+  return new Cloudflare({ apiToken: tokenDns });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -115,10 +123,10 @@ async function listPages({ token, accountId }) {
   }
 }
 
-async function listDns({ token, zoneId }, filter) {
-  const cf = makeClient(token);
+async function listDns(creds, filter) {
+  const cf = makeDnsClient(creds);
   const records = [];
-  for await (const r of cf.dns.records.list({ zone_id: zoneId, per_page: 100 })) {
+  for await (const r of cf.dns.records.list({ zone_id: creds.zoneId, per_page: 100 })) {
     records.push(r);
   }
   const filtered = filter
@@ -160,15 +168,20 @@ async function listR2({ token, accountId }) {
 
 async function gdevelopAudit(creds) {
   const cf = makeClient(creds.token);
+  const cfDns = makeDnsClient(creds);
   const matches = [];
 
   function hit(cat, id, note) {
     if (/gdevelop/i.test(id) || /gdevelop/i.test(note || '')) matches.push({ cat, id, note });
   }
 
-  // DNS
-  for await (const r of cf.dns.records.list({ zone_id: creds.zoneId, per_page: 100 })) {
-    hit('dns', r.name, r.content);
+  // DNS (uses separate DNS-scoped token)
+  try {
+    for await (const r of cfDns.dns.records.list({ zone_id: creds.zoneId, per_page: 100 })) {
+      hit('dns', r.name, r.content);
+    }
+  } catch (err) {
+    console.log(`[warn] dns list skipped: ${err.errors?.[0]?.message || err.message}`);
   }
   // Pages
   try {
