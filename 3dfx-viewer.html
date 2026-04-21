@@ -694,7 +694,7 @@ function buildEffectList(effects, filter = null, search = '') {
     if (search && !fx.name.toLowerCase().includes(search) && !fx.tags?.some(t => t.includes(search))) continue;
 
     const color = catColors[fx.category]?.color || '#888';
-    const srcLabel = fx.source?.replace('gdevelop-effects-playground', 'GDevelop').replace('unity-ummorp-casting', 'Unity Cast').replace('unity-arpg-effects', 'Unity ARPG').replace('unity-new-effects', 'Unity NEW').replace('unity-ummorp-skills', 'Unity Skill') || '';
+    const srcLabel = fx.source?.replace('grudgedot-effects-playground', 'grudgeDot').replace('unity-ummorp-casting', 'Unity Cast').replace('unity-arpg-effects', 'Unity ARPG').replace('unity-new-effects', 'Unity NEW').replace('unity-ummorp-skills', 'Unity Skill') || '';
     el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')">
       <div class="effect-dot" style="background:${color}"></div>
       <div style="flex:1;overflow:hidden">

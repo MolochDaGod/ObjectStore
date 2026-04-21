@@ -33,7 +33,7 @@ The most recent user session progressed through these stages:
    - `docs/reports/puter-remediation-plan-2026-02-28.md` — remediation plan
    - `docs/reports/puter-remediation-checklist.json` — machine-readable checklist
 3. **Agent prompt improvement** — user requested this document be created to encode all context so future agent sessions can resume without losing state.
-4. **SDK v5.0 (2026-03-22)** — Reviewed all frontend apps (GrudgeWars, GDevelop-Assistant, grudge-studio monorepo) and backend services (docker-compose with 8 services). Updated `sdk/grudge-sdk.js` to include full backend API clients: `GrudgeAuthClient`, `GrudgeGameClient`, `GrudgeAccountClient`, `GrudgeLauncherClient`, `GrudgeAssetServiceClient`, `GrudgeWSClient`. Added `TIER_COLORS`, `LS_KEYS`, auto-auth token resolution, updated `getDatabaseInfo()` to MySQL/Redis/VPS. Updated README, CHANGELOG, INTEGRATION-GUIDE.
+4. **SDK v5.0 (2026-03-22)** — Reviewed all frontend apps (GrudgeWars, grudgeDot-Assistant, grudge-studio monorepo) and backend services (docker-compose with 8 services). Updated `sdk/grudge-sdk.js` to include full backend API clients: `GrudgeAuthClient`, `GrudgeGameClient`, `GrudgeAccountClient`, `GrudgeLauncherClient`, `GrudgeAssetServiceClient`, `GrudgeWSClient`. Added `TIER_COLORS`, `LS_KEYS`, auto-auth token resolution, updated `getDatabaseInfo()` to MySQL/Redis/VPS. Updated README, CHANGELOG, INTEGRATION-GUIDE.
 
 ---
 
@@ -236,7 +236,7 @@ When starting a new agent session on this repository, execute in this order:
 ### Session — 2026-03-29
 
 #### Completed
-- Updated `index.html` (root): version badge v3→v5.0.0, stats bar 45+→58+, added "Items & Registries" endpoint group (items-database, sprite-characters, asset-registry, voxelAssets, backgrounds-registry, effects-registry, 3dfx-registry, ui-packs), expanded "Game Engine & Studio" group (gdevelop-assets, gdevelop-hero-aliases, rtsModels, worlds, studio), updated SDK Quick Start to v5.0 backend clients, updated footer version.
+- Updated `index.html` (root): version badge v3→v5.0.0, stats bar 45+→58+, added "Items & Registries" endpoint group (items-database, sprite-characters, asset-registry, voxelAssets, backgrounds-registry, effects-registry, 3dfx-registry, ui-packs), expanded "Game Engine & Studio" group (grudgedot-assets, grudgedot-hero-aliases, rtsModels, worlds, studio), updated SDK Quick Start to v5.0 backend clients, updated footer version.
 - Updated `docs/index.html`: fixed weapon count (119→816+), fixed endpoint count (27→58+), added 3 new sidebar sections (Items & Registries, Studio & Engine, Backend Clients), added 9 new documented endpoint sections, updated JavaScript SDK section to v5.0 with backend service clients table.
 
 #### Carry Forward

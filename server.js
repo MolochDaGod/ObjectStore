@@ -131,7 +131,7 @@ app.use(express.json({ limit: '10mb' }));
 let spriteData = null;
 let characterData = null;
 let assetRegistry = null;
-let gdevelopManifest = null;
+let grudgedotManifest = null;
 let weaponSkillsData = null;
 let spriteIndex = [];
 let weaponSkillIndex = []; // flat index for search
@@ -167,9 +167,9 @@ function loadData() {
   } catch (e) { /* optional */ }
 
   try {
-    gdevelopManifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/gdevelop-assets.json'), 'utf-8'));
-    console.log(`🎮 GDevelop manifest loaded: ${gdevelopManifest.totalAssets} assets`);
-  } catch (e) { /* optional — run npm run build:gdevelop */ }
+    grudgedotManifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/grudgedot-assets.json'), 'utf-8'));
+    console.log(`🎮 grudgeDot manifest loaded: ${grudgedotManifest.totalAssets} assets`);
+  } catch (e) { /* optional — run npm run build:grudgedot */ }
 
   try {
     weaponSkillsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/weaponSkills.json'), 'utf-8'));
@@ -231,7 +231,7 @@ app.get('/health', (req, res) => {
       characters: characterData ? characterData.totalCharacters : 0,
       weaponTypes: weaponSkillsData ? weaponSkillsData.totalWeaponTypes : 0,
       weaponSkills: weaponSkillsData ? weaponSkillsData.totalSkills : 0,
-      gdevelopAssets: gdevelopManifest ? gdevelopManifest.totalAssets : 0,
+      grudgedotAssets: grudgedotManifest ? grudgedotManifest.totalAssets : 0,
       legacyAssets: assetRegistry ? assetRegistry.totalAssets : 0,
     },
     timestamp: new Date().toISOString(),
@@ -318,7 +318,7 @@ app.get('/api/v1/weapon-skills/:weaponType', (req, res) => {
 // ═══════════════════════════════════
 
 const GAME_DATA_DIR = path.join(__dirname, 'api', 'v1');
-const GAME_DATA_BLOCKLIST = new Set(['gdevelop-assets', 'asset-registry', 'master-registry']); // too large for unbounded serving
+const GAME_DATA_BLOCKLIST = new Set(['grudgedot-assets', 'asset-registry', 'master-registry']); // too large for unbounded serving
 
 // GET /api/v1/game-data — List available collections
 app.get('/api/v1/game-data', (req, res) => {
@@ -420,13 +420,13 @@ app.get('/api/v1/stats', (req, res) => {
 });
 
 // ═══════════════════════════════════
-//  GDEVELOP ASSET MANIFEST API
+//  GRUDGEDOT ASSET MANIFEST API
 // ═══════════════════════════════════
 
-app.get('/api/v1/gdevelop-assets', (req, res) => {
-  if (!gdevelopManifest) return jsonErr(res, 503, 'GDevelop manifest not loaded. Run: npm run build:gdevelop');
+app.get('/api/v1/grudgedot-assets', (req, res) => {
+  if (!grudgedotManifest) return jsonErr(res, 503, 'grudgeDot manifest not loaded. Run: npm run build:grudgedot');
   const { type, category, search, page = 1, limit = 200 } = req.query;
-  let assets = gdevelopManifest.assets;
+  let assets = grudgedotManifest.assets;
   if (type) assets = assets.filter(a => a.type === type);
   if (category) assets = assets.filter(a => a.category === category);
   if (search) {
@@ -441,12 +441,12 @@ app.get('/api/v1/gdevelop-assets', (req, res) => {
   const p = Math.max(1, parseInt(page) || 1);
   const l = Math.min(500, Math.max(1, parseInt(limit) || 200));
   const start = (p - 1) * l;
-  jsonOk(res, { total, page: p, limit: l, types: gdevelopManifest.types, assets: assets.slice(start, start + l) });
+  jsonOk(res, { total, page: p, limit: l, types: grudgedotManifest.types, assets: assets.slice(start, start + l) });
 });
 
-app.get('/api/v1/gdevelop-assets/categories', (req, res) => {
-  if (!gdevelopManifest) return jsonErr(res, 503, 'GDevelop manifest not loaded');
-  jsonOk(res, { total: gdevelopManifest.totalAssets, types: gdevelopManifest.types, categories: gdevelopManifest.categories });
+app.get('/api/v1/grudgedot-assets/categories', (req, res) => {
+  if (!grudgedotManifest) return jsonErr(res, 503, 'grudgeDot manifest not loaded');
+  jsonOk(res, { total: grudgedotManifest.totalAssets, types: grudgedotManifest.types, categories: grudgedotManifest.categories });
 });
 
 // ═══════════════════════════════════

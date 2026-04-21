@@ -1,5 +1,5 @@
 /**
- * Convert GDevelopAssistant engine data to ObjectStore JSON endpoints
+ * Convert grudgedot-launcher engine data to ObjectStore JSON endpoints
  * Generates: factionUnits, nodeUpgrades, tileMaps, animations, rendering, controllers, terrain, ai, ecs
  */
 const fs = require('fs');
@@ -366,7 +366,7 @@ function buildECS() {
 }
 
 // ===== RUN ALL =====
-console.log('\n🎮 Converting GDevelop engine data to ObjectStore JSON...\n');
+console.log('\n🎮 Converting grudgeDot engine data to ObjectStore JSON...\n');
 const unitCount = buildFactionUnits();
 buildNodeUpgrades();
 buildTileMaps();

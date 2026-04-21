@@ -40,7 +40,7 @@ const ALLOWED_ORIGINS = new Set([
   'https://client.grudge-studio.com',
   'https://pvp.grudge-studio.com',
   'https://molochdagod.github.io',
-  'https://gdevelop-assistant.vercel.app',
+  'https://grudgedot-launcher.vercel.app',
   'https://grudge-engine-web.vercel.app',
   'https://grudge-builder.vercel.app',
   'https://grudge-warlords-game.vercel.app',

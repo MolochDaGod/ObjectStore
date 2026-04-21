@@ -4,7 +4,7 @@
  * Adds entries to:
  *   - api/v1/effects-registry.json  (magic effects)
  *   - api/v1/asset-registry.json    (all assets)
- *   - api/v1/gdevelop-assets.json   (backend sync manifest)
+ *   - api/v1/grudgedot-assets.json   (backend sync manifest)
  */
 const fs = require('fs');
 const path = require('path');
@@ -146,9 +146,9 @@ assetReg.generatedAt = NOW;
 fs.writeFileSync(assetRegPath, JSON.stringify(assetReg, null, 2));
 console.log(`  -> Added ${assetAdded} assets (total: ${assetReg.totalAssets})`);
 
-// ── 3. Update gdevelop-assets.json (backend sync manifest) ─────────
-console.log('Updating gdevelop-assets.json...');
-const gdPath = path.join(OS_ROOT, 'api/v1/gdevelop-assets.json');
+// ── 3. Update grudgedot-assets.json (backend sync manifest) ─────────
+console.log('Updating grudgedot-assets.json...');
+const gdPath = path.join(OS_ROOT, 'api/v1/grudgedot-assets.json');
 let gdManifest;
 try {
   gdManifest = JSON.parse(fs.readFileSync(gdPath, 'utf8'));

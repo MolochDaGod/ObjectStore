@@ -43,7 +43,7 @@ Previously in grudge-game-data-hub (now archived) — merged into this repo.
 Every Grudge app reads from ObjectStore:
 - `grudge-builder` → `objectStoreApi.ts` (cached fetch), `objectStoreModels.ts` (3D)
 - `grudge-engine-web` → `asset-catalog.ts` (model paths)
-- `GDevelopAssistant` → direct fetch via VITE_OBJECTSTORE_URL
+- `grudgedot-launcher` → direct fetch via VITE_OBJECTSTORE_URL
 - `grudge-studio-backend` → R2 via OBJECT_STORAGE_* env vars
 
 ## Coding Rules

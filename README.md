@@ -58,7 +58,7 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 ### 📦 Full Asset Collection (3.0.0+)
 - **208 animated characters** with 2,388 unique 2D sprites across 3 sources
 - **47 fish species** from Grudge Angeler with full sprite sheets
-- **25 GDevelop Assistant hero aliases** mapped to existing sprites
+- **25 grudgeDot Assistant hero aliases** mapped to existing sprites
 - **7,400+ icons** across weapons, armor, food, materials, RPG packs, entities, potions, resources
 - **450 audio files** (SFX in wav/mp3/ogg/flac)
 - **471 3D model** registry (GLB, GLTF, FBX, OBJ) organized by race
@@ -130,7 +130,7 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 | `/api/v1/spriteMaps.json` | Sprite map definitions |
 | `/api/v1/sprite-characters.json` | 275 animated characters with animations, grid/frame-sequence support |
 | `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
-| `/api/v1/gdevelop-hero-aliases.json` | 25 hero class → sprite mappings for GDevelop Assistant |
+| `/api/v1/grudgedot-hero-aliases.json` | 25 hero class → sprite mappings for grudgeDot Assistant |
 | `/api/v1/items-database.json` | Unified item database — 3,425 items with icon URLs, stats, tooltips (8 categories) |
 | `/api/v1/terrain.json` | Terrain configuration |
 | `/api/v1/tileMaps.json` | Tile map definitions |
@@ -476,7 +476,7 @@ ObjectStore/
 │   ├── sprite-characters.json # 275 animated characters (3 sources)
 │   ├── sprites2d.json       # 2,220+ animations across all sprites
 │   ├── items-database.json  # 3,425 items with icons, stats, categories
-│   ├── gdevelop-hero-aliases.json # Hero class → sprite mappings
+│   ├── grudgedot-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
 │   ├── missions.json        # Story + arena templates
 │   ├── skillTrees.json      # 4 classes × 5 tiers

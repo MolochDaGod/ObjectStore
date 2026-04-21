@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * GDevelop Asset Manifest Builder
+ * grudgeDot Asset Manifest Builder
  * 
  * Reads all ObjectStore API JSONs + icon directories and produces
- * a unified `api/v1/gdevelop-assets.json` for GDevelop to consume.
+ * a unified `api/v1/grudgedot-assets.json` for grudgeDot to consume.
  * 
- * Usage: node scripts/build-gdevelop-manifest.mjs
- * Output: api/v1/gdevelop-assets.json
+ * Usage: node scripts/build-grudgedot-manifest.mjs
+ * Output: api/v1/grudgedot-assets.json
  */
 
 import { readFile, readdir, stat, writeFile, mkdir } from 'node:fs/promises';
@@ -17,7 +17,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const API_DIR = join(ROOT, 'api', 'v1');
 const ICONS_DIR = join(ROOT, 'icons');
-const OUTPUT = join(API_DIR, 'gdevelop-assets.json');
+const OUTPUT = join(API_DIR, 'grudgedot-assets.json');
 const BASE_URL = 'https://molochdagod.github.io/ObjectStore';
 
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp']);
@@ -295,7 +295,7 @@ async function buildGameData() {
 
 // ─── Main ───────────────────────────────────────────────────
 async function main() {
-  console.log('🎮 GDevelop Asset Manifest Builder');
+  console.log('🎮 grudgeDot Asset Manifest Builder');
   console.log(`📁 Root: ${ROOT}`);
   console.log('');
 

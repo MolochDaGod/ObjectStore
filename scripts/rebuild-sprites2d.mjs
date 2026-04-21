@@ -21,7 +21,7 @@ const OUT_CHARS = join(ROOT, 'api', 'v1', 'sprite-characters.json');
 const OVERRIDES_PATH = join(ROOT, 'api', 'v1', 'sprite-overrides.json');
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
-const HERO_ALIASES_PATH = join(ROOT, 'api', 'v1', 'gdevelop-hero-aliases.json');
+const HERO_ALIASES_PATH = join(ROOT, 'api', 'v1', 'grudgedot-hero-aliases.json');
 
 // ─── Source detection based on directory path ───
 // Fish subdirectories with spritesheets from Grudge Angeler
@@ -647,7 +647,7 @@ async function main() {
     characters,
   };
 
-  // ── Inject GDevelop Assistant hero aliases ──
+  // ── Inject grudgeDot Assistant hero aliases ──
   try {
     if (existsSync(HERO_ALIASES_PATH)) {
       const aliases = JSON.parse(readFileSync(HERO_ALIASES_PATH, 'utf8'));
@@ -664,10 +664,10 @@ async function main() {
           name: alias.id,
           displayName: alias.name,
           category: alias.category || 'characters',
-          source: 'gdevelop-assistant',
+          source: 'grudgedot-launcher',
           aliasOf: alias.mapsTo,
           animations: srcChar.animations.map(a => ({ ...a })),
-          uuid: generateUUID('gdevelop', alias.id, '__CHARACTER__'),
+          uuid: generateUUID('grudgedot', alias.id, '__CHARACTER__'),
           animationCount: srcChar.animationCount,
           description: alias.description || '',
           heroClass: alias.heroClass || alias.name,
@@ -676,7 +676,7 @@ async function main() {
         characters.push(aliasChar);
         aliasCount++;
       }
-      console.log(`   ✅ Injected ${aliasCount} GDevelop Assistant hero aliases`);
+      console.log(`   ✅ Injected ${aliasCount} grudgeDot Assistant hero aliases`);
     }
   } catch (e) {
     console.warn('   ⚠️ Could not load hero aliases:', e.message);
