@@ -119,6 +119,59 @@ function resolveWeaponIcon(item, cat, index) {
   return packWeaponIcon(cat.iconBase, index, cat.iconOffset || 0, cat.iconMax || 0);
 }
 
+// ---- Skill icon resolver ----
+// ObjectStore has /icons/skill_nobg/<Class>skill_NN_nobg.png (10 classes x 50-51 skills)
+// and /icons/spells/<effect>-<color>-<N>.png (358 effect sprites).
+// If the canonical skill record already has a real URL/path we keep it;
+// otherwise we pick a semantic match by keyword.
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < (s || '').length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  return Math.abs(h);
+}
+const CLASS_SKILL_PREFIX = { warrior: 'Warrior', mage: 'Mage', ranger: 'Archer', worge: 'Shaman', priest: 'Priest', paladin: 'Paladin', druide: 'Druide', druid: 'Druide', assassin: 'Assassin', warlock: 'Warlock', engineer: 'Engineer' };
+function classSkillIcon(cls, n) {
+  return `${CDN}/icons/skill_nobg/${cls}skill_${String(n).padStart(2, '0')}_nobg.png`;
+}
+function spellIcon(effect, color, variant) {
+  return `${CDN}/icons/spells/${effect}-${color}-${variant}.png`;
+}
+function resolveSkillIcon(skill, className, index = 0) {
+  const raw = skill?.icon;
+  if (typeof raw === 'string') {
+    if (raw.startsWith('http')) return raw;
+    if (raw.startsWith('/icons/')) return `${CDN}${raw}`;
+  }
+  const h = hashStr(`${className}-${skill.id || skill.name || ''}-${index}`);
+  const variant = (h % 3) + 1;
+  const text = `${skill.name || ''} ${skill.description || ''} ${skill.effect || ''}`.toLowerCase();
+
+  if (/fire|burn|flame|inferno|ember|magma|scorch|pyro|blaze|ignite|solar|hellfire/.test(text)) return spellIcon('lightning', 'orange', variant);
+  if (/frost|ice|chill|freeze|glacial|winter|blizzard|cold|cryo/.test(text)) return spellIcon('ice', 'sky', variant);
+  if (/lightning|thunder|storm|shock|electric|volt|zap|tempest/.test(text)) return spellIcon('lightning', 'blue', variant);
+  if (/holy|heal|light|divine|bless|sacred|dawn|cleanse|revive|restore|consecrat|sanctif/.test(text)) return spellIcon('light', 'jade', variant);
+  if (/poison|toxic|venom/.test(text)) return spellIcon('rip', 'acid', variant);
+  if (/nature|vine|root|thorn|leaf|herb|entangle|bloom|grove/.test(text)) return spellIcon('vines', 'jade', variant);
+  if (/shadow|void|dark|night|twilight|shade|eclipse|dusk|wraith|reaper|necrotic/.test(text)) return spellIcon('rip', 'eerie', variant);
+  if (/arcane|mana|magic|spell|cast|mystic|enchant/.test(text)) return spellIcon('beam', 'blue', variant);
+  if (/bleed|crimson|blood/.test(text)) return spellIcon('rip', 'magenta', variant);
+  if (/air|wind|gust|cyclone/.test(text)) return spellIcon('air-burst', 'sky', variant);
+  if (/beam|laser/.test(text)) return spellIcon('beam', 'eerie', variant);
+  if (/needle|piercing/.test(text)) return spellIcon('needles', 'royal', variant);
+
+  // Fall back to class-prefixed skill sprite based on keyword or given className
+  let cls = null;
+  if (/shot|arrow|bow|volley|aim|snipe/.test(text)) cls = 'Archer';
+  else if (/stab|dagger|backstab|stealth|assassin|execute/.test(text)) cls = 'Assassin';
+  else if (/shield|block|parry|guard|ward|bulwark|taunt|aura|defend/.test(text)) cls = 'Paladin';
+  else if (/stun|smash|crush|bash|slam|pound|hammer|maul|concussi|cleave/.test(text)) cls = 'Warrior';
+  else if (/slash|strike|swing|hack|chop|cut|rend|sever|pierce|thrust/.test(text)) cls = 'Warrior';
+  if (!cls) cls = CLASS_SKILL_PREFIX[(className || '').toLowerCase()] || 'Warrior';
+
+  const slot = (h % 50) + 1;
+  return classSkillIcon(cls, slot);
+}
+
 // -- INPUT --------------------------------------------------------------
 function readJson(rel) {
   const full = join(ROOT, rel);
@@ -378,11 +431,21 @@ for (const [gname, gdata] of Object.entries(PROFS.gathering || {})) {
     feedsInto: gdata.feedsInto || [],
   };
 }
+// Map profession-node branches to a reasonable class skill pack
+const PROF_BRANCH_CLASS = {
+  Core: 'Warrior', Weapons: 'Warrior', Armor: 'Paladin', Gathering: 'Druide',
+  Logging: 'Druide', Leatherworking: 'Shaman', Fletching: 'Archer',
+  Hybrid: 'Engineer', Alchemy: 'Druide', Cooking: 'Priest', Scrolls: 'Mage',
+  Traps: 'Engineer',
+};
 for (const [pname, pdata] of Object.entries(PROFS.professions || {})) {
   const pUuid = uuid('item', `prof-${pname}`);
-  const nodes = (pdata.skillTree || []).map(node => {
+  const nodes = (pdata.skillTree || []).map((node, i) => {
     const nodeUuid = uuid('node', `${pname}-node-${node.id}`);
-    const rec = { uuid: nodeUuid, parentNodeId: node.parent ?? null, ...node };
+    const pseudoSkill = { id: String(node.id), name: node.name, description: node.desc, icon: node.icon };
+    const branchClass = PROF_BRANCH_CLASS[node.branch] || 'Warrior';
+    const icon = resolveSkillIcon(pseudoSkill, branchClass, i);
+    const rec = { uuid: nodeUuid, parentNodeId: node.parent ?? null, ...node, icon };
     allProfessionNodes.push({ professionUuid: pUuid, profession: pname, ...rec });
     profNodeCount++;
     return rec;
@@ -408,9 +471,15 @@ let classSkillCount = 0;
 for (const [cname, cdata] of Object.entries(SKILLTREES.skillTrees || {})) {
   const tiers = (cdata.tiers || []).map(tier => ({
     ...tier,
-    skills: (tier.skills || []).map(sk => {
+    skills: (tier.skills || []).map((sk, i) => {
       classSkillCount++;
-      return { uuid: uuid('skill', `class-${cname}-${sk.id}`), ...sk };
+      const resolved = resolveSkillIcon(sk, cname, i);
+      return {
+        uuid: uuid('skill', `class-${cname}-${sk.id}`),
+        ...sk,
+        icon: resolved,
+        originalIcon: sk.icon !== resolved ? (sk.icon ?? null) : undefined,
+      };
     }),
   }));
   masterSkillTrees[cname] = { uuid: uuid('item', `class-${cname}`), ...cdata, tiers };
@@ -428,9 +497,15 @@ const masterWeaponSkills = {
     ...wt, uuid: uuid('item', `weapontype-${wt.id}`),
     slots: (wt.slots || []).map(slot => ({
       ...slot,
-      skills: (slot.skills || []).map(sk => {
+      skills: (slot.skills || []).map((sk, i) => {
         weaponSkillCount++;
-        return { uuid: uuid('skill', `weapon-${wt.id}-${sk.id}`), ...sk };
+        const resolved = resolveSkillIcon(sk, wt.id, i);
+        return {
+          uuid: uuid('skill', `weapon-${wt.id}-${sk.id}`),
+          ...sk,
+          icon: resolved,
+          originalIcon: sk.icon !== resolved ? (sk.icon ?? null) : undefined,
+        };
       }),
     })),
   })),
