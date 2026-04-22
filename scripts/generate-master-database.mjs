@@ -17,10 +17,13 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+import { WEAPONS as DEF_WEAPONS, CATEGORIES_MIGRATED as MIGRATED_WEAPON_CATS } from './defs/weapons.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT = join(__dirname, '..');
 const API_DIR = join(ROOT, 'api', 'v1');
+const ICONS_WEAPONS_DIR = join(ROOT, 'icons', 'weapons');
 
 if (!existsSync(API_DIR)) mkdirSync(API_DIR, { recursive: true });
 
@@ -94,6 +97,16 @@ function scaleStat(base, perTier, tier) {
 // ============================================================
 // ICON MAPPING
 // ============================================================
+// Bespoke icon resolver: if /icons/weapons/<slug>.png exists on disk, use
+// that URL; otherwise fall back to the positional pack icon. Icon URLs
+// emitted for MIGRATED categories are also checked for collisions -- two
+// base items resolving to the same URL fails the build.
+function bespokeIconUrl(slug) {
+  if (!slug) return null;
+  const path = join(ICONS_WEAPONS_DIR, `${slug}.png`);
+  return existsSync(path) ? `${CDN}/icons/weapons/${slug}.png` : null;
+}
+
 const WEAPON_ICONS = {
   swords:     (i) => PACK_ICON(`weapons/Sword_${String(i).padStart(2, '0')}.png`),
   axes:       (i) => PACK_ICON(`weapons/Axe_${String(i).padStart(2, '0')}.png`),
@@ -341,22 +354,47 @@ function getMaterialUuid(name) {
 }
 
 // --- Weapons ---
+// Merge inline WEAPON_DEFINITIONS with the migrated defs/weapons.mjs source.
+// For any category in MIGRATED_WEAPON_CATS, the defs module wins; its items
+// carry `slug` so the bespoke-icon resolver can prefer /icons/weapons/<slug>.png.
+const MERGED_WEAPONS = { ...WEAPON_DEFINITIONS };
+for (const [cat, def] of Object.entries(DEF_WEAPONS)) {
+  MERGED_WEAPONS[cat] = {
+    profession: def.profession,
+    category: def.subCategory || def.category,
+    items: def.items,
+    starter: def.starter,
+  };
+}
+
+const weaponIconCollisions = new Map(); // url -> [baseNames]
 let weaponCount = 0;
-for (const [weaponType, def] of Object.entries(WEAPON_DEFINITIONS)) {
+for (const [weaponType, def] of Object.entries(MERGED_WEAPONS)) {
   const iconFn = WEAPON_ICONS[weaponType];
-  def.items.forEach((item, idx) => {
+  const migrated = MIGRATED_WEAPON_CATS.has(weaponType);
+
+  // Helper: push one base item + its tier expansion
+  const pushItem = (item, idx, { isStarter = false } = {}) => {
+    const bespoke = migrated ? bespokeIconUrl(item.slug) : null;
+    const iconUrl = bespoke || (iconFn ? iconFn(idx + 1) : '');
+
+    if (migrated && iconUrl) {
+      if (!weaponIconCollisions.has(iconUrl)) weaponIconCollisions.set(iconUrl, []);
+      weaponIconCollisions.get(iconUrl).push(`${weaponType}/${item.name}`);
+    }
+
     const baseUuid = generateUuid('item', `${weaponType}-${item.name}`);
     const recipeUuid = generateUuid('recipe', `recipe-${item.name}`);
     const recipeMaterials = Object.entries(item.mats).map(([matName, qty]) => ({
       uuid: getMaterialUuid(matName), name: matName, quantity: qty,
     }));
-
     allRecipes.push({
       uuid: recipeUuid, name: `Craft ${item.name}`, resultItemId: baseUuid,
       resultName: item.name, profession: def.profession, category: weaponType, materials: recipeMaterials,
     });
 
-    for (let tier = 1; tier <= 8; tier++) {
+    const maxTier = isStarter ? 1 : 8;
+    for (let tier = 1; tier <= maxTier; tier++) {
       const tierUuid = tier === 1 ? baseUuid : generateUuid('item', `${weaponType}-${item.name}-T${tier}`);
       const tierData = TIERS[tier - 1];
       const stats = {};
@@ -373,15 +411,32 @@ for (const [weaponType, def] of Object.entries(WEAPON_DEFINITIONS)) {
         uuid: tierUuid, baseUuid, name: tier === 1 ? item.name : `${item.name} T${tier}`,
         baseName: item.name, category: weaponType, type: 'weapon', subCategory: def.category,
         tier, tierLabel: tierData.label, tierColor: tierData.color,
-        iconUrl: iconFn ? iconFn(idx + 1) : '', description: item.desc, stats,
-        craftedBy: def.profession, recipeUuid,
+        iconUrl, description: item.desc, stats,
+        craftedBy: isStarter ? null : def.profession,
+        recipeUuid,
+        source: item.source || (isStarter ? 'world-drop' : 'craft'),
+        foldsInLegacy: item.foldsInLegacy || undefined,
         abilities: item.abilities || [], signature: item.signature || '', passives: item.passives || [],
       });
       weaponCount++;
     }
-  });
+  };
+
+  // Starter item (migrated categories only) -- T1 world-drop generic.
+  // Starter takes pack slot 1; real items shift to slot 2+ to avoid collision.
+  if (def.starter) pushItem(def.starter, 0, { isStarter: true });
+  const packOffset = def.starter ? 1 : 0;
+  def.items.forEach((item, idx) => pushItem(item, idx + packOffset));
 }
-console.log(`  ${weaponCount} weapon items (${weaponCount / 8} base x 8 tiers)`);
+console.log(`  ${weaponCount} weapon items (base x 8 tiers, + starters for migrated categories)`);
+
+// Fail the build on icon collisions WITHIN migrated categories.
+const migratedCollisions = [...weaponIconCollisions.entries()].filter(([, names]) => names.length > 1);
+if (migratedCollisions.length) {
+  console.error('\nICON COLLISIONS in migrated weapon categories (fatal):');
+  for (const [url, names] of migratedCollisions) console.error(`  ${url}\n    ${names.join('\n    ')}`);
+  process.exit(1);
+}
 
 // --- Food ---
 let foodCount = 0;

@@ -1,10 +1,10 @@
 # Grudge Items Audit
 
-Generated: 2026-04-22T00:54:58.224Z
+Generated: 2026-04-22T04:59:38.276Z
 
 ## Source totals
-- master-items: 818
-- master-recipes: 118
+- master-items: 821
+- master-recipes: 121
 - master-materials: 93
 - items-database (legacy): 3425
 - armor.json: 150
@@ -13,8 +13,8 @@ Generated: 2026-04-22T00:54:58.224Z
 ## Current Grudge-system categories
 
 ### axes
-- base items: **6**  tier rows: 48  unique icons: 6
-- base names: Bonehew, Dreadcleaver, Gorehowl, Ironmaw, Skullsplitter, Veinreaver
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bonehew, Dreadcleaver, Gorehowl, Iron Axe, Ironmaw, Skullsplitter, Veinreaver
 
 ### bows
 - base items: **6**  tier rows: 48  unique icons: 6
@@ -34,12 +34,8 @@ Generated: 2026-04-22T00:54:58.224Z
 - base names: Bloodreaver XB, Emberbolt, Ironshard, Ironveil Repeater, Skullpiercer, Wraithspike
 
 ### daggers
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **3**
-    - Nightfang → icons/weapons/nightfang.png
-    - Bloodshiv → icons/weapons/bloodshiv.png
-    - Emberfang → icons/weapons/emberfang.png
-- base names: Bloodshiv, Duskblade, Emberfang, Ironspike, Nightfang, Wraithclaw
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodshiv, Duskblade, Emberfang, Iron Dagger, Ironspike, Nightfang, Wraithclaw
 
 ### fireStaves
 - base items: **4**  tier rows: 32  unique icons: 4
@@ -129,15 +125,8 @@ Generated: 2026-04-22T00:54:58.224Z
 - base names: Bloodspear, Divine Trident, Iron Pike, Mithril Javelin, Steel Lance, Voidpiercer
 
 ### swords
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **6**
-    - Bloodfeud Blade → icons/weapons/bloodfeud-blade.png
-    - Wraithfang → icons/weapons/wraithfang.png
-    - Oathbreaker → icons/weapons/oathbreaker.png
-    - Kinrend → icons/weapons/kinrend.png
-    - Dusksinger → icons/weapons/dusksinger.png
-    - Emberclad → icons/weapons/emberclad.png
-- base names: Bloodfeud Blade, Dusksinger, Emberclad, Kinrend, Oathbreaker, Wraithfang
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodfeud Blade, Dusksinger, Emberclad, Iron Sword, Kinrend, Oathbreaker, Wraithfang
 
 ### tomes
 - base items: **8**  tier rows: 64  unique icons: 8

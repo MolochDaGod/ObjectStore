@@ -15,14 +15,17 @@ ObjectStore, `grudge-game-data-hub`, and every downstream Grudge deployment.
 - `scripts/audit-items.mjs` produces `api/v1/_audit/items-audit.json` and `docs/ITEMS_AUDIT.md`.
 - D5 tier labels applied in both generators; both `master-items.json` outputs regenerated.
 - `api/v1/items-legacy.json` frozen (3,425 items) - source for legacy triage.
-- `scripts/defs/` scaffolded: `weapons.mjs`, `armor.mjs`, `consumables.mjs`, `materials.mjs`, `offhand-tomes.mjs`, `artifacts.mjs` (all empty, filled during sessions).
-- `docs/consolidation/session-1-swords-axes-daggers.md` prepared.
+- `scripts/defs/` scaffolded: `weapons.mjs` (swords/axes/daggers FILLED), `armor.mjs`, `consumables.mjs`, `materials.mjs`, `offhand-tomes.mjs`, `artifacts.mjs`.
+- Generator wired to `defs/weapons.mjs` with bespoke-icon resolver (`/icons/weapons/<slug>.png` -> pack fallback) and fatal collision checks for migrated categories.
+- Starter items (Iron Sword/Axe/Dagger) added for Session #1 -- world-drop T1, profession-less, folds legacy vanilla entries.
+- Misclassified legacy items parked in `docs/consolidation/_holding/misclassified-weapons.md` for resolution in later sessions.
+- Session #2 doc generated at `docs/consolidation/session-2-hammers-greatswords-greataxes.md`.
 
 ## Consolidation sessions
 Session | Categories | Status
 --- | --- | ---
-#1 | swords, axes, daggers | In user review
-#2 | hammers, greatswords, greataxes | Queued
+#1 | swords, axes, daggers | Closed (2026-04-22) - icons wired, starters added, misclassified parked
+#2 | hammers, greatswords, greataxes | Prepared (awaiting review)
 #3 | spears, maces, shields | Queued
 #4 | bows, crossbows, guns | Queued
 #5 | fireStaves, frostStaves, holyStaves, lightningStaves, natureStaves | Queued

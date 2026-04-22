@@ -112,7 +112,8 @@ for (const item of master.items) {
 
   // Issue: missing profession / tier / recipe
   if (item.tier == null) b.issues.push({ kind: 'missing-tier', uuid: item.uuid, name: item.name });
-  if (!item.craftedBy && item.type !== 'potion' && item.type !== 'food') {
+  const starterLike = item.source === 'world-drop' || item.source === 'boss-drop' || item.source === 'quest' || item.type === 'artifact';
+  if (!item.craftedBy && !starterLike && item.type !== 'potion' && item.type !== 'food') {
     b.issues.push({ kind: 'missing-profession', uuid: item.uuid, name: item.name });
   }
   if (!recipeByUuid.has(item.recipeUuid)) {
