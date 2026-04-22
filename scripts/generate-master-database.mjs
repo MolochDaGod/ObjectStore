@@ -106,16 +106,26 @@ function packWeaponIcon(iconBase, index, offset = 0, max = 40) {
   if (isResource) return PACK(`resources/${iconBase}_${String(clamped).padStart(2, '0')}.png`);
   return PACK(`weapons/${iconBase}_${padded}.png`);
 }
+// Verify a canonical spritePath actually exists on disk. Many records in
+// weapons.json point at /icons/weapons/swords/<slug>.png (subfolder + underscore)
+// but the real bespoke art lives flat at /icons/weapons/<slug>.png (hyphen).
+function diskIconExists(cdnRelPath) {
+  if (!cdnRelPath || cdnRelPath.startsWith('http')) return false;
+  const rel = cdnRelPath.replace(/^\//, '');
+  return existsSync(join(ROOT, rel));
+}
+
 function resolveWeaponIcon(item, cat, index) {
-  // 1. canonical spritePath on the item wins unconditionally
-  if (item.spritePath) {
-    const p = item.spritePath.startsWith('http') ? item.spritePath : `${CDN}${item.spritePath}`;
-    return p;
-  }
-  // 2. bespoke at /icons/weapons/<slug>.png
+  // 1. bespoke at /icons/weapons/<slug>.png (hyphenated; this is what's on disk).
   const bespoke = bespokeIconUrl(item.id);
   if (bespoke) return bespoke;
-  // 3. pack math
+  // 2. canonical spritePath only if the file is actually present on disk.
+  if (item.spritePath) {
+    if (item.spritePath.startsWith('http')) return item.spritePath;
+    if (diskIconExists(item.spritePath)) return `${CDN}${item.spritePath}`;
+    // otherwise fall through to pack math below.
+  }
+  // 3. pack math (always resolves to a real pack file).
   return packWeaponIcon(cat.iconBase, index, cat.iconOffset || 0, cat.iconMax || 0);
 }
 
@@ -326,8 +336,11 @@ for (const [matName, matData] of Object.entries(ARMOR.materials || {})) {
     const baseUuid = uuid('item', `armor-${matName}-${item.id}`);
     const recipeMats = [];
     const recipeUuid = uuid('recipe', `recipe-armor-${item.id}`);
+    // Armor: only use spritePath if the file actually exists on disk; otherwise empty.
     const iconUrl = item.spritePath
-      ? (item.spritePath.startsWith('http') ? item.spritePath : `${CDN}${item.spritePath}`)
+      ? (item.spritePath.startsWith('http')
+          ? item.spritePath
+          : (diskIconExists(item.spritePath) ? `${CDN}${item.spritePath}` : ''))
       : '';
     for (let tier = 1; tier <= 8; tier++) {
       const tUuid = tier === 1 ? baseUuid : uuid('item', `armor-${matName}-${item.id}-T${tier}`);
