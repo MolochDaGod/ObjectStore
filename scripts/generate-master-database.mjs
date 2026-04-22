@@ -1,25 +1,39 @@
 #!/usr/bin/env node
 /**
- * ObjectStore — Master Database Generator
+ * ObjectStore - Master Database Generator (data-driven rewrite)
  *
- * Generates unified master JSON files with GRUDGE UUIDs, tier expansion,
- * and recipe linking from the canonical weapon/item definitions.
+ * Canonical source of truth for items, icons, and categories is the set of
+ * files the ItemBrowser.html page consumes:
+ *   - api/v1/weapons.json       (24 weapon categories including tomes + arcaneStaves)
+ *   - api/v1/armor.json         (cloth/leather/metal/gem)
+ *   - api/v1/materials.json     (ore/ingot/wood/cloth/leather/gem/essence)
+ *   - api/v1/consumables.json   (redFoods/greenFoods/blueFoods/mysticPotions/engineerConsumables)
  *
- * Output: api/v1/master-items.json, master-recipes.json, master-materials.json, master-attributes.json
+ * This script reads those files AS-IS, layers GRUDGE UUIDs + tier expansion +
+ * recipe linking on top, and emits master-* JSONs consumed by every Grudge
+ * Studio game via ObjectStore.
  *
- * Usage: node scripts/generate-master-database.mjs
+ * Key decisions:
+ *   - D3: api/v1/weapons.json category `arcaneStaves` is emitted as
+ *     category=artifact, type=artifact, artifactType=arcane (with discovery
+ *     block). No tier expansion. Source-of-truth list remains in weapons.json.
+ *   - D4: api/v1/weapons.json categories ending in `Tomes` (fire/frost/holy/
+ *     lightning/nature/arcane) are emitted as category=offhand-tome,
+ *     type=offhand-tome with skillGrants derived from their `abilities`.
+ *     No tier expansion.
+ *   - D5: tier labels T5=Heroic, T8=Legendary.
+ *   - Icon resolution: prefer canonical `spritePath` -> else bespoke
+ *     `/icons/weapons/<slug>.png` if on disk -> else pack math
+ *     `iconBase_${pad(iconOffset + index)}.png`.
  *
- * Originally from grudge-game-data-hub (now archived).
- * Moved into ObjectStore as the single source of truth.
+ * Output: api/v1/master-items.json, master-armor.json, master-materials.json,
+ * master-consumables.json, master-recipes.json, master-artifacts.json,
+ * master-registry.json.
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-
-import { WEAPONS as DEF_WEAPONS, CATEGORIES_MIGRATED as MIGRATED_WEAPON_CATS } from './defs/weapons.mjs';
-import { OFFHAND_TOMES } from './defs/offhand-tomes.mjs';
-import { ARTIFACTS } from './defs/artifacts.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,30 +43,21 @@ const ICONS_WEAPONS_DIR = join(ROOT, 'icons', 'weapons');
 
 if (!existsSync(API_DIR)) mkdirSync(API_DIR, { recursive: true });
 
-// ============================================================
-// GRUDGE UUID GENERATOR
-// ============================================================
+// -- GRUDGE UUID --------------------------------------------------------
 const PREFIX_MAP = {
   item: 'ITEM', recipe: 'RECP', material: 'MATL', node: 'NODE',
-  food: 'FOOD', potion: 'POTN', skill: 'SKIL', attribute: 'ATTR',
-  class: 'CLAS', race: 'RACE', consumable: 'CONS',
+  food: 'FOOD', potion: 'POTN', tome: 'ITEM', artifact: 'ITEM',
+  skill: 'SKIL', attribute: 'ATTR', consumable: 'CONS',
 };
-
-let sequenceCounter = 0;
-
-function fnv1aHash8(str) {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  hash = hash >>> 0;
-  const h2 = (hash ^ (hash >>> 16)) >>> 0;
-  return h2.toString(16).toUpperCase().padStart(8, '0').slice(0, 8);
+let _seq = 0;
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  h = h >>> 0;
+  return ((h ^ (h >>> 16)) >>> 0).toString(16).toUpperCase().padStart(8, '0').slice(0, 8);
 }
-
-function generateUuid(entityType, metadata = '') {
-  const prefix = PREFIX_MAP[entityType] || entityType.slice(0, 4).toUpperCase();
+function uuid(type, meta = '') {
+  const prefix = PREFIX_MAP[type] || type.slice(0, 4).toUpperCase();
   const now = new Date();
   const ts = now.getFullYear().toString() +
     String(now.getMonth() + 1).padStart(2, '0') +
@@ -60,27 +65,16 @@ function generateUuid(entityType, metadata = '') {
     String(now.getHours()).padStart(2, '0') +
     String(now.getMinutes()).padStart(2, '0') +
     String(now.getSeconds()).padStart(2, '0');
-  sequenceCounter++;
-  const seq = sequenceCounter.toString(16).toUpperCase().padStart(6, '0');
-  const hashInput = `${prefix}-${ts}-${seq}-${metadata}-${Math.random()}`;
-  const hash = fnv1aHash8(hashInput);
-  return `${prefix}-${ts}-${seq}-${hash}`;
+  _seq++;
+  const seq = _seq.toString(16).toUpperCase().padStart(6, '0');
+  return `${prefix}-${ts}-${seq}-${fnv1a(`${prefix}-${ts}-${seq}-${meta}-${Math.random()}`)}`;
 }
 
-// ============================================================
-// OBJECTSTORE CDN BASE
-// ============================================================
+// -- CDN / TIERS --------------------------------------------------------
 const CDN = 'https://molochdagod.github.io/ObjectStore';
-const ICON = (path) => `${CDN}/icons/${path}`;
-const PACK_ICON = (path) => `${CDN}/icons/pack/${path}`;
+const ICON = (p) => `${CDN}/icons/${p}`;
+const PACK = (p) => `${CDN}/icons/pack/${p}`;
 
-// ============================================================
-// TIER SYSTEM
-// ============================================================
-// D5: tier labels — T5 renamed to 'Heroic', T8 renamed to 'Legendary'.
-// The word 'Legendary' is reserved for the T8 tier label only. The
-// 'Artifact' *category* (see scripts/defs/artifacts.mjs, D3) covers end-game
-// world-found items and must not reuse these tier labels.
 const TIERS = [
   { tier: 1, name: 'Bronze',  color: '#8b7355', label: 'Common' },
   { tier: 2, name: 'Silver',  color: '#a8a8a8', label: 'Uncommon' },
@@ -91,495 +85,336 @@ const TIERS = [
   { tier: 7, name: 'Gold',    color: '#d4a84b', label: 'Ancient' },
   { tier: 8, name: 'Shimmer', color: '#f0d890', label: 'Legendary' },
 ];
+const scaleStat = (base, per, tier) => Math.round(base + per * (tier - 1));
 
-function scaleStat(base, perTier, tier) {
-  return Math.round(base + perTier * (tier - 1));
-}
-
-// ============================================================
-// ICON MAPPING
-// ============================================================
-// Bespoke icon resolver: if /icons/weapons/<slug>.png exists on disk, use
-// that URL; otherwise fall back to the positional pack icon. Icon URLs
-// emitted for MIGRATED categories are also checked for collisions -- two
-// base items resolving to the same URL fails the build.
+// -- ICON RESOLVER ------------------------------------------------------
+// Priority: spritePath (canonical bespoke) -> /icons/weapons/<slug>.png ->
+// pack math iconBase_${pad(iconOffset + index)}.png
 function bespokeIconUrl(slug) {
   if (!slug) return null;
   const path = join(ICONS_WEAPONS_DIR, `${slug}.png`);
   return existsSync(path) ? `${CDN}/icons/weapons/${slug}.png` : null;
 }
+function packWeaponIcon(iconBase, index, offset = 0, max = 40) {
+  if (!iconBase) return '';
+  const n = offset + index + 1; // 1-indexed
+  const clamped = max ? (((n - 1) % max) + 1) : n;
+  // Some canonical iconBases are lower-case ('staff'), others uppercase ('Sword')
+  const isBook = iconBase.toLowerCase() === 'book';
+  const isResource = iconBase.toLowerCase() === 'res';
+  const padded = isBook || isResource ? clamped : String(clamped).padStart(2, '0');
+  if (isResource) return PACK(`resources/${iconBase}_${String(clamped).padStart(2, '0')}.png`);
+  return PACK(`weapons/${iconBase}_${padded}.png`);
+}
+function resolveWeaponIcon(item, cat, index) {
+  // 1. canonical spritePath on the item wins unconditionally
+  if (item.spritePath) {
+    const p = item.spritePath.startsWith('http') ? item.spritePath : `${CDN}${item.spritePath}`;
+    return p;
+  }
+  // 2. bespoke at /icons/weapons/<slug>.png
+  const bespoke = bespokeIconUrl(item.id);
+  if (bespoke) return bespoke;
+  // 3. pack math
+  return packWeaponIcon(cat.iconBase, index, cat.iconOffset || 0, cat.iconMax || 0);
+}
 
-const WEAPON_ICONS = {
-  swords:     (i) => PACK_ICON(`weapons/Sword_${String(i).padStart(2, '0')}.png`),
-  axes:       (i) => PACK_ICON(`weapons/Axe_${String(i).padStart(2, '0')}.png`),
-  daggers:    (i) => PACK_ICON(`weapons/Dagger_${String(i).padStart(2, '0')}.png`),
-  hammers:    (i) => PACK_ICON(`weapons/Hammer_${String(i).padStart(2, '0')}.png`),
-  greatswords:(i) => PACK_ICON(`weapons/Sword_${String(i + 9).padStart(2, '0')}.png`),
-  greataxes:  (i) => PACK_ICON(`weapons/Axe_${String(i + 9).padStart(2, '0')}.png`),
-  spears:     (i) => PACK_ICON(`weapons/Spear_${String(i).padStart(2, '0')}.png`),
-  maces:      (i) => PACK_ICON(`weapons/Hammer_${String(i + 9).padStart(2, '0')}.png`),
-  shields:    (i) => PACK_ICON(`weapons/Shield_${String(i).padStart(2, '0')}.png`),
-  bows:       (i) => PACK_ICON(`weapons/Bow_${String(i).padStart(2, '0')}.png`),
-  crossbows:  (i) => PACK_ICON(`weapons/Crossbow_${String(i).padStart(2, '0')}.png`),
-  guns:       (i) => PACK_ICON(`weapons/Crossbow_${String(i + 9).padStart(2, '0')}.png`),
-  fireStaves: (i) => PACK_ICON(`weapons/Staff_${String(i).padStart(2, '0')}.png`),
-  frostStaves:(i) => PACK_ICON(`weapons/Staff_${String(i + 4).padStart(2, '0')}.png`),
-  holyStaves: (i) => PACK_ICON(`weapons/Staff_${String(i + 8).padStart(2, '0')}.png`),
-  lightningStaves: (i) => PACK_ICON(`weapons/Staff_${String(i + 12).padStart(2, '0')}.png`),
-  natureStaves:    (i) => PACK_ICON(`weapons/Staff_${String(i + 16).padStart(2, '0')}.png`),
-  tomes:      (i) => PACK_ICON(`weapons/Book_${i}.png`),
-};
+// -- INPUT --------------------------------------------------------------
+function readJson(rel) {
+  const full = join(ROOT, rel);
+  return JSON.parse(readFileSync(full, 'utf8'));
+}
+const WEAPONS   = readJson('api/v1/weapons.json');
+const ARMOR     = readJson('api/v1/armor.json');
+const MATERIALS = readJson('api/v1/materials.json');
+const CONSUMES  = readJson('api/v1/consumables.json');
 
-const POTION_ICONS = {
-  health:      ICON('consumables/health_potion.png'),
-  mana:        ICON('consumables/mana_potion.png'),
-  stamina:     ICON('consumables/potion_3.png'),
-  antidote:    ICON('consumables/potion_5.png'),
-  rage:        ICON('consumables/potion_8.png'),
-  speed:       ICON('consumables/potion_12.png'),
-  defense:     ICON('consumables/potion_15.png'),
-  invisibility:ICON('consumables/potion_18.png'),
-  fireResist:  ICON('consumables/potion_22.png'),
-  frostResist: ICON('consumables/potion_25.png'),
-  focus:       ICON('consumables/potion_28.png'),
-  luck:        ICON('consumables/potion_32.png'),
-  exp:         ICON('consumables/potion_35.png'),
-  flight:      ICON('consumables/potion_38.png'),
-  divine:      ICON('consumables/potion_42.png'),
-};
+console.log('Generating ObjectStore master database (data-driven)...');
 
-// ============================================================
-// WEAPON DEFINITIONS (canonical data)
-// ============================================================
-const WEAPON_DEFINITIONS = {
-  swords: {
-    profession: 'Miner', category: '1h', items: [
-      { name: 'Bloodfeud Blade',  desc: 'Forged in endless clan blood feuds. Vengeful Slash: Builds Grudge Mark stack.', mats: { 'Iron Ingot': 3, 'Leather': 1 }, stats: { damageBase: 50, damagePerTier: 12, speedBase: 100, speedPerTier: 25, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 20, defensePerTier: 6 }, abilities: ['Blood Rush', 'Iron Grudge', 'Clan Charge', 'Heroic Cleave', 'Parry Counter', 'Deep Wound'], signature: 'Crimson Reprisal', passives: ['Bloodlust (5% lifesteal)', 'Swift Vengeance (+15% atk speed)', 'Deep Cuts (+20% bleed dmg)'] },
-      { name: 'Wraithfang',       desc: 'Whispers forgotten grudges. Shadow Edge: Dash + Stun.', mats: { 'Steel Ingot': 3, 'Void Dust': 1 }, stats: { damageBase: 55, damagePerTier: 13, speedBase: 80, speedPerTier: 20, critBase: 5, critPerTier: 0.8, blockBase: 3, blockPerTier: 0.8, defenseBase: 15, defensePerTier: 5 }, abilities: ['Shadow Edge', 'Execute', 'Bleed Chain', 'Fatal Strike'], signature: "Night's Judgment", passives: ['Life Leech', 'Aggressive Rush', 'Grudge Bleed'] },
-      { name: 'Oathbreaker',      desc: 'Breaks ancient oaths. Lunging Strike: Ranged thrust.', mats: { 'Dark Iron Ingot': 3, 'Obsidian': 1 }, stats: { damageBase: 48, damagePerTier: 11, speedBase: 120, speedPerTier: 30, critBase: 2, critPerTier: 0.4, blockBase: 8, blockPerTier: 1.5, defenseBase: 25, defensePerTier: 7 }, abilities: ['Lunging Strike', 'Shadow Dash', 'Fearful Swipe', 'Hamstring', "Betrayer's Mark", 'Oathbreak'], signature: 'Ancestral Curse', passives: ['Resilience', 'Armor Pen', 'Block Mastery'] },
-      { name: 'Kinrend',          desc: 'Rends bonds of kinship. Kin Strike: High single target damage.', mats: { 'Blood Stone': 3, 'Bone': 2 }, stats: { damageBase: 52, damagePerTier: 12, speedBase: 110, speedPerTier: 28, critBase: 4, critPerTier: 0.6, blockBase: 4, blockPerTier: 1, defenseBase: 18, defensePerTier: 6 }, abilities: ['Kin Strike', 'Ancestral Fury', 'Family Grudge', 'Root Bind'], signature: 'Wrath of Kin', passives: ['Bloodlust', 'Swift Vengeance', 'Deep Cuts'] },
-      { name: 'Dusksinger',       desc: 'Sings of twilight. Dusk Blade: Invisible dash.', mats: { 'Shadow Ingot': 3, 'Gem': 1 }, stats: { damageBase: 53, damagePerTier: 12, speedBase: 90, speedPerTier: 22, critBase: 6, critPerTier: 1, blockBase: 4, blockPerTier: 0.9, defenseBase: 17, defensePerTier: 5 }, abilities: ['Dusk Blade', 'Twilight Slash', 'Night Strike'], signature: 'Eventide Reckoning', passives: ['Shadow Walk', 'Crit Surge', 'Evasion Master'] },
-      { name: 'Emberclad',        desc: 'Clad in flames. Flame Slash: Applies burn.', mats: { 'Fire Essence': 3, 'Steel Ingot': 2 }, stats: { damageBase: 56, damagePerTier: 14, speedBase: 95, speedPerTier: 24, critBase: 4, critPerTier: 0.7, blockBase: 3, blockPerTier: 0.8, defenseBase: 16, defensePerTier: 5 }, abilities: ['Flame Slash', 'Inferno Wave', 'Magma Strike'], signature: 'Solar Annihilation', passives: ['Burn Master', 'Fire Aura', 'Ember Shield'] },
-    ]
-  },
-  axes: {
-    profession: 'Miner', category: '1h', items: [
-      { name: 'Gorehowl',     desc: 'Howls with gore. Rending Chop: Applies Bleed.', mats: { 'Iron Ingot': 3, 'Wood': 2 }, stats: { damageBase: 55, damagePerTier: 14, speedBase: 90, speedPerTier: 22, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 18, defensePerTier: 5 } },
-      { name: 'Skullsplitter', desc: 'Splits skulls. Headcracker: Stun + Damage.', mats: { 'Steel Ingot': 3, 'Bone': 2 }, stats: { damageBase: 58, damagePerTier: 15, speedBase: 85, speedPerTier: 20, critBase: 4, critPerTier: 0.6, blockBase: 3, blockPerTier: 0.8, defenseBase: 16, defensePerTier: 5 } },
-      { name: 'Veinreaver',    desc: 'Reaves veins. Blood Harvest: AoE Lifesteal.', mats: { 'Dark Iron Ingot': 3, 'Blood': 2 }, stats: { damageBase: 52, damagePerTier: 13, speedBase: 95, speedPerTier: 23, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 20, defensePerTier: 6 } },
-      { name: 'Ironmaw',       desc: 'Maw of iron. Iron Bite: Ignores defense.', mats: { 'Iron Ingot': 5, 'Obsidian': 1 }, stats: { damageBase: 60, damagePerTier: 15, speedBase: 80, speedPerTier: 18, critBase: 2, critPerTier: 0.4, blockBase: 6, blockPerTier: 1.2, defenseBase: 22, defensePerTier: 7 } },
-      { name: 'Dreadcleaver',  desc: 'Cleaves dread. Frenzied Chop: High burst damage.', mats: { 'Shadow Ingot': 3, 'Void Dust': 2 }, stats: { damageBase: 57, damagePerTier: 14, speedBase: 88, speedPerTier: 21, critBase: 5, critPerTier: 0.7, blockBase: 3, blockPerTier: 0.8, defenseBase: 15, defensePerTier: 5 } },
-      { name: 'Bonehew',       desc: 'Hews bone. Bone Break: Reduces armor.', mats: { 'Bone': 5, 'Steel Ingot': 2 }, stats: { damageBase: 54, damagePerTier: 13, speedBase: 92, speedPerTier: 22, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 19, defensePerTier: 6 } },
-    ]
-  },
-  daggers: {
-    profession: 'Miner', category: '1h', items: [
-      { name: 'Nightfang',  desc: 'Fang of night. Shadow Stab: Builds Mark.', mats: { 'Iron Ingot': 2, 'Leather': 1 }, stats: { damageBase: 35, damagePerTier: 9, speedBase: 150, speedPerTier: 35, critBase: 8, critPerTier: 1.2, blockBase: 2, blockPerTier: 0.5, defenseBase: 8, defensePerTier: 3 } },
-      { name: 'Bloodshiv',  desc: 'Drips blood. Crimson Stab: High bleed.', mats: { 'Steel Ingot': 2, 'Blood': 1 }, stats: { damageBase: 38, damagePerTier: 10, speedBase: 145, speedPerTier: 33, critBase: 7, critPerTier: 1, blockBase: 2, blockPerTier: 0.5, defenseBase: 7, defensePerTier: 3 } },
-      { name: 'Wraithclaw', desc: 'Claw of wraith. Shadow Strike: AoE Silence.', mats: { 'Dark Iron Ingot': 2, 'Void Dust': 1 }, stats: { damageBase: 36, damagePerTier: 9, speedBase: 155, speedPerTier: 36, critBase: 9, critPerTier: 1.3, blockBase: 1, blockPerTier: 0.4, defenseBase: 6, defensePerTier: 2 } },
-      { name: 'Emberfang',  desc: 'Burning hate. Flame Dagger: Burn DoT.', mats: { 'Fire Essence': 2, 'Steel Ingot': 1 }, stats: { damageBase: 40, damagePerTier: 10, speedBase: 140, speedPerTier: 32, critBase: 6, critPerTier: 0.9, blockBase: 2, blockPerTier: 0.5, defenseBase: 8, defensePerTier: 3 } },
-      { name: 'Ironspike',  desc: 'Unyielding iron. Pinning Stab: Root burst.', mats: { 'Iron Ingot': 4 }, stats: { damageBase: 37, damagePerTier: 9, speedBase: 148, speedPerTier: 34, critBase: 7, critPerTier: 1, blockBase: 3, blockPerTier: 0.6, defenseBase: 10, defensePerTier: 3 } },
-      { name: 'Duskblade',  desc: 'Blade of dusk. Frenzied Cuts: Multi burst.', mats: { 'Shadow Ingot': 2, 'Gem': 1 }, stats: { damageBase: 42, damagePerTier: 11, speedBase: 152, speedPerTier: 35, critBase: 10, critPerTier: 1.5, blockBase: 1, blockPerTier: 0.4, defenseBase: 6, defensePerTier: 2 } },
-    ]
-  },
-  hammers: {
-    profession: 'Miner', category: '2h', items: [
-      { name: 'Titanmaul',    desc: 'Titanic grudge. Earthshatter: AoE Slow.', mats: { 'Iron Ingot': 6, 'Stone': 4 }, stats: { damageBase: 75, damagePerTier: 18, speedBase: 60, speedPerTier: 14, critBase: 2, critPerTier: 0.3, blockBase: 8, blockPerTier: 1.5, defenseBase: 30, defensePerTier: 8 } },
-      { name: 'Bloodcrusher', desc: 'Crushes with blood. Crimson Smash: AoE Bleed.', mats: { 'Steel Ingot': 6, 'Blood': 4 }, stats: { damageBase: 78, damagePerTier: 19, speedBase: 55, speedPerTier: 13, critBase: 3, critPerTier: 0.4, blockBase: 6, blockPerTier: 1.2, defenseBase: 25, defensePerTier: 7 } },
-      { name: 'Stonebreaker', desc: 'Breaks stone. Shattering Blow: Armor Break.', mats: { 'Mithril Ingot': 6, 'Obsidian': 4 }, stats: { damageBase: 80, damagePerTier: 20, speedBase: 50, speedPerTier: 12, critBase: 2, critPerTier: 0.3, blockBase: 10, blockPerTier: 2, defenseBase: 35, defensePerTier: 9 } },
-      { name: 'Oathcrusher', desc: 'Crushes oaths. Oath Shatter: Dispel Buffs.', mats: { 'Dark Iron Ingot': 6, 'Void Dust': 2 }, stats: { damageBase: 72, damagePerTier: 17, speedBase: 58, speedPerTier: 14, critBase: 2, critPerTier: 0.4, blockBase: 7, blockPerTier: 1.4, defenseBase: 28, defensePerTier: 7 } },
-      { name: 'Doomhammer',  desc: 'Hammer of doom. Cataclysmic Strike: Stun AoE.', mats: { 'Shadow Ingot': 6, 'Bone': 4 }, stats: { damageBase: 82, damagePerTier: 20, speedBase: 52, speedPerTier: 12, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 22, defensePerTier: 6 } },
-      { name: 'Divine Maul', desc: 'Divine judgment. Holy Smash: True Damage.', mats: { 'Divine Ingot': 6, 'Holy Essence': 2 }, stats: { damageBase: 85, damagePerTier: 22, speedBase: 48, speedPerTier: 11, critBase: 4, critPerTier: 0.6, blockBase: 8, blockPerTier: 1.5, defenseBase: 30, defensePerTier: 8 } },
-    ]
-  },
-  greatswords: {
-    profession: 'Miner', category: '2h', items: [
-      { name: 'Vengeance Blade', desc: 'Blade of vengeance. Grudge Sweep: Builds Mark.', mats: { 'Iron Ingot': 8, 'Leather': 2 }, stats: { damageBase: 70, damagePerTier: 16, speedBase: 70, speedPerTier: 16, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 22, defensePerTier: 6 } },
-      { name: 'Bloodwrath',      desc: 'Wrath of blood. Crimson Arc: AoE Lifesteal.', mats: { 'Steel Ingot': 8, 'Blood': 4 }, stats: { damageBase: 74, damagePerTier: 17, speedBase: 65, speedPerTier: 15, critBase: 4, critPerTier: 0.6, blockBase: 4, blockPerTier: 0.9, defenseBase: 20, defensePerTier: 6 } },
-      { name: 'Shadowcleave',    desc: 'Cleaves shadows. Shadow Slash: Dash + AoE.', mats: { 'Dark Iron Ingot': 8, 'Void Dust': 2 }, stats: { damageBase: 72, damagePerTier: 17, speedBase: 68, speedPerTier: 16, critBase: 5, critPerTier: 0.7, blockBase: 3, blockPerTier: 0.8, defenseBase: 18, defensePerTier: 5 } },
-      { name: 'Kinslayer',       desc: 'Slays kin. Family Grudge: High Single Target.', mats: { 'Blood Stone': 6, 'Bone': 4 }, stats: { damageBase: 76, damagePerTier: 18, speedBase: 62, speedPerTier: 14, critBase: 4, critPerTier: 0.6, blockBase: 4, blockPerTier: 1, defenseBase: 20, defensePerTier: 6 } },
-      { name: 'Duskbringer',     desc: 'Brings dusk. Twilight Wave: AoE Blind.', mats: { 'Shadow Ingot': 8, 'Gem': 2 }, stats: { damageBase: 73, damagePerTier: 17, speedBase: 66, speedPerTier: 15, critBase: 6, critPerTier: 0.8, blockBase: 3, blockPerTier: 0.8, defenseBase: 17, defensePerTier: 5 } },
-      { name: 'Divine Judgment',  desc: 'Divine judgment. Holy Cleave: True Damage.', mats: { 'Divine Ingot': 10, 'Holy Essence': 3 }, stats: { damageBase: 80, damagePerTier: 20, speedBase: 60, speedPerTier: 14, critBase: 5, critPerTier: 0.7, blockBase: 5, blockPerTier: 1, defenseBase: 24, defensePerTier: 7 } },
-    ]
-  },
-  greataxes: {
-    profession: 'Miner', category: '2h', items: [
-      { name: 'Skullsunder',   desc: 'Sunders skulls. Brutal Hew: AoE Bleed.', mats: { 'Iron Ingot': 5, 'Wood': 3 }, stats: { damageBase: 72, damagePerTier: 17, speedBase: 65, speedPerTier: 15, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 20, defensePerTier: 6 } },
-      { name: 'Bloodreaver',   desc: 'Crimson Harvest: AoE Heal.', mats: { 'Steel Ingot': 5, 'Blood': 3 }, stats: { damageBase: 74, damagePerTier: 18, speedBase: 62, speedPerTier: 14, critBase: 4, critPerTier: 0.6, blockBase: 3, blockPerTier: 0.9, defenseBase: 18, defensePerTier: 5 } },
-      { name: 'Worldsplitter', desc: 'Cataclysm: Massive AoE.', mats: { 'Mithril Ingot': 8, 'Void Essence': 3 }, stats: { damageBase: 80, damagePerTier: 20, speedBase: 55, speedPerTier: 12, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 22, defensePerTier: 6 } },
-      { name: 'Oathcleaver',   desc: "Betrayer's Arc: Bonus vs Allies.", mats: { 'Dark Iron Ingot': 6, 'Obsidian': 2 }, stats: { damageBase: 76, damagePerTier: 18, speedBase: 60, speedPerTier: 13, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 22, defensePerTier: 6 } },
-      { name: 'Duskrend',      desc: 'Twilight Cleave: Invisible.', mats: { 'Shadow Ingot': 6, 'Gem': 2 }, stats: { damageBase: 74, damagePerTier: 17, speedBase: 63, speedPerTier: 14, critBase: 5, critPerTier: 0.7, blockBase: 3, blockPerTier: 0.8, defenseBase: 17, defensePerTier: 5 } },
-      { name: 'World Breaker', desc: 'Apocalypse: Screen Clear.', mats: { 'Divine Ingot': 8, 'Void Essence': 5 }, stats: { damageBase: 85, damagePerTier: 22, speedBase: 50, speedPerTier: 11, critBase: 4, critPerTier: 0.6, blockBase: 5, blockPerTier: 1, defenseBase: 24, defensePerTier: 7 } },
-    ]
-  },
-  spears: {
-    profession: 'Miner', category: '2h', items: [
-      { name: 'Iron Pike',      desc: 'Thrust: Long range poke.', mats: { 'Iron Ingot': 4, 'Wood': 3 }, stats: { damageBase: 48, damagePerTier: 12, speedBase: 110, speedPerTier: 26, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 15, defensePerTier: 4 } },
-      { name: 'Steel Lance',    desc: 'Charge: Gap closer.', mats: { 'Steel Ingot': 4, 'Wood': 3 }, stats: { damageBase: 52, damagePerTier: 13, speedBase: 105, speedPerTier: 25, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 16, defensePerTier: 5 } },
-      { name: 'Mithril Javelin', desc: 'Hurl: Ranged attack.', mats: { 'Mithril Ingot': 4, 'Leather': 2 }, stats: { damageBase: 50, damagePerTier: 12, speedBase: 115, speedPerTier: 28, critBase: 4, critPerTier: 0.6, blockBase: 3, blockPerTier: 0.8, defenseBase: 12, defensePerTier: 4 } },
-      { name: 'Bloodspear',     desc: 'Impale: Lifesteal.', mats: { 'Dark Iron Ingot': 5, 'Blood': 3 }, stats: { damageBase: 55, damagePerTier: 14, speedBase: 100, speedPerTier: 24, critBase: 3, critPerTier: 0.5, blockBase: 4, blockPerTier: 1, defenseBase: 18, defensePerTier: 5 } },
-      { name: 'Voidpiercer',    desc: 'Phase Strike: Ignore armor.', mats: { 'Shadow Ingot': 5, 'Void Essence': 2 }, stats: { damageBase: 58, damagePerTier: 14, speedBase: 98, speedPerTier: 23, critBase: 5, critPerTier: 0.7, blockBase: 3, blockPerTier: 0.8, defenseBase: 14, defensePerTier: 4 } },
-      { name: 'Divine Trident', desc: 'Trinity Strike: Triple hit.', mats: { 'Divine Ingot': 6, 'Holy Essence': 3 }, stats: { damageBase: 62, damagePerTier: 16, speedBase: 95, speedPerTier: 22, critBase: 4, critPerTier: 0.6, blockBase: 5, blockPerTier: 1, defenseBase: 20, defensePerTier: 6 } },
-    ]
-  },
-  maces: {
-    profession: 'Miner', category: '1h', items: [
-      { name: 'Iron Cudgel',        desc: 'Bash: Stun chance.', mats: { 'Iron Ingot': 5, 'Wood': 2 }, stats: { damageBase: 45, damagePerTier: 11, speedBase: 95, speedPerTier: 22, critBase: 2, critPerTier: 0.4, blockBase: 6, blockPerTier: 1.2, defenseBase: 24, defensePerTier: 6 } },
-      { name: 'Steel Flail',        desc: 'Whirl: AoE damage.', mats: { 'Steel Ingot': 5, 'Chain': 2 }, stats: { damageBase: 48, damagePerTier: 12, speedBase: 90, speedPerTier: 20, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 22, defensePerTier: 6 } },
-      { name: 'Spiked Morningstar', desc: 'Crush: Armor break.', mats: { 'Mithril Ingot': 5, 'Iron Ingot': 3 }, stats: { damageBase: 52, damagePerTier: 13, speedBase: 88, speedPerTier: 20, critBase: 3, critPerTier: 0.5, blockBase: 5, blockPerTier: 1, defenseBase: 24, defensePerTier: 7 } },
-      { name: 'Bloodbludgeon',      desc: 'Splatter: Bleed AoE.', mats: { 'Dark Iron Ingot': 6, 'Blood': 3 }, stats: { damageBase: 50, damagePerTier: 12, speedBase: 92, speedPerTier: 21, critBase: 3, critPerTier: 0.5, blockBase: 6, blockPerTier: 1.2, defenseBase: 26, defensePerTier: 7 } },
-      { name: 'Obsidian Crusher',   desc: 'Shatter: Shield break.', mats: { 'Obsidian': 8, 'Shadow Ingot': 3 }, stats: { damageBase: 55, damagePerTier: 14, speedBase: 85, speedPerTier: 19, critBase: 2, critPerTier: 0.4, blockBase: 7, blockPerTier: 1.4, defenseBase: 28, defensePerTier: 8 } },
-      { name: 'Divine Scepter',     desc: 'Judgment: True damage.', mats: { 'Divine Ingot': 6, 'Holy Essence': 2 }, stats: { damageBase: 58, damagePerTier: 15, speedBase: 82, speedPerTier: 18, critBase: 4, critPerTier: 0.6, blockBase: 6, blockPerTier: 1.2, defenseBase: 26, defensePerTier: 7 } },
-    ]
-  },
-  shields: {
-    profession: 'Miner', category: 'offhand', items: [
-      { name: 'Iron Buckler',         desc: '+10% Block.', mats: { 'Iron Ingot': 3 }, stats: { blockBase: 10, blockPerTier: 2, defenseBase: 30, defensePerTier: 8 } },
-      { name: 'Steel Kite Shield',    desc: '+15% Block.', mats: { 'Steel Ingot': 5 }, stats: { blockBase: 15, blockPerTier: 3, defenseBase: 40, defensePerTier: 10 } },
-      { name: 'Obsidian Shield',      desc: 'Fire Resist.', mats: { 'Obsidian': 10, 'Iron Ingot': 5 }, stats: { blockBase: 12, blockPerTier: 2.5, defenseBase: 45, defensePerTier: 12 } },
-      { name: 'Mithril Tower Shield', desc: '+25% Block.', mats: { 'Mithril Ingot': 8 }, stats: { blockBase: 25, blockPerTier: 5, defenseBase: 55, defensePerTier: 14 } },
-      { name: 'Void Aegis',           desc: 'Spell Reflect.', mats: { 'Shadow Ingot': 6, 'Void Essence': 3 }, stats: { blockBase: 18, blockPerTier: 3.5, defenseBase: 50, defensePerTier: 13 } },
-      { name: 'Divine Bulwark',       desc: 'Immunity Proc.', mats: { 'Divine Ingot': 10, 'Holy Essence': 5 }, stats: { blockBase: 30, blockPerTier: 6, defenseBase: 65, defensePerTier: 16 } },
-    ]
-  },
-  bows: {
-    profession: 'Forester', category: '2h', items: [
-      { name: 'Wraithbone Bow', desc: 'Shadow Arrow: Builds Mark.', mats: { 'Wood': 4, 'Bone': 2, 'String': 2 }, stats: { damageBase: 45, damagePerTier: 11, speedBase: 120, speedPerTier: 28, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Bloodstring',    desc: 'Crimson Shot: Bleed.', mats: { 'Hardwood': 4, 'Blood': 2, 'Sinew': 2 }, stats: { damageBase: 48, damagePerTier: 12, speedBase: 115, speedPerTier: 27, critBase: 6, critPerTier: 0.9, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Shadowflight',   desc: 'Shadow Volley: AoE.', mats: { 'Darkwood': 4, 'Void Dust': 2 }, stats: { damageBase: 46, damagePerTier: 11, speedBase: 125, speedPerTier: 30, critBase: 7, critPerTier: 1, blockBase: 0, blockPerTier: 0, defenseBase: 4, defensePerTier: 2 } },
-      { name: 'Emberthorn',     desc: 'Flame Arrow: DoT.', mats: { 'Ashwood': 4, 'Fire Essence': 2 }, stats: { damageBase: 50, damagePerTier: 12, speedBase: 118, speedPerTier: 28, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Ironvine',       desc: 'Root Shot: Snare.', mats: { 'Ironwood': 4, 'Vine': 3 }, stats: { damageBase: 44, damagePerTier: 11, speedBase: 122, speedPerTier: 29, critBase: 4, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 6, defensePerTier: 2 } },
-      { name: 'Duskreaver',     desc: 'Twilight Volley: Pierce.', mats: { 'Worldtree Wood': 6, 'Shadow Essence': 3 }, stats: { damageBase: 52, damagePerTier: 13, speedBase: 112, speedPerTier: 26, critBase: 8, critPerTier: 1.2, blockBase: 0, blockPerTier: 0, defenseBase: 6, defensePerTier: 2 } },
-    ]
-  },
-  crossbows: {
-    profession: 'Engineer', category: '2h', items: [
-      { name: 'Ironveil Repeater', desc: 'Heavy Bolt: Builds Mark.', mats: { 'Iron': 3, 'Wood': 2 }, stats: { damageBase: 55, damagePerTier: 13, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-      { name: 'Skullpiercer',      desc: 'Headshot: Silence.', mats: { 'Steel': 3, 'Bone': 2 }, stats: { damageBase: 58, damagePerTier: 14, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 7, defensePerTier: 3 } },
-      { name: 'Bloodreaver XB',    desc: 'Explosive Round: AoE.', mats: { 'Dark Iron': 3, 'Blood': 2 }, stats: { damageBase: 56, damagePerTier: 13, speedBase: 98, speedPerTier: 23, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-      { name: 'Wraithspike',       desc: 'Shadow Trap: Slow.', mats: { 'Void Dust': 3, 'Wood': 2 }, stats: { damageBase: 54, damagePerTier: 13, speedBase: 102, speedPerTier: 24, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 6, defensePerTier: 2 } },
-      { name: 'Emberbolt',         desc: 'Firestorm Bolt: DoT.', mats: { 'Fire Essence': 3, 'Steel': 2 }, stats: { damageBase: 60, damagePerTier: 15, speedBase: 92, speedPerTier: 21, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 7, defensePerTier: 3 } },
-      { name: 'Ironshard',         desc: 'Shrapnel: Armor break.', mats: { 'Iron': 5, 'Obsidian': 1 }, stats: { damageBase: 62, damagePerTier: 15, speedBase: 90, speedPerTier: 20, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 9, defensePerTier: 3 } },
-    ]
-  },
-  guns: {
-    profession: 'Engineer', category: '2h', items: [
-      { name: 'Blackpowder Blaster', desc: 'Grudge Shot: Mark.', mats: { 'Iron': 3, 'Powder': 2 }, stats: { damageBase: 65, damagePerTier: 16, speedBase: 75, speedPerTier: 18, critBase: 6, critPerTier: 0.9, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Ironstorm Gun',       desc: 'Sniper Round: Range.', mats: { 'Steel': 3, 'Iron': 2 }, stats: { damageBase: 68, damagePerTier: 17, speedBase: 70, speedPerTier: 16, critBase: 7, critPerTier: 1, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Bloodcannon',         desc: 'Crimson Blast: Lifesteal.', mats: { 'Dark Iron': 3, 'Blood': 2 }, stats: { damageBase: 70, damagePerTier: 17, speedBase: 72, speedPerTier: 17, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 6, defensePerTier: 2 } },
-      { name: 'Wraithbarrel',        desc: 'Shadow Shot: Silence.', mats: { 'Void Dust': 3, 'Steel': 2 }, stats: { damageBase: 66, damagePerTier: 16, speedBase: 74, speedPerTier: 17, critBase: 6, critPerTier: 0.9, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Emberrifle',          desc: 'Flame Burst: DoT AoE.', mats: { 'Fire Essence': 3, 'Iron': 2 }, stats: { damageBase: 72, damagePerTier: 18, speedBase: 68, speedPerTier: 16, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-      { name: 'Duskblaster',         desc: 'Shrapnel Spray: Pierce.', mats: { 'Shadow Ingot': 3, 'Gem': 1 }, stats: { damageBase: 75, damagePerTier: 19, speedBase: 65, speedPerTier: 15, critBase: 7, critPerTier: 1, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 2 } },
-    ]
-  },
-  fireStaves:      { profession: 'Mystic', category: '2h', items: [
-    { name: 'Emberwrath Staff', desc: 'Fire Bolt: Builds Burn stacks.', mats: { 'Pine Log': 3, 'Minor Fire Essence': 2 }, stats: { damageBase: 42, damagePerTier: 10, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-    { name: 'Sunfire Staff',    desc: 'Solar Flare: AoE Burn.', mats: { 'Oak Log': 3, 'Fire Essence': 2 }, stats: { damageBase: 45, damagePerTier: 11, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-    { name: 'Inferno Spire',   desc: 'Inferno Wave: Line AoE.', mats: { 'Maple Log': 4, 'Greater Fire Essence': 3 }, stats: { damageBase: 48, damagePerTier: 12, speedBase: 90, speedPerTier: 21, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 9, defensePerTier: 3 } },
-    { name: 'Phoenix Staff',   desc: 'Rebirth: Self-resurrect proc.', mats: { 'Ash Log': 5, 'Phoenix Feather': 1 }, stats: { damageBase: 52, damagePerTier: 13, speedBase: 85, speedPerTier: 20, critBase: 6, critPerTier: 0.9, blockBase: 0, blockPerTier: 0, defenseBase: 10, defensePerTier: 3 } },
-  ] },
-  frostStaves:     { profession: 'Mystic', category: '2h', items: [
-    { name: 'Glacial Spire',    desc: 'Frost Bolt: Applies Chill.', mats: { 'Pine Log': 3, 'Minor Frost Essence': 2 }, stats: { damageBase: 40, damagePerTier: 10, speedBase: 105, speedPerTier: 25, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 10, defensePerTier: 3 } },
-    { name: "Winter's Grudge",   desc: 'Blizzard: AoE Slow.', mats: { 'Oak Log': 3, 'Frost Essence': 2 }, stats: { damageBase: 43, damagePerTier: 11, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 12, defensePerTier: 4 } },
-    { name: 'Frostbite Staff',   desc: 'Deep Freeze: Stun.', mats: { 'Maple Log': 4, 'Greater Frost Essence': 3 }, stats: { damageBase: 46, damagePerTier: 12, speedBase: 95, speedPerTier: 22, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 14, defensePerTier: 4 } },
-    { name: 'Absolute Zero',     desc: 'Time Stop: Ultimate frost.', mats: { 'Worldtree Log': 8, 'Void Ice': 5 }, stats: { damageBase: 50, damagePerTier: 13, speedBase: 88, speedPerTier: 20, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 16, defensePerTier: 5 } },
-  ] },
-  holyStaves:      { profession: 'Mystic', category: '2h', items: [
-    { name: 'Dawnspire',         desc: 'Holy Light: Heals allies.', mats: { 'Pine Log': 3, 'Minor Holy Essence': 2 }, stats: { damageBase: 35, damagePerTier: 8, speedBase: 110, speedPerTier: 26, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 12, defensePerTier: 4 } },
-    { name: 'Redemption Staff',  desc: 'Cleanse: Remove debuffs.', mats: { 'Oak Log': 3, 'Holy Essence': 2 }, stats: { damageBase: 38, damagePerTier: 9, speedBase: 105, speedPerTier: 25, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 14, defensePerTier: 4 } },
-    { name: 'Sacred Light',      desc: 'Divine Shield: Immunity.', mats: { 'Maple Log': 4, 'Greater Holy Essence': 3 }, stats: { damageBase: 40, damagePerTier: 10, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 16, defensePerTier: 5 } },
-    { name: 'Divine Judgment Staff', desc: 'Smite Evil: Ultimate holy.', mats: { 'Worldtree Log': 8, 'Divine Essence': 5 }, stats: { damageBase: 45, damagePerTier: 11, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 18, defensePerTier: 5 } },
-  ] },
-  lightningStaves: { profession: 'Mystic', category: '2h', items: [
-    { name: 'Stormwrath',        desc: 'Thunder Bolt: Chain lightning.', mats: { 'Pine Log': 3, 'Minor Storm Essence': 2 }, stats: { damageBase: 48, damagePerTier: 12, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 7, defensePerTier: 2 } },
-    { name: 'Tempest Spire',     desc: 'Thunder Clap: AoE Stun.', mats: { 'Oak Log': 3, 'Storm Essence': 2 }, stats: { damageBase: 50, damagePerTier: 13, speedBase: 92, speedPerTier: 21, critBase: 5, critPerTier: 0.8, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-    { name: 'Thunderlord Staff', desc: 'Lightning Strike: Burst dmg.', mats: { 'Maple Log': 4, 'Greater Storm Essence': 3 }, stats: { damageBase: 54, damagePerTier: 14, speedBase: 88, speedPerTier: 20, critBase: 6, critPerTier: 0.9, blockBase: 0, blockPerTier: 0, defenseBase: 8, defensePerTier: 3 } },
-    { name: "Zeus's Fury",       desc: 'Godly Thunder: Ultimate.', mats: { 'Worldtree Log': 8, 'Divine Storm': 5 }, stats: { damageBase: 58, damagePerTier: 15, speedBase: 85, speedPerTier: 19, critBase: 7, critPerTier: 1, blockBase: 0, blockPerTier: 0, defenseBase: 9, defensePerTier: 3 } },
-  ] },
-  natureStaves:    { profession: 'Mystic', category: '2h', items: [
-    { name: 'Verdant Wrath',  desc: "Nature's Touch: HoT.", mats: { 'Pine Log': 3, 'Minor Nature Essence': 2 }, stats: { damageBase: 38, damagePerTier: 9, speedBase: 108, speedPerTier: 26, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 10, defensePerTier: 3 } },
-    { name: 'Thorn Grudge',   desc: 'Thorns: Reflect damage.', mats: { 'Oak Log': 3, 'Nature Essence': 2 }, stats: { damageBase: 40, damagePerTier: 10, speedBase: 105, speedPerTier: 25, critBase: 3, critPerTier: 0.5, blockBase: 0, blockPerTier: 0, defenseBase: 12, defensePerTier: 4 } },
-    { name: 'Grove Guardian', desc: 'Entangle: Root AoE.', mats: { 'Maple Log': 4, 'Greater Nature Essence': 3 }, stats: { damageBase: 42, damagePerTier: 10, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 14, defensePerTier: 4 } },
-    { name: 'World Tree',     desc: 'Life Bloom: Ultimate heal.', mats: { 'Worldtree Log': 8, 'Divine Nature': 5 }, stats: { damageBase: 46, damagePerTier: 11, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 16, defensePerTier: 5 } },
-  ] },
-  // tomes are emitted via scripts/defs/offhand-tomes.mjs (D4 - tier-less).
-};
-
-// ============================================================
-// FOOD + POTION DATA (abbreviated — same as game-data-hub)
-// ============================================================
-const FOOD_COLORS = ['red', 'green', 'blue'];
-const FOOD_SAMPLE = {
-  red:   [{ name: 'Grilled Steak', lvl: 20, buff: '+10% Damage', mats: { 'Beef': 2, 'Pepper': 1 } }, { name: 'Dragon Steak', lvl: 85, buff: '+36% Attack', mats: { 'Dragon Flank': 1, 'Liquid Fire': 1 } }],
-  green: [{ name: 'Simple Salad', lvl: 1, buff: '+2 HP/s', mats: { 'Lettuce': 2, 'Tomato': 1 } }, { name: 'World Tree Nectar', lvl: 90, buff: '+38 HP/s', mats: { 'World Tree Sap': 2, 'Divine Pollen': 1 } }],
-  blue:  [{ name: 'Fish Stew', lvl: 20, buff: '+10 MP/s', mats: { 'Fish': 2, 'Potato': 2, 'Broth': 1 } }, { name: 'Nectar of Gods', lvl: 95, buff: '+40 MP/s', mats: { 'Astral Fruit': 10, 'Holy Water': 1 } }],
-};
-
-const POTION_DATA = [
-  { name: 'Minor Health Potion', effect: 'Restores 50 HP', icon: 'health', mats: { 'Red Herb': 2, 'Water': 1 } },
-  { name: 'Minor Mana Potion', effect: 'Restores 50 MP', icon: 'mana', mats: { 'Blue Herb': 2, 'Water': 1 } },
-  { name: 'Health Potion', effect: 'Restores 150 HP', icon: 'health', mats: { 'Blood Moss': 3, 'Distilled Water': 1 } },
-  { name: 'Mana Potion', effect: 'Restores 150 MP', icon: 'mana', mats: { 'Mana Bloom': 3, 'Distilled Water': 1 } },
-  { name: 'Rage Potion', effect: '+30% Damage, 30s', icon: 'rage', mats: { 'Berserker Root': 3, 'Fire Essence': 1 } },
-  { name: 'Speed Potion', effect: '+30% Speed, 30s', icon: 'speed', mats: { 'Swift Herb': 3, 'Wind Essence': 1 } },
-  { name: 'Defense Potion', effect: '+30% Defense, 30s', icon: 'defense', mats: { 'Ironbark': 3, 'Earth Essence': 1 } },
-  { name: 'Greater Health Potion', effect: 'Restores 300 HP', icon: 'health', mats: { 'Heart Blossom': 4, 'Life Essence': 1 } },
-  { name: 'Greater Mana Potion', effect: 'Restores 300 MP', icon: 'mana', mats: { 'Mana Crystal Dust': 4, 'Arcane Water': 1 } },
-  { name: 'Invisibility Potion', effect: 'Invisible 20s', icon: 'invisibility', mats: { 'Ghost Orchid': 4, 'Shadow Essence': 2 } },
-  { name: 'Divine Health', effect: 'Full HP restore', icon: 'divine', mats: { 'Phoenix Tear': 2, 'Divine Essence': 1 } },
-  { name: 'Elixir of Immortality', effect: 'Revive on death', icon: 'divine', mats: { "Philosopher's Stone": 1, 'Dragon Blood': 3 } },
-];
-
-// ============================================================
-// GENERATE
-// ============================================================
-console.log('Generating ObjectStore master database...\n');
-
+// -- OUTPUT BUCKETS -----------------------------------------------------
 const allItems = [];
 const allRecipes = [];
-const materialUuids = new Map();
+const allArtifacts = [];
+const allMaterials = [];
+const allConsumables = [];
+const allArmor = [];
+const matUuid = new Map();
 
-function getMaterialUuid(name) {
-  if (!materialUuids.has(name)) materialUuids.set(name, generateUuid('material', name));
-  return materialUuids.get(name);
+function getMatUuid(name) {
+  if (!matUuid.has(name)) matUuid.set(name, uuid('material', name));
+  return matUuid.get(name);
 }
 
-// --- Weapons ---
-// Merge inline WEAPON_DEFINITIONS with the migrated defs/weapons.mjs source.
-// For any category in MIGRATED_WEAPON_CATS, the defs module wins; its items
-// carry `slug` so the bespoke-icon resolver can prefer /icons/weapons/<slug>.png.
-const MERGED_WEAPONS = { ...WEAPON_DEFINITIONS };
-for (const [cat, def] of Object.entries(DEF_WEAPONS)) {
-  MERGED_WEAPONS[cat] = {
-    profession: def.profession,
-    category: def.subCategory || def.category,
-    items: def.items,
-    starter: def.starter,
-  };
-}
+// ============================================================
+// WEAPONS (includes tomes, arcaneStaves, tools)
+// ============================================================
+let weaponCount = 0, tomeCount = 0, artifactCount = 0, toolCount = 0;
+for (const [catName, catData] of Object.entries(WEAPONS.categories)) {
+  const items = catData.items || [];
+  const isTome = catName.endsWith('Tomes');
+  const isArtifactCat = catName === 'arcaneStaves';
+  const isTool = catName === 'tools';
 
-const weaponIconCollisions = new Map(); // url -> [baseNames]
-let weaponCount = 0;
-for (const [weaponType, def] of Object.entries(MERGED_WEAPONS)) {
-  const iconFn = WEAPON_ICONS[weaponType];
-  const migrated = MIGRATED_WEAPON_CATS.has(weaponType);
+  items.forEach((item, idx) => {
+    const iconUrl = resolveWeaponIcon(item, catData, idx);
+    const itemUuid = uuid('item', `${catName}-${item.id}`);
+    const recipeMats = Object.entries(item.mats || {}).map(([n, q]) => ({
+      uuid: getMatUuid(n), name: n, quantity: q,
+    }));
+    const recipeUuid = uuid('recipe', `recipe-${item.id}`);
 
-  // Helper: push one base item + its tier expansion
-  const pushItem = (item, idx, { isStarter = false } = {}) => {
-    const bespoke = migrated ? bespokeIconUrl(item.slug) : null;
-    const iconUrl = bespoke || (iconFn ? iconFn(idx + 1) : '');
-
-    if (migrated && iconUrl) {
-      if (!weaponIconCollisions.has(iconUrl)) weaponIconCollisions.set(iconUrl, []);
-      weaponIconCollisions.get(iconUrl).push(`${weaponType}/${item.name}`);
+    if (recipeMats.length) {
+      allRecipes.push({
+        uuid: recipeUuid, name: `Craft ${item.name}`, resultItemId: itemUuid,
+        resultName: item.name, profession: item.craftedBy || 'Miner',
+        category: isTome ? 'offhand-tome' : isArtifactCat ? 'artifact' : catName,
+        materials: recipeMats,
+      });
     }
 
-    const baseUuid = generateUuid('item', `${weaponType}-${item.name}`);
-    const recipeUuid = generateUuid('recipe', `recipe-${item.name}`);
-    const recipeMaterials = Object.entries(item.mats).map(([matName, qty]) => ({
-      uuid: getMaterialUuid(matName), name: matName, quantity: qty,
-    }));
-    allRecipes.push({
-      uuid: recipeUuid, name: `Craft ${item.name}`, resultItemId: baseUuid,
-      resultName: item.name, profession: def.profession, category: weaponType, materials: recipeMaterials,
-    });
+    if (isArtifactCat) {
+      // D3: Artifact (no tier expansion, hidden until found)
+      allArtifacts.push({
+        uuid: itemUuid, baseUuid: itemUuid,
+        name: item.name, baseName: item.name,
+        category: 'artifact', type: 'artifact', classification: 'artifact',
+        artifactType: 'arcane', // first sub-type; expand later
+        tier: null, tierLabel: null, tierColor: null,
+        iconUrl, description: item.lore || item.basicAbility || '',
+        stats: item.stats || {},
+        abilities: item.abilities || [], signature: item.signatureAbility || '',
+        passives: item.passives || [],
+        craftedBy: null, recipeUuid: recipeMats.length ? recipeUuid : null,
+        source: 'world',
+        discovery: {
+          hiddenUntilFound: true,
+          source: 'world',
+          revealCondition: `Discover ${item.name} in the world.`,
+        },
+        lore: item.lore || null,
+      });
+      artifactCount++;
+      return;
+    }
 
-    const maxTier = isStarter ? 1 : 8;
-    for (let tier = 1; tier <= maxTier; tier++) {
-      const tierUuid = tier === 1 ? baseUuid : generateUuid('item', `${weaponType}-${item.name}-T${tier}`);
-      const tierData = TIERS[tier - 1];
+    if (isTome) {
+      // D4: tier-less offhand tome with skillGrants
+      const school = catName.replace('Tomes', '').toLowerCase();
+      const skillGrants = (item.abilities || []).map((a, i) => ({
+        name: typeof a === 'string' ? a.replace(/\s*\(.+\)$/, '') : a.name,
+        level: 1 + i * 10,
+      }));
+      allItems.push({
+        uuid: itemUuid, baseUuid: itemUuid,
+        name: item.name, baseName: item.name,
+        category: 'offhand-tome', type: 'offhand-tome', subCategory: 'offhand',
+        school,
+        tier: null, tierLabel: null, tierColor: null,
+        iconUrl, description: item.lore || item.basicAbility || '',
+        skillGrants,
+        craftedBy: item.craftedBy || 'Mystic',
+        recipeUuid: recipeMats.length ? recipeUuid : null,
+        source: 'craft',
+      });
+      tomeCount++;
+      return;
+    }
+
+    // Regular weapon / tool - tier expand T1-T8 (tools also tier via progression)
+    const baseUuidVal = itemUuid;
+    for (let tier = 1; tier <= 8; tier++) {
+      const tUuid = tier === 1 ? baseUuidVal : uuid('item', `${catName}-${item.id}-T${tier}`);
+      const tData = TIERS[tier - 1];
       const stats = {};
       if (item.stats) {
-        for (const [key, val] of Object.entries(item.stats)) {
-          if (key.endsWith('Base')) {
-            const statName = key.replace('Base', '');
-            const perTier = item.stats[`${statName}PerTier`] || 0;
-            stats[statName] = scaleStat(val, perTier, tier);
+        for (const [k, v] of Object.entries(item.stats)) {
+          if (typeof v === 'number' && k.endsWith('Base')) {
+            const name = k.replace('Base', '');
+            const per = item.stats[`${name}PerTier`] || 0;
+            stats[name] = scaleStat(v, per, tier);
           }
         }
       }
       allItems.push({
-        uuid: tierUuid, baseUuid, name: tier === 1 ? item.name : `${item.name} T${tier}`,
-        baseName: item.name, category: weaponType, type: 'weapon', subCategory: def.category,
-        tier, tierLabel: tierData.label, tierColor: tierData.color,
-        iconUrl, description: item.desc, stats,
-        craftedBy: isStarter ? null : def.profession,
-        recipeUuid,
-        source: item.source || (isStarter ? 'world-drop' : 'craft'),
-        foldsInLegacy: item.foldsInLegacy || undefined,
-        abilities: item.abilities || [], signature: item.signature || '', passives: item.passives || [],
+        uuid: tUuid, baseUuid: baseUuidVal,
+        name: tier === 1 ? item.name : `${item.name} T${tier}`,
+        baseName: item.name,
+        category: catName, type: isTool ? 'tool' : 'weapon',
+        subCategory: item.category || (catName.endsWith('2h') ? '2h' : '1h'),
+        tier, tierLabel: tData.label, tierColor: tData.color,
+        iconUrl, description: item.lore || item.basicAbility || '',
+        stats,
+        craftedBy: item.craftedBy || (isTool ? null : 'Miner'),
+        recipeUuid: recipeMats.length ? recipeUuid : null,
+        source: 'craft',
+        abilities: item.abilities || [], signature: item.signatureAbility || '',
+        passives: item.passives || [],
+        primaryStat: item.primaryStat, secondaryStat: item.secondaryStat,
+        lore: item.lore,
       });
-      weaponCount++;
+      if (isTool) toolCount++; else weaponCount++;
     }
-  };
-
-  // Starter item (migrated categories only) -- T1 world-drop generic.
-  // Starter takes pack slot 1; real items shift to slot 2+ to avoid collision.
-  if (def.starter) pushItem(def.starter, 0, { isStarter: true });
-  const packOffset = def.starter ? 1 : 0;
-  def.items.forEach((item, idx) => pushItem(item, idx + packOffset));
-}
-console.log(`  ${weaponCount} weapon items (base x 8 tiers, + starters for migrated categories)`);
-
-// Fail the build on icon collisions WITHIN migrated categories.
-const migratedCollisions = [...weaponIconCollisions.entries()].filter(([, names]) => names.length > 1);
-if (migratedCollisions.length) {
-  console.error('\nICON COLLISIONS in migrated weapon categories (fatal):');
-  for (const [url, names] of migratedCollisions) console.error(`  ${url}\n    ${names.join('\n    ')}`);
-  process.exit(1);
-}
-
-// --- Food ---
-let foodCount = 0;
-const foodIcons = {
-  red: ICON('consumables/food_steak_cooked.png'),
-  green: ICON('consumables/food_grapes.png'),
-  blue: ICON('consumables/food_fish_red.png'),
-};
-for (const [color, foods] of Object.entries(FOOD_SAMPLE)) {
-  foods.forEach((food) => {
-    const foodUuid = generateUuid('food', `food-${color}-${food.name}`);
-    const recipeUuid = generateUuid('recipe', `recipe-food-${food.name}`);
-    const recipeMaterials = Object.entries(food.mats).map(([matName, qty]) => ({
-      uuid: getMaterialUuid(matName), name: matName, quantity: qty,
-    }));
-    allRecipes.push({
-      uuid: recipeUuid, name: `Cook ${food.name}`, resultItemId: foodUuid,
-      resultName: food.name, profession: 'Chef', category: `food-${color}`, materials: recipeMaterials,
-    });
-    allItems.push({
-      uuid: foodUuid, name: food.name, category: `food-${color}`, type: 'food',
-      tier: Math.ceil(food.lvl / 12), requiredLevel: food.lvl,
-      iconUrl: foodIcons[color], description: food.buff, buff: food.buff,
-      craftedBy: 'Chef', recipeUuid,
-    });
-    foodCount++;
   });
 }
-console.log(`  ${foodCount} food items`);
-
-// --- Potions ---
-let potionCount = 0;
-POTION_DATA.forEach((potion) => {
-  const potionUuid = generateUuid('potion', `potion-${potion.name}`);
-  const recipeUuid = generateUuid('recipe', `recipe-potion-${potion.name}`);
-  const recipeMaterials = Object.entries(potion.mats).map(([matName, qty]) => ({
-    uuid: getMaterialUuid(matName), name: matName, quantity: qty,
-  }));
-  allRecipes.push({
-    uuid: recipeUuid, name: `Brew ${potion.name}`, resultItemId: potionUuid,
-    resultName: potion.name, profession: 'Mystic', category: 'potion', materials: recipeMaterials,
-  });
-  allItems.push({
-    uuid: potionUuid, name: potion.name, category: 'potion', type: 'potion', tier: 1,
-    iconUrl: POTION_ICONS[potion.icon] || ICON('consumables/health_potion.png'),
-    description: potion.effect, effect: potion.effect, craftedBy: 'Mystic', recipeUuid,
-  });
-  potionCount++;
-});
-console.log(`  ${potionCount} potions`);
-
-// --- Tomes (D4: tier-less off-hand spell-grants) ---
-const TOME_ICON = (slug) => bespokeIconUrl(slug) || PACK_ICON(`weapons/Book_${(OFFHAND_TOMES.findIndex(t => t.slug === slug) + 1)}.png`);
-let tomeCount = 0;
-for (const tome of OFFHAND_TOMES) {
-  const tomeUuid = generateUuid('item', `offhand-tome-${tome.name}`);
-  const recipeUuid = generateUuid('recipe', `recipe-tome-${tome.name}`);
-  const recipeMaterials = Object.entries(tome.mats || {}).map(([matName, qty]) => ({
-    uuid: getMaterialUuid(matName), name: matName, quantity: qty,
-  }));
-  allRecipes.push({
-    uuid: recipeUuid, name: `Scribe ${tome.name}`, resultItemId: tomeUuid,
-    resultName: tome.name, profession: tome.profession || 'Mystic',
-    category: 'offhand-tome', materials: recipeMaterials,
-  });
-  allItems.push({
-    uuid: tomeUuid, baseUuid: tomeUuid, name: tome.name, baseName: tome.name,
-    category: 'offhand-tome', type: 'offhand-tome', subCategory: 'offhand',
-    tier: null, tierLabel: null, tierColor: null,
-    iconUrl: TOME_ICON(tome.slug),
-    description: tome.desc, school: tome.school,
-    skillGrants: tome.skillGrants || [],
-    craftedBy: tome.profession || 'Mystic', recipeUuid,
-    source: 'craft',
-  });
-  tomeCount++;
-}
-console.log(`  ${tomeCount} offhand tomes`);
-
-// --- Artifacts (D3: world-found, discovery-gated, no craft recipe) ---
-const allArtifacts = [];
-let artifactCount = 0;
-for (const a of ARTIFACTS) {
-  const uuid = generateUuid('item', `artifact-${a.name}`);
-  const iconUrl = bespokeIconUrl(a.slug) || '';
-  const rec = {
-    uuid, baseUuid: uuid, name: a.name, baseName: a.name,
-    category: 'artifact', type: 'artifact',
-    classification: 'artifact', artifactType: a.artifactType || 'arcane',
-    tier: null, tierLabel: null, tierColor: null,
-    iconUrl, description: a.desc, stats: a.stats || {},
-    abilities: a.abilities || [], signature: a.signature || '', passives: a.passives || [],
-    craftedBy: null, recipeUuid: null, source: a.discovery?.source || 'world',
-    discovery: a.discovery,
-    lore: a.lore || null,
-  };
-  allArtifacts.push(rec);
-  artifactCount++;
-}
-console.log(`  ${artifactCount} artifacts`);
-
-// --- Materials ---
-const allMaterials = [];
-for (const [name, uuid] of materialUuids) {
-  allMaterials.push({
-    uuid, name, type: 'material',
-    iconUrl: ICON(`materials/${name.toLowerCase().replace(/\s+/g, '_')}.png`),
-  });
-}
-console.log(`  ${allMaterials.length} unique materials`);
+console.log(`  ${weaponCount} weapon tier rows (incl. tools: ${toolCount})`);
+console.log(`  ${tomeCount} tomes (D4)`);
+console.log(`  ${artifactCount} artifacts (D3)`);
 
 // ============================================================
-// WRITE
+// ARMOR (tier expand per slot)
+// ============================================================
+let armorCount = 0;
+for (const [matName, matData] of Object.entries(ARMOR.materials || {})) {
+  const items = matData.items || [];
+  for (const item of items) {
+    const baseUuid = uuid('item', `armor-${matName}-${item.id}`);
+    const recipeMats = [];
+    const recipeUuid = uuid('recipe', `recipe-armor-${item.id}`);
+    const iconUrl = item.spritePath
+      ? (item.spritePath.startsWith('http') ? item.spritePath : `${CDN}${item.spritePath}`)
+      : '';
+    for (let tier = 1; tier <= 8; tier++) {
+      const tUuid = tier === 1 ? baseUuid : uuid('item', `armor-${matName}-${item.id}-T${tier}`);
+      const tData = TIERS[tier - 1];
+      const stats = {};
+      if (item.stats) {
+        for (const [k, v] of Object.entries(item.stats)) {
+          if (typeof v === 'number' && k.endsWith('Base')) {
+            const name = k.replace('Base', '');
+            const per = item.stats[`${name}PerTier`] || 0;
+            stats[name] = scaleStat(v, per, tier);
+          }
+        }
+      }
+      allArmor.push({
+        uuid: tUuid, baseUuid,
+        name: tier === 1 ? item.name : `${item.name} T${tier}`,
+        baseName: item.name,
+        category: 'armor', type: 'armor',
+        material: matName, slotType: item.type, setName: item.name.split(' ')[0],
+        tier, tierLabel: tData.label, tierColor: tData.color,
+        iconUrl, description: item.lore || '',
+        stats,
+        passive: item.passive, proc: item.proc, setBonus: item.setBonus,
+        source: 'craft',
+      });
+      armorCount++;
+    }
+  }
+}
+console.log(`  ${armorCount} armor tier rows`);
+
+// ============================================================
+// MATERIALS (source already tiered - preserve)
+// ============================================================
+for (const [catName, catData] of Object.entries(MATERIALS.categories || {})) {
+  for (const item of (catData.items || [])) {
+    const mUuid = getMatUuid(item.name);
+    allMaterials.push({
+      uuid: mUuid,
+      id: item.id, name: item.name, type: 'material',
+      category: catName, tier: item.tier ?? 0,
+      emoji: item.emoji, gatheredBy: item.gatheredBy || null,
+      iconUrl: ICON(`materials/${item.id}.png`),
+    });
+  }
+}
+console.log(`  ${allMaterials.length} materials (direct from materials.json)`);
+
+// ============================================================
+// CONSUMABLES (food + potions + engineer items)
+// ============================================================
+for (const [catName, catData] of Object.entries(CONSUMES.categories || {})) {
+  for (const item of (catData.items || [])) {
+    const cUuid = uuid(catName.startsWith('mystic') ? 'potion' : catName.endsWith('Foods') ? 'food' : 'consumable',
+                       `${catName}-${item.id}`);
+    const recipeMats = Object.entries(item.mats || {}).map(([n, q]) => ({
+      uuid: getMatUuid(n), name: n, quantity: q,
+    }));
+    const recipeUuid = uuid('recipe', `recipe-${catName}-${item.id}`);
+    if (recipeMats.length) {
+      allRecipes.push({
+        uuid: recipeUuid,
+        name: `${catName.startsWith('mystic') ? 'Brew' : catName.endsWith('Foods') ? 'Cook' : 'Assemble'} ${item.name}`,
+        resultItemId: cUuid, resultName: item.name,
+        profession: catData.profession || 'Chef',
+        category: catName, materials: recipeMats,
+      });
+    }
+    allConsumables.push({
+      uuid: cUuid, baseUuid: cUuid,
+      name: item.name, baseName: item.name,
+      category: catName,
+      type: catName.startsWith('mystic') ? 'potion' : catName.endsWith('Foods') ? 'food' : 'consumable',
+      requiredLevel: item.lvl ?? null,
+      tier: item.lvl ? Math.max(1, Math.ceil(item.lvl / 12)) : 1,
+      iconUrl: ICON(`consumables/${catName}_${item.id}.png`),
+      emoji: item.icon || item.emoji || null,
+      description: item.desc || '',
+      stats: item.stats || {},
+      buff: item.stats ? JSON.stringify(item.stats) : null,
+      craftedBy: catData.profession || 'Chef',
+      recipeUuid: recipeMats.length ? recipeUuid : null,
+    });
+  }
+}
+console.log(`  ${allConsumables.length} consumables (${Object.keys(CONSUMES.categories || {}).length} sub-categories)`);
+
+// ============================================================
+// WRITE OUTPUTS
 // ============================================================
 const now = new Date().toISOString();
-
 const outputs = [
   ['master-items.json', {
-    version: '2.1.0', generated: now, source: 'ObjectStore/scripts/generate-master-database.mjs',
-    totalItems: allItems.length, totalRecipes: allRecipes.length, totalMaterials: allMaterials.length,
-    items: allItems,
+    version: '3.0.0', generated: now,
+    source: 'Derived from api/v1/{weapons,armor,materials,consumables}.json',
+    totalItems: allItems.length + allArmor.length + allConsumables.length,
+    totalWeapons: allItems.length, totalArmor: allArmor.length,
+    totalConsumables: allConsumables.length, totalRecipes: allRecipes.length,
+    items: [...allItems, ...allArmor, ...allConsumables],
   }],
-  ['master-recipes.json', {
-    version: '2.1.0', generated: now, totalRecipes: allRecipes.length, recipes: allRecipes,
+  ['master-weapons.json', {
+    version: '3.0.0', generated: now, total: allItems.length, items: allItems,
+  }],
+  ['master-armor.json', {
+    version: '3.0.0', generated: now, total: allArmor.length, items: allArmor,
+  }],
+  ['master-consumables.json', {
+    version: '3.0.0', generated: now, total: allConsumables.length, items: allConsumables,
   }],
   ['master-materials.json', {
-    version: '2.1.0', generated: now, totalMaterials: allMaterials.length, materials: allMaterials,
+    version: '3.0.0', generated: now, total: allMaterials.length, materials: allMaterials,
+  }],
+  ['master-recipes.json', {
+    version: '3.0.0', generated: now, total: allRecipes.length, recipes: allRecipes,
   }],
   ['master-artifacts.json', {
-    version: '2.1.0', generated: now, totalArtifacts: allArtifacts.length,
-    note: 'Honor discovery.hiddenUntilFound in player-facing UIs (D3). Admin tools bypass.',
+    version: '3.0.0', generated: now, total: allArtifacts.length,
+    note: 'Honor discovery.hiddenUntilFound in player-facing UIs (D3).',
     artifacts: allArtifacts,
   }],
   ['master-registry.json', {
-    version: '2.1.0', generated: now,
+    version: '3.0.0', generated: now,
     totals: {
-      items: allItems.length, recipes: allRecipes.length,
-      materials: allMaterials.length, artifacts: allArtifacts.length,
+      weapons: allItems.length, armor: allArmor.length,
+      consumables: allConsumables.length, materials: allMaterials.length,
+      recipes: allRecipes.length, artifacts: allArtifacts.length,
     },
     byUuid: Object.fromEntries([
-      ...allItems.map(i => [i.uuid, { kind: 'item', name: i.name, category: i.category }]),
+      ...allItems.map(i => [i.uuid, { kind: i.type, name: i.name, category: i.category, tier: i.tier }]),
+      ...allArmor.map(i => [i.uuid, { kind: 'armor', name: i.name, material: i.material, slot: i.slotType, tier: i.tier }]),
+      ...allConsumables.map(i => [i.uuid, { kind: i.type, name: i.name, category: i.category }]),
+      ...allMaterials.map(m => [m.uuid, { kind: 'material', name: m.name, category: m.category, tier: m.tier }]),
       ...allArtifacts.map(a => [a.uuid, { kind: 'artifact', name: a.name, artifactType: a.artifactType }]),
     ]),
   }],
 ];
-
-for (const [filename, data] of outputs) {
-  const json = JSON.stringify(data, null, 2);
-  writeFileSync(join(API_DIR, filename), json);
+for (const [name, data] of outputs) {
+  writeFileSync(join(API_DIR, name), JSON.stringify(data, null, 2));
 }
 
-console.log(`\nMaster database generated!`);
-console.log(`  api/v1/master-items.json      — ${allItems.length} items`);
-console.log(`  api/v1/master-recipes.json     — ${allRecipes.length} recipes`);
-console.log(`  api/v1/master-materials.json   — ${allMaterials.length} materials`);
+console.log('\nMaster database generated:');
+for (const [name, data] of outputs) {
+  const size = data.total ?? data.totalItems ?? Object.keys(data.byUuid || {}).length;
+  console.log(`  api/v1/${name}  - ${size} rows`);
+}
