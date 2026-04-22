@@ -83,7 +83,10 @@
     "effects:manifest": "node scripts/rebuild-effects-manifest.mjs",
     "effects:all": "node scripts/consolidate-effects.mjs && node scripts/rebuild-effects-manifest.mjs && node scripts/gltf-pipeline.mjs effects && node scripts/gltf-pipeline.mjs validate",
     "pipeline:sync": "node scripts/sync-to-r2.js --pipeline",
-    "pipeline:sync:dry": "node scripts/sync-to-r2.js --pipeline --dry-run"
+    "pipeline:sync:dry": "node scripts/sync-to-r2.js --pipeline --dry-run",
+    "shader-lab:manifest": "node scripts/shader-lab-manifest.mjs",
+    "shader-lab:sync-textures": "node scripts/shader-lab-sync-textures.mjs",
+    "shader-lab:sync-textures:dry": "node scripts/shader-lab-sync-textures.mjs --dry-run"
   },
   "repository": {
     "type": "git",
