@@ -680,6 +680,30 @@ class GrudgeSDK {
   async getRace(raceId) { const d = await this.getRaces(); return d.races[raceId] || null; }
   async getRacesByFaction(factionId) { const d = await this.getRaces(); return Object.values(d.races).filter(r => r.faction === factionId); }
 
+  // ── Race Models (FBX/GLB kits + animation packs) ──
+  async getRaceModels() { return this.fetch('/api/v1/race-models.json'); }
+  async getRaceModel(raceId) { const d = await this.getRaceModels(); return d.races?.[raceId] || null; }
+  async getRaceModelsByFaction(factionId) { const d = await this.getRaceModels(); return Object.values(d.races || {}).filter(r => r.faction === factionId); }
+  async getAnimationPacks() { const d = await this.getRaceModels(); return d.animationPacks || {}; }
+  async getAnimationPack(packId) { const d = await this.getRaceModels(); return d.animationPacks?.[packId] || null; }
+  async getRaceSlotPatterns() { const d = await this.getRaceModels(); return d.slotPatterns || {}; }
+  async getRaceBoneContainers() { const d = await this.getRaceModels(); return d.boneContainers || {}; }
+  /** Resolve a relative asset path from the manifest to an absolute CDN URL. */
+  getRaceAssetUrl(relPath, manifest = null) {
+    if (!relPath) return null;
+    if (/^https?:\/\//i.test(relPath)) return relPath;
+    const base = (manifest?.base || 'https://objects.grudge-studio.com/race-characters/').replace(/\/$/, '');
+    return `${base}/${String(relPath).replace(/^\//, '')}`;
+  }
+  async getRaceModelUrl(raceId) {
+    const d = await this.getRaceModels(); const r = d.races?.[raceId]; if (!r) return null;
+    return this.getRaceAssetUrl(r.model, d);
+  }
+  async getAnimationPackUrl(packId) {
+    const d = await this.getRaceModels(); const p = d.animationPacks?.[packId]; if (!p) return null;
+    return this.getRaceAssetUrl(p.path, d);
+  }
+
   // ── Classes ──
   async getClasses() { return this.fetch('/api/v1/classes.json'); }
   async getClass(classId) { const d = await this.getClasses(); return d.classes[classId] || null; }
@@ -1117,6 +1141,7 @@ class GrudgeSDK {
         gltfManifest: `${this.baseUrl}/api/v1/gltf-manifest.json`,
         effectDefinitions: `${this.baseUrl}/api/v1/effect-definitions.json`,
         animationsGltf: `${this.baseUrl}/api/v1/animations-gltf.json`,
+        raceModels: `${this.baseUrl}/api/v1/race-models.json`,
       },
       r2Worker: { base: this.r2.workerUrl, assets: `${this.r2.workerUrl}/v1/assets`, health: `${this.r2.workerUrl}/v1/health` },
       workerApi: {

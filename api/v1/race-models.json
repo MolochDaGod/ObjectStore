@@ -1,0 +1,194 @@
+{
+  "$schema": "https://molochdagod.github.io/ObjectStore/schemas/race-models.v1.json",
+  "version": "1.0.0",
+  "updated": "2026-04-22",
+  "base": "https://objects.grudge-studio.com/race-characters/",
+  "notes": "The six canonical Grudge MMO race characters. Each model is a single FBX 'customizable kit' exported from the Unity Toon_RTS project. Every armor/weapon/shield/utility variant is a sibling child mesh of the rig; runtime equipment is done by toggling `visible` on children whose name matches `prefix` + slot regex (see `slotPatterns`). Weapons/shields attach to `boneContainers`.",
+
+  "boneContainers": {
+    "rightHand":  "R_hand_container",
+    "leftHand":   "L_hand_container",
+    "leftShield": "L_shield_container",
+    "bag":        "Bone_bag",
+    "wood":       "Bone_wood",
+    "quiver":     "Quiver_container"
+  },
+
+  "slotPatterns": {
+    "body":      "^Units_Body_([A-Z])$",
+    "arms":      "^Units_Arms_([A-Z])$",
+    "legs":      "^Units_Legs_([A-Z])$",
+    "head":      "^Units_head_([A-Z])$",
+    "shoulders": "^Units_shoulderpads_([A-Z])$",
+    "axe":       "^Units_axe_([A-Z])$|^weapon_Axe_([A-Z])$",
+    "hammer":    "^Units_hammer_([A-Z])$|^weapon_hammer_([A-Z])$",
+    "sword":     "^Units_sword_([A-Z])$|^weapon_Sword_([A-Z])$",
+    "pick":      "^Units_pick$",
+    "spear":     "^Units_spear$|^weapon_Spear$",
+    "bow":       "^Units_Bow$|^weapon_Bow$",
+    "staff":     "^Units_staff_([A-Z])$|^weapon_staff_([A-Z])$",
+    "shield":    "^Units_shield_([A-Z])$|^Shield_([A-Z])$",
+    "bag":       "^Xtra_bag$|^Units_bag$",
+    "wood":      "^Xtra_wood$|^Units_wood$",
+    "quiver":    "^Xtra_quiver$|^Units_quiver$"
+  },
+
+  "slotGroups": {
+    "armor":   ["body", "arms", "legs", "head", "shoulders"],
+    "weapons": ["axe", "hammer", "sword", "pick", "spear", "bow", "staff"],
+    "shields": ["shield"],
+    "utility": ["bag", "wood", "quiver"]
+  },
+
+  "races": {
+    "human": {
+      "id": "human",
+      "name": "Human (Western Kingdom)",
+      "faction": "crusade",
+      "prefix": "WK_",
+      "format": "fbx",
+      "model": "wk/WK_Characters_customizable.fbx",
+      "thumbnail": "wk/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "1h_sword_shield",
+      "allowedWeapons": ["sword", "hammer", "axe", "spear", "bow", "staff"]
+    },
+    "barbarian": {
+      "id": "barbarian",
+      "name": "Barbarian",
+      "faction": "crusade",
+      "prefix": "BRB_",
+      "format": "fbx",
+      "model": "brb/BRB_Characters_customizable.fbx",
+      "thumbnail": "brb/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "spear"]
+    },
+    "elf": {
+      "id": "elf",
+      "name": "Elf",
+      "faction": "fabled",
+      "prefix": "ELF_",
+      "format": "fbx",
+      "model": "elf/ELF_Characters_customizable.fbx",
+      "thumbnail": "elf/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "longbow",
+      "allowedWeapons": ["bow", "sword", "spear", "staff"]
+    },
+    "dwarf": {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "faction": "fabled",
+      "prefix": "DWF_",
+      "format": "fbx",
+      "model": "dwf/DWF_Characters_customizable.fbx",
+      "thumbnail": "dwf/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "pick"]
+    },
+    "orc_classic": {
+      "id": "orc_classic",
+      "name": "Orc",
+      "faction": "legion",
+      "prefix": "ORC_",
+      "format": "fbx",
+      "model": "orc/ORC_Characters_Customizable.fbx",
+      "thumbnail": "orc/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "spear"]
+    },
+    "undead": {
+      "id": "undead",
+      "name": "Undead",
+      "faction": "legion",
+      "prefix": "UD_",
+      "format": "fbx",
+      "model": "ud/UD_Characters_customizable.fbx",
+      "thumbnail": "ud/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "magic",
+      "allowedWeapons": ["staff", "sword", "spear"]
+    }
+  },
+
+  "animationPacks": {
+    "1h_sword_shield": {
+      "id": "1h_sword_shield",
+      "name": "1H Sword & Shield",
+      "format": "fbx",
+      "path": "anims/1h_sword_shield.fbx",
+      "clips": {
+        "idle":   "sword_and_shield_idle",
+        "walk":   "sword_and_shield_strafe",
+        "run":    "sword_and_shield_run",
+        "attack": "sword_and_shield_attack",
+        "heavy":  "sword_and_shield_attack_3",
+        "block":  "sword_and_shield_block_idle",
+        "jump":   "standing_jump",
+        "sneak":  "sword_and_shield_strafe",
+        "death":  "sword_and_shield_death"
+      }
+    },
+    "2h_melee": {
+      "id": "2h_melee",
+      "name": "2H Melee (Axe/Hammer)",
+      "format": "fbx",
+      "path": "anims/2h_melee.fbx",
+      "clips": {
+        "idle":   "standing_idle",
+        "walk":   "standing_walk_forward",
+        "run":    "standing_run_forward",
+        "attack": "standing_melee_attack_horizontal",
+        "heavy":  "standing_melee_attack_360_high",
+        "block":  "standing_block_idle",
+        "jump":   "standing_jump",
+        "sneak":  "standing_walk_forward",
+        "death":  "standing_block_react_large"
+      }
+    },
+    "longbow": {
+      "id": "longbow",
+      "name": "Longbow",
+      "format": "fbx",
+      "path": "anims/longbow.fbx",
+      "clips": {
+        "idle":   "standing_idle_01",
+        "walk":   "standing_aim_walk_forward",
+        "run":    "standing_run_forward",
+        "attack": "standing_draw_arrow",
+        "heavy":  "standing_aim_overdraw",
+        "block":  "standing_block",
+        "jump":   "standing_dodge_forward",
+        "sneak":  "standing_aim_walk_forward",
+        "death":  "standing_death_backward_01"
+      }
+    },
+    "magic": {
+      "id": "magic",
+      "name": "Magic Staff",
+      "format": "fbx",
+      "path": "anims/magic.fbx",
+      "clips": {
+        "idle":   "standing_idle",
+        "walk":   "Standing_Walk_Forward",
+        "run":    "Standing_Run_Forward",
+        "attack": "Standing_1H_Magic_Attack_01",
+        "heavy":  "Standing_2H_Magic_Area_Attack_02",
+        "block":  "standing_idle_02",
+        "jump":   "Standing_Jump",
+        "sneak":  "Standing_Walk_Forward",
+        "death":  "Standing_React_Death_Backward"
+      }
+    }
+  }
+}
