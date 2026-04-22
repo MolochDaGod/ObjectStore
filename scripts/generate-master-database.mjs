@@ -128,6 +128,9 @@ const WEAPONS   = readJson('api/v1/weapons.json');
 const ARMOR     = readJson('api/v1/armor.json');
 const MATERIALS = readJson('api/v1/materials.json');
 const CONSUMES  = readJson('api/v1/consumables.json');
+const PROFS     = readJson('api/v1/professions.json');
+const SKILLTREES= readJson('api/v1/skillTrees.json');
+const WSKILLS   = readJson('api/v1/weaponSkills.json');
 
 console.log('Generating ObjectStore master database (data-driven)...');
 
@@ -361,6 +364,80 @@ for (const [catName, catData] of Object.entries(CONSUMES.categories || {})) {
 console.log(`  ${allConsumables.length} consumables (${Object.keys(CONSUMES.categories || {}).length} sub-categories)`);
 
 // ============================================================
+// PROFESSIONS (gathering + crafting + skill-tree nodes with UUIDs)
+// ============================================================
+const masterProfessions = { gathering: {}, crafting: {}, gatheringMilestones: PROFS.gatheringMilestones || [], xpTable: PROFS.xpTable || {}, tierNames: PROFS.tierNames || [], tierColors: PROFS.tierColors || {} };
+const allProfessionNodes = [];
+let profNodeCount = 0;
+for (const [gname, gdata] of Object.entries(PROFS.gathering || {})) {
+  masterProfessions.gathering[gname] = {
+    uuid: uuid('item', `gather-${gname}`),
+    name: gname, category: 'gathering',
+    icon: gdata.icon, color: gdata.color,
+    resources: gdata.resources || [], tierResources: gdata.tierResources || {},
+    feedsInto: gdata.feedsInto || [],
+  };
+}
+for (const [pname, pdata] of Object.entries(PROFS.professions || {})) {
+  const pUuid = uuid('item', `prof-${pname}`);
+  const nodes = (pdata.skillTree || []).map(node => {
+    const nodeUuid = uuid('node', `${pname}-node-${node.id}`);
+    const rec = { uuid: nodeUuid, parentNodeId: node.parent ?? null, ...node };
+    allProfessionNodes.push({ professionUuid: pUuid, profession: pname, ...rec });
+    profNodeCount++;
+    return rec;
+  });
+  masterProfessions.crafting[pname] = {
+    uuid: pUuid,
+    name: pdata.name, role: pdata.role,
+    icon: pdata.icon, color: pdata.color,
+    specializations: pdata.specializations || [],
+    crafts: pdata.crafts || [], gathers: pdata.gathers || [],
+    tools: pdata.tools || [],
+    recipeCount: pdata.recipeCount || 0, recipeTypes: pdata.recipeTypes || [],
+    skillTree: nodes,
+  };
+}
+console.log(`  ${Object.keys(masterProfessions.gathering).length} gathering + ${Object.keys(masterProfessions.crafting).length} crafting professions (${profNodeCount} skill-tree nodes)`);
+
+// ============================================================
+// CLASS SKILL TREES (with UUIDs per skill)
+// ============================================================
+const masterSkillTrees = {};
+let classSkillCount = 0;
+for (const [cname, cdata] of Object.entries(SKILLTREES.skillTrees || {})) {
+  const tiers = (cdata.tiers || []).map(tier => ({
+    ...tier,
+    skills: (tier.skills || []).map(sk => {
+      classSkillCount++;
+      return { uuid: uuid('skill', `class-${cname}-${sk.id}`), ...sk };
+    }),
+  }));
+  masterSkillTrees[cname] = { uuid: uuid('item', `class-${cname}`), ...cdata, tiers };
+}
+console.log(`  ${Object.keys(masterSkillTrees).length} class skill trees (${classSkillCount} skills)`);
+
+// ============================================================
+// WEAPON SKILLS (with UUIDs per skill)
+// ============================================================
+let weaponSkillCount = 0;
+const masterWeaponSkills = {
+  version: WSKILLS.version, generatedAt: WSKILLS.generatedAt,
+  classRestrictions: WSKILLS.classRestrictions || {},
+  weaponTypes: (WSKILLS.weaponTypes || []).map(wt => ({
+    ...wt, uuid: uuid('item', `weapontype-${wt.id}`),
+    slots: (wt.slots || []).map(slot => ({
+      ...slot,
+      skills: (slot.skills || []).map(sk => {
+        weaponSkillCount++;
+        return { uuid: uuid('skill', `weapon-${wt.id}-${sk.id}`), ...sk };
+      }),
+    })),
+  })),
+};
+console.log(`  ${masterWeaponSkills.weaponTypes.length} weapon types (${weaponSkillCount} weapon skills)`);
+
+// ============================================================
 // WRITE OUTPUTS
 // ============================================================
 const now = new Date().toISOString();
@@ -393,12 +470,35 @@ const outputs = [
     note: 'Honor discovery.hiddenUntilFound in player-facing UIs (D3).',
     artifacts: allArtifacts,
   }],
+  ['master-professions.json', {
+    version: '3.0.0', generated: now,
+    totalGathering: Object.keys(masterProfessions.gathering).length,
+    totalCrafting: Object.keys(masterProfessions.crafting).length,
+    totalNodes: profNodeCount,
+    ...masterProfessions,
+  }],
+  ['master-skillTrees.json', {
+    version: '3.0.0', generated: now,
+    totalClasses: Object.keys(masterSkillTrees).length,
+    totalSkills: classSkillCount,
+    skillTrees: masterSkillTrees,
+  }],
+  ['master-weaponSkills.json', {
+    version: '3.0.0', generated: now,
+    totalWeaponTypes: masterWeaponSkills.weaponTypes.length,
+    totalSkills: weaponSkillCount,
+    ...masterWeaponSkills,
+  }],
   ['master-registry.json', {
     version: '3.0.0', generated: now,
     totals: {
       weapons: allItems.length, armor: allArmor.length,
       consumables: allConsumables.length, materials: allMaterials.length,
       recipes: allRecipes.length, artifacts: allArtifacts.length,
+      professions: Object.keys(masterProfessions.crafting).length,
+      professionNodes: profNodeCount,
+      classSkills: classSkillCount,
+      weaponSkills: weaponSkillCount,
     },
     byUuid: Object.fromEntries([
       ...allItems.map(i => [i.uuid, { kind: i.type, name: i.name, category: i.category, tier: i.tier }]),
@@ -406,6 +506,9 @@ const outputs = [
       ...allConsumables.map(i => [i.uuid, { kind: i.type, name: i.name, category: i.category }]),
       ...allMaterials.map(m => [m.uuid, { kind: 'material', name: m.name, category: m.category, tier: m.tier }]),
       ...allArtifacts.map(a => [a.uuid, { kind: 'artifact', name: a.name, artifactType: a.artifactType }]),
+      ...Object.values(masterProfessions.crafting).map(p => [p.uuid, { kind: 'profession', name: p.name, role: p.role }]),
+      ...allProfessionNodes.map(n => [n.uuid, { kind: 'profession-node', name: n.name, profession: n.profession, reqLevel: n.reqLevel, branch: n.branch }]),
+      ...Object.values(masterSkillTrees).map(s => [s.uuid, { kind: 'class', name: s.className }]),
     ]),
   }],
 ];
