@@ -1,10 +1,10 @@
 # Grudge Items Audit
 
-Generated: 2026-04-22T04:59:38.276Z
+Generated: 2026-04-22T05:39:17.074Z
 
 ## Source totals
-- master-items: 821
-- master-recipes: 121
+- master-items: 774
+- master-recipes: 130
 - master-materials: 93
 - items-database (legacy): 3425
 - armor.json: 150
@@ -17,21 +17,12 @@ Generated: 2026-04-22T04:59:38.276Z
 - base names: Bonehew, Dreadcleaver, Gorehowl, Iron Axe, Ironmaw, Skullsplitter, Veinreaver
 
 ### bows
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **3**
-    - Shadowflight → icons/weapons/shadowflight.png
-    - Emberthorn → icons/weapons/emberthorn.png
-    - Duskreaver → icons/weapons/duskreaver.png
-- base names: Bloodstring, Duskreaver, Emberthorn, Ironvine, Shadowflight, Wraithbone Bow
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodstring, Duskreaver, Emberthorn, Ironvine, Shadowflight, Wood Bow Starter, Wraithbone Bow
 
 ### crossbows
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **4**
-    - Skullpiercer → icons/weapons/skullpiercer.png
-    - Wraithspike → icons/weapons/wraithspike.png
-    - Emberbolt → icons/weapons/emberbolt.png
-    - Ironshard → icons/weapons/ironshard.png
-- base names: Bloodreaver XB, Emberbolt, Ironshard, Ironveil Repeater, Skullpiercer, Wraithspike
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodreaver XB, Emberbolt, Iron Crossbow Starter, Ironshard, Ironveil Repeater, Skullpiercer, Wraithspike
 
 ### daggers
 - base items: **7**  tier rows: 49  unique icons: 7
@@ -61,36 +52,23 @@ Generated: 2026-04-22T04:59:38.276Z
 
 ### frostStaves
 - base items: **4**  tier rows: 32  unique icons: 4
-- bespoke icons on disk but NOT wired: **1**
-    - Glacial Spire → icons/weapons/glacial-spire.png
 - base names: Absolute Zero, Frostbite Staff, Glacial Spire, Winter's Grudge
 
 ### greataxes
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **2**
-    - Skullsunder → icons/weapons/skullsunder.png
-    - Bloodreaver → icons/weapons/bloodreaver.png
-- base names: Bloodreaver, Duskrend, Oathcleaver, Skullsunder, World Breaker, Worldsplitter
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodreaver, Duskrend, Iron Greataxe, Oathcleaver, Skullsunder, World Breaker, Worldsplitter
 
 ### greatswords
-- base items: **6**  tier rows: 48  unique icons: 6
-- base names: Bloodwrath, Divine Judgment, Duskbringer, Kinslayer, Shadowcleave, Vengeance Blade
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodwrath, Divine Judgment, Duskbringer, Iron Greatsword, Kinslayer, Shadowcleave, Vengeance Blade
 
 ### guns
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **4**
-    - Bloodcannon → icons/weapons/bloodcannon.png
-    - Wraithbarrel → icons/weapons/wraithbarrel.png
-    - Emberrifle → icons/weapons/emberrifle.png
-    - Duskblaster → icons/weapons/duskblaster.png
-- base names: Blackpowder Blaster, Bloodcannon, Duskblaster, Emberrifle, Ironstorm Gun, Wraithbarrel
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Blackpowder Blaster, Bloodcannon, Duskblaster, Emberrifle, Ironstorm Gun, Old Flintlock, Wraithbarrel
 
 ### hammers
-- base items: **6**  tier rows: 48  unique icons: 6
-- bespoke icons on disk but NOT wired: **2**
-    - Titanmaul → icons/weapons/titanmaul.png
-    - Bloodcrusher → icons/weapons/bloodcrusher.png
-- base names: Bloodcrusher, Divine Maul, Doomhammer, Oathcrusher, Stonebreaker, Titanmaul
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodcrusher, Divine Maul, Doomhammer, Iron Maul, Oathcrusher, Stonebreaker, Titanmaul
 
 ### holyStaves
 - base items: **4**  tier rows: 32  unique icons: 4
@@ -101,12 +79,17 @@ Generated: 2026-04-22T04:59:38.276Z
 - base names: Stormwrath, Tempest Spire, Thunderlord Staff, Zeus's Fury
 
 ### maces
-- base items: **6**  tier rows: 48  unique icons: 6
-- base names: Bloodbludgeon, Divine Scepter, Iron Cudgel, Obsidian Crusher, Spiked Morningstar, Steel Flail
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodbludgeon, Divine Scepter, Iron Club, Iron Cudgel, Obsidian Crusher, Spiked Morningstar, Steel Flail
 
 ### natureStaves
 - base items: **4**  tier rows: 32  unique icons: 4
 - base names: Grove Guardian, Thorn Grudge, Verdant Wrath, World Tree
+
+### offhand-tome
+- base items: **8**  tier rows: 8  unique icons: 8
+- items missing tier: 8
+- base names: Arcane Book, Arcane Tome, Fire Tome, Frost Tome, Holy Tome, Lightning Tome, Nature Tome, Spellbook
 
 ### potion
 - base items: **12**  tier rows: 12  unique icons: 7
@@ -117,27 +100,16 @@ Generated: 2026-04-22T04:59:38.276Z
 - base names: Defense Potion, Divine Health, Elixir of Immortality, Greater Health Potion, Greater Mana Potion, Health Potion, Invisibility Potion, Mana Potion, Minor Health Potion, Minor Mana Potion, Rage Potion, Speed Potion
 
 ### shields
-- base items: **6**  tier rows: 48  unique icons: 6
-- base names: Divine Bulwark, Iron Buckler, Mithril Tower Shield, Obsidian Shield, Steel Kite Shield, Void Aegis
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Divine Bulwark, Iron Buckler, Iron Buckler Starter, Mithril Tower Shield, Obsidian Shield, Steel Kite Shield, Void Aegis
 
 ### spears
-- base items: **6**  tier rows: 48  unique icons: 6
-- base names: Bloodspear, Divine Trident, Iron Pike, Mithril Javelin, Steel Lance, Voidpiercer
+- base items: **7**  tier rows: 49  unique icons: 7
+- base names: Bloodspear, Divine Trident, Iron Pike, Iron Pike Starter, Mithril Javelin, Steel Lance, Voidpiercer
 
 ### swords
 - base items: **7**  tier rows: 49  unique icons: 7
 - base names: Bloodfeud Blade, Dusksinger, Emberclad, Iron Sword, Kinrend, Oathbreaker, Wraithfang
-
-### tomes
-- base items: **8**  tier rows: 64  unique icons: 8
-- bespoke icons on disk but NOT wired: **6**
-    - Fire Tome → icons/weapons/fire-tome.png
-    - Frost Tome → icons/weapons/frost-tome.png
-    - Holy Tome → icons/weapons/holy-tome.png
-    - Lightning Tome → icons/weapons/lightning-tome.png
-    - Nature Tome → icons/weapons/nature-tome.png
-    - Arcane Tome → icons/weapons/arcane-tome.png
-- base names: Arcane Book, Arcane Tome, Fire Tome, Frost Tome, Holy Tome, Lightning Tome, Nature Tome, Spellbook
 
 ## Legacy items (items-database.json) not in master
 
@@ -201,9 +173,9 @@ Generated: 2026-04-22T04:59:38.276Z
 - gun: 1
 - staff: 1
 
-### weapon (975 not-in-master)
+### weapon (974 not-in-master)
 - hammer: 205
-- sword: 164
+- sword: 163
 - bow: 160
 - staff: 111
 - spear: 104

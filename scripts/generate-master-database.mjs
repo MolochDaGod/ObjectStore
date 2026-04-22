@@ -18,6 +18,8 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import { WEAPONS as DEF_WEAPONS, CATEGORIES_MIGRATED as MIGRATED_WEAPON_CATS } from './defs/weapons.mjs';
+import { OFFHAND_TOMES } from './defs/offhand-tomes.mjs';
+import { ARTIFACTS } from './defs/artifacts.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -300,18 +302,7 @@ const WEAPON_DEFINITIONS = {
     { name: 'Grove Guardian', desc: 'Entangle: Root AoE.', mats: { 'Maple Log': 4, 'Greater Nature Essence': 3 }, stats: { damageBase: 42, damagePerTier: 10, speedBase: 100, speedPerTier: 24, critBase: 4, critPerTier: 0.6, blockBase: 0, blockPerTier: 0, defenseBase: 14, defensePerTier: 4 } },
     { name: 'World Tree',     desc: 'Life Bloom: Ultimate heal.', mats: { 'Worldtree Log': 8, 'Divine Nature': 5 }, stats: { damageBase: 46, damagePerTier: 11, speedBase: 95, speedPerTier: 22, critBase: 5, critPerTier: 0.7, blockBase: 0, blockPerTier: 0, defenseBase: 16, defensePerTier: 5 } },
   ] },
-  tomes: {
-    profession: 'Mystic', category: 'offhand', items: [
-      { name: 'Fire Tome',      desc: 'Allows Fire spell selection.', mats: { 'Paper': 5, 'Fire Essence': 3 }, stats: {} },
-      { name: 'Frost Tome',     desc: 'Allows Frost spell selection.', mats: { 'Paper': 5, 'Frost Essence': 3 }, stats: {} },
-      { name: 'Holy Tome',      desc: 'Allows Holy spell selection.', mats: { 'Paper': 5, 'Holy Essence': 3 }, stats: {} },
-      { name: 'Lightning Tome', desc: 'Allows Storm spell selection.', mats: { 'Paper': 5, 'Storm Essence': 3 }, stats: {} },
-      { name: 'Nature Tome',    desc: 'Allows Nature spell selection.', mats: { 'Paper': 5, 'Nature Essence': 3 }, stats: {} },
-      { name: 'Arcane Tome',    desc: 'Allows Arcane spell selection.', mats: { 'Paper': 5, 'Arcane Essence': 3 }, stats: {} },
-      { name: 'Spellbook',      desc: 'Multi-school spell selection.', mats: { 'Enchanted Paper': 10, 'All Essence': 2 }, stats: {} },
-      { name: 'Arcane Book',    desc: 'Advanced spell recipes.', mats: { 'Divine Paper': 15, 'Soul Core': 1 }, stats: {} },
-    ]
-  },
+  // tomes are emitted via scripts/defs/offhand-tomes.mjs (D4 - tier-less).
 };
 
 // ============================================================
@@ -488,6 +479,56 @@ POTION_DATA.forEach((potion) => {
 });
 console.log(`  ${potionCount} potions`);
 
+// --- Tomes (D4: tier-less off-hand spell-grants) ---
+const TOME_ICON = (slug) => bespokeIconUrl(slug) || PACK_ICON(`weapons/Book_${(OFFHAND_TOMES.findIndex(t => t.slug === slug) + 1)}.png`);
+let tomeCount = 0;
+for (const tome of OFFHAND_TOMES) {
+  const tomeUuid = generateUuid('item', `offhand-tome-${tome.name}`);
+  const recipeUuid = generateUuid('recipe', `recipe-tome-${tome.name}`);
+  const recipeMaterials = Object.entries(tome.mats || {}).map(([matName, qty]) => ({
+    uuid: getMaterialUuid(matName), name: matName, quantity: qty,
+  }));
+  allRecipes.push({
+    uuid: recipeUuid, name: `Scribe ${tome.name}`, resultItemId: tomeUuid,
+    resultName: tome.name, profession: tome.profession || 'Mystic',
+    category: 'offhand-tome', materials: recipeMaterials,
+  });
+  allItems.push({
+    uuid: tomeUuid, baseUuid: tomeUuid, name: tome.name, baseName: tome.name,
+    category: 'offhand-tome', type: 'offhand-tome', subCategory: 'offhand',
+    tier: null, tierLabel: null, tierColor: null,
+    iconUrl: TOME_ICON(tome.slug),
+    description: tome.desc, school: tome.school,
+    skillGrants: tome.skillGrants || [],
+    craftedBy: tome.profession || 'Mystic', recipeUuid,
+    source: 'craft',
+  });
+  tomeCount++;
+}
+console.log(`  ${tomeCount} offhand tomes`);
+
+// --- Artifacts (D3: world-found, discovery-gated, no craft recipe) ---
+const allArtifacts = [];
+let artifactCount = 0;
+for (const a of ARTIFACTS) {
+  const uuid = generateUuid('item', `artifact-${a.name}`);
+  const iconUrl = bespokeIconUrl(a.slug) || '';
+  const rec = {
+    uuid, baseUuid: uuid, name: a.name, baseName: a.name,
+    category: 'artifact', type: 'artifact',
+    classification: 'artifact', artifactType: a.artifactType || 'arcane',
+    tier: null, tierLabel: null, tierColor: null,
+    iconUrl, description: a.desc, stats: a.stats || {},
+    abilities: a.abilities || [], signature: a.signature || '', passives: a.passives || [],
+    craftedBy: null, recipeUuid: null, source: a.discovery?.source || 'world',
+    discovery: a.discovery,
+    lore: a.lore || null,
+  };
+  allArtifacts.push(rec);
+  artifactCount++;
+}
+console.log(`  ${artifactCount} artifacts`);
+
 // --- Materials ---
 const allMaterials = [];
 for (const [name, uuid] of materialUuids) {
@@ -505,15 +546,31 @@ const now = new Date().toISOString();
 
 const outputs = [
   ['master-items.json', {
-    version: '2.0.0', generated: now, source: 'ObjectStore/scripts/generate-master-database.mjs',
+    version: '2.1.0', generated: now, source: 'ObjectStore/scripts/generate-master-database.mjs',
     totalItems: allItems.length, totalRecipes: allRecipes.length, totalMaterials: allMaterials.length,
     items: allItems,
   }],
   ['master-recipes.json', {
-    version: '2.0.0', generated: now, totalRecipes: allRecipes.length, recipes: allRecipes,
+    version: '2.1.0', generated: now, totalRecipes: allRecipes.length, recipes: allRecipes,
   }],
   ['master-materials.json', {
-    version: '2.0.0', generated: now, totalMaterials: allMaterials.length, materials: allMaterials,
+    version: '2.1.0', generated: now, totalMaterials: allMaterials.length, materials: allMaterials,
+  }],
+  ['master-artifacts.json', {
+    version: '2.1.0', generated: now, totalArtifacts: allArtifacts.length,
+    note: 'Honor discovery.hiddenUntilFound in player-facing UIs (D3). Admin tools bypass.',
+    artifacts: allArtifacts,
+  }],
+  ['master-registry.json', {
+    version: '2.1.0', generated: now,
+    totals: {
+      items: allItems.length, recipes: allRecipes.length,
+      materials: allMaterials.length, artifacts: allArtifacts.length,
+    },
+    byUuid: Object.fromEntries([
+      ...allItems.map(i => [i.uuid, { kind: 'item', name: i.name, category: i.category }]),
+      ...allArtifacts.map(a => [a.uuid, { kind: 'artifact', name: a.name, artifactType: a.artifactType }]),
+    ]),
   }],
 ];
 

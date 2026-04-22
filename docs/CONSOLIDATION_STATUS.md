@@ -24,16 +24,17 @@ ObjectStore, `grudge-game-data-hub`, and every downstream Grudge deployment.
 ## Consolidation sessions
 Session | Categories | Status
 --- | --- | ---
-#1 | swords, axes, daggers | Closed (2026-04-22) - icons wired, starters added, misclassified parked
-#2 | hammers, greatswords, greataxes | Prepared (awaiting review)
-#3 | spears, maces, shields | Queued
-#4 | bows, crossbows, guns | Queued
-#5 | fireStaves, frostStaves, holyStaves, lightningStaves, natureStaves | Queued
-#6 | artifacts (arcane first) | Queued
-#7 | offhand-tomes | Queued
+#1 | swords, axes, daggers | Closed (2026-04-22) - icons wired, Iron starters folded vanilla legacies
+#2 | hammers, greatswords, greataxes | Closed (2026-04-22, default apply on "continue")
+#3 | spears, maces, shields | Closed (2026-04-22, default apply)
+#4 | bows, crossbows, guns | Closed (2026-04-22, default apply)
+#5 | fireStaves, frostStaves, holyStaves, lightningStaves, natureStaves | Closed (2026-04-22, default apply)
+#6 | artifacts (arcane) | Closed (2026-04-22) - 6 seed arcane artifacts with discovery blocks; all hiddenUntilFound
+#7 | offhand-tomes | Closed (2026-04-22) - 8 tomes migrated from inline; D4 applied (no tier, skillGrants)
 #8 | armor (cloth / leather / mail / plate x slots x sets) | Queued
 #9 | consumables - food (red/green/blue), potions, scrolls, throwables, bombs | Queued
 #10 | materials (ore, ingot, wood, cloth, leather, essence, gem, herb) | Queued
+Generator now emits: master-items.json, master-recipes.json, master-materials.json, **master-artifacts.json** (new), **master-registry.json** (new combined UUID index).
 
 ## After all sessions
 - Rewrite `scripts/generate-master-database.mjs` to import from `scripts/defs/*`.
