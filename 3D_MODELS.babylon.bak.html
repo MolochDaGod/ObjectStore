@@ -1,0 +1,1450 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Studio 3D Models Browser</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tier-system.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 60% 0%, rgba(59,130,246,0.05) 0%, transparent 45%),
+        radial-gradient(ellipse at 10% 90%, rgba(34,197,94,0.04) 0%, transparent 40%),
+        var(--bg-dark);
+      background-attachment: fixed;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    .header { margin-bottom: 32px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; }
+    .header h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--tier-3), var(--tier-4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+    .subtitle { color: var(--text-dim); font-size: 1.1rem; }
+    .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+    .stat-item { background: var(--card-bg); padding: 10px 16px; border-radius: 8px; border-left: 3px solid var(--tier-4); }
+    .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+    .stat-value { font-size: 1.3rem; font-weight: bold; color: var(--tier-4); }
+    .controls { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+    .search-box { width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 12px; }
+    .search-box:focus { outline: none; border-color: var(--tier-4); }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .filter-btn { padding: 6px 14px; background: var(--bg-dark); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--tier-4); }
+    .filter-btn.active { background: var(--tier-4); border-color: var(--tier-4); color: #000; font-weight: 600; }
+    .filter-label { color: var(--text-dim); font-size: 0.8rem; margin-right: 4px; }
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; }
+    .results-title { font-size: 1.3rem; color: var(--tier-4); }
+    .results-count { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* Model card grid */
+    .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .model-card { background: var(--card-bg); border-radius: 12px; padding: 14px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; }
+    .model-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
+    .model-icon { width: 100%; aspect-ratio: 1; border-radius: 8px; background: linear-gradient(135deg, rgba(20,20,35,0.9), rgba(30,30,50,0.7)); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 8px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+    .model-icon .cube-svg { width: 55%; height: 55%; opacity: 0.5; transition: opacity 0.3s, transform 0.3s; }
+    .model-card:hover .cube-svg { opacity: 0.8; transform: scale(1.05) rotate(5deg); }
+    .model-icon .thumb-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; z-index: 1; }
+    .model-icon .load-shimmer { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent); animation: shimmer 2s infinite; pointer-events: none; }
+    @keyframes shimmer { 0%{left:-100%} 100%{left:100%} }
+    .model-icon .error-overlay { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: #ef4444; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 3px; z-index: 2; }
+    .model-icon .format-badge { position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .format-glb { background: #22c55e; color: #000; }
+    .format-gltf { background: #3b82f6; color: #fff; opacity: 0.55; }
+    .format-fbx { background: #f97316; color: #000; opacity: 0.55; }
+    .format-obj { background: #a855f7; color: #fff; opacity: 0.55; }
+    .format-blend { background: #e97316; color: #000; opacity: 0.55; }
+    .model-name { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .model-meta { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* 3D Viewer */
+    .viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 1000; }
+    .viewer-overlay.active { display: flex; flex-direction: column; }
+    .viewer-header { display: flex; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-color); gap: 12px; flex-shrink: 0; }
+    .viewer-title { font-size: 1.1rem; font-weight: 700; color: var(--tier-4); flex: 1; }
+    .viewer-info { font-size: 0.8rem; color: var(--text-dim); }
+    .viewer-close { background: none; border: 2px solid var(--border-color); color: var(--text-primary); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+    .viewer-close:hover { border-color: var(--tier-4); color: var(--tier-4); }
+    .viewer-canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+    .viewer-canvas-wrap canvas { width: 100% !important; height: 100% !important; display: block; }
+    .viewer-controls { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-color); flex-shrink: 0; flex-wrap: wrap; }
+    .viewer-btn { padding: 6px 14px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .viewer-btn:hover { border-color: var(--tier-4); }
+    .viewer-btn.active { background: var(--tier-4); color: #000; border-color: var(--tier-4); }
+    .anim-select-3d { padding: 6px 10px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.8rem; }
+
+    /* Drop zone */
+    .drop-zone { border: 3px dashed var(--border-color); border-radius: 16px; padding: 40px 20px; text-align: center; margin-bottom: 24px; transition: all 0.3s; cursor: pointer; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--tier-4); background: rgba(212,168,75,0.05); }
+    .drop-zone-icon { font-size: 3rem; margin-bottom: 8px; opacity: 0.4; }
+    .drop-zone-text { color: var(--text-dim); font-size: 0.9rem; }
+    .drop-zone-formats { color: var(--text-dim); font-size: 0.75rem; margin-top: 4px; }
+
+    /* Loading */
+    .loading { text-align: center; padding: 60px; color: var(--text-dim); }
+    .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--tier-4); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+    .viewer-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; color: var(--text-dim); z-index: 10; }
+    .viewer-loading .spinner { width: 40px; height: 40px; }
+
+    /* Pagination */
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .page-btn { padding: 8px 14px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; }
+    .page-btn:hover { border-color: var(--tier-4); }
+    .page-btn.active { background: var(--tier-4); border-color: var(--tier-4); color: #000; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* Best practices info */
+    .bp-banner { background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+    .bp-banner-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .bp-banner-text { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+    .bp-banner-text strong { color: var(--text-primary); }
+
+    /* R2 status indicator */
+    .r2-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .r2-status.online { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .r2-status.offline { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .r2-status.checking { background: rgba(234,179,8,0.15); color: #eab308; }
+    .r2-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .r2-status.online .r2-dot { background: #22c55e; }
+    .r2-status.offline .r2-dot { background: #ef4444; }
+    .r2-status.checking .r2-dot { background: #eab308; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Source badge on model cards */
+    .source-badge { position: absolute; bottom: 6px; left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+    .source-r2 { background: #22c55e; color: #000; }
+    .source-static { background: #6366f1; color: #fff; }
+
+    /* Upload to R2 button */
+    .upload-r2-btn { padding: 8px 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 8px; color: #fff; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .upload-r2-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+    .upload-r2-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
+
+    /* Viewer control groups */
+    .ctrl-group { display: flex; gap: 4px; padding: 0 8px; border-right: 1px solid var(--border-color); }
+    .ctrl-group:last-child { border-right: none; }
+    .ctrl-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-right: 4px; align-self: center; }
+    .env-select { padding: 6px 10px; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.8rem; }
+
+    /* ===== Toolbar ===== */
+    .viewer-toolbar { display: flex; gap: 2px; padding: 6px 12px; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+    .toolbar-tab { padding: 6px 16px; background: transparent; border: 1px solid transparent; border-radius: 6px 6px 0 0; color: var(--text-dim); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
+    .toolbar-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .toolbar-tab.active { color: var(--tier-4); border-color: var(--border-color); border-bottom-color: transparent; background: rgba(212,168,75,0.08); }
+    .toolbar-spacer { flex: 1; }
+    .mode-toggle { display: flex; gap: 2px; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 2px; }
+    .mode-btn { padding: 4px 12px; border: none; border-radius: 4px; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+    .mode-btn.active { background: var(--tier-4); color: #000; }
+
+    /* ===== Viewer Body with Inspector ===== */
+    .viewer-body { display: flex; flex: 1; overflow: hidden; }
+    .viewer-canvas-area { flex: 1; position: relative; overflow: hidden; }
+    .viewer-canvas-area canvas { width: 100% !important; height: 100% !important; display: block; }
+    .viewer-inspector { width: 300px; background: rgba(20,20,30,0.95); border-left: 1px solid var(--border-color); overflow-y: auto; flex-shrink: 0; display: none; }
+    .viewer-inspector.open { display: flex; flex-direction: column; }
+    .inspector-section { padding: 10px 12px; border-bottom: 1px solid var(--border-color); }
+    .inspector-section h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.5px; }
+
+    /* ===== Add-to-scene button on cards ===== */
+    .model-card .add-scene-btn { position: absolute; bottom: 6px; right: 6px; padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; background: var(--tier-4); color: #000; border: none; cursor: pointer; opacity: 0; transition: opacity 0.2s; text-transform: uppercase; }
+    .model-card:hover .add-scene-btn { opacity: 1; }
+
+    /* ===== Convert progress ===== */
+    .convert-progress { padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8rem; color: var(--text-dim); margin-top: 8px; }
+    .convert-progress-bar { height: 4px; background: var(--border-color); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+    .convert-progress-fill { height: 100%; background: var(--tier-4); border-radius: 2px; transition: width 0.3s; }
+
+    /* ===== Material Editor ===== */
+    .mat-section { border-bottom: 1px solid var(--border-color); padding: 8px 10px; }
+    .mat-header { font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+    .mat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.78rem; color: var(--text-dim); }
+    .mat-row label { min-width: 80px; }
+    .mat-row input[type="range"] { flex: 1; accent-color: var(--tier-4); }
+    .mat-row input[type="color"] { width: 36px; height: 24px; border: 1px solid var(--border-color); border-radius: 4px; padding: 0; cursor: pointer; }
+    .mat-row input[type="checkbox"] { accent-color: var(--tier-4); }
+    .mat-maps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .mat-map-slot { padding: 3px 6px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.65rem; cursor: pointer; display: flex; gap: 4px; align-items: center; }
+    .mat-map-slot.has-map { border-color: var(--tier-4); color: var(--tier-4); }
+    .mat-map-slot:hover { border-color: var(--tier-4); }
+    .mat-upgrade-btn { width: 100%; padding: 6px; background: var(--tier-4); color: #000; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+    .mat-upgrade-btn:hover { opacity: 0.85; }
+
+    /* ===== Texture Browser ===== */
+    .tex-title { font-size: 0.85rem; font-weight: 600; padding: 10px 12px; color: var(--text-primary); }
+    .tex-category { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); padding: 4px 12px; letter-spacing: 0.5px; }
+    .tex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 6px 12px; }
+    .tex-thumb { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; cursor: pointer; text-align: center; }
+    .tex-thumb:hover { border-color: var(--tier-4); }
+    .tex-thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
+    .tex-thumb span { font-size: 0.7rem; color: var(--text-dim); }
+    .tex-drop-zone { margin: 8px 12px; padding: 16px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; color: var(--text-dim); font-size: 0.8rem; }
+    .tex-drop-zone:hover, .tex-drop-zone.drag-over { border-color: var(--tier-4); }
+  </style>
+
+  <!-- Babylon.js UMD CDN (pinned v9.0.0) -->
+  <script src="https://cdn.babylonjs.com/v9.0.0/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/loaders/babylonjs.loaders.min.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/materialsLibrary/babylonjs.materials.min.js"></script>
+  <script src="https://cdn.babylonjs.com/v9.0.0/serializers/babylonjs.serializers.min.js"></script>
+</head>
+<body>
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
+  <div class="container">
+    <div class="header">
+      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
+      <p class="subtitle">GLB-only 3D object storage — powered by Babylon.js
+        <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> R2 Checking…</span>
+      </p>
+      <div class="stats-bar" id="statsBar"></div>
+    </div>
+
+    <div class="bp-banner">
+      <span class="bp-banner-icon">&#9889;</span>
+      <div class="bp-banner-text">
+        <strong>Grudge Pipeline:</strong> Drop any 3D format — FBX, OBJ, GLTF, BLEND — and it gets auto-converted to optimised GLB
+        (GPU-ready, PBR materials, Draco compression, skeletal animation, smallest file size).
+        Only GLB is surfaced in this 3D browser and served to GDevelop editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
+      </div>
+    </div>
+
+    <!-- Drop Zone for local files -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">&#128230;</div>
+      <div class="drop-zone-text">Drag &amp; drop a 3D model to convert into the GLB pipeline</div>
+      <div class="drop-zone-formats">Accepts source files for conversion, but only GLB is stored and shown here</div>
+      <input type="file" id="fileInput" accept=".glb,.gltf,.fbx,.obj,.blend" style="display:none;">
+    </div>
+
+    <!-- Upload to R2 -->
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
+      <button class="upload-r2-btn" id="uploadR2Btn" disabled>&#9729; Convert &amp; Upload to R2</button>
+      <input type="file" id="r2FileInput" accept=".glb,.gltf,.fbx,.obj,.blend" multiple style="display:none;">
+      <span id="uploadR2Status" style="font-size:0.8rem;color:var(--text-dim);"></span>
+    </div>
+
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search models by name...">
+      <div class="filter-row">
+        <span class="filter-label">Format:</span>
+        <div id="formatFilters"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Category:</span>
+        <div id="categoryFilters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+
+    <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading model catalog...</p></div>
+    <div id="resultsArea" style="display:none;">
+      <div class="results-header">
+        <h2 class="results-title">Models</h2>
+        <span class="results-count" id="resultsCount">0 models</span>
+      </div>
+      <div class="model-grid" id="modelGrid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div style="font-size:4rem;margin-bottom:12px;opacity:0.3;">&#128269;</div>
+      <h3>No models found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+
+  <!-- 3D Viewer Overlay -->
+  <div class="viewer-overlay" id="viewerOverlay">
+    <div class="viewer-header">
+      <span class="viewer-title" id="viewerTitle">Model Viewer</span>
+      <span class="viewer-info" id="viewerInfo"></span>
+      <button class="viewer-close" id="viewerClose">&times; Close</button>
+    </div>
+    <!-- Toolbar -->
+    <div class="viewer-toolbar" id="viewerToolbar">
+      <button class="toolbar-tab active" data-tab="scene">Scene</button>
+      <button class="toolbar-tab" data-tab="materials">Materials</button>
+      <button class="toolbar-tab" data-tab="textures">Textures</button>
+      <button class="toolbar-tab" data-tab="animate">Animate</button>
+      <button class="toolbar-tab" data-tab="convert">Convert</button>
+      <div class="toolbar-spacer"></div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="viewer">Viewer</button>
+        <button class="mode-btn" data-mode="playcanvas">Play Canvas</button>
+      </div>
+    </div>
+    <!-- Body: canvas + inspector -->
+    <div class="viewer-body">
+      <div class="viewer-canvas-area" id="viewerCanvasWrap">
+        <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model...</p></div>
+      </div>
+      <div class="viewer-inspector" id="viewerInspector">
+        <!-- Scene tab -->
+        <div class="inspector-panel" id="panelScene">
+          <div class="inspector-section"><h4>Scene Hierarchy</h4><div id="sceneTree" style="font-size:0.8rem;color:var(--text-dim);">No model loaded</div></div>
+        </div>
+        <!-- Materials tab -->
+        <div class="inspector-panel" id="panelMaterials" style="display:none;"></div>
+        <!-- Textures tab -->
+        <div class="inspector-panel" id="panelTextures" style="display:none;"></div>
+        <!-- Animate tab -->
+        <div class="inspector-panel" id="panelAnimate" style="display:none;"></div>
+        <!-- Convert tab -->
+        <div class="inspector-panel" id="panelConvert" style="display:none;">
+          <div class="inspector-section">
+            <h4>Convert Model</h4>
+            <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">Convert any 3D format to optimised GLB for the Grudge pipeline</p>
+            <input type="file" id="convertFileInput" accept=".glb,.gltf,.fbx,.obj,.blend" style="display:none;">
+            <button class="viewer-btn" id="btnPickConvert" style="width:100%;margin-bottom:6px;">&#128194; Pick File to Convert</button>
+            <button class="viewer-btn" id="btnConvertCurrent" style="width:100%;margin-bottom:6px;">Convert Current Model</button>
+            <div id="convertStatus" class="convert-progress" style="display:none;">
+              <span id="convertMsg">Ready</span>
+              <div class="convert-progress-bar"><div class="convert-progress-fill" id="convertFill" style="width:0%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom controls -->
+    <div class="viewer-controls" id="viewerControls">
+      <div class="ctrl-group">
+        <button class="viewer-btn" id="btnWireframe">Wireframe</button>
+        <button class="viewer-btn active" id="btnGrid">Grid</button>
+        <button class="viewer-btn active" id="btnAutoRotate">Auto Rotate</button>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Cam</span>
+        <button class="viewer-btn" data-cam="front">Front</button>
+        <button class="viewer-btn" data-cam="back">Back</button>
+        <button class="viewer-btn" data-cam="left">Left</button>
+        <button class="viewer-btn" data-cam="right">Right</button>
+        <button class="viewer-btn" data-cam="top">Top</button>
+        <button class="viewer-btn" data-cam="iso">Iso</button>
+        <button class="viewer-btn" id="btnResetCam">Reset</button>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Light</span>
+        <button class="viewer-btn active" data-light="key">Key</button>
+        <button class="viewer-btn active" data-light="fill">Fill</button>
+        <button class="viewer-btn active" data-light="rim">Rim</button>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Env</span>
+        <select class="env-select" id="envSelect">
+          <option value="none">None</option>
+          <option value="studio">Studio</option>
+          <option value="sunset">Sunset</option>
+          <option value="night">Night</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Quality</span>
+        <select class="env-select" id="qualitySelect">
+          <option value="1">1&times;</option>
+          <option value="1.5">1.5&times;</option>
+          <option value="2" selected>2&times;</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <select class="anim-select-3d" id="animSelect" style="display:none;"><option value="-1">No Animation</option></select>
+        <button class="viewer-btn" id="btnScreenshot">&#128247; Screenshot</button>
+        <button class="viewer-btn" id="btnExportGLB">&#128190; Export GLB</button>
+        <button class="viewer-btn" id="btnToggleInspector">Inspector</button>
+      </div>
+      <span class="viewer-info" id="viewerStats"></span>
+    </div>
+  </div>
+
+  <script src="./js/nav.js"></script>
+
+  <!-- Babylon.js Viewer (non-module, uses global BABYLON) -->
+  <script src="./js/viewer/RenderPipeline.js"></script>
+  <script src="./js/viewer/MaterialEditor.js"></script>
+  <script src="./js/viewer/TextureManager.js"></script>
+  <script src="./js/viewer/AnimationManager.js"></script>
+  <script src="./js/viewer/ModelConverter.js"></script>
+  <script>
+
+    /* ═══════════════ State ═══════════════ */
+    var engine, scene, camera, gridMesh, shadows;
+    var keyLight, fillLight, rimLight;
+    var currentModel = null;
+    var currentAnimGroups = [];
+    var isViewerOpen = false;
+    var autoRotate = true;
+    var showWireframe = false;
+    var showGrid = true;
+    var currentMode = 'viewer';
+    var materialEditor = null;
+    var textureManager = null;
+    var modelConverter = null;
+    var animationManager = null;
+    var _autoRotateObs = null;
+
+    /* ═══════════════ Init ═══════════════ */
+    function initViewer() {
+      var wrap = document.getElementById('viewerCanvasWrap');
+      var canvas = document.createElement('canvas');
+      canvas.style.cssText = 'width:100%;height:100%;display:block;';
+      wrap.appendChild(canvas);
+
+      engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, adaptToDeviceRatio: true });
+      scene = new BABYLON.Scene(engine);
+      scene.clearColor = new BABYLON.Color4(0.10, 0.10, 0.18, 1);
+
+      camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5, BABYLON.Vector3.Zero(), scene);
+      camera.lowerRadiusLimit = 0.5; camera.upperRadiusLimit = 500;
+      camera.wheelDeltaPercentage = 0.01;
+      camera.attachControl(canvas, true);
+
+      // 3-point lighting
+      var hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0, 1, 0), scene);
+      hemi.intensity = 0.5; hemi.groundColor = new BABYLON.Color3(0.1, 0.08, 0.15);
+
+      keyLight = new BABYLON.DirectionalLight('key', new BABYLON.Vector3(-0.8, -1.2, -0.5), scene);
+      keyLight.position = new BABYLON.Vector3(5, 8, 5); keyLight.intensity = 1.2;
+      shadows = new BABYLON.ShadowGenerator(1024, keyLight);
+      shadows.useBlurExponentialShadowMap = true; shadows.blurKernel = 16;
+
+      fillLight = new BABYLON.DirectionalLight('fill', new BABYLON.Vector3(1, -0.3, 1), scene);
+      fillLight.position = new BABYLON.Vector3(-5, 3, -3); fillLight.intensity = 0.4;
+      fillLight.diffuse = new BABYLON.Color3(0.5, 0.5, 1);
+
+      rimLight = new BABYLON.PointLight('rim', new BABYLON.Vector3(0, 5, -8), scene);
+      rimLight.diffuse = new BABYLON.Color3(1, 0.85, 0); rimLight.intensity = 20; rimLight.range = 15;
+
+      // Ground
+      var ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 50, height: 50 }, scene);
+      ground.receiveShadows = true;
+      var gMat = new BABYLON.PBRMaterial('gmat', scene);
+      gMat.albedoColor = new BABYLON.Color3(0.08, 0.09, 0.12); gMat.metallic = 0.1; gMat.roughness = 0.9;
+      ground.material = gMat;
+
+      // Grid
+      gridMesh = BABYLON.MeshBuilder.CreateGround('grid', { width: 30, height: 30 }, scene);
+      gridMesh.position.y = 0.002;
+      var gridMat = new BABYLON.GridMaterial('gm', scene);
+      gridMat.majorUnitFrequency = 5; gridMat.minorUnitVisibility = 0.3;
+      gridMat.gridRatio = 0.5; gridMat.mainColor = new BABYLON.Color3(0.3, 0.35, 0.45);
+      gridMat.lineColor = new BABYLON.Color3(0.15, 0.18, 0.25); gridMat.opacity = 0.4;
+      gridMesh.material = gridMat;
+
+      // Post-processing
+      var pip = new BABYLON.DefaultRenderingPipeline('pip', true, scene, [camera]);
+      pip.fxaaEnabled = true; pip.bloomEnabled = true; pip.bloomThreshold = 0.4; pip.bloomWeight = 0.4;
+      pip.imageProcessingEnabled = true;
+      pip.imageProcessing.toneMappingEnabled = true;
+      pip.imageProcessing.toneMappingType = BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;
+      pip.imageProcessing.exposure = 1.2; pip.imageProcessing.contrast = 1.1;
+
+      // Modules
+      modelConverter = new ModelConverter();
+      animationManager = new AnimationManager();
+      materialEditor = new MaterialEditor();
+      textureManager = new TextureManager();
+      textureManager.setScene(scene);
+      materialEditor.buildUI(document.getElementById('panelMaterials'));
+      textureManager.buildUI(document.getElementById('panelTextures'));
+      animationManager.buildUI(document.getElementById('panelAnimate'));
+      initConverterUI();
+
+      // Auto-rotate
+      _autoRotateObs = scene.onBeforeRenderObservable.add(function() {
+        if (autoRotate && isViewerOpen) camera.alpha += 0.003;
+      });
+
+      // Resize
+      new ResizeObserver(function() { engine.resize(); }).observe(wrap);
+      window.addEventListener('resize', function() { engine.resize(); });
+
+      engine.runRenderLoop(function() {
+        if (isViewerOpen) { animationManager.update(); scene.render(); }
+      });
+
+      // Load default character (Corsair King) so the viewer isn't empty on first open
+      loadDefaultCharacter();
+    }
+
+    /* ═══════════════ Grudge Race → 3D Model Mapping ═══════════════
+     * Canonical mapping — must match Grudge-Builder/client/src/lib/gameData.ts
+     * 6 Races: Human, Barbarian (Crusade) | Undead, Orc (Legion) | Elf, Dwarf (Fabled)
+     * 4 Classes: Worg Shapeshifter, Warrior, Mage Priest, Ranger Scout
+     * All models served from assets.grudge-studio.com (R2 CDN, CORS: *).
+     */
+    var RACE_MODEL_CDN = 'https://assets.grudge-studio.com/models/characters/rts';
+    var GRUDGE_RACE_MODELS = {
+      human:     { file: 'Knight_Male.glb',   label: 'Human',     faction: 'Crusade' },
+      barbarian: { file: 'BarbarianGlad.glb', label: 'Barbarian', faction: 'Crusade' },
+      undead:    { file: 'berserker.glb',     label: 'Undead',    faction: 'Legion' },
+      orc:       { file: 'King.glb',          label: 'Orc',       faction: 'Legion' },
+      elf:       { file: 'Wizard.glb',        label: 'Elf',       faction: 'Fabled' },
+      dwarf:     { file: 'Viking_Male.glb',   label: 'Dwarf',     faction: 'Fabled' },
+    };
+    var DEFAULT_RACE = 'human';
+    // Expose globally so other Grudge apps can import/reference
+    window.GRUDGE_RACE_MODELS = GRUDGE_RACE_MODELS;
+
+    function raceModelUrl(race) {
+      var entry = GRUDGE_RACE_MODELS[(race || '').toLowerCase()] || GRUDGE_RACE_MODELS[DEFAULT_RACE];
+      return RACE_MODEL_CDN + '/' + entry.file;
+    }
+    function raceLabel(race) {
+      var entry = GRUDGE_RACE_MODELS[(race || '').toLowerCase()] || GRUDGE_RACE_MODELS[DEFAULT_RACE];
+      return entry.label;
+    }
+
+    /** Load a character model into the viewer scene */
+    async function loadCharacterModel(url, name, info) {
+      try {
+        var before = scene.animationGroups.length;
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, null, '.glb');
+        currentModel = result.meshes[0];
+        result.meshes.forEach(function(m) { shadows.addShadowCaster(m); m.receiveShadows = true; });
+        frameModel(currentModel);
+        var newGroups = scene.animationGroups.slice(before);
+        setupAnimations(newGroups);
+        var stats = getModelStats(currentModel);
+        document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        buildSceneTree(currentModel);
+        if (materialEditor) materialEditor.inspect(currentModel);
+        if (textureManager) textureManager.setInspectedObject(currentModel);
+        document.getElementById('viewerTitle').textContent = name;
+        document.getElementById('viewerInfo').textContent = info;
+        document.getElementById('viewerLoading').style.display = 'none';
+      } catch (err) {
+        console.warn('Character model load failed:', err);
+        document.getElementById('viewerLoading').style.display = 'none';
+      }
+    }
+
+    /** Try to load the player's Grudge character, fall back to default race */
+    async function loadDefaultCharacter() {
+      var token = null;
+      try { token = localStorage.getItem('grudge_auth_token'); } catch(e) {}
+
+      if (token) {
+        try {
+          var res = await fetch('https://api.grudge-studio.com/characters', {
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            signal: AbortSignal.timeout(5000)
+          });
+          if (res.ok) {
+            var chars = await res.json();
+            if (Array.isArray(chars) && chars.length > 0) {
+              var c = chars[0]; // primary character
+              var url = raceModelUrl(c.race);
+              var label = (c.name || 'Character') + ' (' + raceLabel(c.race) + ' ' + (c.class || '') + ')';
+              await loadCharacterModel(url, label, 'GLB \u00b7 Grudge Character \u00b7 Lv.' + (c.level || 1));
+              console.log('Loaded player character:', c.name, c.race, c.class);
+              return;
+            }
+          }
+        } catch (e) { console.warn('Grudge character fetch failed:', e.message); }
+      }
+
+      // No auth or no characters — load default Human
+      await loadCharacterModel(
+        raceModelUrl(DEFAULT_RACE),
+        raceLabel(DEFAULT_RACE) + ' (Default)',
+        'GLB \u00b7 Default Race Model \u00b7 Sign in to load your character'
+      );
+    }
+
+    /* ═══════════════ Model Loading ═══════════════ */
+    function clearModel() {
+      if (currentModel) {
+        currentModel.getChildMeshes(false).forEach(function(m) { m.dispose(); });
+        currentModel.dispose();
+        currentModel = null;
+      }
+      currentAnimGroups.forEach(function(g) { g.dispose(); });
+      currentAnimGroups = [];
+      scene.animationGroups.slice().forEach(function(g) { g.dispose(); });
+      document.getElementById('animSelect').style.display = 'none';
+      document.getElementById('animSelect').innerHTML = '<option value="-1">No Animation</option>';
+      document.getElementById('sceneTree').textContent = 'No model loaded';
+    }
+
+    function frameModel(root) {
+      var bounds = root.getHierarchyBoundingVectors(true);
+      var center = bounds.min.add(bounds.max).scale(0.5);
+      var size = bounds.max.subtract(bounds.min);
+      var maxDim = Math.max(size.x, size.y, size.z);
+      camera.setTarget(center);
+      camera.radius = maxDim * 1.8;
+      camera.alpha = -Math.PI / 2; camera.beta = Math.PI / 3;
+    }
+
+    function setupAnimations(groups) {
+      if (!groups || groups.length === 0) return;
+      currentAnimGroups = groups;
+      var select = document.getElementById('animSelect');
+      select.innerHTML = '<option value="-1">No Animation</option>';
+      groups.forEach(function(g, i) {
+        var opt = document.createElement('option');
+        opt.value = i; opt.textContent = g.name || ('Animation ' + (i + 1));
+        select.appendChild(opt);
+      });
+      select.style.display = 'inline-block';
+      if (groups.length > 0) { groups[0].start(true); select.value = '0'; }
+      animationManager.bind(groups);
+    }
+
+    function applyWireframe(root, wf) {
+      root.getChildMeshes(false).forEach(function(m) { if (m.material) m.material.wireframe = wf; });
+    }
+
+    function getModelStats(root) {
+      var verts = 0, tris = 0, meshes = 0;
+      root.getChildMeshes(false).forEach(function(m) {
+        meshes++;
+        if (m.getTotalVertices) verts += m.getTotalVertices();
+        if (m.getTotalIndices) tris += m.getTotalIndices() / 3;
+      });
+      return { verts: verts, tris: Math.round(tris), meshes: meshes };
+    }
+
+    function buildSceneTree(root) {
+      var tree = document.getElementById('sceneTree');
+      if (!tree) return;
+      var html = '';
+      function walk(node, depth) {
+        var indent = '&nbsp;'.repeat(depth * 2);
+        var icon = (node.getTotalVertices && node.getTotalVertices() > 0) ? '&#9632;' : '&#9654;';
+        html += '<div style="padding:1px 0;">' + indent + icon + ' <span style="color:#ccc;">' + (node.name || 'node') + '</span></div>';
+        var children = node.getChildren ? node.getChildren() : [];
+        children.forEach(function(c) { walk(c, depth + 1); });
+      }
+      walk(root, 0);
+      tree.innerHTML = html || 'No model loaded';
+    }
+
+    async function loadModelFromURL(url, format) {
+      clearModel();
+      document.getElementById('viewerLoading').style.display = 'block';
+      try {
+        var ext = '.glb';
+        var before = scene.animationGroups.length;
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, null, ext);
+        currentModel = result.meshes[0];
+
+        // Shadows
+        result.meshes.forEach(function(m) { shadows.addShadowCaster(m); m.receiveShadows = true; });
+
+        // Frame
+        frameModel(currentModel);
+
+        // Animations
+        var newGroups = scene.animationGroups.slice(before);
+        setupAnimations(newGroups);
+
+        if (showWireframe) applyWireframe(currentModel, true);
+
+        var stats = getModelStats(currentModel);
+        document.getElementById('viewerStats').textContent = stats.meshes + ' meshes \u00b7 ' + stats.verts.toLocaleString() + ' verts \u00b7 ' + stats.tris.toLocaleString() + ' tris';
+        buildSceneTree(currentModel);
+        if (materialEditor) materialEditor.inspect(currentModel);
+        if (textureManager) textureManager.setInspectedObject(currentModel);
+      } catch (err) {
+        console.error('Model load error:', err);
+        document.getElementById('viewerStats').textContent = '\u26A0 Load failed: ' + err.message;
+        var loadEl = document.getElementById('viewerLoading');
+        loadEl.innerHTML = '<div style="text-align:center;padding:40px;">' +
+          '<div style="font-size:3rem;margin-bottom:12px;opacity:0.3;">\u26A0</div>' +
+          '<p style="color:#ef4444;font-size:1rem;margin-bottom:8px;">Failed to load model</p>' +
+          '<p style="color:var(--text-dim);font-size:0.8rem;max-width:400px;margin:0 auto;">' + err.message + '</p>' +
+          '<p style="color:var(--text-dim);font-size:0.75rem;margin-top:12px;">Only GLB/GLTF is supported. All assets must go through the Grudge pipeline. Check R2 or upload from your machine.</p>' +
+          '</div>';
+        loadEl.style.display = 'block';
+        return;
+      }
+      document.getElementById('viewerLoading').style.display = 'none';
+    }
+
+    function loadModelFromFile(file) {
+      var ext = file.name.split('.').pop().toLowerCase();
+      var format = { glb: 'GLB', gltf: 'GLTF' }[ext];
+      if (!format) {
+        // Non-GLB format dropped — send through convert+upload pipeline instead of previewing
+        alert('This .' + ext + ' file will be converted to GLB through the Grudge pipeline.\nUse the "Convert & Upload to R2" button to process it.');
+        return;
+      }
+      var url = URL.createObjectURL(file);
+      openViewer(file.name, format, '');
+      loadModelFromURL(url, format);
+    }
+
+    /* ═══════════════ Viewer Open/Close ═══════════════ */
+    function openViewer(name, format, path) {
+      if (!engine) initViewer();
+      isViewerOpen = true;
+      document.getElementById('viewerOverlay').classList.add('active');
+      document.getElementById('viewerTitle').textContent = name;
+      document.getElementById('viewerInfo').textContent = format + (path ? ' \u00b7 ' + path : '');
+      document.getElementById('viewerStats').textContent = '';
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() { engine.resize(); }, 50);
+    }
+
+    function closeViewer() {
+      isViewerOpen = false; clearModel();
+      document.getElementById('viewerOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    /* ═══════════════ Controls ═══════════════ */
+    document.getElementById('viewerClose').addEventListener('click', closeViewer);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && isViewerOpen) closeViewer(); });
+
+    document.getElementById('btnWireframe').addEventListener('click', function() {
+      showWireframe = !showWireframe; this.classList.toggle('active', showWireframe);
+      if (currentModel) applyWireframe(currentModel, showWireframe);
+    });
+    document.getElementById('btnGrid').addEventListener('click', function() {
+      showGrid = !showGrid; this.classList.toggle('active', showGrid);
+      if (gridMesh) gridMesh.isVisible = showGrid;
+    });
+    document.getElementById('btnAutoRotate').addEventListener('click', function() {
+      autoRotate = !autoRotate; this.classList.toggle('active', autoRotate);
+    });
+    document.getElementById('btnResetCam').addEventListener('click', function() { if (currentModel) frameModel(currentModel); });
+
+    document.getElementById('animSelect').addEventListener('change', function() {
+      var idx = parseInt(this.value);
+      currentAnimGroups.forEach(function(g) { g.stop(); });
+      if (idx >= 0 && currentAnimGroups[idx]) currentAnimGroups[idx].start(true);
+    });
+
+    /* ═══════════════ Camera Presets ═══════════════ */
+    function setCameraPreset(preset) {
+      if (!currentModel) return;
+      var bounds = currentModel.getHierarchyBoundingVectors(true);
+      var center = bounds.min.add(bounds.max).scale(0.5);
+      var size = bounds.max.subtract(bounds.min);
+      var dist = Math.max(size.x, size.y, size.z) * 2;
+      camera.setTarget(center); camera.radius = dist;
+      var presets = { front:[0,Math.PI/3], back:[Math.PI,Math.PI/3], left:[-Math.PI/2,Math.PI/3],
+        right:[Math.PI/2,Math.PI/3], top:[0,0.01], iso:[-Math.PI/4,Math.PI/4] };
+      var p = presets[preset]; if (!p) return;
+      camera.alpha = p[0]; camera.beta = p[1];
+    }
+    document.querySelectorAll('[data-cam]').forEach(function(btn) { btn.addEventListener('click', function() { setCameraPreset(btn.dataset.cam); }); });
+
+    /* ═══════════════ Lighting ═══════════════ */
+    var lightMap = { key: function() { return keyLight; }, fill: function() { return fillLight; }, rim: function() { return rimLight; } };
+    document.querySelectorAll('[data-light]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var light = lightMap[this.dataset.light](); if (!light) return;
+        light.setEnabled(!light.isEnabled()); this.classList.toggle('active', light.isEnabled());
+      });
+    });
+
+    /* ═══════════════ Environment ═══════════════ */
+    var envPresets = {
+      none:   { r:0.10,g:0.10,b:0.18, exposure:1.2 },
+      studio: { r:0.16,g:0.16,b:0.24, exposure:1.4 },
+      sunset: { r:0.10,g:0.04,b:0.04, exposure:1.0 },
+      night:  { r:0.04,g:0.04,b:0.10, exposure:0.7 },
+    };
+    document.getElementById('envSelect').addEventListener('change', function() {
+      var p = envPresets[this.value] || envPresets.none;
+      if (scene) scene.clearColor = new BABYLON.Color4(p.r, p.g, p.b, 1);
+    });
+
+    document.getElementById('qualitySelect').addEventListener('change', function() {
+      var dpr = Math.min(parseFloat(this.value), window.devicePixelRatio);
+      if (engine) engine.setHardwareScalingLevel(1 / dpr);
+    });
+
+    /* ═══════════════ Screenshot & Export ═══════════════ */
+    document.getElementById('btnScreenshot').addEventListener('click', function() {
+      if (!engine || !isViewerOpen) return;
+      BABYLON.Tools.CreateScreenshot(engine, camera, { width: 1920, height: 1080 }, function(data) {
+        var a = document.createElement('a'); a.href = data; a.download = 'grudge-3d-screenshot.png'; a.click();
+      });
+    });
+
+    document.getElementById('btnExportGLB').addEventListener('click', async function() {
+      if (!scene || !currentModel) return;
+      try {
+        var glb = await BABYLON.GLTF2Export.GLBAsync(scene, document.getElementById('viewerTitle').textContent || 'model');
+        var keys = Object.keys(glb.glTFFiles);
+        var blob = glb.glTFFiles[keys[0]];
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (document.getElementById('viewerTitle').textContent || 'model') + '.glb';
+        a.click(); URL.revokeObjectURL(a.href);
+      } catch (err) { console.error('Export failed:', err); }
+    });
+
+    /* ═══════════════ Drag & Drop ═══════════════ */
+    var dropZone = document.getElementById('dropZone');
+    var fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() { if (this.files[0]) loadModelFromFile(this.files[0]); });
+    dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault(); this.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) loadModelFromFile(e.dataTransfer.files[0]);
+    });
+
+    /* ═══════════════ Toolbar & Inspector ═══════════════ */
+    var inspector = document.getElementById('viewerInspector');
+    var panels = { scene: 'panelScene', materials: 'panelMaterials', textures: 'panelTextures', animate: 'panelAnimate', convert: 'panelConvert' };
+
+    document.querySelectorAll('.toolbar-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.toolbar-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        var panelId = panels[this.dataset.tab];
+        document.querySelectorAll('.inspector-panel').forEach(function(p) { p.style.display = 'none'; });
+        if (panelId) document.getElementById(panelId).style.display = '';
+        inspector.classList.add('open');
+        setTimeout(function() { if (engine) engine.resize(); }, 50);
+      });
+    });
+
+    document.getElementById('btnToggleInspector').addEventListener('click', function() {
+      inspector.classList.toggle('open');
+      setTimeout(function() { if (engine) engine.resize(); }, 50);
+    });
+
+    /* ═══════════════ Mode Toggle ═══════════════ */
+    document.querySelectorAll('.mode-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        currentMode = this.dataset.mode;
+      });
+    });
+
+    /* ═══════════════ Converter Panel ═══════════════ */
+    function initConverterUI() {
+      var fileIn = document.getElementById('convertFileInput');
+      var msgEl = document.getElementById('convertMsg');
+      var fillEl = document.getElementById('convertFill');
+      var statusEl = document.getElementById('convertStatus');
+      modelConverter.onProgress(function(stage, pct, msg) { statusEl.style.display = ''; msgEl.textContent = msg; fillEl.style.width = pct + '%'; });
+      document.getElementById('btnPickConvert').addEventListener('click', function() { fileIn.click(); });
+      fileIn.addEventListener('change', async function() {
+        if (!this.files[0]) return;
+        try { var result = await modelConverter.convertToGLB(this.files[0]); modelConverter.downloadBlob(result.blob, result.name); msgEl.textContent = 'Done: ' + result.name; }
+        catch (err) { msgEl.textContent = 'Error: ' + err.message; }
+        this.value = '';
+      });
+      document.getElementById('btnConvertCurrent').addEventListener('click', async function() {
+        if (!scene || !currentModel) { msgEl.textContent = 'No model loaded'; statusEl.style.display = ''; return; }
+        statusEl.style.display = ''; msgEl.textContent = 'Exporting current model...';
+        try {
+          var glb = await BABYLON.GLTF2Export.GLBAsync(scene, 'model');
+          var keys = Object.keys(glb.glTFFiles);
+          modelConverter.downloadBlob(glb.glTFFiles[keys[0]], (document.getElementById('viewerTitle').textContent || 'model') + '.glb');
+          msgEl.textContent = 'Downloaded'; fillEl.style.width = '100%';
+        } catch (err) { msgEl.textContent = 'Error: ' + err.message; }
+      });
+    }
+
+    /* ═══════════════ Thumbnail Generator (BJS offscreen) ═══════════════ */
+    var thumbState = { engine: null, scene: null, camera: null, _queue: [], _running: false };
+
+    function initThumbEngine() {
+      if (thumbState.engine) return;
+      var c = document.createElement('canvas'); c.width = 200; c.height = 200;
+      thumbState.engine = new BABYLON.Engine(c, true, { preserveDrawingBuffer: true });
+      thumbState.scene = new BABYLON.Scene(thumbState.engine);
+      thumbState.scene.clearColor = new BABYLON.Color4(0.10, 0.10, 0.18, 1);
+      new BABYLON.HemisphericLight('h', new BABYLON.Vector3(0, 1, 0), thumbState.scene).intensity = 0.6;
+      var dl = new BABYLON.DirectionalLight('d', new BABYLON.Vector3(-1, -2, -1), thumbState.scene); dl.intensity = 1;
+      thumbState.camera = new BABYLON.ArcRotateCamera('tc', -Math.PI / 4, Math.PI / 3, 5, BABYLON.Vector3.Zero(), thumbState.scene);
+    }
+
+    async function generateThumbnail(url, format) {
+      initThumbEngine();
+      var fmt = format.toUpperCase();
+      if (fmt !== 'GLB' && fmt !== 'GLTF') return null; // Only GLB/GLTF
+      var ext = '.glb';
+      try {
+        var result = await BABYLON.SceneLoader.ImportMeshAsync('', '', url, thumbState.scene, null, ext);
+        var root = result.meshes[0];
+        var bounds = root.getHierarchyBoundingVectors(true);
+        var center = bounds.min.add(bounds.max).scale(0.5);
+        var size = bounds.max.subtract(bounds.min);
+        var maxDim = Math.max(size.x, size.y, size.z);
+        thumbState.camera.setTarget(center);
+        thumbState.camera.radius = maxDim * 1.6;
+        thumbState.scene.render();
+        var dataUrl = thumbState.engine.getRenderingCanvas().toDataURL('image/webp', 0.7);
+        // Cleanup
+        result.meshes.forEach(function(m) { m.dispose(); });
+        result.skeletons.forEach(function(s) { s.dispose(); });
+        thumbState.scene.animationGroups.slice().forEach(function(g) { g.dispose(); });
+        return dataUrl;
+      } catch (e) { return null; }
+    }
+
+    async function processThumbQueue() {
+      if (thumbState._running) return;
+      thumbState._running = true;
+      while (thumbState._queue.length > 0) {
+        var item = thumbState._queue.shift();
+        if (!item.el.isConnected) continue;
+        try {
+          var dataUrl = await generateThumbnail(item.url, item.format);
+          if (dataUrl && item.el.isConnected) {
+            var img = document.createElement('img'); img.className = 'thumb-img'; img.src = dataUrl; img.loading = 'lazy';
+            item.el.appendChild(img);
+            var shimmer = item.el.querySelector('.load-shimmer'); if (shimmer) shimmer.remove();
+          }
+        } catch (e) { /* skip */ }
+      }
+      thumbState._running = false;
+    }
+
+    var thumbObserver = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (!entries[i].isIntersecting) continue;
+        var el = entries[i].target;
+        var url = el.dataset.modelUrl, format = el.dataset.format;
+        if (!url || el.dataset.thumbQueued) continue;
+        el.dataset.thumbQueued = '1';
+        thumbObserver.unobserve(el);
+        thumbState._queue.push({ el: el, url: url, format: format });
+        processThumbQueue();
+      }
+    }, { rootMargin: '200px' });
+
+    window._3dThumbObserver = thumbObserver;
+
+    /* ═══════════════ Expose to catalog ═══════════════ */
+    window._3dViewer = { openViewer: openViewer, loadModelFromURL: loadModelFromURL, closeViewer: closeViewer, loadModelFromFile: loadModelFromFile };
+    window.GrudgeViewer = { scene: function() { return scene; }, camera: function() { return camera; }, engine: function() { return engine; }, currentModel: function() { return currentModel; } };
+    window._modelConverter = new ModelConverter();
+  </script>
+
+  <!-- Catalog Script (non-module) -->
+  <script>
+    var allModels = [];
+    var r2Models = [];
+    var filteredModels = [];
+    var currentPage = 0;
+    var PAGE_SIZE = 80;
+    var filters = { search: '', format: 'all', category: 'all' };
+    var r2Available = false;
+
+    // R2 Worker URLs — workers.dev is currently the only one with a working /v1/health
+    // objectstore.grudge-studio.com is misconfigured (404 on all routes)
+    var R2_URLS = [
+      'https://grudgeassets.grudge.workers.dev',
+      'https://objectstore.grudge-studio.com'
+    ];
+    var R2_WORKER_URL = R2_URLS[0]; // resolved after health check
+
+    // Direct R2 CDN for model files — has Access-Control-Allow-Origin: *
+    var R2_CDN_URL = 'https://assets.grudge-studio.com';
+
+    // ALL model binaries are in R2, never on GitHub Pages (too large for git)
+    // MODEL_BASE_URL is only used as last resort — R2 worker should always be preferred
+    var MODEL_BASE_URL = null; // disabled — forces R2 or CDN paths
+
+    // GitHack CDN — serves raw files from GitHub with proper CORS + content-type
+    var GITHACK_BASE_URL = 'https://raw.githack.com/molochdagod/ObjectStore/main';
+
+    // Properly encode a model path for use in URLs (encodes each segment individually)
+    function encodeModelPath(p) {
+      return p.split('/').map(function(seg) { return encodeURIComponent(seg); }).join('/');
+    }
+
+    // SHA-256 hash of a File (for dedup)
+    async function hashFile(file) {
+      var buffer = await file.arrayBuffer();
+      var hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    /* === R2 Status Check (with fallback) === */
+    async function checkR2Status() {
+      var el = document.getElementById('r2Status');
+      for (var i = 0; i < R2_URLS.length; i++) {
+        try {
+          var res = await fetch(R2_URLS[i] + '/v1/health', { signal: AbortSignal.timeout(5000) });
+          if (res.ok) {
+            R2_WORKER_URL = R2_URLS[i];
+            r2Available = true;
+            el.className = 'r2-status online';
+            el.innerHTML = '<span class="r2-dot"></span> R2 Online';
+            document.getElementById('uploadR2Btn').disabled = false;
+            console.log('R2 connected via ' + R2_WORKER_URL);
+            return;
+          }
+        } catch(e) { /* try next */ }
+      }
+      r2Available = false;
+      el.className = 'r2-status offline';
+      el.innerHTML = '<span class="r2-dot"></span> R2 Offline';
+    }
+
+    /* === Load ALL R2 3D models (multiple prefixes, paginated) === */
+    // Browser is GLB-only. Source formats are accepted by the conversion pipeline,
+    // but only GLB assets are shown in the catalog and considered engine-ready.
+    var R2_3D_EXTENSIONS = new Set(['GLB']);
+
+    function detectR2Category(key) {
+      var parts = key.split('/');
+      // e.g. effects/spells/Fireball.glb -> 'Spell Effects'
+      if (parts[0] === 'effects' && parts[1] === 'spells') return 'Spell Effects';
+      if (parts[0] === 'effects') return 'Effects';
+      if (parts[0] === 'models' && parts.length > 2) {
+        // models/characters/... -> Characters, models/ships/... -> Ships
+        return parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+      }
+      if (parts[0] === 'animations') return 'Animations';
+      if (parts.length > 2) return parts[1];
+      return 'r2-uploaded';
+    }
+
+    async function fetchR2Page(prefix, limit, cursor) {
+      var url = R2_WORKER_URL + '/v1/assets?limit=' + limit;
+      if (prefix) url += '&prefix=' + encodeURIComponent(prefix);
+      if (cursor) url += '&cursor=' + encodeURIComponent(cursor);
+      var res = await fetch(url);
+      return res.json();
+    }
+
+    async function loadR2Models() {
+      if (!r2Available) return;
+      r2Models = [];
+
+      // Fetch from multiple prefixes to catch ALL 3D content
+      var prefixes = ['models/', 'effects/', 'animations/', 'assets/', ''];
+      var seenKeys = new Set();
+
+      for (var pi = 0; pi < prefixes.length; pi++) {
+        try {
+          var cursor = null;
+          var hasMore = true;
+          while (hasMore) {
+            var data = await fetchR2Page(prefixes[pi], 1000, cursor);
+            var assets = data.assets || [];
+            for (var ai = 0; ai < assets.length; ai++) {
+              var a = assets[ai];
+              if (seenKeys.has(a.key)) continue;
+              var fname = a.key.split('/').pop();
+              var ext = fname.split('.').pop().toUpperCase();
+              if (!R2_3D_EXTENSIONS.has(ext)) continue;
+              seenKeys.add(a.key);
+              r2Models.push({
+                name: fname,
+                path: a.key,
+                format: ext,
+                category: detectR2Category(a.key),
+                sizeKB: a.size ? Math.round(a.size / 1024) : 0,
+                _source: 'r2',
+                _cdnUrl: R2_CDN_URL + '/' + a.key.split('/').map(encodeURIComponent).join('/'),
+                _r2Url: R2_WORKER_URL + '/v1/assets/' + a.key.split('/').map(encodeURIComponent).join('/') + '/file'
+              });
+            }
+            cursor = data.cursor || null;
+            hasMore = !!cursor && assets.length > 0;
+          }
+        } catch(e) {
+          console.warn('R2 fetch error for prefix "' + prefixes[pi] + '":', e);
+        }
+      }
+      console.log('Loaded ' + r2Models.length + ' 3D models from R2');
+    }
+
+    /* === Convert + Upload Pipeline Handler === */
+    (function() {
+      var btn = document.getElementById('uploadR2Btn');
+      var fileIn = document.getElementById('r2FileInput');
+      var statusEl = document.getElementById('uploadR2Status');
+      btn.addEventListener('click', function() { fileIn.click(); });
+      fileIn.addEventListener('change', async function() {
+        var file = this.files[0];
+        if (!file) return;
+        var ext = file.name.split('.').pop().toLowerCase();
+        var isGLB = ext === 'glb';
+        btn.disabled = true;
+
+        try {
+          // Step 1: Hash the source file for dedup
+          statusEl.textContent = 'Hashing ' + file.name + '...';
+          var sourceHash = await hashFile(file);
+
+          // Step 2: Dedup check — skip conversion if already done
+          if (r2Available) {
+            try {
+              var checkRes = await fetch(R2_WORKER_URL + '/v1/convert/check?hash=' + sourceHash);
+              var checkData = await checkRes.json();
+              if (checkData.exists) {
+                statusEl.textContent = 'Already converted! ' + checkData.filename;
+                await loadR2Models();
+                mergeAndRefresh();
+                btn.disabled = !r2Available;
+                fileIn.value = '';
+                return;
+              }
+            } catch(e) { /* dedup check failed, continue */ }
+          }
+
+          // Step 3: Convert to GLB if needed, then upload
+          var glbBlob, glbName, meshes = 0, verts = 0, anims = 0;
+          if (isGLB) {
+            statusEl.textContent = 'Uploading ' + file.name + ' (already GLB)...';
+            glbBlob = file;
+            glbName = file.name;
+          } else if (ext === 'gltf' || ext === 'obj') {
+            // Client-side conversion via Babylon.js (GLTF/OBJ supported)
+            statusEl.textContent = 'Converting ' + file.name + ' to GLB...';
+            try {
+              var converterResult = await window._modelConverter.convertToGLB(file);
+              glbBlob = converterResult.blob;
+              glbName = converterResult.name;
+              meshes = converterResult.meshes;
+              verts = converterResult.verts;
+              anims = converterResult.animations;
+              statusEl.textContent = 'Converted! Uploading ' + glbName + '...';
+            } catch (convErr) {
+              // Client-side failed — upload raw for server-side conversion
+              statusEl.textContent = 'Client convert failed, uploading raw for server pipeline...';
+              glbBlob = file;
+              glbName = file.name;
+            }
+          } else {
+            // FBX, BLEND, etc. — upload raw, server-side pipeline converts to GLB
+            statusEl.textContent = 'Uploading ' + file.name + ' for server-side GLB conversion...';
+            glbBlob = file;
+            glbName = file.name;
+          }
+
+          // Step 4: Upload via conversion pipeline (Durable Object)
+          var fd = new FormData();
+          fd.append('file', glbBlob, glbName);
+          fd.append('filename', glbName);
+          fd.append('sourceHash', sourceHash);
+          fd.append('sourceName', file.name);
+          fd.append('sourceFormat', ext);
+          fd.append('sourceSize', String(file.size));
+          fd.append('meshes', String(meshes));
+          fd.append('vertices', String(verts));
+          fd.append('animations', String(anims));
+
+          var res = await fetch(R2_WORKER_URL + '/v1/convert', { method: 'POST', body: fd });
+          if (res.ok) {
+            var result = await res.json();
+            statusEl.textContent = result.deduplicated
+              ? 'Already exists: ' + glbName
+              : 'Stored: ' + glbName + ' (' + (result.size ? Math.round(result.size / 1024) + ' KB' : '') + ')';
+            await loadR2Models();
+            mergeAndRefresh();
+          } else {
+            var errData = await res.json().catch(function() { return {}; });
+            statusEl.textContent = 'Upload failed: ' + (errData.error || res.status);
+          }
+        } catch(e) {
+          statusEl.textContent = 'Error: ' + e.message;
+          console.error('Convert+Upload error:', e);
+        }
+        btn.disabled = !r2Available;
+        fileIn.value = '';
+      });
+    })();
+
+    function mergeAndRefresh() {
+      // Tag static models
+      allModels.forEach(function(m) { if (!m._source) m._source = 'static'; });
+      // Remove dupes from r2Models that match static paths
+      var staticPaths = new Set(allModels.map(function(m) { return m.path; }));
+      var unique = r2Models.filter(function(m) { return !staticPaths.has(m.path); });
+      allModels = unique.concat(allModels);
+      // Rebuild filters and stats to include R2 models
+      var mergedData = { totalModels: allModels.length, byFormat: {}, byCategory: {} };
+      allModels.forEach(function(m) {
+        mergedData.byFormat[m.format] = (mergedData.byFormat[m.format] || 0) + 1;
+        mergedData.byCategory[m.category || 'uncategorized'] = (mergedData.byCategory[m.category || 'uncategorized'] || 0) + 1;
+      });
+      renderStats(mergedData);
+      buildFilters(mergedData);
+      applyFilters();
+    }
+
+    async function init() {
+      // Start R2 check in parallel with static catalog load
+      var r2Promise = checkR2Status();
+      try {
+        var res = await fetch('./api/v1/models3d.json');
+        var data = await res.json();
+        allModels = (data.models || []).filter(function(m) {
+          return String(m.format || '').toUpperCase() === 'GLB';
+        }).map(function(m) {
+          m.path = m.path.replace(/\\/g, '/');
+          m._source = 'static';
+          return m;
+        });
+        renderStats();
+        buildFilters();
+        setupEvents();
+        applyFilters();
+      } catch(e) {
+        console.error('Failed to load models3d.json:', e);
+        document.getElementById('loadingState').innerHTML = '<p style="color:#ff4d4d;">Failed to load model data: ' + e.message + '</p>';
+      }
+      // After R2 check, merge R2 models
+      await r2Promise;
+      if (r2Available) {
+        await loadR2Models();
+        mergeAndRefresh();
+      }
+    }
+
+    function renderStats(data) {
+      if (!data) {
+        data = { totalModels: allModels.length, byFormat: {}, byCategory: {} };
+        allModels.forEach(function(m) {
+          data.byFormat[m.format] = (data.byFormat[m.format] || 0) + 1;
+          data.byCategory[m.category || 'uncategorized'] = (data.byCategory[m.category || 'uncategorized'] || 0) + 1;
+        });
+      }
+      var bar = document.getElementById('statsBar');
+      var html = '<div class="stat-item"><div class="stat-label">Total</div><div class="stat-value">' + (data.totalModels || allModels.length) + '</div></div>';
+      if (data.byFormat) {
+        for (var f in data.byFormat) {
+          html += '<div class="stat-item"><div class="stat-label">' + f + '</div><div class="stat-value">' + data.byFormat[f] + '</div></div>';
+        }
+      }
+      bar.innerHTML = html;
+    }
+
+    function buildFilters(data) {
+      // GLB-only browser: keep a single active format indicator instead of exposing legacy source formats
+      document.getElementById('formatFilters').innerHTML = '<button class="filter-btn active" data-fmt="GLB">GLB Only (' + allModels.length + ')</button>';
+
+      var cats = {};
+      allModels.forEach(function(m) { cats[m.category || 'uncategorized'] = (cats[m.category || 'uncategorized'] || 0) + 1; });
+      var catHtml = '<button class="filter-btn active" data-cat="all">All</button>';
+      Object.entries(cats).sort(function(a,b) { return b[1] - a[1]; }).forEach(function(e) {
+        catHtml += '<button class="filter-btn" data-cat="' + e[0] + '">' + e[0] + ' (' + e[1] + ')</button>';
+      });
+      document.getElementById('categoryFilters').innerHTML = catHtml;
+    }
+
+    function setupEvents() {
+      var debounceTimer;
+      document.getElementById('searchBox').addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() { filters.search = e.target.value.toLowerCase(); currentPage = 0; applyFilters(); }, 250);
+      });
+      document.getElementById('formatFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-fmt]'); if (!btn) return;
+        document.querySelectorAll('[data-fmt]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active'); filters.format = 'GLB'; currentPage = 0; applyFilters();
+      });
+      document.getElementById('categoryFilters').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cat]'); if (!btn) return;
+        document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active'); filters.category = btn.dataset.cat; currentPage = 0; applyFilters();
+      });
+    }
+
+    function applyFilters() {
+      filteredModels = allModels.filter(function(m) {
+        if (String(m.format || '').toUpperCase() !== 'GLB') return false;
+        if (filters.format !== 'all' && filters.format !== 'GLB') return false;
+        if (filters.category !== 'all' && (m.category || 'uncategorized') !== filters.category) return false;
+        if (filters.search && m.name.toLowerCase().indexOf(filters.search) === -1 && (m.category || '').toLowerCase().indexOf(filters.search) === -1) return false;
+        return true;
+      });
+      renderPage();
+    }
+
+    function renderPage() {
+      document.getElementById('loadingState').style.display = 'none';
+      if (filteredModels.length === 0) {
+        document.getElementById('resultsArea').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('resultsArea').style.display = 'block';
+      document.getElementById('resultsCount').textContent = filteredModels.length + ' models';
+
+      var start = currentPage * PAGE_SIZE;
+      var end = Math.min(start + PAGE_SIZE, filteredModels.length);
+      var page = filteredModels.slice(start, end);
+      var grid = document.getElementById('modelGrid');
+      // SVG cube icons colored per format
+      var cubeColors = { GLB: '#22c55e' };
+      function makeCubeSVG(fmt) {
+        var c = cubeColors[fmt] || '#888';
+        return '<svg class="cube-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
+          '<polygon points="40,8 72,24 72,56 40,72 8,56 8,24" fill="none" stroke="' + c + '" stroke-width="1.5" opacity="0.6"/>' +
+          '<polygon points="40,8 72,24 40,40 8,24" fill="' + c + '" opacity="0.15"/>' +
+          '<polygon points="40,40 72,24 72,56 40,72" fill="' + c + '" opacity="0.25"/>' +
+          '<polygon points="40,40 8,24 8,56 40,72" fill="' + c + '" opacity="0.1"/>' +
+          '<text x="40" y="50" text-anchor="middle" fill="' + c + '" font-size="10" font-weight="bold" opacity="0.7">' + fmt + '</text>' +
+        '</svg>';
+      }
+      var html = '';
+      for (var i = 0; i < page.length; i++) {
+        var m = page[i];
+        var fclass = 'format-' + m.format.toLowerCase();
+        var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : '';
+        var srcBadge = m._source === 'r2' ? '<span class="source-badge source-r2">R2</span>' : '<span class="source-badge source-static">Static</span>';
+        var modelUrl = '';
+        if (m._source === 'r2' && m._cdnUrl) {
+          // R2 models: use CDN URL (fastest, has CORS: *)
+          modelUrl = m._cdnUrl;
+        } else if (m._source === 'r2' && m._r2Url) {
+          modelUrl = m._r2Url;
+        } else if (r2Available && R2_WORKER_URL) {
+          // Static catalog models: serve via R2 worker asset endpoint
+          modelUrl = R2_CDN_URL + '/' + encodeModelPath(m.path);
+        } else {
+          // Last resort: try CDN directly
+          modelUrl = R2_CDN_URL + '/' + encodeModelPath(m.path);
+        }
+        html += '<div class="model-card" data-idx="' + (start + i) + '">' +
+          '<div class="model-icon" data-model-url="' + esc(modelUrl) + '" data-format="' + esc(m.format) + '">' +
+            makeCubeSVG(m.format) +
+            '<div class="load-shimmer"></div>' +
+            '<span class="format-badge ' + fclass + '">' + esc(m.format) + '</span>' + srcBadge + '</div>' +
+          '<div class="model-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div>' +
+          '<div class="model-meta">' + esc(m.category || 'uncategorized') + (sizeStr ? ' \u00b7 ' + sizeStr : '') + '</div>' +
+        '</div>';
+      }
+      grid.innerHTML = html;
+
+      // Click handlers — try R2 first for all models, then static fallback
+      grid.querySelectorAll('.model-card').forEach(function(card) {
+        card.addEventListener('click', async function() {
+          var idx = parseInt(this.dataset.idx);
+          var m = filteredModels[idx];
+          if (!m) return;
+          window._3dViewer.openViewer(m.name, m.format, m.path);
+
+          // Try R2 CDN first (assets.grudge-studio.com — proper CORS: *)
+          var cdnUrl = m._cdnUrl || (R2_CDN_URL + '/' + encodeModelPath(m.path));
+          try {
+            var cdnRes = await fetch(cdnUrl, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+            if (cdnRes.ok) {
+              window._3dViewer.loadModelFromURL(cdnUrl, m.format);
+              return;
+            }
+          } catch(e) { /* CDN doesn't have it, fall through */ }
+
+          // Fallback: R2 worker API (may have CORS restrictions)
+          if (r2Available && R2_WORKER_URL) {
+            var r2Url = m._r2Url || (R2_WORKER_URL + '/v1/assets/' + encodeURIComponent(m.path) + '/file');
+            try {
+              var headRes = await fetch(r2Url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+              if (headRes.ok) {
+                window._3dViewer.loadModelFromURL(r2Url, m.format);
+                return;
+              }
+            } catch(e) { /* R2 worker doesn't have it, fall through */ }
+          }
+
+          // Try GitHack CDN (better CORS + content-type than GitHub Pages)
+          var githackUrl = GITHACK_BASE_URL + '/' + encodeModelPath(m.path);
+          try {
+            var ghRes = await fetch(githackUrl, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
+            if (ghRes.ok) {
+              window._3dViewer.loadModelFromURL(githackUrl, m.format);
+              return;
+            }
+          } catch(e) { /* GitHack doesn't have it, fall through */ }
+
+          // Fall back to GitHub Pages
+          if (MODEL_BASE_URL) {
+            window._3dViewer.loadModelFromURL(MODEL_BASE_URL + '/' + encodeModelPath(m.path), m.format);
+          } else {
+            showModelInfo(m);
+          }
+        });
+      });
+      renderPagination();
+
+      // Observe model icons for lazy thumbnail generation
+      if (window._3dThumbObserver) {
+        grid.querySelectorAll('.model-icon[data-model-url]').forEach(function(el) {
+          if (el.dataset.modelUrl) window._3dThumbObserver.observe(el);
+        });
+      }
+    }
+
+    function renderPagination() {
+      var totalPages = Math.ceil(filteredModels.length / PAGE_SIZE);
+      if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+      var html = '<button class="page-btn" onclick="goPage(0)" ' + (currentPage === 0 ? 'disabled' : '') + '>&laquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '>&lsaquo;</button>';
+      var sp = Math.max(0, currentPage - 3), ep = Math.min(totalPages, sp + 7);
+      for (var p = sp; p < ep; p++) {
+        html += '<button class="page-btn ' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + (p + 1) + '</button>';
+      }
+      html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&rsaquo;</button>';
+      html += '<button class="page-btn" onclick="goPage(' + (totalPages - 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '>&raquo;</button>';
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    window.goPage = function(p) {
+      var totalPages = Math.ceil(filteredModels.length / PAGE_SIZE);
+      if (p < 0 || p >= totalPages) return;
+      currentPage = p; renderPage();
+      window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 20, behavior: 'smooth' });
+    };
+
+    /* === Model Info Modal (when models aren't hosted) === */
+    function showModelInfo(m) {
+      var sizeStr = m.sizeKB ? (m.sizeKB < 1024 ? m.sizeKB + ' KB' : (m.sizeKB / 1024).toFixed(1) + ' MB') : 'Unknown';
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      var fclass = 'format-' + m.format.toLowerCase();
+      var html = '<div style="background:var(--card-bg);border:2px solid var(--tier-4);border-radius:16px;max-width:500px;width:100%;padding:32px;position:relative;">' +
+        '<button onclick="this.closest(\'.model-info-overlay\').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text-dim);font-size:1.5rem;cursor:pointer;">&times;</button>' +
+        '<div style="text-align:center;font-size:3rem;margin-bottom:12px;">&#129482;</div>' +
+        '<h3 style="font-size:1.2rem;margin-bottom:4px;color:var(--text-primary);">' + esc(m.name) + '</h3>' +
+        '<p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:16px;">' + esc(m.category || 'uncategorized') + '</p>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">' +
+          '<div style="background:var(--bg-dark);padding:8px 12px;border-radius:8px;"><div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;">Format</div><div style="color:var(--tier-4);font-weight:600;">' + esc(m.format) + '</div></div>' +
+          '<div style="background:var(--bg-dark);padding:8px 12px;border-radius:8px;"><div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;">Size</div><div style="color:var(--tier-4);font-weight:600;">' + sizeStr + '</div></div>' +
+        '</div>' +
+        '<div style="background:var(--bg-dark);padding:10px;border-radius:8px;font-family:monospace;font-size:0.75rem;color:var(--tier-7);word-break:break-all;margin-bottom:16px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent)" title="Click to copy path">' + esc(m.path) + '</div>' +
+        '<p style="color:var(--text-dim);font-size:0.78rem;margin-bottom:12px;text-align:center;">This model is in the registry but not hosted in the repo.<br>Load the file from your machine to preview it in 3D:</p>' +
+        '<div style="text-align:center;"><button class="viewer-btn" style="padding:10px 24px;font-size:0.9rem;" id="modelInfoLoadBtn">&#128194; Load ' + esc(m.format) + ' File to Preview</button></div>' +
+      '</div>';
+      overlay.className = 'model-info-overlay';
+      overlay.innerHTML = html;
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      document.body.appendChild(overlay);
+      // Wire up load button
+      document.getElementById('modelInfoLoadBtn').addEventListener('click', function() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.' + m.format.toLowerCase();
+        input.onchange = function() {
+          if (input.files[0]) {
+            overlay.remove();
+            var url = URL.createObjectURL(input.files[0]);
+            window._3dViewer.openViewer(m.name, m.format, m.path);
+            window._3dViewer.loadModelFromURL(url, m.format);
+          }
+        };
+        input.click();
+      });
+      // ESC to close
+      function escHandler(e) { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', escHandler); } }
+      document.addEventListener('keydown', escHandler);
+    }
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    init();
+  </script>
+</body>
+</html>

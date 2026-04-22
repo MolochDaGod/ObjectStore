@@ -1,0 +1,1828 @@
+
+
+<!-- Interactive Grass + Stylized Procedural Trees + Animated Biped Characters
+     Characters: KayKit rigs from https://molochdagod.github.io/ObjectStore/
+     Trees: pure Three.js procedural geometry + GLSL wind shaders
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grass Field &middot; Stylized Trees &middot; Animated Characters</title>
+    <style>
+      body { margin:0; overflow:hidden; }
+      #container { width:100dvw; height:100dvh; }
+      #controls {
+        position:absolute; top:10px; left:10px;
+        color:#fff; font-family:monospace; font-size:12px;
+        background:rgba(0,0,0,.55); padding:8px 12px; border-radius:6px;
+        pointer-events:none; line-height:1.75;
+      }
+      #loadingScreen {
+        position:fixed; inset:0; background:#0a1520;
+        display:flex; flex-direction:column;
+        align-items:center; justify-content:center;
+        color:#7cf; font-family:monospace; font-size:15px; z-index:9999;
+      }
+      #loadTitle { font-size:22px; font-weight:bold; margin-bottom:24px; color:#fff; }
+      #loadBar   { width:340px; height:8px; background:#1e3a5f; border-radius:4px; }
+      #loadFill  { height:100%; width:0; background:#4db8ff; border-radius:4px; transition:width .25s; }
+      #loadMsg   { margin-top:14px; font-size:12px; color:#6af; min-height:1.5em; }
+      #performanceStats {
+        position:fixed; bottom:120px; right:280px;
+        display:flex; flex-direction:column; gap:10px; z-index:1000;
+      }
+      #performanceStats div {
+        position:relative !important; top:unset !important; left:unset !important;
+        cursor:pointer !important; opacity:0.9 !important;
+      }
+    </style>
+    <script async src="https://cdn.jsdelivr.net/npm/es-module-shims@2.6.2/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three":         "https://cdn.jsdelivr.net/npm/three@0.181.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/",
+        "stats-gl":      "https://cdn.jsdelivr.net/npm/stats-gl@3.6.0/+esm"
+      }
+    }
+    </script>
+  </head>
+  <body>
+
+<div id="loadingScreen">
+  <div id="loadTitle">Loading Sceneâ€¦</div>
+  <div id="loadBar"><div id="loadFill"></div></div>
+  <div id="loadMsg">Initialising rendererâ€¦</div>
+</div>
+
+<div id="container"></div>
+<div id="controls">
+  <strong>Move:</strong> WASD / Arrows &nbsp;|&nbsp; <strong>Run:</strong> Shift<br/>
+  <strong>Jump:</strong> SPACE &nbsp;|&nbsp; <strong>Orbit:</strong> Mouse drag &nbsp;|&nbsp; <strong>Zoom:</strong> Scroll<br/>
+  <strong>Projectile:</strong> Left click &nbsp;|&nbsp; <strong>Melee:</strong> Right click &nbsp;|&nbsp; <strong>Magic AoE:</strong> F
+</div>
+<div id="performanceStats"></div>
+
+<script type="module">
+import * as THREE         from 'three';
+import StatsGL            from 'stats-gl';
+import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader }     from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader }    from 'three/addons/loaders/DRACOLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  ASSET URLs  (KayKit rigs from ObjectStore CDN)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const STORE  = 'https://molochdagod.github.io/ObjectStore';
+const CHAR_A = STORE + '/models/characters/kaykit/Rig_Medium_General.glb';
+const CHAR_B = STORE + '/models/characters/kaykit/Rig_Medium_MovementBasic.glb';
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CONSTANTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const FOG_NEAR    = 52;
+const FOG_FAR     = 68;
+const GROUND_SIZE = 700;
+const GRASS_R     = 44;
+const BLADE_COUNT = 1_400_000;
+const GRASS_H     = 1.2;
+const GRASS_W     = 0.15;
+const CAP_R       = 0.42;
+const CAP_H       = 1.8;
+const CAP_HH      = CAP_H / 2;
+const NPC_COUNT   = 5;
+const MAX_UNI     = 6;
+const WALK_SPD    = 4.0;
+const RUN_SPD     = 9.0;
+const JUMP_SPD    = 6.5;
+const GRAVITY     = -14.0;
+const TINTS       = [0xff5522, 0x22aaff, 0xffcc00, 0xaa44ff, 0x44ffaa];
+
+// Tree world positions (XY ground plane, Z-up world)
+const TREE_SPOTS = [
+  new THREE.Vector3( 11,   8, 0),
+  new THREE.Vector3(-13,   7, 0),
+  new THREE.Vector3(  5, -13, 0),
+];
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  RENDERER
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace    = THREE.SRGBColorSpace;
+renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+document.getElementById('container').appendChild(renderer.domElement);
+
+const stats = new StatsGL({ trackGPU: true, trackHz: true });
+document.getElementById('performanceStats').appendChild(stats.dom);
+stats.init(renderer);
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  SCENE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
+scene.fog        = new THREE.Fog(0x87ceeb, FOG_NEAR, FOG_FAR);
+
+const pmremGen = new THREE.PMREMGenerator(renderer);
+const envScene = new THREE.Scene();
+envScene.background = new THREE.Color(0xaabbcc);
+scene.environment   = pmremGen.fromScene(envScene).texture;
+pmremGen.dispose();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LIGHTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const sun = new THREE.DirectionalLight(0xfff4d0, 2.4);
+sun.position.set(30, 40, 80);
+scene.add(sun);
+scene.add(new THREE.AmbientLight(0x8899cc, 1.0));
+scene.add(new THREE.HemisphereLight(0x87ceeb, 0x5a8a3c, 0.7));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CAMERA + ORBIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+camera.position.set(15, 0, 15);
+camera.up.set(0, 0, 1);
+
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.enableDamping = false;
+orbit.minDistance   = 1;
+orbit.maxDistance   = 800;
+orbit.maxPolarAngle = Math.PI / 2;
+orbit.enableKeys    = false;
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  GROUND  (radial alpha-fog fade toward player)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x8b6f47, side: THREE.FrontSide, transparent: true, fog: false,
+});
+groundMat.onBeforeCompile = shader => {
+  shader.uniforms.uPlayerPos = { value: new THREE.Vector3() };
+  shader.vertexShader = shader.vertexShader.replace('#include <common>',
+    '#include <common>\nvarying vec3 vWP;');
+  shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>',
+    '#include <begin_vertex>\nvWP=(modelMatrix*vec4(position,1.0)).xyz;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <common>',
+    '#include <common>\nuniform vec3 uPlayerPos;\nvarying vec3 vWP;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>',
+    `float gd=length(vWP.xy-uPlayerPos.xy);
+     float gf=smoothstep(${FOG_NEAR.toFixed(1)},${FOG_FAR.toFixed(1)},gd);
+     gl_FragColor.a=mix(1.0,0.0,gf);
+     #include <dithering_fragment>`);
+  groundMat.userData.shader = shader;
+};
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(GROUND_SIZE, GROUND_SIZE), groundMat));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  STYLIZED PROCEDURAL TREES  â€”  pure GLSL
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+// ---- Trunk shader ----
+const trunkVertSrc = `
+varying vec3 vWP;
+varying vec3 vN;
+void main(){
+  vec4 wp = modelMatrix * vec4(position, 1.0);
+  vWP = wp.xyz;
+  vN  = normalize(normalMatrix * normal);
+  gl_Position = projectionMatrix * viewMatrix * wp;
+}`;
+const trunkFragSrc = `
+uniform vec3 sunDir;
+varying vec3 vWP; varying vec3 vN;
+float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  float n=noise(vWP.xz*.9+vWP.y*.3)*.5+noise(vWP.xz*3.2)*.2;
+  vec3 bark=mix(vec3(0.30,0.18,0.09),vec3(0.52,0.33,0.18),n);
+  float h=clamp(vWP.z*.13,0.,1.);
+  bark=mix(bark*.6,bark*1.1,h);
+  float NdL=max(dot(vN,normalize(sunDir)),0.0);
+  float toon=NdL<.15?.18:NdL<.55?.52:1.0;
+  gl_FragColor=vec4(bark*(0.3+0.7*toon),1.0);
+}`;
+
+// ---- Foliage shader (fluffy clusters + wind) ----
+const foliageVertSrc = `
+uniform float time;
+uniform float windStrength;
+uniform vec3  windDir;
+varying vec3  vWP; varying vec3 vN; varying float vFresnel;
+void main(){
+  vec3 pos=position;
+  // Puff vertices outward for fluffy silhouette
+  pos += normal*(0.22*sin(pos.x*4.2+pos.y*3.6+pos.z*4.1));
+  vec4 wp=modelMatrix*vec4(pos,1.0);
+  // Wind sway
+  float phase=dot(wp.xz,windDir.xz)*0.28+time*1.05;
+  float sway=sin(phase)*windStrength;
+  float gust=sin(phase*.31+1.3)*windStrength*.5;
+  float flut=sin(phase*2.9+wp.x*.6)*windStrength*.35;
+  wp.x+=(sway+gust)*windDir.x+flut;
+  wp.y+=(sway+gust)*windDir.y*.5;
+  // Micro leaf flutter
+  float mf=sin(pos.x*8.0+time*4.1)*.045+sin(pos.z*7.3+time*3.5)*.04;
+  wp.xyz+=normal*mf;
+  vWP=wp.xyz;
+  vN=normalize(normalMatrix*normal);
+  vec3 V=normalize(cameraPosition-wp.xyz);
+  vFresnel=pow(1.0-max(dot(vN,V),0.0),2.8);
+  gl_Position=projectionMatrix*viewMatrix*wp;
+}`;
+const foliageFragSrc = `
+uniform vec3  sunDir;
+uniform vec3  leafColorA;
+uniform vec3  leafColorB;
+uniform vec3  leafColorTip;
+varying vec3  vWP; varying vec3 vN; varying float vFresnel;
+float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  vec3 L=normalize(sunDir); vec3 N=normalize(vN);
+  float NdL=max(dot(N,L),0.0);
+  float toon=NdL<.15?.15:NdL<.55?.50:1.0;
+  float cv=noise(vWP.xz*.45+vWP.y*.18);
+  float cv2=noise(vWP.xz*.12+vec2(31.4,7.7));
+  vec3 col=mix(mix(leafColorA,leafColorB,cv),leafColorTip,cv2*.35);
+  // SSS: light bleeding through leaves from behind
+  float sss=pow(max(dot(-N,L),0.0),3.5)*.55;
+  col+=leafColorTip*sss*.4;
+  // Rim glow
+  col+=leafColorTip*vFresnel*.28;
+  // AO: sphere bottom darker
+  float ao=clamp(dot(N,vec3(0,0,1))*.5+.52,.22,1.0);
+  col*=ao*(0.32+0.68*toon);
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+// Shared trunk material
+const trunkMat = new THREE.ShaderMaterial({
+  vertexShader: trunkVertSrc, fragmentShader: trunkFragSrc,
+  uniforms: { sunDir: { value: new THREE.Vector3(1,1,2).normalize() } },
+  side: THREE.FrontSide,
+});
+
+// Per-tree foliage materials (unique leaf colours, shared wind)
+const foliageMats = [];
+function makeFoliageMat(colorA, colorB, colorTip) {
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: foliageVertSrc, fragmentShader: foliageFragSrc,
+    uniforms: {
+      time:         { value: 0 },
+      windStrength: { value: 0.20 },
+      windDir:      { value: new THREE.Vector3(1, 0.35, 0).normalize() },
+      sunDir:       { value: new THREE.Vector3(1, 1, 2).normalize() },
+      leafColorA:   { value: new THREE.Color(colorA) },
+      leafColorB:   { value: new THREE.Color(colorB) },
+      leafColorTip: { value: new THREE.Color(colorTip) },
+    },
+    side: THREE.FrontSide,
+  });
+  foliageMats.push(mat);
+  return mat;
+}
+
+// Build one procedural tree (Z-up: trunk grows along +Z)
+function buildTree(pos, trunkH, rBot, rTop, clusters, matFoliage) {
+  const g = new THREE.Group();
+  g.position.copy(pos);
+  // Cylinder is Y-axis by default; rotateX makes it Z-axis
+  const tGeo = new THREE.CylinderGeometry(rTop, rBot, trunkH, 8, 5);
+  tGeo.rotateX(Math.PI / 2);
+  tGeo.translate(0, 0, trunkH / 2);
+  g.add(new THREE.Mesh(tGeo, trunkMat));
+  for (const cl of clusters) {
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(cl.r, 14, 12), matFoliage);
+    mesh.position.set(cl.ox, cl.oy, trunkH + cl.oz);
+    g.add(mesh);
+  }
+  scene.add(g);
+}
+
+// Tree 1 â€“ wide spreading oak, lush green
+buildTree(TREE_SPOTS[0], 5.5, 0.58, 0.26,
+  [{r:3.3,ox:0,oy:0,oz:2.6},{r:2.5,ox:2.1,oy:0.4,oz:1.1},
+   {r:2.3,ox:-1.9,oy:-0.4,oz:1.3},{r:1.9,ox:0.5,oy:2.1,oz:0.6},
+   {r:1.7,ox:-0.5,oy:-1.9,oz:0.9},{r:2.1,ox:0,oy:0,oz:4.4},
+   {r:1.4,ox:1.2,oy:-1.2,oz:4.8}],
+  makeFoliageMat(0x25680e, 0x3fa018, 0x77cc33));
+
+// Tree 2 â€“ tall slim poplar, yellow-green
+buildTree(TREE_SPOTS[1], 7.2, 0.48, 0.19,
+  [{r:2.9,ox:0,oy:0,oz:3.1},{r:2.2,ox:1.7,oy:0.3,oz:1.6},
+   {r:2.0,ox:-1.6,oy:0.7,oz:1.9},{r:2.4,ox:0.2,oy:-1.6,oz:2.1},
+   {r:1.6,ox:0,oy:0,oz:5.2},{r:1.2,ox:0.8,oy:0.8,oz:6.2}],
+  makeFoliageMat(0x38880e, 0x5cb022, 0x90d840));
+
+// Tree 3 â€“ squat round bush-tree, deep forest green
+buildTree(TREE_SPOTS[2], 4.0, 0.68, 0.32,
+  [{r:3.6,ox:0,oy:0,oz:2.1},{r:2.6,ox:2.3,oy:-0.3,oz:1.0},
+   {r:2.6,ox:-2.1,oy:0.5,oz:1.2},{r:2.1,ox:0,oy:2.3,oz:1.6},
+   {r:2.1,ox:0,oy:-2.1,oz:1.6},{r:2.9,ox:0,oy:0,oz:3.6},
+   {r:1.7,ox:1.1,oy:1.6,oz:4.3},{r:1.5,ox:-1.0,oy:-1.5,oz:4.5}],
+  makeFoliageMat(0x1e5c08, 0x349912, 0x5abf28));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  GRASS SHADER  (Z-up instanced blades)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const GrassVert = `
+uniform vec3  grassSize;
+uniform float time;
+uniform vec3  playerPositions[6];
+uniform int   numPlayerPositions;
+uniform float playerInteractionRadius;
+uniform float playerInteractionStrength;
+uniform vec3  sunDirection;
+uniform int   numProjectilePositions;
+uniform vec3  projectilePositions[16];
+uniform float projectileRadius;
+uniform float projectileStrength;
+uniform int   numMagicPulses;
+uniform vec3  magicPulseCenters[4];
+uniform float magicPulseRadii[4];
+uniform float magicPulseStrengths[4];
+varying float vGrassHeight;
+varying vec3  vWorldPos;
+varying vec3  vGrassColor;
+float hash(float n){ return fract(sin(n)*43758.5453); }
+float hash2(vec2 p){ return fract(sin(p.x+p.y*57.)*43758.5453); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash2(i),hash2(i+vec2(1,0)),u.x),mix(hash2(i+vec2(0,1)),hash2(i+vec2(1,1)),u.x),u.y);
+}
+mat3 rotZ(float a){ float c=cos(a),s=sin(a); return mat3(c,-s,0,s,c,0,0,0,1); }
+void main(){
+  vec3 lp=position; float id=float(gl_InstanceID);
+  lp.z*=mix(0.7,1.3,hash(id*3.0));
+  vGrassHeight=clamp(lp.z/grassSize.z,0.,1.);
+  lp.x=mix(0.4,1.0,1.-vGrassHeight*vGrassHeight)*grassSize.x*mix(0.8,1.5,hash(id*5.0));
+  lp.x+=pow(1.-vGrassHeight,1.2)*grassSize.z*tan((hash(id)-.5)*.22);
+  lp=rotZ((hash(id*7.)-.5)*6.283)*lp;
+  vec4 wp=instanceMatrix*vec4(lp,1.0);
+  vec3 push=vec3(0.);
+  for(int i=0;i<6;i++){
+    if(i>=numPlayerPositions) break;
+    vec3 pp=playerPositions[i]; float d=distance(wp.xyz,pp);
+    if(d>playerInteractionRadius) continue;
+    float inf=pow(1.-smoothstep(0.,playerInteractionRadius,d),1.5)*(1.-smoothstep(.2,.8,abs(pp.z-wp.z)));
+    push+=-normalize(pp-wp.xyz)*inf*playerInteractionStrength*vGrassHeight*grassSize.z;
+  }
+  for(int i=0;i<16;i++){
+    if(i>=numProjectilePositions) break;
+    vec3 pp=projectilePositions[i]; float d=distance(wp.xyz,pp);
+    if(d>projectileRadius) continue;
+    push+=normalize(wp.xyz-pp)*(1.-smoothstep(0.,projectileRadius,d))*projectileStrength*vGrassHeight*grassSize.z;
+  }
+  for(int i=0;i<4;i++){
+    if(i>=numMagicPulses) break;
+    vec3 c=magicPulseCenters[i]; float R=magicPulseRadii[i]; float s=magicPulseStrengths[i];
+    float d=distance(wp.xz,c.xz);
+    float band=clamp(1.-abs(d-R)/max(R*.5,.001),0.,1.);
+    push+=normalize(wp.xyz-c)*band*band*s*vGrassHeight*grassSize.z;
+  }
+  wp.xyz+=push;
+  float t=time*.6; float drift=sin(t*.07)*1.2;
+  float wn=mix(noise(wp.xz*.05+t*.05),noise(wp.xz*1.2+t*.6),.3);
+  wn+=smoothstep(40.,0.,distance(wp.xz,vec2(sin(t*.3)*80.,cos(t*.25)*80.)))*.8;
+  vec2 wd=normalize(vec2(cos(drift),sin(drift)));
+  wp.xyz+=vec3(wd,0.)*(0.3+0.7*vGrassHeight)*wn*(hash(id)*.5+.75);
+  vWorldPos=wp.xyz;
+  float bs=id*12.9898;
+  float bn=hash2(vec2(bs,0.)); float tn=hash2(vec2(bs,1.));
+  vec3 b1=vec3(.20,.40,.10)+(bn-.5)*.08; vec3 b2=vec3(.25,.45,.15)+(bn-.5)*.08;
+  vec3 t1=vec3(.30,.50,.10)+(tn-.5)*.08; vec3 t2=vec3(.35,.55,.15)+(tn-.5)*.08;
+  float bl=clamp(pow(vGrassHeight,1.35)+noise(wp.xz*1.3+bs)*.05,0.,1.);
+  vGrassColor=mix(mix(b1,b2,noise(wp.xz*.3+bs)),mix(t1,t2,noise(wp.xz*.35+bs)),bl);
+  vGrassColor*=(0.7+0.3*max(0.,dot(vec3(0,0,1),normalize(sunDirection))));
+  gl_Position=projectionMatrix*viewMatrix*wp;
+}`;
+
+const GrassFrag = `
+uniform vec3  sunDirection; uniform vec3 sunColor; uniform float sunIntensity; uniform vec3 ambientLight;
+varying float vGrassHeight; varying vec3 vWorldPos; varying vec3 vGrassColor;
+float hash2(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash2(i),hash2(i+vec2(1,0)),u.x),mix(hash2(i+vec2(0,1)),hash2(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  vec3 N=vec3(0,0,1); vec3 L=normalize(sunDirection);
+  vec3 lt=ambientLight*.8+sunColor*(max(dot(N,L),0.)*sunIntensity*.25+pow(max(dot(N,-L),0.),2.)*.5);
+  vec3 col=vGrassColor*lt;
+  float hs=vGrassHeight*.1;
+  col.r=clamp(col.r+hs,0.,1.); col.g=clamp(col.g+hs*.5,0.,1.); col.b=clamp(col.b-hs*.2,0.,1.);
+  float jit=mix(noise(vWorldPos.xz*.5),noise(vWorldPos.xz*.25+vec2(12.3,45.6)),.5);
+  col*=mix(.85,1.15,jit);
+  col*=mix(.8,1.,1.-smoothstep(40.,80.,length(vWorldPos.xz-cameraPosition.xz)));
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+// Blade geometry (grows along +Z)
+const bladGeo = new THREE.PlaneGeometry(GRASS_W, GRASS_H, 1, 3);
+{
+  const p = bladGeo.attributes.position.array;
+  for (let r = 0; r < 4; r++) {
+    const ws = 1.0 - (r/3)*(r/3)*0.8;
+    for (let c = 0; c < 2; c++) p[(r*2+c)*3] *= ws;
+  }
+  bladGeo.attributes.position.needsUpdate = true;
+  bladGeo.rotateX(-Math.PI / 2);
+  bladGeo.translate(0, 0, GRASS_H / 2);
+}
+
+const grassMat = new THREE.ShaderMaterial({
+  vertexShader: GrassVert, fragmentShader: GrassFrag,
+  uniforms: {
+    time:                      { value: 0 },
+    grassSize:                 { value: new THREE.Vector3(GRASS_W, 0, GRASS_H) },
+    playerPositions:           { value: Array.from({length:MAX_UNI}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    numPlayerPositions:        { value: 0 },
+    playerInteractionRadius:   { value: 4.8 },
+    playerInteractionStrength: { value: 0.55 },
+    sunDirection:              { value: new THREE.Vector3(1,1,2).normalize() },
+    sunColor:                  { value: new THREE.Color(1,1,0.9) },
+    sunIntensity:              { value: 1.0 },
+    ambientLight:              { value: new THREE.Color(0.5,0.5,0.5) },
+    cameraPosition:            { value: camera.position },
+    numProjectilePositions:    { value: 0 },
+    projectilePositions:       { value: Array.from({length:16}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    projectileRadius:          { value: 2.0 },
+    projectileStrength:        { value: 0.8 },
+    numMagicPulses:            { value: 0 },
+    magicPulseCenters:         { value: Array.from({length:4}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    magicPulseRadii:           { value: new Float32Array(4) },
+    magicPulseStrengths:       { value: new Float32Array(4) },
+  },
+  side: THREE.DoubleSide, alphaTest: 0.01, depthWrite: true,
+});
+
+const grassMesh = new THREE.InstancedMesh(bladGeo, grassMat, BLADE_COUNT);
+scene.add(grassMesh);
+{
+  const d = new THREE.Object3D();
+  for (let i = 0; i < BLADE_COUNT; i++) {
+    const a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*GRASS_R;
+    d.position.set(Math.cos(a)*r, Math.sin(a)*r, 0);
+    d.rotation.z = Math.random()*Math.PI*2;
+    d.updateMatrix();
+    grassMesh.setMatrixAt(i, d.matrix);
+  }
+  grassMesh.instanceMatrix.needsUpdate = true;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CHARACTER CLASS
+//
+//  World: Z-up, ground is XY plane.
+//  KayKit GLB: Y-up, character forward = +Z in model space.
+//  model.rotation.x = -PI/2  maps:
+//    model +Z (forward) â†’ world +Y  (forward in XY ground plane)
+//    model +Y (up)      â†’ world +Z  (up)
+//  group.rotation.z = atan2(dx, dy) then correctly rotates the
+//  character to face its movement direction in the XY plane.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+class Character {
+  constructor(pos, tint, isPlayer) {
+    this.isPlayer  = isPlayer;
+    this.pos       = pos.clone();
+    this.velZ      = 0;
+    this.onGround  = true;
+    this.speed     = 0;
+    this.facing    = 0;  // angle around Z-axis; 0 = facing +Y world
+
+    this.group = new THREE.Group();
+    this.group.position.copy(pos);
+    scene.add(this.group);
+
+    // Placeholder capsule (hidden once model loads)
+    this.capsule = new THREE.Mesh(
+      new THREE.CylinderGeometry(CAP_R, CAP_R, CAP_H, 10),
+      new THREE.MeshStandardMaterial({ color: tint, fog: false })
+    );
+    this.capsule.rotation.x = Math.PI / 2;
+    this.group.add(this.capsule);
+
+    this.mixer     = null;
+    this.clips     = {};
+    this.action    = null;
+    this.actionKey = '';
+
+    // NPC orbit path (null for player)
+    this.npcPath = isPlayer ? null : (() => {
+      const base = TREE_SPOTS[Math.floor(Math.random() * TREE_SPOTS.length)];
+      return {
+        radius: 4.5 + Math.random() * 8,
+        speed:  0.18 + Math.random() * 0.26,
+        offset: Math.random() * Math.PI * 2,
+        tilt:   Math.random() * Math.PI,
+        cx:     base.x + (Math.random() - 0.5) * 4,
+        cy:     base.y + (Math.random() - 0.5) * 4,
+      };
+    })();
+  }
+
+  attachModel(baseGLTF, allClips) {
+    const model = SkeletonUtils.clone(baseGLTF.scene);
+    model.traverse(n => {
+      if (n.isMesh) { n.material = n.material.clone(); n.material.fog = false; }
+    });
+    // -PI/2: converts KayKit Y-up to Z-up, forward becomes +Y world
+    model.rotation.x = -Math.PI / 2;
+    this.group.add(model);
+    this.capsule.visible = false;
+    this.mixer = new THREE.AnimationMixer(model);
+    this.clips = allClips;
+    this.play('idle');
+  }
+
+  play(key, loop = true) {
+    if (this.actionKey === key) return;
+    const clip = this.clips[key];
+    if (!clip) return;
+    const next = this.mixer.clipAction(clip);
+    next.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce);
+    if (!loop) next.clampWhenFinished = true;
+    if (this.action && this.action !== next)
+      next.reset().crossFadeFrom(this.action, 0.18, true).play();
+    else
+      next.reset().play();
+    this.action    = next;
+    this.actionKey = key;
+  }
+
+  update(dt) {
+    this.group.position.set(this.pos.x, this.pos.y, this.pos.z);
+    // Smooth shortest-path rotation toward facing
+    if (this.speed > 0.15) {
+      let cur  = this.group.rotation.z;
+      let diff = this.facing - cur;
+      while (diff >  Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      this.group.rotation.z = cur + diff * Math.min(dt * 14.0, 1.0);
+    }
+    if (this.mixer) this.mixer.update(dt);
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  ASSET LOADING
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const loadFill = document.getElementById('loadFill');
+const loadMsg  = document.getElementById('loadMsg');
+
+const draco = new DRACOLoader();
+draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/libs/draco/');
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(draco);
+
+let rigA = null, rigB = null, loadedCount = 0;
+const TOTAL_LOADS = 2;
+
+function onAssetLoaded(msg) {
+  loadedCount++;
+  loadFill.style.width = Math.round(loadedCount / TOTAL_LOADS * 100) + '%';
+  loadMsg.textContent  = msg;
+  if (loadedCount >= TOTAL_LOADS) initWorld();
+}
+
+loadMsg.textContent = 'Loading General rigâ€¦';
+gltfLoader.load(CHAR_A,
+  g  => { rigA = g; onAssetLoaded('Loading movement rigâ€¦'); },
+  null,
+  () => { console.warn('Rig A failed'); onAssetLoaded('Rig A skippedâ€¦'); }
+);
+gltfLoader.load(CHAR_B,
+  g  => { rigB = g; onAssetLoaded('Scene ready!'); },
+  null,
+  () => { console.warn('Rig B failed'); onAssetLoaded('Rig B skippedâ€¦'); }
+);
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  WORLD INIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let playerChar = null;
+const npcs = [];
+
+function buildClips() {
+  const clips = {};
+  for (const gltf of [rigA, rigB]) {
+    if (!gltf) continue;
+    for (const c of gltf.animations) clips[c.name] = c;
+  }
+  const alias = (target, ...candidates) => {
+    if (clips[target]) return;
+    for (const k of candidates) if (clips[k]) { clips[target] = clips[k]; return; }
+  };
+  alias('idle',  'Idle_A','Idle_B','Idle','idle');
+  alias('walk',  'Walking_A','Walking_B','Walk','walk');
+  alias('run',   'Running_A','Running_B','Run','run');
+  alias('jump',  'Jump_Start','Jump_Full_Short','Jump','jump');
+  alias('hit',   'Hit_A','Hit','hit');
+  alias('death', 'Death_A','Death','death');
+  return clips;
+}
+
+function initWorld() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  const baseGLTF = rigA || rigB;
+  const allClips = buildClips();
+
+  // Player at origin
+  playerChar = new Character(new THREE.Vector3(0, 0, CAP_HH), 0xff3333, true);
+  if (baseGLTF) playerChar.attachModel(baseGLTF, allClips);
+
+  // NPCs â€“ orbits near the three trees
+  for (let i = 0; i < NPC_COUNT; i++) {
+    const tp  = TREE_SPOTS[i % TREE_SPOTS.length];
+    const npc = new Character(
+      new THREE.Vector3(tp.x+(Math.random()-.5)*5, tp.y+(Math.random()-.5)*5, CAP_HH),
+      TINTS[i], false
+    );
+    if (baseGLTF) {
+      npc.attachModel(baseGLTF, allClips);
+      npc.group.traverse(n => {
+        if (n.isMesh && n.material) {
+          n.material = n.material.clone();
+          n.material.color.lerp(new THREE.Color(TINTS[i]), 0.42);
+        }
+      });
+    }
+    npcs.push(npc);
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  INPUT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.code]=true;  if(e.code==='Space') e.preventDefault(); });
+window.addEventListener('keyup',   e => { keys[e.code]=false; });
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CAPSULE SEPARATION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function separate() {
+  const all  = playerChar ? [playerChar, ...npcs] : [...npcs];
+  const minD = CAP_R * 2;
+  for (let i = 0; i < all.length; i++) {
+    for (let j = i+1; j < all.length; j++) {
+      const a=all[i], b=all[j];
+      const dx=b.pos.x-a.pos.x, dy=b.pos.y-a.pos.y;
+      const d2=dx*dx+dy*dy;
+      if (d2 < minD*minD && d2 > 1e-6) {
+        const d=Math.sqrt(d2), ov=(minD-d)*0.52, nx=dx/d, ny=dy/d;
+        if (!a.isPlayer) { a.pos.x-=nx*ov; a.pos.y-=ny*ov; }
+        if (!b.isPlayer) { b.pos.x+=nx*ov; b.pos.y+=ny*ov; }
+      }
+    }
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  PLAYER UPDATE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const fwdV = new THREE.Vector3();
+const rgtV = new THREE.Vector3();
+const movV = new THREE.Vector3();
+const WU   = new THREE.Vector3(0, 0, 1);
+
+function updatePlayer(dt) {
+  if (!playerChar) return;
+  movV.set(0,0,0);
+  camera.getWorldDirection(fwdV); fwdV.z=0; fwdV.normalize();
+  rgtV.crossVectors(fwdV, WU).normalize();
+  if (keys['KeyW']||keys['ArrowUp'])    movV.add(fwdV);
+  if (keys['KeyS']||keys['ArrowDown'])  movV.sub(fwdV);
+  if (keys['KeyD']||keys['ArrowRight']) movV.add(rgtV);
+  if (keys['KeyA']||keys['ArrowLeft'])  movV.sub(rgtV);
+
+  const running = keys['ShiftLeft']||keys['ShiftRight'];
+  const spd = running ? RUN_SPD : WALK_SPD;
+
+  if (movV.lengthSq() > 0) {
+    movV.normalize();
+    // atan2(x, y): angle from +Y toward +X in XY plane
+    // Model forward = +Y after rotation.x=-PI/2, so this is correct
+    playerChar.facing = Math.atan2(movV.x, movV.y);
+    playerChar.pos.x += movV.x * spd * dt;
+    playerChar.pos.y += movV.y * spd * dt;
+    playerChar.speed  = spd;
+    playerChar.play(running ? 'run' : 'walk');
+  } else {
+    playerChar.speed = 0;
+    if (playerChar.onGround) playerChar.play('idle');
+  }
+
+  if (keys['Space'] && playerChar.onGround) {
+    playerChar.velZ     = JUMP_SPD;
+    playerChar.onGround = false;
+    playerChar.play('jump', false);
+  }
+  playerChar.velZ  += GRAVITY * dt;
+  playerChar.pos.z += playerChar.velZ * dt;
+  if (playerChar.pos.z <= CAP_HH) {
+    playerChar.pos.z    = CAP_HH;
+    playerChar.velZ     = 0;
+    if (!playerChar.onGround) { playerChar.onGround=true; playerChar.play('idle'); }
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  NPC UPDATE
+//  Facing computed analytically from orbit tangent velocity
+//  so NPCs always point exactly the direction they move.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function updateNPCs(t) {
+  for (const npc of npcs) {
+    const p   = npc.npcPath;
+    const ang = t * p.speed + p.offset;
+    const ct  = Math.cos(p.tilt), st = Math.sin(p.tilt);
+
+    // World position on tilted orbit
+    const bx = Math.cos(ang)*p.radius, by = Math.sin(ang)*p.radius;
+    npc.pos.set(p.cx + bx*ct - by*st, p.cy + bx*st + by*ct, CAP_HH);
+
+    // Analytical tangent velocity (derivative of position w.r.t. time)
+    const dvx = -Math.sin(ang)*p.radius*p.speed;
+    const dvy =  Math.cos(ang)*p.radius*p.speed;
+    const vx  = dvx*ct - dvy*st;
+    const vy  = dvx*st + dvy*ct;
+    const spd = Math.sqrt(vx*vx + vy*vy);
+
+    if (spd > 0.05) npc.facing = Math.atan2(vx, vy);
+    npc.speed = spd;
+    npc.play(spd > 4.5 ? 'run' : spd > 0.4 ? 'walk' : 'idle');
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  PROJECTILES
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const projectiles = [];
+const projGeo     = new THREE.SphereGeometry(0.15, 8, 8);
+const projMatBase = new THREE.MeshBasicMaterial({ color:0x66ddff, transparent:true, opacity:0.9 });
+const raycaster   = new THREE.Raycaster();
+const mouse       = new THREE.Vector2();
+
+function spawnProjectile(dir) {
+  if (!playerChar) return;
+  const p = new THREE.Mesh(projGeo, projMatBase.clone());
+  p.position.copy(playerChar.pos); p.position.z = CAP_HH;
+  p.userData.velocity = dir.clone().normalize().multiplyScalar(22);
+  p.userData.life = 2.0;
+  scene.add(p); projectiles.push(p);
+}
+function updateProjectiles(dt) {
+  const u=grassMat.uniforms, pp=u.projectilePositions.value;
+  let cnt=0;
+  for (let i=projectiles.length-1;i>=0;i--) {
+    const p=projectiles[i];
+    p.userData.life-=dt;
+    p.position.addScaledVector(p.userData.velocity,dt);
+    p.material.opacity=Math.max(0,p.userData.life/2.0);
+    if(p.userData.life>0 && cnt<pp.length){ pp[cnt++].copy(p.position); }
+    else { scene.remove(p); projectiles.splice(i,1); }
+  }
+  for(let i=cnt;i<pp.length;i++) pp[i].set(1e6,1e6,1e6);
+  u.numProjectilePositions.value=cnt;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MELEE SLASH
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const meleeGroup = new THREE.Group();
+const meleeMesh  = new THREE.Mesh(
+  new THREE.RingGeometry(0, 1.5, 32, 1, Math.PI*0.2, Math.PI*0.6),
+  new THREE.MeshBasicMaterial({ color:0xffeeaa, side:THREE.DoubleSide, transparent:true, opacity:0 })
+);
+meleeGroup.add(meleeMesh);
+meleeGroup.rotation.x = Math.PI/2;
+meleeGroup.visible    = false;
+scene.add(meleeGroup);
+let meleeTimer=0;
+const MELEE_DUR=0.25;
+
+function triggerMelee() {
+  if (!playerChar) return;
+  meleeTimer=MELEE_DUR; meleeGroup.visible=true;
+  const dir=new THREE.Vector3(); camera.getWorldDirection(dir); dir.z=0; dir.normalize();
+  const center=playerChar.pos.clone().add(dir.clone().multiplyScalar(1.8));
+  meleeGroup.position.copy(center);
+  meleeGroup.rotation.z=Math.PI/2-Math.atan2(dir.y,dir.x);
+  meleeMesh.material.opacity=1.0;
+  addMagicPulse(center,2.4,MELEE_DUR*2,0.7);
+}
+function updateMelee(dt) {
+  if(meleeTimer<=0){ meleeGroup.visible=false; return; }
+  meleeTimer-=dt;
+  const t=1.0-meleeTimer/MELEE_DUR;
+  meleeMesh.material.opacity=1.0-t;
+  meleeGroup.scale.setScalar(1.0+t*0.3);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MAGIC AOE PULSES
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const magicPulses=[];
+const magicRing=new THREE.Mesh(
+  new THREE.RingGeometry(0.9,1.1,64),
+  new THREE.MeshBasicMaterial({color:0x66aaff,transparent:true,opacity:0.7,side:THREE.DoubleSide})
+);
+magicRing.rotation.x=Math.PI/2; magicRing.visible=false; scene.add(magicRing);
+
+function addMagicPulse(center,radius,life,strength){
+  magicPulses.push({center:center.clone(),radius:0,maxRadius:radius,life,maxLife:life,strength});
+}
+function updateMagicPulses(dt){
+  const u=grassMat.uniforms,cs=u.magicPulseCenters.value,rs=u.magicPulseRadii.value,ss=u.magicPulseStrengths.value;
+  let cnt=0, strongest=null;
+  for(let i=magicPulses.length-1;i>=0;i--){
+    const p=magicPulses[i]; p.life-=dt;
+    p.radius=p.maxRadius*(1.-p.life/p.maxLife);
+    if(p.life<=0){magicPulses.splice(i,1);continue;}
+    if(cnt<4){cs[cnt].copy(p.center);rs[cnt]=p.radius;ss[cnt]=p.strength;cnt++;}
+    if(!strongest||p.radius>strongest.radius) strongest=p;
+  }
+  for(let i=cnt;i<4;i++){cs[i].set(1e6,1e6,1e6);rs[i]=0;ss[i]=0;}
+  u.numMagicPulses.value=cnt;
+  if(strongest){
+    magicRing.visible=true; magicRing.position.copy(strongest.center);
+    const s=strongest.radius; magicRing.scale.set(s,s,s);
+    magicRing.material.opacity=THREE.MathUtils.clamp(strongest.life/strongest.maxLife,0,.8);
+  } else magicRing.visible=false;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MOUSE / KEY EVENTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+renderer.domElement.addEventListener('contextmenu', e=>e.preventDefault());
+renderer.domElement.addEventListener('mousedown', e=>{
+  if(e.button===0){
+    mouse.x=(e.clientX/renderer.domElement.clientWidth)*2-1;
+    mouse.y=-(e.clientY/renderer.domElement.clientHeight)*2+1;
+    raycaster.setFromCamera(mouse,camera);
+    spawnProjectile(raycaster.ray.direction);
+  }
+  if(e.button===2) triggerMelee();
+});
+window.addEventListener('keydown', e=>{
+  if(e.code==='KeyF' && playerChar) addMagicPulse(playerChar.pos,10,0.8,1.4);
+});
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  RESIZE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function onResize(){
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  renderer.setSize(window.innerWidth,window.innerHeight,true);
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',onResize); onResize();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MAIN LOOP
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let last=0;
+function animate(){
+  requestAnimationFrame(animate);
+  const now=performance.now()/1000, dt=Math.min(now-last,0.05); last=now;
+
+  // Tick all foliage wind shaders
+  for(const m of foliageMats) m.uniforms.time.value=now;
+
+  if(playerChar){
+    updatePlayer(dt);
+    updateNPCs(now);
+    separate();
+    playerChar.update(dt);
+    for(const n of npcs) n.update(dt);
+
+    orbit.target.lerp(playerChar.group.position,0.07);
+    if(groundMat.userData.shader)
+      groundMat.userData.shader.uniforms.uPlayerPos.value.copy(playerChar.pos);
+
+    grassMat.uniforms.time.value=now;
+    grassMat.uniforms.cameraPosition.value.copy(camera.position);
+    const all=[playerChar,...npcs];
+    for(let i=0;i<MAX_UNI;i++){
+      if(i<all.length) grassMat.uniforms.playerPositions.value[i].copy(all[i].pos);
+      else             grassMat.uniforms.playerPositions.value[i].set(1e6,1e6,1e6);
+    }
+    grassMat.uniforms.numPlayerPositions.value=Math.min(all.length,MAX_UNI);
+  }
+
+  updateProjectiles(dt);
+  updateMagicPulses(dt);
+  updateMelee(dt);
+
+  orbit.update();
+  renderer.render(scene,camera);
+  stats.update();
+}
+animate();
+</script>
+  </body>
+</html>
+d="loadTitle">Loading Sceneâ€¦</div>
+  <div id="loadBar"><div id="loadFill"></div></div>
+  <div id="loadMsg">Initialising rendererâ€¦</div>
+</div>
+
+<div id="container"></div>
+<div id="controls">
+  <strong>Move:</strong> WASD / Arrows &nbsp;|&nbsp; <strong>Run:</strong> Shift<br/>
+  <strong>Jump:</strong> SPACE &nbsp;|&nbsp; <strong>Orbit:</strong> Mouse drag &nbsp;|&nbsp; <strong>Zoom:</strong> Scroll<br/>
+  <strong>Projectile:</strong> Left click &nbsp;|&nbsp; <strong>Melee:</strong> Right click &nbsp;|&nbsp; <strong>Magic AoE:</strong> F
+</div>
+<div id="performanceStats"></div>
+
+<script type="module">
+import * as THREE         from 'three';
+import StatsGL            from 'stats-gl';
+import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader }     from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader }    from 'three/addons/loaders/DRACOLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  ASSET URLs  (KayKit rigs from ObjectStore CDN)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const STORE  = 'https://molochdagod.github.io/ObjectStore';
+const CHAR_A = STORE + '/models/characters/kaykit/Rig_Medium_General.glb';
+const CHAR_B = STORE + '/models/characters/kaykit/Rig_Medium_MovementBasic.glb';
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CONSTANTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const FOG_NEAR    = 52;
+const FOG_FAR     = 68;
+const GROUND_SIZE = 700;
+const GRASS_R     = 44;
+const BLADE_COUNT = 1_400_000;
+const GRASS_H     = 1.2;
+const GRASS_W     = 0.15;
+const CAP_R       = 0.42;
+const CAP_H       = 1.8;
+const CAP_HH      = CAP_H / 2;
+const NPC_COUNT   = 5;
+const MAX_UNI     = 6;
+const WALK_SPD    = 4.0;
+const RUN_SPD     = 9.0;
+const JUMP_SPD    = 6.5;
+const GRAVITY     = -14.0;
+const TINTS       = [0xff5522, 0x22aaff, 0xffcc00, 0xaa44ff, 0x44ffaa];
+
+// Tree world positions (XY ground plane, Z-up world)
+const TREE_SPOTS = [
+  new THREE.Vector3( 11,   8, 0),
+  new THREE.Vector3(-13,   7, 0),
+  new THREE.Vector3(  5, -13, 0),
+];
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  RENDERER
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace    = THREE.SRGBColorSpace;
+renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+document.getElementById('container').appendChild(renderer.domElement);
+
+const stats = new StatsGL({ trackGPU: true, trackHz: true });
+document.getElementById('performanceStats').appendChild(stats.dom);
+stats.init(renderer);
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  SCENE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
+scene.fog        = new THREE.Fog(0x87ceeb, FOG_NEAR, FOG_FAR);
+
+const pmremGen = new THREE.PMREMGenerator(renderer);
+const envScene = new THREE.Scene();
+envScene.background = new THREE.Color(0xaabbcc);
+scene.environment   = pmremGen.fromScene(envScene).texture;
+pmremGen.dispose();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LIGHTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const sun = new THREE.DirectionalLight(0xfff4d0, 2.4);
+sun.position.set(30, 40, 80);
+scene.add(sun);
+scene.add(new THREE.AmbientLight(0x8899cc, 1.0));
+scene.add(new THREE.HemisphereLight(0x87ceeb, 0x5a8a3c, 0.7));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CAMERA + ORBIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+camera.position.set(15, 0, 15);
+camera.up.set(0, 0, 1);
+
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.enableDamping = false;
+orbit.minDistance   = 1;
+orbit.maxDistance   = 800;
+orbit.maxPolarAngle = Math.PI / 2;
+orbit.enableKeys    = false;
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  GROUND  (radial alpha-fog fade toward player)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x8b6f47, side: THREE.FrontSide, transparent: true, fog: false,
+});
+groundMat.onBeforeCompile = shader => {
+  shader.uniforms.uPlayerPos = { value: new THREE.Vector3() };
+  shader.vertexShader = shader.vertexShader.replace('#include <common>',
+    '#include <common>\nvarying vec3 vWP;');
+  shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>',
+    '#include <begin_vertex>\nvWP=(modelMatrix*vec4(position,1.0)).xyz;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <common>',
+    '#include <common>\nuniform vec3 uPlayerPos;\nvarying vec3 vWP;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>',
+    `float gd=length(vWP.xy-uPlayerPos.xy);
+     float gf=smoothstep(${FOG_NEAR.toFixed(1)},${FOG_FAR.toFixed(1)},gd);
+     gl_FragColor.a=mix(1.0,0.0,gf);
+     #include <dithering_fragment>`);
+  groundMat.userData.shader = shader;
+};
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(GROUND_SIZE, GROUND_SIZE), groundMat));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  STYLIZED PROCEDURAL TREES  â€”  pure GLSL
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+// ---- Trunk shader ----
+const trunkVertSrc = `
+varying vec3 vWP;
+varying vec3 vN;
+void main(){
+  vec4 wp = modelMatrix * vec4(position, 1.0);
+  vWP = wp.xyz;
+  vN  = normalize(normalMatrix * normal);
+  gl_Position = projectionMatrix * viewMatrix * wp;
+}`;
+const trunkFragSrc = `
+uniform vec3 sunDir;
+varying vec3 vWP; varying vec3 vN;
+float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  float n=noise(vWP.xz*.9+vWP.y*.3)*.5+noise(vWP.xz*3.2)*.2;
+  vec3 bark=mix(vec3(0.30,0.18,0.09),vec3(0.52,0.33,0.18),n);
+  float h=clamp(vWP.z*.13,0.,1.);
+  bark=mix(bark*.6,bark*1.1,h);
+  float NdL=max(dot(vN,normalize(sunDir)),0.0);
+  float toon=NdL<.15?.18:NdL<.55?.52:1.0;
+  gl_FragColor=vec4(bark*(0.3+0.7*toon),1.0);
+}`;
+
+// ---- Foliage shader (fluffy clusters + wind) ----
+const foliageVertSrc = `
+uniform float time;
+uniform float windStrength;
+uniform vec3  windDir;
+varying vec3  vWP; varying vec3 vN; varying float vFresnel;
+void main(){
+  vec3 pos=position;
+  // Puff vertices outward for fluffy silhouette
+  pos += normal*(0.22*sin(pos.x*4.2+pos.y*3.6+pos.z*4.1));
+  vec4 wp=modelMatrix*vec4(pos,1.0);
+  // Wind sway
+  float phase=dot(wp.xz,windDir.xz)*0.28+time*1.05;
+  float sway=sin(phase)*windStrength;
+  float gust=sin(phase*.31+1.3)*windStrength*.5;
+  float flut=sin(phase*2.9+wp.x*.6)*windStrength*.35;
+  wp.x+=(sway+gust)*windDir.x+flut;
+  wp.y+=(sway+gust)*windDir.y*.5;
+  // Micro leaf flutter
+  float mf=sin(pos.x*8.0+time*4.1)*.045+sin(pos.z*7.3+time*3.5)*.04;
+  wp.xyz+=normal*mf;
+  vWP=wp.xyz;
+  vN=normalize(normalMatrix*normal);
+  vec3 V=normalize(cameraPosition-wp.xyz);
+  vFresnel=pow(1.0-max(dot(vN,V),0.0),2.8);
+  gl_Position=projectionMatrix*viewMatrix*wp;
+}`;
+const foliageFragSrc = `
+uniform vec3  sunDir;
+uniform vec3  leafColorA;
+uniform vec3  leafColorB;
+uniform vec3  leafColorTip;
+varying vec3  vWP; varying vec3 vN; varying float vFresnel;
+float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  vec3 L=normalize(sunDir); vec3 N=normalize(vN);
+  float NdL=max(dot(N,L),0.0);
+  float toon=NdL<.15?.15:NdL<.55?.50:1.0;
+  float cv=noise(vWP.xz*.45+vWP.y*.18);
+  float cv2=noise(vWP.xz*.12+vec2(31.4,7.7));
+  vec3 col=mix(mix(leafColorA,leafColorB,cv),leafColorTip,cv2*.35);
+  // SSS: light bleeding through leaves from behind
+  float sss=pow(max(dot(-N,L),0.0),3.5)*.55;
+  col+=leafColorTip*sss*.4;
+  // Rim glow
+  col+=leafColorTip*vFresnel*.28;
+  // AO: sphere bottom darker
+  float ao=clamp(dot(N,vec3(0,0,1))*.5+.52,.22,1.0);
+  col*=ao*(0.32+0.68*toon);
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+// Shared trunk material
+const trunkMat = new THREE.ShaderMaterial({
+  vertexShader: trunkVertSrc, fragmentShader: trunkFragSrc,
+  uniforms: { sunDir: { value: new THREE.Vector3(1,1,2).normalize() } },
+  side: THREE.FrontSide,
+});
+
+// Per-tree foliage materials (unique leaf colours, shared wind)
+const foliageMats = [];
+function makeFoliageMat(colorA, colorB, colorTip) {
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: foliageVertSrc, fragmentShader: foliageFragSrc,
+    uniforms: {
+      time:         { value: 0 },
+      windStrength: { value: 0.20 },
+      windDir:      { value: new THREE.Vector3(1, 0.35, 0).normalize() },
+      sunDir:       { value: new THREE.Vector3(1, 1, 2).normalize() },
+      leafColorA:   { value: new THREE.Color(colorA) },
+      leafColorB:   { value: new THREE.Color(colorB) },
+      leafColorTip: { value: new THREE.Color(colorTip) },
+    },
+    side: THREE.FrontSide,
+  });
+  foliageMats.push(mat);
+  return mat;
+}
+
+// Build one procedural tree (Z-up: trunk grows along +Z)
+function buildTree(pos, trunkH, rBot, rTop, clusters, matFoliage) {
+  const g = new THREE.Group();
+  g.position.copy(pos);
+  // Cylinder is Y-axis by default; rotateX makes it Z-axis
+  const tGeo = new THREE.CylinderGeometry(rTop, rBot, trunkH, 8, 5);
+  tGeo.rotateX(Math.PI / 2);
+  tGeo.translate(0, 0, trunkH / 2);
+  g.add(new THREE.Mesh(tGeo, trunkMat));
+  for (const cl of clusters) {
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(cl.r, 14, 12), matFoliage);
+    mesh.position.set(cl.ox, cl.oy, trunkH + cl.oz);
+    g.add(mesh);
+  }
+  scene.add(g);
+}
+
+// Tree 1 â€“ wide spreading oak, lush green
+buildTree(TREE_SPOTS[0], 5.5, 0.58, 0.26,
+  [{r:3.3,ox:0,oy:0,oz:2.6},{r:2.5,ox:2.1,oy:0.4,oz:1.1},
+   {r:2.3,ox:-1.9,oy:-0.4,oz:1.3},{r:1.9,ox:0.5,oy:2.1,oz:0.6},
+   {r:1.7,ox:-0.5,oy:-1.9,oz:0.9},{r:2.1,ox:0,oy:0,oz:4.4},
+   {r:1.4,ox:1.2,oy:-1.2,oz:4.8}],
+  makeFoliageMat(0x25680e, 0x3fa018, 0x77cc33));
+
+// Tree 2 â€“ tall slim poplar, yellow-green
+buildTree(TREE_SPOTS[1], 7.2, 0.48, 0.19,
+  [{r:2.9,ox:0,oy:0,oz:3.1},{r:2.2,ox:1.7,oy:0.3,oz:1.6},
+   {r:2.0,ox:-1.6,oy:0.7,oz:1.9},{r:2.4,ox:0.2,oy:-1.6,oz:2.1},
+   {r:1.6,ox:0,oy:0,oz:5.2},{r:1.2,ox:0.8,oy:0.8,oz:6.2}],
+  makeFoliageMat(0x38880e, 0x5cb022, 0x90d840));
+
+// Tree 3 â€“ squat round bush-tree, deep forest green
+buildTree(TREE_SPOTS[2], 4.0, 0.68, 0.32,
+  [{r:3.6,ox:0,oy:0,oz:2.1},{r:2.6,ox:2.3,oy:-0.3,oz:1.0},
+   {r:2.6,ox:-2.1,oy:0.5,oz:1.2},{r:2.1,ox:0,oy:2.3,oz:1.6},
+   {r:2.1,ox:0,oy:-2.1,oz:1.6},{r:2.9,ox:0,oy:0,oz:3.6},
+   {r:1.7,ox:1.1,oy:1.6,oz:4.3},{r:1.5,ox:-1.0,oy:-1.5,oz:4.5}],
+  makeFoliageMat(0x1e5c08, 0x349912, 0x5abf28));
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  GRASS SHADER  (Z-up instanced blades)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const GrassVert = `
+uniform vec3  grassSize;
+uniform float time;
+uniform vec3  playerPositions[6];
+uniform int   numPlayerPositions;
+uniform float playerInteractionRadius;
+uniform float playerInteractionStrength;
+uniform vec3  sunDirection;
+uniform int   numProjectilePositions;
+uniform vec3  projectilePositions[16];
+uniform float projectileRadius;
+uniform float projectileStrength;
+uniform int   numMagicPulses;
+uniform vec3  magicPulseCenters[4];
+uniform float magicPulseRadii[4];
+uniform float magicPulseStrengths[4];
+varying float vGrassHeight;
+varying vec3  vWorldPos;
+varying vec3  vGrassColor;
+float hash(float n){ return fract(sin(n)*43758.5453); }
+float hash2(vec2 p){ return fract(sin(p.x+p.y*57.)*43758.5453); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash2(i),hash2(i+vec2(1,0)),u.x),mix(hash2(i+vec2(0,1)),hash2(i+vec2(1,1)),u.x),u.y);
+}
+mat3 rotZ(float a){ float c=cos(a),s=sin(a); return mat3(c,-s,0,s,c,0,0,0,1); }
+void main(){
+  vec3 lp=position; float id=float(gl_InstanceID);
+  lp.z*=mix(0.7,1.3,hash(id*3.0));
+  vGrassHeight=clamp(lp.z/grassSize.z,0.,1.);
+  lp.x=mix(0.4,1.0,1.-vGrassHeight*vGrassHeight)*grassSize.x*mix(0.8,1.5,hash(id*5.0));
+  lp.x+=pow(1.-vGrassHeight,1.2)*grassSize.z*tan((hash(id)-.5)*.22);
+  lp=rotZ((hash(id*7.)-.5)*6.283)*lp;
+  vec4 wp=instanceMatrix*vec4(lp,1.0);
+  vec3 push=vec3(0.);
+  for(int i=0;i<6;i++){
+    if(i>=numPlayerPositions) break;
+    vec3 pp=playerPositions[i]; float d=distance(wp.xyz,pp);
+    if(d>playerInteractionRadius) continue;
+    float inf=pow(1.-smoothstep(0.,playerInteractionRadius,d),1.5)*(1.-smoothstep(.2,.8,abs(pp.z-wp.z)));
+    push+=-normalize(pp-wp.xyz)*inf*playerInteractionStrength*vGrassHeight*grassSize.z;
+  }
+  for(int i=0;i<16;i++){
+    if(i>=numProjectilePositions) break;
+    vec3 pp=projectilePositions[i]; float d=distance(wp.xyz,pp);
+    if(d>projectileRadius) continue;
+    push+=normalize(wp.xyz-pp)*(1.-smoothstep(0.,projectileRadius,d))*projectileStrength*vGrassHeight*grassSize.z;
+  }
+  for(int i=0;i<4;i++){
+    if(i>=numMagicPulses) break;
+    vec3 c=magicPulseCenters[i]; float R=magicPulseRadii[i]; float s=magicPulseStrengths[i];
+    float d=distance(wp.xz,c.xz);
+    float band=clamp(1.-abs(d-R)/max(R*.5,.001),0.,1.);
+    push+=normalize(wp.xyz-c)*band*band*s*vGrassHeight*grassSize.z;
+  }
+  wp.xyz+=push;
+  float t=time*.6; float drift=sin(t*.07)*1.2;
+  float wn=mix(noise(wp.xz*.05+t*.05),noise(wp.xz*1.2+t*.6),.3);
+  wn+=smoothstep(40.,0.,distance(wp.xz,vec2(sin(t*.3)*80.,cos(t*.25)*80.)))*.8;
+  vec2 wd=normalize(vec2(cos(drift),sin(drift)));
+  wp.xyz+=vec3(wd,0.)*(0.3+0.7*vGrassHeight)*wn*(hash(id)*.5+.75);
+  vWorldPos=wp.xyz;
+  float bs=id*12.9898;
+  float bn=hash2(vec2(bs,0.)); float tn=hash2(vec2(bs,1.));
+  vec3 b1=vec3(.20,.40,.10)+(bn-.5)*.08; vec3 b2=vec3(.25,.45,.15)+(bn-.5)*.08;
+  vec3 t1=vec3(.30,.50,.10)+(tn-.5)*.08; vec3 t2=vec3(.35,.55,.15)+(tn-.5)*.08;
+  float bl=clamp(pow(vGrassHeight,1.35)+noise(wp.xz*1.3+bs)*.05,0.,1.);
+  vGrassColor=mix(mix(b1,b2,noise(wp.xz*.3+bs)),mix(t1,t2,noise(wp.xz*.35+bs)),bl);
+  vGrassColor*=(0.7+0.3*max(0.,dot(vec3(0,0,1),normalize(sunDirection))));
+  gl_Position=projectionMatrix*viewMatrix*wp;
+}`;
+
+const GrassFrag = `
+uniform vec3  sunDirection; uniform vec3 sunColor; uniform float sunIntensity; uniform vec3 ambientLight;
+varying float vGrassHeight; varying vec3 vWorldPos; varying vec3 vGrassColor;
+float hash2(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float noise(vec2 p){
+  vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash2(i),hash2(i+vec2(1,0)),u.x),mix(hash2(i+vec2(0,1)),hash2(i+vec2(1,1)),u.x),u.y);
+}
+void main(){
+  vec3 N=vec3(0,0,1); vec3 L=normalize(sunDirection);
+  vec3 lt=ambientLight*.8+sunColor*(max(dot(N,L),0.)*sunIntensity*.25+pow(max(dot(N,-L),0.),2.)*.5);
+  vec3 col=vGrassColor*lt;
+  float hs=vGrassHeight*.1;
+  col.r=clamp(col.r+hs,0.,1.); col.g=clamp(col.g+hs*.5,0.,1.); col.b=clamp(col.b-hs*.2,0.,1.);
+  float jit=mix(noise(vWorldPos.xz*.5),noise(vWorldPos.xz*.25+vec2(12.3,45.6)),.5);
+  col*=mix(.85,1.15,jit);
+  col*=mix(.8,1.,1.-smoothstep(40.,80.,length(vWorldPos.xz-cameraPosition.xz)));
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+// Blade geometry (grows along +Z)
+const bladGeo = new THREE.PlaneGeometry(GRASS_W, GRASS_H, 1, 3);
+{
+  const p = bladGeo.attributes.position.array;
+  for (let r = 0; r < 4; r++) {
+    const ws = 1.0 - (r/3)*(r/3)*0.8;
+    for (let c = 0; c < 2; c++) p[(r*2+c)*3] *= ws;
+  }
+  bladGeo.attributes.position.needsUpdate = true;
+  bladGeo.rotateX(-Math.PI / 2);
+  bladGeo.translate(0, 0, GRASS_H / 2);
+}
+
+const grassMat = new THREE.ShaderMaterial({
+  vertexShader: GrassVert, fragmentShader: GrassFrag,
+  uniforms: {
+    time:                      { value: 0 },
+    grassSize:                 { value: new THREE.Vector3(GRASS_W, 0, GRASS_H) },
+    playerPositions:           { value: Array.from({length:MAX_UNI}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    numPlayerPositions:        { value: 0 },
+    playerInteractionRadius:   { value: 4.8 },
+    playerInteractionStrength: { value: 0.55 },
+    sunDirection:              { value: new THREE.Vector3(1,1,2).normalize() },
+    sunColor:                  { value: new THREE.Color(1,1,0.9) },
+    sunIntensity:              { value: 1.0 },
+    ambientLight:              { value: new THREE.Color(0.5,0.5,0.5) },
+    cameraPosition:            { value: camera.position },
+    numProjectilePositions:    { value: 0 },
+    projectilePositions:       { value: Array.from({length:16}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    projectileRadius:          { value: 2.0 },
+    projectileStrength:        { value: 0.8 },
+    numMagicPulses:            { value: 0 },
+    magicPulseCenters:         { value: Array.from({length:4}, ()=>new THREE.Vector3(1e6,1e6,1e6)) },
+    magicPulseRadii:           { value: new Float32Array(4) },
+    magicPulseStrengths:       { value: new Float32Array(4) },
+  },
+  side: THREE.DoubleSide, alphaTest: 0.01, depthWrite: true,
+});
+
+const grassMesh = new THREE.InstancedMesh(bladGeo, grassMat, BLADE_COUNT);
+scene.add(grassMesh);
+{
+  const d = new THREE.Object3D();
+  for (let i = 0; i < BLADE_COUNT; i++) {
+    const a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*GRASS_R;
+    d.position.set(Math.cos(a)*r, Math.sin(a)*r, 0);
+    d.rotation.z = Math.random()*Math.PI*2;
+    d.updateMatrix();
+    grassMesh.setMatrixAt(i, d.matrix);
+  }
+  grassMesh.instanceMatrix.needsUpdate = true;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CHARACTER CLASS
+//
+//  World: Z-up, ground is XY plane.
+//  KayKit GLB: Y-up, character forward = +Z in model space.
+//  model.rotation.x = -PI/2  maps:
+//    model +Z (forward) â†’ world +Y  (forward in XY ground plane)
+//    model +Y (up)      â†’ world +Z  (up)
+//  group.rotation.z = atan2(dx, dy) then correctly rotates the
+//  character to face its movement direction in the XY plane.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+class Character {
+  constructor(pos, tint, isPlayer) {
+    this.isPlayer  = isPlayer;
+    this.pos       = pos.clone();
+    this.velZ      = 0;
+    this.onGround  = true;
+    this.speed     = 0;
+    this.facing    = 0;  // angle around Z-axis; 0 = facing +Y world
+
+    this.group = new THREE.Group();
+    this.group.position.copy(pos);
+    scene.add(this.group);
+
+    // Placeholder capsule (hidden once model loads)
+    this.capsule = new THREE.Mesh(
+      new THREE.CylinderGeometry(CAP_R, CAP_R, CAP_H, 10),
+      new THREE.MeshStandardMaterial({ color: tint, fog: false })
+    );
+    this.capsule.rotation.x = Math.PI / 2;
+    this.group.add(this.capsule);
+
+    this.mixer     = null;
+    this.clips     = {};
+    this.action    = null;
+    this.actionKey = '';
+
+    // NPC orbit path (null for player)
+    this.npcPath = isPlayer ? null : (() => {
+      const base = TREE_SPOTS[Math.floor(Math.random() * TREE_SPOTS.length)];
+      return {
+        radius: 4.5 + Math.random() * 8,
+        speed:  0.18 + Math.random() * 0.26,
+        offset: Math.random() * Math.PI * 2,
+        tilt:   Math.random() * Math.PI,
+        cx:     base.x + (Math.random() - 0.5) * 4,
+        cy:     base.y + (Math.random() - 0.5) * 4,
+      };
+    })();
+  }
+
+  attachModel(baseGLTF, allClips) {
+    const model = SkeletonUtils.clone(baseGLTF.scene);
+    model.traverse(n => {
+      if (n.isMesh) { n.material = n.material.clone(); n.material.fog = false; }
+    });
+    // -PI/2: converts KayKit Y-up to Z-up, forward becomes +Y world
+    model.rotation.x = -Math.PI / 2;
+    this.group.add(model);
+    this.capsule.visible = false;
+    this.mixer = new THREE.AnimationMixer(model);
+    this.clips = allClips;
+    this.play('idle');
+  }
+
+  play(key, loop = true) {
+    if (this.actionKey === key) return;
+    const clip = this.clips[key];
+    if (!clip) return;
+    const next = this.mixer.clipAction(clip);
+    next.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce);
+    if (!loop) next.clampWhenFinished = true;
+    if (this.action && this.action !== next)
+      next.reset().crossFadeFrom(this.action, 0.18, true).play();
+    else
+      next.reset().play();
+    this.action    = next;
+    this.actionKey = key;
+  }
+
+  update(dt) {
+    this.group.position.set(this.pos.x, this.pos.y, this.pos.z);
+    // Smooth shortest-path rotation toward facing
+    if (this.speed > 0.15) {
+      let cur  = this.group.rotation.z;
+      let diff = this.facing - cur;
+      while (diff >  Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      this.group.rotation.z = cur + diff * Math.min(dt * 14.0, 1.0);
+    }
+    if (this.mixer) this.mixer.update(dt);
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  ASSET LOADING
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const loadFill = document.getElementById('loadFill');
+const loadMsg  = document.getElementById('loadMsg');
+
+const draco = new DRACOLoader();
+draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/libs/draco/');
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(draco);
+
+let rigA = null, rigB = null, loadedCount = 0;
+const TOTAL_LOADS = 2;
+
+function onAssetLoaded(msg) {
+  loadedCount++;
+  loadFill.style.width = Math.round(loadedCount / TOTAL_LOADS * 100) + '%';
+  loadMsg.textContent  = msg;
+  if (loadedCount >= TOTAL_LOADS) initWorld();
+}
+
+loadMsg.textContent = 'Loading General rigâ€¦';
+gltfLoader.load(CHAR_A,
+  g  => { rigA = g; onAssetLoaded('Loading movement rigâ€¦'); },
+  null,
+  () => { console.warn('Rig A failed'); onAssetLoaded('Rig A skippedâ€¦'); }
+);
+gltfLoader.load(CHAR_B,
+  g  => { rigB = g; onAssetLoaded('Scene ready!'); },
+  null,
+  () => { console.warn('Rig B failed'); onAssetLoaded('Rig B skippedâ€¦'); }
+);
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  WORLD INIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let playerChar = null;
+const npcs = [];
+
+function buildClips() {
+  const clips = {};
+  for (const gltf of [rigA, rigB]) {
+    if (!gltf) continue;
+    for (const c of gltf.animations) clips[c.name] = c;
+  }
+  const alias = (target, ...candidates) => {
+    if (clips[target]) return;
+    for (const k of candidates) if (clips[k]) { clips[target] = clips[k]; return; }
+  };
+  alias('idle',  'Idle_A','Idle_B','Idle','idle');
+  alias('walk',  'Walking_A','Walking_B','Walk','walk');
+  alias('run',   'Running_A','Running_B','Run','run');
+  alias('jump',  'Jump_Start','Jump_Full_Short','Jump','jump');
+  alias('hit',   'Hit_A','Hit','hit');
+  alias('death', 'Death_A','Death','death');
+  return clips;
+}
+
+function initWorld() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  const baseGLTF = rigA || rigB;
+  const allClips = buildClips();
+
+  // Player at origin
+  playerChar = new Character(new THREE.Vector3(0, 0, CAP_HH), 0xff3333, true);
+  if (baseGLTF) playerChar.attachModel(baseGLTF, allClips);
+
+  // NPCs â€“ orbits near the three trees
+  for (let i = 0; i < NPC_COUNT; i++) {
+    const tp  = TREE_SPOTS[i % TREE_SPOTS.length];
+    const npc = new Character(
+      new THREE.Vector3(tp.x+(Math.random()-.5)*5, tp.y+(Math.random()-.5)*5, CAP_HH),
+      TINTS[i], false
+    );
+    if (baseGLTF) {
+      npc.attachModel(baseGLTF, allClips);
+      npc.group.traverse(n => {
+        if (n.isMesh && n.material) {
+          n.material = n.material.clone();
+          n.material.color.lerp(new THREE.Color(TINTS[i]), 0.42);
+        }
+      });
+    }
+    npcs.push(npc);
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  INPUT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.code]=true;  if(e.code==='Space') e.preventDefault(); });
+window.addEventListener('keyup',   e => { keys[e.code]=false; });
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CAPSULE SEPARATION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function separate() {
+  const all  = playerChar ? [playerChar, ...npcs] : [...npcs];
+  const minD = CAP_R * 2;
+  for (let i = 0; i < all.length; i++) {
+    for (let j = i+1; j < all.length; j++) {
+      const a=all[i], b=all[j];
+      const dx=b.pos.x-a.pos.x, dy=b.pos.y-a.pos.y;
+      const d2=dx*dx+dy*dy;
+      if (d2 < minD*minD && d2 > 1e-6) {
+        const d=Math.sqrt(d2), ov=(minD-d)*0.52, nx=dx/d, ny=dy/d;
+        if (!a.isPlayer) { a.pos.x-=nx*ov; a.pos.y-=ny*ov; }
+        if (!b.isPlayer) { b.pos.x+=nx*ov; b.pos.y+=ny*ov; }
+      }
+    }
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  PLAYER UPDATE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const fwdV = new THREE.Vector3();
+const rgtV = new THREE.Vector3();
+const movV = new THREE.Vector3();
+const WU   = new THREE.Vector3(0, 0, 1);
+
+function updatePlayer(dt) {
+  if (!playerChar) return;
+  movV.set(0,0,0);
+  camera.getWorldDirection(fwdV); fwdV.z=0; fwdV.normalize();
+  rgtV.crossVectors(fwdV, WU).normalize();
+  if (keys['KeyW']||keys['ArrowUp'])    movV.add(fwdV);
+  if (keys['KeyS']||keys['ArrowDown'])  movV.sub(fwdV);
+  if (keys['KeyD']||keys['ArrowRight']) movV.add(rgtV);
+  if (keys['KeyA']||keys['ArrowLeft'])  movV.sub(rgtV);
+
+  const running = keys['ShiftLeft']||keys['ShiftRight'];
+  const spd = running ? RUN_SPD : WALK_SPD;
+
+  if (movV.lengthSq() > 0) {
+    movV.normalize();
+    // atan2(x, y): angle from +Y toward +X in XY plane
+    // Model forward = +Y after rotation.x=-PI/2, so this is correct
+    playerChar.facing = Math.atan2(movV.x, movV.y);
+    playerChar.pos.x += movV.x * spd * dt;
+    playerChar.pos.y += movV.y * spd * dt;
+    playerChar.speed  = spd;
+    playerChar.play(running ? 'run' : 'walk');
+  } else {
+    playerChar.speed = 0;
+    if (playerChar.onGround) playerChar.play('idle');
+  }
+
+  if (keys['Space'] && playerChar.onGround) {
+    playerChar.velZ     = JUMP_SPD;
+    playerChar.onGround = false;
+    playerChar.play('jump', false);
+  }
+  playerChar.velZ  += GRAVITY * dt;
+  playerChar.pos.z += playerChar.velZ * dt;
+  if (playerChar.pos.z <= CAP_HH) {
+    playerChar.pos.z    = CAP_HH;
+    playerChar.velZ     = 0;
+    if (!playerChar.onGround) { playerChar.onGround=true; playerChar.play('idle'); }
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  NPC UPDATE
+//  Facing computed analytically from orbit tangent velocity
+//  so NPCs always point exactly the direction they move.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function updateNPCs(t) {
+  for (const npc of npcs) {
+    const p   = npc.npcPath;
+    const ang = t * p.speed + p.offset;
+    const ct  = Math.cos(p.tilt), st = Math.sin(p.tilt);
+
+    // World position on tilted orbit
+    const bx = Math.cos(ang)*p.radius, by = Math.sin(ang)*p.radius;
+    npc.pos.set(p.cx + bx*ct - by*st, p.cy + bx*st + by*ct, CAP_HH);
+
+    // Analytical tangent velocity (derivative of position w.r.t. time)
+    const dvx = -Math.sin(ang)*p.radius*p.speed;
+    const dvy =  Math.cos(ang)*p.radius*p.speed;
+    const vx  = dvx*ct - dvy*st;
+    const vy  = dvx*st + dvy*ct;
+    const spd = Math.sqrt(vx*vx + vy*vy);
+
+    if (spd > 0.05) npc.facing = Math.atan2(vx, vy);
+    npc.speed = spd;
+    npc.play(spd > 4.5 ? 'run' : spd > 0.4 ? 'walk' : 'idle');
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  PROJECTILES
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const projectiles = [];
+const projGeo     = new THREE.SphereGeometry(0.15, 8, 8);
+const projMatBase = new THREE.MeshBasicMaterial({ color:0x66ddff, transparent:true, opacity:0.9 });
+const raycaster   = new THREE.Raycaster();
+const mouse       = new THREE.Vector2();
+
+function spawnProjectile(dir) {
+  if (!playerChar) return;
+  const p = new THREE.Mesh(projGeo, projMatBase.clone());
+  p.position.copy(playerChar.pos); p.position.z = CAP_HH;
+  p.userData.velocity = dir.clone().normalize().multiplyScalar(22);
+  p.userData.life = 2.0;
+  scene.add(p); projectiles.push(p);
+}
+function updateProjectiles(dt) {
+  const u=grassMat.uniforms, pp=u.projectilePositions.value;
+  let cnt=0;
+  for (let i=projectiles.length-1;i>=0;i--) {
+    const p=projectiles[i];
+    p.userData.life-=dt;
+    p.position.addScaledVector(p.userData.velocity,dt);
+    p.material.opacity=Math.max(0,p.userData.life/2.0);
+    if(p.userData.life>0 && cnt<pp.length){ pp[cnt++].copy(p.position); }
+    else { scene.remove(p); projectiles.splice(i,1); }
+  }
+  for(let i=cnt;i<pp.length;i++) pp[i].set(1e6,1e6,1e6);
+  u.numProjectilePositions.value=cnt;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MELEE SLASH
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const meleeGroup = new THREE.Group();
+const meleeMesh  = new THREE.Mesh(
+  new THREE.RingGeometry(0, 1.5, 32, 1, Math.PI*0.2, Math.PI*0.6),
+  new THREE.MeshBasicMaterial({ color:0xffeeaa, side:THREE.DoubleSide, transparent:true, opacity:0 })
+);
+meleeGroup.add(meleeMesh);
+meleeGroup.rotation.x = Math.PI/2;
+meleeGroup.visible    = false;
+scene.add(meleeGroup);
+let meleeTimer=0;
+const MELEE_DUR=0.25;
+
+function triggerMelee() {
+  if (!playerChar) return;
+  meleeTimer=MELEE_DUR; meleeGroup.visible=true;
+  const dir=new THREE.Vector3(); camera.getWorldDirection(dir); dir.z=0; dir.normalize();
+  const center=playerChar.pos.clone().add(dir.clone().multiplyScalar(1.8));
+  meleeGroup.position.copy(center);
+  meleeGroup.rotation.z=Math.PI/2-Math.atan2(dir.y,dir.x);
+  meleeMesh.material.opacity=1.0;
+  addMagicPulse(center,2.4,MELEE_DUR*2,0.7);
+}
+function updateMelee(dt) {
+  if(meleeTimer<=0){ meleeGroup.visible=false; return; }
+  meleeTimer-=dt;
+  const t=1.0-meleeTimer/MELEE_DUR;
+  meleeMesh.material.opacity=1.0-t;
+  meleeGroup.scale.setScalar(1.0+t*0.3);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MAGIC AOE PULSES
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const magicPulses=[];
+const magicRing=new THREE.Mesh(
+  new THREE.RingGeometry(0.9,1.1,64),
+  new THREE.MeshBasicMaterial({color:0x66aaff,transparent:true,opacity:0.7,side:THREE.DoubleSide})
+);
+magicRing.rotation.x=Math.PI/2; magicRing.visible=false; scene.add(magicRing);
+
+function addMagicPulse(center,radius,life,strength){
+  magicPulses.push({center:center.clone(),radius:0,maxRadius:radius,life,maxLife:life,strength});
+}
+function updateMagicPulses(dt){
+  const u=grassMat.uniforms,cs=u.magicPulseCenters.value,rs=u.magicPulseRadii.value,ss=u.magicPulseStrengths.value;
+  let cnt=0, strongest=null;
+  for(let i=magicPulses.length-1;i>=0;i--){
+    const p=magicPulses[i]; p.life-=dt;
+    p.radius=p.maxRadius*(1.-p.life/p.maxLife);
+    if(p.life<=0){magicPulses.splice(i,1);continue;}
+    if(cnt<4){cs[cnt].copy(p.center);rs[cnt]=p.radius;ss[cnt]=p.strength;cnt++;}
+    if(!strongest||p.radius>strongest.radius) strongest=p;
+  }
+  for(let i=cnt;i<4;i++){cs[i].set(1e6,1e6,1e6);rs[i]=0;ss[i]=0;}
+  u.numMagicPulses.value=cnt;
+  if(strongest){
+    magicRing.visible=true; magicRing.position.copy(strongest.center);
+    const s=strongest.radius; magicRing.scale.set(s,s,s);
+    magicRing.material.opacity=THREE.MathUtils.clamp(strongest.life/strongest.maxLife,0,.8);
+  } else magicRing.visible=false;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MOUSE / KEY EVENTS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+renderer.domElement.addEventListener('contextmenu', e=>e.preventDefault());
+renderer.domElement.addEventListener('mousedown', e=>{
+  if(e.button===0){
+    mouse.x=(e.clientX/renderer.domElement.clientWidth)*2-1;
+    mouse.y=-(e.clientY/renderer.domElement.clientHeight)*2+1;
+    raycaster.setFromCamera(mouse,camera);
+    spawnProjectile(raycaster.ray.direction);
+  }
+  if(e.button===2) triggerMelee();
+});
+window.addEventListener('keydown', e=>{
+  if(e.code==='KeyF' && playerChar) addMagicPulse(playerChar.pos,10,0.8,1.4);
+});
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  RESIZE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function onResize(){
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  renderer.setSize(window.innerWidth,window.innerHeight,true);
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',onResize); onResize();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MAIN LOOP
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let last=0;
+function animate(){
+  requestAnimationFrame(animate);
+  const now=performance.now()/1000, dt=Math.min(now-last,0.05); last=now;
+
+  // Tick all foliage wind shaders
+  for(const m of foliageMats) m.uniforms.time.value=now;
+
+  if(playerChar){
+    updatePlayer(dt);
+    updateNPCs(now);
+    separate();
+    playerChar.update(dt);
+    for(const n of npcs) n.update(dt);
+
+    orbit.target.lerp(playerChar.group.position,0.07);
+    if(groundMat.userData.shader)
+      groundMat.userData.shader.uniforms.uPlayerPos.value.copy(playerChar.pos);
+
+    grassMat.uniforms.time.value=now;
+    grassMat.uniforms.cameraPosition.value.copy(camera.position);
+    const all=[playerChar,...npcs];
+    for(let i=0;i<MAX_UNI;i++){
+      if(i<all.length) grassMat.uniforms.playerPositions.value[i].copy(all[i].pos);
+      else             grassMat.uniforms.playerPositions.value[i].set(1e6,1e6,1e6);
+    }
+    grassMat.uniforms.numPlayerPositions.value=Math.min(all.length,MAX_UNI);
+  }
+
+  updateProjectiles(dt);
+  updateMagicPulses(dt);
+  updateMelee(dt);
+
+  orbit.update();
+  renderer.render(scene,camera);
+  stats.update();
+}
+animate();
+</script>
+  </body>
+</html>
