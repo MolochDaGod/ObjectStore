@@ -196,8 +196,9 @@ const assets = await sdk.assets.listAssets({ prefix: 'models/' });
 const gameSocket = sdk.ws.game();
 gameSocket.emit('join-island', { island_key: 'island_1' });
 
-// ── Tier colors ──
-const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: 'Legendary' }
+// ── Tier colors (D5 labels) ──
+const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red',     hex: '#ff4d4d', label: 'Heroic' }
+const t8 = GrudgeSDK.getTierColor(8); // { name: 'Shimmer', hex: '#f0d890', label: 'Legendary' }
 ```
 
 ### Service Clients

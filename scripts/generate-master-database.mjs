@@ -72,15 +72,19 @@ const PACK_ICON = (path) => `${CDN}/icons/pack/${path}`;
 // ============================================================
 // TIER SYSTEM
 // ============================================================
+// D5: tier labels — T5 renamed to 'Heroic', T8 renamed to 'Legendary'.
+// The word 'Legendary' is reserved for the T8 tier label only. The
+// 'Artifact' *category* (see scripts/defs/artifacts.mjs, D3) covers end-game
+// world-found items and must not reuse these tier labels.
 const TIERS = [
   { tier: 1, name: 'Bronze',  color: '#8b7355', label: 'Common' },
   { tier: 2, name: 'Silver',  color: '#a8a8a8', label: 'Uncommon' },
   { tier: 3, name: 'Blue',    color: '#4a9eff', label: 'Rare' },
   { tier: 4, name: 'Purple',  color: '#9d4dff', label: 'Epic' },
-  { tier: 5, name: 'Red',     color: '#ff4d4d', label: 'Legendary' },
+  { tier: 5, name: 'Red',     color: '#ff4d4d', label: 'Heroic' },
   { tier: 6, name: 'Orange',  color: '#ffaa00', label: 'Mythic' },
   { tier: 7, name: 'Gold',    color: '#d4a84b', label: 'Ancient' },
-  { tier: 8, name: 'Shimmer', color: '#f0d890', label: 'Legendary Artifact' },
+  { tier: 8, name: 'Shimmer', color: '#f0d890', label: 'Legendary' },
 ];
 
 function scaleStat(base, perTier, tier) {

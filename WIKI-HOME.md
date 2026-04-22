@@ -21,16 +21,19 @@
 ---
 
 ## 🌟 Overview
-
 ObjectStore is the centralized **single source of truth** for all Grudge Warlords game data. It provides:
-
-- ⚔️ **816 Weapons** across 17 categories × 8 tiers
-- 🪨 **98 Materials** for crafting (ore, wood, cloth, leather, gems)
-- 🛡️ **Armor System** with 11 slots across 4 armor types
-- 🧪 **132 Consumables** (food, potions, engineer items)
-- ⚡ **47 Skills** across weapon types
-- 🎨 **4000+ Sprite Icons** in multiple resolutions
+- ⚔️ **Weapons** across 18 categories × 8 tiers (T1 Common → T8 Legendary)
+- 🪨 **Materials** for crafting (ore, wood, cloth, leather, gems, essence, herbs)
+- 🛡️ **Armor System** with 11 slots × 4 armor materials (cloth, leather, mail, plate) × 6+ sets
+- 🧪 **Consumables** — food (3 colors), potions, scrolls, throwables, bombs
+- 📜 **Tomes** — tier-less off-hand spell-grant utilities (see D4 in AGENTS.md)
+- 🌟 **Artifacts** — end-game, world-found, discovery-gated items (see D3 in AGENTS.md)
+- ⚡ **Skills** across weapon types
+- 🎨 **Bespoke + packaged icons** with guaranteed one-icon-per-item policy
 - 🆔 **GRUDGE UUID System** for consistent object identification
+### Tier Labels
+**T1 Common · T2 Uncommon · T3 Rare · T4 Epic · T5 Heroic · T6 Mythic · T7 Ancient · T8 Legendary**
+"Legendary" refers to the T8 tier label only. "Artifact" is the weapon category — never reuse either word elsewhere in data.
 
 ### Key Features
 
