@@ -1,0 +1,31 @@
+Convert from shadertoy for three js fragment
+( vertex is alway same glsl_basic/basic_vs.glsl )
+
+1°/ add channel target 
+
+// ------------------ channel define
+// 0_# noise #_0
+// 1_# tex02 #_1
+// 2_# tex03 #_2
+// 3_# tex04 #_3
+// ------------------
+
+2°/ for buffer target use 
+
+// ------------------ channel define
+// 0_# buffer_trucA #_0
+// ------------------
+
+3°/ for cube map use 
+
+// ------------------ channel define
+// 0_# cube_grey1 #_0
+// ------------------
+
+
+
+
+to Add
+// Eroded Terrain Noise
+https://www.shadertoy.com/view/7ljcRW
+https://www.shadertoy.com/view/33cXW8
