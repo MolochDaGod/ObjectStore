@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grudge ObjectStore · 3D Assets</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="grudge-api" content="">
+<link rel="icon" href="/grudge-logo.png">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --border: rgba(255,255,255,.08);
+    --accent: #f5b21a;
+    --text: #eef0f4;
+    --muted: #8b92a5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
+  body { display: grid; grid-template-columns: 320px 1fr; grid-template-rows: auto 1fr; min-height: 100vh; gap: 0; }
+  header {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; background: #0d1017;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 15px; margin: 0; font-weight: 600; letter-spacing: .3px; }
+  header nav { margin-left: auto; display: flex; gap: 12px; font-size: 13px; }
+  header nav a { color: var(--muted); text-decoration: none; }
+  header nav a.active, header nav a:hover { color: var(--text); }
+
+  aside {
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .filters { padding: 12px; border-bottom: 1px solid var(--border); display: grid; gap: 8px; }
+  .filters input, .filters select {
+    background: #0d1017; color: var(--text); border: 1px solid var(--border);
+    padding: 8px 10px; border-radius: 6px; width: 100%; font-size: 13px;
+  }
+  .list { flex: 1; overflow: auto; padding: 6px; }
+  .item {
+    display: flex; gap: 10px; align-items: center;
+    padding: 8px; border-radius: 6px; cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .item:hover { background: rgba(255,255,255,.04); }
+  .item.sel { border-color: var(--accent); background: rgba(245,178,26,.07); }
+  .thumb {
+    width: 42px; height: 42px; border-radius: 4px; background: #222 center/cover;
+    display: grid; place-items: center; font-size: 9px; color: #555; flex-shrink: 0;
+  }
+  .meta { min-width: 0; }
+  .meta .name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta .sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+  .count { font-size: 11px; color: var(--muted); padding: 0 12px 6px; }
+
+  main {
+    padding: 12px; display: grid; grid-template-rows: 1fr auto; gap: 12px;
+    min-width: 0; overflow: hidden;
+  }
+  grudge-gltf-viewer {
+    width: 100%; height: 100%; min-height: 420px;
+    background: #0b0d12;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .detail {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+    display: grid; grid-template-columns: 1fr auto; gap: 8px 20px;
+    font-size: 13px;
+  }
+  .detail h2 { margin: 0; font-size: 15px; grid-column: 1 / -1; }
+  .detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+  .detail dt { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .detail dd { margin: 0; font-size: 12px; word-break: break-all; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .actions a, .actions button {
+    background: #1a1f2b; border: 1px solid var(--border);
+    color: var(--text); padding: 6px 10px; font-size: 12px;
+    border-radius: 6px; text-decoration: none; cursor: pointer;
+  }
+  .actions a.primary, .actions button.primary {
+    background: var(--accent); color: #1a0f00; border-color: var(--accent);
+  }
+</style>
+</head>
+<body>
+<header>
+  <img src="/grudge-logo.png" alt="" height="22">
+  <h1>Grudge ObjectStore · 3D</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/2d.html">2D</a>
+    <a href="/3d.html" class="active">3D</a>
+    <a href="/editors/">Editors</a>
+    <a href="/admin.html">Admin</a>
+  </nav>
+</header>
+
+<aside>
+  <div class="filters">
+    <input id="q" placeholder="Search name, tag, pack…" />
+    <select id="kind">
+      <option value="">All 3D kinds</option>
+      <option value="model3d">Models (glb/gltf)</option>
+      <option value="voxel">Voxel</option>
+      <option value="animation3d">Animations (fbx)</option>
+      <option value="rig">Rigs</option>
+      <option value="environment">Environments (HDR/EXR)</option>
+      <option value="scene3d">Scenes</option>
+    </select>
+    <select id="pack">
+      <option value="">All packs</option>
+    </select>
+  </div>
+  <div class="count" id="count">Loading…</div>
+  <div class="list" id="list"></div>
+</aside>
+
+<main>
+  <grudge-gltf-viewer id="viewer" environment="studio" grid="on" sync-url></grudge-gltf-viewer>
+  <section class="detail" id="detail">
+    <h2 id="dName">Select an asset</h2>
+    <dl>
+      <dt>Kind</dt><dd id="dKind">—</dd>
+      <dt>Path</dt><dd id="dPath">—</dd>
+      <dt>Pack</dt><dd id="dPack">—</dd>
+      <dt>Tags</dt><dd id="dTags">—</dd>
+      <dt>Size</dt><dd id="dSize">—</dd>
+    </dl>
+    <div class="actions">
+      <a id="aOpen" class="primary" target="_blank">Open in new tab</a>
+      <a id="aEdit">Edit material</a>
+      <button id="bCopy">Copy URL</button>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import '/js/viewer/grudge-viewer.js';
+  import createStoreClient from '/js/store-client.js';
+
+  const store = createStoreClient();
+  const listEl = document.getElementById('list');
+  const countEl = document.getElementById('count');
+  const viewer = document.getElementById('viewer');
+  const packSel = document.getElementById('pack');
+  const qEl = document.getElementById('q');
+  const kindEl = document.getElementById('kind');
+  const detail = {
+    name: document.getElementById('dName'),
+    kind: document.getElementById('dKind'),
+    path: document.getElementById('dPath'),
+    pack: document.getElementById('dPack'),
+    tags: document.getElementById('dTags'),
+    size: document.getElementById('dSize'),
+    open: document.getElementById('aOpen'),
+    edit: document.getElementById('aEdit'),
+    copy: document.getElementById('bCopy'),
+  };
+
+  let all = [];
+  let selected = null;
+
+  async function loadManifest() {
+    try {
+      // Try live API first; fall back to the static manifest served directly from R2
+      // via the assets CDN binding at assets.grudge-studio.com (works even if the API worker
+      // is offline or we're viewing from a GH-Pages-style static mirror).
+      const MANIFEST_FALLBACK = 'https://assets.grudge-studio.com/manifests/v2/index.json';
+      const data = await store.manifest({ dimension: '3d', pageSize: 5000 }).catch(() =>
+        fetch(MANIFEST_FALLBACK).then((r) => r.json())
+      );
+      all = (data.assets || data).filter((a) => a.dimension === '3d');
+      const packs = Array.from(new Set(all.map((a) => a.pack).filter(Boolean))).sort();
+      for (const p of packs) {
+        const o = document.createElement('option');
+        o.value = p; o.textContent = p;
+        packSel.appendChild(o);
+      }
+      render();
+    } catch (e) {
+      countEl.textContent = 'Failed to load manifest: ' + e.message;
+    }
+  }
+
+  function filter() {
+    const q = qEl.value.trim().toLowerCase();
+    const kind = kindEl.value;
+    const pack = packSel.value;
+    return all.filter((a) => {
+      if (kind && a.kind !== kind) return false;
+      if (pack && a.pack !== pack) return false;
+      if (!q) return true;
+      const hay = [a.name, a.path, a.pack, ...(a.tags || [])].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function fmtBytes(n) {
+    if (!n) return '—';
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1024 / 1024).toFixed(2) + ' MB';
+  }
+
+  function render() {
+    const rows = filter();
+    countEl.textContent = `${rows.length} of ${all.length} assets`;
+    listEl.innerHTML = '';
+    for (const a of rows.slice(0, 400)) {
+      const el = document.createElement('div');
+      el.className = 'item' + (selected?.id === a.id ? ' sel' : '');
+      el.innerHTML = `
+        <div class="thumb">${a.kind.slice(0, 3).toUpperCase()}</div>
+        <div class="meta">
+          <div class="name">${a.name || a.path.split('/').pop()}</div>
+          <div class="sub">${a.kind} · ${fmtBytes(a.size)}</div>
+        </div>
+      `;
+      el.addEventListener('click', () => select(a));
+      listEl.appendChild(el);
+    }
+  }
+
+  function select(a) {
+    selected = a;
+    render();
+    const url = store.assetUrl(a);
+    detail.name.textContent = a.name || a.path.split('/').pop();
+    detail.kind.textContent = a.kind;
+    detail.path.textContent = a.path;
+    detail.pack.textContent = a.pack || '—';
+    detail.tags.textContent = (a.tags || []).join(', ') || '—';
+    detail.size.textContent = fmtBytes(a.size);
+    detail.open.href = url;
+    detail.edit.href = `/editors/material.html?id=${encodeURIComponent(a.id)}`;
+    detail.copy.onclick = () => navigator.clipboard.writeText(url);
+    if (a.kind === 'model3d') viewer.load(url);
+    else viewer.setAttribute('src', '');
+  }
+
+  qEl.addEventListener('input', render);
+  kindEl.addEventListener('change', render);
+  packSel.addEventListener('change', render);
+
+  loadManifest();
+</script>
+</body>
+</html>

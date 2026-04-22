@@ -44,15 +44,17 @@ const DEFAULT_STATUS_URL    = 'https://status.grudge-studio.com';
 // TIER COLOR SYSTEM
 // ==========================================
 
+// D5: T5 renamed 'Legendary' -> 'Heroic'; T8 renamed 'Legendary Artifact' -> 'Legendary'.
+// 'Legendary' is now reserved for the T8 tier label only; 'Artifact' is the weapon category (D3).
 const TIER_COLORS = {
   1: { name: 'Bronze',  hex: '#8b7355', label: 'Common' },
   2: { name: 'Silver',  hex: '#a8a8a8', label: 'Uncommon' },
   3: { name: 'Blue',    hex: '#4a9eff', label: 'Rare' },
   4: { name: 'Purple',  hex: '#9d4dff', label: 'Epic' },
-  5: { name: 'Red',     hex: '#ff4d4d', label: 'Legendary' },
+  5: { name: 'Red',     hex: '#ff4d4d', label: 'Heroic' },
   6: { name: 'Orange',  hex: '#ffaa00', label: 'Mythic' },
   7: { name: 'Gold',    hex: '#d4a84b', label: 'Ancient' },
-  8: { name: 'Shimmer', hex: '#f0d890', label: 'Legendary Artifact' },
+  8: { name: 'Shimmer', hex: '#f0d890', label: 'Legendary' },
 };
 
 // ==========================================
@@ -1040,6 +1042,39 @@ class GrudgeSDK {
   getModelFileUrl(key) { return this.r2.getModelFileUrl(key); }
   async list3DModels(query = {}) { return this.r2.list3DModels(query); }
   async uploadAsset(file, meta = {}) { return this.r2.uploadAsset(file, meta); }
+
+  // ── Master registry / items accessor (one-truth API) ──
+  async getMasterRegistry() { return this.fetch('/api/v1/master-registry.json'); }
+  async getMasterItems()      { return this.fetch('/api/v1/master-items.json'); }
+  async getMasterRecipes()    { return this.fetch('/api/v1/master-recipes.json'); }
+  async getMasterMaterials()  { return this.fetch('/api/v1/master-materials.json'); }
+  async getMasterArtifacts()  { return this.fetch('/api/v1/master-artifacts.json'); }
+  /** Resolve a single item/artifact by uuid, slug, or base name. */
+  async getItemByIdOrUuid(idOrUuid) {
+    const [items, artifacts] = await Promise.all([this.getMasterItems(), this.getMasterArtifacts().catch(() => ({}))]);
+    const haystacks = [...(items?.items || []), ...(artifacts?.artifacts || [])];
+    const key = (idOrUuid || '').toLowerCase();
+    return haystacks.find(i =>
+      i.uuid === idOrUuid ||
+      (i.slug && i.slug.toLowerCase() === key) ||
+      (i.baseName && i.baseName.toLowerCase() === key) ||
+      (i.name && i.name.toLowerCase() === key)
+    ) || null;
+  }
+  /** All items (tier-1 base rows) in a given category, excluding undiscovered artifacts for player surfaces. */
+  async getItemsByCategory(category, { includeHiddenArtifacts = false } = {}) {
+    const [items, artifacts] = await Promise.all([this.getMasterItems(), this.getMasterArtifacts().catch(() => ({}))]);
+    const out = (items?.items || []).filter(i => i.category === category && (i.tier === 1 || i.tier == null));
+    if (category === 'artifact') {
+      const arts = (artifacts?.artifacts || []).filter(a => includeHiddenArtifacts || !a.discovery?.hiddenUntilFound);
+      out.push(...arts);
+    }
+    return out;
+  }
+  /** Filter an array of artifact records for player-facing UIs (honors hiddenUntilFound). */
+  static filterDiscoveredArtifacts(list, discoveredUuids = new Set()) {
+    return (list || []).filter(a => !a.discovery?.hiddenUntilFound || discoveredUuids.has(a.uuid));
+  }
 
   // ── Tier System ──
   static getTierColor(tier) { return TIER_COLORS[tier] || null; }

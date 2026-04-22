@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,90 +6,6 @@
   <title>Grudge Studio 3D Models Browser</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/tier-system.css">
-  <link rel="stylesheet" href="./css/pipeline-viewer.css">
-</head>
-<body>
-  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
-
-  <div class="container">
-    <header class="header">
-      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-      <p class="subtitle">GLB-only 3D object storage — powered by Three.js + Draco
-        <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> Checking R2…</span>
-      </p>
-    </header>
-
-    <div class="stats-bar" id="statsBar">
-      <div class="stat-item"><span class="stat-label">Total Models</span><span class="stat-value" id="totalModels">—</span></div>
-      <div class="stat-item"><span class="stat-label">Categories</span><span class="stat-value" id="totalCategories">—</span></div>
-      <div class="stat-item"><span class="stat-label">Total Size</span><span class="stat-value" id="totalSize">—</span></div>
-      <div class="stat-item"><span class="stat-label">Pipeline</span><span class="stat-value">v2.0</span></div>
-    </div>
-
-    <!-- Drop zone -->
-    <div class="drop-zone" id="dropZone">
-      <div style="font-size:3rem;margin-bottom:8px;opacity:0.4;">📦</div>
-      <div style="color:var(--text-dim);font-size:0.9rem;">Drag & drop a GLB/GLTF model to preview in 3D</div>
-      <div style="color:var(--text-dim);font-size:0.75rem;margin-top:4px;">Only GLB is served to game engines — other formats go through the Grudge pipeline</div>
-      <input type="file" id="fileInput" accept=".glb,.gltf" style="display:none;">
-    </div>
-
-    <div class="controls">
-      <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search models by name, category...">
-      <div class="filter-row" id="categoryFilters"></div>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading" id="loadingState"><div class="spinner"></div><p>Loading model catalog…</p></div>
-
-    <!-- Results -->
-    <div id="resultsArea" style="display:none;">
-      <div class="results-header">
-        <span class="results-title" id="resultsTitle">All Models</span>
-        <span class="results-count" id="resultsCount"></span>
-      </div>
-      <div class="model-grid" id="modelGrid"></div>
-      <div class="pagination" id="pagination"></div>
-    </div>
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <div style="font-size:4rem;margin-bottom:12px;opacity:0.3;">🔍</div>
-      <h3>No models found</h3>
-      <p>Try adjusting your search or filters</p>
-    </div>
-
-    <!-- 3D Viewer Overlay -->
-    <div class="viewer-overlay" id="viewerOverlay">
-      <div class="viewer-header">
-        <span class="viewer-title" id="viewerTitle">Model Viewer</span>
-        <span class="viewer-info" id="viewerInfo"></span>
-        <button class="viewer-close" onclick="closeViewer()">✕ Close</button>
-      </div>
-      <div class="viewer-canvas-wrap" id="viewerCanvasWrap">
-        <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model…</p></div>
-      </div>
-      <div class="viewer-controls">
-        <button class="viewer-btn" onclick="toggleWireframe()">Wireframe</button>
-        <button class="viewer-btn" onclick="toggleAutoRotate()">Auto Rotate</button>
-        <select class="anim-select-3d" id="animSelect" onchange="playAnimation(this.value)" style="display:none">
-          <option value="">— Animations —</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <script src="./js/nav.js"></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-    }
-  }
-  </script>
-  <script type="module" src="./js/model-browser.js"></script>
-</body>
-</html>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -292,7 +208,7 @@
       <div class="bp-banner-text">
         <strong>Grudge Pipeline:</strong> Drop any 3D format — FBX, OBJ, GLTF, BLEND — and it gets auto-converted to optimised GLB
         (GPU-ready, PBR materials, Draco compression, skeletal animation, smallest file size).
-        Only GLB is surfaced in this 3D browser and served to grudgeDot editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
+        Only GLB is surfaced in this 3D browser and served to GDevelop editors and Grudge Engine games, ensuring consistent rigging, textures, and materials everywhere.
       </div>
     </div>
 
@@ -553,7 +469,7 @@
 
     /* ═══════════════ Grudge Race → 3D Model Mapping ═══════════════
      * Canonical mapping — must match Grudge-Builder/client/src/lib/gameData.ts
-     * 6 Races: Human, Barbarian (Crusade) | Undead, Orc (Legion) | High Elf, Dwarf (Fabled)
+     * 6 Races: Human, Barbarian (Crusade) | Undead, Orc (Legion) | Elf, Dwarf (Fabled)
      * 4 Classes: Worg Shapeshifter, Warrior, Mage Priest, Ranger Scout
      * All models served from assets.grudge-studio.com (R2 CDN, CORS: *).
      */
@@ -563,7 +479,7 @@
       barbarian: { file: 'BarbarianGlad.glb', label: 'Barbarian', faction: 'Crusade' },
       undead:    { file: 'berserker.glb',     label: 'Undead',    faction: 'Legion' },
       orc:       { file: 'King.glb',          label: 'Orc',       faction: 'Legion' },
-      high_elf:  { file: 'Wizard.glb',        label: 'High Elf',  faction: 'Fabled' },
+      elf:       { file: 'Wizard.glb',        label: 'Elf',       faction: 'Fabled' },
       dwarf:     { file: 'Viking_Male.glb',   label: 'Dwarf',     faction: 'Fabled' },
     };
     var DEFAULT_RACE = 'human';

@@ -28,8 +28,8 @@ tags:
     description: Classes, races, factions, professions, attributes
   - name: Engine
     description: Game engine data (units, maps, AI, animations)
-  - name: GDevelop
-    description: Unified asset manifest for GDevelop game engine
+  - name: grudgeDot
+    description: Unified asset manifest for grudgeDot game engine
   - name: Serverless
     description: Vercel-only dynamic endpoints
 
@@ -264,22 +264,22 @@ paths:
       responses:
         '200': { description: ECS data }
 
-  /api/v1/gdevelop-assets.json:
+  /api/v1/grudgedot-assets.json:
     get:
-      tags: [GDevelop]
-      summary: Get unified GDevelop asset manifest
-      description: 8,386 assets (icons, sprites, 3D models, audio, video) in a single manifest for GDevelop
+      tags: [grudgeDot]
+      summary: Get unified grudgeDot asset manifest
+      description: 8,386 assets (icons, sprites, 3D models, audio, video) in a single manifest for grudgeDot
       responses:
         '200':
-          description: GDevelop asset manifest
+          description: grudgeDot asset manifest
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/GDevelopManifest' }
+              schema: { $ref: '#/components/schemas/grudgeDotManifest' }
 
-  /api/v1/gdevelop-assets:
+  /api/v1/grudgedot-assets:
     get:
-      tags: [GDevelop]
-      summary: Search/filter GDevelop assets (Express)
+      tags: [grudgeDot]
+      summary: Search/filter grudgeDot assets (Express)
       description: Paginated, filterable asset search when running the Express server
       parameters:
         - name: type
@@ -301,10 +301,10 @@ paths:
         '200':
           description: Filtered asset results
 
-  /api/v1/gdevelop-assets/categories:
+  /api/v1/grudgedot-assets/categories:
     get:
-      tags: [GDevelop]
-      summary: Get GDevelop asset categories with counts
+      tags: [grudgeDot]
+      summary: Get grudgeDot asset categories with counts
       responses:
         '200': { description: Category summary }
 
@@ -408,7 +408,7 @@ components:
                     subcategory: { type: string }
                     source: { type: string }
 
-    GDevelopManifest:
+    grudgeDotManifest:
       type: object
       properties:
         version: { type: string }
@@ -433,9 +433,9 @@ components:
               count: { type: integer }
         assets:
           type: array
-          items: { $ref: '#/components/schemas/GDevelopAsset' }
+          items: { $ref: '#/components/schemas/grudgeDotAsset' }
 
-    GDevelopAsset:
+    grudgeDotAsset:
       type: object
       properties:
         id: { type: string }

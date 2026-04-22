@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grudge — Player & Grass</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e0a;--surface:#0f1a0f;--surface2:#162416;--border:#243824;
+  --text:#d0e8d0;--text2:#6a8a6a;
+  --accent:#4ade80;--accent2:#22d3ee;
+  --race:#94a3b8;
+  --sky:#7db8d4;--grass:#3a6b2a
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+.app{display:grid;grid-template-columns:260px 1fr 300px;grid-template-rows:48px 1fr;height:100vh}
+.app.play-mode{grid-template-columns:0px 1fr 0px}
+.app.play-mode .sidebar,.app.play-mode .inspector{display:none}
+
+/* Header */
+.header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 12px;z-index:10;overflow:hidden}
+.header h1{font-size:14px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;margin-right:4px}
+.race-tabs{display:flex;gap:3px;flex:1;overflow-x:auto;scrollbar-width:none}
+.race-tabs::-webkit-scrollbar{display:none}
+.race-tab{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap;transition:all .15s;border-bottom-color:var(--race-color,var(--border))}
+.race-tab:hover{border-color:var(--race-color,var(--accent));color:var(--text);background:rgba(74,222,128,.08)}
+.race-tab.active{background:rgba(74,222,128,.12);border-color:var(--race-color,var(--accent));color:var(--text)}
+.header-actions{display:flex;gap:6px;flex-shrink:0}
+.header-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all .15s}
+.header-actions button:hover{border-color:var(--accent);background:rgba(74,222,128,.1)}
+.header-actions button.primary,.header-actions button.active{background:var(--accent);border-color:var(--accent);color:#001a00}
+
+/* Sidebar */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;gap:0}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.race-card{margin:8px;border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;background:var(--surface2)}
+.race-card-emoji{font-size:22px}
+.race-card-info{flex:1}
+.race-card-name{font-size:13px;font-weight:600}
+.race-card-faction{font-size:10px;color:var(--text2)}
+.race-card-bar{height:3px;border-radius:2px;margin-top:6px;width:100%}
+
+.section-header{padding:8px 12px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);display:flex;align-items:center;justify-content:space-between}
+.section-header button{background:transparent;border:1px solid var(--border);color:var(--text2);padding:2px 6px;border-radius:4px;font-size:9px;cursor:pointer}
+.section-header button:hover{border-color:var(--accent);color:var(--text)}
+
+.equip-panel{padding:0 8px 8px}
+.equip-group{margin-bottom:6px}
+.equip-group-header{display:flex;align-items:center;gap:4px;padding:4px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.equip-group-header .gflex{flex:1}
+.tiny-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:1px 5px;border-radius:3px;font-size:9px;cursor:pointer;line-height:1.4}
+.tiny-btn:hover{border-color:var(--accent);color:var(--text)}
+.mesh-toggle{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;cursor:pointer;transition:background .1s;font-size:11px}
+.mesh-toggle:hover{background:var(--surface2)}
+.mesh-toggle.locked{opacity:.5;cursor:default}
+.mesh-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.mesh-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.mesh-toggle input[type=checkbox]{accent-color:var(--accent);flex-shrink:0}
+.equip-empty{padding:16px 8px;text-align:center;color:var(--text2);font-size:11px;line-height:1.6}
+
+#cdnEquipSection{padding:0 8px 8px}
+.equip-cdn-btn{display:block;width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;text-align:left;margin-bottom:3px;transition:all .12s}
+.equip-cdn-btn:hover{border-color:var(--accent2);color:var(--text);background:rgba(34,211,238,.08)}
+
+/* Viewport */
+.viewport{position:relative;background:#050b05;overflow:hidden}
+.viewport canvas{width:100%!important;height:100%!important;display:block}
+.mode-badge{position:absolute;top:10px;right:10px;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 10px;border-radius:5px;background:rgba(10,14,10,.75);backdrop-filter:blur(4px);pointer-events:none}
+.wasd-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text2);background:rgba(10,14,10,.8);padding:6px 14px;border-radius:6px;backdrop-filter:blur(4px);pointer-events:none;white-space:nowrap}
+.vp-overlay{position:absolute;top:10px;left:10px;display:flex;gap:5px}
+.vp-overlay button{background:rgba(15,26,15,.8);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all .15s}
+.vp-overlay button:hover,.vp-overlay button.active{color:var(--text);border-color:var(--accent);background:rgba(74,222,128,.18)}
+.vp-info{position:absolute;bottom:10px;right:10px;font-size:10px;color:var(--text2);background:rgba(10,14,10,.75);padding:4px 8px;border-radius:4px;backdrop-filter:blur(4px);pointer-events:none}
+
+.loading-overlay{display:none;position:absolute;inset:0;background:rgba(10,14,10,.7);align-items:center;justify-content:center;z-index:20;flex-direction:column;gap:10px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.loading-text{font-size:12px;color:var(--text2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.drop-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .2s}
+.viewport.drag-over .drop-hint{opacity:1}
+.drop-hint-inner{border:2px dashed var(--accent);border-radius:12px;padding:20px 40px;font-size:14px;color:var(--accent);background:rgba(10,14,10,.8)}
+
+/* Inspector */
+.inspector{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto}
+.inspector::-webkit-scrollbar{width:4px}
+.inspector::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.insp-section{padding:8px 12px;border-bottom:1px solid var(--border)}
+.insp-title{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text2);margin-bottom:8px;letter-spacing:.5px}
+.insp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11px}
+.insp-label{color:var(--text2);flex-shrink:0;width:80px}
+.insp-val{flex:1;display:flex;align-items:center;gap:4px}
+.insp-val input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.insp-val span{min-width:32px;text-align:right;font-size:10px;color:var(--text2)}
+.insp-val input[type=color]{width:26px;height:20px;border:1px solid var(--border);border-radius:3px;cursor:pointer;padding:0;background:transparent}
+.insp-toggle{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:11px;cursor:pointer}
+.insp-toggle input[type=checkbox]{accent-color:var(--accent)}
+.insp-toggle label{color:var(--text2);cursor:pointer;flex:1}
+#modelInfo .insp-row span:last-child{color:var(--text);text-align:right}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--accent);color:var(--text);padding:7px 16px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>⚔ GRUDGE — Player</h1>
+    <div class="race-tabs" id="raceTabs"></div>
+    <div class="header-actions">
+      <button id="btnPlay" onclick="togglePlayMode()">▶ Play</button>
+      <button onclick="window.resetNaked()">⬜ Naked</button>
+      <button onclick="window.equipAll()">✦ Full Kit</button>
+      <button onclick="window.resetCamera()">⌂</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="race-card" id="raceCard">
+      <div class="race-card-emoji">⚔</div>
+      <div class="race-card-info">
+        <div class="race-card-name">Select a Race</div>
+        <div class="race-card-faction">—</div>
+        <div class="race-card-bar" id="raceBar"></div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      Equipment Slots
+      <div style="display:flex;gap:4px">
+        <button onclick="window.resetNaked()">naked</button>
+        <button onclick="window.equipAll()">all</button>
+      </div>
+    </div>
+    <div class="equip-panel" id="equipPanel">
+      <div class="equip-empty">Loading character...</div>
+    </div>
+
+    <div id="cdnEquipSection"></div>
+  </div>
+
+  <!-- Viewport -->
+  <div class="viewport" id="viewport"
+    ondragover="event.preventDefault();this.classList.add('drag-over')"
+    ondragleave="this.classList.remove('drag-over')"
+    ondrop="window.onFileDrop(event)">
+    <div class="drop-hint"><div class="drop-hint-inner">Drop .glb to load</div></div>
+    <div class="vp-overlay">
+      <button id="btnGrid" class="active" onclick="window.toggleGrid()" title="Toggle Grid">⊞</button>
+      <button id="btnRotate" onclick="window.toggleAutoRotate()" title="Auto-rotate">↻</button>
+      <button onclick="window.resetCamera()" title="Reset Camera">⌂</button>
+    </div>
+    <div class="mode-badge" id="modeBadge">EDITOR</div>
+    <div class="wasd-hint" id="wasdHint" style="display:none">WASD Move · Shift Sprint · Space Jump · Mouse Drag = Camera · E = Editor</div>
+    <div class="vp-info" id="vpInfo">FPS: —</div>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loadingText">Loading model...</div>
+    </div>
+  </div>
+
+  <!-- Inspector -->
+  <div class="inspector">
+    <div class="insp-section">
+      <div class="insp-title">Model Info</div>
+      <div id="modelInfo">
+        <div class="insp-row"><span class="insp-label">Race</span><span>—</span></div>
+      </div>
+    </div>
+
+    <div class="insp-section">
+      <div class="insp-title">Transform</div>
+      <div class="insp-row">
+        <span class="insp-label">Scale</span>
+        <div class="insp-val">
+          <input type="range" id="sldScale" min="0.2" max="3" step="0.05" value="1" oninput="window.updateScale()">
+          <span id="valScale">1.00x</span>
+        </div>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Y Offset</span>
+        <div class="insp-val">
+          <input type="range" id="sldYOff" min="-1" max="2" step="0.05" value="0" oninput="window.updateYOffset()">
+          <span id="valYOff">0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insp-section">
+      <div class="insp-title">Lighting</div>
+      <div class="insp-row">
+        <span class="insp-label">Sun</span>
+        <div class="insp-val">
+          <input type="range" id="sldSun" min="0" max="3" step="0.05" value="1.1" oninput="window.updateEnv()">
+          <span id="valSun">1.10</span>
+        </div>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Ambient</span>
+        <div class="insp-val">
+          <input type="range" id="sldAmb" min="0" max="2" step="0.05" value="0.45" oninput="window.updateEnv()">
+          <span id="valAmb">0.45</span>
+        </div>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Sun Dir</span>
+        <div class="insp-val">
+          <input type="range" id="sldSunDir" min="0" max="360" step="5" value="45" oninput="window.updateEnv()">
+          <span id="valSunDir">45°</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insp-section">
+      <div class="insp-title">Environment</div>
+      <div class="insp-row">
+        <span class="insp-label">Sky Color</span>
+        <div class="insp-val">
+          <input type="color" id="colSky" value="#7db8d4" onchange="window.updateEnv()">
+        </div>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Fog Dist</span>
+        <div class="insp-val">
+          <input type="range" id="sldFog" min="10" max="120" step="5" value="50" oninput="window.updateEnv()">
+          <span id="valFog">50</span>
+        </div>
+      </div>
+      <div class="insp-toggle">
+        <input type="checkbox" id="chkGrid" checked onchange="window.toggleGrid()">
+        <label for="chkGrid">Show Grid</label>
+      </div>
+      <div class="insp-toggle">
+        <input type="checkbox" id="chkShadow" checked onchange="window.toggleShadows()">
+        <label for="chkShadow">Shadows</label>
+      </div>
+    </div>
+
+    <div class="insp-section">
+      <div class="insp-title">Camera</div>
+      <div class="insp-row">
+        <span class="insp-label">FOV</span>
+        <div class="insp-val">
+          <input type="range" id="sldFov" min="30" max="100" step="1" value="65" oninput="window.updateCam()">
+          <span id="valFov">65°</span>
+        </div>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Play Dist</span>
+        <div class="insp-val">
+          <input type="range" id="sldCamDist" min="2" max="15" step="0.5" value="7" oninput="window.updateCam()">
+          <span id="valCamDist">7.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insp-section">
+      <div class="insp-title">Load Local GLB</div>
+      <input type="file" accept=".glb" id="fileInput" style="display:none" onchange="window.onFileInput(this)">
+      <button style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:6px;border-radius:5px;cursor:pointer;font-size:11px" onclick="document.getElementById('fileInput').click()">
+        ↑ Browse local .glb
+      </button>
+      <div style="font-size:9px;color:var(--text2);margin-top:4px;line-height:1.5">
+        Or drag a .glb onto the viewport.<br>Local files with all equipment embedded.
+      </div>
+    </div>
+
+    <div class="insp-section" id="playStats" style="display:none">
+      <div class="insp-title">Play Stats</div>
+      <div class="insp-row"><span class="insp-label">Position X</span><span id="statX">0.00</span></div>
+      <div class="insp-row"><span class="insp-label">Position Z</span><span id="statZ">0.00</span></div>
+      <div class="insp-row"><span class="insp-label">Grounded</span><span id="statGnd">yes</span></div>
+      <div class="insp-row"><span class="insp-label">Vel Y</span><span id="statVY">0.00</span></div>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ── Race Config ──────────────────────────────────────────────
+const CDN = 'https://gdevelop-assistant.vercel.app/grudge-warlords/assets/models/rts/';
+const LOCAL_BASE = '../../../../fbxtoon_rts/toon_rts/characters/';
+
+const RACES = {
+  human:    { name:'Human',    emoji:'🧑', color:'#94a3b8', faction:'Crusade', localFile:'human.glb',    cdnPath:'human/WK_Characters.glb',
+    cdnEquip:[{n:'Staff',f:'human/equipment/WK_weapon_staff.glb',t:'weapon'},{n:'Sword',f:'human/equipment/WK_weapon_sword.glb',t:'weapon'}] },
+  dwarf:    { name:'Dwarf',    emoji:'⛏️', color:'#f59e0b', faction:'Fabled',  localFile:'dwarf.glb',    cdnPath:'dwarf/DWF_Characters.glb',
+    cdnEquip:[] },
+  orc:      { name:'Orc',      emoji:'👹', color:'#65a30d', faction:'Legion',  localFile:'orc.glb',      cdnPath:'orc/ORC_Characters.glb',
+    cdnEquip:[{n:'Shield',f:'orc/equipment/ORC_Shield.glb',t:'shield'},{n:'Axe',f:'orc/equipment/ORC_weapon_axe.glb',t:'weapon'},{n:'Staff',f:'orc/equipment/ORC_weapon_staff.glb',t:'weapon'}] },
+  high_elf: { name:'High Elf', emoji:'🧝', color:'#22d3ee', faction:'Fabled',  localFile:'high_elf.glb', cdnPath:'elf/ELF_Characters.glb',
+    cdnEquip:[{n:'Spear',f:'elf/equipment/ELF_weapon_spear.glb',t:'weapon'},{n:'Staff',f:'elf/equipment/ELF_weapon_staff.glb',t:'weapon'}] },
+  demon:    { name:'Demon',    emoji:'😈', color:'#f43f5e', faction:'Legion',  localFile:'demon.glb',    cdnPath:'barbarian/BRB_Characters.glb',
+    cdnEquip:[{n:'Hammer',f:'barbarian/equipment/BRB_weapon_hammer.glb',t:'weapon'},{n:'Spear',f:'barbarian/equipment/BRB_weapon_spear.glb',t:'weapon'},{n:'Staff',f:'barbarian/equipment/BRB_weapon_staff.glb',t:'weapon'},{n:'Sword',f:'barbarian/equipment/BRB_weapon_sword.glb',t:'weapon'}] },
+  undead:   { name:'Undead',   emoji:'💀', color:'#a78bfa', faction:'Legion',  localFile:'undead.glb',   cdnPath:'undead/UD_Characters.glb',
+    cdnEquip:[{n:'Shield',f:'undead/equipment/UD_Shield.glb',t:'shield'},{n:'Spear',f:'undead/equipment/UD_weapon_spear.glb',t:'weapon'},{n:'Staff',f:'undead/equipment/UD_weapon_staff.glb',t:'weapon'},{n:'Sword',f:'undead/equipment/UD_weapon_sword.glb',t:'sword'}] }
+};
+
+// ── State ─────────────────────────────────────────────────────
+let scene, camera, renderer, controls, clock;
+let currentCharacter = null;
+let charMode = 'none'; // 'embedded' | 'cdn-base'
+let meshRegistry = [];
+let equippedNodes = {};
+let selectedRace = 'human';
+let playMode = false;
+
+let gridHelper, sunLight, ambLight, hemiLight;
+let grassMat, grassMesh, grassShader;
+let grassBlades = [];
+
+let modelBaseScale = 1;
+let modelYOffset = 0;
+let camDist = 7;
+
+// Physics
+const keys = {};
+const velocity = new THREE.Vector3();
+let isGrounded = true;
+let cameraYaw = 0;
+let cameraPitch = 0.4;
+let isDragCam = false;
+
+let fps = 0, frameCount = 0, lastFpsTime = 0;
+
+const loader = new GLTFLoader();
+
+// ── Init ──────────────────────────────────────────────────────
+function init() {
+  clock = new THREE.Clock();
+  const vp = document.getElementById('viewport');
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer.setSize(vp.clientWidth, vp.clientHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  vp.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x7db8d4);
+  scene.fog = new THREE.Fog(0x7db8d4, 40, 80);
+
+  camera = new THREE.PerspectiveCamera(65, vp.clientWidth / vp.clientHeight, 0.05, 200);
+  camera.position.set(0, 3, 8);
+
+  // Lights
+  ambLight = new THREE.AmbientLight(0xffffff, 0.45);
+  scene.add(ambLight);
+
+  hemiLight = new THREE.HemisphereLight(0x9bbcff, 0x3d7a1a, 0.5);
+  scene.add(hemiLight);
+
+  sunLight = new THREE.DirectionalLight(0xfff5e0, 1.1);
+  sunLight.position.set(20, 35, 15);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.left = sunLight.shadow.camera.bottom = -20;
+  sunLight.shadow.camera.right = sunLight.shadow.camera.top = 20;
+  sunLight.shadow.camera.near = 0.1;
+  sunLight.shadow.camera.far = 80;
+  sunLight.shadow.bias = -0.001;
+  scene.add(sunLight);
+
+  // Ground
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x3a6b2a, roughness: 0.95, metalness: 0 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Grid
+  gridHelper = new THREE.GridHelper(30, 30, 0x2a4820, 0x1e361a);
+  gridHelper.position.y = 0.004;
+  scene.add(gridHelper);
+
+  // Grass
+  buildGrass();
+
+  // Controls
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 1.1, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 30;
+  controls.maxPolarAngle = Math.PI * 0.88;
+
+  // Events
+  window.addEventListener('resize', onResize);
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', e => { keys[e.code] = false; });
+  renderer.domElement.addEventListener('mousemove', onMouseMove);
+  renderer.domElement.addEventListener('mousedown', e => {
+    if (e.button === 0 && playMode) {
+      renderer.domElement.requestPointerLock();
+    }
+  });
+  document.addEventListener('pointerlockchange', () => {
+    isDragCam = !!document.pointerLockElement;
+  });
+  renderer.domElement.addEventListener('wheel', e => {
+    if (playMode) { camDist = Math.max(2, Math.min(20, camDist + e.deltaY * 0.01)); e.preventDefault(); }
+  }, { passive: false });
+
+  buildRaceTabs();
+  loadRace('human');
+  animate();
+}
+
+// ── Grass ─────────────────────────────────────────────────────
+function buildGrass() {
+  const count = 2000;
+  const bw = 0.11, bh = 0.48;
+  const geo = new THREE.PlaneGeometry(bw, bh, 1, 3);
+  geo.translate(0, bh / 2, 0);
+
+  grassMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, vertexColors: true });
+
+  // Inject wind sway via onBeforeCompile
+  grassMat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = { value: 0 };
+    shader.vertexShader = `uniform float uTime;\n` + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <begin_vertex>',
+      `vec3 transformed = vec3(position);
+      float swayAmt = uv.y * uv.y;
+      #ifdef USE_INSTANCING
+        vec3 iPos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
+        transformed.x += sin(uTime * 1.8 + iPos.x * 0.55 + iPos.z * 0.42) * swayAmt * 0.28;
+        transformed.z += cos(uTime * 1.4 + iPos.z * 0.48 + iPos.x * 0.31) * swayAmt * 0.10;
+      #endif`
+    );
+    grassShader = shader;
+  };
+
+  grassMesh = new THREE.InstancedMesh(geo, grassMat, count);
+  grassBlades = [];
+
+  const dummy = new THREE.Object3D();
+  const col = new THREE.Color();
+
+  for (let i = 0; i < count; i++) {
+    const r = 4 + Math.random() * 28;
+    const a = Math.random() * Math.PI * 2;
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r;
+    const ry = Math.random() * Math.PI * 2;
+    const s = 0.65 + Math.random() * 0.65;
+
+    grassBlades.push({ x, z, ry, s });
+    dummy.position.set(x, 0, z);
+    dummy.rotation.y = ry;
+    dummy.scale.setScalar(s);
+    dummy.updateMatrix();
+    grassMesh.setMatrixAt(i, dummy.matrix);
+
+    const g = 0.36 + Math.random() * 0.24;
+    const rc = g * (0.18 + Math.random() * 0.18);
+    grassMesh.setColorAt(i, col.setRGB(rc, g, rc * 0.55));
+  }
+
+  grassMesh.instanceMatrix.needsUpdate = true;
+  if (grassMesh.instanceColor) grassMesh.instanceColor.needsUpdate = true;
+  scene.add(grassMesh);
+}
+
+// ── Character Loading ─────────────────────────────────────────
+function gltfLoad(url) {
+  return new Promise((res, rej) => loader.load(url, res, undefined, rej));
+}
+
+async function loadRace(raceKey) {
+  selectedRace = raceKey;
+  updateRaceTabs();
+  updateRaceCard();
+  showLoading(true, `Loading ${RACES[raceKey].name}...`);
+
+  // Clean up old CDN equip buttons
+  document.getElementById('cdnEquipSection').innerHTML = '';
+
+  // Try local first
+  let gltf = null;
+  let mode = 'none';
+
+  try {
+    gltf = await gltfLoad(LOCAL_BASE + RACES[raceKey].localFile);
+    mode = 'embedded';
+    showToast(`${RACES[raceKey].name} — local model loaded`);
+  } catch {
+    try {
+      gltf = await gltfLoad(CDN + RACES[raceKey].cdnPath);
+      mode = 'cdn-base';
+      showToast(`${RACES[raceKey].name} — CDN model loaded (drop local .glb for full equipment)`);
+    } catch (err) {
+      showLoading(false);
+      showToast(`Could not load ${RACES[raceKey].name}`);
+      return;
+    }
+  }
+
+  charMode = mode;
+  placeCharacter(gltf);
+
+  if (mode === 'cdn-base') buildCdnEquipPanel(raceKey);
+}
+
+function placeCharacter(gltf) {
+  // Remove previous
+  if (currentCharacter) {
+    scene.remove(currentCharacter);
+    currentCharacter.traverse(n => {
+      if (!n.isMesh) return;
+      n.geometry?.dispose();
+      if (Array.isArray(n.material)) n.material.forEach(m => m.dispose());
+      else n.material?.dispose();
+    });
+  }
+  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  equippedNodes = {};
+
+  currentCharacter = gltf.scene;
+
+  // Normalize to ~2.2 units tall
+  const box = new THREE.Box3().setFromObject(currentCharacter);
+  const sz = box.getSize(new THREE.Vector3());
+  const maxD = Math.max(sz.x, sz.y, sz.z);
+  modelBaseScale = maxD > 0 ? 2.2 / maxD : 1;
+  const userScale = parseFloat(document.getElementById('sldScale').value);
+  currentCharacter.scale.setScalar(modelBaseScale * userScale);
+
+  // Place feet on ground
+  const box2 = new THREE.Box3().setFromObject(currentCharacter);
+  currentCharacter.position.y = -box2.min.y + modelYOffset;
+
+  currentCharacter.traverse(n => {
+    if (n.isMesh) { n.castShadow = true; n.receiveShadow = true; }
+  });
+
+  scene.add(currentCharacter);
+
+  discoverMeshes(currentCharacter);
+  updateModelInfo();
+  showLoading(false);
+
+  const cBox = new THREE.Box3().setFromObject(currentCharacter);
+  const cCenter = cBox.getCenter(new THREE.Vector3());
+  controls.target.set(cCenter.x, cCenter.y, cCenter.z);
+}
+
+// ── Mesh Discovery ────────────────────────────────────────────
+const CAT_COLORS = {
+  body:   '#64748b',
+  weapon: '#f59e0b',
+  shield: '#3b82f6',
+  armor:  '#8b5cf6',
+  misc:   '#10b981',
+  other:  '#6b7280'
+};
+
+const CAT_LABELS = {
+  body: 'Body', weapon: 'Weapon', shield: 'Offhand / Shield',
+  armor: 'Armor', misc: 'Misc / Accessories', other: 'Other Meshes'
+};
+
+function categorizeMesh(name) {
+  const n = name.toLowerCase();
+  if (/body|skin|flesh|head|torso|arm|leg|foot|hand|base|naked|nude|face|character|mesh\d|rig|geo/.test(n)) return 'body';
+  if (/sword|axe|hammer|spear|staff|bow|mace|dagger|blade|weapon|wand|club/.test(n)) return 'weapon';
+  if (/shield|buckler|offhand|parry/.test(n)) return 'shield';
+  if (/armor|helm|helmet|chest|gauntlet|boot|pauldron|greave|plate|mail|brace|shoulder|knee|elbow/.test(n)) return 'armor';
+  if (/bag|backpack|pack|pouch|satchel|cape|cloak|belt|misc|wood|log|bundle/.test(n)) return 'misc';
+  return 'other';
+}
+
+function fmtName(s) {
+  return s.replace(/[_\-\.]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim().slice(0, 28) || s.slice(0, 28);
+}
+
+function discoverMeshes(model) {
+  meshRegistry = [];
+  model.traverse(node => {
+    if (!node.isMesh) return;
+    const cat = categorizeMesh(node.name);
+    meshRegistry.push({ node, origName: node.name, name: fmtName(node.name || `Mesh_${meshRegistry.length}`), category: cat });
+    // Default: body visible, rest hidden
+    node.visible = (cat === 'body' || cat === 'other');
+  });
+  buildEquipPanel();
+}
+
+function buildEquipPanel() {
+  const panel = document.getElementById('equipPanel');
+  if (!panel) return;
+
+  if (meshRegistry.length === 0) {
+    panel.innerHTML = '<div class="equip-empty">No meshes found.<br>Try dropping a local .glb file.</div>';
+    return;
+  }
+
+  let html = '';
+  const order = ['body', 'weapon', 'shield', 'armor', 'misc', 'other'];
+
+  for (const cat of order) {
+    const meshes = meshRegistry.filter(m => m.category === cat);
+    if (!meshes.length) continue;
+    const locked = cat === 'body';
+    const col = CAT_COLORS[cat];
+
+    html += `<div class="equip-group">
+      <div class="equip-group-header" style="color:${col}">
+        <span class="gflex">${CAT_LABELS[cat]} <span style="opacity:.5;font-size:9px">(${meshes.length})</span></span>
+        ${!locked
+          ? `<button class="tiny-btn" onclick="window.setGroupVis('${cat}',true)">on</button>
+             <button class="tiny-btn" onclick="window.setGroupVis('${cat}',false)">off</button>`
+          : '<span style="font-size:9px;opacity:.4">base</span>'}
+      </div>`;
+
+    for (const m of meshes) {
+      const id = `chk_${m.origName.replace(/\W/g, '_')}`;
+      html += `<label class="mesh-toggle${locked ? ' locked' : ''}">
+        <input type="checkbox" id="${id}" ${m.node.visible ? 'checked' : ''} ${locked ? 'disabled' : ''}
+          onchange="window.toggleMesh('${m.origName}', this.checked)">
+        <span class="mesh-dot" style="background:${col}"></span>
+        <span class="mesh-name">${m.name}</span>
+      </label>`;
+    }
+    html += '</div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+function buildCdnEquipPanel(raceKey) {
+  const race = RACES[raceKey];
+  if (!race.cdnEquip.length) return;
+  const sec = document.getElementById('cdnEquipSection');
+  let html = `<div class="section-header">CDN Equipment</div><div style="padding:0 8px 8px">`;
+  for (const eq of race.cdnEquip) {
+    html += `<button class="equip-cdn-btn" onclick="window.attachCdnEquip('${CDN + eq.f}','${eq.n}','${eq.t}')">${eq.n}</button>`;
+  }
+  if (Object.keys(equippedNodes).length) {
+    html += `<button class="equip-cdn-btn" style="border-color:#f43f5e;color:#f43f5e" onclick="window.clearCdnEquip()">Remove All Equipment</button>`;
+  }
+  html += '</div>';
+  sec.innerHTML = html;
+}
+
+// ── Play Mode ─────────────────────────────────────────────────
+function togglePlayMode() {
+  playMode = !playMode;
+  const btn = document.getElementById('btnPlay');
+  const badge = document.getElementById('modeBadge');
+  const hint = document.getElementById('wasdHint');
+  const stats = document.getElementById('playStats');
+
+  if (playMode) {
+    controls.enabled = false;
+    btn.textContent = '✎ Editor';
+    btn.classList.add('active');
+    badge.textContent = 'PLAY';
+    badge.style.background = 'rgba(34,197,94,0.85)';
+    badge.style.color = '#001a00';
+    hint.style.display = 'block';
+    stats.style.display = 'block';
+    document.getElementById('app').classList.add('play-mode');
+    velocity.set(0, 0, 0);
+    isGrounded = true;
+    // Derive yaw from current camera look
+    const d = camera.position.clone().sub(controls.target).normalize();
+    cameraYaw = Math.atan2(d.x, d.z);
+  } else {
+    controls.enabled = true;
+    btn.textContent = '▶ Play';
+    btn.classList.remove('active');
+    badge.textContent = 'EDITOR';
+    badge.style.background = 'rgba(10,14,10,0.75)';
+    badge.style.color = '';
+    hint.style.display = 'none';
+    stats.style.display = 'none';
+    document.getElementById('app').classList.remove('play-mode');
+    if (document.pointerLockElement) document.exitPointerLock();
+    isDragCam = false;
+    if (currentCharacter) {
+      const p = currentCharacter.position;
+      controls.target.set(p.x, p.y + 1.1, p.z);
+    }
+  }
+}
+
+function updatePhysics(dt) {
+  if (!playMode || !currentCharacter) return;
+
+  const dir = new THREE.Vector3();
+  if (keys['KeyW'] || keys['ArrowUp'])    dir.z -= 1;
+  if (keys['KeyS'] || keys['ArrowDown'])  dir.z += 1;
+  if (keys['KeyA'] || keys['ArrowLeft'])  dir.x -= 1;
+  if (keys['KeyD'] || keys['ArrowRight']) dir.x += 1;
+
+  const moving = dir.lengthSq() > 0.01;
+
+  if (moving) {
+    dir.normalize();
+    dir.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, cameraYaw, 0)));
+    const sprint = keys['ShiftLeft'] || keys['ShiftRight'];
+    const spd = sprint ? 9 : 5;
+    velocity.x = dir.x * spd;
+    velocity.z = dir.z * spd;
+    currentCharacter.rotation.y = Math.atan2(dir.x, dir.z);
+  } else {
+    velocity.x *= 0.82;
+    velocity.z *= 0.82;
+  }
+
+  if (keys['Space'] && isGrounded) {
+    velocity.y = 9;
+    isGrounded = false;
+    keys['Space'] = false;
+  }
+
+  if (!isGrounded) velocity.y += -18 * dt;
+
+  currentCharacter.position.x += velocity.x * dt;
+  currentCharacter.position.z += velocity.z * dt;
+  currentCharacter.position.y += velocity.y * dt;
+
+  const groundY = modelYOffset;
+  if (currentCharacter.position.y <= groundY) {
+    currentCharacter.position.y = groundY;
+    velocity.y = 0;
+    isGrounded = true;
+  }
+
+  // World bounds
+  currentCharacter.position.x = Math.max(-40, Math.min(40, currentCharacter.position.x));
+  currentCharacter.position.z = Math.max(-40, Math.min(40, currentCharacter.position.z));
+
+  // Update attached CDN equip
+  Object.values(equippedNodes).forEach(n => {
+    n.position.copy(currentCharacter.position);
+  });
+
+  // Update play stats
+  document.getElementById('statX').textContent = currentCharacter.position.x.toFixed(2);
+  document.getElementById('statZ').textContent = currentCharacter.position.z.toFixed(2);
+  document.getElementById('statGnd').textContent = isGrounded ? 'yes' : 'no';
+  document.getElementById('statVY').textContent = velocity.y.toFixed(2);
+}
+
+function updatePlayCamera() {
+  if (!currentCharacter) return;
+  const head = currentCharacter.position.clone().add(new THREE.Vector3(0, 1.5, 0));
+  const d = camDist;
+  const offset = new THREE.Vector3(
+    Math.sin(cameraYaw) * Math.cos(cameraPitch) * d,
+    Math.sin(cameraPitch) * d,
+    Math.cos(cameraYaw) * Math.cos(cameraPitch) * d
+  );
+  camera.position.lerp(head.clone().add(offset), 0.14);
+  camera.lookAt(head);
+}
+
+// ── Animation Loop ─────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+
+  if (grassShader) grassShader.uniforms.uTime.value = t;
+
+  updatePhysics(dt);
+
+  if (playMode) updatePlayCamera();
+  else controls.update();
+
+  // FPS
+  frameCount++;
+  if (t - lastFpsTime >= 1) {
+    fps = frameCount;
+    frameCount = 0;
+    lastFpsTime = t;
+    document.getElementById('vpInfo').textContent = `FPS: ${fps}`;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ── Events ─────────────────────────────────────────────────────
+function onKeyDown(e) {
+  keys[e.code] = true;
+  if (e.code === 'KeyE') { togglePlayMode(); e.preventDefault(); }
+  if (e.code === 'Space') e.preventDefault();
+  if (e.code === 'Escape' && playMode) togglePlayMode();
+}
+
+function onMouseMove(e) {
+  if (isDragCam && playMode) {
+    cameraYaw -= e.movementX * 0.003;
+    cameraPitch = Math.max(0.08, Math.min(1.35, cameraPitch - e.movementY * 0.003));
+  }
+}
+
+function onResize() {
+  const vp = document.getElementById('viewport');
+  const w = vp.clientWidth, h = vp.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+
+// ── UI Helpers ─────────────────────────────────────────────────
+function buildRaceTabs() {
+  const c = document.getElementById('raceTabs');
+  c.innerHTML = Object.entries(RACES).map(([k, r]) =>
+    `<button class="race-tab" id="rtab-${k}" style="--race-color:${r.color}" onclick="window.loadRace('${k}')">${r.emoji} ${r.name}</button>`
+  ).join('');
+}
+
+function updateRaceTabs() {
+  document.querySelectorAll('.race-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(`rtab-${selectedRace}`)?.classList.add('active');
+}
+
+function updateRaceCard() {
+  const r = RACES[selectedRace];
+  document.getElementById('raceCard').innerHTML = `
+    <div class="race-card-emoji" style="color:${r.color}">${r.emoji}</div>
+    <div class="race-card-info">
+      <div class="race-card-name">${r.name}</div>
+      <div class="race-card-faction">${r.faction}</div>
+      <div class="race-card-bar" style="background:${r.color}33;outline:1px solid ${r.color}44"></div>
+    </div>`;
+}
+
+function updateModelInfo() {
+  let meshC = 0, triC = 0;
+  currentCharacter?.traverse(n => {
+    if (!n.isMesh) return;
+    meshC++;
+    const idx = n.geometry?.index;
+    triC += idx ? idx.count / 3 : (n.geometry?.attributes?.position?.count ?? 0) / 3;
+  });
+  document.getElementById('modelInfo').innerHTML = `
+    <div class="insp-row"><span class="insp-label">Race</span><span>${RACES[selectedRace].name}</span></div>
+    <div class="insp-row"><span class="insp-label">Meshes</span><span>${meshC}</span></div>
+    <div class="insp-row"><span class="insp-label">Triangles</span><span>~${Math.round(triC).toLocaleString()}</span></div>
+    <div class="insp-row"><span class="insp-label">Source</span><span>${charMode === 'embedded' ? 'Local' : 'CDN'}</span></div>`;
+}
+
+function showLoading(show, msg = '') {
+  document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+  document.getElementById('loadingText').textContent = msg;
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── Global API (called from HTML onclick) ──────────────────────
+window.loadRace = loadRace;
+window.togglePlayMode = togglePlayMode;
+
+window.toggleMesh = (origName, visible) => {
+  const m = meshRegistry.find(m => m.origName === origName);
+  if (m) m.node.visible = visible;
+};
+
+window.setGroupVis = (cat, visible) => {
+  meshRegistry.filter(m => m.category === cat).forEach(m => { m.node.visible = visible; });
+  buildEquipPanel();
+};
+
+window.resetNaked = () => {
+  meshRegistry.forEach(m => { m.node.visible = m.category === 'body' || m.category === 'other'; });
+  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  equippedNodes = {};
+  buildEquipPanel();
+  showToast('Reset to naked base');
+};
+
+window.equipAll = () => {
+  meshRegistry.forEach(m => { m.node.visible = true; });
+  buildEquipPanel();
+  showToast('All meshes shown');
+};
+
+window.attachCdnEquip = async (url, name, type) => {
+  showToast(`Loading ${name}…`);
+  try {
+    const gltf = await gltfLoad(url);
+    if (equippedNodes[type]) scene.remove(equippedNodes[type]);
+    const node = gltf.scene;
+    node.scale.setScalar(modelBaseScale);
+    if (currentCharacter) {
+      const b = new THREE.Box3().setFromObject(currentCharacter);
+      node.position.set(b.max.x * 0.5, b.center ? b.center.y : (b.min.y + b.max.y) * 0.5, b.min.z * 0.5);
+    }
+    scene.add(node);
+    equippedNodes[type] = node;
+    buildCdnEquipPanel(selectedRace);
+    showToast(`Equipped: ${name}`);
+  } catch { showToast(`Failed to load ${name}`); }
+};
+
+window.clearCdnEquip = () => {
+  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  equippedNodes = {};
+  buildCdnEquipPanel(selectedRace);
+  showToast('Equipment removed');
+};
+
+window.toggleGrid = () => {
+  gridHelper.visible = !gridHelper.visible;
+  document.getElementById('chkGrid').checked = gridHelper.visible;
+  document.getElementById('btnGrid').classList.toggle('active', gridHelper.visible);
+};
+
+window.toggleAutoRotate = () => {
+  controls.autoRotate = !controls.autoRotate;
+  document.getElementById('btnRotate').classList.toggle('active', controls.autoRotate);
+};
+
+window.toggleShadows = () => {
+  renderer.shadowMap.enabled = document.getElementById('chkShadow').checked;
+};
+
+window.resetCamera = () => {
+  camera.position.set(0, 3, 8);
+  controls.target.set(0, 1.1, 0);
+  controls.update();
+};
+
+window.updateScale = () => {
+  const s = parseFloat(document.getElementById('sldScale').value);
+  document.getElementById('valScale').textContent = s.toFixed(2) + 'x';
+  if (currentCharacter) currentCharacter.scale.setScalar(modelBaseScale * s);
+};
+
+window.updateYOffset = () => {
+  modelYOffset = parseFloat(document.getElementById('sldYOff').value);
+  document.getElementById('valYOff').textContent = modelYOffset.toFixed(2);
+  if (currentCharacter && isGrounded) currentCharacter.position.y = modelYOffset;
+};
+
+window.updateEnv = () => {
+  const sun = parseFloat(document.getElementById('sldSun').value);
+  const amb = parseFloat(document.getElementById('sldAmb').value);
+  const fogD = parseFloat(document.getElementById('sldFog').value);
+  const sunDeg = parseFloat(document.getElementById('sldSunDir').value);
+  const skyHex = document.getElementById('colSky').value;
+
+  document.getElementById('valSun').textContent = sun.toFixed(2);
+  document.getElementById('valAmb').textContent = amb.toFixed(2);
+  document.getElementById('valFog').textContent = fogD;
+  document.getElementById('valSunDir').textContent = sunDeg + '°';
+
+  sunLight.intensity = sun;
+  ambLight.intensity = amb;
+
+  const rad = sunDeg * Math.PI / 180;
+  sunLight.position.set(Math.sin(rad) * 25, 35, Math.cos(rad) * 25);
+
+  const skyCol = new THREE.Color(skyHex);
+  scene.background = skyCol;
+  if (scene.fog) { scene.fog.color.copy(skyCol); scene.fog.near = fogD; scene.fog.far = fogD * 2; }
+};
+
+window.updateCam = () => {
+  const fov = parseFloat(document.getElementById('sldFov').value);
+  camDist = parseFloat(document.getElementById('sldCamDist').value);
+  document.getElementById('valFov').textContent = fov + '°';
+  document.getElementById('valCamDist').textContent = camDist.toFixed(1);
+  camera.fov = fov;
+  camera.updateProjectionMatrix();
+};
+
+window.onFileDrop = (e) => {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file?.name.endsWith('.glb')) { showToast('Drop a .glb file'); return; }
+  const url = URL.createObjectURL(file);
+  showLoading(true, `Loading ${file.name}…`);
+  gltfLoad(url).then(g => { charMode = 'embedded'; placeCharacter(g); showToast(`Loaded: ${file.name}`); })
+    .catch(() => { showLoading(false); showToast('Failed to load GLB'); });
+};
+
+window.onFileInput = (input) => {
+  const file = input.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  showLoading(true, `Loading ${file.name}…`);
+  gltfLoad(url).then(g => { charMode = 'embedded'; placeCharacter(g); showToast(`Loaded: ${file.name}`); })
+    .catch(() => { showLoading(false); showToast('Failed to load GLB'); });
+};
+
+init();
+</script>
+</body>
+</html>

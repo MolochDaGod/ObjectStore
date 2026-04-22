@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grudge Spell VFX Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #080812;
+            --surface: #10101c;
+            --surface2: #18182a;
+            --border: #252540;
+            --text: #e0e0f0;
+            --text2: #888aaa;
+            --accent: #aa44ff;
+            --accent2: #ff44aa;
+            --fire: #ff4400;
+            --ice: #00ccff;
+            --lightning: #ffee00;
+            --arcane: #cc44ff;
+            --earth: #88aa44;
+            --nature: #44cc66;
+            --impact: #ff6600;
+            --portal: #4488ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .header-right a {
+            color: var(--text2);
+            font-size: 12px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all .15s
+        }
+
+        .header-right a:hover {
+            border-color: var(--accent);
+            color: var(--text)
+        }
+
+        /* Filters */
+        .filters {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: sticky;
+            top: 49px;
+            z-index: 9
+        }
+
+        .filter-label {
+            font-size: 11px;
+            color: var(--text2);
+            margin-right: 4px
+        }
+
+        .cat-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .cat-pill:hover,
+        .cat-pill.active {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(170, 68, 255, .15)
+        }
+
+        .search-box {
+            margin-left: auto;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            width: 200px
+        }
+
+        .search-box:focus {
+            border-color: var(--accent)
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            padding: 8px 20px;
+            font-size: 11px;
+            color: var(--text2);
+            border-bottom: 1px solid var(--border)
+        }
+
+        /* Grid */
+        .spell-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            padding: 20px
+        }
+
+        /* Card */
+        .spell-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            flex-direction: column
+        }
+
+        .spell-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(170, 68, 255, .15)
+        }
+
+        .card-preview {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .card-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 70%, var(--cat-color, #aa44ff) 0%, transparent 70%);
+            opacity: .25
+        }
+
+        .card-body {
+            padding: 12px 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .card-name {
+            font-size: 14px;
+            font-weight: 600
+        }
+
+        .card-desc {
+            font-size: 11px;
+            color: var(--text2);
+            line-height: 1.45;
+            flex: 1
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: 9px;
+            color: var(--text2);
+            text-transform: uppercase
+        }
+
+        .card-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px
+        }
+
+        .card-footer button {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            transition: all .15s
+        }
+
+        .card-footer button:hover {
+            border-color: var(--accent);
+            color: var(--text)
+        }
+
+        .card-footer button.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        /* Category badge */
+        .cat-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, .5);
+            border: 1px solid currentColor
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface2);
+            border: 1px solid var(--accent);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity .3s;
+            pointer-events: none
+        }
+
+        .toast.show {
+            opacity: 1
+        }
+
+        /* Empty state */
+        .empty {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text2)
+        }
+
+        .empty h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text)
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>⚔ Grudge Spell VFX Library</h1>
+        <div class="header-right">
+            <a href="3dfx-viewer.html">← Back to 3DFX Viewer</a>
+            <a href="api/v1/vfx-spells.json" target="_blank">📄 JSON API</a>
+        </div>
+    </div>
+
+    <div class="filters" id="filters">
+        <span class="filter-label">Category:</span>
+        <button class="cat-pill active" data-cat="all" onclick="filterCat('all')">All</button>
+        <input class="search-box" type="text" id="search" placeholder="Search spells..." oninput="render()">
+    </div>
+
+    <div class="stats-bar" id="statsBar">Loading spells...</div>
+
+    <div class="spell-grid" id="grid"></div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const SPELLS_URL = './api/v1/vfx-spells.json';
+        const VIEWER_URL = '3dfx-viewer.html';
+
+        const CATEGORY_ICONS = {
+            fire: '🔥', ice: '❄️', lightning: '⚡', arcane: '🔮',
+            earth: '🪨', nature: '🌿', impact: '💥', portal: '🌀'
+        };
+
+        const CARD_EMOJIS = {
+            fire_slash: '🔥', fireball: '🔥', inferno_aoe: '🔥',
+            frost_lance: '❄️', blizzard_aoe: '❄️', ice_wall: '❄️',
+            chain_lightning: '⚡', lightning_storm: '⚡',
+            arcane_symbol: '🔮', arcane_orb: '🔮', arcane_nova: '✨',
+            earth_wall: '🪨', earth_quake: '🪨',
+            nature_heal: '🌿', nature_thorns: '🌿',
+            impact_crater: '💥', portal_open: '🌀', void_rift: '🌌'
+        };
+
+        let allSpells = {};
+        let categories = {};
+        let activeCategory = 'all';
+
+        async function init() {
+            try {
+                const res = await fetch(SPELLS_URL);
+                const data = await res.json();
+                allSpells = data.spells || {};
+                categories = data.categories || {};
+                buildCategoryPills();
+                render();
+            } catch (e) {
+                document.getElementById('statsBar').textContent = 'Failed to load vfx-spells.json';
+                console.error(e);
+            }
+        }
+
+        function buildCategoryPills() {
+            const el = document.getElementById('filters');
+            const search = document.getElementById('search');
+            for (const [key, cat] of Object.entries(categories)) {
+                const btn = document.createElement('button');
+                btn.className = 'cat-pill';
+                btn.dataset.cat = key;
+                btn.style.setProperty('--cat-color', cat.color);
+                btn.innerHTML = `${CATEGORY_ICONS[key] || '✦'} ${cat.name} <span style="color:var(--text2);margin-left:2px">(${cat.count})</span>`;
+                btn.onclick = () => filterCat(key);
+                el.insertBefore(btn, search);
+            }
+        }
+
+        function filterCat(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-pill').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+            render();
+        }
+
+        function render() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const grid = document.getElementById('grid');
+            const catColors = categories;
+            let shown = 0;
+            grid.innerHTML = '';
+
+            for (const [id, spell] of Object.entries(allSpells)) {
+                if (activeCategory !== 'all' && spell.category !== activeCategory) continue;
+                if (q && !spell.name.toLowerCase().includes(q) && !spell.description?.toLowerCase().includes(q) && !spell.tags?.some(t => t.includes(q))) continue;
+
+                const color = catColors[spell.category]?.color || '#888';
+                const icon = CARD_EMOJIS[id] || CATEGORY_ICONS[spell.category] || '✦';
+                const tags = (spell.tags || []).slice(0, 5).map(t => `<span class="tag">${t}</span>`).join('');
+                const catName = catColors[spell.category]?.name || spell.category;
+
+                const card = document.createElement('div');
+                card.className = 'spell-card';
+                card.style.setProperty('--cat-color', color);
+                card.innerHTML = `
+      <div class="card-preview">
+        <span>${icon}</span>
+        <span class="cat-badge" style="color:${color}">${catName}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${spell.name}</div>
+        <div class="card-desc">${spell.description || ''}</div>
+        <div class="card-tags">${tags}</div>
+      </div>
+      <div class="card-footer">
+        <button onclick="openInViewer('${id}')">▶ Preview</button>
+        <button onclick="copyApiUrl('${id}')">⎘ API URL</button>
+        <button class="primary" onclick="openInViewer('${id}')">Open in Viewer</button>
+      </div>`;
+                grid.appendChild(card);
+                shown++;
+            }
+
+            if (shown === 0) {
+                grid.innerHTML = `<div class="empty"><h2>No spells found</h2><p>Try a different category or search term.</p></div>`;
+            }
+
+            const total = Object.keys(allSpells).length;
+            document.getElementById('statsBar').textContent = `Showing ${shown} of ${total} spells`;
+        }
+
+        window.openInViewer = function (id) {
+            window.open(`${VIEWER_URL}?spell=${id}`, '_blank');
+        };
+
+        window.copyApiUrl = function (id) {
+            const url = `${location.origin}${location.pathname.replace('spell-vfx-library.html', '')}api/v1/vfx-spells.json#${id}`;
+            navigator.clipboard.writeText(url).then(() => showToast(`Copied: ${url}`)).catch(() => showToast('Copy failed — check clipboard permissions'));
+        };
+
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

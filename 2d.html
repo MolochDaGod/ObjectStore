@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grudge ObjectStore · 2D Assets</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="grudge-api" content="">
+<link rel="icon" href="/grudge-logo.png">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0d12; --panel: #12151d;
+    --border: rgba(255,255,255,.08); --accent: #f5b21a;
+    --text: #eef0f4; --muted: #8b92a5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: system-ui, Segoe UI, sans-serif; }
+  header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); background: #0d1017; }
+  header h1 { margin: 0; font-size: 15px; }
+  header nav { margin-left: auto; display: flex; gap: 12px; font-size: 13px; }
+  header nav a { color: var(--muted); text-decoration: none; }
+  header nav a.active, header nav a:hover { color: var(--text); }
+
+  .tabs { display: flex; gap: 2px; padding: 8px 16px 0; border-bottom: 1px solid var(--border); background: #0d1017; overflow-x: auto; }
+  .tab {
+    padding: 8px 14px; font-size: 13px; cursor: pointer;
+    border: 1px solid transparent; border-bottom: none;
+    border-radius: 6px 6px 0 0; color: var(--muted);
+  }
+  .tab.active { background: var(--panel); border-color: var(--border); color: var(--text); }
+
+  .toolbar { display: flex; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--panel); flex-wrap: wrap; }
+  .toolbar input, .toolbar select {
+    background: #0d1017; color: var(--text); border: 1px solid var(--border);
+    padding: 7px 10px; border-radius: 6px; font-size: 13px; min-width: 160px;
+  }
+  .toolbar .count { margin-left: auto; color: var(--muted); font-size: 12px; align-self: center; }
+
+  .grid {
+    padding: 12px 16px;
+    display: grid; gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
+  }
+  .card:hover { border-color: var(--accent); }
+  .preview { aspect-ratio: 1 / 1; background: #0a0a0f center/contain no-repeat; display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+  .preview img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+  .preview.audio::before { content: "🎵"; font-size: 26px; }
+  .preview.video::before { content: "🎞"; font-size: 26px; }
+  .label { padding: 6px 8px 8px; font-size: 11px; line-height: 1.3; }
+  .label .n { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .label .s { color: var(--muted); font-size: 10px; }
+
+  dialog.detail {
+    position: fixed; inset: auto; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--panel); color: var(--text); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0; max-width: 680px; width: 94vw; max-height: 86vh;
+  }
+  dialog.detail::backdrop { background: rgba(0,0,0,.6); }
+  dialog .head { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  dialog .body { padding: 14px 16px; display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
+  dialog .body img, dialog .body video { max-width: 100%; max-height: 260px; border-radius: 6px; background: #0a0a0f; }
+  dialog .body audio { width: 100%; }
+  dialog dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 13px; margin: 0; }
+  dialog dt { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  dialog dd { margin: 0; word-break: break-all; }
+  dialog .foot { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+  dialog .foot button, dialog .foot a {
+    background: #1a1f2b; color: var(--text); border: 1px solid var(--border);
+    padding: 7px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    text-decoration: none;
+  }
+  dialog .foot .primary { background: var(--accent); color: #1a0f00; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <img src="/grudge-logo.png" alt="" height="22">
+  <h1>Grudge ObjectStore · 2D</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/2d.html" class="active">2D</a>
+    <a href="/3d.html">3D</a>
+    <a href="/editors/">Editors</a>
+    <a href="/admin.html">Admin</a>
+  </nav>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-kind="">All</div>
+  <div class="tab" data-kind="sprite">Sprites</div>
+  <div class="tab" data-kind="sprite-animation">Sprite Animations</div>
+  <div class="tab" data-kind="vfx2d">VFX</div>
+  <div class="tab" data-kind="icon">Icons</div>
+  <div class="tab" data-kind="background">Backgrounds</div>
+  <div class="tab" data-kind="video">Video</div>
+  <div class="tab" data-kind="audio">Audio</div>
+</div>
+
+<div class="toolbar">
+  <input id="q" placeholder="Search name, tag, pack…" />
+  <select id="pack"><option value="">All packs</option></select>
+  <span class="count" id="count">Loading…</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<dialog class="detail" id="dlg">
+  <div class="head"><strong id="dName"></strong></div>
+  <div class="body">
+    <div id="dPreview"></div>
+    <dl>
+      <dt>Kind</dt><dd id="dKind"></dd>
+      <dt>Path</dt><dd id="dPath"></dd>
+      <dt>Pack</dt><dd id="dPack"></dd>
+      <dt>Tags</dt><dd id="dTags"></dd>
+      <dt>Size</dt><dd id="dSize"></dd>
+    </dl>
+  </div>
+  <div class="foot">
+    <a id="dEdit">Edit</a>
+    <a id="dOpen" class="primary" target="_blank">Open</a>
+    <button id="dClose">Close</button>
+  </div>
+</dialog>
+
+<script type="module">
+  import createStoreClient from '/js/store-client.js';
+  const store = createStoreClient();
+
+  const state = { kind: '', q: '', pack: '', all: [] };
+  const els = {
+    tabs: document.getElementById('tabs'),
+    grid: document.getElementById('grid'),
+    q: document.getElementById('q'),
+    pack: document.getElementById('pack'),
+    count: document.getElementById('count'),
+    dlg: document.getElementById('dlg'),
+    name: document.getElementById('dName'),
+    preview: document.getElementById('dPreview'),
+    kind: document.getElementById('dKind'),
+    path: document.getElementById('dPath'),
+    packD: document.getElementById('dPack'),
+    tags: document.getElementById('dTags'),
+    size: document.getElementById('dSize'),
+    edit: document.getElementById('dEdit'),
+    open: document.getElementById('dOpen'),
+    close: document.getElementById('dClose'),
+  };
+
+  async function load() {
+    const MANIFEST_FALLBACK = 'https://assets.grudge-studio.com/manifests/v2/index.json';
+    const data = await store.manifest({ dimension: '2d', pageSize: 10000 }).catch(() =>
+      fetch(MANIFEST_FALLBACK).then((r) => r.json())
+    );
+    state.all = (data.assets || data).filter((a) => a.dimension === '2d');
+    const packs = Array.from(new Set(state.all.map((a) => a.pack).filter(Boolean))).sort();
+    for (const p of packs) {
+      const o = document.createElement('option');
+      o.value = p; o.textContent = p;
+      els.pack.appendChild(o);
+    }
+    render();
+  }
+
+  function fmtBytes(n) {
+    if (!n) return '—';
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1024 / 1024).toFixed(2) + ' MB';
+  }
+
+  function filtered() {
+    const q = state.q.toLowerCase();
+    return state.all.filter((a) => {
+      if (state.kind && a.kind !== state.kind) return false;
+      if (state.pack && a.pack !== state.pack) return false;
+      if (!q) return true;
+      return (a.name + ' ' + a.path + ' ' + (a.tags || []).join(' ')).toLowerCase().includes(q);
+    });
+  }
+
+  function render() {
+    const rows = filtered();
+    els.count.textContent = `${rows.length} of ${state.all.length}`;
+    els.grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    for (const a of rows.slice(0, 500)) {
+      const c = document.createElement('div');
+      c.className = 'card';
+      const url = store.assetUrl(a);
+      const isImg = ['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind);
+      c.innerHTML = `
+        <div class="preview ${a.kind === 'audio' ? 'audio' : a.kind === 'video' ? 'video' : ''}">
+          ${isImg ? `<img loading="lazy" src="${url}" alt="">` : ''}
+        </div>
+        <div class="label">
+          <span class="n">${a.name || a.path.split('/').pop()}</span>
+          <span class="s">${a.kind} · ${fmtBytes(a.size)}</span>
+        </div>
+      `;
+      c.addEventListener('click', () => open(a));
+      frag.appendChild(c);
+    }
+    els.grid.appendChild(frag);
+  }
+
+  function open(a) {
+    const url = store.assetUrl(a);
+    els.name.textContent = a.name || a.path.split('/').pop();
+    els.kind.textContent = a.kind;
+    els.path.textContent = a.path;
+    els.packD.textContent = a.pack || '—';
+    els.tags.textContent = (a.tags || []).join(', ') || '—';
+    els.size.textContent = fmtBytes(a.size);
+    els.preview.innerHTML = '';
+    if (['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind)) {
+      els.preview.innerHTML = `<img src="${url}" alt="">`;
+    } else if (a.kind === 'audio') {
+      els.preview.innerHTML = `<audio src="${url}" controls></audio>`;
+    } else if (a.kind === 'video') {
+      els.preview.innerHTML = `<video src="${url}" controls></video>`;
+    }
+    els.open.href = url;
+    els.edit.href = `/editors/${a.kind === 'vfx2d' ? 'vfx2d' : 'sprite'}.html?id=${encodeURIComponent(a.id)}`;
+    els.dlg.showModal();
+  }
+
+  els.close.addEventListener('click', () => els.dlg.close());
+  els.tabs.addEventListener('click', (e) => {
+    const t = e.target.closest('.tab');
+    if (!t) return;
+    els.tabs.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x === t));
+    state.kind = t.dataset.kind;
+    render();
+  });
+  els.q.addEventListener('input', () => { state.q = els.q.value; render(); });
+  els.pack.addEventListener('change', () => { state.pack = els.pack.value; render(); });
+
+  load();
+</script>
+</body>
+</html>

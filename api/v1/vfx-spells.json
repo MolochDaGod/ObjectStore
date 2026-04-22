@@ -1,0 +1,675 @@
+{
+  "version": "2.0.0",
+  "generated": "2026-04-21T00:00:00.000Z",
+  "description": "Grudge Warlords — Caster Spell VFX Library. Game-ready 3D spell effects with full shader, particle, spline, ray and geometry definitions.",
+  "sourceBase": "https://molochdagod.github.io/ObjectStore",
+  "totalSpells": 18,
+  "categories": {
+    "fire": { "name": "Fire", "color": "#ff4400", "count": 3 },
+    "ice": { "name": "Ice", "color": "#00ccff", "count": 3 },
+    "lightning": { "name": "Lightning", "color": "#ffff00", "count": 2 },
+    "arcane": { "name": "Arcane", "color": "#aa44ff", "count": 3 },
+    "earth": { "name": "Earth", "color": "#88aa44", "count": 2 },
+    "nature": { "name": "Nature", "color": "#44cc66", "count": 2 },
+    "impact": { "name": "Impact", "color": "#ff6600", "count": 1 },
+    "portal": { "name": "Portal", "color": "#4488ff", "count": 2 }
+  },
+  "spells": {
+    "fire_slash": {
+      "id": "fire_slash",
+      "name": "Fire Slash",
+      "category": "fire",
+      "description": "Burning melee slash trail following a cylinder arc. Trailing embers, heat distortion.",
+      "tags": ["fire", "melee", "slash", "trail", "spline"],
+      "colors": {
+        "primary": "#ff5500",
+        "secondary": "#ffaa00",
+        "ember": "#ff2200"
+      },
+      "timing": { "duration": 1.2, "loop": true, "speed": 1.0 },
+      "shader": "fire_slash",
+      "geometry": {
+        "type": "spline_trail",
+        "cylinder": {
+          "radiusTop": 0.05,
+          "radiusBottom": 0.05,
+          "height": 2.0,
+          "segments": 12
+        },
+        "trail": { "length": 32, "width": 0.35, "fadeTime": 0.6 },
+        "arc": {
+          "radius": 1.8,
+          "startAngle": -1.2,
+          "endAngle": 1.2,
+          "axis": "z"
+        }
+      },
+      "particles": {
+        "count": 220,
+        "size": 0.06,
+        "opacity": 0.9,
+        "blending": "additive",
+        "distribution": "spline",
+        "shape": "disc",
+        "velocityY": [0.5, 2.5],
+        "velocitySpread": 0.8,
+        "drag": 0.95,
+        "gravity": -0.3,
+        "lifespan": [0.3, 0.8]
+      },
+      "lights": {
+        "color": "#ff6600",
+        "intensity": 3.0,
+        "distance": 5,
+        "flicker": true
+      },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.1 },
+      "textures": {
+        "particle": "effects/3d/fire/ember_disc.png",
+        "trail": "effects/3d/fire/slash_trail.png"
+      }
+    },
+
+    "fireball": {
+      "id": "fireball",
+      "name": "Fireball",
+      "category": "fire",
+      "description": "Classic projectile fireball with leading core sphere, trailing embers and shockwave impact.",
+      "tags": ["fire", "projectile", "impact", "spell", "aoe"],
+      "colors": {
+        "primary": "#ff4400",
+        "secondary": "#ffcc00",
+        "core": "#ffffff"
+      },
+      "timing": { "duration": 2.5, "loop": true, "speed": 1.0 },
+      "shader": "fireball",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "icosahedron", "radius": 0.32, "detail": 2 },
+        "shell": { "type": "sphere", "radius": 0.55, "segments": 24 },
+        "trail": { "length": 48, "width": 0.5, "fadeTime": 0.8 },
+        "impact": { "type": "shockwave_ring", "radius": 3.0, "duration": 0.6 }
+      },
+      "particles": {
+        "count": 380,
+        "size": 0.09,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [0.2, 1.5],
+        "velocitySpread": 2.0,
+        "gravity": -0.8,
+        "lifespan": [0.4, 1.2],
+        "drag": 0.92
+      },
+      "lights": {
+        "color": "#ff6600",
+        "intensity": 4.0,
+        "distance": 8,
+        "flicker": true
+      },
+      "bloom": { "strength": 2.5, "radius": 0.6, "threshold": 0.1 },
+      "textures": {
+        "particle": "effects/3d/fire/ember_disc.png",
+        "core": "effects/3d/fire/fireball_core.png"
+      }
+    },
+
+    "inferno_aoe": {
+      "id": "inferno_aoe",
+      "name": "Inferno AOE",
+      "category": "fire",
+      "description": "Ground-eruption AOE pillar of fire. Rising jets, ring of flames, ground scorch.",
+      "tags": ["fire", "aoe", "ground", "pillar", "spell"],
+      "colors": { "primary": "#ff3300", "secondary": "#ffaa00" },
+      "timing": { "duration": 3.0, "loop": true, "speed": 1.0 },
+      "shader": "fire_slash",
+      "geometry": {
+        "type": "compound",
+        "elements": ["fire_planes", "outer_sphere", "shockwave_ring"],
+        "ring": { "innerRadius": 0.8, "outerRadius": 3.5, "segments": 64 },
+        "jets": { "count": 8, "height": 5.0, "width": 0.4 }
+      },
+      "particles": {
+        "count": 900,
+        "size": 0.12,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "circular",
+        "radius": 2.0,
+        "shape": "disc",
+        "velocityY": [2, 6],
+        "velocitySpread": 0.6,
+        "gravity": -0.4,
+        "lifespan": [0.5, 1.5]
+      },
+      "lights": {
+        "color": "#ff4400",
+        "intensity": 5.0,
+        "distance": 10,
+        "flicker": true
+      },
+      "bloom": { "strength": 2.5, "radius": 0.5, "threshold": 0.15 }
+    },
+
+    "frost_lance": {
+      "id": "frost_lance",
+      "name": "Frost Lance",
+      "category": "ice",
+      "description": "Spear of ice — crystalline projectile with shattering impact and ice shard spray.",
+      "tags": ["ice", "projectile", "impact", "spell", "crystal"],
+      "colors": {
+        "primary": "#aaeeff",
+        "secondary": "#ffffff",
+        "core": "#00ccff"
+      },
+      "timing": { "duration": 1.8, "loop": true, "speed": 1.0 },
+      "shader": "ice_crystal",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "octahedron", "radius": 0.45, "detail": 1 },
+        "shards": { "count": 8, "length": [0.3, 1.2], "spread": 0.6 },
+        "trail": { "length": 40, "width": 0.25, "fadeTime": 0.5 },
+        "impact": { "type": "ice_burst", "radius": 2.5, "shardCount": 24 }
+      },
+      "particles": {
+        "count": 300,
+        "size": 0.05,
+        "opacity": 0.9,
+        "blending": "additive",
+        "distribution": "spline",
+        "shape": "disc",
+        "velocityY": [-0.5, 0.5],
+        "velocitySpread": 1.2,
+        "gravity": -0.2,
+        "lifespan": [0.3, 1.0]
+      },
+      "lights": { "color": "#00ccff", "intensity": 2.5, "distance": 6 },
+      "bloom": { "strength": 1.8, "radius": 0.4, "threshold": 0.2 },
+      "textures": { "particle": "effects/3d/ice/ice_flake_disc.png" }
+    },
+
+    "blizzard_aoe": {
+      "id": "blizzard_aoe",
+      "name": "Blizzard AOE",
+      "category": "ice",
+      "description": "Howling arctic storm — spiral ice shards, snowflake particles, freezing ground pulse.",
+      "tags": ["ice", "aoe", "storm", "spell", "freeze"],
+      "colors": { "primary": "#88ddff", "secondary": "#aaeeff" },
+      "timing": { "duration": 4.0, "loop": true, "speed": 1.0 },
+      "shader": "ice_crystal",
+      "geometry": {
+        "type": "compound",
+        "elements": ["ice_shards", "blizzard_ring", "shockwave_ring"],
+        "ring": { "innerRadius": 0.0, "outerRadius": 4.0, "segments": 64 }
+      },
+      "particles": {
+        "count": 1200,
+        "size": 0.055,
+        "opacity": 0.7,
+        "blending": "additive",
+        "distribution": "volume",
+        "width": 8,
+        "height": 6,
+        "shape": "disc",
+        "velocityY": [-1, -4],
+        "velocitySpread": 2.0,
+        "gravity": -0.1,
+        "lifespan": [0.5, 2.0]
+      },
+      "lights": { "color": "#aaeeff", "intensity": 2.0, "distance": 9 },
+      "bloom": { "strength": 1.5, "radius": 0.35, "threshold": 0.25 }
+    },
+
+    "ice_wall": {
+      "id": "ice_wall",
+      "name": "Ice Wall Rise",
+      "category": "ice",
+      "description": "Wall of ice spires erupting from the ground.",
+      "tags": ["ice", "aoe", "wall", "ground", "spell"],
+      "colors": { "primary": "#ccf0ff", "secondary": "#00aadd" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "ice_crystal",
+      "geometry": {
+        "type": "wall",
+        "spires": {
+          "count": 7,
+          "spacing": 0.9,
+          "height": [2.0, 4.0],
+          "radius": [0.15, 0.35]
+        },
+        "groundCrack": { "width": 7.0, "segments": 32 }
+      },
+      "particles": {
+        "count": 400,
+        "size": 0.05,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [0.5, 2.0],
+        "velocitySpread": 2.5,
+        "gravity": -0.5,
+        "lifespan": [0.5, 1.5]
+      },
+      "lights": { "color": "#88ddff", "intensity": 2.0, "distance": 8 },
+      "bloom": { "strength": 1.5, "radius": 0.4, "threshold": 0.2 }
+    },
+
+    "chain_lightning": {
+      "id": "chain_lightning",
+      "name": "Chain Lightning",
+      "category": "lightning",
+      "description": "Lightning bolt arcing between two points, with branching sub-bolts and ground sparks.",
+      "tags": ["lightning", "chain", "arc", "spell", "ray"],
+      "colors": {
+        "primary": "#ffffff",
+        "secondary": "#88aaff",
+        "arc": "#aaddff"
+      },
+      "timing": { "duration": 1.5, "loop": true, "speed": 1.0 },
+      "shader": "lightning",
+      "geometry": {
+        "type": "ray",
+        "start": [0, 1.5, 0],
+        "end": [4, 1.5, 0],
+        "segments": 32,
+        "jitter": 0.35,
+        "branches": {
+          "count": 6,
+          "depth": 2,
+          "jitter": 0.25,
+          "lengthScale": 0.45
+        },
+        "glow": { "radius": 0.12, "opacity": 0.5 }
+      },
+      "particles": {
+        "count": 280,
+        "size": 0.06,
+        "opacity": 0.9,
+        "blending": "additive",
+        "distribution": "ray",
+        "shape": "disc",
+        "velocityY": [-0.5, 0.5],
+        "velocitySpread": 1.5,
+        "gravity": 0.1,
+        "lifespan": [0.1, 0.4]
+      },
+      "lights": {
+        "color": "#88bbff",
+        "intensity": 5.0,
+        "distance": 10,
+        "flicker": true
+      },
+      "bloom": { "strength": 3.0, "radius": 0.6, "threshold": 0.1 }
+    },
+
+    "lightning_storm": {
+      "id": "lightning_storm",
+      "name": "Lightning Storm",
+      "category": "lightning",
+      "description": "AOE storm — multiple bolts striking from above, radial sparks, thunder ring.",
+      "tags": ["lightning", "aoe", "storm", "spell"],
+      "colors": { "primary": "#ffff88", "secondary": "#aaddff" },
+      "timing": { "duration": 2.5, "loop": true, "speed": 1.0 },
+      "shader": "lightning",
+      "geometry": {
+        "type": "compound",
+        "elements": ["lightning_bolts", "shockwave_ring"],
+        "bolts": { "count": 5, "radius": 2.5, "height": 6.0, "jitter": 0.5 }
+      },
+      "particles": {
+        "count": 600,
+        "size": 0.07,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "circular",
+        "radius": 3.0,
+        "shape": "disc",
+        "velocityY": [-1, 1],
+        "velocitySpread": 2.0,
+        "gravity": 0.05,
+        "lifespan": [0.1, 0.5]
+      },
+      "lights": {
+        "color": "#ffff88",
+        "intensity": 6.0,
+        "distance": 12,
+        "flicker": true
+      },
+      "bloom": { "strength": 3.5, "radius": 0.7, "threshold": 0.1 }
+    },
+
+    "arcane_symbol": {
+      "id": "arcane_symbol",
+      "name": "Arcane Multishot",
+      "category": "arcane",
+      "description": "Spinning arcane rune on ground, fires multiple projectile bolts in fan.",
+      "tags": ["arcane", "multishot", "rune", "spell", "symbol"],
+      "colors": { "primary": "#cc44ff", "secondary": "#ff44cc" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "compound",
+        "elements": ["rune_disc", "outer_rings", "bolts"],
+        "rune": { "radius": 2.0, "segments": 64, "symbols": 8 },
+        "bolts": { "count": 8, "radius": 2.0, "speed": 4.0, "size": 0.1 }
+      },
+      "particles": {
+        "count": 500,
+        "size": 0.07,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "circular",
+        "radius": 1.8,
+        "shape": "disc",
+        "velocityY": [0.2, 1.0],
+        "velocitySpread": 1.0,
+        "gravity": -0.1,
+        "lifespan": [0.4, 1.2]
+      },
+      "lights": {
+        "color": "#cc44ff",
+        "intensity": 3.0,
+        "distance": 8,
+        "flicker": false
+      },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.15 }
+    },
+
+    "arcane_orb": {
+      "id": "arcane_orb",
+      "name": "Arcane Orb",
+      "category": "arcane",
+      "description": "Slow-moving purple orb with orbital particles and trailing magic wisps.",
+      "tags": ["arcane", "projectile", "orb", "spell"],
+      "colors": { "primary": "#aa44ff", "secondary": "#ff88ff" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "icosahedron", "radius": 0.4, "detail": 3 },
+        "shell": {
+          "type": "torus",
+          "radius": 0.6,
+          "tube": 0.06,
+          "segments": [16, 48]
+        },
+        "trail": { "length": 36, "width": 0.3, "fadeTime": 0.7 }
+      },
+      "particles": {
+        "count": 300,
+        "size": 0.06,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "spiral",
+        "radius": 0.7,
+        "height": 1.5,
+        "shape": "disc",
+        "velocityY": [0.1, 0.5],
+        "drag": 0.9,
+        "lifespan": [0.5, 1.5]
+      },
+      "lights": { "color": "#aa44ff", "intensity": 3.0, "distance": 7 },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.15 }
+    },
+
+    "arcane_nova": {
+      "id": "arcane_nova",
+      "name": "Arcane Nova",
+      "category": "arcane",
+      "description": "Explosive arcane blast — expanding rings, rune fragments, star burst.",
+      "tags": ["arcane", "aoe", "nova", "explosion", "spell"],
+      "colors": { "primary": "#cc44ff", "secondary": "#4488ff" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "compound",
+        "elements": ["outer_sphere", "rings", "shockwave_ring"]
+      },
+      "particles": {
+        "count": 700,
+        "size": 0.08,
+        "opacity": 0.9,
+        "blending": "additive",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [0.5, 3.0],
+        "velocitySpread": 3.0,
+        "gravity": -0.5,
+        "lifespan": [0.4, 1.4]
+      },
+      "lights": { "color": "#cc44ff", "intensity": 4.0, "distance": 10 },
+      "bloom": { "strength": 2.5, "radius": 0.6, "threshold": 0.1 }
+    },
+
+    "earth_wall": {
+      "id": "earth_wall",
+      "name": "Earth Wall",
+      "category": "earth",
+      "description": "Rock spires erupt from ground in a line — earth bending wall with dust and debris.",
+      "tags": ["earth", "wall", "aoe", "ground", "spell"],
+      "colors": { "primary": "#886644", "secondary": "#ccaa66" },
+      "timing": { "duration": 2.5, "loop": true, "speed": 1.0 },
+      "shader": "earth",
+      "geometry": {
+        "type": "wall",
+        "spires": {
+          "count": 6,
+          "spacing": 1.0,
+          "height": [2.5, 4.5],
+          "radius": [0.3, 0.6]
+        },
+        "groundCrack": { "width": 8.0, "segments": 24 },
+        "debris": { "count": 20, "radius": [0.05, 0.2] }
+      },
+      "particles": {
+        "count": 600,
+        "size": 0.1,
+        "opacity": 0.7,
+        "blending": "normal",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [1.0, 4.0],
+        "velocitySpread": 3.0,
+        "gravity": -1.5,
+        "lifespan": [0.5, 2.0]
+      },
+      "lights": { "color": "#aa8844", "intensity": 2.0, "distance": 6 },
+      "bloom": { "strength": 0.8, "radius": 0.3, "threshold": 0.4 }
+    },
+
+    "earth_quake": {
+      "id": "earth_quake",
+      "name": "Earthquake",
+      "category": "earth",
+      "description": "Radial ground-shatter AOE — cracks spread outward with dust columns and tremor rings.",
+      "tags": ["earth", "aoe", "ground", "quake", "spell"],
+      "colors": { "primary": "#aa8855", "secondary": "#ddaa66" },
+      "timing": { "duration": 3.0, "loop": true, "speed": 1.0 },
+      "shader": "earth",
+      "geometry": {
+        "type": "compound",
+        "elements": ["shockwave_ring", "crack_lines"],
+        "cracks": { "count": 8, "length": 5.0, "width": 0.15 },
+        "ring": { "innerRadius": 0.0, "outerRadius": 5.0, "segments": 64 }
+      },
+      "particles": {
+        "count": 800,
+        "size": 0.12,
+        "opacity": 0.75,
+        "blending": "normal",
+        "distribution": "circular",
+        "radius": 4.0,
+        "shape": "disc",
+        "velocityY": [0.5, 3.0],
+        "velocitySpread": 2.5,
+        "gravity": -1.2,
+        "lifespan": [0.5, 2.0]
+      },
+      "lights": { "color": "#aa8855", "intensity": 2.5, "distance": 8 },
+      "bloom": { "strength": 0.6, "radius": 0.2, "threshold": 0.5 }
+    },
+
+    "nature_heal": {
+      "id": "nature_heal",
+      "name": "Nature Heal",
+      "category": "nature",
+      "description": "Rising green wisps, leaf spiral, healing ring — AoE restore.",
+      "tags": ["nature", "heal", "aoe", "spell", "wisp"],
+      "colors": { "primary": "#44cc66", "secondary": "#88ffaa" },
+      "timing": { "duration": 3.0, "loop": true, "speed": 1.0 },
+      "shader": "nature",
+      "geometry": {
+        "type": "compound",
+        "elements": ["outer_sphere", "rings"],
+        "ring": { "innerRadius": 0.5, "outerRadius": 2.5, "segments": 48 }
+      },
+      "particles": {
+        "count": 350,
+        "size": 0.07,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "spiral",
+        "radius": 1.5,
+        "height": 3.0,
+        "shape": "disc",
+        "velocityY": [0.5, 2.0],
+        "drag": 0.92,
+        "lifespan": [0.8, 2.5]
+      },
+      "lights": { "color": "#44cc66", "intensity": 2.5, "distance": 7 },
+      "bloom": { "strength": 1.5, "radius": 0.4, "threshold": 0.2 }
+    },
+
+    "nature_thorns": {
+      "id": "nature_thorns",
+      "name": "Thorn Burst",
+      "category": "nature",
+      "description": "Thorny vine spires erupt radially with leaf shrapnel and pollen particles.",
+      "tags": ["nature", "aoe", "ground", "thorns", "spell"],
+      "colors": { "primary": "#228833", "secondary": "#66cc44" },
+      "timing": { "duration": 2.5, "loop": true, "speed": 1.0 },
+      "shader": "nature",
+      "geometry": {
+        "type": "compound",
+        "elements": ["outer_sphere", "rings", "shockwave_ring"],
+        "spires": { "count": 10, "height": [1.0, 3.0], "radius": [1.0, 3.5] }
+      },
+      "particles": {
+        "count": 450,
+        "size": 0.08,
+        "opacity": 0.75,
+        "blending": "additive",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [0.5, 3.0],
+        "velocitySpread": 3.0,
+        "gravity": -0.8,
+        "lifespan": [0.5, 1.8]
+      },
+      "lights": { "color": "#33aa44", "intensity": 2.0, "distance": 7 },
+      "bloom": { "strength": 1.2, "radius": 0.35, "threshold": 0.3 }
+    },
+
+    "impact_crater": {
+      "id": "impact_crater",
+      "name": "Impact Crater",
+      "category": "impact",
+      "description": "Heavy projectile impact — ground crater shockwave, radial debris, dust column.",
+      "tags": ["impact", "explosion", "ground", "projectile", "aoe"],
+      "colors": { "primary": "#ff6600", "secondary": "#ffcc44" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "fireball",
+      "geometry": {
+        "type": "compound",
+        "elements": ["shockwave_ring", "outer_sphere"],
+        "ring": { "innerRadius": 0.0, "outerRadius": 4.5, "segments": 64 }
+      },
+      "particles": {
+        "count": 750,
+        "size": 0.11,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "explosion",
+        "shape": "disc",
+        "velocityY": [1.0, 5.0],
+        "velocitySpread": 3.5,
+        "gravity": -1.5,
+        "lifespan": [0.4, 1.6]
+      },
+      "lights": {
+        "color": "#ff6600",
+        "intensity": 5.0,
+        "distance": 10,
+        "flicker": true
+      },
+      "bloom": { "strength": 2.5, "radius": 0.6, "threshold": 0.1 }
+    },
+
+    "portal_open": {
+      "id": "portal_open",
+      "name": "Portal Open",
+      "category": "portal",
+      "description": "Swirling dimensional rift — spiral vortex, energy rings, teleport shimmer.",
+      "tags": ["portal", "teleport", "magic", "spell", "vortex"],
+      "colors": { "primary": "#4488ff", "secondary": "#aa44ff" },
+      "timing": { "duration": 3.0, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "compound",
+        "elements": ["outer_sphere", "rings", "rune_disc"],
+        "disc": { "radius": 1.5, "segments": 64 },
+        "rings": { "count": 4, "radius": [1.0, 2.0] }
+      },
+      "particles": {
+        "count": 500,
+        "size": 0.06,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "spiral",
+        "radius": 1.5,
+        "height": 0.5,
+        "shape": "disc",
+        "velocityY": [0.0, 0.3],
+        "drag": 0.95,
+        "lifespan": [0.5, 2.0]
+      },
+      "lights": { "color": "#4488ff", "intensity": 3.5, "distance": 9 },
+      "bloom": { "strength": 2.5, "radius": 0.6, "threshold": 0.1 }
+    },
+
+    "void_rift": {
+      "id": "void_rift",
+      "name": "Void Rift",
+      "category": "portal",
+      "description": "Dark matter tear — black hole-like singularity pulling surrounding particles inward.",
+      "tags": ["portal", "void", "dark", "aoe", "spell"],
+      "colors": { "primary": "#220033", "secondary": "#8800ff" },
+      "timing": { "duration": 4.0, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "compound",
+        "elements": ["outer_sphere", "inner_sphere", "rings"]
+      },
+      "particles": {
+        "count": 600,
+        "size": 0.07,
+        "opacity": 0.75,
+        "blending": "additive",
+        "distribution": "circular",
+        "radius": 4.0,
+        "shape": "disc",
+        "velocityY": [0, 0],
+        "velocitySpread": 0,
+        "gravity": 0,
+        "drag": 0.98,
+        "attraction": { "center": [0, 1, 0], "force": 0.8 },
+        "lifespan": [0.5, 3.0]
+      },
+      "lights": { "color": "#8800ff", "intensity": 3.0, "distance": 8 },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.15 }
+    }
+  }
+}
