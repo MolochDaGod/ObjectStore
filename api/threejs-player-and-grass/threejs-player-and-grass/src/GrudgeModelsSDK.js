@@ -22,8 +22,11 @@ const DEFAULTS = {
   manifestPath: '/api/v1/race-models.json',
   // Fallback: a local copy shipped with the app (served from same origin).
   localManifestPath: '/src/race-models.v1.json',
-  // Authoritative asset origin.
-  assetOrigin: 'https://objects.grudge-studio.com/race-characters/',
+  // Authoritative read-only asset CDN (Cloudflare Worker `grudge-asset-cdn`
+  // fronting the R2 bucket `grudge-assets` with GitHub Pages fallback).
+  // The legacy `objects.grudge-studio.com` subdomain was never created; we
+  // use `assets.grudge-studio.com` which is the live CDN host.
+  assetOrigin: 'https://assets.grudge-studio.com/race-characters/',
 };
 
 export class GrudgeModelsSDK extends GrudgeSDK {
