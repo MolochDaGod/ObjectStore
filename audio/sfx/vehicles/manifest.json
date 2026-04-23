@@ -1,0 +1,23 @@
+{
+  "$schema": "https://molochdagod.github.io/ObjectStore/schemas/audio-pack.v1.json",
+  "id": "vehicles-sfx-v1",
+  "name": "Vehicle SFX",
+  "version": "1.0.0",
+  "updated": "2026-04-23",
+  "source": "uMMORPG / Addons / CustomVehicle / Sounds",
+  "license": "Imported from licensed uMMORPG Unity asset — internal Grudge Studio use.",
+  "base": "/audio/sfx/vehicles/",
+  "description": "Vehicle-related SFX for boats, cars, spacecraft, sails, and projectiles. Each entry is available in both .wav (uncompressed, low-latency) and .ogg (compressed, bandwidth-friendly) where both formats were provided — prefer .ogg for streaming/web and .wav for in-game one-shots.",
+  "clips": {
+    "boatengine":              { "variants": ["wav"],          "category": "engine",     "loop": true,  "use": "Boat engine loop" },
+    "carengine":               { "variants": ["wav"],          "category": "engine",     "loop": true,  "use": "Car engine loop" },
+    "spaceengine":             { "variants": ["wav"],          "category": "engine",     "loop": true,  "use": "Spacecraft engine loop" },
+    "carskid":                 { "variants": ["wav"],          "category": "motion",     "loop": false, "use": "Tire skid one-shot" },
+    "windsail":                { "variants": ["wav"],          "category": "motion",     "loop": true,  "use": "Sail wind/billow loop" },
+    "fire":                    { "variants": ["ogg", "wav"],   "category": "weapon",     "loop": false, "use": "Cannon/gun firing one-shot" },
+    "bulletshot":              { "variants": ["ogg", "wav"],   "category": "weapon",     "loop": false, "use": "Bullet flyby / shot one-shot" },
+    "bulletimpact":            { "variants": ["ogg", "wav"],   "category": "impact",     "loop": false, "use": "Bullet impact one-shot (land/hard surface)" },
+    "bulletimpactunderwater":  { "variants": ["ogg", "wav"],   "category": "impact",     "loop": false, "use": "Bullet impact one-shot (underwater)" },
+    "bulletwater":             { "variants": ["ogg", "wav"],   "category": "impact",     "loop": false, "use": "Bullet hitting water surface one-shot" }
+  }
+}
