@@ -4,153 +4,252 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grudge 3DFX — Effect Viewer & Editor</title>
+<link rel="icon" href="./branding/favicon-32x32.png" type="image/png">
+<link rel="apple-touch-icon" href="./branding/apple-touch-icon.png">
+<meta name="theme-color" content="#0f1419">
+<meta property="og:title" content="Grudge 3DFX — Effect Viewer & Editor">
+<meta property="og:description" content="Browse, preview, and download 3D effects, spells, and shader starters from the Grudge Studio ObjectStore.">
+<meta property="og:image" content="./branding/opengraph.jpg">
 <style>
+/* ---------- WCS / ObjectStore palette ---------- */
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a12;--surface:#12121e;--surface2:#1a1a2e;--border:#2a2a44;--text:#e0e0f0;--text2:#8888aa;--accent:#aa44ff;--accent2:#ff44aa;--fire:#ff4400;--ice:#00ccff;--lightning:#ffff00;--magic:#aa44ff;--impact:#ff6600;--aura:#ffdd44;--portal:#4488ff;--combat:#ff2222;--env:#44aa44}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
-.app{display:grid;grid-template-columns:280px 1fr 320px;grid-template-rows:48px 1fr 200px;height:100vh}
-/* Header */
-.header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:10}
-.header h1{font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header .stats{font-size:11px;color:var(--text2)}
-.header-actions{display:flex;gap:8px}
-.header-actions button{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;transition:all .15s}
-.header-actions button:hover{border-color:var(--accent);background:rgba(170,68,255,.1)}
-.header-actions button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-/* Sidebar */
-.sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;grid-row:2/4}
-.sidebar::-webkit-scrollbar{width:4px}
-.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.search{padding:8px;position:sticky;top:0;background:var(--surface);z-index:5}
-.search input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-size:12px;outline:none}
-.search input:focus{border-color:var(--accent)}
-.categories{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}
-.cat-btn{padding:3px 8px;border-radius:12px;font-size:10px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
-.cat-btn:hover,.cat-btn.active{border-color:var(--accent);color:var(--text);background:rgba(170,68,255,.15)}
-.effect-list{padding:4px 8px}
-.effect-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:2px}
-.effect-item:hover{background:var(--surface2);border-color:var(--border)}
-.effect-item.active{background:rgba(170,68,255,.12);border-color:var(--accent)}
-.effect-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.effect-name{font-size:12px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.effect-cat{font-size:9px;color:var(--text2);text-transform:uppercase}
-.effect-src{font-size:8px;color:var(--text2);opacity:.6}
-/* Viewport */
-.viewport{position:relative;background:#050508;overflow:hidden}
+:root{
+  --bg-dark:#0f1419;
+  --bg-darker:#0a0e14;
+  --card-bg:#1a1f2e;
+  --card-bg-soft:#161b27;
+  --border-color:#3d3d3d;
+  --border-soft:#2a2f3e;
+  --text-primary:#e8e6e3;
+  --text-dim:#8b8685;
+  --accent-gold:#d4a84b;
+  --accent-gold-soft:rgba(212,168,75,.12);
+  --accent-gold-strong:rgba(212,168,75,.3);
+  --accent-blue:#4a9eff;
+  --accent-purple:#9d4dff;
+  --accent-red:#ff4d4d;
+  --accent-green:#4ade80;
+  /* Category hues */
+  --fire:#ff4d4d;--ice:#4a9eff;--lightning:#ffd84a;--magic:#9d4dff;
+  --impact:#ffaa00;--aura:#ffd890;--portal:#4a8bff;--combat:#ff6666;--env:#4ade80;
+}
+html,body{height:100%}
+body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);overflow:hidden}
+
+/* ---------- App grid (fits below the injected nav bars) ---------- */
+/* nav.js injects ~96px of sticky nav above .app. We size .app to fill the remainder. */
+.app{
+  display:grid;
+  grid-template-columns:300px 1fr 320px;
+  grid-template-rows:56px 1fr 200px;
+  height:calc(100vh - 96px);
+  min-height:600px;
+  background:var(--bg-dark);
+}
+@media(max-width:1100px){.app{grid-template-columns:240px 1fr 280px}}
+@media(max-width:900px){.app{grid-template-columns:220px 1fr;grid-template-rows:56px 1fr 32vh 180px}}
+
+/* ---------- Header ---------- */
+.header{
+  grid-column:1/-1;
+  background:linear-gradient(180deg,var(--card-bg) 0%,var(--card-bg-soft) 100%);
+  border-bottom:1px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:10;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:22px;height:22px;display:block}
+.brand h1{font-size:15px;font-weight:700;color:var(--text-primary);letter-spacing:.3px}
+.brand h1 .h1-accent{color:var(--accent-gold);font-weight:800}
+.brand .badge{font-size:10px;background:var(--accent-gold-soft);color:var(--accent-gold);padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.4px;border:1px solid var(--accent-gold-strong)}
+.brand .stats{font-size:11px;color:var(--text-dim);margin-left:6px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.actions button,.actions a{background:var(--card-bg);border:1px solid var(--border-soft);color:var(--text-primary);padding:6px 11px;border-radius:6px;cursor:pointer;font-size:11px;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-family:inherit}
+.actions button:hover,.actions a:hover{border-color:var(--accent-gold);background:var(--accent-gold-soft);color:var(--text-primary)}
+.actions button.primary{background:var(--accent-gold);border-color:var(--accent-gold);color:#000;font-weight:600}
+.actions button.primary:hover{background:#e8bc5a;border-color:#e8bc5a}
+.actions a.characters{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:var(--accent-green)}
+.actions a.characters:hover{border-color:var(--accent-green);background:rgba(74,222,128,.18)}
+
+/* ---------- Sidebar (with tabs) ---------- */
+.sidebar{background:var(--card-bg);border-right:1px solid var(--border-soft);overflow:hidden;grid-row:2/4;display:flex;flex-direction:column}
+.sb-tabs{display:flex;border-bottom:1px solid var(--border-soft);background:var(--card-bg-soft);flex-shrink:0}
+.sb-tab{flex:1;background:transparent;border:none;color:var(--text-dim);padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit;letter-spacing:.4px;text-transform:uppercase}
+.sb-tab:hover{color:var(--text-primary)}
+.sb-tab.active{color:var(--accent-gold);border-bottom-color:var(--accent-gold);background:var(--accent-gold-soft)}
+.sb-panel{display:none;flex:1;overflow-y:auto}
+.sb-panel.active{display:block}
+.sb-panel::-webkit-scrollbar{width:6px}
+.sb-panel::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+.sb-panel::-webkit-scrollbar-thumb:hover{background:var(--border-color)}
+
+.search{padding:10px 10px 6px;position:sticky;top:0;background:var(--card-bg);z-index:5;border-bottom:1px solid var(--border-soft)}
+.search input{width:100%;background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:7px 10px;border-radius:6px;font-size:12px;outline:none;font-family:inherit}
+.search input::placeholder{color:var(--text-dim)}
+.search input:focus{border-color:var(--accent-gold);box-shadow:0 0 0 3px var(--accent-gold-soft)}
+
+.categories{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border-soft)}
+.cat-btn{padding:4px 9px;border-radius:12px;font-size:10px;border:1px solid var(--border-soft);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;font-family:inherit;font-weight:500}
+.cat-btn:hover{color:var(--text-primary);border-color:var(--accent-gold-strong)}
+.cat-btn.active{border-color:var(--accent-gold);color:var(--accent-gold);background:var(--accent-gold-soft);font-weight:600}
+
+.effect-list{padding:6px 10px}
+.effect-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:3px;background:var(--card-bg-soft)}
+.effect-item:hover{background:var(--bg-darker);border-color:var(--border-soft)}
+.effect-item.active{background:var(--accent-gold-soft);border-color:var(--accent-gold)}
+.effect-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.effect-name{font-size:12px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-primary)}
+.effect-meta{display:flex;gap:6px;margin-top:2px}
+.effect-cat{font-size:9px;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.effect-src{font-size:9px;color:var(--text-dim);opacity:.7}
+
+/* Examples tab items */
+.ex-card{background:var(--card-bg-soft);border:1px solid var(--border-soft);border-radius:8px;padding:10px;margin:6px 0;transition:all .15s}
+.ex-card:hover{border-color:var(--accent-gold-strong)}
+.ex-card h4{font-size:12px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ex-card .ex-tag{font-size:9px;padding:1px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.ex-card p{font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:8px}
+.ex-card .ex-url{font-size:10px;color:var(--accent-blue);background:var(--bg-darker);padding:4px 6px;border-radius:4px;font-family:"Cascadia Code","Fira Code",monospace;word-break:break-all;margin-bottom:8px;border:1px solid var(--border-soft)}
+.ex-card .ex-buttons{display:flex;gap:4px;flex-wrap:wrap}
+.ex-card button,.ex-card a{flex:1;min-width:0;background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:5px 8px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:500;transition:all .15s;text-decoration:none;text-align:center;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:3px}
+.ex-card button:hover,.ex-card a:hover{border-color:var(--accent-gold);color:var(--accent-gold)}
+.ex-card a.dl{background:var(--accent-gold);border-color:var(--accent-gold);color:#000;font-weight:600}
+.ex-card a.dl:hover{background:#e8bc5a;border-color:#e8bc5a;color:#000}
+
+/* Shaders tab items */
+.sh-card{background:var(--card-bg-soft);border:1px solid var(--border-soft);border-radius:6px;padding:8px 10px;margin:4px 0;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh-card:hover{border-color:var(--accent-gold);background:var(--accent-gold-soft)}
+.sh-name{font-size:12px;font-weight:600;color:var(--text-primary)}
+.sh-badge{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--bg-darker);color:var(--text-dim);text-transform:uppercase;letter-spacing:.4px}
+
+/* ---------- Viewport ---------- */
+.viewport{position:relative;background:#050507;overflow:hidden}
 .viewport canvas{width:100%!important;height:100%!important;display:block}
-.vp-overlay{position:absolute;top:8px;left:8px;display:flex;gap:6px}
-.vp-overlay button{background:rgba(18,18,30,.8);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(4px)}
-.vp-overlay button:hover,.vp-overlay button.active{color:var(--text);border-color:var(--accent);background:rgba(170,68,255,.2)}
-.vp-info{position:absolute;bottom:8px;left:8px;font-size:10px;color:var(--text2);background:rgba(10,10,18,.8);padding:4px 8px;border-radius:4px;backdrop-filter:blur(4px)}
-.vp-effect-name{position:absolute;top:8px;right:8px;font-size:13px;font-weight:600;color:var(--text);background:rgba(10,10,18,.8);padding:6px 12px;border-radius:6px;backdrop-filter:blur(4px)}
-/* Inspector */
-.inspector{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;grid-row:2/4}
-.inspector::-webkit-scrollbar{width:4px}
-.inspector::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.insp-section{padding:8px 12px;border-bottom:1px solid var(--border)}
-.insp-title{font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text2);margin-bottom:8px;letter-spacing:.5px}
-.insp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.insp-label{font-size:11px;color:var(--text2);flex-shrink:0;width:90px}
-.insp-value{flex:1;display:flex;align-items:center;gap:4px}
-.insp-value input[type=range]{flex:1;accent-color:var(--accent);height:4px}
-.insp-value input[type=number]{width:50px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:11px;text-align:center}
-.insp-value input[type=color]{width:28px;height:22px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:transparent;padding:0}
-.insp-value select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:3px 6px;border-radius:4px;font-size:11px;flex:1}
+.vp-overlay{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:5}
+.vp-overlay button{background:rgba(15,20,25,.85);border:1px solid var(--border-soft);color:var(--text-dim);width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(6px)}
+.vp-overlay button:hover,.vp-overlay button.active{color:var(--accent-gold);border-color:var(--accent-gold);background:rgba(212,168,75,.18)}
+.vp-info{position:absolute;bottom:10px;left:12px;font-size:10px;color:var(--text-dim);background:rgba(15,20,25,.85);padding:4px 10px;border-radius:4px;backdrop-filter:blur(4px);border:1px solid var(--border-soft)}
+.vp-effect-name{position:absolute;top:12px;right:12px;font-size:13px;font-weight:600;color:var(--text-primary);background:rgba(15,20,25,.85);padding:7px 14px;border-radius:6px;backdrop-filter:blur(6px);border:1px solid var(--accent-gold-strong)}
+
+/* ---------- Inspector ---------- */
+.inspector{background:var(--card-bg);border-left:1px solid var(--border-soft);overflow-y:auto;grid-row:2/4}
+.inspector::-webkit-scrollbar{width:6px}
+.inspector::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+.insp-section{padding:10px 14px;border-bottom:1px solid var(--border-soft)}
+.insp-title{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--accent-gold);margin-bottom:10px;letter-spacing:.8px}
+.insp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.insp-label{font-size:11px;color:var(--text-dim);flex-shrink:0;width:88px}
+.insp-value{flex:1;display:flex;align-items:center;gap:6px}
+.insp-value input[type=range]{flex:1;accent-color:var(--accent-gold);height:4px}
+.insp-value input[type=number],.insp-value input[type=text]{width:52px;background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:3px 5px;border-radius:4px;font-size:11px;text-align:center;font-family:inherit}
+.insp-value input[type=color]{width:28px;height:22px;border:1px solid var(--border-soft);border-radius:4px;cursor:pointer;background:transparent;padding:0}
+.insp-value select{background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:4px 6px;border-radius:4px;font-size:11px;flex:1;font-family:inherit}
 .insp-toggle{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.insp-toggle label{font-size:11px;color:var(--text2);cursor:pointer;flex:1}
-.insp-toggle input[type=checkbox]{accent-color:var(--accent)}
-/* Timeline */
-.timeline{grid-column:2/3;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px;display:flex;flex-direction:column;gap:6px}
-.tl-controls{display:flex;align-items:center;gap:8px}
-.tl-controls button{background:var(--surface2);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
-.tl-controls button:hover{border-color:var(--accent)}
-.tl-controls button.playing{background:var(--accent);border-color:var(--accent)}
-.tl-time{font-size:11px;color:var(--text2);font-variant-numeric:tabular-nums;min-width:60px}
-.tl-track{flex:1;height:24px;background:var(--surface2);border-radius:4px;position:relative;cursor:pointer;overflow:hidden}
-.tl-progress{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .05s linear}
-.tl-speed{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
-.tl-speed select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 6px;border-radius:4px;font-size:11px}
-/* Shader Editor */
-.shader-editor{display:none;grid-column:2/3;grid-row:3/4;background:var(--surface);border-top:1px solid var(--border);overflow:hidden}
+.insp-toggle label{font-size:11px;color:var(--text-dim);cursor:pointer;flex:1}
+.insp-toggle input[type=checkbox]{accent-color:var(--accent-gold)}
+
+/* ---------- Timeline ---------- */
+.timeline{grid-column:2/3;background:var(--card-bg);border-top:1px solid var(--border-soft);padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.tl-controls{display:flex;align-items:center;gap:10px}
+.tl-controls button{background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.tl-controls button:hover{border-color:var(--accent-gold);color:var(--accent-gold)}
+.tl-controls button.playing{background:var(--accent-gold);border-color:var(--accent-gold);color:#000}
+.tl-time{font-size:11px;color:var(--text-dim);font-variant-numeric:tabular-nums;min-width:90px;font-family:"Cascadia Code","Fira Code",monospace}
+.tl-track{flex:1;height:26px;background:var(--bg-darker);border:1px solid var(--border-soft);border-radius:6px;position:relative;cursor:pointer;overflow:hidden}
+.tl-progress{height:100%;background:linear-gradient(90deg,var(--accent-gold),#f0d890);border-radius:5px;transition:width .05s linear}
+.tl-speed{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim)}
+.tl-speed select{background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:3px 8px;border-radius:4px;font-size:11px;font-family:inherit}
+
+/* ---------- Shader editor ---------- */
+.shader-editor{display:none;grid-column:2/3;grid-row:3/4;background:var(--card-bg);border-top:1px solid var(--border-soft);overflow:hidden}
 .shader-editor.open{display:flex;flex-direction:column}
-.shader-tabs{display:flex;border-bottom:1px solid var(--border)}
-.shader-tabs button{background:transparent;border:none;color:var(--text2);padding:6px 12px;font-size:11px;cursor:pointer;border-bottom:2px solid transparent}
-.shader-tabs button.active{color:var(--text);border-bottom-color:var(--accent)}
-.shader-code{flex:1;overflow:auto;padding:8px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;line-height:1.5;color:#c8d0e0;background:#0d0d18;white-space:pre;tab-size:2;outline:none}
-.shader-code::-webkit-scrollbar{width:4px;height:4px}
-.shader-code::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-/* Toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--accent);color:var(--text);padding:8px 16px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.shader-tabs{display:flex;border-bottom:1px solid var(--border-soft);background:var(--card-bg-soft)}
+.shader-tabs button{background:transparent;border:none;color:var(--text-dim);padding:8px 14px;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;letter-spacing:.4px;text-transform:uppercase}
+.shader-tabs button.active{color:var(--accent-gold);border-bottom-color:var(--accent-gold)}
+.shader-code{flex:1;overflow:auto;padding:10px 14px;font-family:"Cascadia Code","Fira Code",monospace;font-size:11px;line-height:1.6;color:#d4cfb9;background:var(--bg-darker);white-space:pre;tab-size:2;outline:none}
+.shader-code::-webkit-scrollbar{width:6px;height:6px}
+.shader-code::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--card-bg);border:1px solid var(--accent-gold);color:var(--text-primary);padding:10px 18px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,.6)}
 .toast.show{opacity:1}
-@media(max-width:1024px){.app{grid-template-columns:220px 1fr 260px}}
-/* Color Presets */
-.preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:2px 0 4px}
-.preset-swatch{border:1px solid var(--border);border-radius:4px;cursor:pointer;height:24px;position:relative;overflow:hidden;transition:transform .1s,border-color .1s;display:flex}
-.preset-swatch:hover{transform:scale(1.06);border-color:rgba(255,255,255,.3)}
-.preset-swatch .ps-h1{flex:1}
-.preset-swatch .ps-h2{flex:1}
-.preset-label{font-size:8px;color:var(--text2);text-align:center;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* HSL Adjust */
-.hsl-row{display:flex;align-items:center;gap:4px;margin-bottom:5px;font-size:11px}
-.hsl-row .insp-label{color:var(--text2);flex-shrink:0;width:70px}
-.hsl-row input[type=range]{flex:1;accent-color:var(--accent);height:4px}
-.hsl-row span{min-width:28px;text-align:right;font-size:10px;color:var(--text2)}
-/* Pattern Tabs */
-.pat-tabs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
-.pat-tab{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:3px 7px;border-radius:4px;cursor:pointer;font-size:9px;transition:all .12s}
-.pat-tab:hover,.pat-tab.active{border-color:var(--accent);color:var(--text);background:rgba(170,68,255,.15)}
-/* Physical Texture */
-.phys-row{display:flex;align-items:center;gap:4px;margin-bottom:5px;font-size:11px}
-.phys-row .insp-label{color:var(--text2);flex-shrink:0;width:78px}
-.phys-row input[type=range]{flex:1;accent-color:var(--accent2);height:4px}
-.phys-row span{min-width:28px;text-align:right;font-size:10px;color:var(--text2)}
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <!-- Header -->
-  <div class="header">
-    <div style="display:flex;align-items:center;gap:12px">
-      <h1>⚡ GRUDGE 3DFX</h1>
-      <span class="stats" id="stats">Loading effects...</span>
+  <header class="header">
+    <div class="brand">
+      <img src="./branding/favicon-32x32.png" alt="Grudge Studio" onerror="this.style.display='none'">
+      <h1>Grudge <span class="h1-accent">3DFX</span></h1>
+      <span class="badge">v3</span>
+      <span class="stats" id="stats">Loading effects…</span>
     </div>
-    <div class="header-actions">
-      <button onclick="toggleShaderEditor()" id="btn-shader">✎ Shader</button>
+    <div class="actions">
+      <button onclick="toggleShaderEditor()" id="btn-shader" title="Toggle shader editor">✎ Shader</button>
       <button onclick="addSceneLayer()" title="Add current effect as a scene layer">＋ Layer</button>
       <button onclick="clearSceneLayers()" title="Clear all layers">✕ Layers</button>
-      <button onclick="exportEffect()">↓ Export</button>
-      <a href="./api/threejs-player-and-grass/index.html" target="_blank" style="background:#162416;border:1px solid #243824;color:#4ade80;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .15s" onmouseover="this.style.borderColor='#4ade80'" onmouseout="this.style.borderColor='#243824'">⚔ Characters</a>
-      <button onclick="saveToR2()" class="primary">☁ Save to R2</button>
+      <button onclick="exportEffect()" title="Export current effect JSON">↓ Export</button>
+      <a href="./api/threejs-player-and-grass/index.html" target="_blank" class="characters" title="Open the character demo">⚔ Characters</a>
+      <button onclick="saveToR2()" class="primary" title="Upload current effect to R2">☁ Save to R2</button>
     </div>
-  </div>
+  </header>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="search"><input type="text" id="search" placeholder="Search effects..." oninput="filterEffects()"></div>
-    <div class="categories" id="categories"></div>
-    <div class="effect-list" id="effectList"></div>
-  </div>
+  <!-- Sidebar with tabs -->
+  <aside class="sidebar">
+    <div class="sb-tabs" role="tablist">
+      <button class="sb-tab active" data-tab="effects" onclick="switchSidebarTab('effects')">Effects</button>
+      <button class="sb-tab"        data-tab="spells"   onclick="switchSidebarTab('spells')">Spells</button>
+      <button class="sb-tab"        data-tab="shaders"  onclick="switchSidebarTab('shaders')">Shaders</button>
+      <button class="sb-tab"        data-tab="examples" onclick="switchSidebarTab('examples')">Examples</button>
+    </div>
+
+    <!-- Effects panel -->
+    <div class="sb-panel active" id="panel-effects">
+      <div class="search"><input type="text" id="search" placeholder="Search effects…" oninput="filterEffects()"></div>
+      <div class="categories" id="categories"></div>
+      <div class="effect-list" id="effectList"></div>
+    </div>
+
+    <!-- Spells panel -->
+    <div class="sb-panel" id="panel-spells">
+      <div class="search"><input type="text" id="spellSearch" placeholder="Search spells…" oninput="filterSpells()"></div>
+      <div class="effect-list" id="spellList"></div>
+    </div>
+
+    <!-- Shaders panel -->
+    <div class="sb-panel" id="panel-shaders">
+      <div class="effect-list" id="shadersList"></div>
+    </div>
+
+    <!-- Examples panel (new) -->
+    <div class="sb-panel" id="panel-examples">
+      <div class="effect-list" id="examplesList">
+        <div style="padding:14px;color:var(--text-dim);font-size:11px">Loading downloadable examples…</div>
+      </div>
+    </div>
+  </aside>
 
   <!-- Viewport -->
   <div class="viewport" id="viewport">
     <div class="vp-overlay">
-      <button onclick="toggleGrid()" id="btn-grid" class="active" title="Grid">⊞</button>
-      <button onclick="toggleAutoRotate()" id="btn-rotate" class="active" title="Auto Rotate">↻</button>
-      <button onclick="resetCamera()" title="Reset Camera">⌂</button>
+      <button onclick="toggleGrid()" id="btn-grid" class="active" title="Toggle grid">⊞</button>
+      <button onclick="toggleAutoRotate()" id="btn-rotate" class="active" title="Auto rotate">↻</button>
+      <button onclick="resetCamera()" title="Reset camera">⌂</button>
       <button onclick="toggleGizmo('translate')" id="btn-move" title="Move">✥</button>
       <button onclick="toggleGizmo('rotate')" id="btn-rot" title="Rotate">↺</button>
       <button onclick="toggleGizmo('scale')" id="btn-scale" title="Scale">⇲</button>
     </div>
     <div class="vp-effect-name" id="effectNameDisplay">Select an effect</div>
-    <div class="vp-info" id="vpInfo">FPS: -- | Particles: 0</div>
+    <div class="vp-info" id="vpInfo">FPS: -- · Particles: 0</div>
   </div>
 
   <!-- Inspector -->
-  <div class="inspector">
+  <aside class="inspector">
     <div class="insp-section">
       <div class="insp-title">Colors</div>
-      <div class="insp-row"><span class="insp-label">Primary</span><div class="insp-value"><input type="color" id="color1" value="#ff4400" onchange="updateColors()"><input type="text" id="color1Hex" value="#ff4400" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:10px" onchange="document.getElementById('color1').value=this.value;updateColors()"></div></div>
-      <div class="insp-row"><span class="insp-label">Secondary</span><div class="insp-value"><input type="color" id="color2" value="#ffcc00" onchange="updateColors()"><input type="text" id="color2Hex" value="#ffcc00" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:2px 4px;border-radius:4px;font-size:10px" onchange="document.getElementById('color2').value=this.value;updateColors()"></div></div>
+      <div class="insp-row"><span class="insp-label">Primary</span><div class="insp-value"><input type="color" id="color1" value="#ff4400" onchange="updateColors()"><input type="text" id="color1Hex" value="#ff4400" style="width:70px" onchange="document.getElementById('color1').value=this.value;updateColors()"></div></div>
+      <div class="insp-row"><span class="insp-label">Secondary</span><div class="insp-value"><input type="color" id="color2" value="#ffcc00" onchange="updateColors()"><input type="text" id="color2Hex" value="#ffcc00" style="width:70px" onchange="document.getElementById('color2').value=this.value;updateColors()"></div></div>
     </div>
     <div class="insp-section">
       <div class="insp-title">Effect</div>
@@ -168,7 +267,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     </div>
     <div class="insp-section">
       <div class="insp-title">Environment</div>
-      <div class="insp-row"><span class="insp-label">Background</span><div class="insp-value"><input type="color" id="bgColor" value="#0a0a12" onchange="updateEnv()"></div></div>
+      <div class="insp-row"><span class="insp-label">Background</span><div class="insp-value"><input type="color" id="bgColor" value="#0f1419" onchange="updateEnv()"></div></div>
       <div class="insp-row"><span class="insp-label">Ambient</span><div class="insp-value"><input type="range" id="ambientIntensity" min="0" max="3" step="0.1" value="0.5" oninput="updateEnv()"><input type="number" id="ambientIntensityNum" value="0.5" step="0.1" onchange="syncSlider('ambientIntensity');updateEnv()"></div></div>
       <div class="insp-row"><span class="insp-label">Dir Light</span><div class="insp-value"><input type="range" id="dirIntensity" min="0" max="5" step="0.1" value="0.3" oninput="updateEnv()"><input type="number" id="dirIntensityNum" value="0.3" step="0.1" onchange="syncSlider('dirIntensity');updateEnv()"></div></div>
       <div class="insp-toggle"><input type="checkbox" id="fogEnabled" onchange="updateEnv()"><label for="fogEnabled">Fog</label></div>
@@ -180,7 +279,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="insp-row"><span class="insp-label">Pos Y</span><div class="insp-value"><input type="range" id="posY" min="-5" max="5" step="0.1" value="0" oninput="updateTransform()"></div></div>
       <div class="insp-row"><span class="insp-label">Pos Z</span><div class="insp-value"><input type="range" id="posZ" min="-5" max="5" step="0.1" value="0" oninput="updateTransform()"></div></div>
     </div>
-  </div>
+  </aside>
 
   <!-- Timeline -->
   <div class="timeline" id="timeline">
@@ -189,12 +288,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <button onclick="restartEffect()" title="Restart">⟲</button>
       <span class="tl-time" id="timeDisplay">0.00s / 2.00s</span>
       <div class="tl-track" id="tlTrack" onclick="seekTimeline(event)"><div class="tl-progress" id="tlProgress" style="width:0%"></div></div>
-      <div class="tl-speed"><span>Speed:</span><select id="speedSelect" onchange="setPlaybackSpeed()"><option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="1.5">1.5x</option><option value="2">2x</option></select></div>
-      <div class="insp-toggle" style="margin:0"><input type="checkbox" id="loopToggle" checked onchange="toggleLoop()"><label for="loopToggle" style="font-size:11px;color:var(--text2)">Loop</label></div>
+      <div class="tl-speed"><span>Speed</span><select id="speedSelect" onchange="setPlaybackSpeed()"><option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="1.5">1.5x</option><option value="2">2x</option></select></div>
+      <div class="insp-toggle" style="margin:0"><input type="checkbox" id="loopToggle" checked onchange="toggleLoop()"><label for="loopToggle" style="font-size:11px;color:var(--text-dim)">Loop</label></div>
     </div>
   </div>
 
-  <!-- Shader Editor (hidden by default) -->
+  <!-- Shader editor (hidden by default, replaces timeline when open) -->
   <div class="shader-editor" id="shaderEditor">
     <div class="shader-tabs">
       <button class="active" onclick="switchShaderTab('vertex')">Vertex</button>
@@ -216,17 +315,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </script>
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { TransformControls } from 'three/addons/controls/TransformControls.js';
+import { OrbitControls }       from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer }      from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }          from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }     from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { TransformControls }   from 'three/addons/controls/TransformControls.js';
 
-const REGISTRY_URL = './api/v1/3dfx-registry.json';
 const OBJECTSTORE_BASE = 'https://molochdagod.github.io/ObjectStore';
-const R2_URL = 'https://objectstore.grudge-studio.com';
+const REGISTRY_URL     = './api/v1/3dfx-registry.json';
+const SPELLS_URL       = './api/v1/vfx-spells.json';
+const EXAMPLES_URL     = './api/v1/3dfx-examples.json';
+const R2_URL           = 'https://objectstore.grudge-studio.com';
 
+// ── State ──
 let registry = null;
+let spellRegistry = null;
+let examplesRegistry = null;
 let scene, camera, renderer, composer, bloomPass, controls, transformControls;
 let clock = new THREE.Clock();
 let effectGroup = new THREE.Group();
@@ -243,6 +347,72 @@ let fps = 0, frameCount = 0, lastFpsTime = 0;
 let currentShaderTab = 'vertex';
 let loadedShaders = {};
 let shaderEditorOpen = false;
+let savedLayers = [];
+let currentCatFilter = 'all';
+let activeSidebarTab = 'effects';
+
+// ── Particle shader pair (shared by all effects) ──
+const PARTICLE_VERT = `
+attribute float aAlpha;
+varying   float vAlpha;
+void main() {
+  vAlpha = aAlpha;
+  vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+  gl_PointSize = 8.0 * (300.0 / -mvPos.z);
+  gl_Position  = projectionMatrix * mvPos;
+}`;
+
+const PARTICLE_FRAG = `
+uniform vec3  uColor;
+uniform float uOpacity;
+varying float vAlpha;
+void main() {
+  vec2  c = gl_PointCoord - vec2(0.5);
+  float d = length(c);
+  if (d > 0.5) discard;
+  float a = smoothstep(0.5, 0.15, d) * vAlpha * uOpacity;
+  gl_FragColor = vec4(uColor, a);
+}`;
+
+// ── Shader sources (built-in material families) ──
+const SHADER_SOURCES = {
+  fire: {
+    vertex:   `varying vec2 vUv;varying float vTime;uniform float uTime;void main(){vUv=uv;vTime=uTime;vec3 pos=position;pos.y+=sin(uTime*3.0+position.x*5.0)*0.1;pos.x+=cos(uTime*2.0+position.y*4.0)*0.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying float vTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float noise(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0;float a=0.5;for(int i=0;i<4;i++){v+=a*noise(p);p=p*2.0;a*=0.5;}return v;}void main(){vec2 uv=vUv;uv.y-=vTime*0.5;float n=fbm(uv*4.0+vTime);float flame=1.0-vUv.y;flame=pow(flame,1.5);flame*=n;flame*=smoothstep(0.0,0.3,vUv.y);flame*=smoothstep(1.0,0.7,abs(vUv.x-0.5)*2.0);vec3 color=mix(uColor2,uColor1,flame);float alpha=flame*uIntensity*2.0;gl_FragColor=vec4(color,alpha);}`
+  },
+  lightning: {
+    vertex:   `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float wave=sin(uTime*20.0+position.y*10.0)*0.1;pos.x+=wave*(1.0-vUv.y);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){float centerDist=abs(vUv.x-0.5)*2.0;float glow=1.0-pow(centerDist,0.5);glow*=1.0-vUv.y*0.3;float flicker=0.8+0.2*sin(uTime*50.0);glow*=flicker;vec3 color=mix(uColor2,uColor1,glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
+  },
+  shockwave: {
+    vertex:   `varying vec2 vUv;uniform float uProgress;void main(){vUv=uv;vec3 pos=position;float scale=1.0+uProgress*3.0;pos.xz*=scale;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform float uProgress;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float ring=smoothstep(0.4,0.5,dist)*smoothstep(0.6,0.5,dist);float alpha=ring*(1.0-uProgress);gl_FragColor=vec4(uColor1,alpha);}`
+  },
+  magic: {
+    vertex:   `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float spiral=sin(uTime*2.0+atan(position.x,position.z)*3.0)*0.1;pos.y+=spiral;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float angle=atan(vUv.y-0.5,vUv.x-0.5);float spiral=sin(angle*5.0-uTime*3.0+dist*10.0);spiral=smoothstep(0.0,1.0,spiral);float glow=1.0-dist;glow=pow(glow,2.0);vec3 color=mix(uColor2,uColor1,spiral*glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
+  },
+  fire_slash: {
+    vertex:   `varying vec2 vUv;varying float vAlpha;varying float vHeat;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float wave=sin(uTime*14.0+position.x*8.0)*0.06;float wave2=cos(uTime*9.0+position.y*5.0)*0.04;pos.z+=wave+wave2;vAlpha=smoothstep(0.0,0.25,vUv.x)*smoothstep(1.0,0.55,vUv.x);vHeat=1.0-abs(vUv.y-0.5)*2.0;vHeat=pow(vHeat,1.5);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying float vAlpha;varying float vHeat;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float rand(vec2 co){return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0,a=0.5;for(int i=0;i<5;i++){v+=a*fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);p=p*2.17+vec2(0.1,0.3);a*=0.48;}return v;}void main(){vec2 uv=vUv;uv.y-=uTime*0.55;uv.x+=sin(uTime*3.0+vUv.y*6.0)*0.04;float n=fbm(uv*3.5);float n2=fbm(uv*6.0+vec2(uTime*0.3,0.0));float core=vHeat*n*1.4;core=clamp(core,0.0,1.0);float edge=1.0-abs(vUv.y-0.5)*2.2;edge=pow(max(edge,0.0),1.2);vec3 white=vec3(1.0,0.95,0.8);vec3 c=mix(uColor2,uColor1,n);c=mix(c,white,core*edge*0.7);float spark=step(0.97,rand(floor(uv*18.0)+floor(uTime*6.0)));c+=spark*white*1.5;float alpha=vAlpha*edge*(n*0.6+0.4)*uIntensity*(1.0-n2*0.3);gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
+  },
+  fireball: {
+    vertex:   `varying vec2 vUv;varying vec3 vNormal;varying float vDisplace;uniform float uTime;float h3(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}float n3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(mix(h3(i),h3(i+vec3(1,0,0)),f.x),mix(h3(i+vec3(0,1,0)),h3(i+vec3(1,1,0)),f.x),f.y),mix(mix(h3(i+vec3(0,0,1)),h3(i+vec3(1,0,1)),f.x),mix(h3(i+vec3(0,1,1)),h3(i+vec3(1,1,1)),f.x),f.y),f.z);}void main(){vUv=uv;vNormal=normal;float n=n3(position*3.0+uTime*1.2);float d=n*0.18*(0.85+0.15*sin(uTime*5.0));vDisplace=d;gl_Position=projectionMatrix*modelViewMatrix*vec4(position+normal*d,1.0);}`,
+    fragment: `varying vec2 vUv;varying vec3 vNormal;varying float vDisplace;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float fbm(vec3 p){float v=0.0,a=0.5;for(int i=0;i<4;i++){v+=a*fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);p=p*2.1+vec3(0.5,0.3,0.1);a*=0.5;}return v;}void main(){vec3 vd=normalize(cameraPosition-vNormal);float fresnel=1.0-max(dot(normalize(vNormal),vd),0.0);fresnel=pow(fresnel,2.0);float n=fbm(vNormal*2.5+uTime*0.6);float n2=fbm(vNormal*5.0-uTime*0.4);vec3 white=vec3(1.0,0.98,0.85);vec3 c=mix(white,uColor2,n*0.7);c=mix(c,uColor1,n2*0.5+fresnel*0.4);c*=(1.0-pow(fresnel,0.8));c+=uColor1*pow(fresnel,5.0)*2.5;float alpha=(1.0-fresnel*0.5)*uIntensity;gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
+  },
+  ice_crystal: {
+    vertex:   `varying vec2 vUv;varying vec3 vNormal;varying float vFresnel;uniform float uTime;void main(){vUv=uv;vNormal=normalize(normalMatrix*normal);vec3 pos=position;float shimmer=sin(uTime*8.0+position.y*12.0+position.x*5.0)*0.012;pos.x+=shimmer;pos.z+=shimmer*0.7;vec4 wp=modelMatrix*vec4(pos,1.0);vec3 vd=normalize(cameraPosition-wp.xyz);vFresnel=1.0-max(dot(vNormal,vd),0.0);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying vec3 vNormal;varying float vFresnel;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}void main(){float band=sin(vUv.x*18.0+uTime*1.5)*sin(vUv.y*12.0-uTime*2.2);float band2=sin((vUv.x+vUv.y)*14.0+uTime*3.0)*0.5+0.5;float caustic=(band*0.5+0.5)*band2;vec3 prism=vec3(sin(vUv.x*6.0+uTime)*0.5+0.5,sin(vUv.y*4.0+uTime*1.3+1.0)*0.5+0.5,1.0);vec3 c=mix(uColor1,uColor2,vFresnel);c=mix(c,prism*uColor2,caustic*0.35);c+=uColor2*pow(vFresnel,3.0)*2.0;c+=vec3(1.0)*pow(max(dot(vNormal,normalize(vec3(1.0,2.0,1.0))),0.0),64.0)*2.5;float alpha=mix(0.55,0.95,vFresnel)*uIntensity;gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
+  },
+  earth: {
+    vertex:   `varying vec2 vUv;varying vec3 vWorldNormal;varying float vHeight;uniform float uTime;float h3(vec3 p){return fract(sin(dot(p,vec3(17.3,41.7,93.1)))*43758.5453);}void main(){vUv=uv;vWorldNormal=normalize(mat3(modelMatrix)*normal);vHeight=position.y;vec3 pos=position;float n=h3(floor(position*4.0));float t=sin(uTime*2.0+n*6.28)*0.5+0.5;pos+=normal*n*0.06*t;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying vec3 vWorldNormal;varying float vHeight;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float vor(vec2 p){vec2 g=floor(p);float d=1.0;for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){vec2 b=g+vec2(x,y);vec2 r=b+vec2(hash(b),hash(b.yx))-p;d=min(d,dot(r,r));}return sqrt(d);}void main(){float rock=vor(vUv*8.0);float rock2=vor(vUv*14.0+vec2(3.7,1.1));float hfac=clamp(vHeight/4.0,0.0,1.0);vec3 c=mix(uColor1*0.6,uColor2,hfac);c=mix(c,uColor2*1.3,rock*0.3);c=mix(c,uColor1*0.4,rock2*0.25);float crack=1.0-smoothstep(0.0,0.12,rock);c+=mix(vec3(1.0,0.7,0.3),uColor2*2.0,hfac)*crack*0.8*uIntensity;c+=uColor2*pow(max(dot(vWorldNormal,normalize(vec3(0.3,1.0,0.5))),0.0),4.0)*0.6;gl_FragColor=vec4(c,1.0);}`
+  },
+  nature: {
+    vertex:   `varying vec2 vUv;varying float vWind;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float sway=sin(uTime*1.8+position.x*2.5+position.z*1.3)*pos.y*0.06;float sway2=cos(uTime*2.6+position.z*1.8)*pos.y*0.03;pos.x+=sway;pos.z+=sway2;vWind=abs(sway)*8.0;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
+    fragment: `varying vec2 vUv;varying float vWind;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0,a=0.5;for(int i=0;i<4;i++){v+=a*hash(floor(p));p=p*2.0+vec2(0.3,0.7);a*=0.5;}return v;}void main(){vec2 uv=vUv;float cells=fbm(uv*6.0+uTime*0.15);float vein=1.0-smoothstep(0.0,0.08,abs(cells-0.5));vec3 c=mix(uColor1*0.7,uColor2,cells);c+=uColor2*vein*0.9;float pollen=step(0.96,hash(floor(uv*22.0)+floor(uTime*4.0)*0.01));c+=vec3(1.0,1.0,0.6)*pollen*2.5;c+=uColor2*vWind*0.15;float alpha=(cells*0.5+0.5)*uIntensity*(0.7+vein*0.3);gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
+  }
+};
 
 // ── Init Three.js ──
 function initScene() {
@@ -250,7 +420,7 @@ function initScene() {
   const w = vp.clientWidth, h = vp.clientHeight;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0a0a12);
+  scene.background = new THREE.Color(0x0f1419);
 
   camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
   camera.position.set(5, 4, 8);
@@ -282,16 +452,16 @@ function initScene() {
   ambientLight = new THREE.AmbientLight(0x222233, 0.5);
   scene.add(ambientLight);
 
-  dirLight = new THREE.DirectionalLight(0x8888ff, 0.3);
+  dirLight = new THREE.DirectionalLight(0xd4a84b, 0.3);
   dirLight.position.set(5, 10, 5);
   scene.add(dirLight);
 
-  gridHelper = new THREE.GridHelper(20, 40, 0x333355, 0x222244);
+  gridHelper = new THREE.GridHelper(20, 40, 0x3d3d3d, 0x2a2f3e);
   scene.add(gridHelper);
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(30, 30),
-    new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.9, metalness: 0.1 })
+    new THREE.MeshStandardMaterial({ color: 0x0a0e14, roughness: 0.9, metalness: 0.1 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.01;
@@ -307,56 +477,6 @@ function initScene() {
     composer.setSize(w2, h2);
   });
 }
-
-// ── Spell registry URL ──
-const SPELLS_URL = './api/v1/vfx-spells.json';
-let spellR egistry = null;  vPos = modelVi   gl_Position = projectionMat rix * mvPos;
-}`;
-con  
-  if (d > 0.5) discard;
-  float a = smoothstep(0.5, 0.15, d) * vAlpha * uOpacity;
-  gl_FragColor = vec4(uColor, a);
-}`;
-
-// ── Shader cache ──
-const SHADER_SOURCES = {
-  fire: {
-    vertex: `varying vec2 vUv;varying float vTime;uniform float uTime;void main(){vUv=uv;vTime=uTime;vec3 pos=position;pos.y+=sin(uTime*3.0+position.x*5.0)*0.1;pos.x+=cos(uTime*2.0+position.y*4.0)*0.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;varying float vTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float noise(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0;float a=0.5;for(int i=0;i<4;i++){v+=a*noise(p);p=p*2.0;a*=0.5;}return v;}void main(){vec2 uv=vUv;uv.y-=vTime*0.5;float n=fbm(uv*4.0+vTime);float flame=1.0-vUv.y;flame=pow(flame,1.5);flame*=n;flame*=smoothstep(0.0,0.3,vUv.y);flame*=smoothstep(1.0,0.7,abs(vUv.x-0.5)*2.0);vec3 color=mix(uColor2,uColor1,flame);float alpha=flame*uIntensity*2.0;gl_FragColor=vec4(color,alpha);}`
-  },
-  lightning: {
-    vertex: `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float wave=sin(uTime*20.0+position.y*10.0)*0.1;pos.x+=wave*(1.0-vUv.y);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){float centerDist=abs(vUv.x-0.5)*2.0;float glow=1.0-pow(centerDist,0.5);glow*=1.0-vUv.y*0.3;float flicker=0.8+0.2*sin(uTime*50.0);glow*=flicker;vec3 color=mix(uColor2,uColor1,glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
-  },
-  shockwave: {
-    vertex: `varying vec2 vUv;uniform float uProgress;void main(){vUv=uv;vec3 pos=position;float scale=1.0+uProgress*3.0;pos.xz*=scale;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform float uProgress;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float ring=smoothstep(0.4,0.5,dist)*smoothstep(0.6,0.5,dist);float alpha=ring*(1.0-uProgress);gl_FragColor=vec4(uColor1,alpha);}`
-  },
-  magic: {
-    vertex: `varying vec2 vUv;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float spiral=sin(uTime*2.0+atan(position.x,position.z)*3.0)*0.1;pos.y+=spiral;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uTime;void main(){vec2 center=vec2(0.5,0.5);float dist=distance(vUv,center);float angle=atan(vUv.y-0.5,vUv.x-0.5);float spiral=sin(angle*5.0-uTime*3.0+dist*10.0);spiral=smoothstep(0.0,1.0,spiral);float glow=1.0-dist;glow=pow(glow,2.0);vec3 color=mix(uColor2,uColor1,spiral*glow);float alpha=glow*1.5;gl_FragColor=vec4(color,alpha);}`
-  },
-  fire_slash: {
-    vertex: `varying vec2 vUv;varying float vAlpha;varying float vHeat;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float wave=sin(uTime*14.0+position.x*8.0)*0.06;float wave2=cos(uTime*9.0+position.y*5.0)*0.04;pos.z+=wave+wave2;vAlpha=smoothstep(0.0,0.25,vUv.x)*smoothstep(1.0,0.55,vUv.x);vHeat=1.0-abs(vUv.y-0.5)*2.0;vHeat=pow(vHeat,1.5);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;varying float vAlpha;varying float vHeat;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float rand(vec2 co){return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0,a=0.5;for(int i=0;i<5;i++){v+=a*fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);p=p*2.17+vec2(0.1,0.3);a*=0.48;}return v;}void main(){vec2 uv=vUv;uv.y-=uTime*0.55;uv.x+=sin(uTime*3.0+vUv.y*6.0)*0.04;float n=fbm(uv*3.5);float n2=fbm(uv*6.0+vec2(uTime*0.3,0.0));float core=vHeat*n*1.4;core=clamp(core,0.0,1.0);float edge=1.0-abs(vUv.y-0.5)*2.2;edge=pow(max(edge,0.0),1.2);vec3 white=vec3(1.0,0.95,0.8);vec3 c=mix(uColor2,uColor1,n);c=mix(c,white,core*edge*0.7);float spark=step(0.97,rand(floor(uv*18.0)+floor(uTime*6.0)));c+=spark*white*1.5;float alpha=vAlpha*edge*(n*0.6+0.4)*uIntensity*(1.0-n2*0.3);gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
-  },
-  fireball: {
-    vertex: `varying vec2 vUv;varying vec3 vNormal;varying float vDisplace;uniform float uTime;float h3(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}float n3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(mix(h3(i),h3(i+vec3(1,0,0)),f.x),mix(h3(i+vec3(0,1,0)),h3(i+vec3(1,1,0)),f.x),f.y),mix(mix(h3(i+vec3(0,0,1)),h3(i+vec3(1,0,1)),f.x),mix(h3(i+vec3(0,1,1)),h3(i+vec3(1,1,1)),f.x),f.y),f.z);}void main(){vUv=uv;vNormal=normal;float n=n3(position*3.0+uTime*1.2);float d=n*0.18*(0.85+0.15*sin(uTime*5.0));vDisplace=d;gl_Position=projectionMatrix*modelViewMatrix*vec4(position+normal*d,1.0);}`,
-    fragment: `varying vec2 vUv;varying vec3 vNormal;varying float vDisplace;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float fbm(vec3 p){float v=0.0,a=0.5;for(int i=0;i<4;i++){v+=a*fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);p=p*2.1+vec3(0.5,0.3,0.1);a*=0.5;}return v;}void main(){vec3 vd=normalize(cameraPosition-vNormal);float fresnel=1.0-max(dot(normalize(vNormal),vd),0.0);fresnel=pow(fresnel,2.0);float n=fbm(vNormal*2.5+uTime*0.6);float n2=fbm(vNormal*5.0-uTime*0.4);vec3 white=vec3(1.0,0.98,0.85);vec3 c=mix(white,uColor2,n*0.7);c=mix(c,uColor1,n2*0.5+fresnel*0.4);c*=(1.0-pow(fresnel,0.8));c+=uColor1*pow(fresnel,5.0)*2.5;float alpha=(1.0-fresnel*0.5)*uIntensity;gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
-  },
-  ice_crystal: {
-    vertex: `varying vec2 vUv;varying vec3 vNormal;varying float vFresnel;uniform float uTime;void main(){vUv=uv;vNormal=normalize(normalMatrix*normal);vec3 pos=position;float shimmer=sin(uTime*8.0+position.y*12.0+position.x*5.0)*0.012;pos.x+=shimmer;pos.z+=shimmer*0.7;vec4 wp=modelMatrix*vec4(pos,1.0);vec3 vd=normalize(cameraPosition-wp.xyz);vFresnel=1.0-max(dot(vNormal,vd),0.0);gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;varying vec3 vNormal;varying float vFresnel;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}void main(){float band=sin(vUv.x*18.0+uTime*1.5)*sin(vUv.y*12.0-uTime*2.2);float band2=sin((vUv.x+vUv.y)*14.0+uTime*3.0)*0.5+0.5;float caustic=(band*0.5+0.5)*band2;vec3 prism=vec3(sin(vUv.x*6.0+uTime)*0.5+0.5,sin(vUv.y*4.0+uTime*1.3+1.0)*0.5+0.5,1.0);vec3 c=mix(uColor1,uColor2,vFresnel);c=mix(c,prism*uColor2,caustic*0.35);c+=uColor2*pow(vFresnel,3.0)*2.0;c+=vec3(1.0)*pow(max(dot(vNormal,normalize(vec3(1.0,2.0,1.0))),0.0),64.0)*2.5;float alpha=mix(0.55,0.95,vFresnel)*uIntensity;gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
-  },
-  earth: {
-    vertex: `varying vec2 vUv;varying vec3 vWorldNormal;varying float vHeight;uniform float uTime;float h3(vec3 p){return fract(sin(dot(p,vec3(17.3,41.7,93.1)))*43758.5453);}void main(){vUv=uv;vWorldNormal=normalize(mat3(modelMatrix)*normal);vHeight=position.y;vec3 pos=position;float n=h3(floor(position*4.0));float t=sin(uTime*2.0+n*6.28)*0.5+0.5;pos+=normal*n*0.06*t;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;varying vec3 vWorldNormal;varying float vHeight;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float vor(vec2 p){vec2 g=floor(p);float d=1.0;for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){vec2 b=g+vec2(x,y);vec2 r=b+vec2(hash(b),hash(b.yx))-p;d=min(d,dot(r,r));}return sqrt(d);}void main(){float rock=vor(vUv*8.0);float rock2=vor(vUv*14.0+vec2(3.7,1.1));float hfac=clamp(vHeight/4.0,0.0,1.0);vec3 c=mix(uColor1*0.6,uColor2,hfac);c=mix(c,uColor2*1.3,rock*0.3);c=mix(c,uColor1*0.4,rock2*0.25);float crack=1.0-smoothstep(0.0,0.12,rock);c+=mix(vec3(1.0,0.7,0.3),uColor2*2.0,hfac)*crack*0.8*uIntensity;c+=uColor2*pow(max(dot(vWorldNormal,normalize(vec3(0.3,1.0,0.5))),0.0),4.0)*0.6;gl_FragColor=vec4(c,1.0);}`
-  },
-  nature: {
-    vertex: `varying vec2 vUv;varying float vWind;uniform float uTime;void main(){vUv=uv;vec3 pos=position;float sway=sin(uTime*1.8+position.x*2.5+position.z*1.3)*pos.y*0.06;float sway2=cos(uTime*2.6+position.z*1.8)*pos.y*0.03;pos.x+=sway;pos.z+=sway2;vWind=abs(sway)*8.0;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}`,
-    fragment: `varying vec2 vUv;varying float vWind;uniform float uTime;uniform vec3 uColor1;uniform vec3 uColor2;uniform float uIntensity;float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}float fbm(vec2 p){float v=0.0,a=0.5;for(int i=0;i<4;i++){v+=a*hash(floor(p));p=p*2.0+vec2(0.3,0.7);a*=0.5;}return v;}void main(){vec2 uv=vUv;float cells=fbm(uv*6.0+uTime*0.15);float vein=1.0-smoothstep(0.0,0.08,abs(cells-0.5));vec3 c=mix(uColor1*0.7,uColor2,cells);c+=uColor2*vein*0.9;float pollen=step(0.96,hash(floor(uv*22.0)+floor(uTime*4.0)*0.01));c+=vec3(1.0,1.0,0.6)*pollen*2.5;c+=uColor2*vWind*0.15;float alpha=(cells*0.5+0.5)*uIntensity*(0.7+vein*0.3);gl_FragColor=vec4(c,clamp(alpha,0.0,1.0));}`
-  }
-};
 
 // ── Build Effect ──
 function clearEffect() {
@@ -396,7 +516,7 @@ function buildEffect(def) {
     bloomPass.threshold = def.bloom.threshold;
   }
   if (pConfig.count) { document.getElementById('particleCount').value = pConfig.count; document.getElementById('particleCountNum').value = pConfig.count; }
-  if (pConfig.size) { document.getElementById('particleSize').value = pConfig.size; document.getElementById('particleSizeNum').value = pConfig.size; }
+  if (pConfig.size)  { document.getElementById('particleSize').value = pConfig.size; document.getElementById('particleSizeNum').value = pConfig.size; }
   document.getElementById('intensity').value = intensity;
   document.getElementById('intensityNum').value = intensity;
   document.getElementById('speed').value = def.timing?.speed || 1;
@@ -407,21 +527,21 @@ function buildEffect(def) {
   if (def.shader && SHADER_SOURCES[def.shader]) {
     const src = SHADER_SOURCES[def.shader];
     const uniforms = {
-      uTime: { value: 0 },
-      uColor1: { value: c1.clone() },
-      uColor2: { value: c2.clone() },
+      uTime:      { value: 0 },
+      uColor1:    { value: c1.clone() },
+      uColor2:    { value: c2.clone() },
       uIntensity: { value: intensity },
-      uProgress: { value: 0 }
+      uProgress:  { value: 0 }
     };
 
     const mat = new THREE.ShaderMaterial({
-      vertexShader: src.vertex,
+      vertexShader:   src.vertex,
       fragmentShader: src.fragment,
       uniforms,
       transparent: true,
-      side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
+      side:        THREE.DoubleSide,
+      blending:    THREE.AdditiveBlending,
+      depthWrite:  false
     });
     shaderMaterials.push(mat);
 
@@ -466,7 +586,6 @@ function buildEffect(def) {
     s.position.y = 1;
     effectGroup.add(s);
   } else if (gConfig.type === 'wall') {
-    // Wall of rock/ice spires erupting from ground
     const spires = gConfig.spires || {};
     const count = spires.count || 6;
     const spacing = spires.spacing || 1.0;
@@ -517,7 +636,6 @@ function buildEffect(def) {
       effectGroup.add(d);
     }
   } else if (gConfig.type === 'compound') {
-    // Aura spheres, rings, etc.
     if (gConfig.elements?.includes('outer_sphere')) {
       const sg = new THREE.SphereGeometry(1.5, 32, 32);
       const sm = new THREE.MeshBasicMaterial({ color: c1, transparent: true, opacity: 0.2, side: THREE.BackSide, blending: THREE.AdditiveBlending });
@@ -588,10 +706,10 @@ function buildEffect(def) {
     }
   }
 
-  // Build particles
+  // Particles
   const pCount = pConfig.count || 200;
   const pGeo = new THREE.BufferGeometry();
-  const positions = new Float32Array(pCount * 3);
+  const positions  = new Float32Array(pCount * 3);
   const velocities = new Float32Array(pCount * 3);
   const radius = pConfig.radius || 1;
 
@@ -616,40 +734,36 @@ function buildEffect(def) {
       positions[i*3+1] = Math.random() * h;
       positions[i*3+2] = (Math.random() - 0.5) * w;
     } else if (dist === 'explosion') {
-      positions[i*3] = 0;
-      positions[i*3+1] = 0;
-      positions[i*3+2] = 0;
+      positions[i*3] = 0; positions[i*3+1] = 0; positions[i*3+2] = 0;
     } else {
       const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = radius * Math.random();
-      positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
+      const phi   = Math.acos(2 * Math.random() - 1);
+      const r     = radius * Math.random();
+      positions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
       positions[i*3+1] = 1 + r * Math.cos(phi);
       positions[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
     }
 
     const vy = pConfig.velocityY || [0, 1];
-    velocities[i*3] = (Math.random() - 0.5) * 0.5;
+    velocities[i*3]   = (Math.random() - 0.5) * 0.5;
     velocities[i*3+1] = vy[0] + Math.random() * (vy[1] - vy[0]);
     velocities[i*3+2] = (Math.random() - 0.5) * 0.5;
   }
 
   pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-  // Per-particle alpha (starts full, fades over life)
   const alphas = new Float32Array(pCount).fill(1);
   pGeo.setAttribute('aAlpha', new THREE.BufferAttribute(alphas, 1));
 
   const pMat = new THREE.ShaderMaterial({
-    vertexShader: PARTICLE_VERT,
+    vertexShader:   PARTICLE_VERT,
     fragmentShader: PARTICLE_FRAG,
     uniforms: {
-      uColor: { value: c1.clone() },
+      uColor:   { value: c1.clone() },
       uOpacity: { value: pConfig.opacity ?? 0.8 }
     },
     transparent: true,
-    blending: pConfig.blending === 'additive' ? THREE.AdditiveBlending : THREE.NormalBlending,
-    depthWrite: false
+    blending:    pConfig.blending === 'additive' ? THREE.AdditiveBlending : THREE.NormalBlending,
+    depthWrite:  false
   });
 
   const pts = new THREE.Points(pGeo, pMat);
@@ -657,7 +771,7 @@ function buildEffect(def) {
   effectGroup.add(pts);
   particleSystems.push(pts);
 
-  // Point lights (support both `light` and `lights` key)
+  // Point lights
   const lCfg = def.lights || def.light;
   if (lCfg) {
     const pl = new THREE.PointLight(new THREE.Color(lCfg.color), lCfg.intensity || 2, lCfg.distance || 8);
@@ -671,11 +785,10 @@ function buildEffect(def) {
   // Load shader code for editor
   if (def.shader && SHADER_SOURCES[def.shader]) {
     loadedShaders = { vertex: SHADER_SOURCES[def.shader].vertex, fragment: SHADER_SOURCES[def.shader].fragment };
-    updateShaderEditor();
   } else {
     loadedShaders = { vertex: '// No custom shader', fragment: '// No custom shader' };
-    updateShaderEditor();
   }
+  updateShaderEditor();
 }
 
 // ── Animation Loop ──
@@ -698,8 +811,9 @@ function animate() {
     if (!looping && effectTime >= dur) {
       effectTime = dur;
       isPlaying = false;
-      document.getElementById('btn-play').classList.remove('playing');
-      document.getElementById('btn-play').textContent = '▶';
+      const b = document.getElementById('btn-play');
+      b.classList.remove('playing');
+      b.textContent = '▶';
     } else if (looping) {
       effectTime = effectTime % dur;
     }
@@ -708,13 +822,11 @@ function animate() {
     document.getElementById('tlProgress').style.width = (progress * 100) + '%';
     document.getElementById('timeDisplay').textContent = `${effectTime.toFixed(2)}s / ${dur.toFixed(2)}s`;
 
-    // Update shaders
     shaderMaterials.forEach(mat => {
-      if (mat.uniforms.uTime) mat.uniforms.uTime.value = effectTime;
+      if (mat.uniforms.uTime)     mat.uniforms.uTime.value = effectTime;
       if (mat.uniforms.uProgress) mat.uniforms.uProgress.value = (effectTime % 2) / 2;
     });
 
-    // Update particles
     particleSystems.forEach(ps => {
       const pos = ps.geometry.attributes.position.array;
       const vel = ps.userData.velocities;
@@ -727,17 +839,17 @@ function animate() {
         if (dist === 'circular' || dist === 'ring') {
           const lt = (effectTime + i * 0.01) % 2;
           pos[i*3+1] = lt * vel[i*3+1];
-          pos[i*3] = Math.cos((effectTime + i) * 0.5) * 0.3 + vel[i*3] * lt * 0.5;
+          pos[i*3]   = Math.cos((effectTime + i) * 0.5) * 0.3 + vel[i*3]   * lt * 0.5;
           pos[i*3+2] = Math.sin((effectTime + i) * 0.5) * 0.3 + vel[i*3+2] * lt * 0.5;
         } else if (dist === 'spiral') {
           const angle = effectTime * 0.5 + i * 0.02;
           const r = 0.5 + (i % 10) * 0.15;
-          pos[i*3] = Math.cos(angle) * r;
+          pos[i*3]   = Math.cos(angle) * r;
           pos[i*3+2] = Math.sin(angle) * r;
           pos[i*3+1] = ((effectTime * 0.5 + i * 0.01) % 1) * (cfg.height || 3);
         } else if (dist === 'explosion') {
           const phase = effectTime % 3;
-          pos[i*3] = vel[i*3] * phase;
+          pos[i*3]   = vel[i*3]   * phase;
           pos[i*3+1] = vel[i*3+1] * phase + (cfg.gravity || 0) * 0.5 * phase * phase;
           pos[i*3+2] = vel[i*3+2] * phase;
           if (pos[i*3+1] < 0) pos[i*3+1] = 0;
@@ -745,60 +857,52 @@ function animate() {
           pos[i*3+1] = init[i*3+1] + vel[i*3+1] * (effectTime % 5);
           if (pos[i*3+1] < -1) pos[i*3+1] = (cfg.height || 5);
         } else {
-          // sphere orbit
-          pos[i*3] = init[i*3] * Math.cos(effectTime * 0.2) - init[i*3+2] * Math.sin(effectTime * 0.2);
-          pos[i*3+2] = init[i*3] * Math.sin(effectTime * 0.2) + init[i*3+2] * Math.cos(effectTime * 0.2);
+          pos[i*3]   = init[i*3]   * Math.cos(effectTime * 0.2) - init[i*3+2] * Math.sin(effectTime * 0.2);
+          pos[i*3+2] = init[i*3]   * Math.sin(effectTime * 0.2) + init[i*3+2] * Math.cos(effectTime * 0.2);
         }
       }
       ps.geometry.attributes.position.needsUpdate = true;
     });
 
-    // Rotate effect group rings/runes
     effectGroup.children.forEach(child => {
-      if (child.geometry?.type === 'TorusGeometry') {
-        child.rotation.z += delta * 0.5;
-      }
+      if (child.geometry?.type === 'TorusGeometry') child.rotation.z += delta * 0.5;
     });
 
-    // Flicker lights
     pointLights.forEach(pl => {
-      if (pl.userData.flicker) {
-        pl.intensity = pl.userData.baseIntensity * (0.8 + 0.4 * Math.sin(effectTime * 20 + pl.id));
-      }
+      if (pl.userData.flicker) pl.intensity = pl.userData.baseIntensity * (0.8 + 0.4 * Math.sin(effectTime * 20 + pl.id));
     });
   }
 
   const totalP = particleSystems.reduce((s, ps) => s + ps.geometry.attributes.position.count, 0);
-  document.getElementById('vpInfo').textContent = `FPS: ${fps} | Particles: ${totalP} | Objects: ${effectGroup.children.length}`;
+  document.getElementById('vpInfo').textContent = `FPS: ${fps} · Particles: ${totalP} · Objects: ${effectGroup.children.length}`;
 
   controls.update();
   composer.render();
 }
 
-// ── UI Functions ──
+// ── Load registries ──
 function loadRegistry() {
   Promise.all([
     fetch(REGISTRY_URL).then(r => r.json()).catch(() => null),
-    fetch(SPELLS_URL).then(r => r.json()).catch(() => null)
-  ]).then(([fxData, spData]) => {
-    registry = fxData || { effects: {}, categories: {}, totalEffects: 0, shaderFiles: {} };
-    spellRegistry = spData;
+    fetch(SPELLS_URL).then(r => r.json()).catch(() => null),
+    fetch(EXAMPLES_URL).then(r => r.json()).catch(() => null)
+  ]).then(([fxData, spData, exData]) => {
+    registry         = fxData || { effects: {}, categories: {}, totalEffects: 0 };
+    spellRegistry    = spData || null;
+    examplesRegistry = exData || null;
 
-    // Merge spell entries into registry.effects under their own IDs
-    if (spData?.spells) {
-      Object.assign(registry.effects, spData.spells);
-      // Merge spell categories
-      for (const [k, v] of Object.entries(spData.categories || {})) {
-        if (!registry.categories[k]) registry.categories[k] = v;
-        else registry.categories[k].count += v.count;
-      }
-    }
+    // Effects stats
+    const effectCount = Object.keys(registry.effects).length;
+    const spellCount  = spData ? Object.keys(spData.spells || {}).length : 0;
+    const exCount     = exData ? (exData.examples || []).length : 0;
+    document.getElementById('stats').textContent = `${effectCount} effects · ${spellCount} spells · ${exCount} examples`;
 
-    const totalFx = Object.keys(registry.effects).length;
-    const spellCount = spData ? Object.keys(spData.spells || {}).length : 0;
-    document.getElementById('stats').textContent = `${totalFx} effects (${spellCount} spells) | ${Object.keys(registry.categories).length} categories`;
-    buildCategoryButtons(registry.categories);
+    buildCategoryButtons(registry.categories || {});
     buildEffectList(registry.effects);
+    buildSpellList();
+    buildShadersList();
+    buildExamplesList();
+
     const firstId = Object.keys(registry.effects)[0];
     if (firstId) selectEffect(firstId);
   }).catch(err => {
@@ -807,6 +911,7 @@ function loadRegistry() {
   });
 }
 
+// ── Effects panel ──
 function buildCategoryButtons(cats) {
   const el = document.getElementById('categories');
   el.innerHTML = `<button class="cat-btn active" onclick="filterCategory('all')">All</button>`;
@@ -820,90 +925,169 @@ function buildEffectList(effects, filter = null, search = '') {
   el.innerHTML = '';
   const catColors = registry?.categories || {};
 
-  for (const [id, fx] of Object.entries(effects)) {
+  for (const [id, fx] of Object.entries(effects || {})) {
     if (filter && filter !== 'all' && fx.category !== filter) continue;
     if (search && !fx.name.toLowerCase().includes(search) && !fx.tags?.some(t => t.includes(search))) continue;
 
-    const color = catColors[fx.category]?.color || '#888';
-    const srcLabel = fx.source?.replace('grudgedot-effects-playground', 'grudgeDot').replace('unity-ummorp-casting', 'Unity Cast').replace('unity-arpg-effects', 'Unity ARPG').replace('unity-new-effects', 'Unity NEW').replace('unity-ummorp-skills', 'Unity Skill') || '';
+    const color = catColors[fx.category]?.color || 'var(--accent-gold)';
+    const srcLabel = (fx.source || '')
+      .replace('grudgedot-effects-playground', 'grudgeDot')
+      .replace('unity-ummorp-casting', 'Unity Cast')
+      .replace('unity-arpg-effects',   'Unity ARPG')
+      .replace('unity-new-effects',    'Unity NEW')
+      .replace('unity-ummorp-skills',  'Unity Skill');
     el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')">
-      <div class="effect-dot" style="background:${color}"></div>
+      <div class="effect-dot" style="background:${color};color:${color}"></div>
       <div style="flex:1;overflow:hidden">
         <div class="effect-name">${fx.name}</div>
-        <div style="display:flex;gap:6px"><span class="effect-cat">${fx.category}</span><span class="effect-src">${srcLabel}</span></div>
+        <div class="effect-meta"><span class="effect-cat">${fx.category || ''}</span><span class="effect-src">${srcLabel}</span></div>
       </div>
     </div>`;
   }
 }
 
-window.selectEffect = function(id) {
-  if (!registry?.effects[id]) return;
+// ── Spells panel ──
+function buildSpellList(filter = '') {
+  const el = document.getElementById('spellList');
+  if (!spellRegistry?.spells) { el.innerHTML = `<div style="padding:14px;color:var(--text-dim);font-size:11px">No spells registry.</div>`; return; }
+  el.innerHTML = '';
+  const cats = spellRegistry.categories || {};
+  for (const [id, sp] of Object.entries(spellRegistry.spells)) {
+    if (filter && !sp.name.toLowerCase().includes(filter) && !sp.tags?.some(t => t.includes(filter))) continue;
+    const color = cats[sp.category]?.color || 'var(--accent-purple)';
+    el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')">
+      <div class="effect-dot" style="background:${color};color:${color}"></div>
+      <div style="flex:1;overflow:hidden">
+        <div class="effect-name">${sp.name}</div>
+        <div class="effect-meta"><span class="effect-cat">${sp.category || ''}</span><span class="effect-src">${sp.source || ''}</span></div>
+      </div>
+    </div>`;
+  }
+}
+window.filterSpells = function () {
+  buildSpellList(document.getElementById('spellSearch').value.toLowerCase());
+};
+
+// ── Shaders panel ──
+function buildShadersList() {
+  const el = document.getElementById('shadersList');
+  el.innerHTML = '';
+  for (const key of Object.keys(SHADER_SOURCES)) {
+    el.innerHTML += `<div class="sh-card" onclick="previewShader('${key}')">
+      <span class="sh-name">${key}</span>
+      <span class="sh-badge">GLSL</span>
+    </div>`;
+  }
+}
+window.previewShader = function (key) {
+  loadedShaders = SHADER_SOURCES[key] || { vertex: '', fragment: '' };
+  if (!shaderEditorOpen) toggleShaderEditor();
+  updateShaderEditor();
+  showToast(`Loaded shader: ${key}`);
+};
+
+// ── Examples panel (downloadables) ──
+function buildExamplesList() {
+  const el = document.getElementById('examplesList');
+  if (!examplesRegistry?.examples) { el.innerHTML = `<div style="padding:14px;color:var(--text-dim);font-size:11px">No examples registry found at api/v1/3dfx-examples.json.</div>`; return; }
+  el.innerHTML = '';
+  const cats = examplesRegistry.categories || {};
+
+  for (const ex of examplesRegistry.examples) {
+    const cat = cats[ex.category] || {};
+    const color = cat.color || 'var(--accent-gold)';
+    const url   = ex.url.startsWith('http') ? ex.url : `${OBJECTSTORE_BASE}/${ex.file}`;
+    const safeDl = ex.downloadAs || (ex.file || '').split('/').pop();
+    el.innerHTML += `<div class="ex-card">
+      <h4>${ex.name}
+        <span class="ex-tag" style="background:${color}22;color:${color};border:1px solid ${color}55">${cat.name || ex.category}</span>
+      </h4>
+      <p>${ex.desc || ''}</p>
+      <div class="ex-url" title="Callable from any app">${url}</div>
+      <div class="ex-buttons">
+        <a class="dl" href="${url}" download="${safeDl}">↓ Download</a>
+        <a href="${url}" target="_blank" rel="noopener">↗ Open</a>
+        <button onclick="copyExampleUrl('${url}')">⧉ Copy URL</button>
+      </div>
+    </div>`;
+  }
+}
+window.copyExampleUrl = function (url) {
+  navigator.clipboard?.writeText(url).then(
+    () => showToast(`Copied: ${url}`),
+    () => showToast('Copy failed')
+  );
+};
+
+// ── Sidebar tab switching ──
+window.switchSidebarTab = function (tab) {
+  activeSidebarTab = tab;
+  document.querySelectorAll('.sb-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.sb-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${tab}`));
+};
+
+// ── Effect selection ──
+window.selectEffect = function (id) {
+  let def = registry?.effects?.[id];
+  if (!def && spellRegistry?.spells?.[id]) def = spellRegistry.spells[id];
+  if (!def) return;
   document.querySelectorAll('.effect-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
-  buildEffect(registry.effects[id]);
+  buildEffect(def);
   effectTime = 0;
   isPlaying = true;
-  document.getElementById('btn-play').classList.add('playing');
-  document.getElementById('btn-play').textContent = '⏸';
+  const b = document.getElementById('btn-play');
+  b.classList.add('playing');
+  b.textContent = '⏸';
 };
 
-let currentCatFilter = 'all';
-window.filterCategory = function(cat) {
+// ── Filters ──
+window.filterCategory = function (cat) {
   currentCatFilter = cat;
-  document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && cat === 'all') || b.textContent.toLowerCase().startsWith(cat)));
+  document.querySelectorAll('#categories .cat-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && cat === 'all') || b.textContent.toLowerCase().startsWith(cat)));
   buildEffectList(registry.effects, cat, document.getElementById('search').value.toLowerCase());
 };
-
-window.filterEffects = function() {
-  const q = document.getElementById('search').value.toLowerCase();
-  buildEffectList(registry.effects, currentCatFilter, q);
+window.filterEffects = function () {
+  buildEffectList(registry.effects, currentCatFilter, document.getElementById('search').value.toLowerCase());
 };
 
-window.togglePlay = function() {
+// ── Playback ──
+window.togglePlay = function () {
   isPlaying = !isPlaying;
   const btn = document.getElementById('btn-play');
   btn.classList.toggle('playing', isPlaying);
   btn.textContent = isPlaying ? '⏸' : '▶';
 };
-
-window.restartEffect = function() {
+window.restartEffect = function () {
   effectTime = 0;
   isPlaying = true;
-  document.getElementById('btn-play').classList.add('playing');
-  document.getElementById('btn-play').textContent = '⏸';
+  const b = document.getElementById('btn-play');
+  b.classList.add('playing');
+  b.textContent = '⏸';
 };
-
-window.seekTimeline = function(e) {
+window.seekTimeline = function (e) {
   if (!currentEffect) return;
   const rect = e.currentTarget.getBoundingClientRect();
   const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   effectTime = pct * (currentEffect.timing?.duration || 2);
 };
+window.setPlaybackSpeed = function () { playbackSpeed = parseFloat(document.getElementById('speedSelect').value); };
+window.toggleLoop        = function () { looping = document.getElementById('loopToggle').checked; };
 
-window.setPlaybackSpeed = function() {
-  playbackSpeed = parseFloat(document.getElementById('speedSelect').value);
-};
-
-window.toggleLoop = function() {
-  looping = document.getElementById('loopToggle').checked;
-};
-
-window.toggleGrid = function() {
+// ── Viewport overlay ──
+window.toggleGrid = function () {
   gridHelper.visible = !gridHelper.visible;
   document.getElementById('btn-grid').classList.toggle('active', gridHelper.visible);
 };
-
-window.toggleAutoRotate = function() {
+window.toggleAutoRotate = function () {
   controls.autoRotate = !controls.autoRotate;
   document.getElementById('btn-rotate').classList.toggle('active', controls.autoRotate);
 };
-
-window.resetCamera = function() {
+window.resetCamera = function () {
   camera.position.set(5, 4, 8);
   controls.target.set(0, 1, 0);
   controls.update();
 };
-
-window.toggleGizmo = function(mode) {
+window.toggleGizmo = function (mode) {
   if (effectGroup.children.length === 0) return;
   if (transformControls.object && transformControls.mode === mode) {
     transformControls.detach();
@@ -916,7 +1100,8 @@ window.toggleGizmo = function(mode) {
   document.getElementById(mode === 'translate' ? 'btn-move' : mode === 'rotate' ? 'btn-rot' : 'btn-scale').classList.add('active');
 };
 
-window.updateColors = function() {
+// ── Inspector ──
+window.updateColors = function () {
   const c1 = document.getElementById('color1').value;
   const c2 = document.getElementById('color2').value;
   document.getElementById('color1Hex').value = c1;
@@ -926,45 +1111,36 @@ window.updateColors = function() {
     if (m.uniforms.uColor1) m.uniforms.uColor1.value = tc1.clone();
     if (m.uniforms.uColor2) m.uniforms.uColor2.value = tc2.clone();
   });
-  particleSystems.forEach(ps => { ps.material.color = tc1.clone(); });
+  particleSystems.forEach(ps => { if (ps.material.uniforms?.uColor) ps.material.uniforms.uColor.value = tc1.clone(); });
   pointLights.forEach(pl => { pl.color = tc1.clone(); });
 };
-
-window.updateParam = function(param) {
+window.updateParam = function (param) {
   const val = parseFloat(document.getElementById(param).value);
   document.getElementById(param + 'Num').value = val;
-  if (param === 'intensity') shaderMaterials.forEach(m => { if (m.uniforms.uIntensity) m.uniforms.uIntensity.value = val; });
-  if (param === 'scale') effectGroup.scale.setScalar(val);
-  if (param === 'particleSize') particleSystems.forEach(ps => { ps.material.size = val; });
+  if (param === 'intensity')    shaderMaterials.forEach(m => { if (m.uniforms.uIntensity) m.uniforms.uIntensity.value = val; });
+  if (param === 'scale')        effectGroup.scale.setScalar(val);
+  if (param === 'particleSize') particleSystems.forEach(ps => { if (ps.material.uniforms?.uSize) ps.material.uniforms.uSize.value = val; });
 };
-
-window.syncSlider = function(id) {
-  document.getElementById(id).value = document.getElementById(id + 'Num').value;
-};
-
-window.updateBloom = function() {
-  bloomPass.strength = parseFloat(document.getElementById('bloomStrength').value);
-  bloomPass.radius = parseFloat(document.getElementById('bloomRadius').value);
+window.syncSlider = function (id) { document.getElementById(id).value = document.getElementById(id + 'Num').value; };
+window.updateBloom = function () {
+  bloomPass.strength  = parseFloat(document.getElementById('bloomStrength').value);
+  bloomPass.radius    = parseFloat(document.getElementById('bloomRadius').value);
   bloomPass.threshold = parseFloat(document.getElementById('bloomThreshold').value);
-  document.getElementById('bloomStrengthNum').value = bloomPass.strength;
-  document.getElementById('bloomRadiusNum').value = bloomPass.radius;
+  document.getElementById('bloomStrengthNum').value  = bloomPass.strength;
+  document.getElementById('bloomRadiusNum').value    = bloomPass.radius;
   document.getElementById('bloomThresholdNum').value = bloomPass.threshold;
 };
-
-window.updateEnv = function() {
+window.updateEnv = function () {
   scene.background = new THREE.Color(document.getElementById('bgColor').value);
   ambientLight.intensity = parseFloat(document.getElementById('ambientIntensity').value);
-  dirLight.intensity = parseFloat(document.getElementById('dirIntensity').value);
+  dirLight.intensity     = parseFloat(document.getElementById('dirIntensity').value);
   document.getElementById('ambientIntensityNum').value = ambientLight.intensity;
-  document.getElementById('dirIntensityNum').value = dirLight.intensity;
-  if (document.getElementById('fogEnabled').checked) {
-    scene.fog = new THREE.FogExp2(scene.background.getHex(), parseFloat(document.getElementById('fogDensity').value));
-  } else {
-    scene.fog = null;
-  }
+  document.getElementById('dirIntensityNum').value     = dirLight.intensity;
+  scene.fog = document.getElementById('fogEnabled').checked
+    ? new THREE.FogExp2(scene.background.getHex(), parseFloat(document.getElementById('fogDensity').value))
+    : null;
 };
-
-window.updateTransform = function() {
+window.updateTransform = function () {
   effectGroup.position.set(
     parseFloat(document.getElementById('posX').value),
     parseFloat(document.getElementById('posY').value),
@@ -972,85 +1148,81 @@ window.updateTransform = function() {
   );
 };
 
-window.toggleShaderEditor = function() {
+// ── Shader editor ──
+window.toggleShaderEditor = function () {
   shaderEditorOpen = !shaderEditorOpen;
-  const el = document.getElementById('shaderEditor');
-  const tl = document.getElementById('timeline');
-  el.classList.toggle('open', shaderEditorOpen);
-  tl.style.display = shaderEditorOpen ? 'none' : '';
+  document.getElementById('shaderEditor').classList.toggle('open', shaderEditorOpen);
+  document.getElementById('timeline').style.display = shaderEditorOpen ? 'none' : '';
   document.getElementById('btn-shader').classList.toggle('active', shaderEditorOpen);
 };
-
-window.switchShaderTab = function(tab) {
+window.switchShaderTab = function (tab) {
   currentShaderTab = tab;
   document.querySelectorAll('.shader-tabs button').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === tab));
   updateShaderEditor();
 };
-
 function updateShaderEditor() {
-  const code = document.getElementById('shaderCode');
-  code.textContent = loadedShaders[currentShaderTab] || '// No shader';
+  document.getElementById('shaderCode').textContent = loadedShaders[currentShaderTab] || '// No shader';
 }
 
-window.exportEffect = function() {
+// ── Export / R2 save ──
+window.exportEffect = function () {
   if (!currentEffect) return;
   const json = JSON.stringify(currentEffect, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
   a.download = `${currentEffect.id}.3dfx.json`;
   a.click();
   URL.revokeObjectURL(url);
   showToast(`Exported ${currentEffect.name}`);
 };
-
-window.saveToR2 = async function() {
+window.saveToR2 = async function () {
   if (!currentEffect) return;
   const json = JSON.stringify(currentEffect, null, 2);
   try {
     const res = await fetch(`${R2_URL}/v1/assets`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/octet-stream', 'X-Filename': `${currentEffect.id}.3dfx.json`, 'X-Category': '3DFX', 'X-Tags': JSON.stringify(currentEffect.tags || []) },
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'X-Filename':   `${currentEffect.id}.3dfx.json`,
+        'X-Category':   '3DFX',
+        'X-Tags':       JSON.stringify(currentEffect.tags || [])
+      },
       body: json
     });
     if (res.ok) showToast(`Saved ${currentEffect.name} to R2`);
-    else showToast(`Error: ${res.status}`);
+    else        showToast(`Error: ${res.status}`);
   } catch (err) {
     showToast(`R2 save failed: ${err.message}`);
   }
 };
 
+// ── Scene layers ──
+window.addSceneLayer = function () {
+  if (!currentEffect) return;
+  const layerGroup = new THREE.Group();
+  layerGroup.name = currentEffect.id;
+  effectGroup.children.forEach(child => layerGroup.add(child.clone(true)));
+  const offset = savedLayers.length * 0.05;
+  layerGroup.position.set(offset, 0, offset);
+  scene.add(layerGroup);
+  savedLayers.push({ id: currentEffect.id, name: currentEffect.name, group: layerGroup });
+  showToast(`Layer added: ${currentEffect.name} (${savedLayers.length} total)`);
+};
+window.clearSceneLayers = function () {
+  savedLayers.forEach(l => scene.remove(l.group));
+  savedLayers = [];
+  showToast('All layers cleared');
+};
+
+// ── Toast ──
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2500);
 }
-
-  // ── Scene Layer Composition ──
-  window.addSceneLayer = function () {
-    if (!currentEffect) return;
-    // Clone the current effectGroup children into a new group
-    const layerGroup = new THREE.Group();
-    layerGroup.name = currentEffect.id;
-    effectGroup.children.forEach(child => {
-      const clone = child.clone(true);
-      layerGroup.add(clone);
-    });
-    // Offset each new layer slightly so they don't overlap exactly
-    const offset = savedLayers.length * 0.05;
-    layerGroup.position.set(offset, 0, offset);
-    scene.add(layerGroup);
-    savedLayers.push({ id: currentEffect.id, name: currentEffect.name, group: layerGroup });
-    showToast(`Layer added: ${currentEffect.name} (${savedLayers.length} total)`);
-  };
-
-  window.clearSceneLayers = function () {
-    savedLayers.forEach(l => scene.remove(l.group));
-    savedLayers = [];
-    showToast('All layers cleared');
-  };
 
 // ── Boot ──
 initScene();

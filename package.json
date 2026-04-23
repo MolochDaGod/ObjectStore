@@ -86,7 +86,10 @@
     "pipeline:sync:dry": "node scripts/sync-to-r2.js --pipeline --dry-run",
     "shader-lab:manifest": "node scripts/shader-lab-manifest.mjs",
     "shader-lab:sync-textures": "node scripts/shader-lab-sync-textures.mjs",
-    "shader-lab:sync-textures:dry": "node scripts/shader-lab-sync-textures.mjs --dry-run"
+    "shader-lab:sync-textures:dry": "node scripts/shader-lab-sync-textures.mjs --dry-run",
+    "import:asset-packs-2026-04": "pwsh -NoProfile -File ./scripts/import-asset-packs-2026-04.ps1",
+    "build:new-registries": "node ./scripts/build-new-asset-registries.mjs",
+    "build:new-registries:dry": "node ./scripts/build-new-asset-registries.mjs --dry"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-04-23",
+  "description": "Downloadable starter examples for the Grudge 3DFX viewer. All files are served directly from ObjectStore.",
+  "baseUrl": "https://molochdagod.github.io/ObjectStore",
+  "categories": {
+    "html":    { "name": "HTML Starters",  "color": "#d4a84b", "desc": "Drop-in standalone HTML + Three.js pages" },
+    "js":      { "name": "JS Modules",     "color": "#4a9eff", "desc": "ES module helpers for loading registries and effects" },
+    "json":    { "name": "JSON Templates", "color": "#9d4dff", "desc": "Starter 3DFX definitions you can edit and re-upload" },
+    "glsl":    { "name": "Shader Snippets","color": "#ff4d4d", "desc": "GLSL code matching the viewer's uniform/varying contract" }
+  },
+  "examples": [
+    {
+      "id": "embed-effect-html",
+      "name": "Embed an Effect in Three.js",
+      "category": "html",
+      "desc": "Standalone HTML page that fetches any effect by ID from ObjectStore and renders it with OrbitControls.",
+      "file": "examples/3dfx/embed-effect.html",
+      "url":  "https://molochdagod.github.io/ObjectStore/examples/3dfx/embed-effect.html",
+      "downloadAs": "embed-effect.html",
+      "mime": "text/html",
+      "tags": ["three.js","embed","html","starter"]
+    },
+    {
+      "id": "grudge-3dfx-loader",
+      "name": "Grudge 3DFX Loader (ESM)",
+      "category": "js",
+      "desc": "Tiny ES module that exposes loadGrudge3DFX() and loadGrudge3DFXExamples() for any project.",
+      "file": "examples/3dfx/grudge-3dfx-loader.js",
+      "url":  "https://molochdagod.github.io/ObjectStore/examples/3dfx/grudge-3dfx-loader.js",
+      "downloadAs": "grudge-3dfx-loader.js",
+      "mime": "application/javascript",
+      "tags": ["esm","helper","sdk"]
+    },
+    {
+      "id": "save-effect-to-r2",
+      "name": "Save Custom Effect to R2",
+      "category": "js",
+      "desc": "POST a 3DFX definition to the objectstore.grudge-studio.com Worker using an API key.",
+      "file": "examples/3dfx/save-effect-to-r2.js",
+      "url":  "https://molochdagod.github.io/ObjectStore/examples/3dfx/save-effect-to-r2.js",
+      "downloadAs": "save-effect-to-r2.js",
+      "mime": "application/javascript",
+      "tags": ["r2","worker","upload"]
+    },
+    {
+      "id": "effect-template",
+      "name": "Effect Definition Template",
+      "category": "json",
+      "desc": "Blank 3DFX definition with every supported key documented.",
+      "file": "examples/3dfx/effect-template.3dfx.json",
+      "url":  "https://molochdagod.github.io/ObjectStore/examples/3dfx/effect-template.3dfx.json",
+      "downloadAs": "effect-template.3dfx.json",
+      "mime": "application/json",
+      "tags": ["template","json","authoring"]
+    },
+    {
+      "id": "shader-snippet",
+      "name": "Fragment Shader Snippet",
+      "category": "glsl",
+      "desc": "GLSL fragment shader scaffold matching the viewer's uTime/uColor1/uColor2/uIntensity contract.",
+      "file": "examples/3dfx/shader-snippet.glsl",
+      "url":  "https://molochdagod.github.io/ObjectStore/examples/3dfx/shader-snippet.glsl",
+      "downloadAs": "shader-snippet.glsl",
+      "mime": "text/plain",
+      "tags": ["glsl","shader","fragment"]
+    }
+  ]
+}

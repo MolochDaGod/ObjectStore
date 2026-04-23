@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grudge 3DFX — Embed Example</title>
+<style>body{margin:0;background:#0f1419;color:#e8e6e3;font-family:system-ui,sans-serif}#app{width:100vw;height:100vh}.hud{position:fixed;top:12px;left:12px;background:rgba(26,31,46,.85);border:1px solid #3d3d3d;padding:8px 12px;border-radius:8px;font-size:12px}.hud code{color:#d4a84b}</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="hud">
+  Load any effect by ID:
+  <code>?id=fire_slash</code> · <code>?id=fireball</code> · <code>?id=ice_crystal</code>
+</div>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const BASE = 'https://molochdagod.github.io/ObjectStore';
+const id = new URLSearchParams(location.search).get('id') || 'fire_slash';
+
+// Fetch the effect registry and locate the requested effect
+const reg = await fetch(`${BASE}/api/v1/3dfx-registry.json`).then(r => r.json());
+const def = reg.effects[id];
+if (!def) { document.body.insertAdjacentHTML('beforeend', `<p style="padding:20px;color:#ff4d4d">Effect '${id}' not found</p>`); throw new Error('missing effect'); }
+
+// Minimal Three.js scene
+const w = innerWidth, h = innerHeight;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1419);
+const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
+camera.position.set(5, 4, 8);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(w, h);
+document.getElementById('app').appendChild(renderer.domElement);
+new OrbitControls(camera, renderer.domElement).target.set(0, 1, 0);
+scene.add(new THREE.AmbientLight(0x8888ff, 0.5));
+
+// Color from the effect definition
+const c1 = new THREE.Color(def.colors.primary);
+const c2 = new THREE.Color(def.colors.secondary);
+const mesh = new THREE.Mesh(
+  new THREE.SphereGeometry(0.8, 32, 32),
+  new THREE.MeshStandardMaterial({ color: c1, emissive: c1, emissiveIntensity: 0.8 })
+);
+mesh.position.y = 1;
+scene.add(mesh);
+
+(function animate() {
+  requestAnimationFrame(animate);
+  mesh.rotation.y += 0.005;
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

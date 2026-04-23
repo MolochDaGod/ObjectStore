@@ -1,0 +1,31 @@
+{
+  "id": "my_custom_effect",
+  "name": "My Custom Effect",
+  "category": "fire",
+  "source": "custom",
+  "tags": ["fire","aoe","burn"],
+  "colors": { "primary": "#ff4400", "secondary": "#ffcc00" },
+  "shader": "fire",
+  "geometry": {
+    "type": "plane",
+    "width": 2,
+    "height": 3,
+    "segments": [16, 16],
+    "instances": 6,
+    "layout": "circular",
+    "layoutRadius": 0.5
+  },
+  "particles": {
+    "count": 400,
+    "distribution": "sphere",
+    "radius": 1.2,
+    "size": 0.08,
+    "velocityY": [0.5, 2.0],
+    "blending": "additive",
+    "opacity": 0.9
+  },
+  "bloom":   { "strength": 1.8, "radius": 0.5, "threshold": 0.15 },
+  "lights":  { "color": "#ff6600", "intensity": 2.5, "distance": 8, "flicker": true },
+  "timing":  { "duration": 2.0, "speed": 1.0, "loop": true },
+  "uniforms": { "uIntensity": { "value": 1.5 } }
+}
