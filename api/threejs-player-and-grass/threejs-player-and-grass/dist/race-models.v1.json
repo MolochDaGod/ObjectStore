@@ -1,0 +1,198 @@
+{
+  "$schema": "https://molochdagod.github.io/ObjectStore/schemas/race-models.v1.json",
+  "version": "1.0.0",
+  "updated": "2026-04-22",
+  "base": "/assets/race-characters/",
+  "notes": "The six canonical Grudge MMO race characters. Each model is a single FBX 'customizable kit' exported from the Unity Toon_RTS project. Every armor/weapon/shield/utility variant is a sibling child mesh of the rig; runtime equipment is done by toggling `visible` on children whose name matches `prefix` + slot regex (see `slotPatterns`). Weapons/shields attach to `boneContainers`.",
+
+  "boneContainers": {
+    "rightHand":  "R_hand_container",
+    "leftHand":   "L_hand_container",
+    "leftShield": "L_shield_container",
+    "bag":        "Bone_bag",
+    "wood":       "Bone_wood",
+    "quiver":     "Quiver_container"
+  },
+
+  "slotPatterns": {
+    "body":      "^Units_Body_([A-Z])$",
+    "arms":      "^Units_Arms_([A-Z])$",
+    "legs":      "^Units_Legs_([A-Z])$",
+    "head":      "^Units_head_([A-Z])$",
+    "shoulders": "^Units_shoulderpads_([A-Z])$",
+    "axe":       "^Units_axe_([A-Z])$|^weapon_Axe_([A-Z])$",
+    "hammer":    "^Units_hammer_([A-Z])$|^weapon_hammer_([A-Z])$",
+    "sword":     "^Units_sword_([A-Z])$|^weapon_Sword_([A-Z])$",
+    "pick":      "^Units_pick$",
+    "spear":     "^Units_spear$|^weapon_Spear$",
+    "bow":       "^Units_Bow$|^weapon_Bow$",
+    "staff":     "^Units_staff_([A-Z])$|^weapon_staff_([A-Z])$",
+    "shield":    "^Units_shield_([A-Z])$|^Shield_([A-Z])$",
+    "bag":       "^Xtra_bag$|^Units_bag$",
+    "wood":      "^Xtra_wood$|^Units_wood$",
+    "quiver":    "^Xtra_quiver$|^Units_quiver$"
+  },
+
+  "slotGroups": {
+    "armor":   ["body", "arms", "legs", "head", "shoulders"],
+    "weapons": ["axe", "hammer", "sword", "pick", "spear", "bow", "staff"],
+    "shields": ["shield"],
+    "utility": ["bag", "wood", "quiver"]
+  },
+
+  "races": {
+    "human": {
+      "id": "human",
+      "name": "Human (Western Kingdom)",
+      "faction": "crusade",
+      "prefix": "WK_",
+      "format": "fbx",
+      "model": "wk/WK_Characters_customizable.fbx",
+      "thumbnail": "wk/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "1h_sword_shield",
+      "allowedWeapons": ["sword", "hammer", "axe", "spear", "bow", "staff"]
+    },
+    "barbarian": {
+      "id": "barbarian",
+      "name": "Barbarian",
+      "faction": "crusade",
+      "prefix": "BRB_",
+      "format": "fbx",
+      "model": "brb/BRB_Characters_customizable.fbx",
+      "thumbnail": "brb/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "spear"]
+    },
+    "elf": {
+      "id": "elf",
+      "name": "Elf",
+      "faction": "fabled",
+      "prefix": "ELF_",
+      "format": "fbx",
+      "model": "elf/ELF_Characters_customizable.fbx",
+      "thumbnail": "elf/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "longbow",
+      "allowedWeapons": ["bow", "sword", "spear", "staff"]
+    },
+    "dwarf": {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "faction": "fabled",
+      "prefix": "DWF_",
+      "format": "fbx",
+      "model": "dwf/DWF_Characters_customizable.fbx",
+      "thumbnail": "dwf/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "pick"]
+    },
+    "orc_classic": {
+      "id": "orc_classic",
+      "name": "Orc",
+      "faction": "legion",
+      "prefix": "ORC_",
+      "format": "fbx",
+      "model": "orc/ORC_Characters_Customizable.fbx",
+      "thumbnail": "orc/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "2h_melee",
+      "allowedWeapons": ["axe", "hammer", "sword", "spear"]
+    },
+    "undead": {
+      "id": "undead",
+      "name": "Undead",
+      "faction": "legion",
+      "prefix": "UD_",
+      "format": "fbx",
+      "model": "ud/UD_Characters_customizable.fbx",
+      "thumbnail": "ud/thumb.png",
+      "scale": 0.04,
+      "yOffset": 0,
+      "defaultAnimPack": "magic",
+      "allowedWeapons": ["staff", "sword", "spear"]
+    }
+  },
+
+  "animationPacks": {
+    "1h_sword_shield": {
+      "id": "1h_sword_shield",
+      "name": "1H Sword & Shield",
+      "format": "fbx",
+      "clipFilesBase": "anims/",
+      "clipFiles": {
+        "idle":   "Idle.fbx",
+        "walk":   "Swagger Walk.fbx",
+        "run":    "Dancing Running Man.fbx",
+        "attack": "Sword And Shield Attack.fbx",
+        "heavy":  "Sword And Shield Slash.fbx",
+        "block":  "Crouch Idle.fbx",
+        "jump":   "Climbing Ladder.fbx",
+        "sneak":  "Crouch Idle.fbx",
+        "dodge":  "Cover To Stand.fbx",
+        "death":  "Reacting.fbx"
+      }
+    },
+    "2h_melee": {
+      "id": "2h_melee",
+      "name": "2H Melee (Axe/Hammer/Greatsword)",
+      "format": "fbx",
+      "clipFilesBase": "anims/",
+      "clipFiles": {
+        "idle":   "Idle.fbx",
+        "walk":   "Swagger Walk.fbx",
+        "run":    "Dancing Running Man.fbx",
+        "attack": "Great Sword Slash.fbx",
+        "heavy":  "Two Hand Sword Combo.fbx",
+        "block":  "Crouch Idle.fbx",
+        "jump":   "Climbing Ladder.fbx",
+        "sneak":  "Crouch Idle.fbx",
+        "dodge":  "Cover To Stand.fbx",
+        "death":  "Reacting.fbx"
+      }
+    },
+    "longbow": {
+      "id": "longbow",
+      "name": "Longbow / Ranged",
+      "format": "fbx",
+      "clipFilesBase": "anims/",
+      "clipFiles": {
+        "idle":   "Idle.fbx",
+        "walk":   "Swagger Walk.fbx",
+        "run":    "Dancing Running Man.fbx",
+        "attack": "Pointing.fbx",
+        "heavy":  "Throw Object.fbx",
+        "block":  "Crouch Idle.fbx",
+        "jump":   "Climbing Ladder.fbx",
+        "sneak":  "Crouch Idle.fbx",
+        "dodge":  "Cover To Stand.fbx",
+        "death":  "Reacting.fbx"
+      }
+    },
+    "magic": {
+      "id": "magic",
+      "name": "Magic Staff",
+      "format": "fbx",
+      "clipFilesBase": "anims/",
+      "clipFiles": {
+        "idle":   "Idle.fbx",
+        "walk":   "Swagger Walk.fbx",
+        "run":    "Dancing Running Man.fbx",
+        "attack": "Standing 2H Magic Attack 01.fbx",
+        "heavy":  "Standing 2H Magic Area Attack 02.fbx",
+        "block":  "Standing 2H Cast Spell 01.fbx",
+        "jump":   "Climbing Ladder.fbx",
+        "sneak":  "Crouch Idle.fbx",
+        "dodge":  "Cover To Stand.fbx",
+        "death":  "Standing Taunt Battlecry.fbx"
+      }
+    }
+  }
+}

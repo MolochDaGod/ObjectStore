@@ -1,6 +1,9 @@
 // Find the un-bundled project on codevre:
 // https://codevre.com/editor?project=7kR8qQoxNCVu1AwDEoqetvzkVGC3_20251211163430823_vh7c
 
+// Grudge wiring — must import before any top-level code so window.Grudge.race
+// is in place by the time the Player constructor runs further down.
+import './wire-race-model.js';
 
 // http-url:https://esm.sh/three@0.182.0/es2022/build/three.core.mjs
 var up = "182";
@@ -18338,18 +18341,16 @@ var Player = class {
     this.mixer = null;
     this.actions = {};
     this.currentAction = null;
-    const loader = new Oe2();
-    loader.load("https://threejs.org/examples/models/gltf/Soldier.glb", (gltf) => {
-      const model = gltf.scene;
-      model.traverse((o) => {
-        if (!o.isMesh)
-          return;
-        o.castShadow = true;
-        o.receiveShadow = true;
-        const mat = o.material;
-        if (!mat)
-          return;
-        mat.onBeforeCompile = (shader) => {
+    this.equipment = null;
+    this.boneContainers = null;
+    this.raceReady = null;
+
+    // Shared material-shader injection (ground occlusion + cloud shadow).
+    // Pulled out so we can reuse it for Soldier.glb OR a race model.
+    const injectShader = (mat) => {
+      if (!mat || mat.__grudgeShaderInjected) return;
+      mat.__grudgeShaderInjected = true;
+      mat.onBeforeCompile = (shader) => {
           shader.uniforms.uGroundHeight = this.playerGroundOcclusion.groundHeight;
           shader.uniforms.uGroundMaxHeight = this.playerGroundOcclusion.maxHeight;
           shader.uniforms.uGroundStrength = this.playerGroundOcclusion.strength;
@@ -18414,35 +18415,104 @@ var Player = class {
                      #include <dithering_fragment>
                      `
           );
-        };
-        mat.needsUpdate = true;
+      };
+      mat.needsUpdate = true;
+    };
+
+    // Prepare a model root: apply shadows + shader injection to every mesh,
+    // swap out the placeholder body box, and build the AnimationMixer.
+    const mountModel = (model, animations, clipMap) => {
+      model.traverse((o) => {
+        if (!o.isMesh && !o.isSkinnedMesh) return;
+        o.castShadow = true;
+        o.receiveShadow = true;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(injectShader);
       });
       model.rotation.y = Math.PI;
       this.group.rotation.y = Math.PI;
-      this.group.remove(body);
+      if (body.parent === this.group) this.group.remove(body);
       this.group.add(model);
       this.mixer = new el(model);
-      gltf.animations.forEach((clip) => {
-        const name = clip.name.toLowerCase();
-        const action = this.mixer.clipAction(clip);
-        if (name.includes("idle"))
-          this.actions.Idle = action;
-        if (name.includes("walk"))
-          this.actions.Walk = action;
-        if (name.includes("run") && !name.includes("jump"))
-          this.actions.Run = action;
-        if (name.includes("jump"))
-          this.actions.Jump = action;
-        if (name.includes("fall"))
-          this.actions.Fall = action;
+
+      // clipMap is optional — { idle, walk, run, jump, attack, heavy, sneak, ... }
+      const stateFromLogical = {
+        idle: "Idle", walk: "Walk", run: "Run", jump: "Jump", fall: "Fall",
+        attack: "Attack", heavy: "Heavy", sneak: "Sneak", dodge: "Dodge", block: "Block", death: "Death"
+      };
+      if (clipMap) {
+        for (const [logical, clip] of Object.entries(clipMap)) {
+          const stateName = stateFromLogical[logical];
+          if (!stateName || !clip) continue;
+          this.actions[stateName] = this.mixer.clipAction(clip);
+        }
+      }
+
+      // Heuristic fill-in from remaining clips (handles Soldier.glb too).
+      (animations || []).forEach((clip) => {
+        const name = (clip.name || "").toLowerCase();
+        if (!this.actions.Idle && name.includes("idle")) this.actions.Idle = this.mixer.clipAction(clip);
+        if (!this.actions.Walk && name.includes("walk")) this.actions.Walk = this.mixer.clipAction(clip);
+        if (!this.actions.Run  && name.includes("run") && !name.includes("jump")) this.actions.Run  = this.mixer.clipAction(clip);
+        if (!this.actions.Jump && name.includes("jump")) this.actions.Jump = this.mixer.clipAction(clip);
+        if (!this.actions.Fall && name.includes("fall")) this.actions.Fall = this.mixer.clipAction(clip);
+        if (!this.actions.Attack && (name.includes("attack") || name.includes("swing") || name.includes("draw"))) this.actions.Attack = this.mixer.clipAction(clip);
+        if (!this.actions.Heavy && (name.includes("heavy") || name.includes("360") || name.includes("overdraw"))) this.actions.Heavy = this.mixer.clipAction(clip);
+        if (!this.actions.Sneak && (name.includes("sneak") || name.includes("crouch") || name.includes("strafe"))) this.actions.Sneak = this.mixer.clipAction(clip);
+        if (!this.actions.Dodge && (name.includes("dodge") || name.includes("roll"))) this.actions.Dodge = this.mixer.clipAction(clip);
       });
-      const clips = gltf.animations;
-      this.actions.Idle ||= this.mixer.clipAction(clips[0]);
-      this.actions.Run ||= this.mixer.clipAction(clips[1] || clips[0]);
-      this.actions.Jump ||= this.mixer.clipAction(clips[2] || clips[0]);
-      this.actions.Walk ||= this.mixer.clipAction(clips[3] || clips[0]);
+
+      const fallback = (animations && animations.length) ? this.mixer.clipAction(animations[0]) : null;
+      this.actions.Idle   ||= fallback;
+      this.actions.Walk   ||= this.actions.Run  || this.actions.Idle;
+      this.actions.Run    ||= this.actions.Walk || this.actions.Idle;
+      this.actions.Jump   ||= this.actions.Idle;
+      this.actions.Fall   ||= this.actions.Jump || this.actions.Idle;
+      this.actions.Attack ||= this.actions.Run  || this.actions.Idle;
+      this.actions.Heavy  ||= this.actions.Attack;
+      this.actions.Sneak  ||= this.actions.Walk;
+      this.actions.Dodge  ||= this.actions.Run  || this.actions.Walk;
+
+      // One-shot actions should clamp & not loop.
+      ["Attack", "Heavy", "Dodge"].forEach((k) => {
+        const a = this.actions[k];
+        if (a && a.setLoop) {
+          a.setLoop(2200 /* LoopOnce */, 1);
+          a.clampWhenFinished = true;
+        }
+      });
+
       this.setAnimationState("Idle", 0, 1);
-    });
+    };
+    this._mountModel = mountModel;
+
+    // Prefer the Grudge race wiring if present (window.Grudge.race is a Promise
+    // set up by src/wire-race-model.js). Fall back to Soldier.glb otherwise.
+    const fallbackSoldier = () => {
+      const loader = new Oe2();
+      loader.load("https://threejs.org/examples/models/gltf/Soldier.glb", (gltf) => {
+        mountModel(gltf.scene, gltf.animations, null);
+      });
+    };
+    const racePromise = (typeof window !== "undefined" && window.Grudge && window.Grudge.race) || null;
+    if (racePromise && typeof racePromise.then === "function") {
+      this.raceReady = racePromise.then((bundle) => {
+        try {
+          this.equipment = bundle.equipment || null;
+          this.boneContainers = bundle.boneContainers || null;
+          mountModel(bundle.root, bundle.animations, bundle.clips);
+          if (typeof window !== "undefined") window.GrudgePlayer = this;
+        } catch (err) {
+          console.warn("[Grudge] race mount failed, falling back to Soldier.glb:", err);
+          fallbackSoldier();
+        }
+      }).catch((err) => {
+        console.warn("[Grudge] race load failed, falling back to Soldier.glb:", err);
+        fallbackSoldier();
+      });
+    } else {
+      fallbackSoldier();
+    }
   }
   setAnimationState(name, fadeDuration, speed) {
     if (!this.mixer)
@@ -18682,10 +18752,19 @@ var World = class {
       fadeDuration: 0.2,
       walkVelocity: 4 * PLAYER_SCALE,
       runVelocity: 10 * PLAYER_SCALE,
+      sneakVelocity: 2 * PLAYER_SCALE,
+      dodgeVelocity: 22 * PLAYER_SCALE,
+      dodgeDuration: 0.35,
       rotateSpeed: 8,
       ease: new w(),
       up: new w(0, 1, 0),
-      rotateQuat: new Mt()
+      rotateQuat: new Mt(),
+      // combat state
+      attackUntil: 0,
+      attackAnim: null,
+      sneak: false,
+      dodgeUntil: 0,
+      dodgeDir: new w()
     };
     this._setupKeyboard();
     const startY = this._getTerrainHeightAtWorld(0, 0) + 0.1;
@@ -18792,8 +18871,28 @@ var World = class {
         k[1] = -1;
       if (e.code === "KeyD" || e.code === "ArrowRight")
         k[1] = 1;
-      if (e.code === "ShiftLeft")
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight")
         k[2] = 1;
+      if (e.code === "AltLeft" || e.code === "AltRight") {
+        this.controlsState.sneak = true;
+        e.preventDefault();
+      }
+      if (e.code === "ControlLeft" || e.code === "ControlRight") {
+        this._triggerDodge();
+        e.preventDefault();
+      }
+      if (e.code === "KeyF")
+        this._triggerAttack("Attack");
+      if (e.code === "KeyG")
+        this._triggerAttack("Heavy");
+    });
+    window.addEventListener("mousedown", (e) => {
+      if (!this.isPointerLocked) return;
+      if (e.button === 0) this._triggerAttack("Attack");
+      if (e.button === 2) this._triggerAttack("Heavy");
+    });
+    window.addEventListener("contextmenu", (e) => {
+      if (this.isPointerLocked) e.preventDefault();
     });
     window.addEventListener("keyup", (e) => {
       this.keys[e.code] = false;
@@ -18806,8 +18905,10 @@ var World = class {
         k[1] = 0;
       if (e.code === "KeyD" || e.code === "ArrowRight")
         k[1] = 0;
-      if (e.code === "ShiftLeft")
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight")
         k[2] = 0;
+      if (e.code === "AltLeft" || e.code === "AltRight")
+        this.controlsState.sneak = false;
     });
   }
   // ======================================================
@@ -19045,6 +19146,35 @@ var World = class {
     this.camera.lookAt(this.cameraTarget);
   }
   // ======================================================
+  // COMBAT
+  // ======================================================
+  _triggerAttack(kind) {
+    if (!this.player || !this.player.actions) return;
+    const actionKey = kind === "Heavy" ? "Heavy" : "Attack";
+    const action = this.player.actions[actionKey];
+    if (!action) return;
+    const clip = action.getClip ? action.getClip() : null;
+    const duration = clip ? clip.duration : 0.5;
+    const rate = kind === "Heavy" ? 0.9 : 1.1;
+    const now = (this.clock && this.clock.elapsedTime) || (typeof performance !== "undefined" ? performance.now() / 1000 : Date.now() / 1000);
+    this.controlsState.attackAnim = actionKey;
+    this.controlsState.attackUntil = now + Math.max(0.2, duration / rate);
+  }
+  _triggerDodge() {
+    const now = (this.clock && this.clock.elapsedTime) || (typeof performance !== "undefined" ? performance.now() / 1000 : Date.now() / 1000);
+    // Already dodging? Ignore.
+    if (now < this.controlsState.dodgeUntil) return;
+    // Direction: movement input rotated by camera yaw; fallback to facing forward.
+    const k = this.controlsState.key;
+    const local = new w(k[1], 0, k[0]);
+    if (local.lengthSq() < 1e-4) local.set(0, 0, -1); // dodge forward when stationary
+    local.normalize();
+    const az = this.cameraParams.yaw;
+    local.applyAxisAngle(this.controlsState.up, az);
+    this.controlsState.dodgeDir.copy(local);
+    this.controlsState.dodgeUntil = now + this.controlsState.dodgeDuration;
+  }
+  // ======================================================
   // PUBLIC API
   // ======================================================
   update(dt, elapsed) {
@@ -19055,8 +19185,26 @@ var World = class {
     const running = key[2] === 1;
     const move = new w();
     const playerPos = this.player.group.position;
-    if (active) {
-      const speed = running ? this.controlsState.runVelocity : this.controlsState.walkVelocity;
+    const attacking = elapsed < this.controlsState.attackUntil;
+    const dodging = elapsed < this.controlsState.dodgeUntil;
+    if (dodging) {
+      const dv = this.controlsState.dodgeVelocity * dt;
+      move.copy(this.controlsState.dodgeDir).multiplyScalar(dv);
+      const angle = Math.atan2(this.controlsState.dodgeDir.x, this.controlsState.dodgeDir.z);
+      this.controlsState.rotateQuat.setFromAxisAngle(this.controlsState.up, angle);
+      this.player.group.quaternion.rotateTowards(
+        this.controlsState.rotateQuat,
+        this.controlsState.rotateSpeed * dt
+      );
+    } else if (active) {
+      let speed;
+      if (attacking) {
+        speed = this.controlsState.walkVelocity * 0.35;
+      } else if (this.controlsState.sneak) {
+        speed = this.controlsState.sneakVelocity;
+      } else {
+        speed = running ? this.controlsState.runVelocity : this.controlsState.walkVelocity;
+      }
       this.controlsState.ease.set(key[1], 0, key[0]).normalize().multiplyScalar(speed * dt);
       const az = this.cameraParams.yaw;
       move.copy(this.controlsState.ease).applyAxisAngle(
@@ -19108,15 +19256,26 @@ var World = class {
     }
     playerPos.y = newY;
     this.ball.update(dt, (x, z2) => this._getTerrainHeightAtWorld(x, z2), this.gravity);
-    let nextAnim = "Idle";
-    if (!this.isGrounded) {
+    let nextAnim;
+    if (dodging) {
+      nextAnim = "Dodge";
+    } else if (attacking && this.controlsState.attackAnim) {
+      nextAnim = this.controlsState.attackAnim;
+    } else if (!this.isGrounded) {
       nextAnim = this.velocityY > 0 ? "Jump" : "Fall";
     } else if (active) {
-      nextAnim = running ? "Run" : "Walk";
+      if (this.controlsState.sneak) nextAnim = "Sneak";
+      else nextAnim = running ? "Run" : "Walk";
+    } else {
+      nextAnim = "Idle";
     }
     if (this.controlsState.current !== nextAnim) {
       this.controlsState.current = nextAnim;
-      const speedScale = nextAnim === "Run" ? 1.4 : 1;
+      let speedScale = 1;
+      if (nextAnim === "Run") speedScale = 1.4;
+      else if (nextAnim === "Sneak") speedScale = 0.8;
+      else if (nextAnim === "Heavy") speedScale = 0.9;
+      else if (nextAnim === "Dodge") speedScale = 1.3;
       this.player.setAnimationState(
         nextAnim,
         this.controlsState.fadeDuration,
@@ -19149,6 +19308,20 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.style.outline = "none";
 var world = new World(renderer);
 var clock = new Zo();
+world.clock = clock;
+// Expose live debug handles only — THREE + loaders are owned exclusively by
+// ./wire-race-model.js (which publishes them under window.Grudge). Keeping a
+// second copy here (GrudgeTHREE / GrudgeGLTFLoader) historically caused
+// two three-r182 instances to race for the same window surface.
+if (typeof window !== "undefined") {
+  window.GrudgeWorld = world;
+  window.GrudgeRenderer = renderer;
+  window.GrudgeClock = clock;
+  // Let the wire module upgrade its KTX2 detection now that renderer exists.
+  if (window.Grudge && window.Grudge.client && typeof window.Grudge.client.attachRenderer === "function") {
+    window.Grudge.client.attachRenderer(renderer);
+  }
+}
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);

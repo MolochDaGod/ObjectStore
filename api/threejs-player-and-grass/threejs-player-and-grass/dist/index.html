@@ -3,17 +3,27 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>ThreeJS player and grass</title>
+    <title>ThreeJS player and grass — Grudge Races</title>
     <link rel="stylesheet" href="./style.css">
-
+    <script type="importmap">
+    {
+      "imports": {
+        "three":          "https://esm.sh/three@0.182.0",
+        "three/":         "https://esm.sh/three@0.182.0/",
+        "three/addons/":  "https://esm.sh/three@0.182.0/examples/jsm/",
+        "@grudgstudio/core":     "https://esm.sh/@grudgstudio/core@2.1.0",
+        "@grudgstudio/core/sdk": "https://esm.sh/@grudgstudio/core@2.1.0/sdk/grudge-sdk.js"
+      }
+    }
+    </script>
   </head>
-    
-  <body>
-  <div id="info">
-   WASD = move, Space = jump, Shift = sprint, MouseWheel = zoom
-</div>
-    <script  src="./script.js"></script>
 
+  <body>
+    <div id="info">
+      WASD = move &middot; Shift = sprint &middot; Alt = sneak (hold) &middot; Ctrl = dodge &middot; Space = jump &middot; F/LMB = attack &middot; G/RMB = heavy &middot; MouseWheel = zoom
+      <br/>Race via <code>?race=human|barbarian|elf|dwarf|orc_classic|undead</code> or <code>window.Grudge.switchRace('elf')</code>
+    </div>
+    <script type="module" src="./script.js"></script>
   </body>
-  
+
 </html>
