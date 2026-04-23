@@ -1,0 +1,25 @@
+# Deploy-size trimming for Vercel.
+#
+# The threejs-player-and-grass race models ship as Unity FBX kits + TGA
+# textures + per-state Mixamo FBX clips. Those total ~280 MB across 178
+# files — way above Vercel's static deploy size budget. They live on
+# objects.grudge-studio.com instead; GrudgeModelsSDK resolves every
+# manifest `model` / `clipFiles` path against that origin.
+#
+# api/v1/race-models.json (the ~6 KB manifest) is NOT ignored — the SDK
+# still fetches it from the same origin as the app.
+
+api/threejs-player-and-grass/**/dist/assets/race-characters/**
+api/threejs-player-and-grass/**/dist/assets/race-characters
+
+# Node + Vite build artefacts — never needed in the Vercel deploy.
+**/node_modules/**
+**/node_modules
+**/dist-build/**
+**/dist-build
+**/.vite/**
+**/.vite
+
+# Package manager lockfiles for nested workspaces (Vercel only needs the
+# root lockfile; the nested threejs-player-and-grass has its own).
+api/threejs-player-and-grass/**/package-lock.json
