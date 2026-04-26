@@ -1,0 +1,1641 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-04-23T03:23:33.418Z",
+  "note": "Draft T0 addendum. Merge into master-items.json / master-consumables.json / master-materials.json after review. Do NOT import WCS set names (Bloodfeud, Wraithfang, Oathbreaker, Kinrend, Dusksinger, Emberclad) or the Rusty Sword / Chipped Axe starter names. ObjectStore naming is canon.",
+  "totals": {
+    "t0Weapons": 15,
+    "t0Armor": 18,
+    "t0Consumables": 5,
+    "t0NewMaterials": 6
+  },
+  "t0Weapons": [
+    {
+      "uuid": "ITEM-20260423030000-000001-4D4C1056",
+      "baseUuid": "ITEM-20260423030000-000001-4D4C1056",
+      "id": "t0-sword",
+      "name": "Training Sword",
+      "baseName": "Training Sword",
+      "category": "swords",
+      "type": "weapon",
+      "subCategory": "1h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/swords/sword_01.png",
+      "description": "A blunted training blade for recruits.",
+      "stats": {
+        "damage": 18,
+        "speed": 95,
+        "combo": 0,
+        "crit": 1,
+        "block": 2,
+        "defense": 6
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 2
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000002-68F0EE98",
+      "baseUuid": "ITEM-20260423030000-000002-68F0EE98",
+      "id": "t0-axe1h",
+      "name": "Hand Axe",
+      "baseName": "Hand Axe",
+      "category": "axes1h",
+      "type": "weapon",
+      "subCategory": "1h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/axes1h/axe_01.png",
+      "description": "A simple woodcutter’s axe pressed into battle.",
+      "stats": {
+        "damage": 20,
+        "speed": 105,
+        "combo": 0,
+        "crit": 1,
+        "block": 2,
+        "defense": 5
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 2
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000003-427E8F16",
+      "baseUuid": "ITEM-20260423030000-000003-427E8F16",
+      "id": "t0-dagger",
+      "name": "Training Dagger",
+      "baseName": "Training Dagger",
+      "category": "daggers",
+      "type": "weapon",
+      "subCategory": "1h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/daggers/dagger_01.png",
+      "description": "A short utility knife used in sparring.",
+      "stats": {
+        "damage": 14,
+        "speed": 70,
+        "combo": 10,
+        "crit": 2,
+        "block": 0,
+        "defense": 3
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 1
+          },
+          {
+            "id": "scraps-leather",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000004-A074566A",
+      "baseUuid": "ITEM-20260423030000-000004-A074566A",
+      "id": "t0-hammer1h",
+      "name": "Training Hammer",
+      "baseName": "Training Hammer",
+      "category": "hammers1h",
+      "type": "weapon",
+      "subCategory": "1h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/hammers1h/hammer_01.png",
+      "description": "A smith’s hammer, heavy enough to bruise.",
+      "stats": {
+        "damage": 22,
+        "speed": 115,
+        "combo": 0,
+        "crit": 0,
+        "block": 3,
+        "defense": 7
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 2
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000005-CAA9CE57",
+      "baseUuid": "ITEM-20260423030000-000005-CAA9CE57",
+      "id": "t0-spear",
+      "name": "Hunting Spear",
+      "baseName": "Hunting Spear",
+      "category": "spears",
+      "type": "weapon",
+      "subCategory": "2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/spears/spear_01.png",
+      "description": "A pointed stick bound with rawhide.",
+      "stats": {
+        "damage": 24,
+        "speed": 110,
+        "combo": 0,
+        "crit": 1,
+        "block": 2,
+        "defense": 7
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          },
+          {
+            "id": "scrap-ingot",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000006-6B71956B",
+      "baseUuid": "ITEM-20260423030000-000006-6B71956B",
+      "id": "t0-greatsword",
+      "name": "Training Greatsword",
+      "baseName": "Training Greatsword",
+      "category": "greatswords",
+      "type": "weapon",
+      "subCategory": "2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/greatswords/sword_30.png",
+      "description": "An oversized training blade meant for practice swings.",
+      "stats": {
+        "damage": 28,
+        "speed": 125,
+        "combo": 0,
+        "crit": 1,
+        "block": 3,
+        "defense": 10
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 3
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000007-53358EF2",
+      "baseUuid": "ITEM-20260423030000-000007-53358EF2",
+      "id": "t0-greataxe",
+      "name": "Training Greataxe",
+      "baseName": "Training Greataxe",
+      "category": "greataxes",
+      "type": "weapon",
+      "subCategory": "2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/greataxes/axe_20.png",
+      "description": "A woodsman’s greataxe sharpened for war.",
+      "stats": {
+        "damage": 30,
+        "speed": 135,
+        "combo": 0,
+        "crit": 1,
+        "block": 3,
+        "defense": 11
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 3
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000008-AA2B4CC9",
+      "baseUuid": "ITEM-20260423030000-000008-AA2B4CC9",
+      "id": "t0-hammer2h",
+      "name": "Training Warhammer",
+      "baseName": "Training Warhammer",
+      "category": "hammers2h",
+      "type": "weapon",
+      "subCategory": "2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/hammers2h/hammer_20.png",
+      "description": "A two-handed maul used to split logs.",
+      "stats": {
+        "damage": 32,
+        "speed": 145,
+        "combo": 0,
+        "crit": 0,
+        "block": 4,
+        "defense": 12
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 3
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000009-0D451C01",
+      "baseUuid": "ITEM-20260423030000-000009-0D451C01",
+      "id": "t0-bow",
+      "name": "Short Bow",
+      "baseName": "Short Bow",
+      "category": "bows",
+      "type": "weapon",
+      "subCategory": "ranged-2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/bows/bow_01.png",
+      "description": "A hunting bow carved from seasoned driftwood.",
+      "stats": {
+        "damage": 20,
+        "speed": 85,
+        "combo": 15,
+        "crit": 2,
+        "block": 0,
+        "defense": 4
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          },
+          {
+            "id": "rag-thread",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000A-46C949AA",
+      "baseUuid": "ITEM-20260423030000-00000A-46C949AA",
+      "id": "t0-crossbow",
+      "name": "Light Crossbow",
+      "baseName": "Light Crossbow",
+      "category": "crossbows",
+      "type": "weapon",
+      "subCategory": "ranged-2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/crossbows/crossbow_01.png",
+      "description": "A crude repeater cobbled from scrap.",
+      "stats": {
+        "damage": 24,
+        "speed": 75,
+        "combo": 5,
+        "crit": 2,
+        "block": 1,
+        "defense": 5
+      },
+      "craftedBy": "Engineer",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          },
+          {
+            "id": "scrap-ingot",
+            "quantity": 2
+          },
+          {
+            "id": "rag-thread",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000B-58235CED",
+      "baseUuid": "ITEM-20260423030000-00000B-58235CED",
+      "id": "t0-gun",
+      "name": "Flintlock Pistol",
+      "baseName": "Flintlock Pistol",
+      "category": "guns",
+      "type": "weapon",
+      "subCategory": "ranged-2h",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/guns/gun_01.png",
+      "description": "A homemade flintlock more loud than accurate.",
+      "stats": {
+        "damage": 28,
+        "speed": 80,
+        "combo": 20,
+        "crit": 3,
+        "block": 0,
+        "defense": 3
+      },
+      "craftedBy": "Engineer",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 2
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000C-FAE29372",
+      "baseUuid": "ITEM-20260423030000-00000C-FAE29372",
+      "id": "t0-wand",
+      "name": "Apprentice Wand",
+      "baseName": "Apprentice Wand",
+      "category": "wands",
+      "type": "weapon",
+      "subCategory": "1h-magic",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/weapons/staff_01.png",
+      "description": "A novice’s wand that flickers with raw magic. Branches into fire, frost, holy, arcane, and lightning staves at T1.",
+      "stats": {
+        "damage": 14,
+        "speed": 70,
+        "combo": 50,
+        "crit": 1,
+        "block": 0,
+        "defense": 3
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          },
+          {
+            "id": "faint-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000D-5736889E",
+      "baseUuid": "ITEM-20260423030000-00000D-5736889E",
+      "id": "t0-nature-staff",
+      "name": "Sapling Staff",
+      "baseName": "Sapling Staff",
+      "category": "natureStaves",
+      "type": "weapon",
+      "subCategory": "2h-magic",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/weapons/staff_02.png",
+      "description": "A living branch that roots the wielder to the earth.",
+      "stats": {
+        "damage": 16,
+        "speed": 95,
+        "combo": 60,
+        "crit": 1,
+        "block": 1,
+        "defense": 5
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "driftwood-log",
+            "quantity": 2
+          },
+          {
+            "id": "faint-essence",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000E-96DA4900",
+      "baseUuid": "ITEM-20260423030000-00000E-96DA4900",
+      "id": "t0-tool",
+      "name": "Crude Tool",
+      "baseName": "Crude Tool",
+      "category": "tools",
+      "type": "weapon",
+      "subCategory": "gathering",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/tools/tool_01.png",
+      "description": "A multipurpose gathering tool for chipping, cutting, and prying.",
+      "stats": {
+        "damage": 8,
+        "speed": 100,
+        "combo": 0,
+        "crit": 0,
+        "block": 0,
+        "defense": 2
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ingot",
+            "quantity": 1
+          },
+          {
+            "id": "driftwood-log",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00000F-0CFAC9C8",
+      "baseUuid": "ITEM-20260423030000-00000F-0CFAC9C8",
+      "id": "t0-offhand-tome",
+      "name": "Novice Tome",
+      "baseName": "Novice Tome",
+      "category": "offhand-tome",
+      "type": "weapon",
+      "subCategory": "offhand",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/tomes/tome_01.png",
+      "description": "A beginner’s spellbook with a handful of cantrips.",
+      "stats": {
+        "damage": 0,
+        "speed": 0,
+        "combo": 30,
+        "crit": 0,
+        "block": 2,
+        "defense": 4
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 2
+          },
+          {
+            "id": "rag-thread",
+            "quantity": 1
+          },
+          {
+            "id": "faint-essence",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    }
+  ],
+  "t0Armor": [
+    {
+      "uuid": "ITEM-20260423030000-000065-E5BA3107",
+      "baseUuid": "ITEM-20260423030000-000065-E5BA3107",
+      "id": "t0-cloth-helmet",
+      "name": "Hemp Wrap",
+      "baseName": "Hemp Wrap",
+      "category": "armor",
+      "type": "armor",
+      "slot": "helmet",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-helmet-t0.png",
+      "description": "Cloth Coverings helmet worn by fresh settlers.",
+      "stats": {
+        "health": 8,
+        "mana": 12,
+        "defense": 1,
+        "evasion": 1
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000066-722736BC",
+      "baseUuid": "ITEM-20260423030000-000066-722736BC",
+      "id": "t0-cloth-shoulders",
+      "name": "Hemp Mantle",
+      "baseName": "Hemp Mantle",
+      "category": "armor",
+      "type": "armor",
+      "slot": "shoulders",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-shoulders-t0.png",
+      "description": "Cloth Coverings shoulders worn by fresh settlers.",
+      "stats": {
+        "health": 8,
+        "mana": 12,
+        "defense": 1,
+        "evasion": 1
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000067-C2FA285D",
+      "baseUuid": "ITEM-20260423030000-000067-C2FA285D",
+      "id": "t0-cloth-chest",
+      "name": "Hemp Tunic",
+      "baseName": "Hemp Tunic",
+      "category": "armor",
+      "type": "armor",
+      "slot": "chest",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-chest-t0.png",
+      "description": "Cloth Coverings chest worn by fresh settlers.",
+      "stats": {
+        "health": 13,
+        "mana": 19,
+        "defense": 2,
+        "evasion": 2
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 5
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000068-8BAD9C4D",
+      "baseUuid": "ITEM-20260423030000-000068-8BAD9C4D",
+      "id": "t0-cloth-hands",
+      "name": "Hemp Wraps",
+      "baseName": "Hemp Wraps",
+      "category": "armor",
+      "type": "armor",
+      "slot": "hands",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-hands-t0.png",
+      "description": "Cloth Coverings hands worn by fresh settlers.",
+      "stats": {
+        "health": 5,
+        "mana": 7,
+        "defense": 1,
+        "evasion": 1
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000069-15B7DF88",
+      "baseUuid": "ITEM-20260423030000-000069-15B7DF88",
+      "id": "t0-cloth-legs",
+      "name": "Hemp Trousers",
+      "baseName": "Hemp Trousers",
+      "category": "armor",
+      "type": "armor",
+      "slot": "legs",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-legs-t0.png",
+      "description": "Cloth Coverings legs worn by fresh settlers.",
+      "stats": {
+        "health": 10,
+        "mana": 14,
+        "defense": 1,
+        "evasion": 1
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006A-C4E65E4A",
+      "baseUuid": "ITEM-20260423030000-00006A-C4E65E4A",
+      "id": "t0-cloth-feet",
+      "name": "Hemp Sandals",
+      "baseName": "Hemp Sandals",
+      "category": "armor",
+      "type": "armor",
+      "slot": "feet",
+      "material": "cloth",
+      "materialLabel": "Cloth Coverings",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/cloth/cloth-feet-t0.png",
+      "description": "Cloth Coverings feet worn by fresh settlers.",
+      "stats": {
+        "health": 6,
+        "mana": 8,
+        "defense": 1,
+        "evasion": 1
+      },
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "hemp",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006B-657BF08D",
+      "baseUuid": "ITEM-20260423030000-00006B-657BF08D",
+      "id": "t0-leather-helmet",
+      "name": "Skinned Leather Cap",
+      "baseName": "Skinned Leather Cap",
+      "category": "armor",
+      "type": "armor",
+      "slot": "helmet",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-helmet-t0.png",
+      "description": "Skinned Leather helmet worn by fresh settlers.",
+      "stats": {
+        "health": 14,
+        "mana": 4,
+        "defense": 3,
+        "evasion": 2
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006C-BAC165A9",
+      "baseUuid": "ITEM-20260423030000-00006C-BAC165A9",
+      "id": "t0-leather-shoulders",
+      "name": "Skinned Leather Pauldrons",
+      "baseName": "Skinned Leather Pauldrons",
+      "category": "armor",
+      "type": "armor",
+      "slot": "shoulders",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-shoulders-t0.png",
+      "description": "Skinned Leather shoulders worn by fresh settlers.",
+      "stats": {
+        "health": 14,
+        "mana": 4,
+        "defense": 3,
+        "evasion": 2
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006D-6C02DDEE",
+      "baseUuid": "ITEM-20260423030000-00006D-6C02DDEE",
+      "id": "t0-leather-chest",
+      "name": "Skinned Leather Vest",
+      "baseName": "Skinned Leather Vest",
+      "category": "armor",
+      "type": "armor",
+      "slot": "chest",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-chest-t0.png",
+      "description": "Skinned Leather chest worn by fresh settlers.",
+      "stats": {
+        "health": 22,
+        "mana": 6,
+        "defense": 5,
+        "evasion": 3
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 5
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006E-EB4EBE87",
+      "baseUuid": "ITEM-20260423030000-00006E-EB4EBE87",
+      "id": "t0-leather-hands",
+      "name": "Skinned Leather Gloves",
+      "baseName": "Skinned Leather Gloves",
+      "category": "armor",
+      "type": "armor",
+      "slot": "hands",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-hands-t0.png",
+      "description": "Skinned Leather hands worn by fresh settlers.",
+      "stats": {
+        "health": 8,
+        "mana": 2,
+        "defense": 2,
+        "evasion": 1
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-00006F-2F5E4A16",
+      "baseUuid": "ITEM-20260423030000-00006F-2F5E4A16",
+      "id": "t0-leather-legs",
+      "name": "Skinned Leather Breeches",
+      "baseName": "Skinned Leather Breeches",
+      "category": "armor",
+      "type": "armor",
+      "slot": "legs",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-legs-t0.png",
+      "description": "Skinned Leather legs worn by fresh settlers.",
+      "stats": {
+        "health": 17,
+        "mana": 5,
+        "defense": 4,
+        "evasion": 2
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000070-60C2B623",
+      "baseUuid": "ITEM-20260423030000-000070-60C2B623",
+      "id": "t0-leather-feet",
+      "name": "Skinned Leather Boots",
+      "baseName": "Skinned Leather Boots",
+      "category": "armor",
+      "type": "armor",
+      "slot": "feet",
+      "material": "leather",
+      "materialLabel": "Skinned Leather",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/leather/leather-feet-t0.png",
+      "description": "Skinned Leather feet worn by fresh settlers.",
+      "stats": {
+        "health": 10,
+        "mana": 3,
+        "defense": 2,
+        "evasion": 1
+      },
+      "craftedBy": "Forester",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scraps-leather",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000071-E2638E16",
+      "baseUuid": "ITEM-20260423030000-000071-E2638E16",
+      "id": "t0-stone-helmet",
+      "name": "Stonebound Helm",
+      "baseName": "Stonebound Helm",
+      "category": "armor",
+      "type": "armor",
+      "slot": "helmet",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-helmet-t0.png",
+      "description": "Ore-Sealed Stone helmet worn by fresh settlers.",
+      "stats": {
+        "health": 20,
+        "mana": 0,
+        "defense": 6,
+        "evasion": 0,
+        "block": 1
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 3
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000072-67E9290B",
+      "baseUuid": "ITEM-20260423030000-000072-67E9290B",
+      "id": "t0-stone-shoulders",
+      "name": "Stonebound Pauldrons",
+      "baseName": "Stonebound Pauldrons",
+      "category": "armor",
+      "type": "armor",
+      "slot": "shoulders",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-shoulders-t0.png",
+      "description": "Ore-Sealed Stone shoulders worn by fresh settlers.",
+      "stats": {
+        "health": 20,
+        "mana": 0,
+        "defense": 6,
+        "evasion": 0,
+        "block": 1
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 3
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000073-9F8B4355",
+      "baseUuid": "ITEM-20260423030000-000073-9F8B4355",
+      "id": "t0-stone-chest",
+      "name": "Stonebound Chestplate",
+      "baseName": "Stonebound Chestplate",
+      "category": "armor",
+      "type": "armor",
+      "slot": "chest",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-chest-t0.png",
+      "description": "Ore-Sealed Stone chest worn by fresh settlers.",
+      "stats": {
+        "health": 32,
+        "mana": 0,
+        "defense": 10,
+        "evasion": 0,
+        "block": 2
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 5
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 5
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000074-6969B258",
+      "baseUuid": "ITEM-20260423030000-000074-6969B258",
+      "id": "t0-stone-hands",
+      "name": "Stonebound Gauntlets",
+      "baseName": "Stonebound Gauntlets",
+      "category": "armor",
+      "type": "armor",
+      "slot": "hands",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-hands-t0.png",
+      "description": "Ore-Sealed Stone hands worn by fresh settlers.",
+      "stats": {
+        "health": 12,
+        "mana": 0,
+        "defense": 4,
+        "evasion": 0,
+        "block": 1
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 2
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000075-74137C63",
+      "baseUuid": "ITEM-20260423030000-000075-74137C63",
+      "id": "t0-stone-legs",
+      "name": "Stonebound Greaves",
+      "baseName": "Stonebound Greaves",
+      "category": "armor",
+      "type": "armor",
+      "slot": "legs",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-legs-t0.png",
+      "description": "Ore-Sealed Stone legs worn by fresh settlers.",
+      "stats": {
+        "health": 24,
+        "mana": 0,
+        "defense": 7,
+        "evasion": 0,
+        "block": 1
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 3
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 3
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "ITEM-20260423030000-000076-66267428",
+      "baseUuid": "ITEM-20260423030000-000076-66267428",
+      "id": "t0-stone-feet",
+      "name": "Stonebound Sabatons",
+      "baseName": "Stonebound Sabatons",
+      "category": "armor",
+      "type": "armor",
+      "slot": "feet",
+      "material": "metal",
+      "materialLabel": "Ore-Sealed Stone",
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/armor/metal/metal-feet-t0.png",
+      "description": "Ore-Sealed Stone feet worn by fresh settlers.",
+      "stats": {
+        "health": 14,
+        "mana": 0,
+        "defense": 4,
+        "evasion": 0,
+        "block": 1
+      },
+      "craftedBy": "Miner",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Anywhere",
+        "materials": [
+          {
+            "id": "scrap-ore",
+            "quantity": 2
+          },
+          {
+            "id": "rough-stone",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 10,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    }
+  ],
+  "t0Consumables": [
+    {
+      "uuid": "POTN-20260423030000-00012D-054B9B0C",
+      "baseUuid": "POTN-20260423030000-00012D-054B9B0C",
+      "id": "t0-weak-health-potion",
+      "name": "Weak Health Potion",
+      "baseName": "Weak Health Potion",
+      "category": "mysticPotions",
+      "type": "potion",
+      "requiredLevel": 1,
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/consumables/mysticPotions_t0_health.png",
+      "emoji": "🧪",
+      "description": "A crude brew that tastes of bitter roots.",
+      "effect": "Restores 25 HP",
+      "stats": {
+        "heal": "25 HP"
+      },
+      "buff": "{\"heal\":\"25 HP\"}",
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Campfire",
+        "materials": [
+          {
+            "id": "wild-herb",
+            "quantity": 2
+          },
+          {
+            "id": "water-flask",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 5,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "POTN-20260423030000-00012E-21385B1E",
+      "baseUuid": "POTN-20260423030000-00012E-21385B1E",
+      "id": "t0-weak-mana-potion",
+      "name": "Weak Mana Potion",
+      "baseName": "Weak Mana Potion",
+      "category": "mysticPotions",
+      "type": "potion",
+      "requiredLevel": 1,
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/consumables/mysticPotions_t0_mana.png",
+      "emoji": "🧪",
+      "description": "A shimmering sip that cools the mind.",
+      "effect": "Restores 15 MP",
+      "stats": {
+        "mana": "15 MP"
+      },
+      "buff": "{\"mana\":\"15 MP\"}",
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Campfire",
+        "materials": [
+          {
+            "id": "wild-herb",
+            "quantity": 2
+          },
+          {
+            "id": "water-flask",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 5,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "POTN-20260423030000-00012F-EB5E2F08",
+      "baseUuid": "POTN-20260423030000-00012F-EB5E2F08",
+      "id": "t0-weak-stamina-potion",
+      "name": "Weak Stamina Potion",
+      "baseName": "Weak Stamina Potion",
+      "category": "mysticPotions",
+      "type": "potion",
+      "requiredLevel": 1,
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/consumables/mysticPotions_t0_stamina.png",
+      "emoji": "🧪",
+      "description": "A gritty draught that jolts the legs.",
+      "effect": "Restores 20 Stamina",
+      "stats": {
+        "stamina": "20"
+      },
+      "buff": "{\"stamina\":\"20\"}",
+      "craftedBy": "Mystic",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Campfire",
+        "materials": [
+          {
+            "id": "wild-herb",
+            "quantity": 2
+          },
+          {
+            "id": "water-flask",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 5,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "FOOD-20260423030000-000130-E81CFF15",
+      "baseUuid": "FOOD-20260423030000-000130-E81CFF15",
+      "id": "t0-charred-meat",
+      "name": "Charred Meat",
+      "baseName": "Charred Meat",
+      "category": "redFoods",
+      "type": "food",
+      "requiredLevel": 1,
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/consumables/redFoods_t0.png",
+      "emoji": "🍖",
+      "description": "Barely edible but filling enough to keep going.",
+      "effect": "Restores 10 HP, +2 Stamina Regen for 30s",
+      "stats": {
+        "heal": "10 HP",
+        "staminaRegen": "+2/s 30s"
+      },
+      "buff": "{\"heal\":\"10 HP\",\"staminaRegen\":\"+2/s 30s\"}",
+      "craftedBy": "Chef",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Campfire",
+        "materials": [
+          {
+            "id": "raw-meat",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 5,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    },
+    {
+      "uuid": "FOOD-20260423030000-000131-40B9F7AB",
+      "baseUuid": "FOOD-20260423030000-000131-40B9F7AB",
+      "id": "t0-smoked-fish",
+      "name": "Smoked Fish",
+      "baseName": "Smoked Fish",
+      "category": "blueFoods",
+      "type": "food",
+      "requiredLevel": 1,
+      "tier": 0,
+      "tierLabel": "Starter",
+      "tierColor": "#6b7280",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/consumables/blueFoods_t0.png",
+      "emoji": "🍖",
+      "description": "Simple preserved fish, calming and clear-headed.",
+      "effect": "Restores 8 HP, +3 Mana Regen for 30s",
+      "stats": {
+        "heal": "8 HP",
+        "manaRegen": "+3/s 30s"
+      },
+      "buff": "{\"heal\":\"8 HP\",\"manaRegen\":\"+3/s 30s\"}",
+      "craftedBy": "Chef",
+      "craftingRecipe": {
+        "profession": null,
+        "station": "Campfire",
+        "materials": [
+          {
+            "id": "raw-fish",
+            "quantity": 1
+          }
+        ],
+        "craftTime": 5,
+        "gold": 0
+      },
+      "source": "starter",
+      "usedInT1Crafting": true
+    }
+  ],
+  "t0NewMaterials": [
+    {
+      "uuid": "MATL-20260423030000-000191-3C18EB79",
+      "id": "hemp",
+      "name": "Hemp",
+      "type": "material",
+      "category": "cloth",
+      "tier": 0,
+      "emoji": "🌾",
+      "gatheredBy": "Mystic",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/hemp.png",
+      "description": "Rough plant fiber gathered from wild hemp stalks. Used in cloth-covering T0 armor."
+    },
+    {
+      "uuid": "MATL-20260423030000-000192-90AA53B6",
+      "id": "rough-stone",
+      "name": "Rough Stone",
+      "type": "material",
+      "category": "component",
+      "tier": 0,
+      "emoji": "🪨",
+      "gatheredBy": "Miner",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/rough-stone.png",
+      "description": "Unshaped stone fragments. Paired with raw ore to seal stone armor."
+    },
+    {
+      "uuid": "MATL-20260423030000-000193-16D467A5",
+      "id": "wild-herb",
+      "name": "Wild Herb",
+      "type": "material",
+      "category": "ingredient",
+      "tier": 0,
+      "emoji": "🌿",
+      "gatheredBy": "Chef",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/wild-herb.png",
+      "description": "Forageable medicinal plants used in starter potions."
+    },
+    {
+      "uuid": "MATL-20260423030000-000194-6D8DB3F8",
+      "id": "water-flask",
+      "name": "Water Flask",
+      "type": "material",
+      "category": "ingredient",
+      "tier": 0,
+      "emoji": "💧",
+      "gatheredBy": "Chef",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/water-flask.png",
+      "description": "A flask of fresh water collected from streams or wells."
+    },
+    {
+      "uuid": "MATL-20260423030000-000195-4E3C5E14",
+      "id": "raw-meat",
+      "name": "Raw Meat",
+      "type": "material",
+      "category": "ingredient",
+      "tier": 0,
+      "emoji": "🥩",
+      "gatheredBy": "Forester",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/raw-meat.png",
+      "description": "Untreated meat from hunted game."
+    },
+    {
+      "uuid": "MATL-20260423030000-000196-0DE74CA5",
+      "id": "raw-fish",
+      "name": "Raw Fish",
+      "type": "material",
+      "category": "ingredient",
+      "tier": 0,
+      "emoji": "🐟",
+      "gatheredBy": "Forester",
+      "iconUrl": "https://molochdagod.github.io/ObjectStore/icons/materials/raw-fish.png",
+      "description": "Freshly caught fish."
+    }
+  ]
+}

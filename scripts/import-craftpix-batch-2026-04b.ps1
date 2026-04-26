@@ -46,12 +46,12 @@ function Extract-CraftpixPack {
         }
 
         # Partition entries into "bg" (PNG/background) vs "noBg" (PNG/without background OR flat PNG/)
-        $bg   = @($entries | Where-Object { $_.FullName -match '(?i)/background/|^[^/]*background/|PNG/background/|background/' })
-        $noBg = @($entries | Where-Object { $_.FullName -match '(?i)/without[_\- ]?background/|/no[_\- ]?background/' })
+        # Note: we must exclude 'without background' / 'no background' from the bg set.
+        $noBg = @($entries | Where-Object { $_.FullName -match '(?i)/(without[_\- ]?background|no[_\- ]?background)/' })
+        $bg   = @($entries | Where-Object { $_.FullName -match '(?i)/background/' -and $_.FullName -notmatch '(?i)/(without[_\- ]?background|no[_\- ]?background)/' })
         $flat = @($entries | Where-Object {
             $_.FullName -match '\.png$' -and
-            $_.FullName -notmatch '(?i)background' -and
-            $_.FullName -notmatch '(?i)without'
+            $_.FullName -notmatch '(?i)background'
         })
 
         # Prefer no-background as primary; framed (background) as secondary.
