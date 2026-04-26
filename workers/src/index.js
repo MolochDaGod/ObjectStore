@@ -37,7 +37,7 @@ export default {
       if (url.pathname === '/' || url.pathname === '') {
         return corsResponse(env, json({
           service: 'objectstore-api',
-          version: '2.1.0',
+          version: '3.0.0',
           status: 'ok',
           endpoints: {
             health: 'GET /health',
@@ -56,7 +56,7 @@ export default {
       }
 
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
-        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '2.0.0', timestamp: new Date().toISOString() }), origin);
+        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '3.0.0', timestamp: new Date().toISOString() }), origin);
       }
 
       // ── Game data routes (/v1/game-data, /v1/weapon-skills) ───────
@@ -403,6 +403,13 @@ async function handleConvertRoutes(request, url, method, env) {
 
 // Known game data collections that can be served
 const GAME_DATA_COLLECTIONS = [
+  // ── Core item/gear databases ──────────────────────────────────────
+  'master-items', 'master-weapons', 'master-armor', 'master-materials',
+  'master-consumables', 'master-recipes', 'master-professions',
+  'master-skillTrees', 'master-weaponSkills', 'master-registry',
+  // ── New Mystic / enchanting system ───────────────────────────────
+  'master-enchants', 'master-infusions', 'master-relics', 'master-artifacts',
+  // ── Legacy / alias collections ────────────────────────────────────
   'weapons', 'armor', 'materials', 'consumables', 'weaponSkills',
   'skills', 'enemies', 'bosses', 'classes', 'races', 'factions',
   'attributes', 'professions', 'heroes', 'equipment', 'missions',
@@ -410,7 +417,7 @@ const GAME_DATA_COLLECTIONS = [
   'dialogue', 'lore', 'audio', 'models', 'animations',
   'factionUnits', 'battleFormations', 'controllers', 'ai',
   'enemyTemplates', 'cutscenes', 'entities', 'models3d',
-  // glTF Pipeline registries
+  // ── glTF Pipeline registries ──────────────────────────────────────
   'gltf-manifest', 'effect-definitions', 'animations-gltf',
 ];
 
