@@ -78,6 +78,34 @@
     .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
     .tabs button { background: var(--surface); border-color: var(--border); }
     .tabs button.active { background: var(--accent); border-color: var(--accent); }
+
+    /* ── Manual generator panel ── */
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 22px; }
+    .panel h2 { color: var(--gold); font-size: 1.05rem; margin-bottom: 6px; }
+    .panel .panel-sub { color: var(--text-dim); font-size: 0.82rem; margin-bottom: 14px; }
+    .panel .row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .panel .row.two { grid-template-columns: 1fr 1fr; }
+    .panel .row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .panel label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .panel label input, .panel label select, .panel label textarea { font-size: 13px; padding: 8px 10px; }
+    .panel textarea { resize: vertical; font-family: inherit; min-height: 60px; }
+    .panel .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .panel .preview { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .ref-drop { flex: 0 0 200px; border: 2px dashed var(--border); border-radius: 10px; min-height: 200px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; cursor: pointer; transition: all 0.15s; padding: 12px; text-align: center; background: #0d131c; }
+    .ref-drop:hover, .ref-drop.dragover { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+    .ref-drop img { max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; }
+    .ref-drop .hint { font-size: 11px; color: var(--text-dim); }
+    .ref-drop input[type="file"] { display: none; }
+    .result-box { flex: 0 0 200px; min-height: 200px; border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #0d131c; padding: 12px; }
+    .result-box img { max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 6px; }
+    .result-box .empty { color: var(--text-dim); font-size: 12px; text-align: center; }
+    .prompt-box { flex: 1 1 320px; min-width: 280px; }
+    .prompt-box textarea { width: 100%; min-height: 200px; resize: vertical; }
+    .checkbox-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; padding: 8px 0; font-size: 13px; }
+    .checkbox-row label { flex-direction: row; align-items: center; gap: 6px; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--text); }
+    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; }
+    button.gold { background: var(--gold); border-color: var(--gold); color: #1a1611; }
+    button.ghost { background: transparent; border-color: var(--border); color: var(--text); }
   </style>
 </head>
 <body>
@@ -97,6 +125,189 @@
   <h1>⚔️ GRUDGE Icon Generator</h1>
   <p class="subtitle">Generate game asset icons using Puter's free AI (FLUX model). Icons save to Puter cloud storage.</p>
 
+  <!-- ── Manual Generator (single icon, with reference image + prompt assist) ── -->
+  <div class="panel" id="manualPanel">
+    <h2>🎨 Manual Icon Generator</h2>
+    <p class="panel-sub">Drop a reference image (optional) and pick the prompt-assist tags. The reference is analyzed by vision AI to enrich the prompt for better results.</p>
+
+    <div class="row">
+      <label>Item Name
+        <input type="text" id="mName" placeholder="e.g. Bone Shiv" />
+      </label>
+      <label>Genre
+        <select id="mGenre">
+          <option value="fantasy">Dark Fantasy RPG</option>
+          <option value="high-fantasy">High Fantasy (Bright)</option>
+          <option value="gothic">Gothic / Bloodborne</option>
+          <option value="souls">Souls-like Grim</option>
+          <option value="sci-fi">Sci-Fi / Space</option>
+          <option value="cyberpunk">Cyberpunk Neon</option>
+          <option value="post-apoc">Post-Apocalyptic</option>
+          <option value="pirate">Pirate / Naval</option>
+          <option value="tribal">Primitive / Tribal</option>
+          <option value="voxel">Voxel / Minecraft</option>
+          <option value="anime">Anime JRPG</option>
+          <option value="toon">Stylized Toon</option>
+        </select>
+      </label>
+      <label>Type
+        <select id="mType">
+          <optgroup label="Weapons">
+            <option value="sword">Sword (1H)</option>
+            <option value="greatsword">Greatsword (2H)</option>
+            <option value="dagger">Dagger / Knife</option>
+            <option value="axe">Axe</option>
+            <option value="hammer">Hammer / Mace</option>
+            <option value="spear">Spear / Polearm</option>
+            <option value="bow">Bow</option>
+            <option value="crossbow">Crossbow</option>
+            <option value="gun">Gun / Firearm</option>
+            <option value="staff">Staff</option>
+            <option value="wand">Wand</option>
+            <option value="tome">Tome / Spellbook</option>
+            <option value="shield">Shield</option>
+            <option value="club">Club</option>
+          </optgroup>
+          <optgroup label="Armor">
+            <option value="helm">Helm</option>
+            <option value="shoulder">Shoulder Pauldron</option>
+            <option value="chest">Chestplate</option>
+            <option value="hands">Gloves / Gauntlets</option>
+            <option value="feet">Boots</option>
+            <option value="cape">Cape / Cloak</option>
+          </optgroup>
+          <optgroup label="Accessory">
+            <option value="ring">Ring</option>
+            <option value="necklace">Necklace / Amulet</option>
+            <option value="relic">Relic / Trinket</option>
+            <option value="offhand">Offhand Gem / Orb</option>
+          </optgroup>
+          <optgroup label="Consumable">
+            <option value="potion">Potion</option>
+            <option value="food">Food</option>
+            <option value="bandage">Bandage / Medkit</option>
+            <option value="grenade">Grenade / Explosive</option>
+            <option value="gadget">Gadget</option>
+            <option value="lure">Lure / Bait</option>
+            <option value="scroll">Scroll</option>
+          </optgroup>
+          <optgroup label="Material">
+            <option value="ore">Ore / Metal</option>
+            <option value="wood">Wood / Lumber</option>
+            <option value="hide">Hide / Leather</option>
+            <option value="cloth">Cloth / Fabric</option>
+            <option value="gem">Gem / Crystal</option>
+            <option value="herb">Herb / Plant</option>
+            <option value="bone">Bone / Tooth</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="skill">Skill / Spell Icon</option>
+            <option value="buff">Buff / Status</option>
+            <option value="currency">Currency / Coin</option>
+            <option value="key">Key</option>
+            <option value="map">Map / Document</option>
+          </optgroup>
+        </select>
+      </label>
+      <label>Material
+        <select id="mMaterial">
+          <option value="">(none)</option>
+          <option value="Cloth">Cloth</option>
+          <option value="Leather">Leather</option>
+          <option value="Metal">Metal / Steel</option>
+          <option value="Bronze">Bronze</option>
+          <option value="Iron">Iron</option>
+          <option value="Gold">Gold</option>
+          <option value="Bone">Bone</option>
+          <option value="Wood">Wood</option>
+          <option value="Stone">Stone</option>
+          <option value="Gem">Gem / Crystal</option>
+          <option value="Mystic">Mystic / Arcane</option>
+          <option value="Cursed">Cursed / Dark</option>
+          <option value="Holy">Holy / Divine</option>
+          <option value="Fire">Fire / Flame</option>
+          <option value="Frost">Frost / Ice</option>
+          <option value="Lightning">Lightning</option>
+          <option value="Poison">Poison / Toxic</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row three">
+      <label>Tier
+        <select id="mTier">
+          <option value="">(none)</option>
+          <option value="T1">T1 — Common (Gray)</option>
+          <option value="T2">T2 — Uncommon (Green)</option>
+          <option value="T3">T3 — Rare (Blue)</option>
+          <option value="T4">T4 — Epic (Purple)</option>
+          <option value="T5">T5 — Legendary (Orange)</option>
+          <option value="T6">T6 — Mythic (Red)</option>
+          <option value="T7">T7 — Ancient (Cyan)</option>
+          <option value="T8">T8 — Divine (Gold)</option>
+        </select>
+      </label>
+      <label>Style
+        <select id="mStyle">
+          <option value="pixel">Pixel Art (64x64)</option>
+          <option value="painted" selected>Hand-Painted</option>
+          <option value="flat">Flat Vector</option>
+          <option value="3d-render">3D Render / PBR</option>
+          <option value="voxel">Voxel / MagicaVoxel</option>
+          <option value="sketch">Ink Sketch</option>
+        </select>
+      </label>
+      <label>Background Mode
+        <select id="mBgMode">
+          <option value="transparent">Transparent (auto-key)</option>
+          <option value="white">Pure White</option>
+          <option value="magenta">Magenta Chroma Key</option>
+          <option value="black">Pure Black</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row two">
+      <label>Extra Description / Keywords
+        <textarea id="mExtra" placeholder="e.g. ornate engravings, glowing runes, blood-stained edge…"></textarea>
+      </label>
+      <label>Negative Prompt
+        <textarea id="mNegative" placeholder="things to avoid (default: scenery, text, watermark, multiple objects)"></textarea>
+      </label>
+    </div>
+
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="mUseRef" checked /> Use reference image to enrich prompt (vision AI)</label>
+      <label><input type="checkbox" id="mAutoKey" checked /> Auto-remove white/solid background after generation</label>
+      <label><input type="checkbox" id="mSaveCloud" /> Save to Puter cloud (/grudge-warlords/sprites/manual/)</label>
+    </div>
+
+    <div class="preview">
+      <label class="ref-drop" id="refDrop" for="refFile">
+        <span id="refPlaceholder">📎 Drop or click<br />to add reference image</span>
+        <span class="hint">PNG / JPG / WEBP</span>
+        <input type="file" id="refFile" accept="image/*" />
+      </label>
+      <div class="prompt-box">
+        <label style="font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Final Prompt (auto-built; you can edit)
+          <textarea id="mPrompt" placeholder="Click 'Build Prompt' to assemble from selections above, or type your own."></textarea>
+        </label>
+      </div>
+      <div class="result-box" id="manualResult">
+        <span class="empty">Generated icon will appear here</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" onclick="buildManualPrompt()">🔨 Build Prompt</button>
+      <button class="ghost" onclick="analyzeReference()" id="analyzeBtn">👁️ Analyze Reference Image</button>
+      <button class="ghost" onclick="clearReference()">❌ Clear Reference</button>
+      <button class="gold" onclick="generateManual()" id="manualGenBtn">✨ Generate Icon</button>
+      <button onclick="downloadManual()" id="manualDlBtn" disabled>💾 Download</button>
+    </div>
+  </div>
+
+  <!-- ── Batch Generator (existing category-based flow) ── -->
   <div class="controls">
     <select id="categorySelect">
       <option value="armor-cloth">🧥 Cloth Armor</option>
@@ -110,6 +321,29 @@
       <option value="pixel">Pixel Art (64x64)</option>
       <option value="painted">Hand-Painted</option>
       <option value="flat">Flat Vector</option>
+      <option value="3d-render">3D Render / PBR</option>
+      <option value="voxel">Voxel / MagicaVoxel</option>
+      <option value="sketch">Ink Sketch</option>
+    </select>
+    <select id="genreSelect" title="Genre flavor applied to all batch icons">
+      <option value="fantasy">Dark Fantasy</option>
+      <option value="high-fantasy">High Fantasy</option>
+      <option value="gothic">Gothic</option>
+      <option value="souls">Souls-like</option>
+      <option value="sci-fi">Sci-Fi</option>
+      <option value="cyberpunk">Cyberpunk</option>
+      <option value="post-apoc">Post-Apocalyptic</option>
+      <option value="pirate">Pirate</option>
+      <option value="tribal">Tribal</option>
+      <option value="voxel">Voxel</option>
+      <option value="anime">Anime JRPG</option>
+      <option value="toon">Toon</option>
+    </select>
+    <select id="bgModeSelect" title="Background handling for batch generations">
+      <option value="transparent">BG: Transparent (auto-key)</option>
+      <option value="white">BG: White</option>
+      <option value="magenta">BG: Magenta</option>
+      <option value="black">BG: Black</option>
     </select>
     <button onclick="loadCategory()">Load Items</button>
     <button onclick="generateAll()" id="batchBtn" disabled>Generate All Missing</button>
@@ -130,42 +364,149 @@
     let generating = false;
     let shouldStop = false;
 
+    // ── Background mode language (kept identical across STYLE so we can swap modes) ──
+    // Diffusion models obey high-frequency keywords like "pure white seamless background" / "chroma-key magenta"
+    // far better than abstract terms like "transparent". We post-process to alpha-key on the client.
+    const BG_PROMPTS = {
+      transparent: 'isolated on pure flat white #ffffff seamless background, infinity-cyc studio backdrop, perfectly clean cutout-ready, no shadow, no reflection, no ground plane, no environment, no scenery, no people, no text, no logo, no watermark, single subject only, alpha-channel ready',
+      white:       'isolated on pure flat white #ffffff seamless background, infinity-cyc studio backdrop, no shadow, no reflection, no ground plane, no environment, no people, no text, no logo, no watermark, single subject only',
+      magenta:     'isolated on pure flat magenta #ff00ff chroma-key background, no shadow, no reflection, no ground plane, no environment, no people, no text, no logo, no watermark, single subject only, cutout-ready',
+      black:       'isolated on pure flat black #000000 seamless background, no shadow, no reflection, no ground plane, no environment, no people, no text, no logo, no watermark, single subject only',
+    };
+
+    const NEGATIVE_DEFAULT = 'no scenery, no environment, no people, no hands, no character, no text, no logo, no watermark, no signature, no border, no frame, no UI overlay, no multiple objects, no duplicates, no shadow, no ground, no floor';
+
     const STYLE_PROMPTS = {
-      pixel: '2D game sprite, pixel art style, 64x64 icon, fantasy RPG item, clean bold dark outline, centered, floating item, NO BACKGROUND COLOR, pure transparent background only, single object, no shadows, no ground, no scenery',
-      painted: 'hand-painted fantasy game art, detailed textures, soft lighting, game icon style, transparent background, centered item',
-      flat: 'flat vector icon style, clean lines, solid colors, game UI icon, transparent background, minimalist, centered',
+      pixel:       '2D game sprite, pixel art style, 64x64 icon, fantasy RPG item, clean bold dark outline, vibrant saturated palette, centered single floating item',
+      painted:     'hand-painted fantasy game art, detailed textures, soft directional lighting, painterly brushwork, World of Warcraft / Hearthstone icon style, centered single floating item',
+      flat:        'flat vector icon, clean bold lines, solid colors, modern game UI icon, minimalist, centered single floating item',
+      '3d-render': 'high quality 3D render, PBR materials, soft global illumination, octane render, sharp focus, fantasy RPG inventory icon, centered single floating item',
+      voxel:       'voxel art style, MagicaVoxel rendering, blocky cubic geometry, vibrant saturated palette, ambient occlusion, centered single floating item',
+      sketch:      'inked black-and-white pen sketch, hatching shading, crisp line art, fantasy concept art, centered single floating item',
     };
 
     const CATEGORY_PROMPTS = {
-      helm: 'fantasy RPG helmet headpiece, armor piece',
-      shoulder: 'fantasy RPG shoulder pauldron armor piece',
-      chest: 'fantasy RPG chestplate body armor',
-      hands: 'fantasy RPG gauntlets gloves armor piece',
-      feet: 'fantasy RPG boots footwear armor piece',
-      ring: 'fantasy RPG magical ring, jewelry, game inventory icon',
-      necklace: 'fantasy RPG necklace pendant amulet, jewelry',
-      relic: 'fantasy RPG magical relic artifact trinket',
-      offhand: 'fantasy RPG glowing magical gem orb, caster offhand',
-      bandage: 'medical bandage wrap, first aid item, game inventory icon',
-      grenade: 'fantasy engineering grenade explosive device',
-      gadget: 'fantasy engineering gadget mechanical device',
-      potion: 'fantasy RPG potion bottle, magical elixir, colorful liquid',
-      lure: 'fishing lure bait hook, game inventory icon',
+      // weapons
+      sword: 'fantasy RPG one-handed sword, sharp metal blade, leather-wrapped grip, decorated cross-guard',
+      greatsword: 'fantasy RPG two-handed greatsword, massive blade, ornate pommel and guard',
+      dagger: 'fantasy RPG dagger knife, short curved blade, wrapped grip',
+      axe: 'fantasy RPG battle axe, sharpened crescent head, sturdy wooden haft',
+      hammer: 'fantasy RPG war hammer or mace, heavy spiked head, banded grip',
+      spear: 'fantasy RPG spear polearm, leaf-shaped tip, long shaft',
+      bow: 'fantasy RPG bow, recurve limbs, taut bowstring, carved nock',
+      crossbow: 'fantasy RPG crossbow, mechanical trigger, bolt loaded',
+      gun: 'fantasy steampunk firearm, brass fittings, wood stock',
+      staff: 'fantasy RPG magic staff, glowing crystal or rune at the head',
+      wand: 'fantasy RPG wand, slender carved handle, glowing tip',
+      tome: 'fantasy RPG spell tome, ancient leather-bound spellbook, gilded clasps and runes',
+      shield: 'fantasy RPG shield, metal rim, faction crest emblem',
+      club: 'fantasy RPG wooden club, knotted spiked head',
+      // armor
+      helm: 'fantasy RPG helmet headpiece, armor slot icon',
+      shoulder: 'fantasy RPG shoulder pauldron, armor slot icon',
+      chest: 'fantasy RPG chestplate body armor, armor slot icon',
+      hands: 'fantasy RPG gauntlets gloves, armor slot icon',
+      feet: 'fantasy RPG boots footwear, armor slot icon',
+      cape: 'fantasy RPG flowing cape cloak, draped fabric',
+      // accessory
+      ring: 'fantasy RPG magical ring, jewelry, ornate band, gemstone setting',
+      necklace: 'fantasy RPG necklace pendant amulet, hanging chain',
+      relic: 'fantasy RPG magical relic artifact trinket, mysterious glowing object',
+      offhand: 'fantasy RPG glowing magical gem orb, caster offhand focus',
+      // consumable
+      potion: 'fantasy RPG potion bottle, glass vial, magical elixir, colorful glowing liquid, cork stopper',
+      food: 'fantasy RPG food item, hearty meal, stylized cooked dish',
+      bandage: 'fantasy medical bandage wrap, rolled gauze, first-aid item',
+      grenade: 'fantasy engineering grenade, round bomb with fuse, explosive device',
+      gadget: 'fantasy engineering gadget, mechanical device, brass and gears',
+      lure: 'fishing lure bait hook, feathered tackle',
+      scroll: 'fantasy RPG paper scroll, rolled parchment, wax seal',
+      // material
+      ore: 'fantasy RPG raw ore chunk, embedded metal flecks, rough rocky surface',
+      wood: 'fantasy RPG cut log of wood, bark texture, growth rings',
+      hide: 'fantasy RPG folded hide leather pelt, stitched edges',
+      cloth: 'fantasy RPG bolt of cloth fabric, folded textile',
+      gem: 'fantasy RPG cut gemstone crystal, faceted, brilliant sparkle',
+      herb: 'fantasy RPG harvested herb plant bundle, fresh leaves',
+      bone: 'fantasy RPG carved bone or tooth fragment, ivory texture',
+      // misc
+      skill: 'fantasy RPG skill ability spell icon, swirling magical effect',
+      buff: 'fantasy RPG status buff icon, glowing aura',
+      currency: 'fantasy RPG gold coin currency, stamped emblem',
+      key: 'fantasy RPG ornate metal key, decorative bow',
+      map: 'fantasy RPG rolled paper map document, weathered parchment',
     };
 
     const MATERIAL_HINTS = {
-      Cloth: 'cloth fabric magical robes wizard',
-      Leather: 'leather hide ranger rogue agile',
-      Metal: 'plate steel heavy knight warrior tank',
-      Gem: 'crystalline glowing magical gem arcane',
+      Cloth: 'cloth fabric magical robes wizard mage attire',
+      Leather: 'leather hide ranger rogue agile worn',
+      Metal: 'plate steel heavy knight warrior tank polished',
+      Bronze: 'aged bronze metal warm patina',
+      Iron: 'rough iron metal forged darker steel',
+      Gold: 'gilded gold metal lustrous noble',
+      Bone: 'pale bone ivory carved primitive',
+      Wood: 'carved wood grain natural earthy',
+      Stone: 'carved stone heavy granite rune-etched',
+      Gem: 'crystalline glowing magical gem arcane facets',
+      Mystic: 'arcane mystical glowing runes ethereal magical',
+      Cursed: 'cursed dark corrupted shadow tendrils ominous',
+      Holy: 'holy divine radiant golden light blessed',
+      Fire: 'fire elemental burning flames embers glowing',
+      Frost: 'frost ice crystals frozen pale-blue',
+      Lightning: 'lightning electrical sparks crackling energy',
+      Poison: 'poison toxic green dripping venomous',
+      Engineering: 'mechanical engineered brass gears precise',
     };
 
-    function buildPrompt(item, style) {
+    const GENRE_PROMPTS = {
+      'fantasy':       'dark fantasy RPG aesthetic, gritty, detailed',
+      'high-fantasy':  'bright high-fantasy RPG aesthetic, heroic, epic',
+      'gothic':        'gothic horror aesthetic, ornate baroque, Bloodborne-inspired',
+      'souls':         'souls-like grim aesthetic, weathered, brooding, From Software inspired',
+      'sci-fi':        'sci-fi space-age aesthetic, sleek metal, glowing accents',
+      'cyberpunk':     'cyberpunk neon aesthetic, holographic glow, chrome highlights',
+      'post-apoc':     'post-apocalyptic aesthetic, scrap metal, rusted, makeshift',
+      'pirate':        'pirate naval aesthetic, sea-worn brass, salt-stained leather',
+      'tribal':        'primitive tribal aesthetic, bone and feather, hand-carved',
+      'voxel':         'voxel art aesthetic, blocky cubic, MagicaVoxel render',
+      'anime':         'anime JRPG aesthetic, stylized, vibrant cel-shading',
+      'toon':          'stylized toon aesthetic, exaggerated proportions, bold outlines',
+    };
+
+    const TIER_HINTS = {
+      T1: 'common-tier, plain, gray accent',
+      T2: 'uncommon-tier, polished, faint green glow',
+      T3: 'rare-tier, refined, glowing blue accent',
+      T4: 'epic-tier, ornate, glowing purple accent, intricate details',
+      T5: 'legendary-tier, master-crafted, glowing orange accent, dramatic',
+      T6: 'mythic-tier, otherworldly, glowing red accent, swirling energy',
+      T7: 'ancient-tier, godlike, glowing cyan accent, ethereal aura',
+      T8: 'divine-tier, transcendent, glowing gold accent, radiant aura, particle effects',
+    };
+
+    function buildPrompt(item, style, opts = {}) {
       const slotKey = item.type?.toLowerCase() || 'helm';
       const categoryPrompt = CATEGORY_PROMPTS[slotKey] || 'fantasy RPG equipment item';
       const materialHint = MATERIAL_HINTS[item.material] || '';
-      const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.pixel;
-      return `${item.name}, ${categoryPrompt}, ${materialHint}, ${stylePrompt}, high quality, game asset`;
+      const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.painted;
+      const genre = opts.genre || (document.getElementById('genreSelect')?.value) || 'fantasy';
+      const genrePrompt = GENRE_PROMPTS[genre] || GENRE_PROMPTS.fantasy;
+      const bgMode = opts.bgMode || (document.getElementById('bgModeSelect')?.value) || 'transparent';
+      const bgPrompt = BG_PROMPTS[bgMode] || BG_PROMPTS.transparent;
+      const tierHint = item.tier ? (TIER_HINTS[item.tier] || '') : '';
+      const refDescription = opts.refDescription ? `reference: ${opts.refDescription}, ` : '';
+      const extra = opts.extra ? `, ${opts.extra}` : '';
+      const parts = [
+        item.name,
+        refDescription + categoryPrompt,
+        materialHint,
+        tierHint,
+        genrePrompt,
+        stylePrompt,
+        bgPrompt,
+        'high quality, game inventory icon, sharp focus, masterpiece' + extra,
+      ].filter(Boolean);
+      return parts.join(', ');
     }
 
     function log(msg, type = 'info') {
@@ -250,36 +591,33 @@
       const item = allItems.find(i => i.iconId === iconId);
       if (!item) return;
       const style = document.getElementById('styleSelect').value;
-      const prompt = buildPrompt(item, style);
+      const bgMode = document.getElementById('bgModeSelect')?.value || 'transparent';
+      const prompt = buildPrompt(item, style, { bgMode });
 
       const card = document.getElementById(`card-${iconId}`);
       card.className = 'card generating';
       log(`Generating: ${item.name}...`, 'info');
 
       try {
-        const img = await puter.ai.txt2img(prompt);
+        const rawImg = await puter.ai.txt2img(prompt);
+        // Post-process: alpha-key the background if requested
+        const finalBlob = await processGeneratedImage(rawImg, bgMode);
+        const finalUrl = URL.createObjectURL(finalBlob);
 
-        // Display the generated image
+        // Display the post-processed image
         const iconEl = document.getElementById(`icon-${iconId}`);
-        if (img instanceof HTMLImageElement) {
-          img.style.width = '128px';
-          img.style.height = '128px';
-          img.style.objectFit = 'contain';
-          iconEl.replaceWith(img);
-          img.id = `icon-${iconId}`;
-        } else if (img instanceof Blob) {
-          const url = URL.createObjectURL(img);
-          const imgEl = document.createElement('img');
-          imgEl.src = url;
-          imgEl.id = `icon-${iconId}`;
-          iconEl.replaceWith(imgEl);
-        }
+        const imgEl = document.createElement('img');
+        imgEl.src = finalUrl;
+        imgEl.id = `icon-${iconId}`;
+        imgEl.style.width = '128px';
+        imgEl.style.height = '128px';
+        imgEl.style.objectFit = 'contain';
+        iconEl.replaceWith(imgEl);
 
         // Save to Puter cloud
         try {
-          const blob = img instanceof Blob ? img : await imageToBlob(img);
           const cloudPath = `/grudge-warlords/sprites/${item.category}/${iconId}.png`;
-          await puter.fs.write(cloudPath, blob, { createMissingParents: true });
+          await puter.fs.write(cloudPath, finalBlob, { createMissingParents: true });
           log(`Saved: ${cloudPath}`, 'success');
         } catch (saveErr) {
           log(`Generated but failed to save: ${saveErr.message}`, 'error');
@@ -302,6 +640,68 @@
       canvas.height = img.naturalHeight || img.height || 512;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0);
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    }
+
+    // ── Decode whatever puter.ai.txt2img returns into an HTMLImageElement ──
+    async function decodeAiImage(result) {
+      if (result instanceof HTMLImageElement) {
+        if (result.complete && result.naturalWidth > 0) return result;
+        await new Promise((res, rej) => { result.onload = res; result.onerror = rej; });
+        return result;
+      }
+      if (result instanceof Blob) {
+        const url = URL.createObjectURL(result);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = url;
+        await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+        return img;
+      }
+      // String URL fallback
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = String(result?.src || result);
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+      return img;
+    }
+
+    // ── Background removal post-processor (canvas-based chroma/luma key) ──
+    // bgMode: 'transparent' | 'white' | 'magenta' | 'black' | 'none'
+    async function processGeneratedImage(rawImg, bgMode) {
+      const img = await decodeAiImage(rawImg);
+      const w = img.naturalWidth || img.width || 512;
+      const h = img.naturalHeight || img.height || 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      if (bgMode === 'transparent' || bgMode === 'white' || bgMode === 'magenta' || bgMode === 'black') {
+        // For 'white' / 'black' the user wants the bg KEPT — only auto-key for transparent/magenta
+        if (bgMode === 'transparent' || bgMode === 'magenta') {
+          const data = ctx.getImageData(0, 0, w, h);
+          const px = data.data;
+          // For 'transparent' we key near-white; for 'magenta' we key near-magenta.
+          const targetR = bgMode === 'magenta' ? 255 : 255;
+          const targetG = bgMode === 'magenta' ?   0 : 255;
+          const targetB = bgMode === 'magenta' ? 255 : 255;
+          const tol = 32;       // distance threshold for full transparency
+          const feather = 24;   // distance band for soft alpha falloff
+          for (let i = 0; i < px.length; i += 4) {
+            const dr = px[i]   - targetR;
+            const dg = px[i+1] - targetG;
+            const db = px[i+2] - targetB;
+            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+            if (dist < tol) {
+              px[i+3] = 0;
+            } else if (dist < tol + feather) {
+              px[i+3] = Math.round(((dist - tol) / feather) * px[i+3]);
+            }
+          }
+          ctx.putImageData(data, 0, 0);
+        }
+      }
       return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     }
 
@@ -355,6 +755,194 @@
       a.click();
       document.body.removeChild(a);
     }
+
+    // ════════════════════════════════════════════════════════════════════
+    //                       MANUAL GENERATOR
+    // ════════════════════════════════════════════════════════════════════
+    let manualRefDataUrl = null;        // base64 data URL of uploaded reference
+    let manualRefDescription = '';      // vision-AI extracted description
+    let manualLastBlob = null;          // last generated PNG blob
+
+    // Wire up the reference-image drop zone
+    (function setupRefDrop() {
+      const drop = document.getElementById('refDrop');
+      const file = document.getElementById('refFile');
+      if (!drop || !file) return;
+      file.addEventListener('change', (e) => {
+        const f = e.target.files?.[0];
+        if (f) loadRefFile(f);
+      });
+      ['dragenter', 'dragover'].forEach(ev =>
+        drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('dragover'); }));
+      ['dragleave', 'drop'].forEach(ev =>
+        drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('dragover'); }));
+      drop.addEventListener('drop', e => {
+        const f = e.dataTransfer?.files?.[0];
+        if (f) loadRefFile(f);
+      });
+      // Paste from clipboard
+      window.addEventListener('paste', e => {
+        const items = e.clipboardData?.items || [];
+        for (const it of items) {
+          if (it.type?.startsWith('image/')) {
+            const f = it.getAsFile();
+            if (f) loadRefFile(f);
+            break;
+          }
+        }
+      });
+    })();
+
+    function loadRefFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        manualRefDataUrl = reader.result;
+        const drop = document.getElementById('refDrop');
+        drop.innerHTML = `<img src="${manualRefDataUrl}" alt="reference" />
+          <span class="hint">Click to replace — or use “Clear Reference”</span>
+          <input type="file" id="refFile" accept="image/*" />`;
+        // Re-attach the file input listener after innerHTML rebuild
+        document.getElementById('refFile').addEventListener('change', e => {
+          const f = e.target.files?.[0];
+          if (f) loadRefFile(f);
+        });
+        log(`Reference image loaded (${(file.size / 1024).toFixed(1)} KB)`, 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearReference() {
+      manualRefDataUrl = null;
+      manualRefDescription = '';
+      const drop = document.getElementById('refDrop');
+      drop.innerHTML = `<span id="refPlaceholder">📎 Drop or click<br />to add reference image</span>
+        <span class="hint">PNG / JPG / WEBP</span>
+        <input type="file" id="refFile" accept="image/*" />`;
+      document.getElementById('refFile').addEventListener('change', e => {
+        const f = e.target.files?.[0];
+        if (f) loadRefFile(f);
+      });
+      log('Reference image cleared', 'info');
+    }
+
+    // Use puter.ai vision chat to convert the reference image into a detailed prompt fragment
+    async function analyzeReference() {
+      if (!manualRefDataUrl) {
+        log('No reference image loaded — drop one onto the panel first', 'error');
+        return;
+      }
+      const btn = document.getElementById('analyzeBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Analyzing...';
+      try {
+        const visionPrompt =
+          'You are a fantasy game asset prompt engineer. Look at this reference image and write a single concise English prompt fragment (under 60 words) describing the visual subject, materials, colors, textures, silhouette, and ornamentation suitable for re-creating the same kind of icon with a text-to-image model. Do NOT mention background, lighting, framing, watermarks, or composition — only the SUBJECT itself. Reply with the prompt fragment ONLY, no preamble.';
+        // puter.ai.chat overload: chat(text, imageUrl, opts)
+        const reply = await puter.ai.chat(visionPrompt, manualRefDataUrl, { model: 'gpt-4o-mini' });
+        const text = (reply?.message?.content?.[0]?.text || reply?.message?.content || reply?.text || reply || '').toString().trim();
+        manualRefDescription = text.replace(/^["']|["']$/g, '').replace(/\n+/g, ' ').trim();
+        log(`Reference analyzed: "${manualRefDescription.slice(0, 80)}..."`, 'success');
+        buildManualPrompt();
+      } catch (err) {
+        log(`Analyze failed: ${err.message || err}`, 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = '👁️ Analyze Reference Image';
+    }
+
+    function buildManualPrompt() {
+      const name     = document.getElementById('mName').value.trim() || 'fantasy item';
+      const genre    = document.getElementById('mGenre').value;
+      const type     = document.getElementById('mType').value;
+      const material = document.getElementById('mMaterial').value;
+      const tier     = document.getElementById('mTier').value;
+      const style    = document.getElementById('mStyle').value;
+      const bgMode   = document.getElementById('mBgMode').value;
+      const extra    = document.getElementById('mExtra').value.trim();
+      const useRef   = document.getElementById('mUseRef').checked;
+      const item = { name, type, material, tier };
+      const opts = {
+        genre,
+        bgMode,
+        extra,
+        refDescription: (useRef && manualRefDescription) ? manualRefDescription : '',
+      };
+      const prompt = buildPrompt(item, style, opts);
+      document.getElementById('mPrompt').value = prompt;
+      return prompt;
+    }
+
+    async function generateManual() {
+      const btn = document.getElementById('manualGenBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+      try {
+        // If user hasn't built/edited a prompt yet, build now
+        const useRef = document.getElementById('mUseRef').checked;
+        if (useRef && manualRefDataUrl && !manualRefDescription) {
+          await analyzeReference();
+        }
+        let prompt = document.getElementById('mPrompt').value.trim();
+        if (!prompt) prompt = buildManualPrompt();
+
+        // Apply negative prompt suffix if it doesn't look like one is already there
+        const userNeg = document.getElementById('mNegative').value.trim();
+        const neg = userNeg || NEGATIVE_DEFAULT;
+        const fullPrompt = `${prompt}. NEGATIVE: ${neg}`;
+
+        const bgMode = document.getElementById('mBgMode').value;
+        log(`Manual generate: "${(document.getElementById('mName').value || 'item')}"`, 'info');
+
+        const rawImg = await puter.ai.txt2img(fullPrompt);
+        const autoKey = document.getElementById('mAutoKey').checked;
+        const finalBlob = await processGeneratedImage(rawImg, autoKey ? bgMode : 'none');
+        manualLastBlob = finalBlob;
+        const url = URL.createObjectURL(finalBlob);
+
+        const box = document.getElementById('manualResult');
+        box.innerHTML = `<img src="${url}" alt="generated" />`;
+        document.getElementById('manualDlBtn').disabled = false;
+
+        // Optional cloud save
+        if (document.getElementById('mSaveCloud').checked) {
+          try {
+            const safeName = (document.getElementById('mName').value || 'manual').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'manual';
+            const ts = Date.now();
+            const cloudPath = `/grudge-warlords/sprites/manual/${safeName}-${ts}.png`;
+            await puter.fs.write(cloudPath, finalBlob, { createMissingParents: true });
+            log(`Saved: ${cloudPath}`, 'success');
+          } catch (saveErr) {
+            log(`Cloud save failed: ${saveErr.message}`, 'error');
+          }
+        }
+        log('Manual generation complete', 'success');
+      } catch (err) {
+        log(`Manual generate failed: ${err.message || err}`, 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = '✨ Generate Icon';
+    }
+
+    function downloadManual() {
+      if (!manualLastBlob) return;
+      const safeName = (document.getElementById('mName').value || 'manual-icon').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'manual-icon';
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(manualLastBlob);
+      a.download = `${safeName}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Auto-rebuild prompt as the user changes the assist controls
+    ['mName','mGenre','mType','mMaterial','mTier','mStyle','mBgMode','mExtra','mUseRef'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', buildManualPrompt);
+      if (el && el.tagName === 'INPUT' && el.type === 'text') el.addEventListener('input', buildManualPrompt);
+      if (el && el.tagName === 'TEXTAREA') el.addEventListener('input', buildManualPrompt);
+    });
+    // Initial prompt fill
+    buildManualPrompt();
 
     log('Ready. Select a category and click Load Items.', 'info');
   </script>
