@@ -118,7 +118,30 @@
   // Register Service Worker
   if ('serviceWorker' in navigator) {
     var swPath = inSubdir ? '../sw.js' : './sw.js';
-    navigator.serviceWorker.register(swPath).catch(function() {});
+    navigator.serviceWorker.register(swPath).then(function(reg) {
+      // Force an update check so SW changes (e.g. cross-origin fixes) reach
+      // clients without waiting for the 24h browser HTTP cache.
+      try { reg.update(); } catch (e) {}
+      // If a new SW is waiting, tell it to take over immediately.
+      if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+      reg.addEventListener('updatefound', function() {
+        var nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', function() {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            nw.postMessage('SKIP_WAITING');
+          }
+        });
+      });
+    }).catch(function() {});
+    // Reload once when a new SW takes control, so the page picks up the new
+    // fetch-handler logic immediately.
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
   }
 
   // Vercel Analytics (only when deployed on Vercel)

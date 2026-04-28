@@ -1,6 +1,6 @@
-const CACHE_NAME = 'objectstore-v3.1';
-const API_CACHE = 'objectstore-api-v3.1';
-const ASSET_CACHE = 'objectstore-assets-v3.1';
+const CACHE_NAME = 'objectstore-v3.2';
+const API_CACHE = 'objectstore-api-v3.2';
+const ASSET_CACHE = 'objectstore-assets-v3.2';
 
 const PRECACHE_URLS = [
   './',
@@ -81,10 +81,20 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Only handle GET requests; let the browser deal with everything else.
+  if (event.request.method !== 'GET') return;
+
   const url = new URL(event.request.url);
 
   // Ignore non-http(s) requests (chrome-extension://, blob:, data:, etc.)
   if (!event.request.url.startsWith('http')) return;
+
+  // CRITICAL: never intercept cross-origin requests. The Cache API rejects
+  // opaque cross-origin responses with a TypeError on cache.put(), which would
+  // surface as "Failed to fetch" for every R2/CDN image. Let the browser
+  // handle off-origin resources (e.g. assets.grudge-studio.com,
+  // objectstore.grudge-studio.com, fonts.gstatic.com) directly.
+  if (url.origin !== self.location.origin) return;
 
   // API JSON: stale-while-revalidate
   if (url.pathname.includes('/api/v1/') && url.pathname.endsWith('.json')) {
@@ -92,7 +102,7 @@ self.addEventListener('fetch', event => {
       caches.open(API_CACHE).then(cache =>
         cache.match(event.request).then(cached => {
           const fetchPromise = fetch(event.request).then(response => {
-            if (response.ok) cache.put(event.request, response.clone());
+            if (response.ok) cache.put(event.request, response.clone()).catch(() => {});
             return response;
           }).catch(() => cached);
           return cached || fetchPromise;
@@ -102,16 +112,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Sprite/icon assets: cache-first
+  // Sprite/icon assets: cache-first (same-origin only)
   if (/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(url.pathname)) {
     event.respondWith(
       caches.open(ASSET_CACHE).then(cache =>
         cache.match(event.request).then(cached => {
           if (cached) return cached;
           return fetch(event.request).then(response => {
-            if (response.ok) cache.put(event.request, response.clone());
+            if (response.ok) cache.put(event.request, response.clone()).catch(() => {});
             return response;
-          });
+          }).catch(err => cached || Response.error());
         })
       )
     );
@@ -123,15 +133,22 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(event.request).then(response => {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone).catch(() => {}));
         return response;
       }).catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // Default: cache-first
+  // Default: cache-first, then network
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    caches.match(event.request).then(cached => cached || fetch(event.request).catch(() => Response.error()))
   );
+});
+
+// Allow the page to instruct the SW to skip waiting (used after deploys).
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING' || event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
