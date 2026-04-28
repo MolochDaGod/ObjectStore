@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Asset Browser — ObjectStore</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tier-system.css">
+  <script src="https://js.puter.com/v2/"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d0d12;color:#e0d8c8;min-height:100vh}
+    :root{--gold:#d4a84b;--red:#f44336;--green:#4caf50;--blue:#4a9eff;--dim:#888;--card:#14141e;--border:#2a2a3a;--hover:#1a1a26}
+
+    /* ── Layout ── */
+    .topbar{background:#111118;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+    .topbar h1{font-size:1.3rem;color:var(--gold);white-space:nowrap}
+    .topbar h1 span{color:var(--dim);font-size:.75rem;font-weight:400;margin-left:8px}
+    .layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 55px)}
+    .sidebar{background:#111118;border-right:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+    .main{padding:20px;overflow-y:auto}
+
+    /* ── Puter auth bar ── */
+    .puter-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:.8rem}
+    .puter-dot{width:8px;height:8px;border-radius:50%;background:#666;flex-shrink:0;transition:background .3s}
+    .puter-dot.ok{background:var(--green)}
+    .puter-dot.busy{background:#ff9800;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .puter-user{color:var(--gold);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #btnPuterAuth{padding:5px 12px;background:transparent;border:1px solid var(--gold);border-radius:6px;color:var(--gold);cursor:pointer;font-size:.75rem;white-space:nowrap}
+    #btnPuterAuth:hover{background:var(--gold);color:#000}
+
+    /* ── Tabs ── */
+    .tabs{display:flex;gap:4px;margin-bottom:4px}
+    .tab{padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:6px 6px 0 0;cursor:pointer;font-size:.8rem;color:var(--dim);transition:all .2s}
+    .tab:hover{color:#fff;border-color:var(--gold)}
+    .tab.active{background:#1a1a28;border-color:var(--gold);color:var(--gold);font-weight:600;border-bottom-color:#1a1a28}
+
+    /* ── Sidebar sections ── */
+    .sidebar-section{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:4px 0 6px}
+    .filter-input{width:100%;padding:8px 10px;background:#0d0d12;border:1px solid var(--border);border-radius:6px;color:#e0d8c8;font-size:.82rem;outline:none}
+    .filter-input:focus{border-color:var(--gold)}
+    .filter-btn{width:100%;padding:7px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--dim);cursor:pointer;font-size:.78rem;text-align:left;transition:all .15s}
+    .filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold);background:var(--hover)}
+    .filter-btn .count{float:right;font-size:.7rem;opacity:.5}
+    .stat-row{font-size:.72rem;color:var(--dim);display:flex;justify-content:space-between;padding:3px 0}
+    .stat-row span{color:#e0d8c8}
+
+    /* ── Search bar ── */
+    .search-bar{display:flex;gap:8px;margin-bottom:16px}
+    .search-input{flex:1;padding:9px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:#e0d8c8;font-size:.9rem;outline:none}
+    .search-input:focus{border-color:var(--gold)}
+    .btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:#e0d8c8;cursor:pointer;font-size:.82rem;transition:all .15s;white-space:nowrap}
+    .btn:hover{border-color:var(--gold);color:var(--gold)}
+    .btn-gold{background:var(--gold);border-color:var(--gold);color:#000;font-weight:600}
+    .btn-gold:hover{background:#c49040;border-color:#c49040;color:#000}
+    .btn-sm{padding:4px 10px;font-size:.72rem}
+
+    /* ── Asset grid ── */
+    .grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:.8rem;color:var(--dim)}
+    .grid-header .count{color:var(--gold);font-weight:600}
+    .asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+    .asset-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+    .asset-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 20px rgba(212,168,75,.15)}
+    .asset-thumb{width:100%;height:120px;object-fit:contain;background:#0d0d12;padding:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+    .asset-thumb img{max-width:100%;max-height:100%;object-fit:contain}
+    .asset-thumb.model{color:var(--blue)}
+    .asset-thumb.audio{color:var(--green)}
+    .asset-thumb.code{color:var(--dim)}
+    .asset-info{padding:8px 10px}
+    .asset-name{font-size:.72rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .asset-meta{font-size:.62rem;color:var(--dim)}
+    .asset-source{position:absolute;top:6px;right:6px;font-size:.58rem;padding:2px 6px;border-radius:4px;font-weight:700;text-transform:uppercase}
+    .source-r2{background:rgba(74,158,255,.2);color:var(--blue);border:1px solid rgba(74,158,255,.4)}
+    .source-puter{background:rgba(76,175,80,.2);color:var(--green);border:1px solid rgba(76,175,80,.4)}
+
+    /* ── Upload panel ── */
+    .upload-panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+    .drop-zone{border:2px dashed var(--border);border-radius:10px;padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:16px}
+    .drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:rgba(212,168,75,.04)}
+    .drop-zone h3{color:var(--dim);margin-bottom:8px}
+    .drop-zone p{font-size:.78rem;color:var(--dim)}
+    .upload-path-row{display:flex;gap:8px;align-items:center;margin-bottom:16px;font-size:.8rem}
+    .upload-path-row label{color:var(--dim);white-space:nowrap}
+    .upload-log{background:#0d0d12;border-radius:8px;padding:12px;max-height:260px;overflow-y:auto;font-family:monospace;font-size:.75rem;line-height:1.6}
+    .log-ok{color:var(--green)}.log-err{color:var(--red)}.log-info{color:var(--gold)}
+
+    /* ── Asset detail modal ── */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+    .modal-bg.open{display:flex}
+    .modal{background:#111118;border:1px solid var(--border);border-radius:14px;padding:28px;width:min(600px,95vw);max-height:90vh;overflow-y:auto}
+    .modal h2{font-size:1.1rem;color:var(--gold);margin-bottom:16px;word-break:break-all}
+    .modal-preview{width:100%;max-height:300px;object-fit:contain;border-radius:8px;background:#0d0d12;padding:12px;margin-bottom:16px}
+    .modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.78rem;margin-bottom:16px}
+    .modal-meta .k{color:var(--dim)}
+    .modal-meta .v{color:#e0d8c8;word-break:break-all}
+    .modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;line-height:1}
+    .modal-close:hover{color:#fff}
+    .modal-wrap{position:relative}
+
+    /* ── Puter file browser ── */
+    .puter-browser{display:flex;flex-direction:column;gap:8px}
+    .breadcrumb{font-size:.76rem;color:var(--dim);display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+    .breadcrumb button{background:none;border:none;color:var(--blue);cursor:pointer;padding:0;font-size:.76rem}
+    .breadcrumb button:hover{color:var(--gold)}
+    .breadcrumb .sep{color:var(--border)}
+    .file-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .15s;font-size:.8rem}
+    .file-row:hover{background:var(--hover)}
+    .file-row .icon{font-size:1rem;width:20px;text-align:center}
+    .file-row .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-row .size{color:var(--dim);font-size:.7rem;white-space:nowrap}
+    .file-row .actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+    .file-row:hover .actions{opacity:1}
+
+    /* ── Empty / loading states ── */
+    .empty{text-align:center;padding:60px 20px;color:var(--dim)}
+    .empty .icon{font-size:3rem;margin-bottom:16px}
+    .loading{text-align:center;padding:40px;color:var(--dim);font-size:.85rem}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;padding:10px 24px;border-radius:8px;font-weight:600;z-index:300;display:none;font-size:.85rem}
+
+    @media(max-width:700px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ─────────────────────────────────────────────────────── -->
+<div class="topbar">
+  <h1>Asset Browser <span>ObjectStore v3.0</span></h1>
+
+  <!-- Puter auth status -->
+  <div class="puter-bar" style="margin-left:auto">
+    <div class="puter-dot" id="puterDot"></div>
+    <span class="puter-user" id="puterUser">Not signed in</span>
+    <button id="btnPuterAuth" onclick="handlePuterAuth()">Sign in to Puter</button>
+  </div>
+</div>
+
+<!-- ── Layout ──────────────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">Source</div>
+    <button class="filter-btn active" id="src-r2" onclick="setSource('r2')">☁ Cloudflare R2 <span class="count" id="r2Count">—</span></button>
+    <button class="filter-btn" id="src-puter" onclick="setSource('puter')">🟢 Puter / GrudaChain <span class="count" id="puterCount">—</span></button>
+    <button class="filter-btn" id="src-game" onclick="setSource('game')">📚 Game Data JSON <span class="count" id="gameCount">—</span></button>
+
+    <div class="sidebar-section">Category</div>
+    <button class="filter-btn active" id="cat-all" onclick="setCategory('')">All</button>
+    <button class="filter-btn" id="cat-3d-models" onclick="setCategory('3d-models')">3D Models</button>
+    <button class="filter-btn" id="cat-sprites" onclick="setCategory('sprites')">Sprites</button>
+    <button class="filter-btn" id="cat-icons" onclick="setCategory('icons')">Icons</button>
+    <button class="filter-btn" id="cat-audio" onclick="setCategory('audio')">Audio</button>
+    <button class="filter-btn" id="cat-textures" onclick="setCategory('textures')">Textures</button>
+    <button class="filter-btn" id="cat-animations" onclick="setCategory('animations')">Animations</button>
+
+    <div class="sidebar-section">Stats</div>
+    <div class="stat-row">R2 assets <span id="statR2">—</span></div>
+    <div class="stat-row">Puter files <span id="statPuter">—</span></div>
+    <div class="stat-row">Worker <span id="statWorker" style="color:var(--green)">checking…</span></div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="tabs">
+      <div class="tab active" data-tab="browse" onclick="switchTab('browse')">Browse</div>
+      <div class="tab" data-tab="puter" onclick="switchTab('puter')">Puter FS</div>
+      <div class="tab" data-tab="upload" onclick="switchTab('upload')">Upload</div>
+      <div class="tab" data-tab="gamedata" onclick="switchTab('gamedata')">Game Data</div>
+    </div>
+
+    <!-- ── Browse Tab ── -->
+    <div id="tab-browse">
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search assets by name, tag, category…" oninput="debounceSearch()">
+        <button class="btn btn-gold" onclick="runSearch()">Search</button>
+        <button class="btn" onclick="loadR2Assets()">Refresh</button>
+      </div>
+      <div class="grid-header">
+        <span id="resultLabel">Loading…</span>
+        <div style="display:flex;gap:8px">
+          <select id="sortSelect" class="filter-input" style="width:auto;padding:4px 8px" onchange="renderGrid()">
+            <option value="created_desc">Newest</option>
+            <option value="created_asc">Oldest</option>
+            <option value="name_asc">Name A–Z</option>
+            <option value="size_desc">Largest</option>
+          </select>
+        </div>
+      </div>
+      <div class="asset-grid" id="assetGrid">
+        <div class="loading"><span class="spinner"></span>Loading assets…</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:center" id="paginationRow"></div>
+    </div>
+
+    <!-- ── Puter FS Tab ── -->
+    <div id="tab-puter" style="display:none">
+      <div class="search-bar">
+        <button class="btn" onclick="puterNav('/GRUDACHAIN')">⬆ Go to /GRUDACHAIN</button>
+        <button class="btn" onclick="puterRefresh()">Refresh</button>
+        <span id="puterPathDisplay" style="font-size:.8rem;color:var(--dim);padding:4px 8px"></span>
+      </div>
+      <div class="breadcrumb" id="puterBreadcrumb"></div>
+      <div id="puterFileList" class="puter-browser">
+        <div class="empty"><div class="icon">☁</div><p>Sign in to Puter to browse your GrudaChain files.</p></div>
+      </div>
+    </div>
+
+    <!-- ── Upload Tab ── -->
+    <div id="tab-upload" style="display:none">
+      <div class="upload-panel">
+        <h3 style="margin-bottom:16px;color:var(--gold)">Upload to Puter / GrudaChain</h3>
+        <p style="font-size:.8rem;color:var(--dim);margin-bottom:16px">Files are uploaded to your Puter cloud storage at <code style="color:var(--gold)">/GRUDACHAIN/objectstore/</code> — no Cloudflare tokens needed.</p>
+
+        <div class="upload-path-row">
+          <label>Subfolder:</label>
+          <input type="text" class="filter-input" id="uploadFolder" placeholder="e.g. sprites/weapons" style="flex:1">
+        </div>
+
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('uploadInput').click()">
+          <h3>Drop files here or click to browse</h3>
+          <p>Images, GLBs, audio, ZIP — up to 100MB each</p>
+          <input type="file" id="uploadInput" multiple style="display:none" onchange="handleFiles(this.files)">
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-gold" onclick="document.getElementById('uploadInput').click()">Choose Files</button>
+          <button class="btn" onclick="uploadQueue.length && startUpload()">Upload Queue (<span id="queueCount">0</span>)</button>
+          <button class="btn" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="upload-log" id="uploadLog"><span class="log-info">Ready — sign in to Puter and drop files to upload.</span></div>
+      </div>
+    </div>
+
+    <!-- ── Game Data Tab ── -->
+    <div id="tab-gamedata" style="display:none">
+      <div class="search-bar">
+        <input type="text" class="search-input" id="gdSearch" placeholder="Filter collections…" oninput="filterCollections()">
+        <button class="btn" onclick="loadGameData()">Refresh</button>
+      </div>
+      <div id="gdGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+        <div class="loading"><span class="spinner"></span>Loading…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Asset Detail Modal ─────────────────────────────────────────── -->
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal modal-wrap">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modalTitle">Asset</h2>
+    <div id="modalPreviewWrap"></div>
+    <div class="modal-meta" id="modalMeta"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ── Config ──────────────────────────────────────────────────────────
+const WORKER_URL = 'https://objectstore.grudge-studio.com';
+const PUTER_BASE = '/GRUDACHAIN/objectstore';
+
+// ── State ───────────────────────────────────────────────────────────
+let puterUser = null;
+let currentSource = 'r2';
+let currentCategory = '';
+let currentTab = 'browse';
+let r2Assets = [];
+let r2Offset = 0;
+const PAGE_SIZE = 48;
+let searchTimer = null;
+let uploadQueue = [];
+let puterCurrentPath = '/GRUDACHAIN';
+let allCollections = [];
+
+// ── Init ────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  checkWorkerHealth();
+  loadR2Assets();
+  loadGameData();
+  initDropZone();
+
+  // Auto-check Puter session
+  try {
+    if (puter.auth.isSignedIn()) {
+      puterUser = await puter.auth.getUser();
+      updatePuterUI();
+    }
+  } catch(e) {}
+});
+
+// ── Puter Auth ──────────────────────────────────────────────────────
+async function handlePuterAuth() {
+  const dot = document.getElementById('puterDot');
+  dot.classList.add('busy');
+  try {
+    if (puter.auth.isSignedIn()) {
+      await puter.auth.signOut();
+      puterUser = null;
+    } else {
+      await puter.auth.signIn();
+      puterUser = await puter.auth.getUser();
+    }
+    updatePuterUI();
+  } catch(e) {
+    log('Puter auth error: ' + e.message, 'err');
+    dot.classList.remove('busy');
+  }
+}
+
+function updatePuterUI() {
+  const dot = document.getElementById('puterDot');
+  const userEl = document.getElementById('puterUser');
+  const btn = document.getElementById('btnPuterAuth');
+  dot.classList.remove('busy');
+  if (puterUser) {
+    dot.classList.add('ok');
+    userEl.textContent = puterUser.username;
+    btn.textContent = 'Sign Out';
+    log('Signed in as ' + puterUser.username, 'ok');
+    // Auto-browse puter if on puter tab
+    if (currentTab === 'puter') puterNav(puterCurrentPath);
+  } else {
+    dot.classList.remove('ok');
+    userEl.textContent = 'Not signed in';
+    btn.textContent = 'Sign in to Puter';
+  }
+}
+
+// ── Tab switching ───────────────────────────────────────────────────
+function switchTab(name) {
+  currentTab = name;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  ['browse','puter','upload','gamedata'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? '' : 'none';
+  });
+  if (name === 'puter' && puterUser) puterNav(puterCurrentPath);
+}
+
+// ── Source / category filters ────────────────────────────────────────
+function setSource(src) {
+  currentSource = src;
+  ['r2','puter','game'].forEach(s => document.getElementById('src-' + s).classList.toggle('active', s === src));
+  if (src === 'puter') { switchTab('puter'); if (puterUser) puterNav(puterCurrentPath); return; }
+  if (src === 'game') { switchTab('gamedata'); return; }
+  switchTab('browse');
+  r2Offset = 0;
+  loadR2Assets();
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('[id^=cat-]').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('cat-' + (cat || 'all'));
+  if (el) el.classList.add('active');
+  r2Offset = 0;
+  loadR2Assets();
+}
+
+// ── R2 Asset loading ─────────────────────────────────────────────────
+async function loadR2Assets() {
+  const q = document.getElementById('searchInput').value.trim();
+  const params = new URLSearchParams({ limit: PAGE_SIZE, offset: r2Offset });
+  if (q) params.set('q', q);
+  if (currentCategory) params.set('category', currentCategory);
+
+  document.getElementById('assetGrid').innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+  document.getElementById('resultLabel').textContent = 'Loading…';
+
+  try {
+    const res = await fetch(`${WORKER_URL}/v1/assets?${params}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    r2Assets = data.items || [];
+    document.getElementById('r2Count').textContent = data.count;
+    document.getElementById('statR2').textContent = data.count;
+    renderGrid();
+    renderPagination(data.count);
+  } catch(e) {
+    document.getElementById('assetGrid').innerHTML = `<div class="empty"><div class="icon">⚠</div><p>${e.message}</p><p style="margin-top:8px;font-size:.75rem">Is the worker reachable?</p></div>`;
+    document.getElementById('resultLabel').textContent = 'Error loading assets';
+  }
+}
+
+function renderGrid() {
+  const grid = document.getElementById('assetGrid');
+  if (!r2Assets.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="icon">📭</div><p>No assets found. Upload some!</p></div>';
+    document.getElementById('resultLabel').textContent = '0 assets';
+    return;
+  }
+
+  const sort = document.getElementById('sortSelect').value;
+  let items = [...r2Assets];
+  if (sort === 'name_asc') items.sort((a,b)=>a.filename.localeCompare(b.filename));
+  else if (sort === 'size_desc') items.sort((a,b)=>b.size-a.size);
+  else if (sort === 'created_asc') items.sort((a,b)=>a.created_at?.localeCompare(b.created_at));
+  // created_desc is default (already from API)
+
+  document.getElementById('resultLabel').innerHTML = `<span class="count">${items.length}</span> assets`;
+  grid.innerHTML = items.map(a => assetCard(a, 'r2')).join('');
+}
+
+function assetCard(a, source) {
+  const thumb = thumbHtml(a);
+  const sizeFmt = a.size ? formatSize(a.size) : '';
+  const cat = a.category || '';
+  return `<div class="asset-card" onclick='openAsset(${JSON.stringify(a)}, "${source}")'>
+    <div class="asset-source source-${source}">${source === 'r2' ? 'R2' : 'Puter'}</div>
+    <div class="asset-thumb ${thumbClass(a)}">${thumb}</div>
+    <div class="asset-info">
+      <div class="asset-name" title="${esc(a.filename)}">${esc(a.filename)}</div>
+      <div class="asset-meta">${cat}${sizeFmt ? ' • ' + sizeFmt : ''}</div>
+    </div>
+  </div>`;
+}
+
+function thumbClass(a) {
+  const m = (a.mime || '').toLowerCase();
+  if (m.startsWith('model/') || a.filename?.endsWith('.glb') || a.filename?.endsWith('.gltf')) return 'model';
+  if (m.startsWith('audio/')) return 'audio';
+  if (m.startsWith('image/')) return '';
+  return 'code';
+}
+
+function thumbHtml(a) {
+  const m = (a.mime || '').toLowerCase();
+  if (m.startsWith('image/')) {
+    const src = `${WORKER_URL}/v1/assets/${a.id}/file`;
+    return `<img src="${src}" alt="${esc(a.filename)}" onerror="this.parentElement.innerHTML='🖼'">`;
+  }
+  if (m.startsWith('model/') || a.filename?.endsWith('.glb')) return '📦';
+  if (m.startsWith('audio/')) return '🎵';
+  if (m.includes('zip')) return '📁';
+  if (m.includes('json')) return '📄';
+  return '📄';
+}
+
+// ── Pagination ───────────────────────────────────────────────────────
+function renderPagination(total) {
+  const row = document.getElementById('paginationRow');
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const cur = Math.floor(r2Offset / PAGE_SIZE);
+  if (pages <= 1) { row.innerHTML = ''; return; }
+  let html = '';
+  if (cur > 0) html += `<button class="btn btn-sm" onclick="r2Offset=${(cur-1)*PAGE_SIZE};loadR2Assets()">← Prev</button>`;
+  html += `<span style="font-size:.8rem;color:var(--dim);padding:0 8px">Page ${cur+1} / ${pages}</span>`;
+  if (cur < pages-1) html += `<button class="btn btn-sm" onclick="r2Offset=${(cur+1)*PAGE_SIZE};loadR2Assets()">Next →</button>`;
+  row.innerHTML = html;
+}
+
+// ── Search ───────────────────────────────────────────────────────────
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { r2Offset = 0; loadR2Assets(); }, 350);
+}
+function runSearch() { r2Offset = 0; loadR2Assets(); }
+
+// ── Asset Detail Modal ───────────────────────────────────────────────
+function openAsset(a, source) {
+  const fileUrl = source === 'r2'
+    ? `${WORKER_URL}/v1/assets/${a.id}/file`
+    : a._puterUrl || '';
+
+  document.getElementById('modalTitle').textContent = a.filename || a.name;
+
+  const m = (a.mime || '').toLowerCase();
+  let preview = '';
+  if (m.startsWith('image/') && fileUrl) {
+    preview = `<img class="modal-preview" src="${fileUrl}" alt="${esc(a.filename)}">`;
+  } else if (m.startsWith('audio/') && fileUrl) {
+    preview = `<audio controls style="width:100%;margin-bottom:16px"><source src="${fileUrl}" type="${m}"></audio>`;
+  } else {
+    const icon = thumbClass(a) === 'model' ? '📦' : thumbClass(a) === 'audio' ? '🎵' : '📄';
+    preview = `<div style="text-align:center;font-size:4rem;padding:24px;background:#0d0d12;border-radius:8px;margin-bottom:16px">${icon}</div>`;
+  }
+  document.getElementById('modalPreviewWrap').innerHTML = preview;
+
+  const meta = [
+    ['ID', a.id || '—'],
+    ['Source', source.toUpperCase()],
+    ['Category', a.category || '—'],
+    ['MIME', a.mime || '—'],
+    ['Size', a.size ? formatSize(a.size) : '—'],
+    ['Tags', Array.isArray(a.tags) ? a.tags.join(', ') : (a.tags || '—')],
+    ['Created', a.created_at ? new Date(a.created_at).toLocaleString() : '—'],
+    ['Key', a.key || '—'],
+  ];
+  document.getElementById('modalMeta').innerHTML = meta.map(([k,v]) =>
+    `<div class="k">${k}</div><div class="v">${esc(String(v))}</div>`).join('');
+
+  let actions = '';
+  if (fileUrl) actions += `<a href="${fileUrl}" download="${esc(a.filename)}" class="btn btn-gold">⬇ Download</a>`;
+  if (fileUrl) actions += `<button class="btn" onclick="copyText('${fileUrl}')">📋 Copy URL</button>`;
+  if (source === 'r2') actions += `<button class="btn" onclick="copyText('${a.id}')">Copy ID</button>`;
+  document.getElementById('modalActions').innerHTML = actions;
+
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalBg') || !e.target) {
+    document.getElementById('modalBg').classList.remove('open');
+  }
+}
+
+// ── Puter FS Browser ─────────────────────────────────────────────────
+async function puterNav(path) {
+  puterCurrentPath = path;
+  document.getElementById('puterPathDisplay').textContent = path;
+
+  if (!puterUser) {
+    document.getElementById('puterFileList').innerHTML = '<div class="empty"><div class="icon">🔒</div><p>Sign in to Puter first.</p></div>';
+    return;
+  }
+
+  document.getElementById('puterFileList').innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+  renderBreadcrumb(path);
+
+  try {
+    const items = await puter.fs.readdir(path);
+    document.getElementById('puterCount').textContent = items.length;
+    document.getElementById('statPuter').textContent = items.length;
+
+    if (!items.length) {
+      document.getElementById('puterFileList').innerHTML = '<div class="empty"><div class="icon">📂</div><p>Empty folder</p></div>';
+      return;
+    }
+
+    // Sort: folders first, then files by name
+    items.sort((a,b) => {
+      if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    document.getElementById('puterFileList').innerHTML = items.map(item => {
+      const icon = item.is_dir ? '📁' : fileIcon(item.name);
+      const size = item.is_dir ? '' : formatSize(item.size || 0);
+      const actions = item.is_dir ? '' : `
+        <button class="btn btn-sm" onclick="event.stopPropagation();downloadPuterFile('${esc(item.path)}','${esc(item.name)}')">⬇</button>
+        <button class="btn btn-sm" onclick="event.stopPropagation();copyPuterUrl('${esc(item.path)}')">🔗</button>`;
+      return `<div class="file-row" onclick="${item.is_dir ? `puterNav('${esc(item.path)}')` : `previewPuterFile('${esc(item.path)}','${esc(item.name)}','${esc(item.size||0)}')`}">
+        <span class="icon">${icon}</span>
+        <span class="name">${esc(item.name)}</span>
+        <span class="size">${size}</span>
+        <span class="actions">${actions}</span>
+      </div>`;
+    }).join('');
+
+  } catch(e) {
+    document.getElementById('puterFileList').innerHTML = `<div class="empty"><div class="icon">⚠</div><p>${e.message}</p></div>`;
+  }
+}
+
+function puterRefresh() { puterNav(puterCurrentPath); }
+
+function renderBreadcrumb(path) {
+  const parts = path.split('/').filter(Boolean);
+  let html = `<button onclick="puterNav('/')">root</button>`;
+  let cumPath = '';
+  parts.forEach((p, i) => {
+    cumPath += '/' + p;
+    const cp = cumPath;
+    html += `<span class="sep">/</span><button onclick="puterNav('${esc(cp)}')">${esc(p)}</button>`;
+  });
+  document.getElementById('puterBreadcrumb').innerHTML = html;
+}
+
+async function downloadPuterFile(path, name) {
+  try {
+    const url = await puter.fs.getReadURL(path, { ttl: 300 });
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    toast('Download started: ' + name);
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function copyPuterUrl(path) {
+  try {
+    const url = await puter.fs.getReadURL(path, { ttl: 3600 });
+    copyText(url);
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function previewPuterFile(path, name, size) {
+  const ext = name.split('.').pop().toLowerCase();
+  const mime = mimeFromExt(ext);
+  const fakeAsset = { id: null, filename: name, mime, size: parseInt(size||0), category: 'puter', tags: [], key: path };
+
+  try {
+    const url = await puter.fs.getReadURL(path, { ttl: 600 });
+    fakeAsset._puterUrl = url;
+    openAsset(fakeAsset, 'puter');
+  } catch(e) {
+    openAsset(fakeAsset, 'puter');
+  }
+}
+
+// ── Upload to Puter ──────────────────────────────────────────────────
+function initDropZone() {
+  const dz = document.getElementById('dropZone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag');
+    handleFiles(e.dataTransfer.files);
+  });
+}
+
+function handleFiles(files) {
+  uploadQueue = Array.from(files);
+  document.getElementById('queueCount').textContent = uploadQueue.length;
+  log(`${uploadQueue.length} file(s) queued. Click Upload.`, 'info');
+  if (uploadQueue.length) startUpload();
+}
+
+async function startUpload() {
+  if (!puterUser) {
+    log('Sign in to Puter first!', 'err');
+    toast('Sign in to Puter first');
+    return;
+  }
+  const sub = document.getElementById('uploadFolder').value.trim();
+  const destBase = sub ? `${PUTER_BASE}/${sub}` : PUTER_BASE;
+
+  // Ensure folder exists
+  try { await puter.fs.mkdir(destBase, { recursive: true }); } catch(e) {}
+
+  log(`Uploading ${uploadQueue.length} file(s) to ${destBase}…`, 'info');
+  let ok = 0, fail = 0;
+
+  for (const file of uploadQueue) {
+    const dest = `${destBase}/${file.name}`;
+    log(`↑ ${file.name} (${formatSize(file.size)})…`, 'info');
+    try {
+      await puter.fs.write(dest, file, { overwrite: true });
+      log(`✓ ${file.name}`, 'ok');
+      ok++;
+    } catch(e) {
+      log(`✗ ${file.name}: ${e.message}`, 'err');
+      fail++;
+    }
+  }
+
+  log(`Done: ${ok} uploaded, ${fail} failed.`, ok > 0 ? 'ok' : 'err');
+  uploadQueue = [];
+  document.getElementById('queueCount').textContent = 0;
+  if (currentTab === 'puter') puterRefresh();
+}
+
+// ── Game Data ────────────────────────────────────────────────────────
+async function loadGameData() {
+  try {
+    const res = await fetch(`${WORKER_URL}/v1/game-data`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    allCollections = data.collections || [];
+    document.getElementById('gameCount').textContent = allCollections.length;
+    renderCollections(allCollections);
+  } catch(e) {
+    document.getElementById('gdGrid').innerHTML = `<div class="empty" style="grid-column:1/-1"><p>${e.message}</p></div>`;
+  }
+}
+
+function filterCollections() {
+  const q = document.getElementById('gdSearch').value.toLowerCase();
+  renderCollections(q ? allCollections.filter(c => c.name.toLowerCase().includes(q)) : allCollections);
+}
+
+function renderCollections(cols) {
+  if (!cols.length) { document.getElementById('gdGrid').innerHTML = '<div class="loading">No collections found</div>'; return; }
+  document.getElementById('gdGrid').innerHTML = cols.map(c => `
+    <div class="asset-card" onclick="openCollection('${esc(c.name)}')">
+      <div class="asset-thumb code" style="height:80px;font-size:1.8rem">📄</div>
+      <div class="asset-info">
+        <div class="asset-name">${esc(c.name)}</div>
+        <div class="asset-meta">${c.url || ''}</div>
+      </div>
+    </div>`).join('');
+}
+
+async function openCollection(name) {
+  const url = `${WORKER_URL}/v1/game-data/${name}`;
+  window.open(url, '_blank');
+}
+
+// ── Worker health ────────────────────────────────────────────────────
+async function checkWorkerHealth() {
+  try {
+    const res = await fetch(`${WORKER_URL}/health`);
+    const stat = document.getElementById('statWorker');
+    if (res.ok) { stat.textContent = 'Online ✓'; stat.style.color = 'var(--green)'; }
+    else { stat.textContent = 'Error ' + res.status; stat.style.color = 'var(--red)'; }
+  } catch(e) {
+    document.getElementById('statWorker').textContent = 'Offline';
+    document.getElementById('statWorker').style.color = 'var(--red)';
+  }
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────
+function log(msg, type='info') {
+  const el = document.getElementById('uploadLog');
+  const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : 'log-info';
+  el.innerHTML += `\n<span class="${cls}">[${new Date().toLocaleTimeString()}] ${esc(msg)}</span>`;
+  el.scrollTop = el.scrollHeight;
+}
+function clearLog() { document.getElementById('uploadLog').innerHTML = ''; }
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copied!')).catch(() => toast('Copy failed'));
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.style.display = 'none', 2200);
+}
+
+function formatSize(bytes) {
+  if (!bytes) return '0 B';
+  const u = ['B','KB','MB','GB'];
+  let i = 0;
+  while (bytes >= 1024 && i < 3) { bytes /= 1024; i++; }
+  return bytes.toFixed(i ? 1 : 0) + ' ' + u[i];
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function fileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  const map = { png:'🖼', jpg:'🖼', jpeg:'🖼', webp:'🖼', gif:'🖼', svg:'🖼', glb:'📦', gltf:'📦', fbx:'📦', mp3:'🎵', wav:'🎵', ogg:'🎵', zip:'🗜', json:'📄', js:'📄', ts:'📄', css:'📄', html:'🌐' };
+  return map[ext] || '📄';
+}
+
+function mimeFromExt(ext) {
+  const m = { png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', webp:'image/webp', gif:'image/gif', svg:'image/svg+xml', glb:'model/gltf-binary', gltf:'model/gltf+json', mp3:'audio/mpeg', wav:'audio/wav', ogg:'audio/ogg', zip:'application/zip', json:'application/json' };
+  return m[ext] || 'application/octet-stream';
+}
+</script>
+</body>
+</html>
