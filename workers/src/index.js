@@ -72,7 +72,7 @@ export default {
       // ── 3D Model routes (/v1/models) ─────────────────────────
       const modelFileMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/file$/);
       if (modelFileMatch && method === 'GET') {
-        return corsResponse(env, await handleModelDownload(modelFileMatch[1], env), origin);
+        return corsResponse(env, await handleModelDownload(modelFileMatch[1], env, request), origin);
       }
       const modelThumbMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/thumbnail$/);
       if (modelThumbMatch && method === 'GET') {
@@ -241,7 +241,9 @@ async function handleGetAsset(id, env, url) {
   return json(row);
 }
 
-/** GET /v1/assets/:id/file — stream file from R2 */
+/** GET /v1/assets/:id/file — download asset file from R2.
+ * Sends an ETag and supports If-None-Match conditional requests.
+ */
 async function handleDownload(id, env) {
   const row = await env.DB.prepare('SELECT key, mime, filename FROM assets WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'Asset not found' }, 404);
@@ -590,19 +592,37 @@ async function handleGetModel(id, env, url) {
   return json(row);
 }
 
-/** GET /v1/models/:id/file — download 3D model from R2 */
-async function handleModelDownload(id, env) {
-  const row = await env.DB.prepare('SELECT key, mime, filename FROM assets WHERE id = ?').bind(id).first();
+/** GET /v1/models/:id/file — download 3D model from R2.
+ * Sends an ETag (R2 etag or sha256) so clients can revalidate without
+ * downloading the entire model again. We also drop 'immutable' so future
+ * key-overwrites can propagate to clients via 1-hour revalidation.
+ */
+async function handleModelDownload(id, env, request) {
+  const row = await env.DB.prepare('SELECT key, mime, filename, sha256 FROM assets WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'Model not found' }, 404);
 
   const obj = await env.BUCKET.get(row.key);
   if (!obj) return json({ error: 'File missing from storage' }, 404);
 
+  const etag = `"${(row.sha256 || obj.etag || obj.httpEtag || '').replace(/"/g, '')}"`;
+  // Conditional GET — return 304 if the client has the same ETag
+  const ifNoneMatch = request?.headers?.get?.('if-none-match');
+  if (ifNoneMatch && ifNoneMatch === etag) {
+    return new Response(null, {
+      status: 304,
+      headers: {
+        'ETag': etag,
+        'Cache-Control': 'public, max-age=3600, must-revalidate',
+      },
+    });
+  }
+
   return new Response(obj.body, {
     headers: {
       'Content-Type': row.mime || 'model/gltf-binary',
       'Content-Disposition': `inline; filename="${row.filename}"`,
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Cache-Control': 'public, max-age=3600, must-revalidate',
+      'ETag': etag,
     },
   });
 }
@@ -648,26 +668,60 @@ function requireAuth(request, env) {
   return null;
 }
 
-/** CORS wrapper — reflects the request Origin if it matches the allowed list */
-function corsResponse(env, response, requestOrigin = '') {
-  const allowed = (env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
-  const headers = new Headers(response.headers);
+/** Match a request Origin against an allow-list entry.
+ * Supports:
+ *   - exact origin: "https://foo.example.com"
+ *   - wildcard subdomain: "*.example.com" (matches "https://x.example.com", "https://a.b.example.com")
+ *   - bare host: "example.com" (treated as exact host match for any scheme)
+ *   - global wildcard: "*"
+ */
+function originMatches(requestOrigin, entry) {
+  if (!entry) return false;
+  if (entry === '*') return true;
+  if (!requestOrigin) return false;
+  if (entry === requestOrigin) return true;
 
-  // Match request origin against allowed origins; fall back to wildcard
-  let origin = '*';
-  if (allowed.includes('*')) {
-    origin = '*';
-  } else if (requestOrigin && allowed.some(a => requestOrigin === a || requestOrigin.endsWith(a.replace(/^https?:\/\//, '')))) {
-    origin = requestOrigin;
-  } else if (allowed.length > 0) {
-    origin = allowed[0];
+  // Wildcard subdomain pattern
+  if (entry.startsWith('*.')) {
+    const suffix = entry.slice(1); // ".example.com"
+    let host;
+    try { host = new URL(requestOrigin).host; } catch { return false; }
+    return host === suffix.slice(1) || host.endsWith(suffix);
   }
 
-  headers.set('Access-Control-Allow-Origin', origin);
+  // Bare host (no scheme) — match by host
+  if (!/^https?:\/\//i.test(entry)) {
+    let host;
+    try { host = new URL(requestOrigin).host; } catch { return false; }
+    return host === entry;
+  }
+
+  return false;
+}
+
+/** CORS wrapper — reflects the request Origin if it matches the allowed list */
+function corsResponse(env, response, requestOrigin = '') {
+  const allowed = (env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim()).filter(Boolean);
+  const headers = new Headers(response.headers);
+
+  // Decide which Origin to echo back
+  let origin = '';
+  if (allowed.includes('*')) {
+    origin = requestOrigin || '*';
+  } else if (requestOrigin && allowed.some(a => originMatches(requestOrigin, a))) {
+    origin = requestOrigin;
+  }
+
+  if (origin) {
+    headers.set('Access-Control-Allow-Origin', origin);
+    headers.set('Vary', 'Origin');
+    // Allow credentials only for explicit (non-wildcard) origin echoes
+    if (origin !== '*') headers.set('Access-Control-Allow-Credentials', 'true');
+  }
   headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility, Authorization');
+  headers.set('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Type, X-Source');
   headers.set('Access-Control-Max-Age', '86400');
-  if (origin !== '*') headers.set('Vary', 'Origin');
   return new Response(response.body, { status: response.status, headers });
 }
 

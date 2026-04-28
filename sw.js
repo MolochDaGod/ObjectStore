@@ -112,16 +112,22 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Sprite/icon assets: cache-first (same-origin only)
+  // Sprite/icon assets: cache-first (same-origin only).
+  // Validates Content-Type so a Vercel/Pages SPA-fallback HTML 200 can never
+  // be cached as an image and silently break the page.
   if (/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(url.pathname)) {
     event.respondWith(
       caches.open(ASSET_CACHE).then(cache =>
         cache.match(event.request).then(cached => {
           if (cached) return cached;
           return fetch(event.request).then(response => {
-            if (response.ok) cache.put(event.request, response.clone()).catch(() => {});
+            const ct = response.headers.get('content-type') || '';
+            const looksImage = ct.startsWith('image/') || ct === '' || /\.svg$/i.test(url.pathname);
+            if (response.ok && looksImage) {
+              cache.put(event.request, response.clone()).catch(() => {});
+            }
             return response;
-          }).catch(err => cached || Response.error());
+          }).catch(() => cached || Response.error());
         })
       )
     );

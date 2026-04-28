@@ -12,10 +12,10 @@ compatibility_date = "2025-03-01"
 [ai]
 binding = "AI"
 
-# ── Environment variables ───────────────────────────────────────────
-# (preserves existing env from the original grudge-ai-hub)
+# ── Environment variables ──────────────────────────────────────
+# Wildcards (leading '*.') are supported by the cors() matcher in index.js.
 [vars]
-ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,https://ai.grudge-studio.com,https://dash.grudge-studio.com,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,https://client.grudge-studio.com,https://app.puter.com"
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,*.grudge-studio.com,*.grudgestudio.com,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,*.vercel.app,*.puter.site,https://app.puter.com,http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
 OBJECTSTORE_URL = "https://objectstore.grudge-studio.com"
 ENVIRONMENT = "production"
 MAX_PAYLOAD_BYTES = "65536"

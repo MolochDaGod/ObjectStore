@@ -5,7 +5,7 @@
 <title>Grudge ObjectStore · 3D Assets</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="grudge-api" content="">
-<link rel="icon" href="/grudge-logo.png">
+<link rel="icon" href="./favicon.svg">
 <style>
   :root {
     color-scheme: dark;
@@ -91,14 +91,14 @@
 </head>
 <body>
 <header>
-  <img src="/grudge-logo.png" alt="" height="22">
+  <img src="./favicon.svg" alt="" height="22">
   <h1>Grudge ObjectStore · 3D</h1>
   <nav>
-    <a href="/">Home</a>
-    <a href="/2d.html">2D</a>
-    <a href="/3d.html" class="active">3D</a>
-    <a href="/editors/">Editors</a>
-    <a href="/admin.html">Admin</a>
+    <a href="./">Home</a>
+    <a href="./2d.html">2D</a>
+    <a href="./3d.html" class="active">3D</a>
+    <a href="./editors/">Editors</a>
+    <a href="./admin.html">Admin</a>
   </nav>
 </header>
 
@@ -143,7 +143,7 @@
 
 <script type="module">
   import '/js/viewer/grudge-viewer.js';
-  import createStoreClient from '/js/store-client.js';
+  import createStoreClient from './js/store-client.js';
 
   const store = createStoreClient();
   const listEl = document.getElementById('list');

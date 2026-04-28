@@ -310,19 +310,43 @@ async function logJob(env, type, prompt, result) {
   try { await env.DB.prepare('INSERT INTO ai_jobs (id,type,prompt,status,result,model) VALUES (?,?,?,\'complete\',?,?)').bind(crypto.randomUUID(), type, (prompt||'').slice(0,500), JSON.stringify(result||{}), MODELS.TEXT).run(); } catch(e) { /* non-fatal */ }
 }
 
-function cors(env, response, origin) {
-  var allowed = (env.ALLOWED_ORIGINS || '*').split(',').map(function(s){return s.trim();});
-  var headers = new Headers(response.headers);
-  var o = '*';
-  if (!allowed.includes('*') && origin) {
-    if (allowed.some(function(a) { return origin === a || origin.endsWith(a.replace(/^https?:\/\//, '')); })) o = origin;
-    else if (allowed.length) o = allowed[0];
+function originMatches(requestOrigin, entry) {
+  if (!entry) return false;
+  if (entry === '*') return true;
+  if (!requestOrigin) return false;
+  if (entry === requestOrigin) return true;
+  if (entry.indexOf('*.') === 0) {
+    var suffix = entry.slice(1);
+    var host;
+    try { host = new URL(requestOrigin).host; } catch (e) { return false; }
+    return host === suffix.slice(1) || host.indexOf(suffix, host.length - suffix.length) !== -1;
   }
-  headers.set('Access-Control-Allow-Origin', o);
+  if (!/^https?:\/\//i.test(entry)) {
+    var h2;
+    try { h2 = new URL(requestOrigin).host; } catch (e) { return false; }
+    return h2 === entry;
+  }
+  return false;
+}
+
+function cors(env, response, origin) {
+  var allowed = (env.ALLOWED_ORIGINS || '*').split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var headers = new Headers(response.headers);
+  var o = '';
+  if (allowed.indexOf('*') !== -1) {
+    o = origin || '*';
+  } else if (origin && allowed.some(function(a) { return originMatches(origin, a); })) {
+    o = origin;
+  }
+  if (o) {
+    headers.set('Access-Control-Allow-Origin', o);
+    headers.set('Vary', 'Origin');
+    if (o !== '*') headers.set('Access-Control-Allow-Credentials', 'true');
+  }
   headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, Authorization');
+  headers.set('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Type');
   headers.set('Access-Control-Max-Age', '86400');
-  if (o !== '*') headers.set('Vary', 'Origin');
   return new Response(response.body, { status: response.status, headers: headers });
 }
 

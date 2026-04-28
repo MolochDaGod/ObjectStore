@@ -5,7 +5,7 @@
 <title>Material Editor · Grudge ObjectStore</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="grudge-api" content="">
-<link rel="icon" href="/grudge-logo.png">
+<link rel="icon" href="../favicon.svg">
 <style>
   :root { color-scheme: dark; --bg: #0b0d12; --panel: #12151d; --border: rgba(255,255,255,.08); --accent: #f5b21a; --text: #eef0f4; --muted: #8b92a5; }
   * { box-sizing: border-box; }
@@ -45,11 +45,11 @@
 </head>
 <body>
 <header>
-  <img src="/grudge-logo.png" alt="" height="22">
+  <img src="../favicon.svg" alt="" height="22">
   <h1>Material Editor</h1>
   <nav>
-    <a href="/3d.html">Back to 3D</a>
-    <a href="/editors/">All editors</a>
+    <a href="../3d.html">Back to 3D</a>
+    <a href="../editors/">All editors</a>
   </nav>
 </header>
 <div class="wrap">
@@ -73,7 +73,7 @@
 </div>
 <script type="module">
   import '/js/viewer/grudge-viewer.js';
-  import createStoreClient from '/js/store-client.js';
+  import createStoreClient from '../js/store-client.js';
   const store = createStoreClient();
   const viewer = document.getElementById('v');
   const $ = (id) => document.getElementById(id);

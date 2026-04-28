@@ -115,10 +115,13 @@
     document.body.appendChild(wrap);
   }
 
-  // Register Service Worker
+  // Register Service Worker.
+  // updateViaCache: 'none' makes the browser skip its HTTP cache when checking
+  // for sw.js updates, so deploys propagate immediately instead of being
+  // pinned to the (default) 24h imported-script cache.
   if ('serviceWorker' in navigator) {
     var swPath = inSubdir ? '../sw.js' : './sw.js';
-    navigator.serviceWorker.register(swPath).then(function(reg) {
+    navigator.serviceWorker.register(swPath, { updateViaCache: 'none' }).then(function(reg) {
       // Force an update check so SW changes (e.g. cross-origin fixes) reach
       // clients without waiting for the 24h browser HTTP cache.
       try { reg.update(); } catch (e) {}
