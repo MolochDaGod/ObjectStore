@@ -637,6 +637,97 @@ app.get('/api/storage/list', async (req, res) => {
 })();
 
 // ═══════════════════════════════════
+//  PUTER CLOUD STORAGE BRIDGE
+//  Requires: ENABLE_PUTER_CLOUD=true + PUTER_AUTH_TOKEN in .env
+//  All routes under /api/puter/* proxy to the deployer's Puter FS.
+// ═══════════════════════════════════
+(async () => {
+  if (process.env.ENABLE_PUTER_CLOUD !== 'true') return;
+  let puter;
+  try {
+    const { init } = require('@heyputer/puter.js/src/init.cjs');
+    puter = init(process.env.PUTER_AUTH_TOKEN);
+    console.log('☁  Puter cloud bridge enabled (GRUDACHAIN)');
+  } catch(e) {
+    console.warn('⚠️  @heyputer/puter.js not installed — run npm install. Puter routes disabled.');
+    return;
+  }
+
+  const PUTER_BASE = process.env.PUTER_BASE_PATH || '/GRUDACHAIN';
+
+  /** GET /api/puter/list?path= — list a directory */
+  app.get('/api/puter/list', async (req, res) => {
+    try {
+      const dirPath = req.query.path || PUTER_BASE;
+      const items = await puter.fs.readdir(dirPath);
+      jsonOk(res, { path: dirPath, count: items.length, items: items.map(f => ({
+        name: f.name, path: f.path, is_dir: f.is_dir,
+        size: f.size || 0, modified: f.modified || null,
+      })) });
+    } catch(e) { jsonErr(res, 500, e.message); }
+  });
+
+  /** GET /api/puter/read?path= — get a signed read URL for a file */
+  app.get('/api/puter/read', async (req, res) => {
+    try {
+      const filePath = req.query.path;
+      if (!filePath) return jsonErr(res, 400, 'path is required');
+      const url = await puter.fs.getReadURL(filePath, { ttl: 600 });
+      jsonOk(res, { url, path: filePath, ttlSeconds: 600 });
+    } catch(e) { jsonErr(res, 500, e.message); }
+  });
+
+  /** POST /api/puter/upload — upload a single file to Puter FS */
+  app.post('/api/puter/upload', memUpload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) return jsonErr(res, 400, 'No file provided');
+      const subfolder = (req.body.folder || '').replace(/\/$/, '');
+      const destDir = subfolder ? `${PUTER_BASE}/objectstore/${subfolder}` : `${PUTER_BASE}/objectstore`;
+      const destPath = `${destDir}/${req.file.originalname}`;
+
+      // Ensure folder exists
+      try { await puter.fs.mkdir(destDir, { recursive: true }); } catch(e) {}
+
+      // Write file
+      const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+      await puter.fs.write(destPath, blob, { overwrite: true });
+
+      // Get a shareable URL
+      let readUrl = null;
+      try { readUrl = await puter.fs.getReadURL(destPath, { ttl: 3600 }); } catch(e) {}
+
+      jsonOk(res, {
+        ok: true, path: destPath, name: req.file.originalname,
+        size: req.file.size, readUrl,
+      });
+    } catch(e) { console.error('Puter upload error:', e.message); jsonErr(res, 500, e.message); }
+  });
+
+  /** DELETE /api/puter/delete?path= */
+  app.delete('/api/puter/delete', async (req, res) => {
+    try {
+      const filePath = req.query.path;
+      if (!filePath) return jsonErr(res, 400, 'path is required');
+      await puter.fs.delete(filePath);
+      jsonOk(res, { ok: true, deleted: filePath });
+    } catch(e) { jsonErr(res, 500, e.message); }
+  });
+
+  /** GET /api/puter/health — check Puter connection */
+  app.get('/api/puter/health', async (req, res) => {
+    try {
+      await puter.fs.readdir(PUTER_BASE);
+      jsonOk(res, { ok: true, base: PUTER_BASE, service: 'puter-cloud' });
+    } catch(e) { jsonErr(res, 500, e.message); }
+  });
+
+  console.log('   GET  /api/puter/list?path=');
+  console.log('   GET  /api/puter/read?path=');
+  console.log('   POST /api/puter/upload');
+  console.log('   DELETE /api/puter/delete?path=');
+})();
+
+// ═══════════════════════════════════
 //  STATIC FILES
 // ═══════════════════════════════════
 app.use(express.static(__dirname, {
