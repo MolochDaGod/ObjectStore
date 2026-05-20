@@ -355,10 +355,11 @@ let activeSidebarTab = 'effects';
 const PARTICLE_VERT = `
 attribute float aAlpha;
 varying   float vAlpha;
+uniform   float uSize;
 void main() {
   vAlpha = aAlpha;
   vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-  gl_PointSize = 8.0 * (300.0 / -mvPos.z);
+  gl_PointSize = uSize * (300.0 / -mvPos.z);
   gl_Position  = projectionMatrix * mvPos;
 }`;
 
@@ -759,7 +760,8 @@ function buildEffect(def) {
     fragmentShader: PARTICLE_FRAG,
     uniforms: {
       uColor:   { value: c1.clone() },
-      uOpacity: { value: pConfig.opacity ?? 0.8 }
+      uOpacity: { value: pConfig.opacity ?? 0.8 },
+      uSize:    { value: pConfig.size ?? 8.0 }
     },
     transparent: true,
     blending:    pConfig.blending === 'additive' ? THREE.AdditiveBlending : THREE.NormalBlending,
@@ -857,10 +859,24 @@ function animate() {
           pos[i*3+1] = init[i*3+1] + vel[i*3+1] * (effectTime % 5);
           if (pos[i*3+1] < -1) pos[i*3+1] = (cfg.height || 5);
         } else {
-          pos[i*3]   = init[i*3]   * Math.cos(effectTime * 0.2) - init[i*3+2] * Math.sin(effectTime * 0.2);
-          pos[i*3+2] = init[i*3]   * Math.sin(effectTime * 0.2) + init[i*3+2] * Math.cos(effectTime * 0.2);
+          // Default sphere: rotate in XZ + drift upward + respawn when too high
+          const life = (effectTime * 0.5 + i * 0.017) % 2.0; // 2s particle lifetime
+          const drift = vel[i*3+1] * life;
+          const cosT = Math.cos(effectTime * 0.3 + i * 0.01);
+          const sinT = Math.sin(effectTime * 0.3 + i * 0.01);
+          pos[i*3]   = init[i*3]   * cosT - init[i*3+2] * sinT + vel[i*3] * life * 0.3;
+          pos[i*3+1] = init[i*3+1] + drift;
+          pos[i*3+2] = init[i*3]   * sinT + init[i*3+2] * cosT + vel[i*3+2] * life * 0.3;
         }
       }
+      // Animate alpha: fade in then out over each particle's lifetime cycle
+      const alphaArr = ps.geometry.attributes.aAlpha.array;
+      for (let i = 0; i < pCount; i++) {
+        const life = (effectTime * 0.5 + i * 0.017) % 2.0;
+        const t = life / 2.0; // 0..1
+        alphaArr[i] = t < 0.1 ? t / 0.1 : 1.0 - Math.pow((t - 0.1) / 0.9, 2.0); // quick fade-in, slow fade-out
+      }
+      ps.geometry.attributes.aAlpha.needsUpdate = true;
       ps.geometry.attributes.position.needsUpdate = true;
     });
 
@@ -1119,7 +1135,9 @@ window.updateParam = function (param) {
   document.getElementById(param + 'Num').value = val;
   if (param === 'intensity')    shaderMaterials.forEach(m => { if (m.uniforms.uIntensity) m.uniforms.uIntensity.value = val; });
   if (param === 'scale')        effectGroup.scale.setScalar(val);
-  if (param === 'particleSize') particleSystems.forEach(ps => { if (ps.material.uniforms?.uSize) ps.material.uniforms.uSize.value = val; });
+  if (param === 'speed')        { if (currentEffect) { currentEffect.timing = currentEffect.timing || {}; currentEffect.timing.speed = val; } }
+  if (param === 'particleSize') particleSystems.forEach(ps => { if (ps.material.uniforms?.uSize) ps.material.uniforms.uSize.value = val * 80.0; });
+  if (param === 'particleCount' && currentEffect) { currentEffect.particles = currentEffect.particles || {}; currentEffect.particles.count = Math.round(val); buildEffect(currentEffect); }
 };
 window.syncSlider = function (id) { document.getElementById(id).value = document.getElementById(id + 'Num').value; };
 window.updateBloom = function () {
