@@ -152,4 +152,4 @@ const { data } = await supabase
 ## Contact
 
 - Website: https://grudgewarlords.com
-- Support: support@grudgestudio.com
+- Support: games@grudgestudio.org

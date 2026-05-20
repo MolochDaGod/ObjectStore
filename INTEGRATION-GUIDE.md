@@ -568,7 +568,7 @@ GitHub Actions automatically deploys to GitHub Pages.
 ### Contact
 - Website: [grudgewarlords.com](https://grudgewarlords.com)
 - GitHub: [@MolochDaGod](https://github.com/MolochDaGod)
-- Email: contact@grudgewarlords.com
+- Email: games@grudgestudio.org
 
 ---
 

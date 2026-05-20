@@ -24,9 +24,10 @@ RATE_LIMIT_RPM_ADMIN = "300"
 VPS_AI_AGENT_URL = "https://api.grudge-studio.com"
 
 # ── R2 Object Storage (shared with ObjectStore worker) ────────────
+# Same bucket as the ObjectStore worker — all assets live here.
 [[r2_buckets]]
 binding = "BUCKET"
-bucket_name = "objectstore-assets"
+bucket_name = "grudge-assets"
 
 # ── D1: AI jobs database (original grudge-ai-hub DB) ──────────────
 [[d1_databases]]
@@ -35,10 +36,12 @@ database_name = "grudge-ai-hub"
 database_id = "42ada55e-2095-46da-840b-6bb301a57253"
 
 # ── D1: ObjectStore metadata (for asset queries) ─────────────────
+# Points to grudge-objectstore — objectstore-meta (58edfe47...) is deprecated,
+# data was migrated to this DB per ObjectStore wrangler.toml notes.
 [[d1_databases]]
 binding = "OBJECTSTORE_DB"
-database_name = "objectstore-meta"
-database_id = "58edfe47-b748-4bd1-81c2-66e483c18a9a"
+database_name = "grudge-objectstore"
+database_id = "8fc367a8-9120-490e-a503-b0fcb755c044"
 
 # ── KV: Rate limiting + response cache ───────────────────────────
 [[kv_namespaces]]

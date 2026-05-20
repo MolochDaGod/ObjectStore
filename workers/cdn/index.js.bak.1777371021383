@@ -1,5 +1,5 @@
 /**
- * Grudge Asset CDN Worker v2.1
+ * Grudge Asset CDN Worker v2.0
  *
  * Production CDN for all Grudge 3D assets, textures, and game data.
  * Optimized for BabylonJS glTF loading with Cloudflare best practices.
@@ -49,27 +49,8 @@ const ALLOWED_ORIGINS = new Set([
   'http://localhost:3000',
   'http://localhost:5000',
   'http://localhost:5173',
-  'https://mech.grudge-studio.com',
-  'https://mech-playground.vercel.app',
-  'http://localhost:4173',
   'http://localhost:8080',
 ]);
-
-// Wildcard origin patterns. Anything matching is allowed. Mirrors the matcher
-// used in the sibling objectstore worker (see ObjectStore/workers/src/index.js).
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/[a-z0-9-]+\.grudge-studio\.com$/i,
-  /^https:\/\/[a-z0-9-]+\.vercel\.app$/i,
-  /^https:\/\/[a-z0-9-]+\.puter\.site$/i,
-];
-
-function isOriginAllowed(origin) {
-  if (!origin) return false;
-  if (ALLOWED_ORIGINS.has(origin)) return true;
-  for (const re of ALLOWED_ORIGIN_PATTERNS) if (re.test(origin)) return true;
-  return false;
-}
-
 
 // ════════════════════════════════════════════════════════════════════════
 //  MIME Types — complete for game assets
@@ -166,7 +147,7 @@ export default {
 
     if (url.pathname === '/_health' || url.pathname === '/health') {
       return cors(origin, Response.json({
-        status: 'ok', service: 'grudge-asset-cdn', version: '2.1.0',
+        status: 'ok', service: 'grudge-asset-cdn', version: '2.0.0',
         features: ['range-requests','etag','cf-cache','backfill','gltf-optimized','cache-tags'],
       }));
     }
@@ -189,7 +170,7 @@ export default {
     const key = normalizeKey(url.pathname);
     if (!key) {
       return cors(origin, Response.json({
-        service: 'grudge-asset-cdn', version: '2.1.0',
+        service: 'grudge-asset-cdn', version: '2.0.0',
         usage: 'GET /<path>',
         examples: ['/models/_optimized/buildings/cantina.glb', '/effects/3d/fire/arpg-effects_fire_16x4.png', '/api/v1/effect-definitions.json'],
       }));
@@ -259,7 +240,7 @@ async function serveAsset(request, url, key, env, ctx) {
 
   // ── GitHub Pages fallback ───────────────────────────────────────
   const gh = await fetch(`${GITHUB_PAGES_BASE}/${key}`, {
-    headers: { 'User-Agent': 'GrudgeAssetCDN/2.1' },
+    headers: { 'User-Agent': 'GrudgeAssetCDN/2.0' },
   });
 
   if (!gh.ok) {
@@ -333,7 +314,7 @@ function getExt(k) { const d = k.lastIndexOf('.'); return d >= 0 ? k.substring(d
 function getMime(k) { return MIME[getExt(k)] || 'application/octet-stream'; }
 
 function buildHeaders(mime, cc, tags, etag, src, key) {
-  const h = new Headers({ 'Content-Type': mime, 'Cache-Control': cc, 'X-Asset-Source': src, 'X-Powered-By': 'Grudge CDN/2.1' });
+  const h = new Headers({ 'Content-Type': mime, 'Cache-Control': cc, 'X-Asset-Source': src, 'X-Powered-By': 'Grudge CDN/2.0' });
   if (etag) h.set('ETag', etag);
   if (tags) h.set('CF-Cache-Tag', tags);
   if (PRE_COMPRESSED.has(getExt(key))) h.set('Content-Encoding', 'identity');
@@ -342,7 +323,7 @@ function buildHeaders(mime, cc, tags, etag, src, key) {
 
 function cors(origin, resp) {
   const h = new Headers(resp.headers);
-  h.set('Access-Control-Allow-Origin', isOriginAllowed(origin) ? origin : 'https://grudgewarlords.com');
+  h.set('Access-Control-Allow-Origin', ALLOWED_ORIGINS.has(origin) ? origin : 'https://grudgewarlords.com');
   h.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
   h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, If-None-Match');
   h.set('Access-Control-Expose-Headers', 'Content-Range, Content-Length, ETag, Accept-Ranges, CF-Cache-Tag, X-Asset-Source');

@@ -482,7 +482,7 @@ This project is part of the Grudge Studio ecosystem. See individual repository l
 - **Issues**: [GitHub Issues](https://github.com/MolochDaGod/ObjectStore/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/MolochDaGod/ObjectStore/discussions)
 - **Discord**: Join the Grudge Studio Discord
-- **Email**: contact@grudgewarlords.com
+- **Email**: games@grudgestudio.org
 
 ---
 
