@@ -101,6 +101,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .insp-toggle label{color:var(--text2);cursor:pointer;flex:1}
 #modelInfo .insp-row span:last-child{color:var(--text);text-align:right}
 
+/* Animation panel */
+.anim-clip{display:flex;align-items:center;gap:5px;padding:3px 0;font-size:11px;cursor:pointer;border-radius:3px;transition:background .1s}
+.anim-clip:hover{background:var(--surface2)}
+.anim-clip.active{color:var(--accent);font-weight:600}
+.anim-clip .anim-play{width:18px;height:18px;border-radius:3px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.anim-clip .anim-play:hover{border-color:var(--accent);color:var(--text)}
+.anim-clip.active .anim-play{background:var(--accent);border-color:var(--accent);color:#001a00}
+.anim-clip-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anim-clip-dur{font-size:9px;color:var(--text2);flex-shrink:0}
+.anim-empty{padding:12px 0;text-align:center;color:var(--text2);font-size:11px}
+.bone-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.bone-tag{font-size:9px;padding:1px 5px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;color:var(--text2)}
+
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--accent);color:var(--text);padding:7px 16px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
@@ -272,6 +285,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
 
+    <div class="insp-section" id="animSection">
+      <div class="insp-title">Animations</div>
+      <div id="animPanel"><div class="anim-empty">No animations</div></div>
+    </div>
+
+    <div class="insp-section" id="boneSection">
+      <div class="insp-title">Skeleton</div>
+      <div id="bonePanel"><span style="font-size:11px;color:var(--text2)">No bones</span></div>
+    </div>
+
     <div class="insp-section" id="playStats" style="display:none">
       <div class="insp-title">Play Stats</div>
       <div class="insp-row"><span class="insp-label">Position X</span><span id="statX">0.00</span></div>
@@ -328,6 +351,19 @@ let grassBlades = [];
 let modelBaseScale = 1;
 let modelYOffset = 0;
 let camDist = 7;
+
+// Animation system
+let mixer = null;
+let animClips = [];
+let animActions = {};
+let activeAction = null;
+let animSpeed = 1;
+// Auto-transition clips for play mode
+let clipIdle = null, clipWalk = null, clipRun = null;
+let prevMoveState = 'idle'; // 'idle' | 'walk' | 'run'
+
+// Skeleton bone map for equipment attachment
+let boneMap = {}; // { 'RightHand': Bone, 'LeftHand': Bone, ... }
 
 // Physics
 const keys = {};
@@ -535,8 +571,19 @@ function placeCharacter(gltf) {
       else n.material?.dispose();
     });
   }
-  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  Object.values(equippedNodes).forEach(n => {
+    if (n.parent) n.parent.remove(n);
+    else scene.remove(n);
+  });
   equippedNodes = {};
+
+  // Dispose old animation mixer
+  if (mixer) { mixer.stopAllAction(); mixer.uncacheRoot(mixer.getRoot()); mixer = null; }
+  animClips = [];
+  animActions = {};
+  activeAction = null;
+  clipIdle = clipWalk = clipRun = null;
+  prevMoveState = 'idle';
 
   currentCharacter = gltf.scene;
 
@@ -558,13 +605,113 @@ function placeCharacter(gltf) {
 
   scene.add(currentCharacter);
 
+  // Discover skeleton bones for equipment attachment
+  discoverBones(currentCharacter);
+
+  // Initialize animation system
+  initAnimations(gltf);
+
   discoverMeshes(currentCharacter);
   updateModelInfo();
+  buildAnimPanel();
   showLoading(false);
 
   const cBox = new THREE.Box3().setFromObject(currentCharacter);
   const cCenter = cBox.getCenter(new THREE.Vector3());
   controls.target.set(cCenter.x, cCenter.y, cCenter.z);
+}
+
+// ── Skeleton Bone Discovery ───────────────────────────────────
+const BONE_ALIASES = {
+  weapon_r:  /right.?hand|r.?hand|hand.?r|weapon.?r|mixamorig.*righthand$/i,
+  weapon_l:  /left.?hand|l.?hand|hand.?l|weapon.?l|mixamorig.*lefthand$/i,
+  shield:    /left.?hand|l.?hand|hand.?l|shield|mixamorig.*lefthand$/i,
+  head:      /head(?!top)|mixamorig.*head$/i,
+  spine:     /spine2?$|chest|upper.?body|mixamorig.*spine2$/i,
+  hips:      /hip|pelvis|root|mixamorig.*hips$/i,
+  back:      /spine1|back|mixamorig.*spine1$/i,
+};
+
+function discoverBones(model) {
+  boneMap = {};
+  const allBones = [];
+  model.traverse(n => {
+    if (n.isBone) allBones.push(n);
+  });
+  for (const [slot, pattern] of Object.entries(BONE_ALIASES)) {
+    const match = allBones.find(b => pattern.test(b.name));
+    if (match) boneMap[slot] = match;
+  }
+  // Log discovered bones for debugging
+  const found = Object.keys(boneMap);
+  if (found.length) console.log('[Grudge] Bones:', found.join(', '), '| Total:', allBones.length);
+  else if (allBones.length) console.log('[Grudge] Skeleton has', allBones.length, 'bones but no common names matched');
+}
+
+// ── Animation System ──────────────────────────────────────────
+function initAnimations(gltf) {
+  if (!gltf.animations || gltf.animations.length === 0) {
+    animClips = [];
+    return;
+  }
+
+  mixer = new THREE.AnimationMixer(currentCharacter);
+  animClips = gltf.animations;
+  animActions = {};
+
+  for (const clip of animClips) {
+    const action = mixer.clipAction(clip);
+    animActions[clip.name] = action;
+  }
+
+  // Auto-detect locomotion clips
+  detectLocomotionClips();
+
+  // Play first available: idle > first clip
+  const startClip = clipIdle || animClips[0];
+  if (startClip) playClip(startClip.name);
+}
+
+function detectLocomotionClips() {
+  clipIdle = clipWalk = clipRun = null;
+  for (const clip of animClips) {
+    const n = clip.name.toLowerCase();
+    if (!clipIdle && /idle|stand|breath|rest/i.test(n)) clipIdle = clip;
+    if (!clipWalk && /walk(?!run)/i.test(n)) clipWalk = clip;
+    if (!clipRun  && /run|sprint|jog/i.test(n)) clipRun = clip;
+  }
+  console.log('[Grudge] Locomotion clips — idle:', clipIdle?.name || 'none', '| walk:', clipWalk?.name || 'none', '| run:', clipRun?.name || 'none');
+}
+
+function playClip(name, fadeTime = 0.35) {
+  const action = animActions[name];
+  if (!action || action === activeAction) return;
+
+  if (activeAction) {
+    activeAction.fadeOut(fadeTime);
+  }
+  action.reset().setEffectiveTimeScale(animSpeed).setEffectiveWeight(1).fadeIn(fadeTime).play();
+  activeAction = action;
+  buildAnimPanel(); // refresh active indicator
+}
+
+function stopAllAnims() {
+  if (mixer) mixer.stopAllAction();
+  activeAction = null;
+  buildAnimPanel();
+}
+
+function updateAnimState(moving, sprinting) {
+  let target = 'idle';
+  if (moving && sprinting && clipRun) target = 'run';
+  else if (moving && clipWalk) target = 'walk';
+  else if (moving && clipRun) target = 'run'; // fallback if no walk clip
+
+  if (target === prevMoveState) return;
+  prevMoveState = target;
+
+  const clip = target === 'run' ? clipRun : target === 'walk' ? clipWalk : clipIdle;
+  if (clip) playClip(clip.name, 0.25);
 }
 
 // ── Mesh Discovery ────────────────────────────────────────────
@@ -717,11 +864,11 @@ function updatePhysics(dt) {
   if (keys['KeyD'] || keys['ArrowRight']) dir.x += 1;
 
   const moving = dir.lengthSq() > 0.01;
+  const sprint = keys['ShiftLeft'] || keys['ShiftRight'];
 
   if (moving) {
     dir.normalize();
     dir.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, cameraYaw, 0)));
-    const sprint = keys['ShiftLeft'] || keys['ShiftRight'];
     const spd = sprint ? 9 : 5;
     velocity.x = dir.x * spd;
     velocity.z = dir.z * spd;
@@ -730,6 +877,9 @@ function updatePhysics(dt) {
     velocity.x *= 0.82;
     velocity.z *= 0.82;
   }
+
+  // Animation auto-transition
+  updateAnimState(moving, sprint);
 
   if (keys['Space'] && isGrounded) {
     velocity.y = 9;
@@ -754,9 +904,13 @@ function updatePhysics(dt) {
   currentCharacter.position.x = Math.max(-40, Math.min(40, currentCharacter.position.x));
   currentCharacter.position.z = Math.max(-40, Math.min(40, currentCharacter.position.z));
 
-  // Update attached CDN equip
-  Object.values(equippedNodes).forEach(n => {
-    n.position.copy(currentCharacter.position);
+  // Bone-attached equipment follows automatically via skeleton;
+  // only update scene-level equip (non-bone-attached fallback)
+  Object.entries(equippedNodes).forEach(([key, entry]) => {
+    if (!entry.attachedToBone && entry.node) {
+      entry.node.position.copy(currentCharacter.position);
+      entry.node.rotation.copy(currentCharacter.rotation);
+    }
   });
 
   // Update play stats
@@ -786,6 +940,9 @@ function animate() {
   const t = clock.elapsedTime;
 
   if (grassShader) grassShader.uniforms.uTime.value = t;
+
+  // Tick animation mixer
+  if (mixer) mixer.update(dt * animSpeed);
 
   updatePhysics(dt);
 
@@ -878,9 +1035,62 @@ function showToast(msg) {
   setTimeout(() => el.classList.remove('show'), 2800);
 }
 
+// ── Animation Panel UI ─────────────────────────────────────────
+function buildAnimPanel() {
+  const panel = document.getElementById('animPanel');
+  const bonePanel = document.getElementById('bonePanel');
+  if (!panel) return;
+
+  // Animation clips list
+  if (animClips.length === 0) {
+    panel.innerHTML = '<div class="anim-empty">No animations in model</div>';
+  } else {
+    let html = `<div class="insp-row" style="margin-bottom:8px">
+      <span class="insp-label">Speed</span>
+      <div class="insp-val">
+        <input type="range" id="sldAnimSpeed" min="0" max="3" step="0.1" value="${animSpeed}" oninput="window.setAnimSpeed(this.value)">
+        <span id="valAnimSpeed">${animSpeed.toFixed(1)}x</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;margin-bottom:6px">
+      <button class="tiny-btn" onclick="window.stopAnims()">⏹ Stop</button>
+    </div>`;
+    for (const clip of animClips) {
+      const isActive = activeAction && activeAction.getClip().name === clip.name;
+      const dur = clip.duration.toFixed(2);
+      const safeName = clip.name.replace(/'/g, "\\'");
+      html += `<div class="anim-clip${isActive ? ' active' : ''}" onclick="window.playAnim('${safeName}')">
+        <button class="anim-play">${isActive ? '▶' : '○'}</button>
+        <span class="anim-clip-name" title="${clip.name}">${fmtName(clip.name)}</span>
+        <span class="anim-clip-dur">${dur}s</span>
+      </div>`;
+    }
+    panel.innerHTML = html;
+  }
+
+  // Bone info
+  if (bonePanel) {
+    const boneKeys = Object.keys(boneMap);
+    if (boneKeys.length === 0) {
+      bonePanel.innerHTML = '<span style="font-size:11px;color:var(--text2)">No bones found</span>';
+    } else {
+      bonePanel.innerHTML = `<div style="font-size:10px;color:var(--text2);margin-bottom:4px">${boneKeys.length} attachment points</div>
+        <div class="bone-list">${boneKeys.map(k => `<span class="bone-tag" title="${boneMap[k].name}">${k}</span>`).join('')}</div>`;
+    }
+  }
+}
+
 // ── Global API (called from HTML onclick) ──────────────────────
 window.loadRace = loadRace;
 window.togglePlayMode = togglePlayMode;
+
+window.playAnim = (name) => playClip(name);
+window.stopAnims = () => stopAllAnims();
+window.setAnimSpeed = (val) => {
+  animSpeed = parseFloat(val);
+  document.getElementById('valAnimSpeed').textContent = animSpeed.toFixed(1) + 'x';
+  if (activeAction) activeAction.setEffectiveTimeScale(animSpeed);
+};
 
 window.toggleMesh = (origName, visible) => {
   const m = meshRegistry.find(m => m.origName === origName);
@@ -894,7 +1104,11 @@ window.setGroupVis = (cat, visible) => {
 
 window.resetNaked = () => {
   meshRegistry.forEach(m => { m.node.visible = m.category === 'body' || m.category === 'other'; });
-  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  Object.values(equippedNodes).forEach(entry => {
+    const n = entry.node || entry;
+    if (n.parent) n.parent.remove(n);
+    else scene.remove(n);
+  });
   equippedNodes = {};
   buildEquipPanel();
   showToast('Reset to naked base');
@@ -910,22 +1124,52 @@ window.attachCdnEquip = async (url, name, type) => {
   showToast(`Loading ${name}…`);
   try {
     const gltf = await gltfLoad(url);
-    if (equippedNodes[type]) scene.remove(equippedNodes[type]);
+    // Remove previous equipment in this slot
+    const prev = equippedNodes[type];
+    if (prev) {
+      if (prev.attachedToBone && prev.node.parent) prev.node.parent.remove(prev.node);
+      else scene.remove(prev.node || prev);
+    }
+
     const node = gltf.scene;
     node.scale.setScalar(modelBaseScale);
-    if (currentCharacter) {
-      const b = new THREE.Box3().setFromObject(currentCharacter);
-      node.position.set(b.max.x * 0.5, b.center ? b.center.y : (b.min.y + b.max.y) * 0.5, b.min.z * 0.5);
+    node.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true; } });
+
+    // Try bone attachment
+    const boneSlot = type === 'weapon' ? 'weapon_r' : type === 'shield' ? 'shield' : null;
+    const bone = boneSlot ? boneMap[boneSlot] : null;
+
+    if (bone) {
+      // Attach to bone — position/rotation are local to bone
+      node.position.set(0, 0, 0);
+      node.rotation.set(0, 0, 0);
+      // Scale relative to bone (undo parent chain scale)
+      const boneWorldScale = new THREE.Vector3();
+      bone.getWorldScale(boneWorldScale);
+      const relScale = modelBaseScale / (boneWorldScale.x || 1);
+      node.scale.setScalar(relScale);
+      bone.add(node);
+      equippedNodes[type] = { node, attachedToBone: true };
+      showToast(`${name} → bone: ${bone.name}`);
+    } else {
+      // Fallback: place near character
+      if (currentCharacter) {
+        node.position.copy(currentCharacter.position);
+      }
+      scene.add(node);
+      equippedNodes[type] = { node, attachedToBone: false };
+      showToast(`Equipped: ${name} (no bone found — scene level)`);
     }
-    scene.add(node);
-    equippedNodes[type] = node;
     buildCdnEquipPanel(selectedRace);
-    showToast(`Equipped: ${name}`);
   } catch { showToast(`Failed to load ${name}`); }
 };
 
 window.clearCdnEquip = () => {
-  Object.values(equippedNodes).forEach(n => scene.remove(n));
+  Object.values(equippedNodes).forEach(entry => {
+    const n = entry.node || entry;
+    if (n.parent) n.parent.remove(n);
+    else scene.remove(n);
+  });
   equippedNodes = {};
   buildCdnEquipPanel(selectedRace);
   showToast('Equipment removed');
