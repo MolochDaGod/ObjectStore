@@ -33,19 +33,96 @@ const WEAPON_TYPE_ICON={swords:{prefix:'Sword',count:61},greatswords:{prefix:'Sw
 function staffIcon(item){const n=hashStr(item.baseName||item.name||'')%50+1;return`${CDN}/icons/pack/weapons/${n>=51?'Staff':'staff'}_${n}.png`;}
 function weaponIcon(item){const raw=item.iconUrl||'';if(raw.includes('/icons/weapons/')&&!raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i))return raw;const wt=(item.weaponType||item.subType||item.category||'').toLowerCase();if(wt.includes('stav')||wt.includes('staff'))return staffIcon(item);const slot=WEAPON_TYPE_ICON[wt];if(slot){const n=hashStr(item.baseName||item.name||'')%slot.count+1;return`${CDN}/icons/pack/weapons/${slot.prefix}_${slot.nopad?String(n):String(n).padStart(2,'0')}.png`;}return raw||`${CDN}/icons/pack/weapons/Sword_01.png`;}
 
-// Food
-const RED_FOOD=['food_steak_cooked','food_steak_rare','food_ham','food_meat_raw','food_steak_raw','food_crab','food_squid','food_fish_red'];
-const GREEN_FOOD=['food_apple','food_banana','food_carrot','food_grapes','food_mango','food_mushroom','food_wheat','food_cheese'];
-const BLUE_FOOD=['food_bread','food_croissant','food_fish_silver','food_beer'];
-const FOOD_FALLBACK=['95_steak','85_roastedchicken','88_salmon','13_bacon','87_ramen','97_sushi','94_spaghetti','92_sandwich','81_pizza','99_taco','15_burger','54_hotdog','69_meatball','32_curry','36_dumplings','71_nacho','38_friedegg','73_omlet','67_macncheese','07_bread','09_baguette','65_loafbread','48_garlicbread','79_pancakes','101_waffle','34_donut','28_cookies','22_cheesecake','90_strawberrycake','63_lemonpie','05_apple_pie','75_pudding','57_icecream','26_chocolate','44_frenchfries','77_potatochips','83_popcorn','59_jelly','61_jam','50_giantgummybear','52_gingerbreadman'];
-function foodIcon(item){const cat=(item.category||'').toLowerCase();const h=hashStr(item.baseName||item.name||'');if(cat==='redfoods')return`${CDN}/icons/consumables/${RED_FOOD[h%RED_FOOD.length]}.png`;if(cat==='greenfoods')return`${CDN}/icons/consumables/${GREEN_FOOD[h%GREEN_FOOD.length]}.png`;if(cat==='bluefoods')return`${CDN}/icons/consumables/${BLUE_FOOD[h%BLUE_FOOD.length]}.png`;return`${CDN}/icons/food/${FOOD_FALLBACK[h%FOOD_FALLBACK.length]}.png`;}
+// Food (keyword-matched)
+function foodIcon(item){
+  const n=(item.baseName||item.name||'').toLowerCase();
+  const C=`${CDN}/icons/consumables`,F=`${CDN}/icons/food`;
+  if((item.category||'')==='redFoods'){
+    if(n.includes('steak')||n.includes('seared'))return`${C}/food_steak_cooked.png`;
+    if(n.includes('roast')||n.includes('cuts'))return`${F}/85_roastedchicken.png`;
+    if(n.includes('ribs')||n.includes('bbq'))return`${C}/food_steak_rare.png`;
+    if(n.includes('bacon')||n.includes('sausage'))return`${C}/food_ham.png`;
+    if(n.includes('burger'))return`${F}/15_burger.png`;
+    if(n.includes('skewer')||n.includes('kebab'))return`${F}/54_hotdog.png`;
+    if(n.includes('wings'))return`${C}/food_crab.png`;
+    if(n.includes('curry'))return`${F}/32_curry.png`;
+    if(n.includes('stew'))return`${F}/87_ramen.png`;
+    if(n.includes('sashimi')||n.includes('fish'))return`${C}/food_fish_red.png`;
+    if(n.includes('feast')||n.includes('platter'))return`${F}/95_steak.png`;
+    if(n.includes('charred')||n.includes('burnt'))return`${C}/food_steak_raw.png`;
+    return`${C}/food_meat_raw.png`;
+  }
+  if((item.category||'')==='greenFoods'){
+    if(n.includes('salad')||n.includes('greens'))return`${C}/food_grapes.png`;
+    if(n.includes('soup')||n.includes('stew'))return`${C}/food_mushroom.png`;
+    if(n.includes('herb')||n.includes('tea'))return`${C}/herb_herb_leaf.png`;
+    if(n.includes('mushroom'))return`${C}/food_mushroom.png`;
+    if(n.includes('fruit')||n.includes('blossom'))return`${C}/food_apple.png`;
+    if(n.includes('nectar'))return`${C}/food_mango.png`;
+    if(n.includes('wrap')||n.includes('roll'))return`${C}/food_carrot.png`;
+    if(n.includes('garden')||n.includes('medley'))return`${C}/food_carrot.png`;
+    if(n.includes('feast')||n.includes('bowl'))return`${C}/food_banana.png`;
+    return`${C}/food_wheat.png`;
+  }
+  if((item.category||'')==='blueFoods'){
+    if(n.includes('bread')||n.includes('biscuit'))return`${C}/food_bread.png`;
+    if(n.includes('cake')||n.includes('pastry')||n.includes('pie'))return`${C}/food_croissant.png`;
+    if(n.includes('soup')||n.includes('stew')||n.includes('broth')||n.includes('chowder')||n.includes('bisque')||n.includes('gumbo'))return`${C}/food_fish_silver.png`;
+    if(n.includes('brew')||n.includes('grog')||n.includes('nectar'))return`${C}/food_beer.png`;
+    if(n.includes('fish'))return`${C}/food_fish_silver.png`;
+    return`${C}/food_bread.png`;
+  }
+  return`${C}/food_cheese.png`;
+}
 
-// Potions
-function potionIcon(item){const name=(item.baseName||item.name||'').toLowerCase();if(name.includes('health'))return`${CDN}/icons/consumables/health_potion.png`;if(name.includes('mana'))return`${CDN}/icons/consumables/mana_potion.png`;if(name.includes('stamina'))return`${CDN}/icons/potions/P_Green05.png`;if(name.includes('antidote'))return`${CDN}/icons/potions/P_Yellow01.png`;if(name.includes('fire'))return`${CDN}/icons/potions/fire_potion.png`;if(name.includes('frost')||name.includes('ice'))return`${CDN}/icons/potions/P_Blue05.png`;if(name.includes('earth'))return`${CDN}/icons/potions/earth_potion.png`;if(name.includes('air')||name.includes('wind'))return`${CDN}/icons/potions/air_potion.png`;const n=hashStr(item.baseName||item.name||'')%48+1;return`${CDN}/icons/consumables/potion_${n}.png`;}
+// Potions (keyword-matched)
+function potionIcon(item){
+  const n=(item.baseName||item.name||'').toLowerCase();
+  const C=`${CDN}/icons/consumables`,P=`${CDN}/icons/potions`;
+  if(n.includes('health'))return`${C}/health_potion.png`;
+  if(n.includes('mana'))return`${C}/mana_potion.png`;
+  if(n.includes('stamina'))return`${P}/P_Green05.png`;
+  if(n.includes('antidote')||n.includes('poison'))return`${P}/P_Yellow01.png`;
+  if(n.includes('fire')||n.includes('incendiar'))return`${P}/fire_potion.png`;
+  if(n.includes('frost')||n.includes('ice'))return`${P}/P_Blue05.png`;
+  if(n.includes('lightning'))return`${P}/P_Yellow01.png`;
+  if(n.includes('earth'))return`${P}/earth_potion.png`;
+  if(n.includes('air')||n.includes('wind'))return`${P}/air_potion.png`;
+  if(n.includes('speed')||n.includes('swift'))return`${P}/P_Green03.png`;
+  if(n.includes('rage')||n.includes('berserker')||n.includes('strength')||n.includes('titan'))return`${P}/P_Red07.png`;
+  if(n.includes('defense')||n.includes('ward'))return`${P}/P_Blue03.png`;
+  if(n.includes('invisib'))return`${P}/P_White05.png`;
+  if(n.includes('invulner'))return`${P}/P_Medicine06.png`;
+  if(n.includes('elixir')||n.includes('ultimate')||n.includes('divine')||n.includes('immortal'))return`${P}/P_Red05.png`;
+  if(n.includes('elemental'))return`${P}/P_Blue06.png`;
+  if(n.includes('super')||n.includes('greater'))return`${P}/P_Red03.png`;
+  if(n.includes('mega'))return`${P}/P_Red05.png`;
+  return`${C}/potion_${hashStr(item.baseName||item.name||'')%48+1}.png`;
+}
 
-// Consumables + Materials
-function consumableIcon(item){const n=hashStr(item.baseName||item.name||'')%48+1;return`${CDN}/icons/consumables/alchemy_${n}.png`;}
-function materialIcon(item){const n=hashStr(item.baseName||item.name||'')%166+1;return`${CDN}/icons/pack/resources/Res_${String(n).padStart(2,'0')}.png`;}
+// Consumables (keyword-matched)
+function consumableIcon(item){
+  const n=(item.baseName||item.name||'').toLowerCase();
+  const C=`${CDN}/icons/consumables`;
+  if(n.includes('bandage')||n.includes('medkit'))return`${C}/alchemy_1.png`;
+  if(n.includes('repair'))return`${C}/alchemy_5.png`;
+  if(n.includes('grenade')||n.includes('bomb'))return`${C}/alchemy_30.png`;
+  if(n.includes('smoke'))return`${C}/alchemy_25.png`;
+  if(n.includes('flash'))return`${C}/alchemy_28.png`;
+  if(n.includes('turret'))return`${C}/alchemy_40.png`;
+  if(n.includes('lure')||n.includes('fish'))return`${C}/food_fish_silver.png`;
+  if(n.includes('emp'))return`${C}/alchemy_35.png`;
+  return`${C}/alchemy_${hashStr(item.baseName||item.name||'')%48+1}.png`;
+}
+
+// Materials (name-matched to exact icon files)
+const MAT_FALLBACK={'hemp':'rag-thread','rough stone':'ore_t1','wild herb':'herb_herb_leaf','water flask':'food_beer','raw meat':'food_meat_raw','raw fish':'food_fish_red','moonweave thread':'celestial-thread','starweave thread':'arcane-thread','voidweave thread':'enchanted-thread','wyrm leather':'rugged-leather','infernal leather':'hardened-leather','titan leather':'thick-hide','divine leather':'rawhide'};
+function materialIcon(item){
+  const name=(item.name||'').toLowerCase();
+  const fb=MAT_FALLBACK[name];
+  if(fb){if(fb.startsWith('food_')||fb.startsWith('herb_'))return`${CDN}/icons/consumables/${fb}.png`;return`${CDN}/icons/materials/${fb}.png`;}
+  return`${CDN}/icons/materials/${name.replace(/\s+/g,'-')}.png`;
+}
 
 // Enchants, Infusions, Relics, Artifacts
 const ENCH_ICON={damage:'ability_arcane_bolt',defense:'ability_bark_skin',speed:'ability_arrow_storm',crit:'ability_arcane_focus',critChance:'ability_arcane_focus',critDamage:'ability_arcane_focus',fire:'ability_arcane_cataclysm',lightning:'ability_arcane_cataclysm',frost:'ability_avatar_form',health:'ability_avatar',mana:'ability_arcane_focus',elementResist:'ability_bark_skin'};
