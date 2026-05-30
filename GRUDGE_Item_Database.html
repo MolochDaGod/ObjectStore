@@ -439,8 +439,8 @@ function resolveIcon(item) {
   if (!raw && item._type === 'artifact') {
     return LOOT_ICON[Math.min((item._tierNum||1)-1, LOOT_ICON.length-1)];
   }
-  // Empty armor icon → resolve from slot type icons
-  if (!raw && item._type === 'armor') {
+  // Armor → always use slot-type icon resolver (existing iconUrl values are broken)
+  if (item._type === 'armor') {
     return armorIcon(item);
   }
   // Craftpix plain icons → try framed variant first
