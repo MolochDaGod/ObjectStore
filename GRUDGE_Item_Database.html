@@ -457,25 +457,44 @@ function weaponIcon(item) {
 }
 
 // ─── Food icon resolver ───────────────────────────────────────────────────
-// 41 food icons in /icons/food/ with names like '05_apple_pie.png'
-const FOOD_FILES = ['05_apple_pie','07_bread','09_baguette','101_waffle','13_bacon','15_burger','22_cheesecake','26_chocolate','28_cookies','32_curry','34_donut','36_dumplings','38_friedegg','44_frenchfries','48_garlicbread','50_giantgummybear','52_gingerbreadman','54_hotdog','57_icecream','59_jelly','61_jam','63_lemonpie','65_loafbread','67_macncheese','69_meatball','71_nacho','73_omlet','75_pudding','77_potatochips','79_pancakes','81_pizza','83_popcorn','85_roastedchicken','87_ramen','88_salmon','90_strawberrycake','92_sandwich','94_spaghetti','95_steak','97_sushi','99_taco'];
+// Category-specific food icon pools from /icons/consumables/ + /icons/food/
+const RED_FOOD = ['food_steak_cooked','food_steak_rare','food_ham','food_meat_raw','food_steak_raw','food_crab','food_squid','food_fish_red'];
+const GREEN_FOOD = ['food_apple','food_banana','food_carrot','food_grapes','food_mango','food_mushroom','food_wheat','food_cheese'];
+const BLUE_FOOD = ['food_bread','food_croissant','food_fish_silver','food_beer'];
+const FOOD_FALLBACK = ['95_steak','85_roastedchicken','88_salmon','13_bacon','87_ramen','97_sushi','94_spaghetti','92_sandwich','81_pizza','99_taco','15_burger','54_hotdog','69_meatball','32_curry','36_dumplings','71_nacho','38_friedegg','73_omlet','67_macncheese','07_bread','09_baguette','65_loafbread','48_garlicbread','79_pancakes','101_waffle','34_donut','28_cookies','22_cheesecake','90_strawberrycake','63_lemonpie','05_apple_pie','75_pudding','57_icecream','26_chocolate','44_frenchfries','77_potatochips','83_popcorn','59_jelly','61_jam','50_giantgummybear','52_gingerbreadman'];
 function foodIcon(item) {
-  const idx = hashStr(item.baseName||item.name||'') % FOOD_FILES.length;
-  return `${CDN}/icons/food/${FOOD_FILES[idx]}.png`;
+  const cat = (item.category || '').toLowerCase();
+  const h = hashStr(item.baseName||item.name||'');
+  if (cat === 'redfoods')  return `${CDN}/icons/consumables/${RED_FOOD[h % RED_FOOD.length]}.png`;
+  if (cat === 'greenfoods') return `${CDN}/icons/consumables/${GREEN_FOOD[h % GREEN_FOOD.length]}.png`;
+  if (cat === 'bluefoods') return `${CDN}/icons/consumables/${BLUE_FOOD[h % BLUE_FOOD.length]}.png`;
+  return `${CDN}/icons/food/${FOOD_FALLBACK[h % FOOD_FALLBACK.length]}.png`;
 }
 
 // ─── Potion icon resolver ─────────────────────────────────────────────────
-// 50 framed potion icons in /icons/items/potions/
+// 48 pixel-art potion icons in /icons/consumables/potion_N.png
+// + named health/mana potions + colored element potions
 function potionIcon(item) {
-  const n = hashStr(item.baseName||item.name||'') % 50 + 1;
-  return `${CDN}/icons/items/potions/potions_${String(n).padStart(2,'0')}_framed.png`;
+  const name = (item.baseName||item.name||'').toLowerCase();
+  // Named potions → specific colored icons
+  if (name.includes('health'))  return `${CDN}/icons/consumables/health_potion.png`;
+  if (name.includes('mana'))    return `${CDN}/icons/consumables/mana_potion.png`;
+  if (name.includes('stamina')) return `${CDN}/icons/potions/P_Green05.png`;
+  if (name.includes('antidote'))return `${CDN}/icons/potions/P_Yellow01.png`;
+  if (name.includes('fire'))    return `${CDN}/icons/potions/fire_potion.png`;
+  if (name.includes('frost') || name.includes('ice')) return `${CDN}/icons/potions/P_Blue05.png`;
+  if (name.includes('earth'))   return `${CDN}/icons/potions/earth_potion.png`;
+  if (name.includes('air') || name.includes('wind')) return `${CDN}/icons/potions/air_potion.png`;
+  // Generic potions → 48 pixel-art potion icons
+  const n = hashStr(item.baseName||item.name||'') % 48 + 1;
+  return `${CDN}/icons/consumables/potion_${n}.png`;
 }
 
 // ─── Consumable icon resolver ─────────────────────────────────────────────
-// 100 framed rpg-general icons in /icons/items/rpg-general/
+// 48 alchemy icons in /icons/consumables/alchemy_N.png for engineer items
 function consumableIcon(item) {
-  const n = hashStr(item.baseName||item.name||'') % 100 + 1;
-  return `${CDN}/icons/items/rpg-general/rpg-general_${String(n).padStart(2,'0')}_framed.png`;
+  const n = hashStr(item.baseName||item.name||'') % 48 + 1;
+  return `${CDN}/icons/consumables/alchemy_${n}.png`;
 }
 
 // ─── Material icon resolver ──────────────────────────────────────────────
