@@ -3,5 +3,5 @@ All notable changes to the ObjectStore API and assets.
 
 ## 2026-05-30
 ### Added
-- feat: bake resolved iconUrls + 3D model links into all API JSON files (8526791)
+- feat: keyword-matched icons - visually accurate to item names (a9c6f51)
 
