@@ -410,6 +410,86 @@ function armorIcon(item) {
   return `${CDN}/icons/armor_full/${slot.prefix}_${String(num).padStart(2, '0')}.png`;
 }
 
+// ─── Weapon icon resolver ─────────────────────────────────────────────────
+// weaponType → { prefix, count } in icons/pack/weapons/
+const WEAPON_TYPE_ICON = {
+  swords:       { prefix: 'Sword',    count: 61 },
+  greatswords:  { prefix: 'Sword',    count: 61 },
+  axes1h:       { prefix: 'Axe',      count: 50 },
+  greataxes:    { prefix: 'Axe',      count: 50 },
+  daggers:      { prefix: 'Dagger',   count: 60 },
+  hammers1h:    { prefix: 'Hammer',   count: 54 },
+  hammers2h:    { prefix: 'Hammer',   count: 54 },
+  spears:       { prefix: 'Spear',    count: 40 },
+  bows:         { prefix: 'Bow',      count: 40 },
+  crossbows:    { prefix: 'Crossbow', count: 10 },
+  guns:         { prefix: 'Crossbow', count: 10 },
+  scythes:      { prefix: 'Scythe',   count: 7  },
+  shields:      { prefix: 'shield',   count: 51 },
+  tools:        { prefix: 'Hammer',   count: 54 },
+  'offhand-tome':{ prefix: 'Book',    count: 25, nopad: true },
+};
+// Staves use lowercase + no zero-padding (staff_1..staff_50, Staff_51..Staff_54)
+function staffIcon(item) {
+  const n = hashStr(item.baseName||item.name||'') % 50 + 1;
+  const prefix = n >= 51 ? 'Staff' : 'staff';
+  return `${CDN}/icons/pack/weapons/${prefix}_${n}.png`;
+}
+function weaponIcon(item) {
+  const raw = item.iconUrl || '';
+  // Named weapon icons (kebab-case in /icons/weapons/) — keep if valid
+  if (raw.includes('/icons/weapons/') && !raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i)) {
+    return raw;
+  }
+  // Staves (fire/frost/lightning/nature/holy/arcane) → staff icons
+  const wt = (item.weaponType || item.subType || '').toLowerCase();
+  if (wt.includes('stav') || wt.includes('staff')) return staffIcon(item);
+  // Map weaponType → pack/weapons/ generic icons
+  const slot = WEAPON_TYPE_ICON[wt];
+  if (slot) {
+    const n = hashStr(item.baseName||item.name||'') % slot.count + 1;
+    const num = slot.nopad ? String(n) : String(n).padStart(2, '0');
+    return `${CDN}/icons/pack/weapons/${slot.prefix}_${num}.png`;
+  }
+  // Fallback: keep raw if set, else generic sword
+  return raw || `${CDN}/icons/pack/weapons/Sword_01.png`;
+}
+
+// ─── Food icon resolver ───────────────────────────────────────────────────
+// 41 food icons in /icons/food/ with names like '05_apple_pie.png'
+const FOOD_FILES = ['05_apple_pie','07_bread','09_baguette','101_waffle','13_bacon','15_burger','22_cheesecake','26_chocolate','28_cookies','32_curry','34_donut','36_dumplings','38_friedegg','44_frenchfries','48_garlicbread','50_giantgummybear','52_gingerbreadman','54_hotdog','57_icecream','59_jelly','61_jam','63_lemonpie','65_loafbread','67_macncheese','69_meatball','71_nacho','73_omlet','75_pudding','77_potatochips','79_pancakes','81_pizza','83_popcorn','85_roastedchicken','87_ramen','88_salmon','90_strawberrycake','92_sandwich','94_spaghetti','95_steak','97_sushi','99_taco'];
+function foodIcon(item) {
+  const idx = hashStr(item.baseName||item.name||'') % FOOD_FILES.length;
+  return `${CDN}/icons/food/${FOOD_FILES[idx]}.png`;
+}
+
+// ─── Potion icon resolver ─────────────────────────────────────────────────
+// 50 framed potion icons in /icons/items/potions/
+function potionIcon(item) {
+  const n = hashStr(item.baseName||item.name||'') % 50 + 1;
+  return `${CDN}/icons/items/potions/potions_${String(n).padStart(2,'0')}_framed.png`;
+}
+
+// ─── Consumable icon resolver ─────────────────────────────────────────────
+// 100 framed rpg-general icons in /icons/items/rpg-general/
+function consumableIcon(item) {
+  const n = hashStr(item.baseName||item.name||'') % 100 + 1;
+  return `${CDN}/icons/items/rpg-general/rpg-general_${String(n).padStart(2,'0')}_framed.png`;
+}
+
+// ─── Material icon resolver ──────────────────────────────────────────────
+// 166 resource icons in /icons/pack/resources/Res_NN.png
+function materialIcon(item) {
+  const raw = item.iconUrl || '';
+  // If the raw URL points to /icons/materials/ and the file name is a valid kebab-case material, keep it
+  if (raw.includes('/icons/materials/')) {
+    // These may or may not exist — check via onerror fallback in the card
+    // But we know the 13 broken ones; map them to resource icons instead
+  }
+  const n = hashStr(item.baseName||item.name||'') % 166 + 1;
+  return `${CDN}/icons/pack/resources/Res_${String(n).padStart(2,'0')}.png`;
+}
+
 // Artifacts → loot icons
 const LOOT_ICON = Array.from({length:16},(_,i)=>`${CDN}/icons/loot/loot_${i+1}.png`);
 
@@ -439,10 +519,18 @@ function resolveIcon(item) {
   if (!raw && item._type === 'artifact') {
     return LOOT_ICON[Math.min((item._tierNum||1)-1, LOOT_ICON.length-1)];
   }
-  // Armor → always use slot-type icon resolver (existing iconUrl values are broken)
-  if (item._type === 'armor') {
-    return armorIcon(item);
-  }
+  // Armor → always use slot-type icon resolver
+  if (item._type === 'armor') return armorIcon(item);
+  // Weapons → fix broken paths (staves, training weapons, wrong dirs)
+  if (item._type === 'weapon') return weaponIcon(item);
+  // Food → map to /icons/food/
+  if (item._type === 'food') return foodIcon(item);
+  // Potions → map to /icons/items/potions/ framed
+  if (item._type === 'potion') return potionIcon(item);
+  // Consumables → map to rpg-general framed
+  if (item._type === 'consumable') return consumableIcon(item);
+  // Materials → fix broken paths, fallback to resource icons
+  if (item._type === 'material') return materialIcon(item);
   // Craftpix plain icons → try framed variant first
   if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {
     return raw.replace(/\.png$/, '_framed.png');
