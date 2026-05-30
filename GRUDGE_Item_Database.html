@@ -404,7 +404,7 @@ function armorIcon(item) {
   if (!slot) return `${CDN}/icons/armor/armor_${((item._tierNum||1)%30)+1}.png`;
   const matShift = MAT_OFFSET[item.material] || 0;
   const base = Math.floor(matShift * slot.count);
-  let num = (base + hashStr(item.name||'') % Math.ceil(slot.count / 3)) % slot.count + 1;
+  let num = (base + hashStr(item.baseName||item.name||'') % Math.ceil(slot.count / 3)) % slot.count + 1;
   const skip = SKIP_ICONS[item.slotType];
   if (skip && skip.includes(num)) num++;
   return `${CDN}/icons/armor_full/${slot.prefix}_${String(num).padStart(2, '0')}.png`;
