@@ -17,7 +17,12 @@
 const ARMOR_SLOT_MAP = {
   'Helm': 'Helm', 'Shoulder': 'Shoulder', 'Chest': 'Chest',
   'Hands': 'Gloves', 'Feet': 'Boots', 'Ring': 'Ring',
-  'Necklace': 'necklace', 'Relic': 'Back', 'Belt': 'Belt'
+  'Necklace': 'necklace', 'Relic': 'Ring', 'Belt': 'Belt',
+  'Legs': 'Pants', 'Offhand': 'Chest', 'Back': 'Back', 'Bracer': 'Bracer'
+};
+const ARMOR_SLOT_MAX = {
+  'Helm': 72, 'Shoulder': 70, 'Chest': 83, 'Gloves': 28, 'Boots': 56, 'Ring': 57,
+  'necklace': 36, 'Pants': 42, 'Back': 16, 'Belt': 36, 'Bracer': 7
 };
 
 // Weapon-type icon counts in wcs/weapons/
@@ -155,8 +160,12 @@ export function getFallbackUrl(item, base) {
 function getArmorIcon(item, baseId, base) {
   var slot = item.slotType || 'Chest';
   var prefix = ARMOR_SLOT_MAP[slot] || 'Chest';
-  var num = (hashStr(baseId) % 20) + 1;
-  return base + '/icons/pack/armor/' + prefix + '_' + pad2(num) + '.png';
+  var max = ARMOR_SLOT_MAX[prefix] || 30;
+  var band = Math.max(Math.floor(max / 3), 1);
+  var matOff = { cloth: 0, leather: band, metal: band * 2, gem: band * 2 }[item.material] || 0;
+  var h = hashStr(baseId);
+  var idx = Math.min(matOff + (h % band) + 1, max);
+  return base + '/icons/pack/armor/' + prefix + '_' + pad2(idx) + '.png';
 }
 
 function getWeaponPackIcon(item, baseId, base) {

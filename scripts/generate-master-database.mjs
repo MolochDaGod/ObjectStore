@@ -90,6 +90,28 @@ const scaleStat = (base, per, tier) => Math.round(base + per * (tier - 1));
 // -- ICON RESOLVER ------------------------------------------------------
 // Priority: spritePath (canonical bespoke) -> /icons/weapons/<slug>.png ->
 // pack math iconBase_${pad(iconOffset + index)}.png
+
+// ── Armor icon resolver ──
+const ARMOR_SLOT_PREFIX = {
+  Helm: 'Helm', Shoulder: 'Shoulder', Chest: 'Chest', Hands: 'Gloves',
+  Feet: 'Boots', Ring: 'Ring', Necklace: 'necklace', Legs: 'Pants',
+  Offhand: 'Chest', Back: 'Back', Belt: 'Belt', Bracer: 'Bracer',
+  Relic: 'Ring',
+};
+const ARMOR_SLOT_MAX = {
+  Helm: 72, Shoulder: 70, Chest: 83, Gloves: 28, Boots: 56, Ring: 57,
+  necklace: 36, Pants: 42, Back: 16, Belt: 36, Bracer: 7,
+};
+function resolveArmorIcon(item, matName) {
+  const slot = item.type || 'Chest';
+  const prefix = ARMOR_SLOT_PREFIX[slot] || 'Chest';
+  const max = ARMOR_SLOT_MAX[prefix] || 30;
+  const band = Math.max(Math.floor(max / 3), 1);
+  const matOff = { cloth: 0, leather: band, metal: band * 2, gem: band * 2 }[matName] || 0;
+  const h = hashStr(item.id || item.name || '');
+  const idx = Math.min(matOff + (h % band) + 1, max);
+  return PACK(`armor/${prefix}_${String(idx).padStart(2, '0')}.png`);
+}
 function bespokeIconUrl(slug) {
   if (!slug) return null;
   const path = join(ICONS_WEAPONS_DIR, `${slug}.png`);
@@ -336,12 +358,8 @@ for (const [matName, matData] of Object.entries(ARMOR.materials || {})) {
     const baseUuid = uuid('item', `armor-${matName}-${item.id}`);
     const recipeMats = [];
     const recipeUuid = uuid('recipe', `recipe-armor-${item.id}`);
-    // Armor: only use spritePath if the file actually exists on disk; otherwise empty.
-    const iconUrl = item.spritePath
-      ? (item.spritePath.startsWith('http')
-          ? item.spritePath
-          : (diskIconExists(item.spritePath) ? `${CDN}${item.spritePath}` : ''))
-      : '';
+    // Armor: deterministic slot-based icon from icons/pack/armor/
+    const iconUrl = resolveArmorIcon(item, matName);
     for (let tier = 1; tier <= 8; tier++) {
       const tUuid = tier === 1 ? baseUuid : uuid('item', `armor-${matName}-${item.id}-T${tier}`);
       const tData = TIERS[tier - 1];
