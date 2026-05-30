@@ -289,6 +289,21 @@
       <button class="sf-btn" data-sub="shield" onclick="setSub('shield')">Shields</button>
     </div>
 
+    <!-- Armor slot-type strip (visible only when Armor tab active) -->
+    <div class="subfilter-strip" id="armorSubfilterStrip">
+      <button class="sf-btn active" data-sub="all" onclick="setSub('all')">All</button>
+      <button class="sf-btn" data-sub="Helm" onclick="setSub('Helm')">Helms</button>
+      <button class="sf-btn" data-sub="Chest" onclick="setSub('Chest')">Chest</button>
+      <button class="sf-btn" data-sub="Shoulder" onclick="setSub('Shoulder')">Shoulders</button>
+      <button class="sf-btn" data-sub="Hands" onclick="setSub('Hands')">Hands</button>
+      <button class="sf-btn" data-sub="Feet" onclick="setSub('Feet')">Feet</button>
+      <button class="sf-btn" data-sub="Legs" onclick="setSub('Legs')">Legs</button>
+      <button class="sf-btn" data-sub="Ring" onclick="setSub('Ring')">Rings</button>
+      <button class="sf-btn" data-sub="Necklace" onclick="setSub('Necklace')">Necklaces</button>
+      <button class="sf-btn" data-sub="Offhand" onclick="setSub('Offhand')">Offhand</button>
+      <button class="sf-btn" data-sub="Relic" onclick="setSub('Relic')">Relics</button>
+    </div>
+
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -367,6 +382,30 @@ const INFU_ICON = Array.from({length:12},(_,i)=>`${CDN}/icons/items/alchemy/alch
 // Relics → artifacts framed icons (tier-indexed)
 const RELIC_ICON = Array.from({length:12},(_,i)=>`${CDN}/icons/items/artifacts/artifacts_${String(i+1).padStart(2,'0')}_framed.png`);
 
+// Armor slot → icon prefix and count (in icons/armor_full/)
+const ARMOR_SLOT_ICON = {
+  Helm:     { prefix: 'Helm',     count: 72 },
+  Shoulder: { prefix: 'Shoulder', count: 71 },
+  Chest:    { prefix: 'Chest',    count: 83 },
+  Hands:    { prefix: 'Gloves',   count: 28 },
+  Feet:     { prefix: 'Boots',    count: 56 },
+  Ring:     { prefix: 'Ring',     count: 57 },
+  Necklace: { prefix: 'necklace', count: 36 },
+  Legs:     { prefix: 'Pants',    count: 42 },
+  Offhand:  { prefix: 'Bracer',   count: 7  },
+  Relic:    { prefix: 'Ring',     count: 57 },
+};
+const MAT_OFFSET = { cloth: 0, leather: 0.33, metal: 0.66, gem: 0.5 };
+function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;} return Math.abs(h); }
+function armorIcon(item) {
+  const slot = ARMOR_SLOT_ICON[item.slotType];
+  if (!slot) return `${CDN}/icons/armor/armor_${((item._tierNum||1)%30)+1}.png`;
+  const matShift = MAT_OFFSET[item.material] || 0;
+  const base = Math.floor(matShift * slot.count);
+  const idx = (base + hashStr(item.name||'') % Math.ceil(slot.count / 3)) % slot.count;
+  return `${CDN}/icons/armor_full/${slot.prefix}_${String(idx + 1).padStart(2, '0')}.png`;
+}
+
 // Artifacts → loot icons
 const LOOT_ICON = Array.from({length:16},(_,i)=>`${CDN}/icons/loot/loot_${i+1}.png`);
 
@@ -395,6 +434,10 @@ function resolveIcon(item) {
   // No icon for artifact → loot icons
   if (!raw && item._type === 'artifact') {
     return LOOT_ICON[Math.min((item._tierNum||1)-1, LOOT_ICON.length-1)];
+  }
+  // Empty armor icon → resolve from slot type icons
+  if (!raw && item._type === 'armor') {
+    return armorIcon(item);
   }
   // Craftpix plain icons → try framed variant first
   if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {
@@ -458,6 +501,7 @@ async function loadSource({ url, key, type, ico }) {
       _ico:     ico,
       _tierNum: parseInt(item.tier) || 1,
       _subType: (item.subType || item.weaponType || item.category || '').toLowerCase(),
+      _slotType: item.slotType || '',
     }))
   };
 }
@@ -471,10 +515,14 @@ function applyFilters() {
     if (activeSub !== 'all' && activeType === 'weapon') {
       if (!(item._subType||'').includes(activeSub)) return false;
     }
+    if (activeSub !== 'all' && activeType === 'armor') {
+      if ((item._slotType||'') !== activeSub) return false;
+    }
     if (q) {
       const hay = [item.name, item.category, item.subCategory, item.subType,
         item.weaponType, item.description, item._type, item.element,
-        item.effect?.stat, item.scope, item.profession]
+        item.effect?.stat, item.scope, item.profession,
+        item.slotType, item.material, item.setName]
         .filter(Boolean).join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
@@ -526,7 +574,9 @@ function makeCard(item) {
   div.className = 'item-card';
   div.dataset.tier = item._tierNum || 1;
   const tc  = item.tierColor || '#8b7355';
-  const cat = item.category || item.subCategory || item.weaponType || item._subType || '';
+  const cat = item._type === 'armor' && item.slotType
+    ? item.slotType + (item.material ? ' · ' + item.material : '')
+    : (item.category || item.subCategory || item.weaponType || item._subType || '');
   const icon = resolveIcon(item);
 
   // Rich tooltip
@@ -580,6 +630,9 @@ function openDrawer(item, cardEl) {
     [item.category,      ''],
     [item.subCategory,   ''],
     [item.weaponType,    ''],
+    [item.slotType,      ''],
+    [item.material,      ''],
+    [item.setName,       ''],
     [item.element,       EL_CLS[(item.element||'').toLowerCase()]||''],
     [item.scope,         ''],
     [item.appliedAt,     ''],
@@ -699,6 +752,7 @@ function setType(type) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
   document.querySelectorAll('.sf-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === 'all'));
   document.getElementById('subfilterStrip').classList.toggle('visible', type === 'weapon');
+  document.getElementById('armorSubfilterStrip').classList.toggle('visible', type === 'armor');
   applyFilters();
 }
 function setTier(tier) {
