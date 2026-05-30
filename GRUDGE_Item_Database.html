@@ -418,15 +418,16 @@ const WEAPON_TYPE_ICON = {
   axes1h:       { prefix: 'Axe',      count: 50 },
   greataxes:    { prefix: 'Axe',      count: 50 },
   daggers:      { prefix: 'Dagger',   count: 60 },
-  hammers1h:    { prefix: 'Hammer',   count: 54 },
-  hammers2h:    { prefix: 'Hammer',   count: 54 },
+  hammers1h:    { prefix: 'Hammer',   count: 50 },
+  hammers2h:    { prefix: 'Hammer',   count: 50 },
+  wands:        { prefix: 'staff',    count: 50, nopad: true },
   spears:       { prefix: 'Spear',    count: 40 },
   bows:         { prefix: 'Bow',      count: 40 },
   crossbows:    { prefix: 'Crossbow', count: 10 },
   guns:         { prefix: 'Crossbow', count: 10 },
   scythes:      { prefix: 'Scythe',   count: 7  },
   shields:      { prefix: 'shield',   count: 51 },
-  tools:        { prefix: 'Hammer',   count: 54 },
+  tools:        { prefix: 'Hammer',   count: 50 },
   'offhand-tome':{ prefix: 'Book',    count: 25, nopad: true },
 };
 // Staves use lowercase + no zero-padding (staff_1..staff_50, Staff_51..Staff_54)
@@ -442,7 +443,7 @@ function weaponIcon(item) {
     return raw;
   }
   // Staves (fire/frost/lightning/nature/holy/arcane) → staff icons
-  const wt = (item.weaponType || item.subType || '').toLowerCase();
+  const wt = (item.weaponType || item.subType || item.category || '').toLowerCase();
   if (wt.includes('stav') || wt.includes('staff')) return staffIcon(item);
   // Map weaponType → pack/weapons/ generic icons
   const slot = WEAPON_TYPE_ICON[wt];
