@@ -233,6 +233,93 @@ function getMatUuid(name) {
   return matUuid.get(name);
 }
 
+// ── Artifact helpers ──────────────────────────────────────────────────
+const ELEMENT_COLORS = {
+  lightning: '#4dc3ff', fire: '#ff6b35', frost: '#7dd3fc', nature: '#6bdc8b',
+  holy: '#fde68a', shadow: '#a78bfa', arcane: '#818cf8', physical: '#d4a84b',
+  defense: '#60a5fa', speed: '#34d399', stun: '#f97316', stealth: '#6b7280',
+  mana: '#818cf8', health: '#f87171',
+};
+
+function inferWeaponSubtype(item) {
+  const id = (item.id || '').toLowerCase();
+  const name = (item.name || '').toLowerCase();
+  if (/staff|magi$/.test(id)) return 'staff';
+  if (/bow/.test(id)) return 'bow';
+  if (/tomb|tome|grimoire|book/.test(id)) return 'tome';
+  if (/hammer|maul|mjolnir/.test(id)) return 'hammer';
+  if (/axe/.test(id)) return 'axe';
+  if (/spear|lance|pike|destiny/.test(id)) return 'spear';
+  if (/club|mace/.test(id)) return 'mace';
+  if (/great.?sword|runed/.test(id)) return 'greatsword';
+  if (/sword|blade|shard/.test(id)) return 'sword';
+  if (/dagger|shiv/.test(name)) return 'dagger';
+  // Fallback based on category
+  if (item.category === '2h') return 'greatsword';
+  if (item.category === 'Ranged 2h') return 'bow';
+  return 'sword';
+}
+
+function buildDropSources(item) {
+  const id = (item.id || '').toLowerCase();
+  const element = (item.secondaryStat || '').toLowerCase();
+  // Each artifact has a thematic primary source + 2 alternates
+  const sources = {
+    primary: 'world bosses',
+    alternates: ['special events', 'hidden dungeons'],
+    factionVendor: null,     // some can be bought from faction vendors at max rep
+    eventOnly: false,        // true = only available during seasonal events
+    bossDropTable: [],       // specific boss IDs that drop this
+    locationHints: [],       // vague area hints shown in codex after discovery
+  };
+
+  // Assign thematic sources based on weapon identity
+  if (/storm|lightning|thunder/.test(id)) {
+    sources.primary = 'storm world bosses';
+    sources.locationHints = ['mountain peaks during thunderstorms', 'the Stormspire dungeon'];
+    sources.bossDropTable = ['boss-storm-titan', 'boss-thunder-drake'];
+  } else if (/hellfire|demon|shard/.test(id)) {
+    sources.primary = 'demon invasion events';
+    sources.locationHints = ['the Infernal Rift', 'Legion territory volcanic caves'];
+    sources.bossDropTable = ['boss-infernal-lord', 'boss-demon-general'];
+    sources.eventOnly = true;
+  } else if (/holy|war-hammer|crusad|commander|light/.test(id)) {
+    sources.primary = 'Crusade faction vendor (max reputation)';
+    sources.factionVendor = { faction: 'crusade', reputationRequired: 'exalted' };
+    sources.locationHints = ['Crusade Island cathedral', 'the Holy Bastion'];
+  } else if (/emerald|nature|frost/.test(id)) {
+    sources.primary = 'rare island world bosses';
+    sources.locationHints = ['deep in the Fabled Forest', 'frozen peaks of the north'];
+    sources.bossDropTable = ['boss-ancient-treant', 'boss-frost-wyrm'];
+  } else if (/shrouded|stealth|shadow/.test(id)) {
+    sources.primary = 'Legion faction vendor (max reputation)';
+    sources.factionVendor = { faction: 'legion', reputationRequired: 'exalted' };
+    sources.locationHints = ['Legion shadow markets', 'the Assassin\'s Crypt'];
+  } else if (/magi|dead|power|tomb/.test(id)) {
+    sources.primary = 'dungeon final boss chests';
+    sources.locationHints = ['the Arcane Library dungeon', 'Lich King\'s tomb'];
+    sources.bossDropTable = ['boss-archmage-phantom', 'boss-lich-king'];
+  } else if (/wind|bow/.test(id)) {
+    sources.primary = 'Fabled faction vendor (max reputation)';
+    sources.factionVendor = { faction: 'fabled', reputationRequired: 'exalted' };
+    sources.locationHints = ['Fabled Island treetop sanctuaries', 'the Wind Temple'];
+  } else if (/royal|destiny|spear/.test(id)) {
+    sources.primary = 'PvP season rewards';
+    sources.alternates = ['arena champion chest', 'world PvP territory control'];
+    sources.locationHints = ['the Royal Arena', 'contested territory strongholds'];
+  } else if (/thors|steel|maul|club|spiked/.test(id)) {
+    sources.primary = 'rare world boss drops';
+    sources.locationHints = ['dwarven deep mines', 'orc warchief strongholds'];
+    sources.bossDropTable = ['boss-mountain-king', 'boss-orc-warchief'];
+  } else if (/runed|great/.test(id)) {
+    sources.primary = 'ancient dungeon hidden rooms';
+    sources.locationHints = ['behind sealed rune doors', 'the Warden\'s Vault'];
+    sources.bossDropTable = ['boss-rune-guardian'];
+  }
+
+  return sources;
+}
+
 // ============================================================
 // WEAPONS (includes tomes, arcaneStaves, tools)
 // ============================================================
@@ -261,24 +348,71 @@ for (const [catName, catData] of Object.entries(WEAPONS.categories)) {
     }
 
     if (isArtifactCat) {
-      // D3: Artifact (no tier expansion, hidden until found)
+      // D3: Artifact — no tier system, level-scaled, world-drop only
+      // Stats scale with character level at equip time (computed by game client)
+      const weaponSubtype = inferWeaponSubtype(item);
+      const elementType = item.secondaryStat || 'physical';
+      const dropSources = buildDropSources(item);
+
       allArtifacts.push({
         uuid: itemUuid, baseUuid: itemUuid,
         name: item.name, baseName: item.name,
         category: 'artifact', type: 'artifact', classification: 'artifact',
-        artifactType: 'arcane', // first sub-type; expand later
-        tier: null, tierLabel: null, tierColor: null,
+        artifactType: elementType,
+        weaponSubtype,   // sword, greatsword, axe, hammer, spear, staff, tome, bow, mace
+        handedness: item.category === '2h' || item.category === 'Ranged 2h' ? '2h' : '1h',
+
+        // No tier — artifacts scale with character level
+        tier: null, tierLabel: 'Legendary', tierColor: '#f0d890',
+
+        // Level scaling config: game client multiplies base stats by this formula
+        // stat = baseValue * (1 + (characterLevel - 1) * scaleFactor)
+        levelScaling: {
+          enabled: true,
+          minLevel: 1,
+          maxLevel: 100,
+          scaleFactor: 0.04,  // +4% per level → 5x at level 100
+          description: 'Stats scale to the level of the character who equips it',
+        },
+
         iconUrl, description: item.lore || item.basicAbility || '',
+
+        // Base stats (pre-scaling) — game client applies levelScaling formula
         stats: item.stats || {},
-        abilities: item.abilities || [], signature: item.signatureAbility || '',
+
+        basicAbility: item.basicAbility || null,
+        abilities: item.abilities || [],
+        signature: item.signatureAbility || '',
         passives: item.passives || [],
-        craftedBy: null, recipeUuid: recipeMats.length ? recipeUuid : null,
-        source: 'world',
+
+        // NOT craftable — world drops only
+        craftedBy: null,
+        recipeUuid: null,
+        source: 'world-drop',
+
+        // Drop / acquisition sources
+        dropSources,
+
+        // Discovery system — hidden in codex until player finds it
         discovery: {
           hiddenUntilFound: true,
-          source: 'world',
-          revealCondition: `Discover ${item.name} in the world.`,
+          source: 'world-drop',
+          revealCondition: `Discover ${item.name} through ${dropSources.primary}.`,
         },
+
+        // Asset prefab references for 3D rendering
+        prefab: {
+          modelId: item.id,               // kebab-case model key
+          modelUrl: `${CDN}/models/weapons/artifacts/${item.id}.glb`,
+          effectUrl: `${CDN}/effects/weapons/${elementType}-trail.json`,
+          soundOnEquip: `${CDN}/audio/sfx/equip/artifact-equip.ogg`,
+          soundOnSwing: `${CDN}/audio/sfx/weapons/${weaponSubtype}-swing.ogg`,
+          soundSignature: `${CDN}/audio/sfx/signature/${item.id}-signature.ogg`,
+          particleColor: ELEMENT_COLORS[elementType] || '#f0d890',
+          glowIntensity: 1.5,
+          trailEnabled: true,
+        },
+
         lore: item.lore || null,
       });
       artifactCount++;
