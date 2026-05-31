@@ -1,0 +1,403 @@
+#!/usr/bin/env node
+/**
+ * inject-legendary-artifacts.mjs
+ *
+ * Replaces the placeholder arcaneStaves artifacts with 20 legendary weapons
+ * sourced from the Unity Grudge Warlords game. These are world-drop artifacts
+ * with unique abilities, hidden until discovered.
+ *
+ * Usage: node scripts/inject-legendary-artifacts.mjs
+ */
+
+import { readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, '..');
+const WEAPONS_PATH = join(ROOT, 'api', 'v1', 'weapons.json');
+
+// ── 20 Legendary Artifact Weapons from Unity Grudge Warlords ──────────
+// Each has unique lore, abilities, stats, and a signature ability.
+// These are NOT tier-expanded — they're one-of-a-kind world drops.
+
+const LEGENDARY_ARTIFACTS = [
+  // ═══ SWORDS (4) ═══
+  {
+    id: 'sword-of-the-storm',
+    name: 'Sword Of The Storm',
+    primaryStat: 'damage',
+    secondaryStat: 'lightning',
+    emoji: '⚡',
+    grudgeType: 'item',
+    lore: 'Forged in the heart of an eternal tempest, this blade crackles with caged lightning. Each swing splits the air with thunderclaps that shatter the resolve of armies.',
+    category: '1h',
+    stats: { damageBase: 85, damagePerTier: 0, speedBase: 110, speedPerTier: 0, critBase: 12, critPerTier: 0, blockBase: 5, blockPerTier: 0, defenseBase: 15, defensePerTier: 0 },
+    basicAbility: 'Storm Strike (each hit chains lightning to 2 nearby enemies for 30% damage)',
+    abilities: ['Tempest Fury (AoE lightning burst, 8m radius, stuns 1.5s)', 'Chain Lightning (bounces between 5 targets, +15% damage per bounce)', 'Thunder Guard (passive: 20% chance to shock melee attackers)', 'Stormcaller (summon a lightning pillar that strikes randomly for 10s)', 'Eye of the Storm (dash through enemies leaving a lightning trail)'],
+    signatureAbility: 'Wrath of the Tempest (massive AoE: call down 12 lightning bolts in a 15m area over 4s, each dealing 200% weapon damage)',
+    passives: ['Storm Conduit (+25% lightning damage)', 'Static Field (enemies within 5m take 3% max HP per second)', 'Thunderborn (immune to stun and knockback)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/sword-of-the-storm.png',
+  },
+  {
+    id: 'hellfire-blade',
+    name: 'Hellfire Blade',
+    primaryStat: 'damage',
+    secondaryStat: 'fire',
+    emoji: '🔥',
+    grudgeType: 'item',
+    lore: 'Quenched in demon blood and sealed with infernal runes, this sword burns with an unquenchable flame that feeds on the souls of the fallen.',
+    category: '1h',
+    stats: { damageBase: 90, damagePerTier: 0, speedBase: 95, speedPerTier: 0, critBase: 10, critPerTier: 0, blockBase: 3, blockPerTier: 0, defenseBase: 10, defensePerTier: 0 },
+    basicAbility: 'Infernal Slash (attacks apply Hellfire DoT: 5% weapon damage per second for 8s, stacks 3x)',
+    abilities: ['Hellfire Wave (frontal cone fire blast, 10m range)', 'Soul Immolation (ignite target, if they die while burning you heal 15% max HP)', 'Flame Dash (teleport 8m leaving a fire trail that burns for 6s)', 'Demon Rage (+40% attack speed, +20% fire damage for 10s, costs 5% HP/s)'],
+    signatureAbility: 'Inferno Incarnate (transform into a fire demon for 12s: +50% all stats, all attacks deal AoE fire, immune to CC)',
+    passives: ['Soulfire (+15% damage vs enemies below 30% HP)', 'Hellforged (fire resistance +50%, fire damage +20%)', 'Burning Grudge (kills extend Hellfire DoT to nearby enemies)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/hellfire-blade.png',
+  },
+  {
+    id: 'commander-sword',
+    name: 'Commander Sword',
+    primaryStat: 'damage',
+    secondaryStat: 'defense',
+    emoji: '⚔️',
+    grudgeType: 'item',
+    lore: 'Carried by the last general of the Grudge Crusade, this blade inspires unwavering loyalty in allies and dread in foes. Its edge has never dulled.',
+    category: '1h',
+    stats: { damageBase: 75, damagePerTier: 0, speedBase: 100, speedPerTier: 0, critBase: 8, critPerTier: 0, blockBase: 10, blockPerTier: 0, defenseBase: 25, defensePerTier: 0 },
+    basicAbility: 'Rally Strike (attacks grant nearby allies +3% damage for 5s, stacks 5x)',
+    abilities: ['Battle Standard (plant a banner: +15% damage and +10% defense to allies in 12m for 20s)', 'Commander\'s Charge (charge forward 10m, allies in path gain +20% speed for 5s)', 'Unyielding Order (party-wide CC immunity for 4s)', 'Tactical Retreat (all allies gain +30% defense and +20% speed for 6s)'],
+    signatureAbility: 'General\'s Decree (for 15s: all allies deal +30% damage, take -20% damage, and regenerate 2% HP/s)',
+    passives: ['Born Leader (party members gain +5% all stats while you\'re alive)', 'Crusade Veteran (+10% damage per nearby ally, max 40%)', 'Unbreakable Will (revive once per battle with 30% HP)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/commander-sword.png',
+  },
+  {
+    id: 'emerald-sword',
+    name: 'Emerald Sword',
+    primaryStat: 'damage',
+    secondaryStat: 'nature',
+    emoji: '💎',
+    grudgeType: 'item',
+    lore: 'Cut from a single world-crystal found in the roots of the Fabled Tree, this blade pulses with the heartbeat of the forest itself.',
+    category: '1h',
+    stats: { damageBase: 70, damagePerTier: 0, speedBase: 115, speedPerTier: 0, critBase: 15, critPerTier: 0, blockBase: 4, blockPerTier: 0, defenseBase: 12, defensePerTier: 0 },
+    basicAbility: 'Verdant Strike (attacks heal you for 3% of damage dealt)',
+    abilities: ['Thorn Lash (root target for 3s, deal nature damage over time)', 'Nature\'s Embrace (heal 25% max HP over 8s, cleanse all debuffs)', 'Crystal Barrage (fire 8 emerald shards in a cone, each dealing 40% weapon damage)', 'Overgrowth (summon entangling vines in 8m area, slow enemies 50% for 6s)'],
+    signatureAbility: 'Wrath of the Wilds (massive nature explosion: 20m AoE, enemies take 300% weapon damage and are rooted for 4s, allies heal 30% max HP)',
+    passives: ['Nature Bond (regenerate 1% max HP per second while in forest/nature biomes)', 'Emerald Skin (+20% nature resistance, +10% all resistance)', 'Life Leech (critical hits heal for 8% of damage dealt)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/emerald-sword.png',
+  },
+
+  // ═══ 2H SWORDS (2) ═══
+  {
+    id: 'runed-great-sword',
+    name: 'Runed Great Sword',
+    primaryStat: 'damage',
+    secondaryStat: 'arcane',
+    emoji: '🗡️',
+    grudgeType: 'item',
+    lore: 'Ancient runes carved by the first Grudge wardens pulse with power. Each kill adds a new rune, and the sword grows hungrier.',
+    category: '2h',
+    stats: { damageBase: 120, damagePerTier: 0, speedBase: 70, speedPerTier: 0, critBase: 8, critPerTier: 0, blockBase: 2, blockPerTier: 0, defenseBase: 18, defensePerTier: 0 },
+    basicAbility: 'Runic Cleave (wide arc attack, each kill adds a Rune Stack max 10, each stack +3% damage)',
+    abilities: ['Rune Explosion (consume all Rune Stacks, deal 50% weapon damage per stack in 10m AoE)', 'Gravity Well (pull all enemies within 12m to your position)', 'Runic Shield (absorb damage equal to 5% max HP per Rune Stack for 8s)', 'Executioner\'s Sweep (360° slash, +100% damage vs enemies below 25% HP)'],
+    signatureAbility: 'Rune Apocalypse (at 10 stacks: unleash all runes as homing projectiles dealing 500% total weapon damage split across all enemies in 20m)',
+    passives: ['Runehunger (gain 1 Rune Stack per 3 hits even without kills)', 'Ancient Power (+2% damage per Rune Stack, permanent until death)', 'Warden\'s Legacy (Rune Stacks persist through death, lose half on respawn)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/runed-great-sword.png',
+  },
+  {
+    id: 'demons-shard',
+    name: 'Demons Shard',
+    primaryStat: 'damage',
+    secondaryStat: 'shadow',
+    emoji: '🖤',
+    grudgeType: 'item',
+    lore: 'A fragment of a shattered demon lord\'s spine, reforged into a blade that whispers dark promises. It feeds on fear and grows stronger in darkness.',
+    category: '2h',
+    stats: { damageBase: 130, damagePerTier: 0, speedBase: 65, speedPerTier: 0, critBase: 14, critPerTier: 0, blockBase: 1, blockPerTier: 0, defenseBase: 8, defensePerTier: 0 },
+    basicAbility: 'Shadow Rend (attacks apply Fear: enemies deal -10% damage for 4s)',
+    abilities: ['Soul Harvest (drain 8% max HP from target, heal yourself)', 'Nightmare (AoE fear: enemies flee for 3s, take 20% more damage while feared)', 'Shadow Step (teleport behind target, next attack crits automatically)', 'Dark Pact (sacrifice 20% current HP for +50% damage for 12s)'],
+    signatureAbility: 'Demon Lord\'s Wrath (transform the battlefield: 20m zone of darkness for 10s, you gain +60% damage, enemies are blinded and slowed 40%)',
+    passives: ['Demonheart (attacks steal 5% of damage as HP)', 'Fear Aura (enemies within 8m deal -5% damage)', 'Shard Corruption (+30% damage at night or in dungeons)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/demons-shard.png',
+  },
+
+  // ═══ AXES (1) ═══
+  {
+    id: 'shrouded-axe',
+    name: 'Shrouded Axe',
+    primaryStat: 'damage',
+    secondaryStat: 'stealth',
+    emoji: '🪓',
+    grudgeType: 'item',
+    lore: 'Wrapped in shadows that cling like living smoke, this axe was the weapon of the Legion\'s ghost executioner. Its victims never see it coming.',
+    category: '1h',
+    stats: { damageBase: 80, damagePerTier: 0, speedBase: 105, speedPerTier: 0, critBase: 18, critPerTier: 0, blockBase: 3, blockPerTier: 0, defenseBase: 10, defensePerTier: 0 },
+    basicAbility: 'Phantom Chop (attacks from stealth deal +80% damage and apply a bleed)',
+    abilities: ['Smoke Bomb (vanish for 4s, next attack from stealth guaranteed crit)', 'Execution (instant kill enemies below 10% HP, player-characters take 500% damage instead)', 'Shadow Clone (create a decoy that taunts for 5s while you reposition)', 'Venomous Edge (coat axe in poison: attacks deal +25% damage as poison DoT for 6s)'],
+    signatureAbility: 'Ghost Executioner (enter permanent stealth for 8s, each attack from stealth deals +100% damage and doesn\'t break stealth)',
+    passives: ['Assassin\'s Mark (first hit on each target deals +30% damage)', 'Shadowmeld (standing still for 2s grants stealth)', 'Bleed Master (bleed effects deal +40% damage and last +50% longer)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/axes/shrouded-axe.png',
+  },
+
+  // ═══ HAMMERS (3) ═══
+  {
+    id: 'thors-hammer',
+    name: 'Thors Hammer',
+    primaryStat: 'damage',
+    secondaryStat: 'lightning',
+    emoji: '🔨',
+    grudgeType: 'item',
+    lore: 'Not the god\'s own, but a hammer forged from the same celestial ore, struck by a thousand thunderbolts during its creation. Only the worthy can lift it.',
+    category: '2h',
+    stats: { damageBase: 140, damagePerTier: 0, speedBase: 55, speedPerTier: 0, critBase: 10, critPerTier: 0, blockBase: 8, blockPerTier: 0, defenseBase: 30, defensePerTier: 0 },
+    basicAbility: 'Thunderstrike (each hit creates a shockwave stunning nearby enemies for 0.5s)',
+    abilities: ['Hammer Throw (hurl the hammer 20m, it returns like a boomerang hitting all in path)', 'Ground Slam (smash the ground: 12m AoE, enemies knocked airborne 2s)', 'Lightning Call (call down 5 lightning bolts on target area over 3s)', 'Mjolnir\'s Blessing (self-buff: +30% damage, +20% defense, lightning aura for 12s)'],
+    signatureAbility: 'Thundergod\'s Judgment (leap 15m into the air, slam down with cosmic force: 20m AoE, 400% weapon damage, all enemies stunned 3s)',
+    passives: ['Worthy (only equippable at level 50+, grants +10% all stats)', 'Storm Lord (lightning attacks chain to 1 additional target)', 'Unyielding (+20% stun resistance, immune to disarm)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/hammers/thors-hammer.png',
+  },
+  {
+    id: 'steel-maul',
+    name: 'Steel Maul',
+    primaryStat: 'damage',
+    secondaryStat: 'stun',
+    emoji: '⚒️',
+    grudgeType: 'item',
+    lore: 'Pure dwarven steel, no enchantments, no magic — just perfect engineering and devastating weight. The dwarves say it speaks for itself.',
+    category: '2h',
+    stats: { damageBase: 150, damagePerTier: 0, speedBase: 45, speedPerTier: 0, critBase: 6, critPerTier: 0, blockBase: 12, blockPerTier: 0, defenseBase: 35, defensePerTier: 0 },
+    basicAbility: 'Crushing Blow (30% chance to stun for 1.5s on hit, +50% damage to stunned targets)',
+    abilities: ['Shockwave (ground pound: 10m frontal cone, stun 2s)', 'Armor Break (reduce target defense by 40% for 10s)', 'Dwarven Fortitude (take -30% damage for 8s, reflect 15% melee damage)', 'Seismic Slam (3-hit combo: each hit wider AoE, third hit knocks back 8m)'],
+    signatureAbility: 'Earthquake (channel 3s: entire screen shakes, all enemies in 25m take 300% damage and are stunned 4s, terrain cracks open dealing DoT)',
+    passives: ['Heavy Hitter (+20% damage vs armored targets)', 'Dwarven Craft (weapon never loses durability)', 'Concussive Force (stuns last +50% longer)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/hammers/steel-maul.png',
+  },
+  {
+    id: 'war-hammer',
+    name: 'War Hammer',
+    primaryStat: 'damage',
+    secondaryStat: 'holy',
+    emoji: '🔨',
+    grudgeType: 'item',
+    lore: 'Blessed by the last priest of the Crusade before the fall, this hammer glows with divine radiance and burns the undead on contact.',
+    category: '1h',
+    stats: { damageBase: 78, damagePerTier: 0, speedBase: 90, speedPerTier: 0, critBase: 7, critPerTier: 0, blockBase: 8, blockPerTier: 0, defenseBase: 20, defensePerTier: 0 },
+    basicAbility: 'Holy Smite (attacks deal +30% damage to undead and demons)',
+    abilities: ['Consecrate (create holy ground: allies heal 3% HP/s, undead take damage, 10m, 12s)', 'Divine Shield (absorb next 3 attacks completely)', 'Judgment (single-target nuke: 250% weapon damage to undead, 150% to others)', 'Redemption (revive a fallen ally with 40% HP, 5min cooldown)'],
+    signatureAbility: 'Crusader\'s Light (massive holy nova: 15m AoE, heal all allies 40% max HP, damage all enemies 200%, undead take 400%)',
+    passives: ['Sacred Weapon (+15% damage, +30% vs undead)', 'Blessed Armor (+15% defense while wielding)', 'Holy Fervor (kills restore 5% max HP and mana)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/hammers/war-hammer.png',
+  },
+
+  // ═══ SPEARS (4) ═══
+  {
+    id: 'spear-of-destiny',
+    name: 'Spear Of Destiny',
+    primaryStat: 'damage',
+    secondaryStat: 'holy',
+    emoji: '🔱',
+    grudgeType: 'item',
+    lore: 'Legend says whoever wields this spear controls the fate of nations. It has pierced the hearts of kings and toppled empires.',
+    category: '2h',
+    stats: { damageBase: 110, damagePerTier: 0, speedBase: 85, speedPerTier: 0, critBase: 15, critPerTier: 0, blockBase: 5, blockPerTier: 0, defenseBase: 15, defensePerTier: 0 },
+    basicAbility: 'Destiny Strike (attacks that crit have a 20% chance to instantly reset all cooldowns)',
+    abilities: ['Piercing Thrust (30m range, pierces through all enemies in a line)', 'Fate\'s Judgment (mark a target: they take +25% damage from all sources for 10s)', 'Destiny\'s Shield (become immune to the next lethal hit, 3min cooldown)', 'Vault Strike (pole-vault 12m, slam down for AoE)'],
+    signatureAbility: 'Manifest Destiny (for 15s: all attacks pierce through enemies, crit chance +30%, kills extend duration by 3s)',
+    passives: ['Fated (+5% crit chance, crits deal +40% damage)', 'Kingslayer (+50% damage vs bosses and elite enemies)', 'Unwavering Purpose (immune to fear and charm)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/spears/spear-of-destiny.png',
+  },
+  {
+    id: 'royal-spear',
+    name: 'Royal Spear',
+    primaryStat: 'damage',
+    secondaryStat: 'defense',
+    emoji: '👑',
+    grudgeType: 'item',
+    lore: 'The ceremonial weapon of the Grudge royal guard, each gem in its shaft represents a kingdom sworn to the Grudge throne.',
+    category: '2h',
+    stats: { damageBase: 95, damagePerTier: 0, speedBase: 90, speedPerTier: 0, critBase: 9, critPerTier: 0, blockBase: 10, blockPerTier: 0, defenseBase: 25, defensePerTier: 0 },
+    basicAbility: 'Royal Guard Stance (while blocking, nearby allies gain +10% defense)',
+    abilities: ['Shield Wall (create a barrier that blocks all projectiles for 5s)', 'Crown\'s Authority (taunt all enemies in 15m, gain +30% defense for 6s)', 'Royal Thrust (long-range lunge, knocks target back 8m)', 'King\'s Blessing (buff nearest 3 allies with +15% damage for 12s)'],
+    signatureAbility: 'Royal Decree (20m AoE: allies gain +25% all stats, enemies are slowed 50% and deal -20% damage for 10s)',
+    passives: ['Royal Blood (+10% HP, +10% defense while above 50% HP)', 'Guardian\'s Duty (take 15% of nearby ally damage)', 'Crown\'s Resilience (+30% CC resistance)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/spears/royal-spear.png',
+  },
+  {
+    id: 'light-spear',
+    name: 'Light Spear',
+    primaryStat: 'damage',
+    secondaryStat: 'holy',
+    emoji: '✨',
+    grudgeType: 'item',
+    lore: 'Woven from crystallized starlight by the Fabled elves, this spear weighs nothing and strikes with the brilliance of a falling star.',
+    category: '2h',
+    stats: { damageBase: 88, damagePerTier: 0, speedBase: 120, speedPerTier: 0, critBase: 16, critPerTier: 0, blockBase: 3, blockPerTier: 0, defenseBase: 10, defensePerTier: 0 },
+    basicAbility: 'Starlight Thrust (fastest attack in the game, attacks emit light that reveals stealthed enemies)',
+    abilities: ['Radiant Barrage (5 rapid thrusts in 1s, each dealing 60% weapon damage)', 'Blinding Flash (blind all enemies in 10m for 3s)', 'Light Step (dash 15m, leave afterimages that deal 30% damage to enemies they pass through)', 'Starfall (throw spear skyward, it returns as 8 light spears in an area)'],
+    signatureAbility: 'Supernova (charge for 2s, release a massive light explosion: 25m AoE, 350% damage, blinds 5s, heals allies 20% max HP)',
+    passives: ['Lightborn (immune to blind, +15% damage in daylight)', 'Swift as Light (+20% attack speed, +15% movement speed)', 'Starweaver (critical hits leave a light trail that heals allies walking through it)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/spears/light-spear.png',
+  },
+  {
+    id: 'frost-blade',
+    name: 'Frost Blade',
+    primaryStat: 'damage',
+    secondaryStat: 'frost',
+    emoji: '❄️',
+    grudgeType: 'item',
+    lore: 'Carved from glacier ice that never melts, this blade freezes the blood of those it cuts. The cold it radiates can be felt from ten paces.',
+    category: '1h',
+    stats: { damageBase: 72, damagePerTier: 0, speedBase: 100, speedPerTier: 0, critBase: 11, critPerTier: 0, blockBase: 5, blockPerTier: 0, defenseBase: 14, defensePerTier: 0 },
+    basicAbility: 'Frostbite (attacks slow enemies by 15% for 3s, stacks 3x to 45%)',
+    abilities: ['Ice Prison (freeze target solid for 3s, they take +30% damage when thawed)', 'Blizzard (summon a blizzard: 12m AoE, continuous frost damage + slow for 8s)', 'Glacial Armor (coat yourself in ice: +40% defense, reflects 10% melee damage as frost for 10s)', 'Shatter (deal 200% damage to frozen targets, shattering them sends ice shards to nearby enemies)'],
+    signatureAbility: 'Absolute Zero (everything in 15m freezes for 4s, then shatters for 250% weapon damage, terrain becomes icy reducing enemy movement for 20s)',
+    passives: ['Permafrost (+25% frost damage, frost effects last +50% longer)', 'Cold Blooded (slow immunity, +10% damage to slowed targets)', 'Frozen Heart (when below 20% HP, automatically freeze all nearby enemies for 2s, 60s cooldown)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/swords/frost-blade.png',
+  },
+
+  // ═══ STAVES (4) ═══
+  {
+    id: 'staff-of-the-magi',
+    name: 'Staff Of The Magi',
+    primaryStat: 'mana',
+    secondaryStat: 'arcane',
+    emoji: '🔮',
+    grudgeType: 'item',
+    lore: 'The pinnacle of arcane craftsmanship, wielded by the archmage who shattered the first Grudge seal. It amplifies magic beyond mortal limits.',
+    category: '2h',
+    stats: { damageBase: 65, damagePerTier: 0, speedBase: 80, speedPerTier: 0, critBase: 12, critPerTier: 0, blockBase: 2, blockPerTier: 0, defenseBase: 10, defensePerTier: 0 },
+    basicAbility: 'Arcane Amplification (all spell damage +25% while wielding)',
+    abilities: ['Spell Steal (copy the last spell an enemy cast and use it yourself)', 'Arcane Barrage (fire 6 homing arcane bolts, each dealing 80% spell damage)', 'Mana Singularity (drain mana from all enemies in 10m, restore your mana)', 'Time Warp (slow time by 50% for enemies in 15m for 6s)'],
+    signatureAbility: 'Arcane Apotheosis (ascend for 10s: float above ground, all spells cost 0 mana, +50% spell damage, +30% cast speed)',
+    passives: ['Magi\'s Wisdom (mana regeneration +50%)', 'Spellweaver (spells have 15% chance to not trigger cooldown)', 'Arcane Mastery (spell damage scales with remaining mana %)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/staves/staff-of-the-magi.png',
+  },
+  {
+    id: 'staff-of-the-dead',
+    name: 'Staff Of The Dead',
+    primaryStat: 'mana',
+    secondaryStat: 'shadow',
+    emoji: '💀',
+    grudgeType: 'item',
+    lore: 'Fashioned from the spine of a lich king, this staff bridges the gap between life and death. The spirits of the slain answer its call.',
+    category: '2h',
+    stats: { damageBase: 70, damagePerTier: 0, speedBase: 75, speedPerTier: 0, critBase: 10, critPerTier: 0, blockBase: 1, blockPerTier: 0, defenseBase: 8, defensePerTier: 0 },
+    basicAbility: 'Death Touch (attacks have 10% chance to instantly kill non-elite enemies below 15% HP)',
+    abilities: ['Raise Dead (summon 3 skeleton warriors from corpses, last 30s)', 'Soul Drain (channel: drain HP from target, heal yourself, 5s)', 'Plague Cloud (AoE poison: 12m, enemies take 3% max HP/s for 8s)', 'Death Coil (projectile that heals undead allies or damages living enemies)'],
+    signatureAbility: 'Army of the Dead (raise 8 powerful undead warriors + 1 skeletal champion for 20s, all inheriting 50% of your stats)',
+    passives: ['Necromancer (+30% damage to living, +30% healing to undead)', 'Death\'s Embrace (when you die, become a wraith for 6s dealing AoE damage before falling)', 'Soul Collector (each kill grants +1% spell damage, max 20%, resets on death)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/staves/staff-of-the-dead.png',
+  },
+  {
+    id: 'staff-of-power',
+    name: 'Staff Of Power',
+    primaryStat: 'mana',
+    secondaryStat: 'arcane',
+    emoji: '⚡',
+    grudgeType: 'item',
+    lore: 'Raw magical energy given form. This staff doesn\'t channel spells — it IS a spell, barely contained, vibrating with unimaginable power.',
+    category: '2h',
+    stats: { damageBase: 80, damagePerTier: 0, speedBase: 85, speedPerTier: 0, critBase: 14, critPerTier: 0, blockBase: 3, blockPerTier: 0, defenseBase: 12, defensePerTier: 0 },
+    basicAbility: 'Power Surge (every 5th attack releases an unblockable energy wave dealing 150% damage in 8m cone)',
+    abilities: ['Energy Beam (channel a continuous beam dealing 200% damage/s for 3s, drains mana)', 'Power Shield (absorb shield equal to 30% of your max mana)', 'Overcharge (next spell deals double damage but costs triple mana)', 'Mana Explosion (detonate 20% of your current mana as AoE damage, 1 mana = 2 damage)'],
+    signatureAbility: 'Retribution (discharge ALL remaining mana as a single blast: 1 mana = 5 damage, 30m range, unavoidable)',
+    passives: ['Power Hungry (+2% spell damage per 100 max mana)', 'Volatile (when hit, 10% chance to release a damaging energy pulse)', 'Mana Battery (max mana +30% while wielding)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/staves/staff-of-power.png',
+  },
+  {
+    id: 'tomb-of-the-magi',
+    name: 'Tomb Of The Magi',
+    primaryStat: 'mana',
+    secondaryStat: 'arcane',
+    emoji: '📖',
+    grudgeType: 'item',
+    lore: 'A living grimoire that writes itself. Pages appear and vanish as needed, containing every spell ever conceived and some that have yet to be imagined.',
+    category: 'Ranged 2h',
+    stats: { damageBase: 55, damagePerTier: 0, speedBase: 95, speedPerTier: 0, critBase: 18, critPerTier: 0, blockBase: 1, blockPerTier: 0, defenseBase: 8, defensePerTier: 0 },
+    basicAbility: 'Living Grimoire (randomly enhances each spell cast with a bonus effect: +damage, +AoE, +duration, or +healing)',
+    abilities: ['Page Turn (instantly reset cooldown of last used ability)', 'Forbidden Knowledge (learn the last spell an enemy used, usable once)', 'Arcane Library (for 10s, all your spells gain +1 target)', 'Author\'s Rewrite (undo the last 3 seconds of combat — reverse damage, positions, cooldowns)'],
+    signatureAbility: 'Omniscience (for 12s: you can cast any class skill from any class at +30% effectiveness, mana costs halved)',
+    passives: ['Infinite Pages (spell cooldowns reduced by 15%)', 'Arcane Scribe (casting spells has 10% chance to create a scroll consumable)', 'Magi\'s Legacy (+5% spell damage per spell book in inventory)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/tomes/tomb-of-the-magi.png',
+  },
+
+  // ═══ BOWS (1) ═══
+  {
+    id: 'windwalker-bow',
+    name: 'WindWalker Bow',
+    primaryStat: 'damage',
+    secondaryStat: 'speed',
+    emoji: '🏹',
+    grudgeType: 'item',
+    lore: 'Strung with wind itself, arrows fired from this bow bend around obstacles and strike true. The wind carries the archer\'s will.',
+    category: 'Ranged 2h',
+    stats: { damageBase: 75, damagePerTier: 0, speedBase: 130, speedPerTier: 0, critBase: 20, critPerTier: 0, blockBase: 0, blockPerTier: 0, defenseBase: 5, defensePerTier: 0 },
+    basicAbility: 'Wind-Guided Shot (arrows home slightly toward targets, +15% accuracy, +10% range)',
+    abilities: ['Gale Volley (fire 12 arrows into the air, they rain down on a 10m area)', 'Zephyr Dash (wind-dash 15m in any direction, fire 3 arrows during the dash)', 'Tornado Shot (fire an arrow that creates a tornado on impact, pulling enemies in for 5s)', 'Wind Walk (become one with the wind: +50% movement speed, invisible while moving, 8s)'],
+    signatureAbility: 'Storm of Arrows (ascend on wind, hover for 5s firing homing arrows at all enemies in 30m — 1 arrow per enemy per second, each dealing 100% weapon damage)',
+    passives: ['Wind Runner (+20% movement speed, +10% attack speed)', 'True Shot (arrows cannot be blocked or deflected)', 'Tailwind (each consecutive hit on same target increases damage by 5%, max 30%)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/bows/windwalker-bow.png',
+  },
+
+  // ═══ CLUB (1) ═══
+  {
+    id: 'spiked-club',
+    name: 'Spiked Club',
+    primaryStat: 'damage',
+    secondaryStat: 'stun',
+    emoji: '🏏',
+    grudgeType: 'item',
+    lore: 'Crude but devastatingly effective. Torn from the hands of an orc warchief after a three-day duel, every spike is stained with the blood of champions.',
+    category: '1h',
+    stats: { damageBase: 82, damagePerTier: 0, speedBase: 88, speedPerTier: 0, critBase: 8, critPerTier: 0, blockBase: 6, blockPerTier: 0, defenseBase: 12, defensePerTier: 0 },
+    basicAbility: 'Brutal Smash (attacks cause bleeding, 40% chance to stun for 0.5s)',
+    abilities: ['Overhead Crush (single target, 200% damage, guaranteed stun 2s)', 'Berserker Rage (+30% damage, +20% attack speed, take +15% damage, 10s)', 'Spine Breaker (hit reduces target attack speed by 25% for 6s)', 'Primal Roar (AoE fear 3s, +10% damage per feared enemy for 6s)'],
+    signatureAbility: 'Warchief\'s Fury (enter a 12s frenzy: +50% attack speed, each hit applies a random debuff — bleed, stun, slow, or fear)',
+    passives: ['Brutality (overkill damage splashes to nearby enemies)', 'Thick Skull (stun duration on you reduced by 50%)', 'Bloodlust (below 30% HP: +25% damage, +25% lifesteal)'],
+    craftedBy: null,
+    spritePath: '/icons/weapons/maces/spiked-club.png',
+  },
+];
+
+// ── MAIN ────────────────────────────────────────────────────────────────
+console.log('=== Inject Legendary Artifact Weapons ===\n');
+
+const weapons = JSON.parse(readFileSync(WEAPONS_PATH, 'utf8'));
+
+// Replace arcaneStaves with our legendary artifacts
+const oldCount = weapons.categories.arcaneStaves?.items?.length || 0;
+weapons.categories.arcaneStaves = {
+  iconBase: 'staff',
+  iconMax: 54,
+  grudgeType: 'artifact',
+  items: LEGENDARY_ARTIFACTS,
+};
+
+console.log(`Replaced ${oldCount} placeholder artifacts with ${LEGENDARY_ARTIFACTS.length} legendary weapons`);
+console.log('Weapon types covered:');
+const types = {};
+LEGENDARY_ARTIFACTS.forEach(a => { const t = a.category; types[t] = (types[t]||0)+1; });
+Object.entries(types).forEach(([t,c]) => console.log(`  ${t}: ${c}`));
+
+writeFileSync(WEAPONS_PATH, JSON.stringify(weapons, null, 2));
+console.log(`\nWrote weapons.json. Run generate-master-database.mjs to rebuild master data.`);
