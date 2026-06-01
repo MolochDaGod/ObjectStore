@@ -566,8 +566,8 @@
         <h3 style="color:var(--gold);margin-bottom:12px;">🔗 API Endpoints</h3>
         <p style="color:var(--text-dim);margin-bottom:16px;">All data is served as static JSON from GitHub Pages. No auth required. Base URL:</p>
         <div style="background:var(--code-bg);padding:12px 16px;border-radius:8px;margin-bottom:16px;">
-          <code style="color:var(--gold-light);font-size:0.95rem;">https://molochdagod.github.io/ObjectStore/api/v1/</code>
-          <button onclick="navigator.clipboard.writeText('https://molochdagod.github.io/ObjectStore/api/v1/');this.textContent='✓ Copied'" style="float:right;background:var(--gold);color:var(--bg);border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;">Copy</button>
+          <code style="color:var(--gold-light);font-size:0.95rem;">https://objectstore.grudge-studio.com/api/v1/</code>
+          <button onclick="navigator.clipboard.writeText('https://objectstore.grudge-studio.com/api/v1/');this.textContent='✓ Copied'" style="float:right;background:var(--gold);color:var(--bg);border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;">Copy</button>
         </div>
         <div id="dev-endpoints" style="display:grid;gap:8px;"></div>
       </div>
@@ -602,7 +602,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;">
           <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
             <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">Browser / Vanilla JS</p>
-            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">const BASE = 'https://molochdagod.github.io/ObjectStore';
+            <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">const BASE = 'https://objectstore.grudge-studio.com';
 
 // Fetch all swords
 const weapons = await fetch(`${BASE}/api/v1/weapons.json`).then(r => r.json());
@@ -621,7 +621,7 @@ const armorIcons = sprites.categories.armor_full.sprites;</pre>
             <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">import { initGrudgeStudio } from '@grudgstudio/core';
 
 const api = await initGrudgeStudio({
-  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore'
+  objectStoreUrl: 'https://objectstore.grudge-studio.com'
 });
 
 // Search by name or slug
@@ -639,7 +639,7 @@ console.log(item.slug); // swords/bloodfeud-blade/t5</pre>
             <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">using GrudgeStudio;
 
 var api = new GrudgeStudioAPI(
-  "https://molochdagod.github.io/ObjectStore"
+  "https://objectstore.grudge-studio.com"
 );
 
 // Load weapon by slug
@@ -653,7 +653,7 @@ renderer.sprite = Sprite.Create(tex, ...);</pre>
           <div style="background:var(--code-bg);padding:16px;border-radius:8px;">
             <p style="color:var(--gold);font-weight:bold;margin-bottom:8px;">grudgeDot / HTML5 Game</p>
             <pre style="font-size:0.82rem;color:var(--gold-light);line-height:1.7;white-space:pre-wrap;">// In grudgeDot JavaScript event
-const BASE = 'https://molochdagod.github.io/ObjectStore';
+const BASE = 'https://objectstore.grudge-studio.com';
 
 // Load enemy data for spawning
 const enemies = await fetch(`${BASE}/api/v1/enemies.json`)
@@ -1980,7 +1980,7 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
         { path: 'terrain.json', desc: '5 procedural biome presets', slug: 'terrain/{biome-id}' },
       ];
 
-      const baseUrl = 'https://molochdagod.github.io/ObjectStore/api/v1/';
+      const baseUrl = 'https://objectstore.grudge-studio.com/api/v1/';
       const container = document.getElementById('dev-full-endpoints');
       if (!container) return;
 

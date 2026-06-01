@@ -51,7 +51,7 @@ export default {
             upload: 'POST /v1/assets (API key required)',
             convert: 'POST /v1/convert (API key required)',
           },
-          docs: 'https://molochdagod.github.io/ObjectStore/docs',
+          docs: 'https://objectstore.grudge-studio.com/docs',
         }), origin);
       }
 
@@ -423,7 +423,7 @@ const GAME_DATA_COLLECTIONS = [
   'gltf-manifest', 'effect-definitions', 'animations-gltf',
 ];
 
-const GITHUB_PAGES_BASE = 'https://molochdagod.github.io/ObjectStore/api/v1';
+const GITHUB_PAGES_BASE = 'https://objectstore.grudge-studio.com/api/v1';
 
 /** Route handler for /v1/game-data/* and /v1/weapon-skills/* */
 async function handleGameDataRoutes(url, method, env) {

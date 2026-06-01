@@ -6,11 +6,11 @@
  * and caches GLSL, and builds a Three.js ShaderMaterial in one call.
  *
  * Served from:
- *   https://molochdagod.github.io/ObjectStore/api/v1/shader-lab/loader.js
+ *   https://objectstore.grudge-studio.com/api/v1/shader-lab/loader.js
  *
  * Usage (dynamic import from an editor):
  *   const { ShaderLab } = await import(
- *     'https://molochdagod.github.io/ObjectStore/api/v1/shader-lab/loader.js'
+ *     'https://objectstore.grudge-studio.com/api/v1/shader-lab/loader.js'
  *   );
  *   const lab = new ShaderLab(THREE);
  *   await lab.ready();
@@ -25,8 +25,8 @@
  * injected by the caller so the editor can pin its own version.
  */
 
-const MANIFEST_URL = 'https://molochdagod.github.io/ObjectStore/api/v1/shader-lab/manifest.json';
-const GLSL_BASE    = 'https://molochdagod.github.io/ObjectStore/api/v1/shader-lab';
+const MANIFEST_URL = 'https://objectstore.grudge-studio.com/api/v1/shader-lab/manifest.json';
+const GLSL_BASE    = 'https://objectstore.grudge-studio.com/api/v1/shader-lab';
 const TEX_BASE     = 'https://assets.grudge-studio.com/shader-lab/textures';
 
 const CUBEMAP_FACES = ['px', 'nx', 'py', 'ny', 'pz', 'nz'];

@@ -1,32 +1,35 @@
 (function() {
-  // Internal ObjectStore pages
+  // CDN base for icon images
+  var ICN = 'https://objectstore.grudge-studio.com/icons';
+
+  // Internal ObjectStore pages — icon is now image path relative to ICN
   var pages = [
-    { label: 'Home', href: './', icon: '🏠' },
-    { label: 'API Docs', href: './docs/', icon: '📖' },
-    { label: 'Items', href: './GRUDGE_Item_Database.html', icon: '🗃️' },
-    { label: 'Item Browser', href: './ItemBrowser.html', icon: '🔍' },
-    { label: 'Sprites', href: './SPRITE_DATABASE.html', icon: '📊' },
-    { label: 'Weapon Skills', href: './WEAPON_SKILLS.html', icon: '⚔️' },
-    { label: '2D Models', href: './2D_MODELS.html', icon: '🎨' },
-    { label: 'VFX', href: './VFX_BROWSER.html', icon: '✨' },
-    { label: '3DFX', href: './3dfx-viewer.html', icon: '⚡' },
-    { label: 'Spell VFX', href: './spell-vfx-library.html', icon: '🔮' },
-    { label: '3D Models', href: './3D_MODELS.html', icon: '🧱' },
-    { label: 'Audio', href: './AUDIO_BROWSER.html', icon: '🔊' },
-    { label: 'Icons', href: './tools/icon-generator.html', icon: '🖌️' },
-    { label: 'Admin', href: './admin.html', icon: '⚙️' }
+    { label: 'Home',         href: './',                          icon: ICN + '/Icons_Essential/v1.2/Icons/Home.png' },
+    { label: 'API Docs',     href: './docs/',                     icon: ICN + '/496_rpg_icons/I_Scroll.png' },
+    { label: 'Items',        href: './GRUDGE_Item_Database.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/ChestTreasure.png' },
+    { label: 'Item Browser', href: './ItemBrowser.html',           icon: ICN + '/Icons_Essential/v1.2/Icons/MagnifyingGlass.png' },
+    { label: 'Sprites',      href: './SPRITE_DATABASE.html',       icon: ICN + '/ui/buttons/people.png' },
+    { label: 'Weapon Skills', href: './WEAPON_SKILLS.html',        icon: ICN + '/496_rpg_icons/S_Sword07.png' },
+    { label: '2D Models',    href: './2D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/PaintBrush.png' },
+    { label: 'VFX',          href: './VFX_BROWSER.html',           icon: ICN + '/496_rpg_icons/S_Fire05.png' },
+    { label: '3DFX',         href: './3dfx-viewer.html',           icon: ICN + '/496_rpg_icons/S_Thunder03.png' },
+    { label: 'Spell VFX',    href: './spell-vfx-library.html',     icon: ICN + '/496_rpg_icons/S_Magic05.png' },
+    { label: '3D Models',    href: './3D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png' },
+    { label: 'Audio',        href: './AUDIO_BROWSER.html',         icon: ICN + '/Icons_Essential/v1.2/Icons/SpeakerOn.png' },
+    { label: 'Icons',        href: './tools/icon-generator.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/Pencil.png' },
+    { label: 'Admin',        href: './admin.html',                 icon: ICN + '/Icons_Essential/v1.2/Icons/Gear.png' }
   ];
 
   // Grudge front-end apps (external, open in same tab)
   var apps = [
-    { label: 'Warlords',    href: 'https://grudgewarlords.com',       icon: '⚔️', title: 'Grudge Warlords - player-facing game' },
-    { label: 'Info Hub',    href: 'https://info.grudge-studio.com',   icon: '📊', title: 'Game Data Hub - items, stats, skills, professions' },
-    { label: 'Client',      href: 'https://client.grudge-studio.com', icon: '🎮', title: 'Grudge Builder / client.grudge-studio.com' },
-    { label: 'Dashboard',   href: 'https://dash.grudge-studio.com',   icon: '📋', title: 'Grudge Studio dashboard' },
-    { label: 'ID',          href: 'https://id.grudge-studio.com',     icon: '🔐', title: 'Grudge Auth / identity' },
-    { label: 'AI',          href: 'https://ai.grudge-studio.com',     icon: '🤖', title: 'Gruda Legion AI hub' },
-    { label: 'Crafting',    href: 'https://grudge-crafting.puter.site', icon: '🔨', title: 'Puter-hosted crafting suite' },
-    { label: 'Grudge Studio', href: 'https://grudge-studio.com',      icon: '🏰', title: 'grudge-studio.com' }
+    { label: 'Warlords',      href: 'https://grudgewarlords.com',         icon: ICN + '/496_rpg_icons/S_Sword01.png',     title: 'Grudge Warlords - player-facing game' },
+    { label: 'Info Hub',      href: 'https://info.grudge-studio.com',     icon: ICN + '/496_rpg_icons/I_Book.png',        title: 'Game Data Hub - items, stats, skills, professions' },
+    { label: 'Client',        href: 'https://client.grudge-studio.com',   icon: ICN + '/Icons_Essential/v1.2/Icons/Gamepad.png', title: 'Grudge Builder / client.grudge-studio.com' },
+    { label: 'Dashboard',     href: 'https://dash.grudge-studio.com',     icon: ICN + '/Icons_Essential/v1.2/Icons/Document.png', title: 'Grudge Studio dashboard' },
+    { label: 'ID',            href: 'https://id.grudge-studio.com',       icon: ICN + '/Icons_Essential/v1.2/Icons/Key.png',     title: 'Grudge Auth / identity' },
+    { label: 'AI',            href: 'https://ai.grudge-studio.com',       icon: ICN + '/Icons_Essential/v1.2/Icons/Lightbulb.png', title: 'Gruda Legion AI hub' },
+    { label: 'Crafting',      href: 'https://grudge-crafting.puter.site', icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png',  title: 'Puter-hosted crafting suite' },
+    { label: 'Grudge Studio', href: 'https://grudge-studio.com',          icon: ICN + '/Icons_Essential/v1.2/Icons/Trophy.png',  title: 'grudge-studio.com' }
   ];
 
   // Detect if we're in a subdirectory (like docs/)
@@ -57,7 +60,8 @@
     '.os-nav-logo{display:flex;align-items:center;gap:6px;color:#d4a84b;font-weight:700;font-size:0.85rem;margin-right:8px;text-decoration:none;flex-shrink:0;}',
     '.os-nav-logo img{height:18px;width:18px;}',
     '.os-appbar-label{color:#8b8685;font-size:0.7rem;margin-right:8px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;}',
-    '.os-nav-btn{padding:6px 12px;border-radius:6px;font-size:0.78rem;color:#8b8685;text-decoration:none;transition:all 0.15s;border:1px solid transparent;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}',
+    '.os-nav-btn{padding:6px 12px;border-radius:6px;font-size:0.78rem;color:#8b8685;text-decoration:none;transition:all 0.15s;border:1px solid transparent;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;}',
+    '.os-nav-btn img{width:16px;height:16px;object-fit:contain;vertical-align:middle;image-rendering:auto;flex-shrink:0;}',
     '.os-nav-btn:hover{color:#e8e6e3;background:#1a1f2e;border-color:#3d3d3d;}',
     '.os-nav-btn.active{color:#d4a84b;background:rgba(212,168,75,0.12);border-color:rgba(212,168,75,0.3);font-weight:600;}',
     '.os-nav-btn.external{color:#a7b0c0;border-color:transparent;}',
@@ -85,7 +89,7 @@
     al.className = 'os-nav-btn external';
     al.href = app.href;
     al.title = app.title || app.label;
-    al.innerHTML = app.icon + ' ' + app.label;
+    al.innerHTML = '<img src="' + app.icon + '" alt="" width="16" height="16"> ' + app.label;
     appbar.appendChild(al);
   }
   wrap.appendChild(appbar);
@@ -103,7 +107,7 @@
     var a = document.createElement('a');
     a.className = 'os-nav-btn' + (isActive(p.href) ? ' active' : '');
     a.href = href;
-    a.innerHTML = p.icon + ' ' + p.label;
+    a.innerHTML = '<img src="' + p.icon + '" alt="" width="16" height="16"> ' + p.label;
     nav.appendChild(a);
   }
   wrap.appendChild(nav);

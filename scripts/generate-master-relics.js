@@ -99,7 +99,7 @@ for (const base of RELIC_BASE) {
       element: base.element || null,
       description: base.lore,
       lore: base.lore,
-      iconUrl: `https://molochdagod.github.io/ObjectStore/icons/relics/${base.id}.png`,
+      iconUrl: `https://objectstore.grudge-studio.com/icons/relics/${base.id}.png`,
       stats,
       craftedBy: 'Mystic',
       craftingRecipe: {

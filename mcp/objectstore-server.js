@@ -5,7 +5,7 @@
  * Protocol: stdio (JSON-RPC over stdin/stdout)
  */
 
-const BASE_URL = 'https://molochdagod.github.io/ObjectStore';
+const BASE_URL = 'https://objectstore.grudge-studio.com';
 
 async function fetchJSON(endpoint) {
   const res = await fetch(`${BASE_URL}${endpoint}`);

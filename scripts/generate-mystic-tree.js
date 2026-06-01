@@ -91,7 +91,7 @@ for (const base of ENCHANT_BASE) {
         value,
         valueType: base.type,    // flat | percentage
       },
-      iconUrl: `https://molochdagod.github.io/ObjectStore/icons/enchants/${base.id}.png`,
+      iconUrl: `https://objectstore.grudge-studio.com/icons/enchants/${base.id}.png`,
       description: base.lore,
       lore: base.lore,
       profession: 'Mystic',
@@ -174,7 +174,7 @@ const infusions = INFUSIONS.map(inf => ({
   iterationsGranted: inf.iterations,
   appliedAt: 'Enchanting Bench (Mystic)',
   sideEffect: inf.sideEffect || null,
-  iconUrl: `https://molochdagod.github.io/ObjectStore/icons/infusions/${inf.id}.png`,
+  iconUrl: `https://objectstore.grudge-studio.com/icons/infusions/${inf.id}.png`,
   description: inf.lore,
   lore: inf.lore,
   acquisition: inf.acquisition,

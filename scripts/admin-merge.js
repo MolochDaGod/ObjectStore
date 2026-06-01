@@ -103,7 +103,7 @@ const TESLA_COIL = {
   passives: ['Capacitor (charges on hits)', 'Grounded (CC resist)', 'Overclock (next spell free after crit)'],
   primaryStat: 'damage',
   secondaryStat: 'stun',
-  iconUrl: 'https://molochdagod.github.io/ObjectStore/icons/pack/weapons/staff_60.png',
+  iconUrl: 'https://objectstore.grudge-studio.com/icons/pack/weapons/staff_60.png',
 };
 
 // ============================================================

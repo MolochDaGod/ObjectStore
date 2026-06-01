@@ -328,9 +328,9 @@
 
     <section id="base-url">
       <h2>Base URL</h2>
-      <pre><code>https://molochdagod.github.io/ObjectStore</code></pre>
+      <pre><code>https://objectstore.grudge-studio.com</code></pre>
       <p>All endpoints are relative to this base URL. For example:</p>
-      <pre><code>GET https://molochdagod.github.io/ObjectStore/api/v1/weapons.json</code></pre>
+      <pre><code>GET https://objectstore.grudge-studio.com/api/v1/weapons.json</code></pre>
     </section>
 
     <section id="authentication">
@@ -1213,7 +1213,7 @@
       <p>Single import for all backend services + static game data:</p>
 
       <pre><code>// CDN
-import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
+import { GrudgeSDK } from 'https://objectstore.grudge-studio.com/sdk/grudge-sdk.js';
 
 // or NPM
 // npm install @grudgstudio/core
@@ -1274,7 +1274,7 @@ socket.emit('join-island', { island_key: 'island_1' });</code></pre>
       
       <pre><code>import requests
 
-BASE_URL = "https://molochdagod.github.io/ObjectStore/api/v1"
+BASE_URL = "https://objectstore.grudge-studio.com/api/v1"
 
 # Get all weapons
 weapons = requests.get(f"{BASE_URL}/weapons.json").json()

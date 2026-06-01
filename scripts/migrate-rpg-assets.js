@@ -38,7 +38,7 @@ const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg']);
 const DATA_EXTS = new Set(['.json']);
 const ALL_EXTS = new Set([...IMAGE_EXTS, ...DATA_EXTS]);
 
-const BASE_URL = 'https://molochdagod.github.io/ObjectStore';
+const BASE_URL = 'https://objectstore.grudge-studio.com';
 
 // ── Character sprite folders (vs. category folders like bosses, buildings, etc.) ──
 const CATEGORY_SPRITE_DIRS = new Set([

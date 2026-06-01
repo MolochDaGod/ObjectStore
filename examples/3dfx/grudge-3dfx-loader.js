@@ -2,16 +2,16 @@
  * Grudge 3DFX Loader — tiny helper for any Three.js project.
  *
  * Usage:
- *   import { loadGrudge3DFX } from 'https://molochdagod.github.io/ObjectStore/examples/3dfx/grudge-3dfx-loader.js';
+ *   import { loadGrudge3DFX } from 'https://objectstore.grudge-studio.com/examples/3dfx/grudge-3dfx-loader.js';
  *   const fx = await loadGrudge3DFX();
  *   const def = fx.effects['fire_slash'];
  *
  * All registry data is served by the ObjectStore static API:
- *   https://molochdagod.github.io/ObjectStore/api/v1/3dfx-registry.json
- *   https://molochdagod.github.io/ObjectStore/api/v1/vfx-spells.json
- *   https://molochdagod.github.io/ObjectStore/api/v1/3dfx-examples.json
+ *   https://objectstore.grudge-studio.com/api/v1/3dfx-registry.json
+ *   https://objectstore.grudge-studio.com/api/v1/vfx-spells.json
+ *   https://objectstore.grudge-studio.com/api/v1/3dfx-examples.json
  */
-export const OBJECTSTORE_BASE = 'https://molochdagod.github.io/ObjectStore';
+export const OBJECTSTORE_BASE = 'https://objectstore.grudge-studio.com';
 
 export async function loadGrudge3DFX() {
   const [reg, spells] = await Promise.all([

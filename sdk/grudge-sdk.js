@@ -28,7 +28,7 @@ import { ObjectStoreR2Client, DEFAULT_WORKER_URL } from './r2-client.js';
 // DEFAULTS
 // ==========================================
 
-const DEFAULT_BASE_URL      = 'https://molochdagod.github.io/ObjectStore';
+const DEFAULT_BASE_URL      = 'https://objectstore.grudge-studio.com';
 const DEFAULT_WORKER_API    = 'https://objectstore.grudge-studio.com';
 const DEFAULT_ID_URL        = 'https://id.grudge-studio.com';
 const DEFAULT_GAME_URL      = 'https://api.grudge-studio.com';

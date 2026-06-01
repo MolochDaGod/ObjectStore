@@ -54,7 +54,8 @@
     .nav-btn:hover{background:var(--bg-card);color:var(--text);}
     .nav-btn.active{border-left-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
     .nav-btn .badge{margin-left:auto;font-size:0.65rem;color:var(--text-dim);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1px 6px;font-family:'Cinzel',serif;}
-    .nav-btn .ico{font-size:0.9rem;width:16px;text-align:center;flex-shrink:0;}
+    .nav-btn .ico{width:16px;height:16px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+    .nav-btn .ico img{width:16px;height:16px;object-fit:contain;}
     .sidebar-divider{height:1px;background:var(--border);margin:6px 0;}
     .tier-filters{padding:0 10px 8px;}
     .tier-row{display:flex;flex-wrap:wrap;gap:4px;}
@@ -68,6 +69,19 @@
     .sf-btn{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text-muted);font-family:'Cinzel',serif;font-size:0.66rem;cursor:pointer;transition:all var(--transition);white-space:nowrap;}
     .sf-btn:hover{border-color:var(--gold);color:var(--gold);}
     .sf-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+
+    /* Weapon type drill-down grid */
+    .weapon-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;padding:16px;}
+    .weapon-type-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;cursor:pointer;text-align:center;transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:8px;}
+    .weapon-type-card:hover{border-color:var(--border-gold-hover);background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.45);}
+    .weapon-type-card img{width:48px;height:48px;object-fit:contain;}
+    .weapon-type-card .wt-label{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--gold-light);}
+    .weapon-type-card .wt-count{font-family:'Cinzel',serif;font-size:0.62rem;color:var(--text-dim);}
+    .back-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--bg-mid);border-bottom:1px solid var(--border);}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:0.72rem;cursor:pointer;transition:all var(--transition);}
+    .back-btn:hover{background:var(--gold);color:#0a0e14;}
+    .back-bar .current-type{font-family:'Cinzel Decorative',serif;font-size:0.82rem;color:var(--gold-light);}
+    .back-bar .type-count{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--text-dim);margin-left:auto;}
 
     /* Main */
     .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
@@ -218,37 +232,37 @@
   <nav class="sidebar">
     <div class="sidebar-label">Browse</div>
     <button class="nav-btn active" data-type="all" onclick="setType('all')">
-      <span class="ico">📖</span> All Items <span class="badge" id="count-all">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/Icons_Essential/v1.2/Icons/ChestTreasure.png" width="16" height="16" alt=""></span> All Items <span class="badge" id="count-all">—</span>
     </button>
 
     <div class="sidebar-label">Equipment</div>
     <button class="nav-btn" data-type="weapon" onclick="setType('weapon')">
-      <span class="ico">⚔️</span> Weapons <span class="badge" id="count-weapon">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/496_rpg_icons/S_Sword07.png" width="16" height="16" alt=""></span> Weapons <span class="badge" id="count-weapon">—</span>
     </button>
     <button class="nav-btn" data-type="armor" onclick="setType('armor')">
-      <span class="ico">🛡️</span> Armor <span class="badge" id="count-armor">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/armor_full/Chest_01.png" width="16" height="16" alt=""></span> Armor <span class="badge" id="count-armor">—</span>
     </button>
     <button class="nav-btn" data-type="relic" onclick="setType('relic')">
-      <span class="ico">💎</span> Relics <span class="badge" id="count-relic">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/items/artifacts/artifacts_01_framed.png" width="16" height="16" alt=""></span> Relics <span class="badge" id="count-relic">—</span>
     </button>
 
     <div class="sidebar-label">Consumables</div>
     <button class="nav-btn" data-type="consumable" onclick="setType('consumable')">
-      <span class="ico">🧪</span> Consumables <span class="badge" id="count-consumable">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> Consumables <span class="badge" id="count-consumable">—</span>
     </button>
     <button class="nav-btn" data-type="material" onclick="setType('material')">
-      <span class="ico">🪨</span> Materials <span class="badge" id="count-material">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt=""></span> Materials <span class="badge" id="count-material">—</span>
     </button>
     <button class="nav-btn" data-type="artifact" onclick="setType('artifact')">
-      <span class="ico">🏺</span> Artifacts <span class="badge" id="count-artifact">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/loot/loot_1.png" width="16" height="16" alt=""></span> Artifacts <span class="badge" id="count-artifact">—</span>
     </button>
 
     <div class="sidebar-label">Mystic System</div>
     <button class="nav-btn" data-type="enchant" onclick="setType('enchant')">
-      <span class="ico">✨</span> Enchants <span class="badge" id="count-enchant">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/abilities/ability_arcane_bolt.png" width="16" height="16" alt=""></span> Enchants <span class="badge" id="count-enchant">—</span>
     </button>
     <button class="nav-btn" data-type="infusion" onclick="setType('infusion')">
-      <span class="ico">🌀</span> Infusions <span class="badge" id="count-infusion">—</span>
+      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt=""></span> Infusions <span class="badge" id="count-infusion">—</span>
     </button>
 
     <div class="sidebar-divider"></div>
@@ -271,22 +285,15 @@
   <!-- Main -->
   <div class="main">
 
-    <!-- Weapon sub-type strip (visible only when Weapons tab active) -->
-    <div class="subfilter-strip" id="subfilterStrip">
-      <button class="sf-btn active" data-sub="all" onclick="setSub('all')">All</button>
-      <button class="sf-btn" data-sub="sword" onclick="setSub('sword')">Swords</button>
-      <button class="sf-btn" data-sub="axe" onclick="setSub('axe')">Axes</button>
-      <button class="sf-btn" data-sub="hammer" onclick="setSub('hammer')">Hammers</button>
-      <button class="sf-btn" data-sub="dagger" onclick="setSub('dagger')">Daggers</button>
-      <button class="sf-btn" data-sub="bow" onclick="setSub('bow')">Bows</button>
-      <button class="sf-btn" data-sub="crossbow" onclick="setSub('crossbow')">Crossbows</button>
-      <button class="sf-btn" data-sub="spear" onclick="setSub('spear')">Spears</button>
-      <button class="sf-btn" data-sub="staff" onclick="setSub('staff')">Staves</button>
-      <button class="sf-btn" data-sub="wand" onclick="setSub('wand')">Wands</button>
-      <button class="sf-btn" data-sub="tome" onclick="setSub('tome')">Tomes</button>
-      <button class="sf-btn" data-sub="gun" onclick="setSub('gun')">Guns</button>
-      <button class="sf-btn" data-sub="shield" onclick="setSub('shield')">Shields</button>
+    <!-- Weapon type drill-down (replaces flat subfilter) -->
+    <div id="weaponTypeGrid" style="display:none"></div>
+    <div class="back-bar" id="weaponBackBar" style="display:none">
+      <button class="back-btn" onclick="backToWeaponTypes()">&#8592; Weapon Types</button>
+      <span class="current-type" id="currentWeaponType"></span>
+      <span class="type-count" id="weaponTypeCount"></span>
     </div>
+    <!-- legacy subfilter strip (hidden, kept for armor) -->
+    <div class="subfilter-strip" id="subfilterStrip" style="display:none"></div>
 
     <!-- Armor slot-type strip (visible only when Armor tab active) -->
     <div class="subfilter-strip" id="armorSubfilterStrip">
@@ -356,7 +363,7 @@ const SOURCES = [
 ];
 
 // ─── Icon resolution ──────────────────────────────────────────────────────
-const CDN = 'https://molochdagod.github.io/ObjectStore';
+const CDN = 'https://objectstore.grudge-studio.com';
 
 // Enchant stat → existing ability icon
 const ENCH_ICON = {
@@ -617,6 +624,24 @@ let allItems = [], filtered = [];
 let activeType = 'all', activeTier = 'all', activeSub = 'all';
 let searchQ = '', sortKey = 'name', pageOffset = 0;
 const PAGE = 80;
+let weaponViewMode = 'types'; // 'types' = show weapon type grid, 'list' = show items of one type
+
+// Weapon type definitions with real icons from the CDN
+const WEAPON_TYPES = [
+  { key: 'sword',    label: 'Swords',    icon: `${CDN}/icons/pack/weapons/Sword_01.png` },
+  { key: 'axe',      label: 'Axes',      icon: `${CDN}/icons/pack/weapons/Axe_01.png` },
+  { key: 'hammer',   label: 'Hammers',   icon: `${CDN}/icons/pack/weapons/Hammer_01.png` },
+  { key: 'dagger',   label: 'Daggers',   icon: `${CDN}/icons/pack/weapons/Dagger_01.png` },
+  { key: 'bow',      label: 'Bows',      icon: `${CDN}/icons/pack/weapons/Bow_01.png` },
+  { key: 'crossbow', label: 'Crossbows', icon: `${CDN}/icons/pack/weapons/Crossbow_01.png` },
+  { key: 'spear',    label: 'Spears',    icon: `${CDN}/icons/pack/weapons/Spear_01.png` },
+  { key: 'staff',    label: 'Staves',    icon: `${CDN}/icons/pack/weapons/staff_1.png` },
+  { key: 'wand',     label: 'Wands',     icon: `${CDN}/icons/pack/weapons/staff_5.png` },
+  { key: 'tome',     label: 'Tomes',     icon: `${CDN}/icons/pack/weapons/Book_1.png` },
+  { key: 'gun',      label: 'Guns',      icon: `${CDN}/icons/pack/weapons/Crossbow_05.png` },
+  { key: 'scythe',   label: 'Scythes',   icon: `${CDN}/icons/pack/weapons/Scythe_1.png` },
+  { key: 'shield',   label: 'Shields',   icon: `${CDN}/icons/pack/weapons/shield_01.png` },
+];
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────
 (async () => {
@@ -917,9 +942,63 @@ function setType(type) {
   activeType = type; activeSub = 'all';
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
   document.querySelectorAll('.sf-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === 'all'));
-  document.getElementById('subfilterStrip').classList.toggle('visible', type === 'weapon');
   document.getElementById('armorSubfilterStrip').classList.toggle('visible', type === 'armor');
+
+  // Weapon drill-down: show type grid when Weapons selected
+  if (type === 'weapon') {
+    weaponViewMode = 'types';
+    showWeaponTypeGrid();
+    return; // don't call applyFilters yet
+  }
+  // Hide weapon UI for other types
+  document.getElementById('weaponTypeGrid').style.display = 'none';
+  document.getElementById('weaponBackBar').style.display = 'none';
   applyFilters();
+}
+
+function showWeaponTypeGrid() {
+  const gridEl = document.getElementById('weaponTypeGrid');
+  const backBar = document.getElementById('weaponBackBar');
+  const gridWrap = document.querySelector('.grid-wrap');
+  backBar.style.display = 'none';
+
+  // Count items per weapon type
+  const weapons = allItems.filter(i => i._type === 'weapon');
+  const counts = {};
+  WEAPON_TYPES.forEach(wt => {
+    counts[wt.key] = weapons.filter(i => (i._subType||'').includes(wt.key)).length;
+  });
+
+  let html = '<div class="weapon-type-grid">';
+  WEAPON_TYPES.forEach(wt => {
+    html += `<div class="weapon-type-card" onclick="selectWeaponType('${wt.key}','${e(wt.label)}')">
+      <img src="${wt.icon}" alt="${e(wt.label)}" loading="lazy">
+      <span class="wt-label">${e(wt.label)}</span>
+      <span class="wt-count">${counts[wt.key] || 0} weapons</span>
+    </div>`;
+  });
+  html += '</div>';
+  gridEl.innerHTML = html;
+  gridEl.style.display = 'block';
+  gridWrap.style.display = 'none';
+}
+
+function selectWeaponType(sub, label) {
+  weaponViewMode = 'list';
+  activeSub = sub;
+  document.getElementById('weaponTypeGrid').style.display = 'none';
+  document.getElementById('weaponBackBar').style.display = 'flex';
+  document.getElementById('currentWeaponType').textContent = label;
+  document.querySelector('.grid-wrap').style.display = 'block';
+  applyFilters();
+  // Update count in back bar after filtering
+  document.getElementById('weaponTypeCount').textContent = filtered.length + ' items';
+}
+
+function backToWeaponTypes() {
+  activeSub = 'all';
+  weaponViewMode = 'types';
+  showWeaponTypeGrid();
 }
 function setTier(tier) {
   activeTier = tier;
@@ -946,5 +1025,6 @@ document.addEventListener('keydown', ev => {
   if (ev.key==='Escape') closeDrawer();
 });
 </script>
+<script src="./js/nav.js"></script>
 </body>
 </html>

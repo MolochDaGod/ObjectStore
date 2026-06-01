@@ -11,7 +11,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const OS_ROOT = path.resolve(__dirname, '..');
-const BASE_URL = 'https://molochdagod.github.io/ObjectStore';
+const BASE_URL = 'https://objectstore.grudge-studio.com';
 const NOW = new Date().toISOString();
 
 // ── Helpers ─────────────────────────────────────────────────────────

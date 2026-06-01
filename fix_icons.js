@@ -5,7 +5,7 @@
  * Parses all items from GRUDGE_Item_Database.html and assigns the correct
  * icon from the ObjectStore icon library based on item name + category keywords.
  * 
- * Icon sources (all under https://molochdagod.github.io/ObjectStore/icons/):
+ * Icon sources (all under https://objectstore.grudge-studio.com/icons/):
  *   pack/weapons/   — Sword, Axe, Dagger, Hammer, Bow, Crossbow, Book, Spear, staff, shield, Scythe
  *   pack/armor/      — Helm, Shoulder, Chest, Belt, Boots, Pants, Gloves, Bracer, Back, necklace, Ring
  *   pack/potions/    — Potions
@@ -25,7 +25,7 @@ const fs = require('fs');
 const path = require('path');
 
 const HTML_PATH = path.join(__dirname, 'GRUDGE_Item_Database.html');
-const ICON_BASE = 'https://molochdagod.github.io/ObjectStore/icons';
+const ICON_BASE = 'https://objectstore.grudge-studio.com/icons';
 
 // ─── Icon inventories (gathered from the filesystem) ────────────────────────
 

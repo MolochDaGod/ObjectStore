@@ -62,7 +62,7 @@ const defaultRaceId = pickDefaultRace();
 
 const sdk = new GrudgeModelsSDK({
   // Use same-origin fallback by default; once the PR lands, set:
-  //   baseUrl: 'https://molochdagod.github.io/ObjectStore'
+  //   baseUrl: 'https://objectstore.grudge-studio.com'
   manifestPath: '/api/v1/race-models.json',
 });
 

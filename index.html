@@ -529,7 +529,7 @@
         <div class="section-icon gold">&#9889;</div>
         <h2>API Endpoints</h2>
       </div>
-      <p class="section-desc">All endpoints return JSON. No authentication required. Base URL: <code style="color:var(--gold-light);font-size:0.85rem;">https://molochdagod.github.io/ObjectStore</code></p>
+      <p class="section-desc">All endpoints return JSON. No authentication required. Base URL: <code style="color:var(--gold-light);font-size:0.85rem;">https://objectstore.grudge-studio.com</code></p>
 
       <div class="endpoint-group">
         <div class="group-label">&#9876;&#65039; Core Game Data</div>
@@ -682,7 +682,7 @@
           <span>No auth required — fetch any endpoint directly</span>
         </div>
         <pre><code><span class="cm">// Direct fetch — works in any AI agent or script</span>
-<span class="kw">const</span> base = <span class="str">'https://molochdagod.github.io/ObjectStore'</span>;
+<span class="kw">const</span> base = <span class="str">'https://objectstore.grudge-studio.com'</span>;
 
 <span class="kw">const</span> [weapons, quests, enemies] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
   <span class="fn">fetch</span>(<span class="str">`${base}/api/v1/weapons.json`</span>).then(r =&gt; r.<span class="fn">json</span>()),

@@ -2,7 +2,7 @@
  * Grudge 3DFX — Save a custom effect to R2 via the ObjectStore Worker.
  *
  * Requires an API key (X-API-Key header). See:
- *   https://molochdagod.github.io/ObjectStore/AGENTS.md
+ *   https://objectstore.grudge-studio.com/AGENTS.md
  */
 const R2_WORKER = 'https://objectstore.grudge-studio.com';
 

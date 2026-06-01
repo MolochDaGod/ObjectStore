@@ -14,7 +14,7 @@ const ROOT = path.resolve(__dirname, '..');
 const HTML_PATH = path.join(ROOT, 'GRUDGE_Item_Database.html');
 const OUT_PATH = path.join(ROOT, 'api', 'v1', 'items-database.json');
 
-const ICON_BASE = 'https://molochdagod.github.io/ObjectStore';
+const ICON_BASE = 'https://objectstore.grudge-studio.com';
 
 // Category keyword → normalised category id
 const CATEGORY_MAP = {
