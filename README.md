@@ -409,24 +409,43 @@ See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend
 
 ## 🎨 Icons
 
-All items display real icon assets — no emoji or placeholder images.
+All items display real icon assets — no emoji or placeholder images. Icon resolution is centralized in **`utils/icon-resolver.js`** which both `ItemBrowser.html` and `GRUDGE_Item_Database.html` share.
 
-### Icon Resolution
-- **Weapons**: Named icons at `/icons/weapons/{id}.png` (e.g. `bloodfeud-blade.png`), with automatic fallback to `/icons/wcs/weapons/{Type}_{##}.png` pack (502 real weapon sprites)
-- **Armor**: `/icons/pack/armor/{Slot}_{##}.png` (Helm, Chest, Boots, Gloves, etc.)
-- **Materials**: Named icons at `/icons/materials/{id}.png` with category-matched fallback
-- **Consumables**: Smart matching — 18 food icons, 10 herb icons, 48 potion icons, 48 alchemy icons
-- **Tools**: Mapped to appropriate weapon-type icons (pick→hammer, axe→axe, knife→dagger)
+### Icon Resolution — `utils/icon-resolver.js`
 
-### Icon Packs Available
-- `/icons/weapons/` — 82 named weapon icons
-- `/icons/wcs/weapons/` — 502 weapon sprites (Sword, Axe, Dagger, Hammer, Spear, Bow, etc.)
-- `/icons/pack/armor/` — Armor slot icons (Helm, Chest, Boots, Belt, Ring, etc.)
-- `/icons/consumables/` — Food, herbs, potions, alchemy items
+```javascript
+import { getIconUrl, getFallbackUrl } from './utils/icon-resolver.js';
+const primary  = getIconUrl(item);      // best-match icon for this item
+const fallback = getFallbackUrl(item);  // guaranteed-exists fallback
+```
+
+Resolution per item type:
+
+- **Weapons** — Named icons at `/icons/weapons/{kebab-name}.png` (119 unique), with type-based fallback to `/icons/pack/weapons/{Type}_{##}.png` (502 weapon sprites). Category field (`swords`, `daggers`, `bows`, etc.) maps to the correct weapon prefix. Absolute GitHub Pages URLs in JSON `iconUrl` are normalized to relative paths.
+- **Armor** — Slot-based icons in `/icons/armor_full/{Slot}_{##}.png` (523 icons across Helm, Chest, Boots, Gloves, Shoulder, Ring, necklace, Pants, Bracer). Material type (cloth/leather/metal) shifts the hash offset for visual variety. Shoulder_63 gap is auto-skipped.
+- **Materials** — Kebab-case name derived from `item.name` (not UUID) at `/icons/materials/{kebab-name}.png`, with category-based fallback (`ore→iron-ore`, `cloth→wool-thread`, `wood→oak-log`, etc.).
+- **Consumables** — Keyword matching: potions→`/icons/consumables/potion_{N}.png`, food keywords (steak, fish, bread, etc.)→matching food icons, herbs→herb sprite set, alchemy→`alchemy_{N}.png`.
+- **Enchants** — Resolves `item.effect.stat` (damage, defense, speed, crit, fire, frost, etc.) to ability icons in `/icons/abilities/`. Falls back to name-based keyword matching for element/stat enchants.
+- **Infusions** — Tier-indexed framed alchemy icons: `/icons/items/alchemy/alchemy_{tier}_framed.png`.
+- **Relics** — Tier-indexed framed artifact icons: `/icons/items/artifacts/artifacts_{tier}_framed.png`.
+- **Artifacts** — Hash-deterministic loot icons: `/icons/loot/loot_{N}.png`.
+- **Skills** — Keyword-matched ability icons (120+ keyword→icon mappings for fire, ice, lightning, holy, nature, arcane, shadow, warrior, ranged, beast skills).
+- **Tools** — Mapped to weapon-type icons (mining-pick→Hammer, lumber-axe→Axe, skinning-knife→Dagger, etc.).
+
+### Icon Directories
+- `/icons/weapons/` — 119 named weapon icons (kebab-case)
+- `/icons/pack/weapons/` — 502 weapon sprites (Sword, Axe, Dagger, Hammer, Spear, Bow, Crossbow, Scythe, shield, staff, Book)
+- `/icons/armor_full/` — 523 armor slot icons (Helm, Chest, Boots, Gloves, Shoulder, Ring, necklace, Pants, Bracer)
+- `/icons/consumables/` — Food, herbs, potions, alchemy items (100+ icons)
 - `/icons/materials/` — 79 crafting material icons
-- `/icons/skills/` — Class-based skill icons (aeromancer, pirate, swordsman, warlock)
-- `/icons/abilities/` — 28 ability icons
+- `/icons/abilities/` — 28+ ability icons (used by enchants and skills)
+- `/icons/items/alchemy/` — 100 framed alchemy icons (used by infusions)
+- `/icons/items/artifacts/` — 100 framed artifact icons (used by relics)
+- `/icons/loot/` — 48 loot icons (used by artifacts)
+- `/icons/pack/resources/` — 120 generic resource/loot fallback icons
+- `/icons/skills/` — Class-based skill icons
 - `/icons/spells/` — Spell effect icons with color variants
+- `/icons/food/` — Additional food icons (referenced by GRUDGE_Item_Database)
 
 ## 🎮 2D Sprite Browser & Editor
 

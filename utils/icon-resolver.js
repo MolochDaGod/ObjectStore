@@ -184,7 +184,7 @@ export function getIconUrl(item, base) {
   var baseId = String(item.id).replace(/-t\d+$/, '');
   if (item.type === 'weapon')     return getWeaponIcon(item, baseId, base);
   if (item.type === 'armor')      return getArmorIcon(item, baseId, base);
-  if (item.type === 'material')   return base + '/icons/materials/' + baseId + '.png';
+  if (item.type === 'material')   return getMaterialIcon(item, baseId, base);
   if (item.type === 'consumable') return getConsumableIcon(item, baseId, base);
   if (item.type === 'enchant')    return getEnchantIcon(item, baseId, base);
   if (item.type === 'infusion')   return getInfusionIcon(item, baseId, base);
@@ -212,24 +212,29 @@ export function getFallbackUrl(item, base) {
 
 // ── Weapon: try named icon first, then pack/weapons/ ──
 function getWeaponIcon(item, baseId, base) {
+  // If the item already has a working iconUrl path, use it
   var raw = item.iconUrl || '';
   if (raw && raw.includes('/icons/weapons/') && !raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i)) {
+    // Convert absolute GitHub Pages / CDN URLs to relative for same-origin loading
     var relMatch = raw.match(/\/icons\/weapons\/.+$/);
     if (relMatch) return base + relMatch[0];
     return raw;
   }
+  // Staves special case: lowercase staff_1..staff_50, uppercase Staff_51..54
   var wt = (item.weaponType || item.subType || item.category || '').toLowerCase();
   if (wt.includes('stav') || wt.includes('staff')) {
     var sn = hashStr(item.baseName || item.name || '') % 50 + 1;
     var sp = sn >= 51 ? 'Staff' : 'staff';
     return base + '/icons/pack/weapons/' + sp + '_' + sn + '.png';
   }
+  // Map weaponType → pack/weapons/ generic icons
   var slot = WEAPON_TYPE_ICON[wt];
   if (slot) {
     var n = hashStr(item.baseName || item.name || '') % slot.count + 1;
     var num = slot.nopad ? String(n) : pad2(n);
     return base + '/icons/pack/weapons/' + slot.prefix + '_' + num + '.png';
   }
+  // Fallback: try named file, then generic sword
   return raw ? (raw.startsWith('http') ? raw : base + raw) : base + '/icons/pack/weapons/Sword_01.png';
 }
 
@@ -297,6 +302,13 @@ function getRelicIcon(item, baseId, base) {
 function getArtifactIcon(item, baseId, base) {
   var n = (hashStr(baseId) % 20) + 1;
   return base + '/icons/loot/loot_' + n + '.png';
+}
+
+// ── Material primary icon (kebab-case name, not UUID) ──
+function getMaterialIcon(item, baseId, base) {
+  // UUIDs (MATL-...) don't map to icon filenames — derive from item name
+  var kebabName = (item.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return base + '/icons/materials/' + kebabName + '.png';
 }
 
 // ── Material fallback ──
