@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <title>Grudge Warlords — Character Builder</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; padding: 24px 0; border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1; margin-bottom: 24px; }
+    .header h1 { font-family: var(--font-display); font-size: 2em; }
+    .layout { display: grid; grid-template-columns: 350px 1fr 380px; gap: 20px; }
+    .panel { padding: 20px; }
+    .panel h2 { color: var(--gold); font-size: 1.1em; margin-bottom: 16px; border-bottom: 2px solid var(--gold-dim); padding-bottom: 8px; }
+    .attr-row { margin-bottom: 14px; }
+    .attr-header { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
+    .attr-label { font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 6px; }
+    .attr-value { font-family: var(--font-mono); color: var(--gold); font-weight: 700; font-size: 0.95em; }
+    .attr-controls { display: flex; gap: 8px; align-items: center; }
+    input[type="range"] { flex: 1; height: 6px; border-radius: 3px; background: hsl(225 20% 20%); outline: none; -webkit-appearance: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 2px solid white; }
+    input[type="number"] { width: 50px; padding: 6px; border-radius: 4px; border: 1px solid var(--border); background: hsl(225 28% 8%); color: var(--gold); font-weight: 600; text-align: center; font-family: var(--font-mono); }
+    .points { text-align: center; padding: 14px; border-radius: 4px; margin: 14px 0; }
+    .points.done { border-color: var(--green) !important; }
+    .points .val { font-size: 2em; font-weight: 700; font-family: var(--font-mono); }
+    .points .lbl { color: var(--muted); font-size: 0.85em; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 50vh; overflow-y: auto; }
+    .stat-row { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 4px; font-size: 0.82em; }
+    .stat-row .k { color: var(--muted); }
+    .stat-row .v { color: var(--green); font-family: var(--font-mono); }
+    .class-grid, .race-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .class-btn, .race-btn { padding: 10px; border: 2px solid hsl(225 20% 20%); border-radius: 4px; cursor: pointer; text-align: center; transition: 0.2s; font-size: 0.85em; color: var(--text); background: hsl(225 28% 10%); font-family: var(--font-heading); }
+    .class-btn:hover, .race-btn:hover { border-color: var(--gold-dim); }
+    .class-btn.active, .race-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.08); }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .detail-card { margin-bottom: 12px; padding: 10px; border-radius: 4px; border-left: 3px solid; }
+    .detail-card h4 { margin: 0 0 4px; font-size: 0.9em; display: flex; align-items: center; gap: 6px; }
+    .detail-card .dd { color: var(--muted); font-size: 0.8em; line-height: 1.4; }
+    .detail-card .dg { font-size: 0.75em; color: var(--dim); margin-top: 4px; font-family: var(--font-mono); }
+    .back-link { display: inline-block; margin-bottom: 16px; color: var(--gold); font-size: 0.9em; }
+    .radar-wrap { margin: 20px 0; height: 280px; position: relative; }
+    .review-box { padding: 14px; border-radius: 6px; margin: 16px 0; }
+    .review-box h3 { margin: 0 0 10px; color: var(--gold); font-size: 1em; }
+    .review-row { display: flex; justify-content: space-between; align-items: center; }
+    .review-label { color: var(--muted); font-size: 0.85em; }
+    .review-value { font-size: 1.6em; font-weight: 700; font-family: var(--font-mono); }
+    .review-advice { margin-top: 10px; font-size: 0.82em; color: var(--muted); font-style: italic; }
+    .attr-icon { width: 20px; height: 20px; image-rendering: pixelated; vertical-align: middle; }
+    @media(max-width:1100px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="index.html">← Back to Hub</a>
+    <header class="header">
+      <h1 class="gold-text">Character Builder</h1>
+      <p style="color:var(--muted);margin-top:6px;">160 points across 8 attributes — 37 derived stats</p>
+    </header>
+    <div class="layout">
+      <div class="panel fantasy-panel" id="leftPanel"></div>
+      <div class="panel fantasy-panel" id="centerPanel">
+        <div id="centerClassRace"></div>
+        <div class="radar-wrap"><canvas id="buildChart"></canvas></div>
+        <div id="centerReview"></div>
+        <div id="centerStats"></div>
+      </div>
+      <div class="panel fantasy-panel" id="rightPanel"></div>
+    </div>
+  </div>
+
+  <script>
+    const CDN = 'https://assets.grudge-studio.com';
+    const TOTAL_POINTS = 160;
+    let ATTR_DATA = [];
+    let attrs = {};
+    let selectedClass = 'Warrior', selectedRace = 'Human';
+    let buildChart = null;
+
+    // Fallback icons only used if attribute JSON has no icon field
+    const ATTR_ICONS_FALLBACK = {
+      strength:  'icons/wcs/weapons/Hammer_01.png',
+      intellect: 'icons/wcs/weapons/Book_1.png',
+      vitality:  'icons/wcs/misc/Core.png',
+      dexterity: 'icons/wcs/weapons/Dagger_01.png',
+      endurance: 'icons/wcs/weapons/shield_01.png',
+      wisdom:    'icons/wcs/weapons/staff_1.png',
+      agility:   'icons/wcs/misc/Slash_07.png',
+      tactics:   'icons/wcs/misc/runic_tablet_01.png',
+    };
+
+    const CLASS_DATA = {
+      Warrior:          { color:'#ff7d87', bonuses:{strength:2,vitality:1,endurance:1,tactics:1}, desc:'Tank / DPS / Support' },
+      'Mage Priest':    { color:'#bb95ff', bonuses:{intellect:3,wisdom:2}, desc:'Healer / DPS / Utility' },
+      Ranger:           { color:'#49de95', bonuses:{dexterity:2,agility:2,tactics:1}, desc:'DPS / Utility / Off-Tank' },
+      Worge:            { color:'#ffb16d', bonuses:{strength:1,vitality:2,endurance:1,agility:1}, desc:'Tank / DPS / Utility' },
+    };
+    const RACE_DATA = {
+      Human:     { bonuses:{strength:2,vitality:2,intellect:1}, desc:'Crusade — Balanced fighters' },
+      Elf:       { bonuses:{intellect:2,dexterity:1,wisdom:2}, desc:'Fabled — Nature & arcane arts' },
+      Dwarf:     { bonuses:{vitality:2,endurance:2,wisdom:1}, desc:'Fabled — Master craftsmen' },
+      Orc:       { bonuses:{strength:2,vitality:1,endurance:2}, desc:'Legion — Overwhelming force' },
+      Barbarian: { bonuses:{strength:2,vitality:2,endurance:1}, desc:'Crusade — Tribal warriors' },
+      Undead:    { bonuses:{intellect:2,wisdom:3}, desc:'Legion — Dark sorcery' },
+    };
+
+    const BASE_STATS = { health:250, mana:100, stamina:100, damage:0, defense:0,
+      block:0, blockEffect:0, evasion:0, accuracy:0, criticalChance:0, criticalDamage:0,
+      attackSpeed:0, movementSpeed:0, resistance:0, cdrResist:0, defenseBreakResist:0,
+      armorPenetration:0, blockPenetration:0, defenseBreak:0, drainHealth:0, manaRegen:0,
+      healthRegen:0, cooldownReduction:0, abilityCost:0, spellAccuracy:0, stagger:0,
+      ccResistance:0, armor:0, damageReduction:0, bleedResist:0, statusEffect:0,
+      spellblock:0, dodge:0, reflexTime:0, criticalEvasion:0, fallDamage:0, comboCooldownRed:0 };
+
+    const PERCENT_STATS = new Set(['block','blockEffect','evasion','accuracy','criticalChance','criticalDamage',
+      'attackSpeed','movementSpeed','resistance','cdrResist','defenseBreakResist','armorPenetration',
+      'blockPenetration','defenseBreak','drainHealth','cooldownReduction','abilityCost','spellAccuracy',
+      'stagger','ccResistance','damageReduction','bleedResist','statusEffect','spellblock','dodge',
+      'reflexTime','criticalEvasion','fallDamage','comboCooldownRed']);
+
+    async function init() {
+      const data = await fetch('./api/v1/master-attributes.json').then(r => r.json());
+      ATTR_DATA = data.attributes;
+      ATTR_DATA.forEach(a => attrs[a.id] = 0);
+      renderAll();
+    }
+
+    function getTotal(id) {
+      let t = attrs[id] || 0;
+      const cb = CLASS_DATA[selectedClass]?.bonuses || {};
+      const rb = RACE_DATA[selectedRace]?.bonuses || {};
+      t += (cb[id] || 0) + (rb[id] || 0);
+      return t;
+    }
+
+    function usedPoints() { return Object.values(attrs).reduce((s,v) => s+v, 0); }
+    function remaining() { return TOTAL_POINTS - usedPoints(); }
+
+    // Diminishing returns: Full 1-25, Half 26-50, Quarter 51+
+    // Synced with stats-guide.html formula
+    function effectivePoints(raw) {
+      if (raw <= 25) return raw;
+      if (raw <= 50) return 25 + (raw - 25) * 0.5;
+      return 25 + 12.5 + (raw - 50) * 0.25;
+    }
+
+    function calculateStats() {
+      const stats = { ...BASE_STATS };
+      const tacticsRaw = getTotal('tactics');
+      const tacticsEff = effectivePoints(tacticsRaw);
+      ATTR_DATA.forEach(a => {
+        const rawPts = getTotal(a.id);
+        const effPts = effectivePoints(rawPts);
+        if (rawPts > 0 && a.gains) {
+          Object.entries(a.gains).forEach(([key, g]) => {
+            if (stats[key] !== undefined) {
+              const flatGain = g.flat !== undefined ? g.flat : (g.value || 0);
+              stats[key] += flatGain * effPts;
+            }
+          });
+        }
+      });
+      // Tactics global bonus uses effective points
+      if (tacticsEff > 0) {
+        const bonus = tacticsEff * 0.5;
+        Object.keys(stats).forEach(k => {
+          if (k !== 'health' && k !== 'mana' && k !== 'stamina' && typeof stats[k] === 'number') {
+            stats[k] *= (1 + bonus / 100);
+          }
+        });
+      }
+      return stats;
+    }
+
+    function calculateCombatPower(stats) {
+      const ehp = stats.health * (1 + (stats.defense / 100)) * (1 + (stats.resistance / 100));
+      const dps = (stats.damage + 10) * (1 + (stats.criticalChance / 100) * (stats.criticalDamage / 100)) * (1 + (stats.attackSpeed / 100));
+      const utility = (stats.cooldownReduction * 2) + (stats.manaRegen * 10) + (stats.movementSpeed * 2);
+      return Math.floor((ehp * 0.4) + (dps * 2.5) + (utility * 5));
+    }
+
+    function getBuildRating(stats) {
+      const cp = calculateCombatPower(stats);
+      if (cp > 5000) return { rating: 'S+', color: '#fbbf24' };
+      if (cp > 4500) return { rating: 'S', color: '#fbbf24' };
+      if (cp > 3800) return { rating: 'A', color: '#a855f7' };
+      if (cp > 3000) return { rating: 'B', color: '#e8eaf6' };
+      if (cp > 2000) return { rating: 'C', color: '#e8eaf6' };
+      return { rating: 'D', color: '#9ca3af' };
+    }
+
+    function getIconUrl(attrId) {
+      const a = ATTR_DATA.find(x => x.id === attrId);
+      if (a && a.icon) return CDN + '/' + a.icon;
+      if (ATTR_ICONS_FALLBACK[attrId]) return CDN + '/' + ATTR_ICONS_FALLBACK[attrId];
+      return '';
+    }
+
+    function renderRadarChart(stats) {
+      const maxHP = 3000, maxDmg = 500, maxDef = 500;
+      const newData = [
+        Math.min(100, (stats.health / maxHP) * 100 + (stats.defense / maxDef) * 50),
+        Math.min(100, (stats.damage / maxDmg) * 100 + stats.criticalChance),
+        Math.min(100, stats.cooldownReduction * 2 + stats.manaRegen * 5),
+        Math.min(100, stats.movementSpeed * 5 + stats.evasion),
+        Math.min(100, stats.block + stats.stagger * 2),
+        Math.min(100, stats.resistance + stats.mana / 20)
+      ];
+
+      const ctx = document.getElementById('buildChart');
+      if (!ctx) return;
+
+      if (buildChart) {
+        buildChart.data.datasets[0].data = newData;
+        buildChart.update();
+      } else {
+        buildChart = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: ['Survivability', 'Damage', 'Utility', 'Mobility', 'Control', 'Magic'],
+            datasets: [{
+              label: 'Current Build',
+              data: newData,
+              fill: true,
+              backgroundColor: 'rgba(212, 175, 55, 0.15)',
+              borderColor: '#d4af37',
+              pointBackgroundColor: '#d4af37',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: '#d4af37'
+            }, {
+              label: 'Balanced Reference',
+              data: [60, 60, 50, 50, 40, 40],
+              fill: true,
+              backgroundColor: 'rgba(165, 180, 208, 0.08)',
+              borderColor: '#a5b4d0',
+              pointBackgroundColor: '#a5b4d0',
+              pointBorderColor: '#fff',
+              borderDash: [5, 5]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            elements: { line: { borderWidth: 2 } },
+            scales: {
+              r: {
+                angleLines: { color: 'rgba(255,255,255,0.1)' },
+                grid: { color: 'rgba(255,255,255,0.1)' },
+                pointLabels: { color: '#e8eaf6', font: { size: 11 } },
+                ticks: { display: false, backdropColor: 'transparent' },
+                min: 0,
+                max: 100
+              }
+            },
+            plugins: {
+              legend: { labels: { color: '#a5b4d0', font: { size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    function renderAll() {
+      const stats = calculateStats();
+      const cp = calculateCombatPower(stats);
+      const br = getBuildRating(stats);
+
+      // LEFT PANEL
+      const left = document.getElementById('leftPanel');
+      left.innerHTML = '<h2>Attributes</h2>' +
+        ATTR_DATA.map(a => {
+          const iconUrl = getIconUrl(a.id);
+          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" onerror="this.style.display='none'">` : '';
+          return `
+            <div class="attr-row">
+              <div class="attr-header">
+                <span class="attr-label">${iconTag} ${a.name}</span>
+                <span class="attr-value">${getTotal(a.id)}</span>
+              </div>
+              <div class="attr-controls">
+                <input type="range" min="0" max="${TOTAL_POINTS}" value="${attrs[a.id]}" oninput="setAttr('${a.id}',this.value)">
+                <input type="number" min="0" max="${TOTAL_POINTS}" value="${attrs[a.id]}" onchange="setAttr('${a.id}',this.value)">
+              </div>
+            </div>`;
+        }).join('') +
+        `<div class="points inset-panel ${remaining()===0?'done':''}">
+          <div class="val" style="color:${remaining()===0?'var(--green)':'var(--text)'}">${usedPoints()} / ${TOTAL_POINTS}</div>
+          <div class="lbl">Points Allocated</div>
+        </div>
+        <div class="btn-row">
+          <button class="dark-button" onclick="resetAttrs()">Reset</button>
+          <button class="gilded-button" onclick="randomize()">Randomize</button>
+        </div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="gilded-button" style="grid-column:1/-1" onclick="exportBuild()">Export Build</button>
+        </div>`;
+
+      // CENTER PANEL — update sub-sections without touching the persistent canvas
+      document.getElementById('centerClassRace').innerHTML = '<h2>Class & Race</h2>' +
+        `<div class="class-grid">${Object.entries(CLASS_DATA).map(([n,d]) =>
+          `<div class="class-btn ${selectedClass===n?'active':''}" style="${selectedClass===n?'border-color:'+d.color:''}" onclick="selectClass('${n}')">${n}<br><small style="color:var(--muted)">${d.desc}</small></div>`
+        ).join('')}</div>` +
+        `<div class="race-grid">${Object.entries(RACE_DATA).map(([n,d]) =>
+          `<div class="race-btn ${selectedRace===n?'active':''}" onclick="selectRace('${n}')">${n}<br><small style="color:var(--muted)">${d.desc}</small></div>`
+        ).join('')}</div>`;
+
+      document.getElementById('centerReview').innerHTML =
+        `<div class="review-box inset-panel">
+          <h3>Statistical Review</h3>
+          <div class="review-row">
+            <div><div class="review-label">Combat Power</div><div class="review-value" style="color:#fbbf24">${remaining()===0 ? cp.toLocaleString() : '\u2014'}</div></div>
+            <div style="text-align:right"><div class="review-label">Build Rating</div><div class="review-value" style="color:${br.color}">${remaining()===0 ? br.rating : '?'}</div></div>
+          </div>
+          <div class="review-advice">${remaining()===0 ? (cp < 3000 ? 'Low combat effectiveness. Try focusing on synergy stats.' : cp > 5000 ? 'Excellent build efficiency!' : 'Solid build. Consider specializing further for higher tiers.') : 'Allocate all 160 points to see your build rating.'}</div>
+        </div>`;
+
+      document.getElementById('centerStats').innerHTML =
+        '<h2 style="margin-top:20px">Derived Stats (37)</h2>' +
+        '<div class="stats-grid">' +
+          Object.entries(stats).map(([k,v]) => {
+            const isPct = PERCENT_STATS.has(k);
+            const display = isPct ? v.toFixed(2) + '%' : Math.floor(v);
+            return `<div class="stat-row inset-panel"><span class="k">${k.replace(/([A-Z])/g,' $1').trim()}</span><span class="v">${display}</span></div>`;
+          }).join('') +
+        '</div>';
+
+      // RIGHT PANEL
+      const right = document.getElementById('rightPanel');
+      right.innerHTML = '<h2>Attribute Guide</h2>' +
+        ATTR_DATA.map(a => {
+          const pts = getTotal(a.id);
+          const iconUrl = getIconUrl(a.id);
+          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" style="width:18px;height:18px" onerror="this.style.display='none'">` : '';
+          const eff = effectivePoints(pts);
+          const drPct = pts > 0 ? Math.floor((eff / pts) * 100) : 100;
+          const gainsText = a.gains ? Object.entries(a.gains).map(([k,g]) => {
+            const isPercent = PERCENT_STATS.has(k);
+            const flatGain = g.flat !== undefined ? g.flat : (g.value || 0);
+            const total = (flatGain * eff).toFixed(2);
+            const parts = [`+${total}${isPercent ? '%' : ''}`];
+            if (g.percent && g.percent !== 0) parts.push(`(+${(g.percent * eff).toFixed(1)}% base)`);
+            return `${g.label}: ${parts.join(' ')}`;
+          }).join(' | ') : '';
+          const drTag = pts > 25 ? ` <span style="color:${drPct<75?'#ef4444':'#fbbf24'};font-size:0.75em">DR:${drPct}%</span>` : '';
+          return `
+            <div class="detail-card inset-panel" style="border-color:${a.color}">
+              <h4 style="color:${a.color}">${iconTag} ${a.name} \u2014 ${pts} (eff: ${eff.toFixed(1)})${drTag}</h4>
+              <div class="dd">${a.description}</div>
+              <div class="dg">${gainsText}</div>
+            </div>`;
+        }).join('');
+
+      renderRadarChart(stats);
+    }
+
+    function setAttr(id, val) {
+      const v = parseInt(val) || 0;
+      const old = attrs[id];
+      attrs[id] = Math.max(0, Math.min(TOTAL_POINTS, v));
+      if (usedPoints() > TOTAL_POINTS) attrs[id] = old;
+      renderAll();
+    }
+    function resetAttrs() { ATTR_DATA.forEach(a => attrs[a.id] = 0); renderAll(); }
+    function randomize() {
+      ATTR_DATA.forEach(a => attrs[a.id] = 0);
+      let rem = TOTAL_POINTS;
+      while (rem > 0) {
+        const keys = ATTR_DATA.map(a => a.id);
+        const key = keys[Math.floor(Math.random() * keys.length)];
+        attrs[key]++;
+        rem--;
+      }
+      renderAll();
+    }
+    function selectClass(c) { selectedClass = c; renderAll(); }
+    function selectRace(r) { selectedRace = r; renderAll(); }
+    function exportBuild() {
+      const build = { class: selectedClass, race: selectedRace, attributes: {...attrs}, stats: calculateStats() };
+      navigator.clipboard.writeText(JSON.stringify(build, null, 2));
+      alert('Build copied to clipboard!');
+    }
+
+    init();
+  </script>
+</body>
+</html>

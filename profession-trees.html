@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Grudge Warlords — Profession &amp; Weapon Skill Trees</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <style>
+    .container{max-width:1500px;margin:0 auto;padding:20px}
+    .back-links{display:flex;gap:12px;margin-bottom:20px}
+    .back-links a{color:var(--gold);font-size:.9em;text-decoration:none;padding:6px 14px;border:1px solid var(--gold-dim);border-radius:4px}
+    .back-links a:hover{border-color:var(--gold);background:var(--gold-dim)}
+    .hero{text-align:center;padding:36px 0 24px;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,transparent,var(--gold),transparent) 1;margin-bottom:28px}
+    .hero h1{font-family:var(--font-display);font-size:2.4em}
+    .hero p{color:var(--muted);margin:8px auto 0;max-width:800px;line-height:1.5;font-size:.9em}
+    .counts{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+    .counts .c{text-align:center}.counts .c .n{color:var(--gold);font-size:1.4em;font-weight:bold;font-family:var(--font-mono)}
+    .counts .c .l{color:var(--muted);font-size:.72em}
+    /* mode tabs */
+    .mode-tabs{display:flex;gap:6px;margin-bottom:24px;justify-content:center}
+    .mode-tabs button{background:var(--card);border:2px solid var(--gold-dim);color:var(--muted);padding:12px 28px;border-radius:4px;cursor:pointer;font-family:var(--font-heading);font-size:.95em;transition:all .2s}
+    .mode-tabs button.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold)}
+    .mode-tabs button:hover{color:var(--gold);border-color:var(--gold)}
+    .mode-panel{display:none}.mode-panel.active{display:block}
+    /* prof tabs */
+    .prof-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+    .prof-tabs button{background:var(--card);border:1px solid var(--gold-dim);color:var(--muted);padding:10px 22px;border-radius:4px;cursor:pointer;font-family:var(--font-mono);font-size:.85em;transition:all .2s}
+    .prof-tabs button.active{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.08)}
+    .prof-tabs button:hover{color:var(--gold);border-color:var(--gold)}
+    .prof-panel{display:none}.prof-panel.active{display:block}
+    /* tree header */
+    .tree-header{display:flex;align-items:center;gap:20px;padding:18px 22px;background:var(--card);border-radius:8px 8px 0 0;border:1px solid var(--gold-dim);margin-bottom:0}
+    .tree-header .th-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+    .tree-header .th-info h2{font-family:var(--font-heading);font-size:1.2em;margin-bottom:2px}
+    .tree-header .th-info p{color:var(--muted);font-size:.82em}
+    .tree-header .th-stats{margin-left:auto;text-align:right}
+    .tree-header .th-stats .s{display:flex;gap:8px;justify-content:flex-end;font-size:.82em;margin:2px 0}
+    .tree-header .th-stats .s span:first-child{color:var(--muted)}
+    .tree-header .th-stats .s span:last-child{color:var(--gold);font-weight:bold;font-family:var(--font-mono)}
+    /* branches */
+    .branch{margin-bottom:24px}
+    .branch-bar{display:flex;align-items:center;gap:12px;padding:12px 18px;background:rgba(255,255,255,.02);border:1px solid var(--gold-dim);border-radius:6px 6px 0 0}
+    .branch-bar .bb-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .branch-bar .bb-name{font-family:var(--font-heading);color:var(--gold-light);font-size:.92em}
+    .branch-bar .bb-desc{color:var(--muted);font-size:.75em}
+    .branch-bar .bb-count{margin-left:auto;font-size:.78em;color:var(--muted);font-family:var(--font-mono);background:var(--card);padding:3px 10px;border-radius:4px}
+    /* node grid */
+    .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:16px;background:var(--card);border:1px solid var(--gold-dim);border-top:none;border-radius:0 0 6px 6px}
+    .skill-node{background:rgba(255,255,255,.02);border:1px solid var(--gold-dim);border-radius:6px;padding:12px;transition:all .2s}
+    .skill-node:hover{border-color:var(--gold);transform:translateY(-1px)}
+    .skill-node.core{border-left:3px solid var(--gold)}
+    .skill-node.recipe{border-left:3px solid #33aa55}
+    .skill-node.combat{border-left:3px solid #cc3333}
+    .skill-node.effect{border-left:3px solid #3388cc}
+    .skill-node.stat{border-left:3px solid #8855cc}
+    .sn-head{display:flex;justify-content:space-between;align-items:start;margin-bottom:6px}
+    .sn-name{font-weight:600;font-size:.88em}
+    .sn-lv{background:rgba(212,175,55,.12);color:var(--gold);padding:2px 8px;border-radius:3px;font-size:.7em;font-family:var(--font-mono)}
+    .sn-desc{color:var(--muted);font-size:.78em;line-height:1.4;margin-bottom:6px}
+    .sn-tags{display:flex;flex-wrap:wrap;gap:4px}
+    .sn-tag{font-size:.68em;padding:2px 7px;border-radius:3px;font-family:var(--font-mono)}
+    .sn-tag.recipe{background:rgba(51,170,85,.15);color:#33aa55}
+    .sn-tag.combat{background:rgba(204,51,51,.15);color:#cc3333}
+    .sn-tag.stat{background:rgba(136,85,204,.15);color:#8855cc}
+    .sn-tag.effect{background:rgba(51,136,204,.15);color:#3388cc}
+    /* legend */
+    .legend{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+    .legend .li{display:flex;align-items:center;gap:6px;font-size:.78em;color:var(--muted)}
+    .legend .li .lc{width:14px;height:14px;border-radius:3px}
+    .legend .li .lc.core{background:var(--gold)}
+    .legend .li .lc.recipe{background:#33aa55}
+    .legend .li .lc.combat{background:#cc3333}
+    .legend .li .lc.stat{background:#8855cc}
+    .legend .li .lc.effect{background:#3388cc}
+    /* weapon skill section */
+    .wtype-tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+    .wtype-tabs button{background:var(--card);border:1px solid var(--gold-dim);color:var(--muted);padding:6px 14px;border-radius:3px;cursor:pointer;font-size:.78em;font-family:var(--font-mono);transition:all .2s}
+    .wtype-tabs button.active{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.08)}
+    .wtype-tabs button:hover{color:var(--gold);border-color:var(--gold)}
+    .wtype-panel{display:none}.wtype-panel.active{display:block}
+    /* weapon info */
+    .slot-section{margin-bottom:20px}
+    .slot-header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,255,255,.02);border:1px solid var(--gold-dim);border-radius:6px 6px 0 0}
+    .slot-header .sh-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:bold;font-family:var(--font-mono);flex-shrink:0}
+    .slot-header .sh-title{font-family:var(--font-heading);font-size:.9em}
+    .slot-header .sh-desc{color:var(--muted);font-size:.72em}
+    .slot-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;padding:14px;background:var(--card);border:1px solid var(--gold-dim);border-top:none;border-radius:0 0 6px 6px}
+    .skill-opt{background:rgba(255,255,255,.02);border:1px solid var(--gold-dim);border-radius:6px;padding:10px;transition:all .2s}
+    .skill-opt:hover{border-color:var(--gold)}
+    .skill-opt .so-name{font-weight:600;font-size:.85em;margin-bottom:3px}
+    .skill-opt .so-desc{color:var(--muted);font-size:.75em;margin-bottom:5px}
+    .skill-opt .so-stats{display:flex;flex-wrap:wrap;gap:4px}
+    .skill-opt .so-stat{font-size:.68em;padding:2px 6px;border-radius:3px;font-family:var(--font-mono)}
+    .so-stat.cd{background:rgba(212,175,55,.1);color:var(--gold)}
+    .so-stat.mana{background:rgba(51,136,204,.12);color:#3388cc}
+    .so-stat.dmg{background:rgba(204,51,51,.12);color:#cc3333}
+    .so-stat.fx{background:rgba(51,170,85,.12);color:#33aa55}
+    /* per-weapon ultimates */
+    .ult-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:14px;background:var(--card);border:1px solid var(--gold-dim);border-top:none;border-radius:0 0 6px 6px}
+    .ult-card{background:rgba(212,175,55,.04);border:1px solid var(--gold-dim);border-left:3px solid var(--gold);border-radius:6px;padding:10px;transition:all .2s}
+    .ult-card:hover{border-color:var(--gold)}
+    .ult-card .uc-weapon{font-size:.68em;color:var(--muted);font-family:var(--font-mono);margin-bottom:2px}
+    .ult-card .uc-name{font-weight:600;font-size:.85em;color:var(--gold)}
+    .ult-card .uc-desc{font-size:.72em;color:var(--muted);margin-top:2px}
+    /* tier info */
+    .tier-note{background:rgba(212,175,55,.06);border:1px solid var(--gold-dim);border-radius:4px;padding:14px 18px;margin:16px 0;font-size:.82em;color:var(--muted);line-height:1.5}
+    .tier-note strong{color:var(--gold)}
+    .footer{text-align:center;padding:24px 0;border-top:1px solid var(--gold-dim);color:var(--dim);font-size:.8em;margin-top:32px}
+    @media(max-width:768px){.tree-header{flex-direction:column;text-align:center}.tree-header .th-stats{margin-left:0;text-align:center}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="back-links">
+    <a href="grudge-guide.html">📖 Guide</a>
+    <a href="skill-trees.html">🌳 Static Trees</a>
+    <a href="index.html">← Hub</a>
+  </div>
+
+  <header class="hero">
+    <h1 class="gold-text">Skill Trees &amp; Arsenal</h1>
+    <p>Profession crafting trees, gathering trees, and weapon skill loadouts — all sourced from WCS.</p>
+    <div class="counts">
+      <div class="c"><div class="n">5</div><div class="l">Crafting Professions</div></div>
+      <div class="c"><div class="n">250+</div><div class="l">Profession Nodes</div></div>
+      <div class="c"><div class="n">17</div><div class="l">Weapon Types</div></div>
+      <div class="c"><div class="n">5</div><div class="l">Skill Slots / Weapon</div></div>
+      <div class="c"><div class="n">207+</div><div class="l">Weapon Skills</div></div>
+      <div class="c"><div class="n">T0–T8</div><div class="l">Tier Progression</div></div>
+    </div>
+  </header>
+
+  <!-- ═══ MODE TABS ═══ -->
+  <div class="mode-tabs">
+    <button class="active" data-mode="professions">⛏ Profession Trees</button>
+    <button data-mode="weapons">⚔ Weapon Skill Loadouts</button>
+    <button data-mode="arsenal">🏹 Arsenal &amp; Tier Progression</button>
+  </div>
+
+  <!-- ═══════════════════ PROFESSION TREES ═══════════════════ -->
+  <div class="mode-panel active" id="mode-professions">
+    <div class="legend">
+      <div class="li"><div class="lc core"></div> Core</div>
+      <div class="li"><div class="lc recipe"></div> Recipe Unlock</div>
+      <div class="li"><div class="lc combat"></div> Combat Bonus</div>
+      <div class="li"><div class="lc stat"></div> Stat Bonus</div>
+      <div class="li"><div class="lc effect"></div> Effect</div>
+    </div>
+
+    <div class="prof-tabs" id="profTabs">
+      <button class="active" data-prof="miner">⛏ Miner</button>
+      <button data-prof="forester">🌲 Forester</button>
+      <button data-prof="chef">🍖 Chef</button>
+      <button data-prof="engineer">⚙ Engineer</button>
+      <button data-prof="mystic">🔮 Mystic</button>
+    </div>
+
+    <!-- MINER -->
+    <div class="prof-panel active" id="prof-miner">
+      <div class="tree-header" style="border-left:4px solid var(--miner)">
+        <div class="th-icon" style="background:var(--miner)">⛏</div>
+        <div class="th-info">
+          <h2 style="color:var(--miner)">Miner</h2>
+          <p>Masters of ore, metal, and weapons. Forge devastating blades and impenetrable armor.</p>
+        </div>
+        <div class="th-stats">
+          <div class="s"><span>Nodes:</span><span>35</span></div>
+          <div class="s"><span>Branches:</span><span>5</span></div>
+          <div class="s"><span>Max Lv:</span><span>95</span></div>
+        </div>
+      </div>
+      <!-- Core -->
+      <div class="branch">
+        <div class="branch-bar"><div class="bb-icon" style="background:var(--gold)">🎯</div><div><div class="bb-name">Core Skills</div><div class="bb-desc">Fundamental mining and metallurgy</div></div><div class="bb-count">3 nodes</div></div>
+        <div class="node-grid">
+          <div class="skill-node core"><div class="sn-head"><div class="sn-name">Miner's Initiation</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">Begin your journey. Unlocks basic mining tools and ore identification.</div><div class="sn-tags"><span class="sn-tag stat">+5 Mining Speed</span><span class="sn-tag recipe">Basic Pickaxe</span></div></div>
+          <div class="skill-node core"><div class="sn-head"><div class="sn-name">Ore Identification</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">Identify valuable ore deposits at a glance. Increases rare ore discovery.</div><div class="sn-tags"><span class="sn-tag stat">+10% Rare Ore</span><span class="sn-tag effect">Ore Glow</span></div></div>
+          <div class="skill-node core"><div class="sn-head"><div class="sn-name">Metallurgy Basics</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Master working with metals. Unlocks smelting and basic forging.</div><div class="sn-tags"><span class="sn-tag recipe">Smelting</span><span class="sn-tag recipe">Basic Forge</span></div></div>
+        </div>
+      </div>
+      <!-- Weaponry -->
+      <div class="branch">
+        <div class="branch-bar"><div class="bb-icon" style="background:#cc3333">⚔</div><div><div class="bb-name">Weaponry</div><div class="bb-desc">Forge devastating weapons of war</div></div><div class="bb-count">8 nodes</div></div>
+        <div class="node-grid">
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Blade Forging</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">Learn sword crafting recipes.</div><div class="sn-tags"><span class="sn-tag recipe">Swords T1–T3</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Edge Tempering</div><div class="sn-lv">Lv 25</div></div><div class="sn-desc">Master blade tempering for sharpness and durability.</div><div class="sn-tags"><span class="sn-tag effect">+15% Weapon Damage</span><span class="sn-tag stat">+10% Durability</span></div></div>
+          <div class="skill-node combat"><div class="sn-head"><div class="sn-name">Axe Smithing</div><div class="sn-lv">Lv 35</div></div><div class="sn-desc">Forge axes that cleave through armor.</div><div class="sn-tags"><span class="sn-tag recipe">Axes T1–T4</span><span class="sn-tag combat">+10% Armor Pen</span></div></div>
+          <div class="skill-node combat"><div class="sn-head"><div class="sn-name">Dagger Crafting</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Craft precise daggers for swift, deadly strikes.</div><div class="sn-tags"><span class="sn-tag recipe">Daggers T1–T4</span><span class="sn-tag combat">+15% Crit Chance</span></div></div>
+          <div class="skill-node combat"><div class="sn-head"><div class="sn-name">Hammer Forging</div><div class="sn-lv">Lv 50</div></div><div class="sn-desc">Create mighty hammers that shatter bones and armor.</div><div class="sn-tags"><span class="sn-tag recipe">Hammers T1–T5</span><span class="sn-tag combat">+20% Stun Chance</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Greatsword Mastery</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Forge massive two-handed swords for sweeping attacks.</div><div class="sn-tags"><span class="sn-tag recipe">Greatswords T1–T5</span></div></div>
+          <div class="skill-node combat"><div class="sn-head"><div class="sn-name">Greataxe Mastery</div><div class="sn-lv">Lv 65</div></div><div class="sn-desc">Forge massive two-handed axes for cleaving multiple foes.</div><div class="sn-tags"><span class="sn-tag recipe">Greataxes T1–T6</span><span class="sn-tag combat">+25% Cleave Damage</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Spear &amp; Mace Craft</div><div class="sn-lv">Lv 75</div></div><div class="sn-desc">Master forging of reach weapons and crushing instruments.</div><div class="sn-tags"><span class="sn-tag recipe">Spears T1–T6</span><span class="sn-tag recipe">Maces T1–T6</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Legendary Weaponsmith</div><div class="sn-lv">Lv 90</div></div><div class="sn-desc">Craft legendary weapons of immense power.</div><div class="sn-tags"><span class="sn-tag recipe">All Weapons T7–T8</span><span class="sn-tag effect">Legendary Bonus</span></div></div>
+          <div class="skill-node combat"><div class="sn-head"><div class="sn-name">Divine Armaments</div><div class="sn-lv">Lv 95</div></div><div class="sn-desc">Forge divine weapons blessed by the gods.</div><div class="sn-tags"><span class="sn-tag recipe">Divine Weapons</span><span class="sn-tag combat">+Holy Damage</span></div></div>
+        </div>
+      </div>
+      <!-- Armor -->
+      <div class="branch">
+        <div class="branch-bar"><div class="bb-icon" style="background:#4a9eff">🛡</div><div><div class="bb-name">Plate Armor</div><div class="bb-desc">Impenetrable metal armor</div></div><div class="bb-count">8 nodes</div></div>
+        <div class="node-grid">
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Basic Armor</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">Craft copper plate armor.</div><div class="sn-tags"><span class="sn-tag recipe">Plate T1</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Reinforced Plates</div><div class="sn-lv">Lv 25</div></div><div class="sn-desc">Improve armor defense values.</div><div class="sn-tags"><span class="sn-tag stat">+10% Armor Defense</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Steel Armoring</div><div class="sn-lv">Lv 35</div></div><div class="sn-desc">Steel and mithril plate armor recipes.</div><div class="sn-tags"><span class="sn-tag recipe">Plate T2–T4</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Shield Forging</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Craft shields from T1 through T6.</div><div class="sn-tags"><span class="sn-tag recipe">Shields T1–T6</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Master Temper</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Armor provides bonus HP.</div><div class="sn-tags"><span class="sn-tag stat">+8% HP from Plate</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Heroic Armor</div><div class="sn-lv">Lv 60</div></div><div class="sn-desc">Adamantine and orichalcum plate.</div><div class="sn-tags"><span class="sn-tag recipe">Plate T5–T6</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Ancient Armor</div><div class="sn-lv">Lv 80</div></div><div class="sn-desc">Starmetal plate armor.</div><div class="sn-tags"><span class="sn-tag recipe">Plate T7</span></div></div>
+          <div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Divine Armor</div><div class="sn-lv">Lv 95</div></div><div class="sn-desc">Divine plate armor.</div><div class="sn-tags"><span class="sn-tag recipe">Plate T8</span><span class="sn-tag effect">Divine Set Bonus</span></div></div>
+        </div>
+      </div>
+      <!-- Mining -->
+      <div class="branch">
+        <div class="branch-bar"><div class="bb-icon" style="background:var(--miner)">⛏</div><div><div class="bb-name">Mining Mastery</div><div class="bb-desc">Ore, gem, and crystal gathering</div></div><div class="bb-count">11 nodes</div></div>
+        <div class="node-grid">
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Copper Mining</div><div class="sn-lv">Lv 1</div></div><div class="sn-desc">Mine copper ore deposits.</div><div class="sn-tags"><span class="sn-tag recipe">Copper Ore</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Iron Mining</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Mine iron ore.</div><div class="sn-tags"><span class="sn-tag recipe">Iron Ore</span><span class="sn-tag stat">+5% Yield</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Steel Mining</div><div class="sn-lv">Lv 20</div></div><div class="sn-desc">Mine steel ore veins.</div><div class="sn-tags"><span class="sn-tag recipe">Steel Ore</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Mithril Mining</div><div class="sn-lv">Lv 35</div></div><div class="sn-desc">Rare mithril veins.</div><div class="sn-tags"><span class="sn-tag recipe">Mithril Ore</span><span class="sn-tag stat">+10% Yield</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Adamantine Mining</div><div class="sn-lv">Lv 50</div></div><div class="sn-desc">Deep adamantine deposits.</div><div class="sn-tags"><span class="sn-tag recipe">Adamantine Ore</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Orichalcum Mining</div><div class="sn-lv">Lv 65</div></div><div class="sn-desc">Orichalcum from volcanic veins.</div><div class="sn-tags"><span class="sn-tag recipe">Orichalcum Ore</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Starmetal Mining</div><div class="sn-lv">Lv 80</div></div><div class="sn-desc">Meteorite-infused starmetal.</div><div class="sn-tags"><span class="sn-tag recipe">Starmetal Ore</span></div></div>
+          <div class="skill-node stat"><div class="sn-head"><div class="sn-name">Divine Mining</div><div class="sn-lv">Lv 95</div></div><div class="sn-desc">Mine divine essence from the gods' veins.</div><div class="sn-tags"><span class="sn-tag recipe">Divine Ore</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Gem Mastery</div><div class="sn-lv">Lv 30</div></div><div class="sn-desc">Detect and mine gem deposits.</div><div class="sn-tags"><span class="sn-tag recipe">Gem Harvesting</span><span class="sn-tag effect">Gem Glow</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Crystal Mastery</div><div class="sn-lv">Lv 45</div></div><div class="sn-desc">Harvest crystals from cave formations.</div><div class="sn-tags"><span class="sn-tag recipe">Crystal Harvesting</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Treasure Hunting</div><div class="sn-lv">Lv 60</div></div><div class="sn-desc">Detect buried treasure and rare veins.</div><div class="sn-tags"><span class="sn-tag effect">Treasure Detection</span><span class="sn-tag stat">+5% Rare Drop</span></div></div>
+        </div>
+      </div>
+      <!-- Infusions -->
+      <div class="branch">
+        <div class="branch-bar"><div class="bb-icon" style="background:#8855cc">✨</div><div><div class="bb-name">Miner Infusions</div><div class="bb-desc">Profession-specific enchantments</div></div><div class="bb-count">3 nodes</div></div>
+        <div class="node-grid">
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Forge Infusion</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Weapon/armor durability +10%.</div><div class="sn-tags"><span class="sn-tag effect">Durability +10%</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Earthen Infusion</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Defense +5% on plate armor.</div><div class="sn-tags"><span class="sn-tag effect">Defense +5%</span></div></div>
+          <div class="skill-node effect"><div class="sn-head"><div class="sn-name">Crystal Infusion</div><div class="sn-lv">Lv 70</div></div><div class="sn-desc">Critical damage +8% on weapons.</div><div class="sn-tags"><span class="sn-tag effect">Crit Damage +8%</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORESTER -->
+    <div class="prof-panel" id="prof-forester">
+      <div class="tree-header" style="border-left:4px solid var(--forester)">
+        <div class="th-icon" style="background:var(--forester)">🌲</div>
+        <div class="th-info"><h2 style="color:var(--forester)">Forester</h2><p>Woodworker, leatherworker &amp; mount tamer. Bows, leather armor, and mounts.</p></div>
+        <div class="th-stats"><div class="s"><span>Nodes:</span><span>20</span></div><div class="s"><span>Branches:</span><span>4</span></div><div class="s"><span>Max Lv:</span><span>95</span></div></div>
+      </div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--gold)">🎯</div><div><div class="bb-name">Core</div><div class="bb-desc">Woodcutting, skinning, and processing</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node core"><div class="sn-head"><div class="sn-name">Forester's Initiation</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">Basic woodcutting and skinning tools.</div><div class="sn-tags"><span class="sn-tag recipe">Lumber Axe</span><span class="sn-tag recipe">Skinning Knife</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Timber Processing</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">Sawmill access for planks.</div><div class="sn-tags"><span class="sn-tag recipe">Pine Plank</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Leatherwork Basics</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Tanning rack for leather.</div><div class="sn-tags"><span class="sn-tag recipe">Rawhide Leather</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#cc3333">🏹</div><div><div class="bb-name">Bowcraft &amp; Leather Armor</div><div class="bb-desc">Ranged weapons and leather protection</div></div><div class="bb-count">8 nodes</div></div><div class="node-grid"><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Bow Carving</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">Craft bows T1–T3.</div><div class="sn-tags"><span class="sn-tag recipe">Bows T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Leather Armor</div><div class="sn-lv">Lv 20</div></div><div class="sn-desc">Leather armor T1–T3.</div><div class="sn-tags"><span class="sn-tag recipe">Leather Armor T1–T3</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">String &amp; Bowstring</div><div class="sn-lv">Lv 25</div></div><div class="sn-desc">Craft strings and bowstrings from fiber.</div><div class="sn-tags"><span class="sn-tag recipe">String</span><span class="sn-tag recipe">Bowstring</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Advanced Bowcraft</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Bows T4–T6.</div><div class="sn-tags"><span class="sn-tag recipe">Bows T4–T6</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Advanced Leather</div><div class="sn-lv">Lv 45</div></div><div class="sn-desc">Leather armor T4–T6.</div><div class="sn-tags"><span class="sn-tag recipe">Leather T4–T6</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Legendary Bowyer</div><div class="sn-lv">Lv 80</div></div><div class="sn-desc">Bows T7–T8.</div><div class="sn-tags"><span class="sn-tag recipe">Bows T7–T8</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Legendary Leatherwork</div><div class="sn-lv">Lv 85</div></div><div class="sn-desc">Leather armor T7–T8.</div><div class="sn-tags"><span class="sn-tag recipe">Leather T7–T8</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Mount Taming</div><div class="sn-lv">Lv 50</div></div><div class="sn-desc">Tame and craft ground/flying mounts.</div><div class="sn-tags"><span class="sn-tag recipe">Ground Mounts</span><span class="sn-tag recipe">Flying Mounts</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--forester)">🌿</div><div><div class="bb-name">Gathering Mastery</div><div class="bb-desc">Woodcutting, skinning, fishing, herb gathering</div></div><div class="bb-count">6 nodes</div></div><div class="node-grid"><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Pine Logging</div><div class="sn-lv">Lv 1</div></div><div class="sn-tags"><span class="sn-tag recipe">Pine Log</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Oak Logging</div><div class="sn-lv">Lv 10</div></div><div class="sn-tags"><span class="sn-tag recipe">Oak Log</span><span class="sn-tag stat">+5% Yield</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Maple→Ash→Ironwood→Ebony→Wyrmwood→Worldtree</div><div class="sn-lv">Lv 20–95</div></div><div class="sn-desc">Progressive wood tier unlocks through T8.</div><div class="sn-tags"><span class="sn-tag recipe">Wood T3–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Skinning Mastery</div><div class="sn-lv">Lv 10–80</div></div><div class="sn-desc">Rawhide → Divine hide tiers.</div><div class="sn-tags"><span class="sn-tag recipe">Hide T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Fishing</div><div class="sn-lv">Lv 15–70</div></div><div class="sn-desc">Salmon → Leviathan → Kraken.</div><div class="sn-tags"><span class="sn-tag recipe">Fish T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Herb Gathering</div><div class="sn-lv">Lv 10–60</div></div><div class="sn-desc">Spice → Mystic herbs.</div><div class="sn-tags"><span class="sn-tag recipe">Herbs</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#8855cc">✨</div><div><div class="bb-name">Forester Infusions</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Verdant Infusion</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Nature damage +10%.</div><div class="sn-tags"><span class="sn-tag effect">Nature +10%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Beast Infusion</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Attack speed +5%.</div><div class="sn-tags"><span class="sn-tag effect">Atk Speed +5%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Primal Infusion</div><div class="sn-lv">Lv 70</div></div><div class="sn-desc">Bleed damage +15%.</div><div class="sn-tags"><span class="sn-tag effect">Bleed +15%</span></div></div></div></div>
+    </div>
+
+    <!-- CHEF -->
+    <div class="prof-panel" id="prof-chef">
+      <div class="tree-header" style="border-left:4px solid var(--chef)">
+        <div class="th-icon" style="background:var(--chef)">🍖</div>
+        <div class="th-info"><h2 style="color:var(--chef)">Chef</h2><p>Cook, brewer &amp; alchemist. Food, potions, drinks, and alchemy.</p></div>
+        <div class="th-stats"><div class="s"><span>Nodes:</span><span>17</span></div><div class="s"><span>Branches:</span><span>4</span></div><div class="s"><span>Max Lv:</span><span>95</span></div></div>
+      </div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--gold)">🎯</div><div><div class="bb-name">Core</div><div class="bb-desc">Campfire cooking and foraging</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node core"><div class="sn-head"><div class="sn-name">Chef's Initiation</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">Campfire cooking. Grilled fish, simple bread, roasted meat.</div><div class="sn-tags"><span class="sn-tag recipe">Campfire Recipes</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Basic Alchemy</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">Charcoal, salt, basic preparations.</div><div class="sn-tags"><span class="sn-tag recipe">Charcoal</span><span class="sn-tag recipe">Salt</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Kitchen Access</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Upgrade to kitchen station for T1+ cooking.</div><div class="sn-tags"><span class="sn-tag recipe">Kitchen Station</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#cc3333">🍲</div><div><div class="bb-name">Cooking &amp; Alchemy</div><div class="bb-desc">Food T0–T8, potions, drinks</div></div><div class="bb-count">7 nodes</div></div><div class="node-grid"><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Food T1–T3</div><div class="sn-lv">Lv 10–25</div></div><div class="sn-desc">Salted jerky → cooked meals → hearty stew.</div><div class="sn-tags"><span class="sn-tag recipe">Food T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Health Potions</div><div class="sn-lv">Lv 10–90</div></div><div class="sn-desc">Minor → Divine health potions (8 tiers).</div><div class="sn-tags"><span class="sn-tag recipe">HP Potions T1–T8</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Mana Potions</div><div class="sn-lv">Lv 10–90</div></div><div class="sn-desc">Minor → Divine mana potions (8 tiers).</div><div class="sn-tags"><span class="sn-tag recipe">MP Potions T1–T8</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Buff Potions</div><div class="sn-lv">Lv 30</div></div><div class="sn-desc">STR, DEF, SPD, Regen elixirs.</div><div class="sn-tags"><span class="sn-tag recipe">4+ Buff Types</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Drinks</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">Water → Fruit Juice (3 tiers).</div><div class="sn-tags"><span class="sn-tag recipe">Drinks T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Food T4–T6</div><div class="sn-lv">Lv 40–65</div></div><div class="sn-desc">Epic through mythic cuisine.</div><div class="sn-tags"><span class="sn-tag recipe">Food T4–T6</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Food T7–T8</div><div class="sn-lv">Lv 80–95</div></div><div class="sn-desc">Ancient → Divine Banquet.</div><div class="sn-tags"><span class="sn-tag recipe">Food T7–T8</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--chef)">🌿</div><div><div class="bb-name">Gathering</div><div class="bb-desc">Fishing, foraging, herb, ingredient</div></div><div class="bb-count">4 nodes</div></div><div class="node-grid"><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Fishing T1–T8</div><div class="sn-lv">Lv 1–80</div></div><div class="sn-desc">Salmon → Kraken.</div><div class="sn-tags"><span class="sn-tag recipe">Fish T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Foraging T1–T8</div><div class="sn-lv">Lv 5–75</div></div><div class="sn-desc">Fruit → Grain → Golden Wheat.</div><div class="sn-tags"><span class="sn-tag recipe">Forage T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Herb Gathering</div><div class="sn-lv">Lv 10–70</div></div><div class="sn-desc">Healing → Primordial herbs.</div><div class="sn-tags"><span class="sn-tag recipe">Herbs</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Ingredients</div><div class="sn-lv">Lv 15–50</div></div><div class="sn-desc">Milk, Honey, Salt, Water.</div><div class="sn-tags"><span class="sn-tag recipe">Ingredients</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#8855cc">✨</div><div><div class="bb-name">Chef Infusions</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Vitality Infusion</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Max HP +8%.</div><div class="sn-tags"><span class="sn-tag effect">HP +8%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Stamina Infusion</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Stamina regen +10%.</div><div class="sn-tags"><span class="sn-tag effect">Stamina Regen +10%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Elixir Infusion</div><div class="sn-lv">Lv 70</div></div><div class="sn-desc">Potion effectiveness +20%.</div><div class="sn-tags"><span class="sn-tag effect">Potion +20%</span></div></div></div></div>
+    </div>
+
+    <!-- ENGINEER -->
+    <div class="prof-panel" id="prof-engineer">
+      <div class="tree-header" style="border-left:4px solid var(--engineer)">
+        <div class="th-icon" style="background:var(--engineer)">⚙</div>
+        <div class="th-info"><h2 style="color:var(--engineer)">Engineer</h2><p>Mechanic, gunsmith &amp; inventor. Crossbows, guns, gadgets, and mechanical mounts.</p></div>
+        <div class="th-stats"><div class="s"><span>Nodes:</span><span>15</span></div><div class="s"><span>Branches:</span><span>4</span></div><div class="s"><span>Max Lv:</span><span>95</span></div></div>
+      </div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--gold)">🎯</div><div><div class="bb-name">Core</div><div class="bb-desc">Basic mechanics and tinkering</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node core"><div class="sn-head"><div class="sn-name">Tinker's Initiation</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">Scrap parts, basic traps, alarm tripwires.</div><div class="sn-tags"><span class="sn-tag recipe">Tinker Bench</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Component Assembly</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">Craft gears, springs, and basic components.</div><div class="sn-tags"><span class="sn-tag recipe">Copper Gear</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Workshop Access</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Unlock workshop for T1+ crafting.</div><div class="sn-tags"><span class="sn-tag recipe">Workshop</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#cc3333">🔫</div><div><div class="bb-name">Ranged Weapons &amp; Gadgets</div><div class="bb-desc">Crossbows, guns, components, mech mounts</div></div><div class="bb-count">6 nodes</div></div><div class="node-grid"><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Crossbow Craft</div><div class="sn-lv">Lv 15</div></div><div class="sn-tags"><span class="sn-tag recipe">Crossbows T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Gun Craft</div><div class="sn-lv">Lv 25</div></div><div class="sn-tags"><span class="sn-tag recipe">Guns T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Components</div><div class="sn-lv">Lv 30</div></div><div class="sn-desc">Gunpowder, gears, springs, lenses, circuits.</div><div class="sn-tags"><span class="sn-tag recipe">8 Components</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Advanced Ranged</div><div class="sn-lv">Lv 50</div></div><div class="sn-tags"><span class="sn-tag recipe">Crossbows + Guns T4–T6</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Mechanical Mounts</div><div class="sn-lv">Lv 55</div></div><div class="sn-tags"><span class="sn-tag recipe">Mechanical Mounts</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Legendary Engineering</div><div class="sn-lv">Lv 80</div></div><div class="sn-tags"><span class="sn-tag recipe">Crossbows + Guns T7–T8</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--engineer)">🧲</div><div><div class="bb-name">Scavenging Mastery</div><div class="bb-desc">Salvaging, scavenging, dismantling, special materials</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Salvaging T1–T8</div><div class="sn-lv">Lv 1–80</div></div><div class="sn-desc">Iron → Eternal scrap.</div><div class="sn-tags"><span class="sn-tag recipe">Scrap T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Scavenging T1–T8</div><div class="sn-lv">Lv 10–75</div></div><div class="sn-desc">Basic → Quantum parts.</div><div class="sn-tags"><span class="sn-tag recipe">Parts T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Special Materials</div><div class="sn-lv">Lv 20–60</div></div><div class="sn-desc">Oil, gas, explosives, batteries.</div><div class="sn-tags"><span class="sn-tag recipe">Special Materials</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#8855cc">✨</div><div><div class="bb-name">Engineer Infusions</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Mechanical Infusion</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Ranged damage +10%.</div><div class="sn-tags"><span class="sn-tag effect">Ranged +10%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Explosive Infusion</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">AoE damage +12%.</div><div class="sn-tags"><span class="sn-tag effect">AoE +12%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Automaton Infusion</div><div class="sn-lv">Lv 70</div></div><div class="sn-desc">Turret damage +15%.</div><div class="sn-tags"><span class="sn-tag effect">Turret +15%</span></div></div></div></div>
+    </div>
+
+    <!-- MYSTIC -->
+    <div class="prof-panel" id="prof-mystic">
+      <div class="tree-header" style="border-left:4px solid var(--mystic)">
+        <div class="th-icon" style="background:var(--mystic)">🔮</div>
+        <div class="th-info"><h2 style="color:var(--mystic)">Mystic</h2><p>Weaver, enchanter &amp; spellcrafter. Staves, cloth armor, enchanting, and magical mounts.</p></div>
+        <div class="th-stats"><div class="s"><span>Nodes:</span><span>18</span></div><div class="s"><span>Branches:</span><span>5</span></div><div class="s"><span>Max Lv:</span><span>95</span></div></div>
+      </div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--gold)">🎯</div><div><div class="bb-name">Core</div><div class="bb-desc">Weaving, spinning, and essence basics</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node core"><div class="sn-head"><div class="sn-name">Mystic's Initiation</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">Spinning wheel access, torn rag salvage.</div><div class="sn-tags"><span class="sn-tag recipe">Spinning Wheel</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Weaving Basics</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">Loom for cloth weaving.</div><div class="sn-tags"><span class="sn-tag recipe">Linen Cloth</span></div></div><div class="skill-node core"><div class="sn-head"><div class="sn-name">Essence Channeling</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">Extract and use essence for enchanting.</div><div class="sn-tags"><span class="sn-tag recipe">Minor Essence</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#cc3333">🪄</div><div><div class="bb-name">Staves, Cloth Armor &amp; Enchanting</div><div class="bb-desc">6 staff elements, cloth armor, tomes, wands, enchanting</div></div><div class="bb-count">10 nodes</div></div><div class="node-grid"><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Staff Crafting</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">Fire &amp; Frost staves T1–T3.</div><div class="sn-tags"><span class="sn-tag recipe">Fire/Frost Staff T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Cloth Armor</div><div class="sn-lv">Lv 20</div></div><div class="sn-desc">Hood, Robe, Pants, Slippers, Gloves, Mantle, Sash.</div><div class="sn-tags"><span class="sn-tag recipe">Cloth T1–T3</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">All Elements</div><div class="sn-lv">Lv 30</div></div><div class="sn-desc">Holy, Lightning, Nature, Arcane staves.</div><div class="sn-tags"><span class="sn-tag recipe">All 6 Staff Elements</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Tomes &amp; Wands</div><div class="sn-lv">Lv 35</div></div><div class="sn-desc">Off-hand tomes and 1h wands.</div><div class="sn-tags"><span class="sn-tag recipe">Tomes</span><span class="sn-tag recipe">Wands</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Enchanting Table</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Apply infusions to equipment.</div><div class="sn-tags"><span class="sn-tag recipe">Enchanting</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Advanced Craft</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">All staves + cloth T4–T6.</div><div class="sn-tags"><span class="sn-tag recipe">Staves + Cloth T4–T6</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Off-hand Relics</div><div class="sn-lv">Lv 60</div></div><div class="sn-desc">Trinkets and active-use relics.</div><div class="sn-tags"><span class="sn-tag recipe">Relics</span></div></div><div class="skill-node recipe"><div class="sn-head"><div class="sn-name">Legendary Mystic</div><div class="sn-lv">Lv 80</div></div><div class="sn-desc">All staves + cloth T7–T8, magical mounts.</div><div class="sn-tags"><span class="sn-tag recipe">All T7–T8</span><span class="sn-tag recipe">Magical Mounts</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:var(--mystic)">🌿</div><div><div class="bb-name">Gathering</div><div class="bb-desc">Herbalism, essence, crystal, special</div></div><div class="bb-count">4 nodes</div></div><div class="node-grid"><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Herbalism T1–T8</div><div class="sn-lv">Lv 1–80</div></div><div class="sn-desc">Healing → Primordial herbs.</div><div class="sn-tags"><span class="sn-tag recipe">Herbs T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Essence Extraction</div><div class="sn-lv">Lv 10–75</div></div><div class="sn-desc">Lesser → Radiant essence.</div><div class="sn-tags"><span class="sn-tag recipe">Essence T1–T8</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Crystal Harvesting</div><div class="sn-lv">Lv 15–70</div></div><div class="sn-desc">Mana → Primordial crystals.</div><div class="sn-tags"><span class="sn-tag recipe">Crystals</span></div></div><div class="skill-node stat"><div class="sn-head"><div class="sn-name">Special Gathering</div><div class="sn-lv">Lv 20–55</div></div><div class="sn-desc">Mushrooms, lichen, flowers, roots.</div><div class="sn-tags"><span class="sn-tag recipe">Special Items</span></div></div></div></div>
+      <div class="branch"><div class="branch-bar"><div class="bb-icon" style="background:#8855cc">✨</div><div><div class="bb-name">Mystic Infusions</div></div><div class="bb-count">3 nodes</div></div><div class="node-grid"><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Arcane Infusion</div><div class="sn-lv">Lv 40</div></div><div class="sn-desc">Spell power +10%.</div><div class="sn-tags"><span class="sn-tag effect">Spell Power +10%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Void Infusion</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Shadow damage +12%.</div><div class="sn-tags"><span class="sn-tag effect">Shadow +12%</span></div></div><div class="skill-node effect"><div class="sn-head"><div class="sn-name">Celestial Infusion</div><div class="sn-lv">Lv 70</div></div><div class="sn-desc">Holy damage +15%.</div><div class="sn-tags"><span class="sn-tag effect">Holy +15%</span></div></div></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ WEAPON SKILL LOADOUTS ═══════════════════ -->
+  <div class="mode-panel" id="mode-weapons">
+    <div class="tier-note">
+      <strong>Weapon Skill System:</strong> Each weapon type has <strong>5 skill slots</strong> bound to hotkeys 1–5.
+      Slots 1–3 have <strong>2–3 shared options</strong> across all 6 weapons of that type — pick one per slot.
+      Slot 4 has <strong>per-weapon grouped abilities</strong> (2 options each).
+      Slot 5 is the <strong>unique ultimate</strong> for each named weapon.
+    </div>
+
+    <div class="wtype-tabs" id="wtypeTabs">
+      <button class="active" data-wtype="sword">⚔ Sword</button>
+      <button data-wtype="axe1h">🪓 Axe</button>
+      <button data-wtype="greatsword">🗡 Greatsword</button>
+      <button data-wtype="greataxe">🪓 Greataxe</button>
+      <button data-wtype="dagger">🗡 Dagger</button>
+      <button data-wtype="bow">🏹 Bow</button>
+      <button data-wtype="firestaff">🔥 Fire Staff</button>
+      <button data-wtype="froststaff">❄ Frost Staff</button>
+      <button data-wtype="holystaff">☀ Holy Staff</button>
+    </div>
+
+    <!-- SWORD -->
+    <div class="wtype-panel active" id="wtype-sword">
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#cc3333;color:#fff">1</div><div><div class="sh-title">Attack (shared)</div><div class="sh-desc">Basic attack — pick one</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Slash</div><div class="so-desc">Basic sword slash attack</div><div class="so-stats"><span class="so-stat dmg">100% DMG</span><span class="so-stat cd">0s CD</span></div></div><div class="skill-opt"><div class="so-name">Thrust</div><div class="so-desc">Quick thrusting attack, +10% armor pen</div><div class="so-stats"><span class="so-stat dmg">90% DMG</span><span class="so-stat fx">armor pen</span></div></div><div class="skill-opt"><div class="so-name">Quick Jab</div><div class="so-desc">Fast jab, lower damage but builds combo</div><div class="so-stats"><span class="so-stat dmg">70% DMG</span><span class="so-stat fx">combo builder</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#e68a00;color:#fff">2</div><div><div class="sh-title">Core Skill (shared)</div><div class="sh-desc">Core offensive skills — pick one</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Power Strike</div><div class="so-desc">Powerful overhead strike dealing 150% damage</div><div class="so-stats"><span class="so-stat dmg">150% DMG</span><span class="so-stat cd">6s</span><span class="so-stat mana">15 MP</span></div></div><div class="skill-opt"><div class="so-name">Rend</div><div class="so-desc">Tearing strike causing bleed</div><div class="so-stats"><span class="so-stat dmg">120% DMG</span><span class="so-stat cd">5s</span><span class="so-stat fx">bleed 4s</span></div></div><div class="skill-opt"><div class="so-name">Cleave</div><div class="so-desc">Wide arc hitting multiple enemies</div><div class="so-stats"><span class="so-stat dmg">110% DMG</span><span class="so-stat cd">7s</span><span class="so-stat fx">AoE frontal</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#d4af37;color:#000">3</div><div><div class="sh-title">Utility (shared)</div><div class="sh-desc">Defensive / utility — pick one</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Parry</div><div class="so-desc">Block incoming attack and counter for 50% damage</div><div class="so-stats"><span class="so-stat cd">8s</span><span class="so-stat fx">block + counter</span></div></div><div class="skill-opt"><div class="so-name">Sidestep</div><div class="so-desc">Quick dodge with i-frames</div><div class="so-stats"><span class="so-stat cd">6s</span><span class="so-stat fx">dodge + i-frames</span></div></div><div class="skill-opt"><div class="so-name">Riposte</div><div class="so-desc">Counter next attack for 200% damage</div><div class="so-stats"><span class="so-stat dmg">200% DMG</span><span class="so-stat cd">10s</span><span class="so-stat fx">counter window</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#8855cc;color:#fff">4</div><div><div class="sh-title">Special (per weapon — 2 options each)</div></div></div><div class="slot-options"><div class="skill-opt" style="border-left:3px solid #cc3333"><div class="so-name">Bloodfeud: Rending Strike / Blood Fury</div><div class="so-desc">Deep wounds bleed 5s / Attack speed per bleed</div></div><div class="skill-opt" style="border-left:3px solid #3388cc"><div class="so-name">Wraithfang: Wraith Phase / Spectral Mark</div><div class="so-desc">Phase through enemy / Mark for crit</div></div><div class="skill-opt" style="border-left:3px solid #8855cc"><div class="so-name">Oathbreaker: Shield Shatter / Armor Break</div><div class="so-desc">Destroy shield + stun / -30% armor 6s</div></div><div class="skill-opt" style="border-left:3px solid #33aa55"><div class="so-name">Kinrend: Blood Drain / Blood Sacrifice</div><div class="so-desc">Lifesteal 200% / Spend 10% HP → +30% damage</div></div><div class="skill-opt" style="border-left:3px solid #e68a00"><div class="so-name">Dusksinger: Swift Strikes / Shadow Dash</div><div class="so-desc">3 rapid attacks @ 60% / Dash through enemies</div></div><div class="skill-opt" style="border-left:3px solid #cc3333"><div class="so-name">Emberclad: Ignite / Flame Burst</div><div class="so-desc">Fire DoT 6s / Detonate burns for burst</div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:var(--gold);color:#000">5</div><div><div class="sh-title">Ultimate (unique per weapon)</div></div></div><div class="ult-grid"><div class="ult-card"><div class="uc-weapon">Bloodfeud Blade</div><div class="uc-name">Bloodfeud's Vengeance</div><div class="uc-desc">300% damage to enemies who damaged you recently · 45s CD</div></div><div class="ult-card"><div class="uc-weapon">Wraithfang</div><div class="uc-name">Wraith's Whisper</div><div class="uc-desc">Invisible + next attack crits 250% · 40s CD</div></div><div class="ult-card"><div class="uc-weapon">Oathbreaker</div><div class="uc-name">Oathbreaker's Judgment</div><div class="uc-desc">Mark enemy — 50% more damage for 8s · 50s CD</div></div><div class="ult-card"><div class="uc-weapon">Kinrend</div><div class="uc-name">Kinrend's Bond</div><div class="uc-desc">Link to enemy — their damage heals you 10s · 60s CD</div></div><div class="ult-card"><div class="uc-weapon">Dusksinger</div><div class="uc-name">Dusksinger's Twilight</div><div class="uc-desc">Time slows, +100% attack speed 5s · 55s CD</div></div><div class="ult-card"><div class="uc-weapon">Emberclad</div><div class="uc-name">Emberclad's Inferno</div><div class="uc-desc">Engulf in flames, AoE fire damage · 45s CD</div></div></div></div>
+    </div>
+
+    <!-- BOW -->
+    <div class="wtype-panel" id="wtype-bow">
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#cc3333;color:#fff">1</div><div><div class="sh-title">Attack (shared)</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Quick Shot</div><div class="so-desc">Fast ranged arrow attack</div><div class="so-stats"><span class="so-stat dmg">100% DMG</span></div></div><div class="skill-opt"><div class="so-name">Hip Fire</div><div class="so-desc">Very fast but inaccurate</div><div class="so-stats"><span class="so-stat dmg">80% DMG</span><span class="so-stat fx">-20% accuracy</span></div></div><div class="skill-opt"><div class="so-name">Steady Shot</div><div class="so-desc">Slower but more damage</div><div class="so-stats"><span class="so-stat dmg">120% DMG</span><span class="so-stat fx">slower draw</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#e68a00;color:#fff">2</div><div><div class="sh-title">Core Skill (shared)</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Aimed Shot</div><div class="so-desc">Charged shot for 200% damage</div><div class="so-stats"><span class="so-stat dmg">200% DMG</span><span class="so-stat cd">4s</span></div></div><div class="skill-opt"><div class="so-name">Multi Shot</div><div class="so-desc">Fire 3 arrows in spread</div><div class="so-stats"><span class="so-stat fx">3 projectiles</span><span class="so-stat cd">5s</span></div></div><div class="skill-opt"><div class="so-name">Piercing Shot</div><div class="so-desc">Arrow passes through enemies</div><div class="so-stats"><span class="so-stat fx">pierce 3 targets</span><span class="so-stat cd">6s</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#d4af37;color:#000">3</div><div><div class="sh-title">Utility (shared)</div></div></div><div class="slot-options"><div class="skill-opt"><div class="so-name">Evasive Roll</div><div class="so-desc">Roll away, brief invulnerability</div><div class="so-stats"><span class="so-stat cd">8s</span><span class="so-stat fx">i-frames</span></div></div><div class="skill-opt"><div class="so-name">Backflip</div><div class="so-desc">Leap backwards while firing</div><div class="so-stats"><span class="so-stat cd">10s</span><span class="so-stat fx">retreat + shot</span></div></div><div class="skill-opt"><div class="so-name">Caltrops</div><div class="so-desc">Drop slowing traps behind</div><div class="so-stats"><span class="so-stat cd">12s</span><span class="so-stat fx">ground slow</span></div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:#8855cc;color:#fff">4</div><div><div class="sh-title">Special (per weapon)</div></div></div><div class="slot-options"><div class="skill-opt" style="border-left:3px solid #3388cc"><div class="so-name">Wraithbone: Spirit Arrow / Spectral Chain</div><div class="so-desc">Pierce through / Bounce 4 targets</div></div><div class="skill-opt" style="border-left:3px solid #cc3333"><div class="so-name">Bloodstring: Barbed Arrow / Blood Arrow</div><div class="so-desc">Heavy bleed 8s / Lifesteal</div></div><div class="skill-opt" style="border-left:3px solid #8855cc"><div class="so-name">Shadowflight: Triple Shot / Shadow Step</div><div class="so-desc">3 arrow spread / Stealth 3s after shot</div></div><div class="skill-opt" style="border-left:3px solid #e68a00"><div class="so-name">Emberthorn: Fire Arrow / Explosive Arrow</div><div class="so-desc">Burn DoT 5s / AoE fire explosion</div></div><div class="skill-opt" style="border-left:3px solid #33aa55"><div class="so-name">Ironvine: Entangle Shot / Net Shot</div><div class="so-desc">Root 3s / Slow + armor debuff</div></div><div class="skill-opt" style="border-left:3px solid #cc3333"><div class="so-name">Duskreaver: Shadow Volley / Death Mark</div><div class="so-desc">Arrow rain AoE / Vulnerability debuff</div></div></div></div>
+      <div class="slot-section"><div class="slot-header"><div class="sh-num" style="background:var(--gold);color:#000">5</div><div><div class="sh-title">Ultimate (unique per weapon)</div></div></div><div class="ult-grid"><div class="ult-card"><div class="uc-weapon">Wraithbone</div><div class="uc-name">Doom Arrow</div><div class="uc-desc">Mark + execute after 5s · 50s CD</div></div><div class="ult-card"><div class="uc-weapon">Bloodstring</div><div class="uc-name">Torrent</div><div class="uc-desc">Rapid bleed arrows 5s channel · 45s CD</div></div><div class="ult-card"><div class="uc-weapon">Shadowflight</div><div class="uc-name">Assassination</div><div class="uc-desc">Teleport behind + crit · 40s CD</div></div><div class="ult-card"><div class="uc-weapon">Emberthorn</div><div class="uc-name">Phoenix Shot</div><div class="uc-desc">Explosion + fire zone · 50s CD</div></div><div class="ult-card"><div class="uc-weapon">Ironvine</div><div class="uc-name">Prison</div><div class="uc-desc">Vine cage trapping enemies 5s · 55s CD</div></div><div class="ult-card"><div class="uc-weapon">Duskreaver</div><div class="uc-name">Dark Rain</div><div class="uc-desc">Massive arrow barrage AoE · 60s CD</div></div></div></div>
+    </div>
+
+    <!-- Placeholder panels for other weapon types -->
+    <div class="wtype-panel" id="wtype-axe1h"><div class="tier-note">1h Axe skills: Chop / Hack / Wild Swing · Cleave / Rend / Double Chop · Axe Block / Whirlwind / Throw Axe · Per-weapon specials for Gorehowl, Skullsplitter, Veinreaver, Ironmaw, Dreadcleaver, Bonehew · Unique ultimates each. Full data sourced from WCS <code>weaponSkills.ts</code>.</div></div>
+    <div class="wtype-panel" id="wtype-greatsword"><div class="tier-note">Greatsword skills: Heavy Slash / Overhead Smash / Ground Sweep · Whirlwind / Impaling Thrust / Blade Storm · Iron Guard / Shoulder Charge / Pommel Strike · Per-weapon specials for Doomspire, Bloodspire, Wraithblade, Emberbrand, Ironedge, Duskbringer · Unique ultimates each.</div></div>
+    <div class="wtype-panel" id="wtype-greataxe"><div class="tier-note">Greataxe skills: Heavy Chop / Wide Sweep / Ground Slam · Whirlwind / Brutal Cleave / Executioner · Brace / Charge / Battle Roar · Per-weapon specials for Skullsunder, Bloodreaver, Wraithhew, Embermaul, Ironrend, Dusksplitter · Unique ultimates each.</div></div>
+    <div class="wtype-panel" id="wtype-dagger"><div class="tier-note">Dagger skills: Quick Stab / Slice / Backstab · Blade Flurry / Eviscerate / Fan of Knives · Vanish / Shadow Step / Deflect · Per-weapon specials for Bloodshiv, Wraithclaw, Emberfang, Ironspike · Unique ultimates each.</div></div>
+    <div class="wtype-panel" id="wtype-firestaff"><div class="tier-note">Fire Staff skills: Fire Bolt / Flame Spray / Fire Orb · Flame Burst / Searing Beam / Fire Rain · Fire Shield / Flame Dash / Wall of Fire · Per-weapon specials for Emberwrath, Sunfire, Inferno Spire, Ash Grudge, Ember Heart, Blazing Wrath · Unique ultimates each.</div></div>
+    <div class="wtype-panel" id="wtype-froststaff"><div class="tier-note">Frost Staff skills: Frost Bolt / Ice Shard / Frost Spray · Frost Nova / Ice Lance / Blizzard · Ice Armor / Frost Blink / Ice Wall · Per-weapon specials for Glacial Spire, Frostbite, Winter Grudge, Ice Warden, Blizzard Heart, Frozen Spite · Unique ultimates each.</div></div>
+    <div class="wtype-panel" id="wtype-holystaff"><div class="tier-note">Holy Staff skills: Holy Smite / Light Beam / Divine Touch · Divine Heal / Prayer of Mending / Holy Nova · Divine Shield / Cleanse / Protection · Per-weapon specials for Dawnspire, Redemption, Sacred Light, Holy Wrath, Celestial Grace, Divine Judgment · Unique ultimates each.</div></div>
+  </div>
+
+  <!-- ═══════════════════ ARSENAL & TIER PROGRESSION ═══════════════════ -->
+  <div class="mode-panel" id="mode-arsenal">
+    <div class="tier-note">
+      <strong>Arsenal Tier Progression (T0–T8):</strong> Every weapon has a <strong>T0 starter version</strong> (70% damage, basic attack only, no ultimate, no 3rd ability slot). At <strong>T1</strong> all abilities unlock. Each tier adds stats and bonuses. <strong>Passives unlock at T5+</strong>.
+    </div>
+    <div class="node-grid" style="border:1px solid var(--gold-dim);border-radius:6px;margin-bottom:20px">
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T0 — Starter</div><div class="sn-lv">Lv 0</div></div><div class="sn-desc">70% damage. Basic attack only. No ultimate. No 3rd ability slot.</div><div class="sn-tags"><span class="sn-tag stat">×0.7 stats</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T1 — Common</div><div class="sn-lv">Lv 1</div></div><div class="sn-desc">Base damage. +5 HP, +3 Mana, +2 Defense. All abilities unlocked.</div><div class="sn-tags"><span class="sn-tag stat">×1.0 stats</span><span class="sn-tag recipe">All abilities</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T2 — Uncommon</div><div class="sn-lv">Lv 5</div></div><div class="sn-desc">+Crit Chance. +10 HP, +5 Mana, +4 Defense.</div><div class="sn-tags"><span class="sn-tag stat">×1.1 stats</span><span class="sn-tag effect">+2% Crit</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T3 — Rare</div><div class="sn-lv">Lv 10</div></div><div class="sn-desc">+Attack Speed. +15 HP, +8 Mana, +6 Defense.</div><div class="sn-tags"><span class="sn-tag stat">×1.2 stats</span><span class="sn-tag effect">+3% Atk Speed</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T4 — Epic</div><div class="sn-lv">Lv 15</div></div><div class="sn-desc">+1 Primary Attribute. +20 HP, +12 Mana, +8 Defense.</div><div class="sn-tags"><span class="sn-tag stat">×1.35 stats</span><span class="sn-tag effect">+1 Primary Attr</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T5 — Heroic</div><div class="sn-lv">Lv 25</div></div><div class="sn-desc">First Passive Unlocked. +2 Primary Attribute. +30 HP.</div><div class="sn-tags"><span class="sn-tag stat">×1.5 stats</span><span class="sn-tag recipe">Passive 1</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T6 — Mythic</div><div class="sn-lv">Lv 35</div></div><div class="sn-desc">Second Passive Unlocked. +3 Primary Attribute. +45 HP.</div><div class="sn-tags"><span class="sn-tag stat">×1.7 stats</span><span class="sn-tag recipe">Passive 2</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T7 — Ancient</div><div class="sn-lv">Lv 45</div></div><div class="sn-desc">+4 Dual Attributes. +65 HP, +35 Mana.</div><div class="sn-tags"><span class="sn-tag stat">×1.9 stats</span><span class="sn-tag effect">+4 Dual Attrs</span></div></div>
+      <div class="skill-node stat"><div class="sn-head"><div class="sn-name">T8 — Legendary</div><div class="sn-lv">Lv 55</div></div><div class="sn-desc">Third Passive Unlocked. +5 Dual Attributes. +100 HP, +50 Mana.</div><div class="sn-tags"><span class="sn-tag stat">×2.2 stats</span><span class="sn-tag recipe">Passive 3</span></div></div>
+    </div>
+    <div class="tier-note">
+      <strong>Stat Bars:</strong> Each weapon shows 6 normalized bars (0–100) for Damage, Speed, Combo, Crit, Block, Defense.
+      <strong>Abilities:</strong> Basic Attack + Signature + 3 Attacks + 3 Spells.
+      <strong>Passives:</strong> 3 per weapon, unlocking at T5, T6, and T8.
+      <strong>Example — Bloodfeud Blade:</strong> DMG 75 · SPD 60 · COMBO 85 · CRIT 50 · BLK 40 · DEF 30. Passives: Bloodlust (T5, +5% atk speed on kill), Swift Vengeance (T6, crits reduce CD), Deep Cuts (T8, +25% bleed dmg).
+    </div>
+  </div>
+
+  <footer class="footer">
+    Grudge Warlords — Profession &amp; Weapon Skill Trees · Created by Racalvin The Pirate King<br>
+    <a href="https://grudgewarlords.com">grudgewarlords.com</a> ·
+    <a href="https://grudge-studio.com">grudge-studio.com</a> ·
+    <a href="index.html">Back to Hub</a>
+  </footer>
+</div>
+
+<script>
+// Mode tab switching
+document.querySelectorAll('.mode-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('mode-' + btn.dataset.mode).classList.add('active');
+  });
+});
+// Profession tab switching
+document.querySelectorAll('#profTabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#profTabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.prof-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('prof-' + btn.dataset.prof).classList.add('active');
+  });
+});
+// Weapon type tab switching
+document.querySelectorAll('#wtypeTabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#wtypeTabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.wtype-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('wtype-' + btn.dataset.wtype).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

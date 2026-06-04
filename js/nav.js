@@ -17,6 +17,12 @@
     { label: '3D Models',    href: './3D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png' },
     { label: 'Audio',        href: './AUDIO_BROWSER.html',         icon: ICN + '/Icons_Essential/v1.2/Icons/SpeakerOn.png' },
     { label: 'Icons',        href: './tools/icon-generator.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/Pencil.png' },
+    { label: 'Guide',        href: './grudge-guide.html',           icon: ICN + '/496_rpg_icons/I_Scroll.png' },
+    { label: 'Stats',        href: './stats-guide.html',            icon: ICN + '/496_rpg_icons/I_Book.png' },
+    { label: 'Professions',  href: './professions.html',            icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png' },
+    { label: 'Crafting',     href: './crafting.html',               icon: ICN + '/496_rpg_icons/S_Fire05.png' },
+    { label: 'Builder',      href: './character-builder.html',      icon: ICN + '/ui/buttons/people.png' },
+    { label: 'Panel',        href: './main-panel.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/Gamepad.png' },
     { label: 'Admin',        href: './admin.html',                 icon: ICN + '/Icons_Essential/v1.2/Icons/Gear.png' }
   ];
 

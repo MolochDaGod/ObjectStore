@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <title>Grudge Warlords — Stats & Attributes Guide</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <style>
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; padding: 30px 0; border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1; margin-bottom: 30px; }
+    .header h1 { font-family: var(--font-display); font-size: 2.4em; }
+    .header p { color: var(--muted); margin-top: 8px; font-size: 1em; }
+    .level-info { display: flex; justify-content: center; gap: 30px; margin-top: 16px; flex-wrap: wrap; }
+    .level-info .li-item { text-align: center; }
+    .level-info .li-val { color: var(--gold); font-size: 1.5em; font-weight: 700; font-family: var(--font-mono); }
+    .level-info .li-lbl { color: var(--muted); font-size: 0.8em; }
+
+    .attr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .attr-card { padding: 24px; border-radius: 4px; border-left: 5px solid; transition: 0.2s; }
+    .attr-card:hover { transform: translateY(-3px); }
+    .attr-card h3 { font-size: 1.2em; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .attr-card .role-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.75em; font-family: var(--font-mono); }
+    .attr-card .desc { color: var(--muted); font-size: 0.9em; line-height: 1.5; margin: 8px 0; }
+    .attr-card .gains-list { list-style: none; padding: 0; margin: 10px 0 0; }
+    .attr-card .gains-list li { padding: 3px 0; font-size: 0.85em; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; }
+    .attr-card .gains-list .gl { color: var(--muted); }
+    .attr-card .gains-list .gv { color: var(--green); font-family: var(--font-mono); }
+    .attr-card .uuid-line { font-family: var(--font-mono); font-size: 0.65em; color: var(--dim); margin-top: 8px; }
+
+    .section { margin-bottom: 40px; }
+    .section h2 { color: var(--gold); font-size: 1.4em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--gold-dim); }
+
+    .formula-table { width: 100%; border-collapse: collapse; }
+    .formula-table th { text-align: left; color: var(--gold); padding: 10px 12px; border-bottom: 2px solid var(--gold-dim); font-size: 0.85em; font-family: var(--font-heading); }
+    .formula-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85em; }
+    .formula-table td:first-child { color: var(--text); font-weight: 600; }
+    .formula-table td:nth-child(2) { font-family: var(--font-mono); color: var(--cyan); }
+    .formula-table td:nth-child(3) { color: var(--muted); }
+
+    .formula-box { padding: 16px 20px; border-radius: 4px; margin: 16px 0; font-family: var(--font-mono); font-size: 0.95em; color: var(--gold-light); }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 16px 0; }
+    .stat-item { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 4px; font-size: 0.85em; }
+    .stat-item .sk { color: var(--muted); }
+    .stat-item .sv { color: var(--green); font-family: var(--font-mono); }
+
+    .back-link { display: inline-block; margin-bottom: 16px; color: var(--gold); font-size: 0.9em; }
+    @media(max-width:768px) { .attr-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="index.html">← Back to Hub</a>
+    <header class="header">
+      <h1 class="gold-text">Stats & Attributes Guide</h1>
+      <p>Complete reference for the Grudge Warlords attribute system — Level 0-20</p>
+      <div class="level-info">
+        <div class="li-item"><div class="li-val">0–20</div><div class="li-lbl">Level Range</div></div>
+        <div class="li-item"><div class="li-val">20</div><div class="li-lbl">Starting Points</div></div>
+        <div class="li-item"><div class="li-val">+7</div><div class="li-lbl">Per Level</div></div>
+        <div class="li-item"><div class="li-val">160</div><div class="li-lbl">Max Points (Lv20)</div></div>
+        <div class="li-item"><div class="li-val">8</div><div class="li-lbl">Attributes</div></div>
+        <div class="li-item"><div class="li-val">37</div><div class="li-lbl">Derived Stats</div></div>
+      </div>
+    </header>
+
+    <!-- THE 8 ATTRIBUTES -->
+    <div class="section">
+      <h2>The 8 Attributes</h2>
+      <div class="attr-grid" id="attrGrid"></div>
+    </div>
+
+    <!-- ALL 37 DERIVED STATS -->
+    <div class="section">
+      <h2>All 37 Derived Stats</h2>
+      <div class="stat-grid" id="allStats"></div>
+    </div>
+
+    <!-- DIMINISHING RETURNS -->
+    <div class="section">
+      <h2>Diminishing Returns</h2>
+      <div class="formula-box parchment-panel">
+        Effective Points = Full Points (1-25) + Half Points (26-50) + Quarter Points (51+)<br><br>
+        Total Stat = (Per-Point Gain × Effective Points) + Base Stat
+      </div>
+      <table class="formula-table">
+        <tr><th>Actual Points</th><th>Calculation</th><th>Effective</th><th>Efficiency</th></tr>
+        <tr><td>20</td><td>20 (no DR)</td><td>20</td><td>100%</td></tr>
+        <tr><td>25</td><td>25 (threshold)</td><td>25</td><td>100%</td></tr>
+        <tr><td>35</td><td>25 + (10 × 0.5)</td><td>30</td><td>85.7%</td></tr>
+        <tr><td>50</td><td>25 + (25 × 0.5)</td><td>37.5</td><td>75%</td></tr>
+        <tr><td>60</td><td>25 + 12.5 + (10 × 0.25)</td><td>40</td><td>66.7%</td></tr>
+        <tr><td>80</td><td>25 + 12.5 + (30 × 0.25)</td><td>45</td><td>56.25%</td></tr>
+        <tr><td>160</td><td>25 + 12.5 + (110 × 0.25)</td><td>65</td><td>40.6%</td></tr>
+      </table>
+    </div>
+
+    <!-- STAT CAPS -->
+    <div class="section">
+      <h2>Stat Caps</h2>
+      <table class="formula-table" id="capsTable"></table>
+    </div>
+
+    <!-- COMBAT MATH -->
+    <div class="section">
+      <h2>Combat Math</h2>
+      <h3 style="color:var(--gold-light);margin-bottom:12px;">Damage Reduction (Defense)</h3>
+      <div class="formula-box ornate-frame">Damage Taken = Incoming Damage × (100 - √Defense) / 100</div>
+      <table class="formula-table">
+        <tr><th>Defense</th><th>√Defense</th><th>Reduction</th><th>100 Dmg →</th></tr>
+        <tr><td>100</td><td>10</td><td>10%</td><td>90 damage</td></tr>
+        <tr><td>400</td><td>20</td><td>20%</td><td>80 damage</td></tr>
+        <tr><td>900</td><td>30</td><td>30%</td><td>70 damage</td></tr>
+        <tr><td>1600</td><td>40</td><td>40%</td><td>60 damage</td></tr>
+      </table>
+
+      <h3 style="color:var(--gold-light);margin:24px 0 12px;">Block & Critical</h3>
+      <div class="formula-box stone-panel">
+        Block: IF Random &lt; Block Chance → Damage = Damage × (1 - Block Factor)<br>
+        Critical: IF Random &lt; Crit Chance → Damage = Damage × Crit Factor<br><br>
+        Note: Block check happens BEFORE crit check. Crits cannot occur on blocked attacks.
+      </div>
+
+      <h3 style="color:var(--gold-light);margin:24px 0 12px;">Drain / Reflect / Absorb</h3>
+      <div class="formula-box stone-panel">
+        Health Restored = Damage Dealt × Drain Health Factor (cap 50%)<br>
+        Damage Reflected = Damage Received × Reflect Factor (cap 50%)<br>
+        Absorb = Damage Received × Absorb Factor (cap 50%)<br><br>
+        Reflect does NOT proc on blocked hits.
+      </div>
+
+      <h3 style="color:var(--gold-light);margin:24px 0 12px;">Full Combat Pipeline (8 Steps)</h3>
+      <ol style="line-height:2; color:var(--muted); font-size:0.9em; padding-left:20px;">
+        <li>Calculate Base Damage — Level + Attributes + Equipment + Traits</li>
+        <li>Apply Defense Break — Reduce target defense by attacker's Defense Break Factor</li>
+        <li>Calculate Mitigation — Apply defense formula (√defense reduction)</li>
+        <li>Apply Random Variance — ±25% deviation (if enabled)</li>
+        <li>Check Block — Roll vs effective block chance (modified by Block Break)</li>
+        <li>Check Critical — Roll vs effective crit chance (modified by Crit Evasion) if not blocked</li>
+        <li>Apply Damage — Subtract from target HP</li>
+        <li>Trigger Effects — Drain, Reflect, Absorb factors activate</li>
+      </ol>
+    </div>
+
+    <!-- TIER SYSTEM -->
+    <div class="section">
+      <h2>Tier System (T1-T8)</h2>
+      <p style="color:var(--muted);font-size:0.9em;margin-bottom:12px">
+        T5 renamed from "Legendary" to <strong>Heroic</strong>; T8 renamed from "Legendary Artifact" to <strong>Legendary</strong>.
+        The word <em>Legendary</em> now refers to the T8 tier label only. The <strong>Artifact</strong> weapon category (end-game, world-found)
+        is separate - see the <a href="items-guide.html" style="color:var(--gold)">Items &amp; System Guide</a> for details.
+      </p>
+      <div class="attr-grid">
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #8b7355"><h3 style="color:#8b7355;margin:0">T1 Common</h3><p class="desc">Base items. Starting gear, easy to craft.</p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #a8a8a8"><h3 style="color:#a8a8a8;margin:0">T2 Uncommon</h3><p class="desc">Slightly improved stats. Early progression.</p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #4a9eff"><h3 style="color:#4a9eff;margin:0">T3 Rare</h3><p class="desc">Notable stat jump. Mid-game gear.</p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #9d4dff"><h3 style="color:#9d4dff;margin:0">T4 Epic</h3><p class="desc">Strong items with special properties.</p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #ff4d4d"><h3 style="color:#ff4d4d;margin:0">T5 Heroic</h3><p class="desc">End-game crafts and rare drops. <span style="color:var(--gold-light);font-size:0.78em">was "Legendary"</span></p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #ffaa00"><h3 style="color:#ffaa00;margin:0">T6 Mythic</h3><p class="desc">Faction-specific powerful gear.</p></div>
+        <div class="fantasy-panel" style="padding:16px;border-left:4px solid #d4a84b"><h3 style="color:#d4a84b;margin:0">T7 Ancient</h3><p class="desc">Ancient relics with unique abilities.</p></div>
+        <div class="fantasy-panel animate-rune-pulse" style="padding:16px;border-left:4px solid #f0d890"><h3 style="color:#f0d890;margin:0">T8 Legendary</h3><p class="desc">Apex of the crafting track. <span style="color:var(--gold-light);font-size:0.78em">was "Legendary Artifact"</span></p></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CDN = 'https://assets.grudge-studio.com';
+    const PERCENT_STATS = new Set(['block','blockEffect','evasion','accuracy','criticalChance','criticalDamage',
+      'attackSpeed','movementSpeed','resistance','cdrResist','defenseBreakResist','armorPenetration',
+      'blockPenetration','defenseBreak','drainHealth','drainMana','cooldownReduction','abilityCost','spellAccuracy',
+      'stagger','ccResistance','damageReduction','bleedResist','statusEffect','spellblock','dodge',
+      'reflexTime','criticalEvasion','fallDamage','comboCooldownRed']);
+
+    async function init() {
+      const data = await fetch('./api/v1/master-attributes.json').then(r => r.json());
+      const attrs = data.attributes;
+
+      // Render attribute cards
+      document.getElementById('attrGrid').innerHTML = attrs.map(a => {
+        const gainsHtml = Object.entries(a.gains || {}).map(([k, g]) => {
+          const isPercent = PERCENT_STATS.has(k);
+          const parts = [];
+          if (g.flat !== undefined && g.flat !== 0) parts.push(`+${g.flat}${isPercent ? '%' : ''} flat`);
+          if (g.percent !== undefined && g.percent !== 0) parts.push(`+${g.percent}% base`);
+          const display = parts.length ? parts.join(' / ') : '+0';
+          return `<li><span class="gl">${g.label}</span><span class="gv">${display}</span></li>`;
+        }).join('');
+
+        const iconSrc = a.icon ? `${CDN}/${a.icon}` : '';
+        const iconHtml = iconSrc
+          ? `<img src="${iconSrc}" class="attr-icon" alt="${a.name}" onerror="this.outerHTML='<span style=font-size:1.2em>${a.emoji}</span>'">`
+          : `<span style="font-size:1.2em">${a.emoji}</span>`;
+
+        return `
+          <div class="attr-card fantasy-panel" style="border-color:${a.color}">
+            <h3 style="color:${a.color}">
+              ${iconHtml}
+              ${a.name}
+            </h3>
+            <span class="role-badge" style="background:${a.color}22;color:${a.color}">${a.role || ''}</span>
+            <p class="desc">${a.description}</p>
+            <ul class="gains-list">${gainsHtml}</ul>
+            <div class="uuid-line">UUID: ${a.uuid}</div>
+          </div>`;
+      }).join('');
+
+      // Render all 37 derived stats
+      if (data.statDescriptions && Object.keys(data.statDescriptions).length) {
+        document.getElementById('allStats').innerHTML = Object.entries(data.statDescriptions).map(([k, desc]) =>
+          `<div class="stat-item inset-panel"><span class="sk">${k.replace(/([A-Z])/g,' $1').trim()}</span><span class="sv" title="${desc}">${desc}</span></div>`
+        ).join('');
+      } else {
+        // Fallback: derive stat names from attribute gains keys
+        const allStatKeys = new Set();
+        attrs.forEach(a => {
+          if (a.gains) Object.keys(a.gains).forEach(k => allStatKeys.add(k));
+        });
+        // Add known base stats
+        ['health','mana','stamina','damage','defense','block','blockEffect','evasion','accuracy',
+         'criticalChance','criticalDamage','attackSpeed','movementSpeed','resistance','cdrResist',
+         'defenseBreakResist','armorPenetration','blockPenetration','defenseBreak','drainHealth',
+         'manaRegen','healthRegen','cooldownReduction','abilityCost','spellAccuracy','stagger',
+         'ccResistance','armor','damageReduction','bleedResist','statusEffect','spellblock',
+         'dodge','reflexTime','criticalEvasion','fallDamage','comboCooldownRed'].forEach(k => allStatKeys.add(k));
+        const sortedStats = [...allStatKeys].sort();
+        document.getElementById('allStats').innerHTML = sortedStats.map(k => {
+          const label = k.replace(/([A-Z])/g, ' $1').trim();
+          const unit = PERCENT_STATS.has(k) ? '%' : '';
+          // Find which attributes contribute to this stat
+          const sources = attrs.filter(a => a.gains && a.gains[k]).map(a => {
+            const g = a.gains[k];
+            const parts = [];
+            if (g.flat && g.flat !== 0) parts.push(`+${g.flat}${unit}/pt`);
+            if (g.percent && g.percent !== 0) parts.push(`+${g.percent}%/pt`);
+            return `${a.name}: ${parts.join(', ')}`;
+          });
+          const desc = sources.length ? sources.join(' · ') : 'Base stat';
+          return `<div class="stat-item inset-panel"><span class="sk">${label}</span><span class="sv" title="${desc}" style="font-size:0.75em;">${desc}</span></div>`;
+        }).join('');
+      }
+
+      // Render stat caps
+      if (data.statCaps && Object.keys(data.statCaps).length) {
+        document.getElementById('capsTable').innerHTML = '<tr><th>Stat</th><th>Cap</th><th>Rationale</th></tr>' +
+          Object.entries(data.statCaps).map(([k, c]) =>
+            `<tr><td>${k.replace(/([A-Z])/g,' $1').trim()}</td><td style="color:var(--gold)">${c.display}</td><td>${c.rationale}</td></tr>`
+          ).join('');
+      } else {
+        // Fallback: known stat caps from game design
+        const defaultCaps = [
+          ['Block Chance', '75%', 'Prevents permanent immunity'],
+          ['Critical Chance', '75%', 'Balanced with Crit Evasion'],
+          ['Evasion', '50%', 'Cannot dodge more than half of attacks'],
+          ['Damage Reduction', '75%', 'Always take some damage'],
+          ['Drain Health', '50%', 'Lifesteal cap prevents full sustain'],
+          ['Cooldown Reduction', '50%', 'Skills must have minimum cooldowns'],
+          ['Movement Speed', '200%', 'Map balance; prevents extreme kiting'],
+          ['Attack Speed', '200%', 'Animation and server tick limits'],
+          ['Resistance', '75%', 'Magic damage remains relevant'],
+          ['Absorb', '50%', 'Damage shields cannot negate all damage'],
+          ['Reflect', '50%', 'Reflected damage has diminishing returns'],
+        ];
+        document.getElementById('capsTable').innerHTML = '<tr><th>Stat</th><th>Cap</th><th>Rationale</th></tr>' +
+          defaultCaps.map(([stat, cap, why]) =>
+            `<tr><td>${stat}</td><td style="color:var(--gold)">${cap}</td><td>${why}</td></tr>`
+          ).join('');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

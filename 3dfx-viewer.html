@@ -173,6 +173,55 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
 /* ---------- Toast ---------- */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--card-bg);border:1px solid var(--accent-gold);color:var(--text-primary);padding:10px 18px;border-radius:8px;font-size:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,.6)}
 .toast.show{opacity:1}
+
+/* ---------- UUID badge (inline, no patch) ---------- */
+.uuid-badge{font-size:9px;color:var(--accent-gold);background:var(--accent-gold-soft);padding:1px 5px;border-radius:4px;cursor:pointer;font-family:"Cascadia Code","Fira Code",monospace;border:1px solid var(--accent-gold-strong);flex-shrink:0;transition:background .15s}
+.uuid-badge:hover{background:var(--accent-gold-strong)}
+
+/* ---------- Loading skeleton ---------- */
+.skeleton{padding:6px 10px}
+.sk-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;margin-bottom:3px;background:var(--card-bg-soft)}
+.sk-dot{width:10px;height:10px;border-radius:50%;background:var(--border-soft)}
+.sk-bar{height:10px;border-radius:4px;background:var(--border-soft)}
+.sk-item,.sk-dot,.sk-bar{animation:shimmer 1.4s ease-in-out infinite alternate}
+@keyframes shimmer{0%{opacity:.4}100%{opacity:.9}}
+
+/* ---------- Empty state ---------- */
+.empty-state{padding:28px 16px;text-align:center;color:var(--text-dim);font-size:12px;line-height:1.6}
+.empty-state .empty-icon{font-size:28px;margin-bottom:8px;opacity:.5}
+
+/* ---------- Better active effect item ---------- */
+.effect-item.active{background:var(--accent-gold-soft);border-color:var(--accent-gold);border-left:3px solid var(--accent-gold)}
+
+/* ---------- Keyboard hints ---------- */
+.kbd-hints{position:absolute;bottom:10px;right:12px;font-size:9px;color:var(--text-dim);background:rgba(15,20,25,.85);padding:4px 10px;border-radius:4px;backdrop-filter:blur(4px);border:1px solid var(--border-soft);display:flex;gap:8px}
+.kbd-hints kbd{background:var(--bg-darker);border:1px solid var(--border-soft);border-radius:3px;padding:1px 5px;font-family:inherit;font-size:9px;color:var(--text-primary)}
+
+/* ---------- Auth modal ---------- */
+.auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+.auth-overlay.show{display:flex}
+.auth-modal{background:var(--card-bg);border:1px solid var(--accent-gold);border-radius:12px;padding:24px 28px;max-width:380px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.auth-modal h3{font-size:15px;margin-bottom:8px;color:var(--accent-gold)}
+.auth-modal p{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:14px}
+.auth-modal .auth-btns{display:flex;gap:8px}
+.auth-modal .auth-btns a,.auth-modal .auth-btns button{flex:1;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;font-family:inherit;border:1px solid var(--border-soft)}
+.auth-modal .auth-btns a{background:var(--accent-gold);border-color:var(--accent-gold);color:#000}
+.auth-modal .auth-btns button{background:var(--bg-darker);color:var(--text-dim)}
+
+/* ---------- Inspector UUID section ---------- */
+.uuid-display{font-size:11px;color:var(--accent-gold);background:var(--bg-darker);padding:5px 8px;border-radius:4px;border:1px solid var(--border-soft);font-family:"Cascadia Code","Fira Code",monospace;word-break:break-all;flex:1}
+.uuid-copy-btn{background:var(--accent-gold);border:1px solid var(--accent-gold);color:#000;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:600;font-family:inherit;transition:background .15s}
+.uuid-copy-btn:hover{background:#e8bc5a}
+.snippet-toggle{width:100%;background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:5px 8px;border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;text-align:left;transition:border-color .15s}
+.snippet-toggle:hover{border-color:var(--accent-gold)}
+.snippet-pre{display:none;font-size:10px;color:#d4cfb9;background:var(--bg-darker);padding:8px;border-radius:4px;border:1px solid var(--border-soft);font-family:"Cascadia Code","Fira Code",monospace;line-height:1.5;overflow-x:auto;white-space:pre;max-height:140px;margin-top:6px}
+.snippet-pre.show{display:block}
+
+/* ---------- Responsive: inspector bottom sheet < 900px ---------- */
+@media(max-width:900px){
+  .inspector{grid-row:auto;grid-column:1/-1;border-left:none;border-top:1px solid var(--border-soft);max-height:32vh}
+  .kbd-hints{display:none}
+}
 </style>
 </head>
 <body>
@@ -208,7 +257,16 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
     <div class="sb-panel active" id="panel-effects">
       <div class="search"><input type="text" id="search" placeholder="Search effects…" oninput="filterEffects()"></div>
       <div class="categories" id="categories"></div>
-      <div class="effect-list" id="effectList"></div>
+      <div class="effect-list" id="effectList">
+        <div class="skeleton" id="effectSkeleton">
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:70%"></div></div>
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:55%"></div></div>
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:80%"></div></div>
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:45%"></div></div>
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:65%"></div></div>
+          <div class="sk-item"><div class="sk-dot"></div><div class="sk-bar" style="width:50%"></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- Spells panel -->
@@ -242,10 +300,21 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
     </div>
     <div class="vp-effect-name" id="effectNameDisplay">Select an effect</div>
     <div class="vp-info" id="vpInfo">FPS: -- · Particles: 0</div>
+    <div class="kbd-hints"><kbd>Space</kbd> Play/Pause <kbd>R</kbd> Restart <kbd>G</kbd> Grid <kbd>Esc</kbd> Close</div>
   </div>
 
   <!-- Inspector -->
   <aside class="inspector">
+    <div class="insp-section" id="uuid-section">
+      <div class="insp-title">Grudge UUID</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <code class="uuid-display" id="uuid-display">Select an effect</code>
+        <button class="uuid-copy-btn" id="uuid-copy-btn" onclick="copyCurrentUUID()">Copy</button>
+      </div>
+      <button class="snippet-toggle" onclick="toggleSnippet('three')">📋 Copy Three.js snippet</button>
+      <button class="snippet-toggle" style="margin-top:4px" onclick="toggleSnippet('babylon')">📋 Copy Babylon.js snippet</button>
+      <pre class="snippet-pre" id="uuid-snippet"></pre>
+    </div>
     <div class="insp-section">
       <div class="insp-title">Colors</div>
       <div class="insp-row"><span class="insp-label">Primary</span><div class="insp-value"><input type="color" id="color1" value="#ff4400" onchange="updateColors()"><input type="text" id="color1Hex" value="#ff4400" style="width:70px" onchange="document.getElementById('color1').value=this.value;updateColors()"></div></div>
@@ -305,6 +374,17 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
 
 <div class="toast" id="toast"></div>
 
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-modal">
+    <h3>☁ Grudge ID Required</h3>
+    <p>Sign in with your Grudge ID to save effects to the cloud. Your effects will be tagged with your account for attribution.</p>
+    <div class="auth-btns">
+      <a href="https://id.grudge-studio.com" target="_blank">Sign In</a>
+      <button onclick="closeAuthModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script type="importmap">
 {
   "imports": {
@@ -325,12 +405,14 @@ const OBJECTSTORE_BASE = 'https://objectstore.grudge-studio.com';
 const REGISTRY_URL     = './api/v1/3dfx-registry.json';
 const SPELLS_URL       = './api/v1/vfx-spells.json';
 const EXAMPLES_URL     = './api/v1/3dfx-examples.json';
+const UUIDS_URL        = './api/v1/3dfx-uuids.json';
 const R2_URL           = 'https://objectstore.grudge-studio.com';
 
 // ── State ──
 let registry = null;
 let spellRegistry = null;
 let examplesRegistry = null;
+let uuidMap = {};
 let scene, camera, renderer, composer, bloomPass, controls, transformControls;
 let clock = new THREE.Clock();
 let effectGroup = new THREE.Group();
@@ -901,17 +983,24 @@ function loadRegistry() {
   Promise.all([
     fetch(REGISTRY_URL).then(r => r.json()).catch(() => null),
     fetch(SPELLS_URL).then(r => r.json()).catch(() => null),
-    fetch(EXAMPLES_URL).then(r => r.json()).catch(() => null)
-  ]).then(([fxData, spData, exData]) => {
+    fetch(EXAMPLES_URL).then(r => r.json()).catch(() => null),
+    fetch(UUIDS_URL).then(r => r.json()).catch(() => null)
+  ]).then(([fxData, spData, exData, uuidData]) => {
     registry         = fxData || { effects: {}, categories: {}, totalEffects: 0 };
     spellRegistry    = spData || null;
     examplesRegistry = exData || null;
+    uuidMap          = uuidData?.uuids || {};
 
-    // Effects stats
+    // Stats
     const effectCount = Object.keys(registry.effects).length;
     const spellCount  = spData ? Object.keys(spData.spells || {}).length : 0;
+    const uuidCount   = Object.keys(uuidMap).length;
     const exCount     = exData ? (exData.examples || []).length : 0;
-    document.getElementById('stats').textContent = `${effectCount} effects · ${spellCount} spells · ${exCount} examples`;
+    document.getElementById('stats').textContent = `${effectCount} effects \u00b7 ${spellCount} spells \u00b7 ${uuidCount} UUIDs \u00b7 ${exCount} examples`;
+
+    // Remove loading skeleton
+    const skel = document.getElementById('effectSkeleton');
+    if (skel) skel.remove();
 
     buildCategoryButtons(registry.categories || {});
     buildEffectList(registry.effects);
@@ -924,6 +1013,8 @@ function loadRegistry() {
   }).catch(err => {
     console.error('Failed to load registry:', err);
     document.getElementById('stats').textContent = 'Failed to load registry';
+    const skel = document.getElementById('effectSkeleton');
+    if (skel) skel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u26a0</div>Failed to load effects registry</div>';
   });
 }
 
@@ -940,10 +1031,12 @@ function buildEffectList(effects, filter = null, search = '') {
   const el = document.getElementById('effectList');
   el.innerHTML = '';
   const catColors = registry?.categories || {};
+  let count = 0;
 
   for (const [id, fx] of Object.entries(effects || {})) {
     if (filter && filter !== 'all' && fx.category !== filter) continue;
     if (search && !fx.name.toLowerCase().includes(search) && !fx.tags?.some(t => t.includes(search))) continue;
+    count++;
 
     const color = catColors[fx.category]?.color || 'var(--accent-gold)';
     const srcLabel = (fx.source || '')
@@ -952,13 +1045,24 @@ function buildEffectList(effects, filter = null, search = '') {
       .replace('unity-arpg-effects',   'Unity ARPG')
       .replace('unity-new-effects',    'Unity NEW')
       .replace('unity-ummorp-skills',  'Unity Skill');
-    el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')">
+    const uuid = uuidMap[id] || '';
+    const uuidBadge = uuid
+      ? `<span class="uuid-badge" title="Copy: ${uuid}" onclick="event.stopPropagation();copyText('${uuid}')">${uuid.slice(-8)}</span>`
+      : '';
+    const desc = (fx.description || '').replace(/"/g, '&quot;');
+    const tooltip = uuid ? `${desc}\n${uuid}` : desc;
+    el.innerHTML += `<div class="effect-item" data-id="${id}" onclick="selectEffect('${id}')" title="${tooltip}">
       <div class="effect-dot" style="background:${color};color:${color}"></div>
       <div style="flex:1;overflow:hidden">
         <div class="effect-name">${fx.name}</div>
         <div class="effect-meta"><span class="effect-cat">${fx.category || ''}</span><span class="effect-src">${srcLabel}</span></div>
       </div>
+      ${uuidBadge}
     </div>`;
+  }
+
+  if (count === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">\ud83d\udd0d</div>No effects match your search</div>`;
   }
 }
 
@@ -1054,6 +1158,19 @@ window.selectEffect = function (id) {
   const b = document.getElementById('btn-play');
   b.classList.add('playing');
   b.textContent = '⏸';
+
+  // Update inspector UUID
+  const uuid = uuidMap[id] || '';
+  const uuidEl = document.getElementById('uuid-display');
+  if (uuidEl) {
+    uuidEl.textContent = uuid || 'No UUID assigned';
+    uuidEl.title = uuid ? `Click Copy to copy this UUID` : '';
+  }
+  // Update viewport overlay to show UUID
+  const nameEl = document.getElementById('effectNameDisplay');
+  if (nameEl && uuid) nameEl.textContent = `${def.name}  \u00b7  ${uuid.slice(-8)}`;
+  // Update snippet
+  updateSnippet(id, uuid);
 };
 
 // ── Filters ──
@@ -1185,7 +1302,11 @@ function updateShaderEditor() {
 // ── Export / R2 save ──
 window.exportEffect = function () {
   if (!currentEffect) return;
-  const json = JSON.stringify(currentEffect, null, 2);
+  // Include Grudge UUID in export
+  const exportDef = { ...currentEffect };
+  const uuid = uuidMap[currentEffect.id];
+  if (uuid) exportDef.grudgeUUID = uuid;
+  const json = JSON.stringify(exportDef, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
@@ -1193,28 +1314,110 @@ window.exportEffect = function () {
   a.download = `${currentEffect.id}.3dfx.json`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast(`Exported ${currentEffect.name}`);
+  showToast(`Exported ${currentEffect.name}` + (uuid ? ` (${uuid.slice(-8)})` : ''));
 };
+
+function getGrudgeID() {
+  return window.GRUDGE_ID || window.localStorage?.getItem('grudge_id') || '';
+}
+
 window.saveToR2 = async function () {
   if (!currentEffect) return;
-  const json = JSON.stringify(currentEffect, null, 2);
+  const grudgeId = getGrudgeID();
+  if (!grudgeId) { showAuthModal(); return; }
+  const uuid = uuidMap[currentEffect.id] || '';
+  const exportDef = { ...currentEffect };
+  if (uuid) exportDef.grudgeUUID = uuid;
+  const json = JSON.stringify(exportDef, null, 2);
   try {
     const res = await fetch(`${R2_URL}/v1/assets`, {
       method:  'POST',
       headers: {
-        'Content-Type': 'application/octet-stream',
-        'X-Filename':   `${currentEffect.id}.3dfx.json`,
-        'X-Category':   '3DFX',
-        'X-Tags':       JSON.stringify(currentEffect.tags || [])
+        'Content-Type':  'application/octet-stream',
+        'X-Filename':    `${currentEffect.id}.3dfx.json`,
+        'X-Category':    '3DFX',
+        'X-Tags':        JSON.stringify(currentEffect.tags || []),
+        'X-Grudge-ID':   grudgeId,
+        'X-Grudge-UUID': uuid
       },
       body: json
     });
-    if (res.ok) showToast(`Saved ${currentEffect.name} to R2`);
+    if (res.ok) showToast(`Saved ${currentEffect.name} to R2` + (uuid ? ` · ${uuid}` : ''));
     else        showToast(`Error: ${res.status}`);
   } catch (err) {
     showToast(`R2 save failed: ${err.message}`);
   }
 };
+
+// ── Auth modal ──
+function showAuthModal() { document.getElementById('authOverlay').classList.add('show'); }
+window.closeAuthModal = function () { document.getElementById('authOverlay').classList.remove('show'); };
+
+// ── UUID helpers ──
+window.copyText = function (text) {
+  navigator.clipboard?.writeText(text).then(
+    () => showToast(`Copied: ${text}`),
+    () => showToast('Copy failed')
+  );
+};
+window.copyCurrentUUID = function () {
+  const el = document.getElementById('uuid-display');
+  if (!el || el.textContent === 'Select an effect' || el.textContent === 'No UUID assigned') return;
+  copyText(el.textContent);
+};
+
+function updateSnippet(effectId, uuid) {
+  const snippet = document.getElementById('uuid-snippet');
+  if (!snippet) return;
+  snippet.dataset.effectId = effectId;
+  snippet.dataset.uuid = uuid;
+  snippet.classList.remove('show');
+}
+
+window.toggleSnippet = function (engine) {
+  const snippet = document.getElementById('uuid-snippet');
+  if (!snippet) return;
+  const uuid = snippet.dataset.uuid || '';
+  const effectId = snippet.dataset.effectId || '';
+  if (!uuid && !effectId) { showToast('Select an effect first'); return; }
+
+  if (engine === 'three') {
+    snippet.textContent = `// Load Grudge 3DFX by UUID (Three.js)
+const EFFECT_UUID = '${uuid}';
+const BASE = '${OBJECTSTORE_BASE}';
+const [reg, uuids] = await Promise.all([
+  fetch(BASE + '/api/v1/3dfx-registry.json').then(r=>r.json()),
+  fetch(BASE + '/api/v1/3dfx-uuids.json').then(r=>r.json())
+]);
+const id = Object.entries(uuids.uuids).find(([k,v]) => v === EFFECT_UUID)?.[0];
+const effect = reg.effects[id]; // Full shader + particle definition`;
+  } else {
+    snippet.textContent = `// Load Grudge 3DFX by UUID (Babylon.js)
+const EFFECT_UUID = '${uuid}';
+const BASE = '${OBJECTSTORE_BASE}';
+const reg = await fetch(BASE + '/api/v1/3dfx-registry.json').then(r=>r.json());
+const uuids = await fetch(BASE + '/api/v1/3dfx-uuids.json').then(r=>r.json());
+const id = Object.entries(uuids.uuids).find(([k,v]) => v === EFFECT_UUID)?.[0];
+const def = reg.effects[id];
+// Use def.colors, def.particles, def.bloom with BABYLON.ParticleSystem`;
+  }
+
+  snippet.classList.add('show');
+  navigator.clipboard?.writeText(snippet.textContent);
+  showToast(`${engine === 'three' ? 'Three.js' : 'Babylon.js'} snippet copied`);
+};
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  // Don't intercept when typing in inputs
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+  switch (e.code) {
+    case 'Space':  e.preventDefault(); togglePlay(); break;
+    case 'KeyR':   restartEffect(); break;
+    case 'KeyG':   toggleGrid(); break;
+    case 'Escape': if (shaderEditorOpen) toggleShaderEditor(); closeAuthModal(); break;
+  }
+});
 
 // ── Scene layers ──
 window.addSceneLayer = function () {
@@ -1248,6 +1451,6 @@ animate();
 loadRegistry();
 </script>
 <script src="./js/nav.js" defer></script>
-<script src="./js/3dfx-uuid-patch.js" defer></script>
+<!-- UUID logic is now built-in — no external patch needed -->
 </body>
 </html>

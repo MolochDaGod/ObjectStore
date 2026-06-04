@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <title>Grudge Warlords — Crafting</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <style>
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; padding: 30px 0; border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1; margin-bottom: 30px; }
+    .header h1 { font-family: var(--font-display); font-size: 2.2em; }
+    .back-link { display: inline-block; margin-bottom: 16px; color: var(--gold); font-size: 0.9em; }
+    .section { margin-bottom: 40px; }
+    .section h2 { color: var(--gold); font-size: 1.4em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--gold-dim); }
+    .prof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .prof-card { padding: 20px; border-left: 4px solid; border-radius: 4px; display: flex; gap: 14px; align-items: flex-start; }
+    .prof-card .prof-icon { width: 48px; height: 48px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 6px rgba(212,175,55,0.3)); flex-shrink: 0; }
+    .prof-card h3 { margin: 0 0 6px; }
+    .prof-card .desc { color: var(--muted); font-size: 0.9em; line-height: 1.5; }
+    .recipe-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .recipe-filters select, .recipe-filters input { padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: hsl(225 28% 10%); color: var(--text); font-size: 0.9em; }
+    .recipe-filters input { flex: 1; min-width: 200px; }
+    .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+    .recipe-card { padding: 16px; border-radius: 4px; display: flex; gap: 12px; align-items: flex-start; transition: all 0.15s; }
+    .recipe-card:hover { border-color: var(--gold-dim); box-shadow: 0 0 8px rgba(212,175,55,0.15); }
+    .recipe-card .recipe-icon { width: 48px; height: 48px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); flex-shrink: 0; border-radius: 6px; border: 2px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); padding: 4px; }
+    .recipe-card .recipe-body { flex: 1; min-width: 0; }
+    .recipe-card h4 { color: var(--gold); margin: 0 0 6px; font-size: 1em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .recipe-card .recipe-meta { font-size: 0.75em; color: var(--dim); font-family: var(--font-mono); margin-bottom: 4px; }
+    .recipe-card .mats { font-size: 0.82em; color: var(--muted); line-height: 1.6; }
+    .recipe-card .mats span { color: var(--green); font-family: var(--font-mono); }
+    .recipe-card .tier-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.7em; font-family: var(--font-mono); }
+    .station-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .station-card { padding: 20px; text-align: center; border-radius: 4px; transition: all 0.15s; }
+    .station-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+    .station-card .station-icon { width: 48px; height: 48px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 6px rgba(212,175,55,0.3)); margin-bottom: 6px; }
+    .station-card h4 { color: var(--gold); margin: 8px 0 4px; }
+    .station-card .desc { color: var(--muted); font-size: 0.85em; }
+    .tier-list { font-size: 0.78em; color: var(--dim); margin-top: 8px; font-family: var(--font-mono); line-height: 1.5; }
+    .formula-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .formula-table th { text-align: left; color: var(--gold); padding: 10px 12px; border-bottom: 2px solid var(--gold-dim); font-size: 0.85em; font-family: var(--font-heading); }
+    .formula-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85em; }
+    .formula-table td:first-child { color: var(--text); font-weight: 600; font-family: var(--font-mono); }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+    .recipe-count { font-size: 0.85em; color: var(--muted); margin-bottom: 12px; }
+    .load-more { display: block; margin: 20px auto; padding: 12px 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="index.html">← Back to Hub</a>
+    <header class="header">
+      <h1 class="gold-text">Crafting</h1>
+      <p style="color:var(--muted);margin-top:8px;">6 Gathering · 5 Crafting · 8 Tiers · 100 Levels · 22 Milestones</p>
+    </header>
+
+    <div class="section">
+      <h2>Gathering Professions (6)</h2>
+      <p style="color:var(--muted);margin-bottom:16px">Resource collection from the world. Levels 1-100 with 5 progression tiers. Each profession unlocks T1-T8 resources as you level.</p>
+      <div class="prof-grid">
+        <div class="prof-card fantasy-panel" style="border-color:#8b6914">
+          <div><h3 style="color:#d4a84b">⛏️ Mining</h3>
+          <div class="desc">Extract ores, gems, and minerals. Feeds into Miner, Engineer, Mystic professions.</div>
+          <div class="tier-list">T1: Copper → T2: Iron → T3: Steel → T4: Mithril → T5: Adamantine → T6: Orichalcum → T7: Starmetal → T8: Divine</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#2d8a4e">
+          <div><h3 style="color:#49de95">🌿 Herbalism</h3>
+          <div class="desc">Gather herbs, roots, magical plants. Feeds into Chef, Mystic, Forester.</div>
+          <div class="tier-list">T1: Healing Herb → T2: Common Herb → T3: Rare Herb → T4: Exotic Herb → T5: Mystic Herb → T6: Ancient Herb → T7: Primordial Herb → T8: Divine Herb</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#5a3a1a">
+          <div><h3 style="color:#b8814a">🪓 Logging</h3>
+          <div class="desc">Fell trees for lumber, bark, sap. Feeds into Forester, Engineer.</div>
+          <div class="tier-list">T1: Pine → T2: Oak → T3: Maple → T4: Ash → T5: Ironwood → T6: Ebony → T7: Wyrmwood → T8: Worldtree</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#4a6fa5">
+          <div><h3 style="color:#7ab3ff">🎣 Fishing</h3>
+          <div class="desc">Catch fish and aquatic resources. Feeds into Chef, Mystic.</div>
+          <div class="tier-list">T1: Salmon → T2: Trout → T3: Tuna → T4: Swordfish → T5: Giant Crab → T6: Leviathan → T7: Kraken → T8: Divine Fish</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#d4a060">
+          <div><h3 style="color:#d4a060">🔪 Skinning</h3>
+          <div class="desc">Skin creatures for hides, leather, bones. Feeds into Forester, Chef, Mystic.</div>
+          <div class="tier-list">T1: Rawhide → T2: Thick → T3: Rugged → T4: Hardened → T5: Wyrm → T6: Infernal → T7: Titan → T8: Divine Hide</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#9b59b6">
+          <div><h3 style="color:#c39bd3">🧲 Scavenging</h3>
+          <div class="desc">Salvage scrap, components, relics. Feeds into Engineer, Miner.</div>
+          <div class="tier-list">T1: Scrap Parts → T2: Iron Gears → T3: Steel Components → T4: Mithril Circuits → T5: Adamantine Parts → T6: Orichalcum Tech → T7: Starmetal Circuits → T8: Divine Engine</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Gathering Level Milestones</h2>
+      <p style="color:var(--muted);margin-bottom:16px">Progression tiers: <strong style="color:var(--gold)">Novice</strong> (1-10) → <strong style="color:#49de95">Apprentice</strong> (11-25) → <strong style="color:#4a9eff">Journeyman</strong> (26-50) → <strong style="color:#9d4dff">Expert</strong> (51-75) → <strong style="color:#ff4d4d">Master</strong> (76-100)</p>
+      <table class="formula-table">
+        <tr><th>Level</th><th>Unlock</th><th>Description</th></tr>
+        <tr><td>1</td><td style="color:var(--gold)">Tier 1 Resources</td><td>Basic resources — Iron Ore, Pine Logs, Common Fish</td></tr>
+        <tr><td>10</td><td style="color:var(--green)">+1 Quantity</td><td>Gather +1 additional resource per harvest</td></tr>
+        <tr><td>13</td><td style="color:var(--gold)">Tier 2 Resources</td><td>Copper Ore, Oak Logs, Salmon, Fine Leather</td></tr>
+        <tr><td>20</td><td style="color:var(--green)">+2 Quantity</td><td>Gather +2 additional resources per harvest</td></tr>
+        <tr><td>25</td><td style="color:var(--gold)">Tier 3 Resources</td><td>Steel Ore, Ironwood, Tuna, Moonpetal</td></tr>
+        <tr><td>30</td><td style="color:var(--green)">+3 Quantity</td><td>Gather +3 additional resources per harvest</td></tr>
+        <tr><td>35</td><td style="color:#9d4dff">5% Gear Drop</td><td>5% chance for equipment drops while gathering</td></tr>
+        <tr><td>38</td><td style="color:var(--gold)">Tier 4 Resources</td><td>Gold Ore, Elderwood, Golden Fish, Dragon's Breath</td></tr>
+        <tr><td>40</td><td style="color:var(--green)">+4 Quantity</td><td>Gather +4 additional resources per harvest</td></tr>
+        <tr><td>50</td><td style="color:var(--gold)">Tier 5 Resources</td><td>Mythril Ore, Ancient Wood, Void Gems</td></tr>
+        <tr><td>55</td><td style="color:#9d4dff">10% Gear Drop</td><td>10% chance for equipment drops while gathering</td></tr>
+        <tr><td>60</td><td style="color:var(--green)">+6 Quantity</td><td>Gather +6 additional resources per harvest</td></tr>
+        <tr><td>63</td><td style="color:var(--gold)">Tier 6 Resources</td><td>Adamantine, Sunwood, Prismatic Gems</td></tr>
+        <tr><td>70</td><td style="color:var(--green)">+7 Quantity</td><td>Gather +7 additional resources per harvest</td></tr>
+        <tr><td>75</td><td style="color:#ff4d4d">15% Gear Drop</td><td>15% chance for equipment drops while gathering</td></tr>
+        <tr><td>76</td><td style="color:var(--gold)">Tier 7 Resources</td><td>Celestial Ore, World Tree Bark, Divine Pearls</td></tr>
+        <tr><td>80</td><td style="color:var(--green)">+8 Quantity</td><td>Gather +8 additional resources per harvest</td></tr>
+        <tr><td>88</td><td style="color:var(--gold)">Tier 8 Resources</td><td>Legendary materials — Starmetal, Godwood, Infinity Gems</td></tr>
+        <tr><td>90</td><td style="color:var(--green)">+9 Quantity</td><td>Gather +9 additional resources per harvest</td></tr>
+        <tr><td>95</td><td style="color:#ff4d4d">20% Gear Drop</td><td>20% chance for rare/epic equipment drops</td></tr>
+        <tr><td>100</td><td style="color:#fbbf24">Grandmaster</td><td>Maximum efficiency: 25% legendary drop chance, +10 quantity</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Crafting Professions (5)</h2>
+      <p style="color:var(--muted);margin-bottom:16px">Specializations that consume gathered materials to create equipment, consumables, and structures.</p>
+      <div class="prof-grid">
+        <div class="prof-card fantasy-panel" style="border-color:#ff7d87">
+          <div><h3 style="color:#ff7d87">⛏️ Miner</h3>
+          <div class="desc">Forge weapons and heavy armor from ores. Creates: Swords, Axes, Daggers, Hammers, Greatswords, Greataxes, Plate Armor. Smelts raw ore into refined ingots.</div>
+          <div class="tier-list">Synergies: Mining, Scavenging</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#49de95">
+          <div><h3 style="color:#49de95">🌲 Forester</h3>
+          <div class="desc">Craft bows, leather gear, and ship parts. Creates: Bows, Leather Armor, Hunting Daggers, Ship Components. Mills planks and tans leather.</div>
+          <div class="tier-list">Synergies: Logging, Skinning, Herbalism</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#bb95ff">
+          <div><h3 style="color:#bb95ff">🔮 Mystic</h3>
+          <div class="desc">Enchant items and weave magic cloth. Creates: Staves, Cloth Armor, Enchantments, Scrolls, Grimoires, Soul Gems. Weaves magic fabric from fibers.</div>
+          <div class="tier-list">Synergies: Mining (Gems), Herbalism, Fishing</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#ffb16d">
+          <div><h3 style="color:#ffb16d">👨‍🍳 Chef</h3>
+          <div class="desc">Cook food buffs and brew potions. Creates: Buff Food (red/blue/green), Potions, Elixirs, Preserved Rations, Antidotes.</div>
+          <div class="tier-list">Synergies: Fishing, Skinning, Herbalism</div></div>
+        </div>
+        <div class="prof-card fantasy-panel" style="border-color:#7ab3ff">
+          <div><h3 style="color:#7ab3ff">🔧 Engineer</h3>
+          <div class="desc">Build ranged weapons and siege equipment. Creates: Crossbows, Firearms, Grenades, Traps, Scopes, Siege Equipment, Automata.</div>
+          <div class="tier-list">Synergies: Mining, Scavenging, Logging</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Crafting Stations</h2>
+      <div class="station-grid">
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/weapons/Hammer_01.png" alt="Forge" onerror="this.style.display='none'">
+          <h4>Forge</h4>
+          <div class="desc">Weapons & heavy armor. Requires ore and fuel.</div>
+        </div>
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/weapons/Sword_01.png" alt="Workbench" onerror="this.style.display='none'">
+          <h4>Workbench</h4>
+          <div class="desc">General crafting, wood items, bows, and tools.</div>
+        </div>
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/misc/Core.png" alt="Alchemy" onerror="this.style.display='none'">
+          <h4>Alchemy Table</h4>
+          <div class="desc">Potions, elixirs, poisons, and enchanting oils.</div>
+        </div>
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/misc/runic_tablet_01.png" alt="Loom" onerror="this.style.display='none'">
+          <h4>Loom</h4>
+          <div class="desc">Cloth armor, capes, bags, and magical fabrics.</div>
+        </div>
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/weapons/Dagger_01.png" alt="Tannery" onerror="this.style.display='none'">
+          <h4>Tannery</h4>
+          <div class="desc">Leather armor, belts, boots from hides and skins.</div>
+        </div>
+        <div class="station-card fantasy-panel">
+          <img class="station-icon" src="https://assets.grudge-studio.com/icons/wcs/misc/runic_tablet_02.png" alt="Enchanting" onerror="this.style.display='none'">
+          <h4>Enchanting Altar</h4>
+          <div class="desc">Apply enchantments, runes, and magical properties to gear.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Recipes</h2>
+      <div class="recipe-filters">
+        <select id="filterProf">
+          <option value="">All Professions</option>
+          <option value="Miner">⛏ Miner</option>
+          <option value="Forester">🌲 Forester</option>
+          <option value="Mystic">🔮 Mystic</option>
+          <option value="Chef">👨‍🍳 Chef</option>
+          <option value="Engineer">🔧 Engineer</option>
+        </select>
+        <select id="filterTier">
+          <option value="">All Tiers</option>
+          <option value="1">T1 Common</option>
+          <option value="2">T2 Uncommon</option>
+          <option value="3">T3 Rare</option>
+          <option value="4">T4 Epic</option>
+          <option value="5">T5 Heroic</option>
+          <option value="6">T6 Mythic</option>
+          <option value="7">T7 Ancient</option>
+          <option value="8">T8 Legendary</option>
+        </select>
+        <select id="filterType">
+          <option value="">All Types</option>
+          <option value="weapon">Weapons</option>
+          <option value="armor">Armor</option>
+          <option value="potion">Potions</option>
+          <option value="food">Food</option>
+        </select>
+        <input type="text" id="searchBox" placeholder="Search recipes...">
+      </div>
+      <div class="recipe-grid" id="recipeGrid">
+        <div class="empty-state">Loading recipes...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CDN = 'https://assets.grudge-studio.com';
+    const TIER_COLORS = { 1:'#8b7355', 2:'#a8a8a8', 3:'#4a9eff', 4:'#9d4dff', 5:'#ff4d4d', 6:'#ffaa00', 7:'#d4a84b', 8:'#f0d890' };
+    const TIER_NAMES = { 1:'Common', 2:'Uncommon', 3:'Rare', 4:'Epic', 5:'Heroic', 6:'Mythic', 7:'Ancient', 8:'Legendary' };
+    const PROF_COLORS = { Miner:'#d4a84b', Forester:'#49de95', Mystic:'#bb95ff', Chef:'#ffb16d', Engineer:'#7ab3ff' };
+    let allRecipes = [], allItems = [], itemMap = {}, armorMap = {};
+    let displayCount = 60;
+
+    async function init() {
+      try {
+        const [recipeData, itemData, armorData] = await Promise.all([
+          fetch('./api/v1/master-recipes.json').then(r => r.json()),
+          fetch('./api/v1/master-items.json').then(r => r.json()),
+          fetch('./api/v1/master-armor.json').then(r => r.json()).catch(() => ({ items: [] })),
+        ]);
+        allRecipes = recipeData.recipes || [];
+        allItems = itemData.items || [];
+        // Build UUID lookup maps
+        allItems.forEach(i => { itemMap[i.uuid] = i; });
+        (armorData.items || []).forEach(i => { armorMap[i.uuid] = i; });
+        document.querySelector('.header p').textContent =
+          `6 Gathering · 5 Crafting · ${allRecipes.length} Recipes · 8 Tiers · 100 Levels · 22 Milestones`;
+        renderRecipes(allRecipes);
+      } catch(e) {
+        document.getElementById('recipeGrid').innerHTML = '<div class="empty-state">Recipe data will be loaded from the Grudge backend.</div>';
+      }
+
+      document.getElementById('filterProf').addEventListener('change', () => { displayCount = 60; applyFilters(); });
+      document.getElementById('filterTier').addEventListener('change', () => { displayCount = 60; applyFilters(); });
+      document.getElementById('filterType').addEventListener('change', () => { displayCount = 60; applyFilters(); });
+      document.getElementById('searchBox').addEventListener('input', () => { displayCount = 60; applyFilters(); });
+    }
+
+    function applyFilters() {
+      const prof = document.getElementById('filterProf').value;
+      const tier = document.getElementById('filterTier').value;
+      const type = document.getElementById('filterType').value;
+      const search = document.getElementById('searchBox').value.toLowerCase();
+      let filtered = allRecipes;
+      if (prof) filtered = filtered.filter(r => r.profession === prof);
+      if (tier) filtered = filtered.filter(r => String(r.tier) === tier);
+      if (type) filtered = filtered.filter(r => (r.type || r.category || '').toLowerCase().includes(type));
+      if (search) filtered = filtered.filter(r =>
+        (r.name || '').toLowerCase().includes(search) ||
+        (r.resultName || '').toLowerCase().includes(search) ||
+        (r.profession || '').toLowerCase().includes(search) ||
+        (r.category || '').toLowerCase().includes(search)
+      );
+      renderRecipes(filtered);
+    }
+
+    function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+
+    function renderRecipes(recipes) {
+      const grid = document.getElementById('recipeGrid');
+      if (!recipes.length) { grid.innerHTML = '<div class="empty-state">No recipes match your filters.</div>'; return; }
+
+      const visible = recipes.slice(0, displayCount);
+      const countHtml = `<div class="recipe-count" style="grid-column:1/-1;">Showing ${visible.length} of ${recipes.length} recipes</div>`;
+
+      const cardsHtml = visible.map(r => {
+        const t = r.tier || 1;
+        const color = TIER_COLORS[t] || '#8b7355';
+        const profColor = PROF_COLORS[r.profession] || 'var(--muted)';
+        const matsHtml = (r.materials || []).map(m => `${esc(m.name)} x<span>${m.quantity}</span>`).join('<br>');
+        // Resolve result item icon from item UUID — check both item map and armor map
+        const resultItem = r.resultItemId ? (itemMap[r.resultItemId] || armorMap[r.resultItemId]) : null;
+        const iconUrl = resultItem?.iconUrl || '';
+        const iconHtml = iconUrl
+          ? `<img class="recipe-icon" src="${esc(iconUrl)}" alt="${esc(r.resultName || r.name)}" onerror="this.style.display='none'">`
+          : `<div class="recipe-icon" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:0.3;flex-shrink:0;">🔨</div>`;
+        return `<div class="recipe-card inset-panel">
+          ${iconHtml}
+          <div class="recipe-body">
+            <h4><span class="tier-badge" style="background:${color}22;color:${color}">${TIER_NAMES[t] || 'T'+t}</span> ${esc(r.resultName || r.name || 'Unknown')}</h4>
+            <div class="recipe-meta"><span style="color:${profColor}">${esc(r.profession || '')}</span> · ${esc(r.category || '')}${r.slot ? ' · '+esc(r.slot) : ''}</div>
+            <div class="mats">${matsHtml || 'Materials TBD'}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      const loadMoreHtml = visible.length < recipes.length
+        ? `<div style="grid-column:1/-1;text-align:center;"><button class="gilded-button load-more" onclick="loadMore()">Load More (${recipes.length - visible.length} remaining)</button></div>`
+        : '';
+
+      grid.innerHTML = countHtml + cardsHtml + loadMoreHtml;
+    }
+
+    function loadMore() {
+      displayCount += 60;
+      applyFilters();
+    }
+
+    init();
+  </script>
+</body>
+</html>

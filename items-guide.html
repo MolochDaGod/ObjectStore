@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <title>Grudge Warlords - Items & System Guide</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <style>
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; padding: 30px 0; border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1; margin-bottom: 30px; }
+    .header h1 { font-family: var(--font-display); font-size: 2.4em; }
+    .header p { color: var(--muted); margin-top: 8px; font-size: 1em; max-width: 760px; margin-left: auto; margin-right: auto; }
+    .section { margin-bottom: 40px; }
+    .section h2 { color: var(--gold); font-size: 1.4em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--gold-dim); }
+    .section h3 { color: var(--gold-light); font-size: 1.1em; margin: 20px 0 10px; }
+
+    .tier-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 8px; }
+    .tier-card { padding: 14px 16px; border-radius: 4px; border-left: 5px solid; background: var(--card); }
+    .tier-card h3 { margin: 0; font-size: 1em; }
+    .tier-card p { color: var(--muted); font-size: 0.8em; margin-top: 4px; }
+    .tier-card .word { color: var(--gold-light); font-size: 0.72em; font-family: var(--font-mono); margin-top: 4px; display: block; }
+
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .cat-card { padding: 16px 18px; background: var(--card); border-left: 4px solid var(--gold-dim); border-radius: 4px; }
+    .cat-card h3 { color: var(--gold); margin: 0 0 6px; font-size: 1em; }
+    .cat-card .tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.7em; font-family: var(--font-mono); margin-right: 4px; background: rgba(255,255,255,0.06); color: var(--muted); }
+    .cat-card p { color: var(--muted); font-size: 0.85em; margin-top: 6px; line-height: 1.5; }
+    .cat-card.special { border-left-color: #f0d890; }
+    .cat-card.offhand { border-left-color: #4a9eff; }
+
+    .callout { padding: 16px 20px; border-radius: 4px; background: rgba(240, 216, 144, 0.08); border-left: 4px solid #f0d890; color: var(--text); font-size: 0.9em; line-height: 1.6; margin: 16px 0; }
+    .callout .tag { color: #f0d890; font-weight: 700; font-family: var(--font-mono); font-size: 0.8em; }
+
+    .word-table { width: 100%; border-collapse: collapse; }
+    .word-table th { text-align: left; color: var(--gold); padding: 10px 12px; border-bottom: 2px solid var(--gold-dim); font-size: 0.85em; }
+    .word-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85em; }
+    .word-table td.word { font-family: var(--font-mono); color: var(--gold-light); white-space: nowrap; }
+    .word-table td.means { color: var(--text); }
+    .word-table td.rule  { color: var(--muted); }
+
+    .api-list { margin: 10px 0; }
+    .api-row { display: flex; gap: 12px; padding: 8px 14px; background: var(--card); border-radius: 6px; margin-bottom: 6px; align-items: center; font-size: 0.85em; }
+    .api-row .method { background: var(--green); color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
+    .api-row .path { font-family: var(--font-mono); color: var(--text); }
+    .api-row .desc { color: var(--muted); margin-left: auto; font-size: 0.8em; }
+
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; margin: 16px 0; }
+    .flow .node { background: var(--card); padding: 14px 16px; border-radius: 6px; border-top: 3px solid var(--gold); text-align: center; }
+    .flow .node h4 { color: var(--gold); font-size: 0.95em; margin: 0 0 6px; }
+    .flow .node p { color: var(--muted); font-size: 0.8em; margin: 0; }
+    .flow .arrow { color: var(--gold-dim); font-size: 1.6em; text-align: center; }
+    @media(max-width:768px){ .flow{ grid-template-columns: 1fr; } .flow .arrow { display:none; } }
+
+    .back-link { display: inline-block; margin-bottom: 16px; color: var(--gold); font-size: 0.9em; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="index.html">&larr; Back to Hub</a>
+    <header class="header">
+      <h1 class="gold-text">Items & System Guide</h1>
+      <p>
+        How items, tiers, artifacts, tomes, and the crafting system fit together in Grudge Warlords.
+        Every item below lives under the same UUID in <a href="https://assets.grudge-studio.com" style="color:var(--gold)">ObjectStore</a>
+        and is served to every Grudge Studio game.
+      </p>
+    </header>
+
+    <!-- ONE-TRUTH ARCHITECTURE -->
+    <div class="section">
+      <h2>One Source of Truth</h2>
+      <p style="color: var(--muted); font-size: 0.95em; line-height: 1.6;">
+        Every item and icon in Grudge Warlords lives in <strong>ObjectStore</strong> - the shared backend used by all Grudge Studio games.
+        This page is a per-game view; it does not store item data. When ObjectStore updates, this page picks the changes up automatically.
+      </p>
+      <div class="callout">
+        <span class="tag">Canonical</span> The <a href="https://assets.grudge-studio.com/ItemBrowser.html" style="color:var(--gold)">ItemBrowser</a>
+        on ObjectStore is the source of truth for item names, categories, and icons. The master-* JSONs served here are
+        derived from <code>api/v1/weapons.json</code>, <code>armor.json</code>, <code>materials.json</code>, and <code>consumables.json</code> - the same files ItemBrowser reads.
+        Missing or placeholder icons are filled through the <a href="https://assets.grudge-studio.com/tools/icon-generator.html" style="color:var(--gold)">Icon Generator</a>
+        (Puter AI) and land back in the same canonical set.
+      </div>
+      <div class="flow">
+        <div class="node">
+          <h4>ObjectStore</h4>
+          <p><code>/api/v1/master-*.json</code><br>Items, recipes, materials, artifacts.</p>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="node">
+          <h4>Data Hub (this site)</h4>
+          <p>Prefetches at build, revalidates at runtime.</p>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="node">
+          <h4>Game Clients</h4>
+          <p>grudgewarlords.com, client.grudge-studio.com, and every other Grudge game.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER SYSTEM -->
+    <div class="section">
+      <h2>Tier System (T1 - T8)</h2>
+      <p style="color: var(--muted); font-size: 0.95em;">
+        Tiers scale craftable items. Every base weapon expands into all 8 tiers with scaling stats.
+        "Legendary" now means <strong>T8</strong> only - the old T5 label was renamed to <strong>Heroic</strong>.
+      </p>
+      <div class="tier-row">
+        <div class="tier-card" style="border-left-color:#8b7355"><h3 style="color:#8b7355">T1 Common</h3><p>Starter gear. Craftable with basic materials.</p></div>
+        <div class="tier-card" style="border-left-color:#a8a8a8"><h3 style="color:#a8a8a8">T2 Uncommon</h3><p>Slight stat upgrade. Early progression.</p></div>
+        <div class="tier-card" style="border-left-color:#4a9eff"><h3 style="color:#4a9eff">T3 Rare</h3><p>Notable stat jump. Mid-game.</p></div>
+        <div class="tier-card" style="border-left-color:#9d4dff"><h3 style="color:#9d4dff">T4 Epic</h3><p>Strong items with special properties.</p></div>
+        <div class="tier-card" style="border-left-color:#ff4d4d"><h3 style="color:#ff4d4d">T5 Heroic</h3><p>End-game crafts and rare drops.<span class="word">was "Legendary"</span></p></div>
+        <div class="tier-card" style="border-left-color:#ffaa00"><h3 style="color:#ffaa00">T6 Mythic</h3><p>Faction-specific high-end gear.</p></div>
+        <div class="tier-card" style="border-left-color:#d4a84b"><h3 style="color:#d4a84b">T7 Ancient</h3><p>Ancient relics with unique abilities.</p></div>
+        <div class="tier-card" style="border-left-color:#f0d890"><h3 style="color:#f0d890">T8 Legendary</h3><p>Apex of the crafting track.<span class="word">was "Legendary Artifact"</span></p></div>
+      </div>
+    </div>
+
+    <!-- WORD CONTROL -->
+    <div class="section">
+      <h2>Naming Rules (reserved words)</h2>
+      <p style="color: var(--muted); font-size: 0.95em;">
+        Certain words now have exactly one meaning in the data. Do not reuse them as lore names, flavor descriptors, or category slugs.
+      </p>
+      <table class="word-table">
+        <tr><th>Word</th><th>Means</th><th>Rule</th></tr>
+        <tr><td class="word">Legendary</td><td class="means">T8 tier label on tiered items.</td><td class="rule">Never used as a category or weapon-type name.</td></tr>
+        <tr><td class="word">Heroic</td><td class="means">T5 tier label on tiered items.</td><td class="rule">Replaces the old "T5 Legendary" label; the word "Legendary" is reserved for T8.</td></tr>
+        <tr><td class="word">Artifact</td><td class="means">Weapon category for end-game, world-found items.</td><td class="rule">Not a tier label. Never appears in the tier string.</td></tr>
+        <tr><td class="word">Arcane</td><td class="means">A spell school AND an artifact sub-type (<code>artifact-arcane</code>).</td><td class="rule">No longer names a weapon class. The old <code>arcaneStaves</code> slot is now <code>artifact</code>.</td></tr>
+      </table>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="section">
+      <h2>Item Categories</h2>
+      <h3>Weapons (tier-expanded, craftable)</h3>
+      <div class="cat-grid">
+        <div class="cat-card"><h3>Swords <span class="tag">1h</span><span class="tag">Miner</span></h3><p>Balanced 1h blades. Sign each with a bespoke slug icon.</p></div>
+        <div class="cat-card"><h3>Axes <span class="tag">1h</span><span class="tag">Miner</span></h3><p>Chopping damage with bleed and stun patterns.</p></div>
+        <div class="cat-card"><h3>Daggers <span class="tag">1h</span><span class="tag">Miner</span></h3><p>High crit, low armor. Rogue-adjacent combos.</p></div>
+        <div class="cat-card"><h3>Maces <span class="tag">1h</span><span class="tag">Miner</span></h3><p>Stun, armor-break, crush effects.</p></div>
+        <div class="cat-card"><h3>Hammers <span class="tag">2h</span><span class="tag">Miner</span></h3><p>Slow heavy AoE. Ground control.</p></div>
+        <div class="cat-card"><h3>Greatswords <span class="tag">2h</span><span class="tag">Miner</span></h3><p>Wide arcs, moderate speed, sustained damage.</p></div>
+        <div class="cat-card"><h3>Greataxes <span class="tag">2h</span><span class="tag">Miner</span></h3><p>High burst + bleed, slower recovery.</p></div>
+        <div class="cat-card"><h3>Spears <span class="tag">2h</span><span class="tag">Miner</span></h3><p>Range, thrust, gap-closing charge.</p></div>
+        <div class="cat-card"><h3>Shields <span class="tag">offhand</span><span class="tag">Miner</span></h3><p>Block-focused. Pairs with 1h main-hand.</p></div>
+        <div class="cat-card"><h3>Bows <span class="tag">2h</span><span class="tag">Forester</span></h3><p>Wooden-ranged damage. Scaled with sinew and hardwood.</p></div>
+        <div class="cat-card"><h3>Crossbows <span class="tag">2h</span><span class="tag">Engineer</span></h3><p>Heavy bolt damage, mechanical feel.</p></div>
+        <div class="cat-card"><h3>Guns <span class="tag">2h</span><span class="tag">Engineer</span></h3><p>Powder firearms. Single-target high crit.</p></div>
+        <div class="cat-card"><h3>Fire Staves <span class="tag">2h</span><span class="tag">Mystic</span></h3><p>Burn stacks, fire AoE.</p></div>
+        <div class="cat-card"><h3>Frost Staves <span class="tag">2h</span><span class="tag">Mystic</span></h3><p>Chill, slow, deep freeze.</p></div>
+        <div class="cat-card"><h3>Holy Staves <span class="tag">2h</span><span class="tag">Mystic</span></h3><p>Heals, cleanses, divine shields.</p></div>
+        <div class="cat-card"><h3>Lightning Staves <span class="tag">2h</span><span class="tag">Mystic</span></h3><p>Chain lightning, stun, burst.</p></div>
+        <div class="cat-card"><h3>Nature Staves <span class="tag">2h</span><span class="tag">Mystic</span></h3><p>HoT, reflect, entangle.</p></div>
+        <div class="cat-card"><h3>Wands <span class="tag">1h</span><span class="tag">Mystic</span></h3><p>One-hand caster mainhand. Pairs with tome or off-hand relic.</p></div>
+        <div class="cat-card"><h3>Scythes <span class="tag">2h</span><span class="tag">Forester</span></h3><p>Reaping arcs with bleed and cleave. Worge-favoured 2h melee.</p></div>
+        <div class="cat-card offhand"><h3>Off-Hand Relics <span class="tag">offhand</span><span class="tag">Mystic</span></h3><p>Caster off-hand. Bonus to spell crit, mana, and school mastery.</p></div>
+      </div>
+
+      <h3>Off-hand utility</h3>
+      <div class="cat-grid">
+        <div class="cat-card offhand">
+          <h3>Tomes <span class="tag">offhand</span><span class="tag">no tier</span></h3>
+          <p>Tomes are <strong>tier-less off-hand</strong> items. Equipping a tome while wielding a 1h main-hand (sword, axe, dagger, mace, pistol) grants that main-hand new spell-cast options drawn from the tome's school.</p>
+          <p style="margin-top: 6px; font-size: 0.8em;"><code>type: "offhand-tome"</code> &middot; <code>skillGrants: [...]</code> &middot; No stat block.</p>
+        </div>
+      </div>
+
+      <h3>Artifacts (end-game, world-found)</h3>
+      <div class="cat-grid">
+        <div class="cat-card special">
+          <h3>Artifact <span class="tag">world</span><span class="tag">hidden</span></h3>
+          <p>Artifacts are <strong>end-game items</strong> with fixed stats and <strong>no craft recipe</strong>.
+          They are discovered in the world: boss drops, raid vaults, world reveals, or quest completions.
+          Player-facing UIs filter out artifacts with <code>discovery.hiddenUntilFound: true</code> until the player has found them.</p>
+          <p style="margin-top: 6px; font-size: 0.8em;">
+            First sub-type: <code>artifact-arcane</code> (the old arcaneStaves slot). Future sub-types reserved: storm, blood, frost, ember, nature, holy, void.
+          </p>
+        </div>
+      </div>
+
+      <h3>Consumables &amp; Materials</h3>
+      <div class="cat-grid">
+        <div class="cat-card"><h3>Food <span class="tag">Chef</span></h3><p>Red / Green / Blue food colors. Buffs scale with level.</p></div>
+        <div class="cat-card"><h3>Potions <span class="tag">Mystic</span></h3><p>Restores, resistances, and short-duration buffs.</p></div>
+        <div class="cat-card"><h3>Materials <span class="tag">gather</span></h3><p>Ore, ingots, logs, cloth, leather, essence, gem, herb. Each tier has its own material tree.</p></div>
+      </div>
+    </div>
+
+    <!-- ARTIFACT DISCOVERY -->
+    <div class="section">
+      <h2>Artifact Discovery Rules</h2>
+      <div class="callout">
+        <span class="tag">Rule</span> Undiscovered artifacts must not leak into player-facing UIs.
+        The <code>discovery</code> block on each artifact includes <code>hiddenUntilFound</code>, <code>source</code>, and <code>revealCondition</code>.
+        Client code checks a player's discovered-artifact set before rendering an artifact anywhere a player can see.
+        Admin tools bypass this filter.
+      </div>
+    </div>
+
+    <!-- API -->
+    <div class="section">
+      <h2>API Endpoints (from ObjectStore)</h2>
+      <div class="api-list">
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-items.json</span><span class="desc">All tier-expanded items with GRUDGE UUIDs</span></div>
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-recipes.json</span><span class="desc">Craft recipes with material links</span></div>
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-materials.json</span><span class="desc">Crafting materials</span></div>
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-artifacts.json</span><span class="desc">Artifact catalog with discovery blocks</span></div>
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-registry.json</span><span class="desc">Combined UUID-&gt;entity index</span></div>
+        <div class="api-row"><span class="method">GET</span><span class="path">/api/v1/master-attributes.json</span><span class="desc">8 attributes + 37 derived stats</span></div>
+      </div>
+      <p style="color: var(--muted); font-size: 0.85em; margin-top: 10px;">
+        Base URL: <code>https://assets.grudge-studio.com</code>. This site revalidates these files at runtime; edits in ObjectStore appear here without redeploy.
+      </p>
+    </div>
+
+    <!-- ITEM FIELDS -->
+    <div class="section">
+      <h2>Item Record Shape</h2>
+      <table class="word-table">
+        <tr><th>Field</th><th>Used by</th><th>Notes</th></tr>
+        <tr><td class="word">uuid</td><td class="means">Everyone</td><td class="rule">Primary key. Prefix: <code>ITEM-</code>.</td></tr>
+        <tr><td class="word">baseUuid</td><td class="means">Tier expansions</td><td class="rule">Points to the T1 row for a tier-expanded weapon.</td></tr>
+        <tr><td class="word">slug</td><td class="means">Icon resolver</td><td class="rule">Used to look up <code>/icons/weapons/&lt;slug&gt;.png</code> first, then pack fallback.</td></tr>
+        <tr><td class="word">category</td><td class="means">UIs, filters</td><td class="rule">swords, axes, ..., offhand-tome, artifact.</td></tr>
+        <tr><td class="word">type</td><td class="means">Render logic</td><td class="rule">weapon | armor | food | potion | offhand-tome | artifact.</td></tr>
+        <tr><td class="word">tier / tierLabel</td><td class="means">UIs</td><td class="rule">Null for artifacts and tomes. See tier table above.</td></tr>
+        <tr><td class="word">source</td><td class="means">Crafting UIs</td><td class="rule">craft | world-drop | boss | quest | raid | world.</td></tr>
+        <tr><td class="word">discovery</td><td class="means">Artifacts only</td><td class="rule"><code>{ hiddenUntilFound, source, revealCondition }</code>.</td></tr>
+        <tr><td class="word">skillGrants</td><td class="means">Tomes only</td><td class="rule">List of spells added to the 1h main-hand when equipped.</td></tr>
+        <tr><td class="word">foldsInLegacy</td><td class="means">Starter items</td><td class="rule">Old Unity / Steam item IDs absorbed into this starter (documentation only).</td></tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

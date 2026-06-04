@@ -1,0 +1,275 @@
+/* Grudge Game Data Hub — WCS (Warlord Crafting Suite) Theme */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=Spectral+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* WCS Core Palette */
+  --bg: hsl(225 30% 8%);
+  --card: hsl(225 25% 12%);
+  --panel: hsl(225 28% 10%);
+  --gold: hsl(43 85% 55%);
+  --gold-light: hsl(43 90% 70%);
+  --gold-dark: hsl(43 70% 35%);
+  --gold-dim: rgba(212,175,55,0.2);
+  --bronze: hsl(30 60% 40%);
+  --obsidian: hsl(225 30% 8%);
+  --stone: hsl(220 15% 25%);
+  --crimson: hsl(0 65% 40%);
+  --royal-blue: hsl(220 60% 35%);
+  --text: hsl(45 30% 90%);
+  --muted: hsl(45 15% 60%);
+  --dim: hsl(45 10% 40%);
+  --border: hsl(43 60% 30%);
+  --red: #ff4444; --green: #44ff44; --blue: #4488ff;
+  --purple: #aa44ff; --orange: #ff8844; --cyan: #44ddff;
+  --miner: hsl(43 96% 56%); --forester: hsl(142 71% 29%);
+  --mystic: hsl(271 91% 65%); --chef: hsl(32 95% 44%); --engineer: hsl(24 94% 50%);
+  --font-display: 'Cinzel Decorative', 'Cinzel', serif;
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Spectral SC', 'Segoe UI', serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, hsl(225 30% 12%) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, hsl(225 25% 6%) 0%, transparent 50%),
+    linear-gradient(180deg, hsl(225 30% 6%) 0%, hsl(225 28% 10%) 50%, hsl(225 30% 6%) 100%);
+  background-attachment: fixed;
+}
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; color: var(--gold-light); }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ===== GOLD TEXT GRADIENT ===== */
+.gold-text {
+  background: linear-gradient(180deg, hsl(43 90% 75%) 0%, hsl(43 85% 55%) 40%, hsl(35 70% 40%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+}
+
+/* ===== FANTASY PANELS ===== */
+.fantasy-panel {
+  position: relative;
+  background: linear-gradient(180deg, hsl(225 25% 14%) 0%, hsl(225 28% 10%) 50%, hsl(225 25% 8%) 100%);
+  border: 2px solid hsl(43 60% 35%);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 4px 12px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(0,0,0,0.3);
+}
+
+.ornate-frame {
+  position: relative;
+  background: linear-gradient(180deg, hsl(225 22% 16%) 0%, hsl(225 25% 11%) 100%);
+  border: 3px solid transparent;
+  border-image: linear-gradient(180deg, hsl(43 80% 60%) 0%, hsl(43 70% 40%) 50%, hsl(35 60% 30%) 100%) 1;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.5),
+    0 0 0 1px hsl(35 50% 25%),
+    0 8px 24px rgba(0,0,0,0.6);
+}
+
+.stone-panel {
+  background: linear-gradient(180deg, rgba(40,45,55,0.95) 0%, rgba(30,35,45,0.98) 100%);
+  border: 2px solid hsl(220 15% 30%);
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.03), 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.parchment-panel {
+  background: linear-gradient(180deg, hsl(40 30% 22%) 0%, hsl(38 25% 18%) 50%, hsl(35 20% 15%) 100%);
+  border: 2px solid hsl(40 40% 30%);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgba(255,235,180,0.1), 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.inset-panel {
+  background: hsl(225 28% 8%);
+  border: 1px solid hsl(225 20% 20%);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.3);
+  border-radius: 2px;
+}
+
+/* Background pattern overlay */
+.grudge-bg-pattern {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(212,175,55,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 75% 75%, rgba(180,130,40,0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(100,80,40,0.03) 0%, transparent 60%);
+}
+
+/* ===== BUTTONS ===== */
+.gilded-button {
+  position: relative;
+  background: linear-gradient(180deg, hsl(43 70% 45%) 0%, hsl(38 65% 35%) 50%, hsl(35 60% 28%) 100%);
+  border: 2px solid hsl(43 50% 50%);
+  border-radius: 4px;
+  color: hsl(225 30% 10%);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.4);
+  transition: all 0.15s ease;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.gilded-button:hover {
+  background: linear-gradient(180deg, hsl(43 80% 55%) 0%, hsl(43 70% 45%) 50%, hsl(38 65% 35%) 100%);
+  border-color: hsl(43 60% 60%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 0 12px rgba(212,175,55,0.4), 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.dark-button {
+  background: linear-gradient(180deg, hsl(225 25% 22%) 0%, hsl(225 28% 15%) 100%);
+  border: 2px solid hsl(43 50% 35%);
+  border-radius: 4px;
+  color: hsl(43 70% 65%);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.4);
+  transition: all 0.15s ease;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.dark-button:hover {
+  background: linear-gradient(180deg, hsl(225 25% 26%) 0%, hsl(225 28% 18%) 100%);
+  border-color: hsl(43 60% 45%);
+  color: hsl(43 80% 70%);
+  box-shadow: 0 0 8px rgba(212,175,55,0.2), 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.btn {
+  padding: 10px 20px; border: none; border-radius: 4px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; font-size: 0.9em;
+}
+.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: hsl(225 30% 8%); font-family: var(--font-heading); }
+.btn-gold:hover { box-shadow: 0 0 12px rgba(212,175,55,0.4), 0 4px 8px rgba(0,0,0,0.4); }
+.btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--gold); }
+
+/* ===== EFFECTS ===== */
+@keyframes gem-glow {
+  0% { box-shadow: 0 0 0px currentColor; }
+  50% { box-shadow: 0 0 15px currentColor; }
+  100% { box-shadow: 0 0 0px currentColor; }
+}
+.animate-gem-glow { animation: gem-glow 2s infinite; }
+
+@keyframes rune-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(212,175,55,0.3); }
+  50% { box-shadow: 0 0 16px rgba(212,175,55,0.6); }
+}
+.animate-rune-pulse { animation: rune-pulse 3s infinite; }
+
+@keyframes shimmer {
+  0%,100% { box-shadow: 0 0 8px rgba(240,216,144,0.3); }
+  50% { box-shadow: 0 0 20px rgba(240,216,144,0.6); }
+}
+
+/* ===== TIER SYSTEM ===== */
+.tier-1 { border-color: #8b7355 !important; }
+.tier-2 { border-color: #a8a8a8 !important; }
+.tier-3 { border-color: #4a9eff !important; }
+.tier-4 { border-color: #9d4dff !important; }
+.tier-5 { border-color: #ff4d4d !important; }
+.tier-6 { border-color: #ffaa00 !important; }
+.tier-7 { border-color: #d4a84b !important; }
+.tier-8 { border-color: #f0d890 !important; animation: shimmer 2s infinite; }
+
+.tier-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.75em; font-weight: bold; text-transform: uppercase;
+}
+.tier-badge.t1 { background: rgba(139,115,85,0.3); color: #8b7355; }
+.tier-badge.t2 { background: rgba(168,168,168,0.3); color: #a8a8a8; }
+.tier-badge.t3 { background: rgba(74,158,255,0.3); color: #4a9eff; }
+.tier-badge.t4 { background: rgba(157,77,255,0.3); color: #9d4dff; }
+.tier-badge.t5 { background: rgba(255,77,77,0.3); color: #ff4d4d; }
+.tier-badge.t6 { background: rgba(255,170,0,0.3); color: #ffaa00; }
+.tier-badge.t7 { background: rgba(212,168,75,0.3); color: #d4a84b; }
+.tier-badge.t8 { background: rgba(240,216,144,0.3); color: #f0d890; }
+
+.rarity-common { color: hsl(0 0% 70%); }
+.rarity-uncommon { color: hsl(120 60% 50%); }
+.rarity-rare { color: hsl(220 80% 60%); }
+.rarity-epic { color: hsl(280 70% 60%); }
+.rarity-legendary { color: hsl(35 100% 55%); }
+
+/* ===== UUID & ITEM CARDS ===== */
+.uuid { font-family: var(--font-mono); font-size: 0.7em; color: var(--muted); cursor: pointer; }
+.uuid:hover { color: var(--gold); }
+
+.item-card {
+  background: var(--card);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+.item-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(212,175,55,0.2);
+}
+.item-card img {
+  width: 64px; height: 64px; object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 5px rgba(212,175,55,0.3));
+}
+.item-name { font-weight: bold; font-size: 0.95em; margin-top: 8px; }
+.item-type { color: var(--muted); font-size: 0.8em; margin-top: 4px; }
+
+/* ===== ATTRIBUTE ICON ===== */
+.attr-icon {
+  width: 32px; height: 32px; object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 4px rgba(212,175,55,0.4));
+  vertical-align: middle;
+}
+.attr-icon.lg { width: 48px; height: 48px; }
+
+/* ===== SCROLLBAR (WCS Fantasy) ===== */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track {
+  background: hsl(225 25% 10%);
+  border-left: 1px solid hsl(43 40% 25%);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(43 50% 35%) 0%, hsl(35 45% 25%) 100%);
+  border: 1px solid hsl(43 40% 40%);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(43 60% 45%) 0%, hsl(35 50% 30%) 100%);
+}
+
+/* ===== UTILITY ===== */
+.text-shadow-gold { text-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.3); }
+
+@media (max-width: 768px) {
+  h1 { font-size: 1.6em !important; }
+  h2 { font-size: 1.2em !important; }
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Grudge Warlords — Professions &amp; Skills</title>
+  <link rel="stylesheet" href="css/grudge-theme.css">
+  <style>
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; padding: 40px 0 30px; border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1; margin-bottom: 32px; }
+    .header h1 { font-family: var(--font-display); font-size: 2.6em; }
+    .header p  { color: var(--muted); margin: 10px auto 0; max-width: 820px; line-height: 1.6; }
+    .counts { display: flex; gap: 32px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .counts .c { text-align: center; }
+    .counts .c .n { color: var(--gold); font-size: 1.7em; font-weight: bold; font-family: var(--font-mono); }
+    .counts .c .l { color: var(--muted); font-size: 0.8em; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; justify-content: center; }
+    .tabs button { background: var(--card); border: 1px solid var(--gold-dim); color: var(--muted);
+      padding: 10px 22px; border-radius: 4px; cursor: pointer; font-family: var(--font-mono);
+      font-size: 0.88em; transition: all 0.2s; }
+    .tabs button.active { background: var(--gold-dim); color: var(--gold); border-color: var(--gold); }
+    .tabs button:hover  { color: var(--gold); border-color: var(--gold); }
+    .section { display: none; } .section.active { display: block; }
+
+    .sec-heading { font-family: var(--font-heading); color: var(--gold-light); font-size: 1.2em;
+      margin: 0 0 16px; letter-spacing: 0.06em; text-transform: uppercase;
+      padding-bottom: 6px; border-bottom: 1px solid var(--gold-dim); }
+
+    .prof-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px; margin-bottom: 36px; }
+    .prof-card { position: relative; overflow: hidden; border-radius: 6px;
+      border: 1px solid var(--gold-dim); border-left: 4px solid var(--gold);
+      cursor: pointer; transition: all 0.22s; background: var(--card); }
+    .prof-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+    .prof-card-bg { position: absolute; inset: 0; opacity: 0.12; transition: opacity 0.3s; z-index: 0; }
+    .prof-card:hover .prof-card-bg { opacity: 0.2; }
+    .prof-card-content { position: relative; z-index: 1; padding: 20px 18px 16px; }
+    .prof-card h3 { font-family: var(--font-heading); font-size: 1.15em;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .prof-card .icon-big { font-size: 1.5em; }
+    .prof-card .role-badge { display: inline-block; padding: 2px 9px; border-radius: 3px;
+      font-size: 0.72em; font-family: var(--font-mono); background: rgba(255,255,255,0.06);
+      color: var(--muted); margin-bottom: 10px; }
+    .prof-card .attr-tag { display: inline-block; padding: 2px 9px; border-radius: 3px;
+      font-size: 0.72em; font-family: var(--font-mono); margin-left: 4px; font-weight: bold; }
+    .prof-card .desc-text { color: var(--muted); font-size: 0.82em; line-height: 1.5; margin-bottom: 10px; }
+    .prof-card .resources { display: flex; flex-wrap: wrap; gap: 4px; }
+    .prof-card .res-tag { background: rgba(255,255,255,0.04); color: var(--muted);
+      padding: 2px 7px; border-radius: 3px; font-size: 0.7em; font-family: var(--font-mono); }
+    .prof-card .expand-hint { color: var(--gold); font-size: 0.75em; margin-top: 10px;
+      font-family: var(--font-mono); opacity: 0.7; }
+
+    .prof-detail { display: none; background: var(--card); border: 1px solid var(--gold-dim);
+      border-radius: 6px; padding: 28px; margin-bottom: 28px; }
+    .prof-detail.open { display: block; }
+    .prof-detail .back-btn { color: var(--gold); font-size: 0.85em; cursor: pointer;
+      font-family: var(--font-mono); margin-bottom: 16px; display: inline-block;
+      background: none; border: none; }
+    .prof-detail .back-btn:hover { text-decoration: underline; }
+    .prof-detail h2 { font-family: var(--font-heading); margin-bottom: 6px; }
+    .prof-detail .meta-row { color: var(--muted); font-size: 0.85em; margin-bottom: 20px; }
+
+    .tier-progress { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tier-step { flex: 1; min-width: 120px; padding: 10px 14px;
+      background: rgba(255,255,255,0.03); border-radius: 4px;
+      border-top: 3px solid var(--gold-dim); transition: border-color 0.2s; }
+    .tier-step:hover { border-top-color: var(--gold); }
+    .tier-step .lv { font-family: var(--font-mono); font-size: 0.7em; color: var(--gold); margin-bottom: 4px; }
+    .tier-step .tn { font-size: 0.82em; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .tier-step .tres { display: flex; flex-wrap: wrap; gap: 3px; }
+    .tier-step .tr { background: rgba(255,255,255,0.04); color: var(--muted);
+      padding: 1px 6px; border-radius: 2px; font-size: 0.68em; font-family: var(--font-mono); }
+
+    .weapon-note { background: var(--card); border: 1px solid var(--gold-dim); border-radius: 6px;
+      padding: 24px; text-align: center; color: var(--muted); }
+    .weapon-note a { color: var(--gold); }
+
+    .link-card { background: var(--card); border: 1px solid var(--gold-dim); border-left: 4px solid var(--gold);
+      border-radius: 6px; padding: 22px 26px; margin: 24px 0; transition: all 0.2s; }
+    .link-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .link-card a { color: var(--gold); text-decoration: none; font-family: var(--font-heading); font-size: 1.15em; }
+    .link-card a:hover { text-decoration: underline; }
+    .link-card p { color: var(--muted); font-size: 0.85em; margin-top: 6px; line-height: 1.5; }
+
+    .back-link { display: inline-block; color: var(--gold); font-size: 0.9em; margin-bottom: 20px; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="index.html">&larr; Back to Hub</a>
+
+    <header class="header">
+      <h1 class="gold-text">Professions &amp; Skills</h1>
+      <p>
+        6 gathering professions with 8 tiers each, 5 crafting professions with their own skill trees,
+        and 17 weapon types with class restrictions. All data sourced live from the
+        <strong>Grudge Warlords</strong> canonical dataset.
+      </p>
+      <div class="counts">
+        <div class="c"><div class="n" id="countGather">—</div><div class="l">Gathering</div></div>
+        <div class="c"><div class="n" id="countCraft">—</div><div class="l">Crafting</div></div>
+        <div class="c"><div class="n" id="countNodes">—</div><div class="l">Skill Nodes</div></div>
+        <div class="c"><div class="n" id="countMiles">—</div><div class="l">Milestones</div></div>
+        <div class="c"><div class="n" id="countWeapons">—</div><div class="l">Weapon Types</div></div>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="active" data-tab="gather">⛏ Gathering</button>
+      <button data-tab="craft">🔨 Crafting</button>
+      <button data-tab="miles">📈 Gathering Milestones</button>
+      <button data-tab="weapons">⚔ Weapon Skills</button>
+    </div>
+
+    <div class="section active" id="tab-gather">
+      <p class="sec-heading">Gathering Professions</p>
+      <div class="prof-row" id="profRow"></div>
+      <div class="prof-detail" id="profDetail">
+        <button class="back-btn" onclick="closeProfDetail()">&larr; Back to Gathering</button>
+        <h2 class="gold-text" id="detailName"></h2>
+        <div class="meta-row" id="detailMeta"></div>
+        <p class="sec-heading" style="font-size:0.95em;margin-top:0;">Tier Progression</p>
+        <div class="tier-progress" id="detailTiers"></div>
+      </div>
+    </div>
+
+    <div class="section" id="tab-craft">
+      <p class="sec-heading">Crafting Professions</p>
+      <div class="prof-row" id="craftRow"></div>
+      <div class="prof-detail" id="craftDetail">
+        <button class="back-btn" onclick="closeCraftDetail()">&larr; Back to Crafting</button>
+        <h2 class="gold-text" id="craftDetailName"></h2>
+        <div class="meta-row" id="craftDetailMeta"></div>
+        <p class="sec-heading" style="font-size:0.95em;margin-top:0;">Specializations, Tools &amp; Skill Tree</p>
+        <div class="tier-progress" id="craftDetailTiers"></div>
+        <div id="craftDetailSignatures"></div>
+      </div>
+      <div class="link-card">
+        <a href="profession-trees.html">⚔ Skill Trees &amp; Arsenal &rarr;</a>
+        <p>Profession crafting trees, weapon skill loadouts (5-slot system), and T0–T8 arsenal progression — all sourced from WCS.</p>
+      </div>
+    </div>
+
+    <div class="section" id="tab-miles">
+      <p class="sec-heading">Gathering Skill Milestones</p>
+      <div class="tier-progress" id="milesGrid"></div>
+    </div>
+
+    <div class="section" id="tab-weapons">
+      <div class="weapon-note">
+        <p style="font-size:1.1em;color:var(--gold);font-family:var(--font-heading);margin-bottom:12px;">Weapon Skills Reference</p>
+        <p style="margin-bottom:16px;">
+          17 weapon types &middot; 4-slot Arsenal per weapon (Primary / Secondary / Ability / Ultimate).<br>
+          Full interactive reference on the
+          <a href="profession-trees.html">Skill Trees &amp; Arsenal</a> page.
+        </p>
+        <div id="weaponTypesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;text-align:left;margin-top:20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/professions.js"></script>
+</body>
+</html>
