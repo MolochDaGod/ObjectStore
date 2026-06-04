@@ -71,9 +71,11 @@ function uuid(type, meta = '') {
 }
 
 // -- CDN / TIERS --------------------------------------------------------
-const CDN = 'https://molochdagod.github.io/ObjectStore';
-const ICON = (p) => `${CDN}/icons/${p}`;
-const PACK = (p) => `${CDN}/icons/pack/${p}`;
+// Use relative paths so icons work on any host (info.grudge-studio.com,
+// GitHub Pages, or localhost).
+const CDN = '';
+const ICON = (p) => `/icons/${p}`;
+const PACK = (p) => `/icons/pack/${p}`;
 
 const TIERS = [
   { tier: 1, name: 'Bronze',  color: '#8b7355', label: 'Common' },
@@ -115,7 +117,7 @@ function resolveArmorIcon(item, matName) {
 function bespokeIconUrl(slug) {
   if (!slug) return null;
   const path = join(ICONS_WEAPONS_DIR, `${slug}.png`);
-  return existsSync(path) ? `${CDN}/icons/weapons/${slug}.png` : null;
+  return existsSync(path) ? `/icons/weapons/${slug}.png` : null;
 }
 function packWeaponIcon(iconBase, index, offset = 0, max = 40) {
   if (!iconBase) return '';

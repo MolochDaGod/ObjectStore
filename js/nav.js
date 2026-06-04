@@ -1,6 +1,6 @@
 (function() {
-  // CDN base for icon images
-  var ICN = 'https://objectstore.grudge-studio.com/icons';
+  // Use relative icon paths so they work on any host
+  var ICN = '/icons';
 
   // Internal ObjectStore pages — icon is now image path relative to ICN
   var pages = [
@@ -99,7 +99,7 @@
   nav.className = 'os-nav';
   nav.setAttribute('aria-label', 'ObjectStore pages');
   var faviconPath = inSubdir ? '../favicon.svg' : './favicon.svg';
-  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '"><img src="' + faviconPath + '" alt=""> <span>ObjectStore</span><span style="font-size:0.6rem;background:rgba(212,168,75,0.15);color:#d4a84b;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600;">v3</span></a>';
+  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '"><img src="' + faviconPath + '" alt=""> <span>Game Info Hub</span><span style="font-size:0.6rem;background:rgba(212,168,75,0.15);color:#d4a84b;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600;">v5</span></a>';
 
   for (var i = 0; i < pages.length; i++) {
     var p = pages[i];

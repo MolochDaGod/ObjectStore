@@ -15,7 +15,7 @@ const R2_WORKER_URLS = [
   'https://objectstore.grudge-studio.com',
 ];
 const GITHACK_BASE = 'https://raw.githack.com/molochdagod/ObjectStore/main';
-const GHPAGES_BASE = 'https://objectstore.grudge-studio.com';
+const GHPAGES_BASE = 'https://info.grudge-studio.com';
 const DRACO_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
 
 const REGISTRY_URLS = [
@@ -37,6 +37,10 @@ let r2Available = false;
 let scene, camera, renderer, controls, mixer, clock, currentModel;
 let wireframeMode = false;
 let autoRotate = true;
+
+// Reuse Draco loader across model loads to avoid re-downloading the decoder
+const _dracoLoader = new DRACOLoader();
+_dracoLoader.setDecoderPath(DRACO_PATH);
 
 // ── URL helpers ────────────────────────────────────────
 function encPath(p) { return p.split('/').map(s => encodeURIComponent(s)).join('/'); }
@@ -163,8 +167,8 @@ function initViewer() {
 }
 
 async function loadByUrl(url, entry) {
-  if(currentModel){scene.remove(currentModel);currentModel=null;} if(mixer){mixer.stopAllAction();mixer=null;}
-  const loader=new GLTFLoader(); const dr=new DRACOLoader(); dr.setDecoderPath(DRACO_PATH); loader.setDRACOLoader(dr);
+  if(currentModel){scene.remove(currentModel);currentModel.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();}});currentModel=null;} if(mixer){mixer.stopAllAction();mixer=null;}
+  const loader=new GLTFLoader(); loader.setDRACOLoader(_dracoLoader);
   const le=document.getElementById('viewerLoading'); if(le)le.style.display='block';
   try {
     const gltf=await loader.loadAsync(url); currentModel=gltf.scene; scene.add(currentModel);
