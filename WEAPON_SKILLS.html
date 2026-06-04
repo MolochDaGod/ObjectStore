@@ -1058,12 +1058,15 @@ const ARTIFACT_WEAPONS = {
 // Remove SCYTHE from normal weapon types
 delete WEAPON_TYPE_DEFINITIONS.SCYTHE;
 
-// ===== CLASS RESTRICTIONS (6 per class) =====
-const CLASS_WEAPONS = {
-  Warrior: ['SWORD','AXE','HAMMER','SHIELD','GREATSWORD','GREATAXE'],
-  Mage:    ['STAFF','TOME','MACE','WAND','OFFHAND_RELIC','DAGGER'],
-  Ranger:  ['BOW','CROSSBOW','GUN','DAGGER','GREATSWORD','SPEAR'],
-  Worge:   ['STAFF','SPEAR','DAGGER','BOW','HAMMER','MACE']
+// ===== WEAPON TYPE → ITEM CATEGORY MAPPING =====
+// Maps weapon skill type ID to the master-items.json category name
+const WEAPON_CATEGORY_MAP = {
+  SWORD: 'swords', AXE: 'axes1h', BOW: 'bows', CROSSBOW: 'crossbows',
+  GUN: 'guns', DAGGER: 'daggers', STAFF: 'fireStaves', HAMMER: 'hammers1h',
+  SHIELD: 'shields', GREATSWORD: 'greatswords', GREATAXE: 'greataxes',
+  SPEAR: 'spears', TOME: 'offhand-tome', MACE: 'hammers1h',
+  WAND: 'lightningStaves', OFFHAND_RELIC: 'offhand-relic',
+  SCYTHE: 'scythes'
 };
 
 // ===== GRUDGE STUDIO API CONFIG =====
@@ -1078,64 +1081,94 @@ const GRUDGE_API = {
 };
 
 // ===== STATE =====
-let activeClass = null; // null = show all
 let activeWeapon = 'SWORD';
+let activeIndividualWeapon = null; // selected individual weapon from the 6
 let playerTier = 3;
 let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
 let showingArtifact = false;
+let weaponItemsCache = {}; // cache for fetched weapon items
 
 // ===== RENDER =====
 function render() {
-  renderClassSelector();
   renderWeaponTabs();
+  renderWeaponPicker();
   renderTierBar();
   renderActionBar();
   renderSlotColumns();
 }
 
-function renderClassSelector() {
-  let container = document.getElementById('classSelector');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'classSelector';
-    container.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:16px 20px;background:linear-gradient(180deg,hsl(225 28% 10%) 0%,hsl(225 30% 8%) 100%);border-bottom:1px solid hsl(43 40% 20%);';
-    const tabs = document.getElementById('weaponTabs');
-    tabs.parentNode.insertBefore(container, tabs);
-  }
-  const classes = ['Warrior','Mage','Ranger','Worge'];
-  const classColors = { Warrior: '#ef4444', Mage: '#818cf8', Ranger: '#22c55e', Worge: '#f97316' };
-  const classIcons = { Warrior: '⚔', Mage: '✦', Ranger: '🏹', Worge: '🐺' };
-  container.innerHTML = `<button style="padding:8px 18px;border-radius:4px;border:2px solid ${!activeClass && !showingArtifact ? 'var(--gold)' : 'var(--border-gold)'};background:${!activeClass && !showingArtifact ? 'var(--gold)' : 'hsl(225 25% 14%)'};color:${!activeClass && !showingArtifact ? '#0a0e14' : 'var(--text-muted)'};font-family:var(--font-heading);font-size:0.9em;cursor:pointer;font-weight:600;" onclick="activeClass=null;showingArtifact=false;activeWeapon='SWORD';selectedSkills={primary:null,secondary:null,ability:null,ultimate:null};closeDetail();render();">ALL</button>` +
-    classes.map(c => {
-      const isActive = activeClass === c && !showingArtifact;
-      const color = classColors[c];
-      return `<button style="padding:8px 18px;border-radius:4px;border:2px solid ${isActive ? color : 'hsl(225 20% 20%)'};background:${isActive ? color+'22' : 'hsl(225 25% 14%)'};color:${isActive ? color : 'var(--text-muted)'};font-family:var(--font-heading);font-size:0.9em;cursor:pointer;font-weight:600;" onclick="activeClass='${c}';showingArtifact=false;activeWeapon=CLASS_WEAPONS['${c}'][0];selectedSkills={primary:null,secondary:null,ability:null,ultimate:null};closeDetail();render();">${classIcons[c]} ${c}</button>`;
-    }).join('') +
-    `<button style="padding:8px 18px;border-radius:4px;border:2px solid ${showingArtifact ? '#f0d890' : 'hsl(225 20% 20%)'};background:${showingArtifact ? 'rgba(240,216,144,0.15)' : 'hsl(225 25% 14%)'};color:${showingArtifact ? '#f0d890' : 'var(--text-muted)'};font-family:var(--font-heading);font-size:0.9em;cursor:pointer;font-weight:600;letter-spacing:0.05em;" onclick="showingArtifact=true;activeClass=null;activeWeapon=Object.keys(ARTIFACT_WEAPONS)[0];selectedSkills={primary:null,secondary:null,ability:null,ultimate:null};closeDetail();render();">⚜ ARTIFACT</button>`;
-}
-
 function renderWeaponTabs() {
   const container = document.getElementById('weaponTabs');
   container.innerHTML = '';
-  const source = showingArtifact ? ARTIFACT_WEAPONS : WEAPON_TYPE_DEFINITIONS;
-  const allowed = (!showingArtifact && activeClass) ? CLASS_WEAPONS[activeClass] : null;
-  for (const [key, weapon] of Object.entries(source)) {
-    if (allowed && !allowed.includes(key)) continue;
+  // Standard weapon type tabs
+  for (const [key, weapon] of Object.entries(WEAPON_TYPE_DEFINITIONS)) {
     const tab = document.createElement('button');
-    tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
-    if (showingArtifact) {
-      tab.style.cssText = 'border-color:#f0d890;background:linear-gradient(180deg,hsl(43 30% 16%) 0%,hsl(43 25% 10%) 100%);';
-      if (key === activeWeapon) tab.style.cssText += 'background:linear-gradient(180deg,hsl(43 60% 40%) 0%,hsl(43 50% 28%) 100%);color:#0a0e14;box-shadow:0 0 12px rgba(240,216,144,0.3);';
-    }
-    tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${showingArtifact ? ' <span style="font-size:0.6em;opacity:0.7">LEGACY</span>' : ''}`;
+    tab.className = 'weapon-tab' + (key === activeWeapon && !showingArtifact ? ' active' : '');
+    tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}`;
     tab.onclick = () => {
-      activeWeapon = key;
+      activeWeapon = key; showingArtifact = false; activeIndividualWeapon = null;
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
-      closeDetail();
-      render();
+      closeDetail(); render(); loadWeaponItems(key);
     };
     container.appendChild(tab);
   }
+  // Artifact tab (gold shimmer)
+  for (const [key, weapon] of Object.entries(ARTIFACT_WEAPONS)) {
+    const tab = document.createElement('button');
+    tab.className = 'weapon-tab' + (showingArtifact && key === activeWeapon ? ' active' : '');
+    tab.style.cssText = 'border-color:#f0d890;background:linear-gradient(180deg,hsl(43 30% 16%) 0%,hsl(43 25% 10%) 100%);';
+    if (showingArtifact && key === activeWeapon) tab.style.cssText += 'background:linear-gradient(180deg,hsl(43 60% 40%) 0%,hsl(43 50% 28%) 100%);color:#0a0e14;box-shadow:0 0 12px rgba(240,216,144,0.3);';
+    tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name} <span style="font-size:0.6em;opacity:0.7">ARTIFACT</span>`;
+    tab.onclick = () => {
+      showingArtifact = true; activeWeapon = key; activeIndividualWeapon = null;
+      selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
+      closeDetail(); render();
+    };
+    container.appendChild(tab);
+  }
+}
+
+// ===== 6-WEAPON PICKER (individual weapons per type) =====
+async function loadWeaponItems(weaponTypeKey) {
+  const cat = WEAPON_CATEGORY_MAP[weaponTypeKey];
+  if (!cat || weaponItemsCache[weaponTypeKey]) { renderWeaponPicker(); return; }
+  try {
+    const res = await fetch('./api/v1/master-items.json');
+    const data = await res.json();
+    // Get T1 items (base weapons) for this category — these are the 6 unique weapons
+    const t1Items = (data.items || []).filter(i => i.category === cat && i.tier === 1);
+    weaponItemsCache[weaponTypeKey] = t1Items.slice(0, 6);
+    renderWeaponPicker();
+  } catch (e) { console.warn('Could not load weapon items:', e); }
+}
+
+function renderWeaponPicker() {
+  let container = document.getElementById('weaponPicker');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'weaponPicker';
+    container.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:14px 20px;flex-wrap:wrap;background:hsl(225 28% 8%);border-bottom:1px solid hsl(43 40% 18%);min-height:42px;';
+    const tierBar = document.getElementById('tierBar');
+    tierBar.parentNode.insertBefore(container, tierBar);
+  }
+  if (showingArtifact) { container.innerHTML = '<span style="color:#f0d890;font-family:var(--font-heading);font-size:0.85em;letter-spacing:0.06em;">⚜ ARTIFACT LEGACY — Own Level System (1-100)</span>'; return; }
+  const items = weaponItemsCache[activeWeapon];
+  if (!items || !items.length) { container.innerHTML = '<span style="color:var(--text-muted);font-size:0.8em;">Loading weapons…</span>'; loadWeaponItems(activeWeapon); return; }
+  const TIER_COLORS = { 1:'#8b7355', 2:'#a8a8a8', 3:'#4a9eff', 4:'#9d4dff', 5:'#ff4d4d', 6:'#ffaa00', 7:'#d4a84b', 8:'#f0d890' };
+  container.innerHTML = items.map((item, i) => {
+    const selected = activeIndividualWeapon === i;
+    const borderColor = selected ? (TIER_COLORS[item.tier] || 'var(--gold)') : 'hsl(225 20% 20%)';
+    const bg = selected ? 'rgba(212,168,75,0.12)' : 'hsl(225 25% 14%)';
+    return `<button onclick="activeIndividualWeapon=${i};render();" style="
+      display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;
+      border:2px solid ${borderColor};background:${bg};cursor:pointer;
+      transition:all 0.15s;font-family:var(--font-heading);color:${selected ? TIER_COLORS[item.tier] || '#d4a84b' : 'var(--text-muted)'};
+      font-size:0.82em;font-weight:${selected ? '700' : '500'};
+      ${selected ? 'box-shadow:0 0 10px '+borderColor+'44;' : ''}
+    "><img src="${item.iconUrl || item.icon || ''}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:3px;" onerror="this.style.display='none'">
+    <span>${item.baseName || item.name}</span>
+    </button>`;
+  }).join('');
 }
 
 function renderTierBar() {
@@ -1338,6 +1371,7 @@ function resetSelections() {
 
 // Init
 render();
+loadWeaponItems('SWORD');
 </script>
 <script src="./js/nav.js" defer></script>
 </body>
