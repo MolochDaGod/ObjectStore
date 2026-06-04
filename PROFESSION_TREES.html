@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profession Skill Trees — Grudge Warlords</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Spectral+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#0a0e14;--card:#151d2b;--gold:#d4a84b;--gold-light:#f0d890;--text:#e8e6e3;--text-dim:#7a7877;--border:#1e2a3a; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Spectral SC',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh}
+    .header{text-align:center;padding:40px 20px 30px;background:linear-gradient(180deg,hsl(225 28% 13%),hsl(225 30% 8%));border-bottom:2px solid var(--gold)}
+    .header h1{font-family:'Cinzel Decorative',serif;font-size:2.4em;background:linear-gradient(180deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .header p{color:var(--text-dim);font-size:1em;margin-top:8px}
+    .prof-tabs{display:flex;gap:8px;justify-content:center;padding:20px;flex-wrap:wrap;background:hsl(225 28% 10%);border-bottom:1px solid var(--border)}
+    .prof-tab{display:flex;align-items:center;gap:8px;padding:10px 20px;border:2px solid var(--border);border-radius:6px;background:var(--card);color:var(--text-dim);cursor:pointer;font-family:'Cinzel',serif;font-size:0.9em;font-weight:600;transition:all 0.2s}
+    .prof-tab:hover{border-color:var(--gold);color:var(--text)}
+    .prof-tab.active{border-color:var(--gold);background:rgba(212,168,75,0.12);color:var(--gold)}
+    .prof-tab img{width:32px;height:32px;border-radius:4px;object-fit:cover}
+    .tree-container{position:relative;width:100%;height:calc(100vh - 260px);min-height:500px;overflow:hidden}
+    .tree-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.25}
+    .tree-svg{position:absolute;inset:0;width:100%;height:100%}
+    .branch-legend{position:absolute;top:12px;left:12px;background:rgba(10,14,20,0.85);border:1px solid var(--border);border-radius:8px;padding:12px;backdrop-filter:blur(6px);z-index:10}
+    .branch-legend h3{font-family:'Cinzel',serif;font-size:0.75em;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em}
+    .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:0.78em;color:var(--text-dim)}
+    .legend-dot{width:10px;height:10px;border-radius:50%}
+    .node-tooltip{position:fixed;background:rgba(10,14,20,0.95);border:1px solid var(--gold);border-radius:8px;padding:14px;max-width:280px;z-index:100;pointer-events:none;display:none;backdrop-filter:blur(8px)}
+    .node-tooltip .tt-name{font-family:'Cinzel',serif;font-size:0.95em;color:var(--gold-light);margin-bottom:4px}
+    .node-tooltip .tt-desc{font-size:0.8em;color:var(--text-dim);margin-bottom:8px;line-height:1.4}
+    .node-tooltip .tt-bonus{font-size:0.75em;color:#4ade80;margin-bottom:2px}
+    .node-tooltip .tt-unlock{font-size:0.72em;color:#fbbf24;margin-top:6px}
+    .node-tooltip .tt-req{font-size:0.7em;color:#ef4444;margin-top:4px}
+    .prof-info{position:absolute;top:12px;right:12px;background:rgba(10,14,20,0.85);border:1px solid var(--border);border-radius:8px;padding:12px;backdrop-filter:blur(6px);z-index:10;text-align:right}
+    .prof-info .pi-name{font-family:'Cinzel Decorative',serif;font-size:1.1em;color:var(--gold-light)}
+    .prof-info .pi-role{font-size:0.78em;color:var(--text-dim)}
+    .prof-info .pi-count{font-size:0.72em;color:var(--text-dim);margin-top:4px}
+    .loading{text-align:center;padding:80px;color:var(--text-dim);font-size:1.1em}
+    @media(max-width:768px){.prof-tab{padding:8px 14px;font-size:0.8em}.prof-tab img{width:24px;height:24px}}
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>⚒ Profession Skill Trees</h1>
+  <p>5 crafting professions — 148 skill nodes — imported from Warlord Crafting Suite</p>
+</div>
+<div class="prof-tabs" id="profTabs"></div>
+<div class="tree-container" id="treeContainer">
+  <div class="tree-bg" id="treeBg"></div>
+  <svg class="tree-svg" id="treeSvg"></svg>
+  <div class="branch-legend" id="branchLegend"></div>
+  <div class="prof-info" id="profInfo"></div>
+</div>
+<div class="node-tooltip" id="tooltip"></div>
+<div class="loading" id="loading">Loading profession trees…</div>
+
+<script>
+let data = null;
+let activeProf = 'miner';
+
+async function init() {
+  try {
+    const res = await fetch('./api/v1/master-professionTrees.json');
+    data = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    renderProfTabs();
+    renderTree();
+  } catch (e) {
+    document.getElementById('loading').textContent = 'Failed to load profession data.';
+    console.error(e);
+  }
+}
+
+function renderProfTabs() {
+  const container = document.getElementById('profTabs');
+  container.innerHTML = '';
+  for (const [key, prof] of Object.entries(data.professions)) {
+    const tab = document.createElement('button');
+    tab.className = 'prof-tab' + (key === activeProf ? ' active' : '');
+    tab.innerHTML = `<img src="${prof.iconImage}" alt="${prof.name}" onerror="this.style.display='none'"> ${prof.icon} ${prof.name}`;
+    tab.onclick = () => { activeProf = key; renderProfTabs(); renderTree(); };
+    container.appendChild(tab);
+  }
+}
+
+function renderTree() {
+  const prof = data.professions[activeProf];
+  if (!prof) return;
+
+  // Background
+  document.getElementById('treeBg').style.backgroundImage = `url(${prof.bgImage})`;
+
+  // Info panel
+  document.getElementById('profInfo').innerHTML = `
+    <div class="pi-name">${prof.icon} ${prof.name}</div>
+    <div class="pi-role">${prof.role}</div>
+    <div class="pi-count">${prof.totalNodes} nodes · ${prof.branches.length} branches</div>
+  `;
+
+  // Branch legend
+  document.getElementById('branchLegend').innerHTML = `<h3>Branches</h3>` +
+    prof.branches.map(b => `<div class="legend-item"><div class="legend-dot" style="background:${b.color.stroke}"></div> ${b.name} (${b.nodeCount})</div>`).join('');
+
+  // SVG tree
+  const svg = document.getElementById('treeSvg');
+  const W = svg.clientWidth || 800;
+  const H = svg.clientHeight || 600;
+  const PAD = 40;
+
+  // Map x/y (0-100 percent) to SVG coords
+  const mapX = (x) => PAD + (x / 100) * (W - PAD * 2);
+  const mapY = (y) => PAD + ((100 - y) / 100) * (H - PAD * 2); // flip Y (0=bottom)
+
+  let svgContent = '';
+
+  // Draw connections first (lines behind nodes)
+  for (const node of prof.nodes) {
+    if (node.parent !== null) {
+      const parent = prof.nodes.find(n => n.id === node.parent);
+      if (parent) {
+        const color = node.branchColor?.stroke || '#555';
+        svgContent += `<line x1="${mapX(parent.x)}" y1="${mapY(parent.y)}" x2="${mapX(node.x)}" y2="${mapY(node.y)}" stroke="${color}" stroke-width="2" stroke-opacity="0.5"/>`;
+      }
+    }
+  }
+
+  // Draw nodes
+  const nodeTypeShapes = { stat: 'circle', effect: 'diamond', combat: 'star', recipe: 'rect' };
+  const nodeTypeColors = data.nodeTypes || {};
+
+  for (const node of prof.nodes) {
+    const cx = mapX(node.x);
+    const cy = mapY(node.y);
+    const color = node.branchColor?.stroke || '#d4a84b';
+    const fill = node.branchColor?.fill || 'rgba(212,168,75,0.15)';
+    const r = 16;
+
+    // Shape based on nodeType
+    switch (node.nodeType) {
+      case 'effect': // Diamond
+        svgContent += `<polygon points="${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+        break;
+      case 'combat': // Star (simplified as larger circle with glow)
+        svgContent += `<circle cx="${cx}" cy="${cy}" r="${r+2}" fill="${fill}" stroke="${color}" stroke-width="2.5" class="node" data-id="${node.id}" style="cursor:pointer;filter:drop-shadow(0 0 4px ${color})"/>`;
+        break;
+      case 'recipe': // Rounded rect
+        svgContent += `<rect x="${cx-r}" y="${cy-r}" width="${r*2}" height="${r*2}" rx="5" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+        break;
+      default: // circle (stat)
+        svgContent += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+    }
+
+    // Node label
+    svgContent += `<text x="${cx}" y="${cy+r+14}" text-anchor="middle" fill="${color}" font-family="Cinzel,serif" font-size="9" font-weight="600" opacity="0.8">${node.name.length > 16 ? node.name.substring(0,14)+'…' : node.name}</text>`;
+
+    // Level requirement badge
+    if (node.reqLevel > 0) {
+      svgContent += `<text x="${cx+r+4}" y="${cy-r+4}" fill="#ef4444" font-size="8" font-family="Cinzel,serif" opacity="0.7">Lv${node.reqLevel}</text>`;
+    }
+  }
+
+  svg.innerHTML = svgContent;
+
+  // Add tooltip handlers
+  const tooltip = document.getElementById('tooltip');
+  svg.querySelectorAll('.node').forEach(el => {
+    el.addEventListener('mouseenter', (e) => {
+      const id = parseInt(el.dataset.id);
+      const node = prof.nodes.find(n => n.id === id);
+      if (!node) return;
+      tooltip.innerHTML = `
+        <div class="tt-name">${node.name}</div>
+        <div class="tt-desc">${node.description || 'No description'}</div>
+        ${node.bonuses.map(b => `<div class="tt-bonus">+${b.value}% ${b.type} (${b.target})</div>`).join('')}
+        ${node.unlocks.length ? `<div class="tt-unlock">Unlocks: ${node.unlocks.join(', ')}</div>` : ''}
+        ${node.reqLevel > 0 ? `<div class="tt-req">Requires Level ${node.reqLevel}</div>` : ''}
+      `;
+      tooltip.style.display = 'block';
+      tooltip.style.left = e.clientX + 12 + 'px';
+      tooltip.style.top = e.clientY + 12 + 'px';
+    });
+    el.addEventListener('mousemove', (e) => {
+      tooltip.style.left = e.clientX + 12 + 'px';
+      tooltip.style.top = e.clientY + 12 + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  });
+}
+
+init();
+</script>
+<script src="./js/nav.js" defer></script>
+</body>
+</html>

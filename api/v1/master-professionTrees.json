@@ -1,0 +1,3150 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-04T16:35:04.189Z",
+  "totalProfessions": 5,
+  "totalNodes": 148,
+  "nodeTypes": {
+    "stat": {
+      "shape": "circle",
+      "label": "Stat Boost",
+      "color": "#4ade80"
+    },
+    "effect": {
+      "shape": "diamond",
+      "label": "Effect",
+      "color": "#c084fc"
+    },
+    "combat": {
+      "shape": "star",
+      "label": "Combat",
+      "color": "#facc15"
+    },
+    "recipe": {
+      "shape": "scroll",
+      "label": "Recipe",
+      "color": "#fbbf24"
+    }
+  },
+  "branchColors": {
+    "Core": {
+      "stroke": "#f97316",
+      "fill": "rgba(249,115,22,0.2)"
+    },
+    "Weapons": {
+      "stroke": "#6366f1",
+      "fill": "rgba(99,102,241,0.2)"
+    },
+    "Gathering": {
+      "stroke": "#f59e0b",
+      "fill": "rgba(245,158,11,0.2)"
+    },
+    "Armor": {
+      "stroke": "#ef4444",
+      "fill": "rgba(239,68,68,0.2)"
+    },
+    "Butchery": {
+      "stroke": "#ef4444",
+      "fill": "rgba(239,68,68,0.2)"
+    },
+    "Baking": {
+      "stroke": "#3b82f6",
+      "fill": "rgba(59,130,246,0.2)"
+    },
+    "Alchemy": {
+      "stroke": "#22c55e",
+      "fill": "rgba(34,197,94,0.2)"
+    },
+    "Forestry": {
+      "stroke": "#22c55e",
+      "fill": "rgba(34,197,94,0.2)"
+    },
+    "Leatherworking": {
+      "stroke": "#a16207",
+      "fill": "rgba(161,98,7,0.2)"
+    },
+    "Bowcraft": {
+      "stroke": "#10b981",
+      "fill": "rgba(16,185,129,0.2)"
+    },
+    "Mining": {
+      "stroke": "#f59e0b",
+      "fill": "rgba(245,158,11,0.2)"
+    },
+    "Smelting": {
+      "stroke": "#ef4444",
+      "fill": "rgba(239,68,68,0.2)"
+    },
+    "Weaponsmithing": {
+      "stroke": "#6366f1",
+      "fill": "rgba(99,102,241,0.2)"
+    },
+    "Nexus": {
+      "stroke": "#fbbf24",
+      "fill": "rgba(251,191,36,0.3)"
+    },
+    "Enchanter": {
+      "stroke": "#f472b6",
+      "fill": "rgba(244,114,182,0.25)"
+    },
+    "Spellwright": {
+      "stroke": "#60a5fa",
+      "fill": "rgba(96,165,250,0.25)"
+    },
+    "Arcanist": {
+      "stroke": "#fb7185",
+      "fill": "rgba(251,113,133,0.25)"
+    },
+    "Arcanist Forge": {
+      "stroke": "#fb7185",
+      "fill": "rgba(251,113,133,0.25)"
+    },
+    "Soulbinder": {
+      "stroke": "#2dd4bf",
+      "fill": "rgba(45,212,191,0.25)"
+    },
+    "Chronoweaver": {
+      "stroke": "#c084fc",
+      "fill": "rgba(192,132,252,0.25)"
+    },
+    "Weaponry": {
+      "stroke": "#f97316",
+      "fill": "rgba(249,115,22,0.2)"
+    },
+    "Automata": {
+      "stroke": "#64748b",
+      "fill": "rgba(100,116,139,0.2)"
+    },
+    "Siege": {
+      "stroke": "#dc2626",
+      "fill": "rgba(220,38,38,0.2)"
+    }
+  },
+  "professions": {
+    "miner": {
+      "uuid": "PROF-20260604113504-00001C--6259AD8",
+      "name": "Miner",
+      "role": "Weaponsmith & Armorsmith",
+      "icon": "⛏️",
+      "color": "#f59e0b",
+      "bgImage": "/images/professions/dark_underground_mine_with_glowing_crystals.png",
+      "iconImage": "/images/professions/miner_profession_game_icon.png",
+      "totalNodes": 27,
+      "branches": [
+        {
+          "name": "Core",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 3
+        },
+        {
+          "name": "Weapons",
+          "color": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          },
+          "nodeCount": 7
+        },
+        {
+          "name": "Gathering",
+          "color": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          },
+          "nodeCount": 7
+        },
+        {
+          "name": "Armor",
+          "color": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          },
+          "nodeCount": 7
+        },
+        {
+          "name": "Hybrid",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 3
+        }
+      ],
+      "nodes": [
+        {
+          "uuid": "NODE-20260604113504-000001--78E8F08",
+          "id": 1,
+          "name": "Miner's Initiation",
+          "x": 50,
+          "y": 92,
+          "reqLevel": 0,
+          "parent": null,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Begin your journey into the depths. Learn the fundamentals of mining and metalwork.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000002-47E87C35",
+          "id": 2,
+          "name": "Ore Identification",
+          "x": 50,
+          "y": 82,
+          "reqLevel": 5,
+          "parent": 1,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Learn to identify valuable ore deposits by sight and sound.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000003-43A2C742",
+          "id": 3,
+          "name": "Metallurgy Basics",
+          "x": 50,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Master the science of working with metals. Unlocks all three specialization paths.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000004--3BD53BC",
+          "id": 10,
+          "name": "Blade Forging",
+          "x": 20,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Weapons",
+          "nodeType": "stat",
+          "description": "Learn to forge sharp blades from refined metals.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000005--33024CA",
+          "id": 11,
+          "name": "Edge Tempering",
+          "x": 12,
+          "y": 55,
+          "reqLevel": 25,
+          "parent": 10,
+          "branch": "Weapons",
+          "nodeType": "recipe",
+          "description": "Master the art of tempering blades for maximum sharpness and durability.",
+          "bonuses": [],
+          "unlocks": [
+            "Iron Sword",
+            "Bloodfeud Blade"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000006-6FB1A08A",
+          "id": 12,
+          "name": "Axe Smithing",
+          "x": 8,
+          "y": 42,
+          "reqLevel": 35,
+          "parent": 11,
+          "branch": "Weapons",
+          "nodeType": "effect",
+          "description": "Forge devastating axes designed to cleave through armor.",
+          "bonuses": [],
+          "unlocks": [
+            "Tempered Blade",
+            "Wraithfang"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000007--228A4F3",
+          "id": 13,
+          "name": "Dagger Crafting",
+          "x": 18,
+          "y": 35,
+          "reqLevel": 40,
+          "parent": 11,
+          "branch": "Weapons",
+          "nodeType": "combat",
+          "description": "Craft precise daggers for quick, deadly strikes.",
+          "bonuses": [],
+          "unlocks": [
+            "Gorehowl",
+            "Skullsplitter"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000008-32A0CF89",
+          "id": 14,
+          "name": "Hammer Forging",
+          "x": 5,
+          "y": 28,
+          "reqLevel": 50,
+          "parent": 12,
+          "branch": "Weapons",
+          "nodeType": "combat",
+          "description": "Create mighty hammers that crush bones and shatter shields.",
+          "bonuses": [],
+          "unlocks": [
+            "Nightfang",
+            "Bloodshiv"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000009-04E9D439",
+          "id": 15,
+          "name": "Greataxe Mastery",
+          "x": 15,
+          "y": 20,
+          "reqLevel": 65,
+          "parent": 14,
+          "branch": "Weapons",
+          "nodeType": "combat",
+          "description": "Forge massive two-handed axes that cleave through multiple foes.",
+          "bonuses": [],
+          "unlocks": [
+            "Titanmaul"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000A--124C01F",
+          "id": 16,
+          "name": "Legendary Weaponsmith",
+          "x": 10,
+          "y": 10,
+          "reqLevel": 90,
+          "parent": 15,
+          "branch": "Weapons",
+          "nodeType": "combat",
+          "description": "Achieve legendary status. Craft weapons spoken of in tales.",
+          "bonuses": [],
+          "unlocks": [
+            "Skullsunder",
+            "Bloodreaver"
+          ],
+          "branchColor": {
+            "stroke": "#6366f1",
+            "fill": "rgba(99,102,241,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000B-1B5AF5C9",
+          "id": 20,
+          "name": "Efficient Mining",
+          "x": 42,
+          "y": 62,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Gathering",
+          "nodeType": "recipe",
+          "description": "Mine faster with improved technique and tool handling.",
+          "bonuses": [],
+          "unlocks": [
+            "World Breaker"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000C-421507C9",
+          "id": 21,
+          "name": "Deep Vein Sensing",
+          "x": 35,
+          "y": 50,
+          "reqLevel": 28,
+          "parent": 20,
+          "branch": "Gathering",
+          "nodeType": "effect",
+          "description": "Sense hidden ore veins deep within the rock.",
+          "bonuses": [],
+          "unlocks": [
+            "Faster Mining",
+            "Double Ore Chance"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000D--63E088C",
+          "id": 22,
+          "name": "Master Smelting",
+          "x": 50,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 21,
+          "branch": "Gathering",
+          "nodeType": "stat",
+          "description": "Smelt ores with minimal waste and maximum purity.",
+          "bonuses": [],
+          "unlocks": [
+            "Rare Ore Detection",
+            "Hidden Vein Finder"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000E-59E521A0",
+          "id": 23,
+          "name": "Gem Extraction",
+          "x": 42,
+          "y": 35,
+          "reqLevel": 50,
+          "parent": 22,
+          "branch": "Gathering",
+          "nodeType": "stat",
+          "description": "Extract gems from ore without damaging their structure.",
+          "bonuses": [],
+          "unlocks": [
+            "Pure Ingots",
+            "Alloy Crafting"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00000F--42C589F",
+          "id": 24,
+          "name": "Relic Detection",
+          "x": 58,
+          "y": 35,
+          "reqLevel": 55,
+          "parent": 22,
+          "branch": "Gathering",
+          "nodeType": "stat",
+          "description": "Sense ancient relics buried in the earth.",
+          "bonuses": [],
+          "unlocks": [
+            "Gem Mining",
+            "Pristine Gems"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000010-3068197B",
+          "id": 25,
+          "name": "Mythril Prospecting",
+          "x": 50,
+          "y": 22,
+          "reqLevel": 75,
+          "parent": 23,
+          "branch": "Gathering",
+          "nodeType": "stat",
+          "description": "Locate and extract the legendary mythril ore.",
+          "bonuses": [],
+          "unlocks": [
+            "Ancient Relic Mining",
+            "Artifact Discovery"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000011--4AB7033",
+          "id": 26,
+          "name": "Divine Ore Mastery",
+          "x": 50,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 25,
+          "branch": "Gathering",
+          "nodeType": "stat",
+          "description": "Master the extraction of divine ores from the planet's core.",
+          "bonuses": [],
+          "unlocks": [
+            "Mythril Mining",
+            "T7 Ores"
+          ],
+          "branchColor": {
+            "stroke": "#f59e0b",
+            "fill": "rgba(245,158,11,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000012-603FB42D",
+          "id": 30,
+          "name": "Plate Shaping",
+          "x": 80,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Shape metal plates into protective armor pieces.",
+          "bonuses": [],
+          "unlocks": [
+            "Divine Ore Mining",
+            "T8 Resources"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000013-0FEA3BC3",
+          "id": 31,
+          "name": "Reinforced Plating",
+          "x": 88,
+          "y": 55,
+          "reqLevel": 28,
+          "parent": 30,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Add reinforced layers for extra protection.",
+          "bonuses": [],
+          "unlocks": [
+            "Iron Helm",
+            "Guardian Set"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000014--4AF9A6D",
+          "id": 32,
+          "name": "Shield Crafting",
+          "x": 92,
+          "y": 42,
+          "reqLevel": 40,
+          "parent": 31,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Forge mighty shields that can block devastating blows.",
+          "bonuses": [],
+          "unlocks": [
+            "Steel Plate",
+            "Guardian Set"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000015-0ED3EAC9",
+          "id": 33,
+          "name": "Berserker Smithing",
+          "x": 82,
+          "y": 38,
+          "reqLevel": 45,
+          "parent": 31,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Craft armor that enhances offensive capabilities.",
+          "bonuses": [],
+          "unlocks": [
+            "Iron Shield",
+            "Tower Shield",
+            "Obsidian Shield"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000016--5B255AE",
+          "id": 34,
+          "name": "Elemental Resistance",
+          "x": 95,
+          "y": 28,
+          "reqLevel": 60,
+          "parent": 32,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Imbue armor with elemental resistances.",
+          "bonuses": [],
+          "unlocks": [
+            "Berserker Set",
+            "Offensive Plate"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000017-143EA86E",
+          "id": 35,
+          "name": "Masterwork Plate",
+          "x": 85,
+          "y": 20,
+          "reqLevel": 75,
+          "parent": 34,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Craft masterwork quality plate armor with exceptional stats.",
+          "bonuses": [],
+          "unlocks": [
+            "Fire Resistant Plate",
+            "Frost Resistant Plate"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000018-0CF532F8",
+          "id": 36,
+          "name": "Divine Armorsmith",
+          "x": 90,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 35,
+          "branch": "Armor",
+          "nodeType": "stat",
+          "description": "Forge armor blessed by the gods themselves.",
+          "bonuses": [],
+          "unlocks": [
+            "Masterwork Set"
+          ],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000019--A8804BA",
+          "id": 40,
+          "name": "Weapon Sockets",
+          "x": 25,
+          "y": 48,
+          "reqLevel": 45,
+          "parent": 12,
+          "branch": "Hybrid",
+          "nodeType": "stat",
+          "description": "Add gem sockets to weapons during forging.",
+          "bonuses": [],
+          "unlocks": [
+            "Divine Plate Set"
+          ],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00001A--74D91C7",
+          "id": 41,
+          "name": "Armor Sockets",
+          "x": 75,
+          "y": 48,
+          "reqLevel": 45,
+          "parent": 31,
+          "branch": "Hybrid",
+          "nodeType": "stat",
+          "description": "Add gem sockets to armor pieces during crafting.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00001B--2D28462",
+          "id": 42,
+          "name": "Ore Efficiency",
+          "x": 60,
+          "y": 55,
+          "reqLevel": 35,
+          "parent": 21,
+          "branch": "Hybrid",
+          "nodeType": "stat",
+          "description": "Use less ore when crafting without sacrificing quality.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        }
+      ]
+    },
+    "forester": {
+      "uuid": "PROF-20260604113504-000039--57BAFB6",
+      "name": "Forester",
+      "role": "Forester Specialization",
+      "icon": "🌲",
+      "color": "#22c55e",
+      "bgImage": "/images/professions/ancient_mystical_forest_with_glowing_particles.png",
+      "iconImage": "/images/professions/forester_profession_game_icon.png",
+      "totalNodes": 28,
+      "branches": [
+        {
+          "name": "Core",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 28
+        }
+      ],
+      "nodes": [
+        {
+          "uuid": "NODE-20260604113504-00001D-7B5D9D48",
+          "id": 1,
+          "name": "Logging Basics",
+          "x": 50,
+          "y": 90,
+          "reqLevel": 0,
+          "parent": null,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00001E--568DB30",
+          "id": 2,
+          "name": "Skinning Basics",
+          "x": 50,
+          "y": 80,
+          "reqLevel": 5,
+          "parent": 1,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00001F-49E7E733",
+          "id": 3,
+          "name": "Wood Seasoning",
+          "x": 40,
+          "y": 70,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000020--53C9066",
+          "id": 4,
+          "name": "Hide Curing",
+          "x": 60,
+          "y": 70,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000021--4422D0C",
+          "id": 5,
+          "name": "Axe Forging I",
+          "x": 25,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000022--31F8CF5",
+          "id": 6,
+          "name": "Wood Wall Fab",
+          "x": 10,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 5,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000023--C0225C5",
+          "id": 7,
+          "name": "Hardwood Mastery",
+          "x": 20,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 5,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000024--5594455",
+          "id": 8,
+          "name": "Skullsplitter Spec",
+          "x": 30,
+          "y": 45,
+          "reqLevel": 35,
+          "parent": 7,
+          "branch": "Core",
+          "nodeType": "combat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000025-65EE6946",
+          "id": 9,
+          "name": "Stone Reinforce",
+          "x": 5,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 6,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000026-085C5511",
+          "id": 10,
+          "name": "Ironmaw Forging",
+          "x": 25,
+          "y": 30,
+          "reqLevel": 60,
+          "parent": 8,
+          "branch": "Core",
+          "nodeType": "combat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000027--6EF5D43",
+          "id": 11,
+          "name": "Gorehowl Smith",
+          "x": 15,
+          "y": 15,
+          "reqLevel": 85,
+          "parent": 10,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000028-4D9E8503",
+          "id": 12,
+          "name": "Iron Clad Walls",
+          "x": 5,
+          "y": 20,
+          "reqLevel": 90,
+          "parent": 9,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000029--4B0D6EF",
+          "id": 13,
+          "name": "Leather Stitching",
+          "x": 50,
+          "y": 55,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002A--2ABABA1",
+          "id": 14,
+          "name": "Berry Foraging",
+          "x": 40,
+          "y": 45,
+          "reqLevel": 25,
+          "parent": 13,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002B-702DC4FB",
+          "id": 15,
+          "name": "Leather Armor (Sets)",
+          "x": 60,
+          "y": 45,
+          "reqLevel": 30,
+          "parent": 13,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002C--26A3B3D",
+          "id": 16,
+          "name": "Pristine Skinning",
+          "x": 50,
+          "y": 40,
+          "reqLevel": 45,
+          "parent": 15,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002D--5A055B5",
+          "id": 17,
+          "name": "Exotic Dyes",
+          "x": 45,
+          "y": 30,
+          "reqLevel": 55,
+          "parent": 16,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002E-63D7AA13",
+          "id": 18,
+          "name": "Legendary Pelts",
+          "x": 55,
+          "y": 25,
+          "reqLevel": 75,
+          "parent": 16,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00002F-54FFC8BD",
+          "id": 19,
+          "name": "Mythic Skinning",
+          "x": 50,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 18,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000030-531FF999",
+          "id": 20,
+          "name": "Fletching Basics",
+          "x": 75,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000031--5DAA58B",
+          "id": 21,
+          "name": "Arrow Smithing",
+          "x": 90,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 20,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000032--1EDC126",
+          "id": 22,
+          "name": "Crossbow Tech",
+          "x": 80,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 20,
+          "branch": "Core",
+          "nodeType": "combat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000033--BC2B539",
+          "id": 23,
+          "name": "Watchtower Blueprint",
+          "x": 95,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 21,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000034-6DC6F43C",
+          "id": 24,
+          "name": "Wraithbone Bow",
+          "x": 70,
+          "y": 45,
+          "reqLevel": 50,
+          "parent": 22,
+          "branch": "Core",
+          "nodeType": "combat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000035--31B5CA0",
+          "id": 25,
+          "name": "Shipbuilding I",
+          "x": 80,
+          "y": 35,
+          "reqLevel": 60,
+          "parent": 24,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000036--5ACFB8B",
+          "id": 26,
+          "name": "Elemental Arrows",
+          "x": 90,
+          "y": 30,
+          "reqLevel": 70,
+          "parent": 21,
+          "branch": "Core",
+          "nodeType": "combat",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000037--1EF0EE5",
+          "id": 27,
+          "name": "Naval Architecture",
+          "x": 75,
+          "y": 20,
+          "reqLevel": 80,
+          "parent": 25,
+          "branch": "Core",
+          "nodeType": "effect",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000038--6F4C6BA",
+          "id": 28,
+          "name": "War Galleon",
+          "x": 85,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 27,
+          "branch": "Core",
+          "nodeType": "recipe",
+          "description": "",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        }
+      ]
+    },
+    "mystic": {
+      "uuid": "PROF-20260604113504-00005F--64BF583",
+      "name": "Mystic",
+      "role": "Arcane Crafter & Enchanter",
+      "icon": "🔮",
+      "color": "#a855f7",
+      "bgImage": "/images/professions/cosmic_arcane_void_magic_background.png",
+      "iconImage": "/images/professions/mystic_profession_game_icon.png",
+      "totalNodes": 37,
+      "branches": [
+        {
+          "name": "Nexus",
+          "color": {
+            "stroke": "#fbbf24",
+            "fill": "rgba(251,191,36,0.3)"
+          },
+          "nodeCount": 3
+        },
+        {
+          "name": "Enchanter",
+          "color": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          },
+          "nodeCount": 6
+        },
+        {
+          "name": "Spellwright",
+          "color": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          },
+          "nodeCount": 6
+        },
+        {
+          "name": "Arcanist",
+          "color": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          },
+          "nodeCount": 6
+        },
+        {
+          "name": "Soulbinder",
+          "color": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          },
+          "nodeCount": 7
+        },
+        {
+          "name": "Chronoweaver",
+          "color": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          },
+          "nodeCount": 6
+        },
+        {
+          "name": "Hybrid",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 3
+        }
+      ],
+      "nodes": [
+        {
+          "uuid": "NODE-20260604113504-00003A-3DA6B0D9",
+          "id": 1,
+          "name": "Astral Nexus",
+          "x": 50,
+          "y": 92,
+          "reqLevel": 0,
+          "parent": null,
+          "branch": "Nexus",
+          "nodeType": "stat",
+          "description": "The center of all mystical power. Begin your journey into the arcane arts.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#fbbf24",
+            "fill": "rgba(251,191,36,0.3)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00003B--58A9367",
+          "id": 2,
+          "name": "Mana Weaving",
+          "x": 50,
+          "y": 82,
+          "reqLevel": 5,
+          "parent": 1,
+          "branch": "Nexus",
+          "nodeType": "stat",
+          "description": "Learn to weave raw mana into stable patterns for crafting.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#fbbf24",
+            "fill": "rgba(251,191,36,0.3)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00003C-60576740",
+          "id": 3,
+          "name": "Arcane Attunement",
+          "x": 50,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Nexus",
+          "nodeType": "stat",
+          "description": "Attune yourself to the cosmic energies. Unlocks all 5 constellation paths.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#fbbf24",
+            "fill": "rgba(251,191,36,0.3)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00003D-79BBFCAE",
+          "id": 10,
+          "name": "Rune Inscription",
+          "x": 20,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Enchanter",
+          "nodeType": "stat",
+          "description": "Inscribe basic runes onto equipment to grant minor bonuses.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00003E--8DB552F",
+          "id": 11,
+          "name": "Glyph Mastery",
+          "x": 12,
+          "y": 55,
+          "reqLevel": 25,
+          "parent": 10,
+          "branch": "Enchanter",
+          "nodeType": "stat",
+          "description": "Master complex glyphs that provide powerful stat increases.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00003F--2A014B6",
+          "id": 12,
+          "name": "Elemental Infusion",
+          "x": 8,
+          "y": 42,
+          "reqLevel": 35,
+          "parent": 11,
+          "branch": "Enchanter",
+          "nodeType": "effect",
+          "description": "Infuse weapons with elemental damage types.",
+          "bonuses": [],
+          "unlocks": [
+            "Major Enchant: Might",
+            "Major Enchant: Wisdom"
+          ],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000040-64B3162B",
+          "id": 13,
+          "name": "Soul Binding",
+          "x": 18,
+          "y": 35,
+          "reqLevel": 50,
+          "parent": 11,
+          "branch": "Enchanter",
+          "nodeType": "stat",
+          "description": "Bind souls to items, granting them sentience and power.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000041--1942101",
+          "id": 14,
+          "name": "Arcane Overcharge",
+          "x": 5,
+          "y": 25,
+          "reqLevel": 70,
+          "parent": 12,
+          "branch": "Enchanter",
+          "nodeType": "effect",
+          "description": "Push enchantments beyond normal limits. Risk of failure but massive power.",
+          "bonuses": [],
+          "unlocks": [
+            "Soul Enchant: Lifesteal",
+            "Soul Enchant: Mana Leech"
+          ],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000042-70428B32",
+          "id": 15,
+          "name": "Cosmic Inscription",
+          "x": 15,
+          "y": 12,
+          "reqLevel": 90,
+          "parent": 14,
+          "branch": "Enchanter",
+          "nodeType": "stat",
+          "description": "Write enchantments using the language of the cosmos itself.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f472b6",
+            "fill": "rgba(244,114,182,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000043--574FA45",
+          "id": 20,
+          "name": "Scroll Scribing",
+          "x": 32,
+          "y": 62,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Spellwright",
+          "nodeType": "recipe",
+          "description": "Learn to scribe spells onto scrolls for single-use casting.",
+          "bonuses": [],
+          "unlocks": [
+            "Divine Enchantment",
+            "T8 Enchanting"
+          ],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000044-56DA2D91",
+          "id": 21,
+          "name": "Spell Page Crafting",
+          "x": 28,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 20,
+          "branch": "Spellwright",
+          "nodeType": "stat",
+          "description": "Create spell pages that teach permanent spell upgrades.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000045--50DCDB2",
+          "id": 22,
+          "name": "Arcane Lexicon",
+          "x": 22,
+          "y": 40,
+          "reqLevel": 45,
+          "parent": 21,
+          "branch": "Spellwright",
+          "nodeType": "stat",
+          "description": "Compile spell pages into powerful lexicons of knowledge.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000046-65CBC0E2",
+          "id": 23,
+          "name": "Grimoire Binding",
+          "x": 35,
+          "y": 32,
+          "reqLevel": 60,
+          "parent": 22,
+          "branch": "Spellwright",
+          "nodeType": "effect",
+          "description": "Bind multiple spell pages into grimoires of immense power.",
+          "bonuses": [],
+          "unlocks": [
+            "Lexicon of Fire",
+            "Lexicon of Frost"
+          ],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000047-18D101D2",
+          "id": 24,
+          "name": "Tome of Mastery",
+          "x": 28,
+          "y": 20,
+          "reqLevel": 80,
+          "parent": 23,
+          "branch": "Spellwright",
+          "nodeType": "stat",
+          "description": "Create master tomes that grant entire spell schools.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000048--2FBF579",
+          "id": 25,
+          "name": "Codex of Infinity",
+          "x": 32,
+          "y": 8,
+          "reqLevel": 95,
+          "parent": 24,
+          "branch": "Spellwright",
+          "nodeType": "effect",
+          "description": "The ultimate spellcraft. Create codexes with limitless spell potential.",
+          "bonuses": [],
+          "unlocks": [
+            "Tome of Destruction",
+            "Tome of Restoration"
+          ],
+          "branchColor": {
+            "stroke": "#60a5fa",
+            "fill": "rgba(96,165,250,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000049--5C42CC6",
+          "id": 30,
+          "name": "Staff Shaping",
+          "x": 50,
+          "y": 60,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Arcanist",
+          "nodeType": "recipe",
+          "description": "Shape magical wood into conduits for arcane energy.",
+          "bonuses": [],
+          "unlocks": [
+            "Spell Page: Tier VIII",
+            "Codex of the Void"
+          ],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004A--6E8F211",
+          "id": 31,
+          "name": "Crystal Focus",
+          "x": 50,
+          "y": 48,
+          "reqLevel": 30,
+          "parent": 30,
+          "branch": "Arcanist",
+          "nodeType": "stat",
+          "description": "Embed crystals into staves to focus and amplify magical power.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004B-40652686",
+          "id": 32,
+          "name": "Elemental Core",
+          "x": 42,
+          "y": 38,
+          "reqLevel": 45,
+          "parent": 31,
+          "branch": "Arcanist",
+          "nodeType": "stat",
+          "description": "Craft elemental cores that define a staff's magical affinity.",
+          "bonuses": [],
+          "unlocks": [
+            "Crystal-Tipped Staff",
+            "Frost Staff T2"
+          ],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004C--7E26111",
+          "id": 33,
+          "name": "Void Channeling",
+          "x": 58,
+          "y": 38,
+          "reqLevel": 45,
+          "parent": 31,
+          "branch": "Arcanist",
+          "nodeType": "stat",
+          "description": "Channel void energy through staves for devastating attacks.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004D--7123D3B",
+          "id": 34,
+          "name": "Archmage Crafting",
+          "x": 50,
+          "y": 25,
+          "reqLevel": 70,
+          "parent": 32,
+          "branch": "Arcanist",
+          "nodeType": "combat",
+          "description": "Craft staves worthy of archmages with multiple elemental affinities.",
+          "bonuses": [],
+          "unlocks": [
+            "Void Staff T4",
+            "Lightning Staff T4"
+          ],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004E--48B2051",
+          "id": 35,
+          "name": "Staff of the Grudge",
+          "x": 50,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 34,
+          "branch": "Arcanist",
+          "nodeType": "recipe",
+          "description": "The legendary Staff of the Grudge. Ultimate mystical weapon.",
+          "bonuses": [],
+          "unlocks": [
+            "Staff of Elements T7",
+            "Archmage Staff"
+          ],
+          "branchColor": {
+            "stroke": "#fb7185",
+            "fill": "rgba(251,113,133,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00004F--42A363C",
+          "id": 40,
+          "name": "Gem Cutting",
+          "x": 68,
+          "y": 62,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Soulbinder",
+          "nodeType": "recipe",
+          "description": "Cut raw gems into shapes that can hold magical energy.",
+          "bonuses": [],
+          "unlocks": [
+            "Staff of the Grudge",
+            "T8 Staff Crafting"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000050-5F9536E5",
+          "id": 41,
+          "name": "Gem Faceting",
+          "x": 75,
+          "y": 52,
+          "reqLevel": 30,
+          "parent": 40,
+          "branch": "Soulbinder",
+          "nodeType": "stat",
+          "description": "Create precise facets that maximize a gem's magical potential.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000051-46013BD1",
+          "id": 42,
+          "name": "Necklace Smithing",
+          "x": 82,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 41,
+          "branch": "Soulbinder",
+          "nodeType": "stat",
+          "description": "Craft magical necklaces that channel gem powers directly.",
+          "bonuses": [],
+          "unlocks": [
+            "Brilliant Cut",
+            "Radiant Cut"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000052-7B1B4496",
+          "id": 43,
+          "name": "Soul Gem Crafting",
+          "x": 70,
+          "y": 38,
+          "reqLevel": 55,
+          "parent": 41,
+          "branch": "Soulbinder",
+          "nodeType": "recipe",
+          "description": "Infuse gems with captured souls for incredible power.",
+          "bonuses": [],
+          "unlocks": [
+            "Mana Pendant",
+            "Amulet of Power"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000053--240BADC",
+          "id": 44,
+          "name": "Astral Jewelry",
+          "x": 78,
+          "y": 28,
+          "reqLevel": 75,
+          "parent": 42,
+          "branch": "Soulbinder",
+          "nodeType": "effect",
+          "description": "Create jewelry that connects the wearer to astral planes.",
+          "bonuses": [],
+          "unlocks": [
+            "Soul Gem",
+            "Trapped Essence"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000054-7CF45FB8",
+          "id": 45,
+          "name": "Divine Gems",
+          "x": 72,
+          "y": 15,
+          "reqLevel": 90,
+          "parent": 44,
+          "branch": "Soulbinder",
+          "nodeType": "recipe",
+          "description": "Cut gems blessed by the gods themselves.",
+          "bonuses": [],
+          "unlocks": [
+            "Astral Amulet",
+            "Cosmic Pendant T7"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000055-013AE19B",
+          "id": 46,
+          "name": "Heart of the Cosmos",
+          "x": 85,
+          "y": 12,
+          "reqLevel": 95,
+          "parent": 45,
+          "branch": "Soulbinder",
+          "nodeType": "recipe",
+          "description": "Create the legendary Heart of the Cosmos necklace.",
+          "bonuses": [],
+          "unlocks": [
+            "Divine Ruby",
+            "Divine Sapphire",
+            "T8 Gem Cutting"
+          ],
+          "branchColor": {
+            "stroke": "#2dd4bf",
+            "fill": "rgba(45,212,191,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000056-22BCCD9B",
+          "id": 50,
+          "name": "Fabric Weaving",
+          "x": 80,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Chronoweaver",
+          "nodeType": "recipe",
+          "description": "Weave magical threads into protective fabrics.",
+          "bonuses": [],
+          "unlocks": [
+            "Heart of the Cosmos",
+            "T8 Necklace Crafting"
+          ],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000057-6C8BA104",
+          "id": 51,
+          "name": "Enchanted Threads",
+          "x": 88,
+          "y": 55,
+          "reqLevel": 28,
+          "parent": 50,
+          "branch": "Chronoweaver",
+          "nodeType": "stat",
+          "description": "Spin threads infused with raw magical essence.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000058-7C143976",
+          "id": 52,
+          "name": "Moonweave Crafting",
+          "x": 92,
+          "y": 42,
+          "reqLevel": 45,
+          "parent": 51,
+          "branch": "Chronoweaver",
+          "nodeType": "effect",
+          "description": "Harvest moonlight into threads of ethereal beauty.",
+          "bonuses": [],
+          "unlocks": [
+            "Silk Robe",
+            "Enchanted Cloth T2"
+          ],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000059-67C9BC63",
+          "id": 53,
+          "name": "Starweave Mastery",
+          "x": 85,
+          "y": 32,
+          "reqLevel": 60,
+          "parent": 52,
+          "branch": "Chronoweaver",
+          "nodeType": "recipe",
+          "description": "Weave starlight into armor that protects against cosmic threats.",
+          "bonuses": [],
+          "unlocks": [
+            "Moonweave Robe",
+            "Starweave Set T4"
+          ],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00005A--6A193C7",
+          "id": 54,
+          "name": "Voidweave Secrets",
+          "x": 90,
+          "y": 22,
+          "reqLevel": 80,
+          "parent": 53,
+          "branch": "Chronoweaver",
+          "nodeType": "combat",
+          "description": "Master the forbidden art of weaving void energy into fabric.",
+          "bonuses": [],
+          "unlocks": [
+            "Starweave Set T6",
+            "Astral Robes"
+          ],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00005B--5BA0F44",
+          "id": 55,
+          "name": "Divine Vestments",
+          "x": 95,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 54,
+          "branch": "Chronoweaver",
+          "nodeType": "effect",
+          "description": "Create vestments worn by gods and cosmic entities.",
+          "bonuses": [],
+          "unlocks": [
+            "Voidweave Set T7",
+            "Robes of the Void"
+          ],
+          "branchColor": {
+            "stroke": "#c084fc",
+            "fill": "rgba(192,132,252,0.25)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00005C-698B852D",
+          "id": 60,
+          "name": "Enchanted Fabrics",
+          "x": 55,
+          "y": 50,
+          "reqLevel": 40,
+          "parent": 31,
+          "branch": "Hybrid",
+          "nodeType": "recipe",
+          "description": "Apply enchantments directly during cloth crafting.",
+          "bonuses": [],
+          "unlocks": [
+            "Divine Cloth Set T8",
+            "Vestments of Eternity"
+          ],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00005D--6C830AF",
+          "id": 61,
+          "name": "Gemstone Staves",
+          "x": 60,
+          "y": 30,
+          "reqLevel": 65,
+          "parent": 33,
+          "branch": "Hybrid",
+          "nodeType": "effect",
+          "description": "Integrate gem sockets directly into staff designs.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00005E--3C4225F",
+          "id": 62,
+          "name": "Spell-Woven Cloth",
+          "x": 40,
+          "y": 55,
+          "reqLevel": 35,
+          "parent": 20,
+          "branch": "Hybrid",
+          "nodeType": "stat",
+          "description": "Weave spell formulas directly into cloth armor.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        }
+      ]
+    },
+    "chef": {
+      "uuid": "PROF-20260604113504-00007C--7CD79EF",
+      "name": "Chef",
+      "role": "Culinary Master & Alchemist",
+      "icon": "🍲",
+      "color": "#f97316",
+      "bgImage": "/images/professions/rustic_fantasy_kitchen_hearth.png",
+      "iconImage": "/images/professions/chef_profession_game_icon.png",
+      "totalNodes": 28,
+      "branches": [
+        {
+          "name": "Core",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 2
+        },
+        {
+          "name": "Butchery",
+          "color": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          },
+          "nodeCount": 9
+        },
+        {
+          "name": "Baking",
+          "color": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          },
+          "nodeCount": 8
+        },
+        {
+          "name": "Alchemy",
+          "color": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          },
+          "nodeCount": 9
+        }
+      ],
+      "nodes": [
+        {
+          "uuid": "NODE-20260604113504-000060-691D9849",
+          "id": 1,
+          "name": "Fire Management",
+          "x": 50,
+          "y": 92,
+          "reqLevel": 0,
+          "parent": null,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Master the art of controlling cooking flames. The foundation of all culinary arts.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000061-1AAB0040",
+          "id": 2,
+          "name": "Ingredient Slicing",
+          "x": 50,
+          "y": 82,
+          "reqLevel": 5,
+          "parent": 1,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Precise knife work for consistent ingredient preparation.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000062-01FA76E9",
+          "id": 3,
+          "name": "Salt Refining",
+          "x": 40,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "Purify and enhance salt for better preservation and flavor.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000063--37C70F2",
+          "id": 4,
+          "name": "Broth Base",
+          "x": 60,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Create rich, flavorful broth bases for soups and stews.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000064--C06E57E",
+          "id": 5,
+          "name": "Cleaver Mastery I",
+          "x": 25,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "Expert cleaver techniques for processing large cuts of meat.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000065-3CC198AB",
+          "id": 6,
+          "name": "Slow Smoking",
+          "x": 10,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 5,
+          "branch": "Butchery",
+          "nodeType": "combat",
+          "description": "Master the art of slow-smoking meats for deep flavor penetration.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000066-7EC83C4D",
+          "id": 7,
+          "name": "Prime Rib Spec",
+          "x": 20,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 5,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "Specialize in preparing premium rib cuts for maximum tenderness.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000067--6543965",
+          "id": 8,
+          "name": "Wild Game Prep",
+          "x": 30,
+          "y": 45,
+          "reqLevel": 35,
+          "parent": 7,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "Techniques for preparing exotic wild game meats.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000068-5E5717D6",
+          "id": 9,
+          "name": "Orcish Barbecue",
+          "x": 5,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 6,
+          "branch": "Butchery",
+          "nodeType": "recipe",
+          "description": "Learn brutal but effective Orcish grilling techniques.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000069--32A9AB4",
+          "id": 10,
+          "name": "Cleaver of Feast",
+          "x": 25,
+          "y": 30,
+          "reqLevel": 60,
+          "parent": 8,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "Craft the legendary Cleaver of Feast, a weapon and tool in one.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006A-0-5D3357",
+          "id": 11,
+          "name": "Dragon Steak",
+          "x": 15,
+          "y": 15,
+          "reqLevel": 85,
+          "parent": 10,
+          "branch": "Butchery",
+          "nodeType": "stat",
+          "description": "The ultimate meat dish - seared dragon flank with liquid fire.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006B--2B7D04B",
+          "id": 12,
+          "name": "Goliath Roast",
+          "x": 5,
+          "y": 20,
+          "reqLevel": 90,
+          "parent": 9,
+          "branch": "Butchery",
+          "nodeType": "recipe",
+          "description": "Prepare massive roasts capable of feeding entire armies.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#ef4444",
+            "fill": "rgba(239,68,68,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006C-79242E7F",
+          "id": 13,
+          "name": "Basic Dough",
+          "x": 50,
+          "y": 58,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Master the fundamentals of dough preparation.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006D--247C80A",
+          "id": 14,
+          "name": "Hardtack (Preserve)",
+          "x": 40,
+          "y": 48,
+          "reqLevel": 25,
+          "parent": 13,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Create long-lasting hardtack for extended journeys.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006E-77145107",
+          "id": 15,
+          "name": "Sugar Work",
+          "x": 60,
+          "y": 48,
+          "reqLevel": 30,
+          "parent": 13,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Artistry with sugar for decorative and delicious confections.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00006F--6ABA4BC",
+          "id": 16,
+          "name": "Battle Rations",
+          "x": 50,
+          "y": 40,
+          "reqLevel": 45,
+          "parent": 15,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Compact, high-energy rations for warriors in combat.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000070-6E954591",
+          "id": 17,
+          "name": "Honey Glazing",
+          "x": 45,
+          "y": 30,
+          "reqLevel": 55,
+          "parent": 16,
+          "branch": "Baking",
+          "nodeType": "combat",
+          "description": "Perfect honey glazes for enhanced flavor and preservation.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000071-1C5EFA3A",
+          "id": 18,
+          "name": "Pastry Mastery",
+          "x": 55,
+          "y": 25,
+          "reqLevel": 75,
+          "parent": 16,
+          "branch": "Baking",
+          "nodeType": "stat",
+          "description": "Advanced pastry techniques for flaky, delicate creations.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000072--1331EE4",
+          "id": 19,
+          "name": "The Eternal Cake",
+          "x": 50,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 18,
+          "branch": "Baking",
+          "nodeType": "recipe",
+          "description": "A mythical cake that never spoils and grants divine buffs.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#3b82f6",
+            "fill": "rgba(59,130,246,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000073--7D50B97",
+          "id": 20,
+          "name": "Spice Extraction",
+          "x": 75,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Alchemy",
+          "nodeType": "recipe",
+          "description": "Extract potent essences from herbs and spices.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000074--324EAE5",
+          "id": 21,
+          "name": "Fire Chilli Infusion",
+          "x": 90,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 20,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "Infuse dishes with magical fire chilli for burn damage buffs.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000075--3D3A05C",
+          "id": 22,
+          "name": "Cold-Press Oils",
+          "x": 80,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 20,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "Create pure oils that preserve magical properties.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000076-03006914",
+          "id": 23,
+          "name": "Poison Resistance",
+          "x": 95,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 21,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "Cook dishes that grant temporary poison immunity.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000077-1601E514",
+          "id": 24,
+          "name": "Liquid Essence",
+          "x": 70,
+          "y": 45,
+          "reqLevel": 50,
+          "parent": 22,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "Distill ingredients into their pure liquid essence form.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000078--61FF6C1",
+          "id": 25,
+          "name": "Grog Brewing",
+          "x": 80,
+          "y": 35,
+          "reqLevel": 60,
+          "parent": 24,
+          "branch": "Alchemy",
+          "nodeType": "effect",
+          "description": "Brew powerful grog that enhances strength and courage.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000079-7AA63EE6",
+          "id": 26,
+          "name": "Static Shock Herb",
+          "x": 90,
+          "y": 30,
+          "reqLevel": 70,
+          "parent": 21,
+          "branch": "Alchemy",
+          "nodeType": "recipe",
+          "description": "Cultivate herbs infused with lightning energy.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00007A-334E7489",
+          "id": 27,
+          "name": "Astral Seasoning",
+          "x": 75,
+          "y": 20,
+          "reqLevel": 80,
+          "parent": 25,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "Season dishes with extracts from astral plane ingredients.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00007B-6D83C8FD",
+          "id": 28,
+          "name": "Nectar of Gods",
+          "x": 85,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 27,
+          "branch": "Alchemy",
+          "nodeType": "stat",
+          "description": "The legendary ambrosia - grants temporary divine powers.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#22c55e",
+            "fill": "rgba(34,197,94,0.2)"
+          }
+        }
+      ]
+    },
+    "engineer": {
+      "uuid": "PROF-20260604113504-000099--61D78EC",
+      "name": "Engineer",
+      "role": "Mechanist & Siege Master",
+      "icon": "🔧",
+      "color": "#64748b",
+      "bgImage": "/images/professions/steampunk_blueprint_background_with_gears.png",
+      "iconImage": "/images/professions/engineer_profession_game_icon.png",
+      "totalNodes": 28,
+      "branches": [
+        {
+          "name": "Core",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 2
+        },
+        {
+          "name": "Weaponry",
+          "color": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          },
+          "nodeCount": 9
+        },
+        {
+          "name": "Automata",
+          "color": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          },
+          "nodeCount": 8
+        },
+        {
+          "name": "Siege",
+          "color": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          },
+          "nodeCount": 9
+        }
+      ],
+      "nodes": [
+        {
+          "uuid": "NODE-20260604113504-00007D--4394CF3",
+          "id": 1,
+          "name": "Tinkering Basics",
+          "x": 50,
+          "y": 92,
+          "reqLevel": 0,
+          "parent": null,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "The fundamentals of mechanical engineering. Every great invention starts here.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00007E-791D0ADF",
+          "id": 2,
+          "name": "Copper Wiring",
+          "x": 50,
+          "y": 82,
+          "reqLevel": 5,
+          "parent": 1,
+          "branch": "Core",
+          "nodeType": "stat",
+          "description": "Master electrical connections for powering devices.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00007F--5C05374",
+          "id": 3,
+          "name": "Gear Grinding",
+          "x": 40,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Precision gear crafting for mechanical weapons.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000080--4BBCECD",
+          "id": 4,
+          "name": "Soldering I",
+          "x": 60,
+          "y": 72,
+          "reqLevel": 10,
+          "parent": 2,
+          "branch": "Automata",
+          "nodeType": "stat",
+          "description": "Join metal components with molten solder for durable constructs.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000081--44787D3",
+          "id": 5,
+          "name": "Gunpowder Alchemy",
+          "x": 25,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 3,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Mix volatile compounds to create explosive propellants.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000082-0A80E43E",
+          "id": 6,
+          "name": "Crossbow Tuning",
+          "x": 10,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 5,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Fine-tune crossbow mechanisms for maximum power and accuracy.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000083-3B9A12E7",
+          "id": 7,
+          "name": "Explosive Shells",
+          "x": 20,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 5,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Craft ammunition that detonates on impact.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000084--2028857",
+          "id": 8,
+          "name": "Precision Sights",
+          "x": 30,
+          "y": 45,
+          "reqLevel": 35,
+          "parent": 7,
+          "branch": "Weaponry",
+          "nodeType": "combat",
+          "description": "Craft optical sights for enhanced accuracy at range.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000085--55CD4AC",
+          "id": 9,
+          "name": "Hidden Traps",
+          "x": 5,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 6,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Design concealed mechanical traps for ambushes.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000086--6903BF2",
+          "id": 10,
+          "name": "Mortar Battery",
+          "x": 25,
+          "y": 30,
+          "reqLevel": 60,
+          "parent": 8,
+          "branch": "Weaponry",
+          "nodeType": "stat",
+          "description": "Construct multi-barrel mortar systems for area bombardment.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000087-13A9969F",
+          "id": 11,
+          "name": "Nuke-In-A-Box",
+          "x": 15,
+          "y": 15,
+          "reqLevel": 85,
+          "parent": 10,
+          "branch": "Weaponry",
+          "nodeType": "recipe",
+          "description": "The ultimate portable explosive device. Handle with extreme caution.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000088-047DAEFA",
+          "id": 12,
+          "name": "Railgun Tech",
+          "x": 5,
+          "y": 20,
+          "reqLevel": 90,
+          "parent": 9,
+          "branch": "Weaponry",
+          "nodeType": "combat",
+          "description": "Electromagnetic projectile acceleration for devastating firepower.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#f97316",
+            "fill": "rgba(249,115,22,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000089--32EC926",
+          "id": 13,
+          "name": "Clockwork Heart",
+          "x": 50,
+          "y": 58,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Automata",
+          "nodeType": "recipe",
+          "description": "Create beating mechanical hearts to power automatons.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008A-768BF17A",
+          "id": 14,
+          "name": "Simple Drones",
+          "x": 40,
+          "y": 48,
+          "reqLevel": 25,
+          "parent": 13,
+          "branch": "Automata",
+          "nodeType": "stat",
+          "description": "Build basic autonomous flying machines for reconnaissance.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008B--1AEDAB5",
+          "id": 15,
+          "name": "Mecha-Skeleton",
+          "x": 60,
+          "y": 48,
+          "reqLevel": 30,
+          "parent": 13,
+          "branch": "Automata",
+          "nodeType": "stat",
+          "description": "Construct the internal framework for wearable mechanical suits.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008C-5669E2EE",
+          "id": 16,
+          "name": "A.I. Neural Net",
+          "x": 50,
+          "y": 40,
+          "reqLevel": 45,
+          "parent": 15,
+          "branch": "Automata",
+          "nodeType": "stat",
+          "description": "Program basic artificial intelligence for autonomous operation.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008D-49AB3E8B",
+          "id": 17,
+          "name": "Power Cell Tech",
+          "x": 45,
+          "y": 30,
+          "reqLevel": 55,
+          "parent": 16,
+          "branch": "Automata",
+          "nodeType": "effect",
+          "description": "Develop high-capacity power cells for extended operation.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008E--7177D06",
+          "id": 18,
+          "name": "Mecha Mk.I Suit",
+          "x": 55,
+          "y": 25,
+          "reqLevel": 75,
+          "parent": 16,
+          "branch": "Automata",
+          "nodeType": "recipe",
+          "description": "The first pilotable mechanical battle suit. A marvel of engineering.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-00008F--7E9C0DA",
+          "id": 19,
+          "name": "Giga-Mech Lord",
+          "x": 50,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 18,
+          "branch": "Automata",
+          "nodeType": "stat",
+          "description": "The ultimate mechanical titan. A walking fortress of destruction.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#64748b",
+            "fill": "rgba(100,116,139,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000090--44E4E46",
+          "id": 20,
+          "name": "Steel Framework",
+          "x": 75,
+          "y": 65,
+          "reqLevel": 15,
+          "parent": 4,
+          "branch": "Siege",
+          "nodeType": "combat",
+          "description": "Build reinforced steel frames for large-scale constructions.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000091--44D715B",
+          "id": 21,
+          "name": "Catapult Rigging",
+          "x": 90,
+          "y": 60,
+          "reqLevel": 20,
+          "parent": 20,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "Design tension-based launching mechanisms for siege weapons.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000092-038A15DD",
+          "id": 22,
+          "name": "Advanced Hydraulics",
+          "x": 80,
+          "y": 50,
+          "reqLevel": 30,
+          "parent": 20,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "Master fluid-powered systems for heavy machinery.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000093--26636D2",
+          "id": 23,
+          "name": "Ballista Array",
+          "x": 95,
+          "y": 45,
+          "reqLevel": 40,
+          "parent": 21,
+          "branch": "Siege",
+          "nodeType": "effect",
+          "description": "Deploy multiple synchronized ballistae for rapid fire.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000094-18BCC30B",
+          "id": 24,
+          "name": "Steam Engines",
+          "x": 70,
+          "y": 45,
+          "reqLevel": 50,
+          "parent": 22,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "Harness steam power for mobile siege platforms.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000095--3200A03",
+          "id": 25,
+          "name": "Airship Skeleton",
+          "x": 80,
+          "y": 35,
+          "reqLevel": 60,
+          "parent": 24,
+          "branch": "Siege",
+          "nodeType": "recipe",
+          "description": "Construct the lightweight framework for flying vessels.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000096--2F373DF",
+          "id": 26,
+          "name": "Torsion Springs",
+          "x": 90,
+          "y": 30,
+          "reqLevel": 70,
+          "parent": 21,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "Create powerful torsion mechanisms for siege artillery.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000097--7256DF3",
+          "id": 27,
+          "name": "Aeronautics II",
+          "x": 75,
+          "y": 20,
+          "reqLevel": 80,
+          "parent": 25,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "Advanced flight mechanics and navigation systems.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        },
+        {
+          "uuid": "NODE-20260604113504-000098-76371DA0",
+          "id": 28,
+          "name": "The Dreadnaught",
+          "x": 85,
+          "y": 10,
+          "reqLevel": 95,
+          "parent": 27,
+          "branch": "Siege",
+          "nodeType": "stat",
+          "description": "The ultimate flying fortress. Armed to the teeth and nearly indestructible.",
+          "bonuses": [],
+          "unlocks": [],
+          "branchColor": {
+            "stroke": "#dc2626",
+            "fill": "rgba(220,38,38,0.2)"
+          }
+        }
+      ]
+    }
+  }
+}

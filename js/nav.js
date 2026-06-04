@@ -15,6 +15,7 @@
     { label: '3DFX',         href: './3dfx-viewer.html',           icon: ICN + '/496_rpg_icons/S_Thunder03.png' },
     { label: 'Spell VFX',    href: './spell-vfx-library.html',     icon: ICN + '/496_rpg_icons/S_Magic05.png' },
     { label: '3D Models',    href: './3D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png' },
+    { label: 'Professions',  href: './PROFESSION_TREES.html',       icon: ICN + '/496_rpg_icons/I_Scroll.png' },
     { label: 'Audio',        href: './AUDIO_BROWSER.html',         icon: ICN + '/Icons_Essential/v1.2/Icons/SpeakerOn.png' },
     { label: 'Icons',        href: './tools/icon-generator.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/Pencil.png' },
     { label: 'Guide',        href: './grudge-guide.html',           icon: ICN + '/496_rpg_icons/I_Scroll.png' },
