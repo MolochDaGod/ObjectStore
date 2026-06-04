@@ -328,9 +328,39 @@
 
     <section id="base-url">
       <h2>Base URL</h2>
-      <pre><code>https://objectstore.grudge-studio.com</code></pre>
+      <pre><code>https://info.grudge-studio.com</code></pre>
       <p>All endpoints are relative to this base URL. For example:</p>
-      <pre><code>GET https://objectstore.grudge-studio.com/api/v1/weapons.json</code></pre>
+      <pre><code>GET https://info.grudge-studio.com/api/v1/weapons.json</code></pre>
+      <p>Mirror: <code class="inline-code">https://molochdagod.github.io/ObjectStore/api/v1/</code></p>
+    </section>
+
+    <section id="architecture">
+      <h2>Data Architecture — What Controls What</h2>
+      <div class="card">
+        <p><strong>ObjectStore</strong> (this repo) is the single source of truth for all game data schemas.</p>
+        <ul>
+          <li><strong>ObjectStore JSON</strong> (<code class="inline-code">api/v1/master-*.json</code>) — canonical item definitions, skills, weapon skills, recipes, materials, tiers. Every entry has a GRUDGE UUID.</li>
+          <li><strong>R2 CDN</strong> (<code class="inline-code">assets.grudge-studio.com</code>) — binary assets: GLB models, textures, audio, VFX shaders. Referenced by GRUDGE UUID in ObjectStore data.</li>
+          <li><strong>D1 Database</strong> (Cloudflare) — metadata index for search, analytics, and asset manifests. Synced from ObjectStore via Workers.</li>
+          <li><strong>info.grudge-studio.com</strong> — public browsable UI for all game data (this site).</li>
+          <li><strong>api.grudge-studio.com</strong> — live game API consuming ObjectStore data + player state from PostgreSQL.</li>
+        </ul>
+        <p><strong>GRUDGE UUID links everything:</strong> <code class="inline-code">SKIL-...(skill)</code> → <code class="inline-code">prefab.vfxRef</code> → <code class="inline-code">R2 path</code>. Game client resolves UUIDs via the ObjectStore API at runtime.</p>
+      </div>
+      <h3>Icon &amp; Asset Paths</h3>
+      <p>All icon URLs in JSON data use <strong>relative paths</strong> (e.g. <code class="inline-code">/icons/pack/weapons/Sword_01.png</code>). The game client prepends the appropriate base URL depending on environment.</p>
+      <h3>Prefab Connection Fields</h3>
+      <p>Every weapon skill has a <code class="inline-code">prefab</code> block for game engine wiring:</p>
+      <pre><code>"prefab": {
+  "modelRef": null,        // GRUDGE UUID → GLB model on R2
+  "vfxRef": null,          // GRUDGE UUID → VFX effect on R2
+  "impactRef": null,       // GRUDGE UUID → impact particle
+  "animationClip": "2h_slash", // animation clip name
+  "soundRef": null,        // GRUDGE UUID → audio on R2
+  "projectileRef": null,   // GRUDGE UUID → projectile model
+  "cameraShake": null      // camera shake profile
+}</code></pre>
+      <p>Fields are <code class="inline-code">null</code> until assets are created and wired. Game client skips null refs gracefully.</p>
     </section>
 
     <section id="authentication">
