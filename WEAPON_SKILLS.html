@@ -1060,14 +1060,24 @@ delete WEAPON_TYPE_DEFINITIONS.SCYTHE;
 
 // ===== WEAPON TYPE → ITEM CATEGORY MAPPING =====
 // Maps weapon skill type ID to the master-items.json category name
+// STAFF is special — it has 5 subtypes that each have 6 weapons
 const WEAPON_CATEGORY_MAP = {
   SWORD: 'swords', AXE: 'axes1h', BOW: 'bows', CROSSBOW: 'crossbows',
-  GUN: 'guns', DAGGER: 'daggers', STAFF: 'fireStaves', HAMMER: 'hammers1h',
+  GUN: 'guns', DAGGER: 'daggers', HAMMER: 'hammers1h',
   SHIELD: 'shields', GREATSWORD: 'greatswords', GREATAXE: 'greataxes',
   SPEAR: 'spears', TOME: 'offhand-tome', MACE: 'hammers1h',
   WAND: 'lightningStaves', OFFHAND_RELIC: 'offhand-relic',
   SCYTHE: 'scythes'
 };
+
+// Staff subtypes — each is a different school of magic with 6 weapons
+const STAFF_SUBTYPES = [
+  { id: 'fireStaves',      name: 'Fire Staff',      icon: '/icons/pack/misc/fire_05.png',    color: '#ff6b35' },
+  { id: 'frostStaves',     name: 'Frost Staff',     icon: '/icons/pack/misc/frozen.png',     color: '#7dd3fc' },
+  { id: 'holyStaves',      name: 'Holy Staff',      icon: '/icons/pack/misc/Glow.png',       color: '#fde68a' },
+  { id: 'lightningStaves', name: 'Lightning Staff',  icon: '/icons/pack/misc/Lighting.png',   color: '#4dc3ff' },
+  { id: 'natureStaves',    name: 'Nature Staff',    icon: '/icons/pack/misc/Naturecircle.png', color: '#6bdc8b' },
+];
 
 // ===== GRUDGE STUDIO API CONFIG =====
 const GRUDGE_API = {
@@ -1083,6 +1093,7 @@ const GRUDGE_API = {
 // ===== STATE =====
 let activeWeapon = 'SWORD';
 let activeIndividualWeapon = null; // selected individual weapon from the 6
+let activeStaffSubtype = null;    // selected staff subtype (fireStaves, frostStaves, etc.)
 let playerTier = 3;
 let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
 let showingArtifact = false;
@@ -1107,8 +1118,10 @@ function renderWeaponTabs() {
     tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}`;
     tab.onclick = () => {
       activeWeapon = key; showingArtifact = false; activeIndividualWeapon = null;
+      activeStaffSubtype = (key === 'STAFF') ? null : null; // reset staff subtype
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
-      closeDetail(); render(); loadWeaponItems(key);
+      closeDetail(); render();
+      if (key !== 'STAFF') loadWeaponItems(key);
     };
     container.appendChild(tab);
   }
@@ -1130,12 +1143,18 @@ function renderWeaponTabs() {
 
 // ===== 6-WEAPON PICKER (individual weapons per type) =====
 async function loadWeaponItems(weaponTypeKey) {
-  const cat = WEAPON_CATEGORY_MAP[weaponTypeKey];
-  if (!cat || weaponItemsCache[weaponTypeKey]) { renderWeaponPicker(); return; }
+  if (weaponItemsCache[weaponTypeKey]) { renderWeaponPicker(); return; }
+  // Resolve the item category: STAFF_fireStaves → fireStaves, otherwise use WEAPON_CATEGORY_MAP
+  let cat;
+  if (weaponTypeKey.startsWith('STAFF_')) {
+    cat = weaponTypeKey.replace('STAFF_', '');
+  } else {
+    cat = WEAPON_CATEGORY_MAP[weaponTypeKey];
+  }
+  if (!cat) return;
   try {
     const res = await fetch('./api/v1/master-items.json');
     const data = await res.json();
-    // Get T1 items (base weapons) for this category — these are the 6 unique weapons
     const t1Items = (data.items || []).filter(i => i.category === cat && i.tier === 1);
     weaponItemsCache[weaponTypeKey] = t1Items.slice(0, 6);
     renderWeaponPicker();
@@ -1147,11 +1166,55 @@ function renderWeaponPicker() {
   if (!container) {
     container = document.createElement('div');
     container.id = 'weaponPicker';
-    container.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:14px 20px;flex-wrap:wrap;background:hsl(225 28% 8%);border-bottom:1px solid hsl(43 40% 18%);min-height:42px;';
+    container.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:14px 20px;flex-wrap:wrap;background:hsl(225 28% 8%);border-bottom:1px solid hsl(43 40% 18%);min-height:42px;align-items:center;';
     const tierBar = document.getElementById('tierBar');
     tierBar.parentNode.insertBefore(container, tierBar);
   }
   if (showingArtifact) { container.innerHTML = '<span style="color:#f0d890;font-family:var(--font-heading);font-size:0.85em;letter-spacing:0.06em;">⚜ ARTIFACT LEGACY — Own Level System (1-100)</span>'; return; }
+
+  // STAFF: show subtype selector first, then 6 weapons of selected subtype
+  if (activeWeapon === 'STAFF') {
+    if (!activeStaffSubtype) {
+      // Show the 5 magic school buttons
+      container.innerHTML = '<span style="color:var(--text-muted);font-family:var(--font-heading);font-size:0.75em;margin-right:6px;">SCHOOL:</span>' +
+        STAFF_SUBTYPES.map(st => {
+          return `<button onclick="activeStaffSubtype='${st.id}';activeIndividualWeapon=null;loadWeaponItems('STAFF_${st.id}');render();" style="
+            display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;
+            border:2px solid ${st.color}33;background:${st.color}11;cursor:pointer;
+            font-family:var(--font-heading);color:${st.color};font-size:0.85em;font-weight:600;
+            transition:all 0.15s;
+          "><img src="${st.icon}" alt="" style="width:22px;height:22px;object-fit:contain;" onerror="this.style.display='none'">
+          ${st.name}</button>`;
+        }).join('');
+      return;
+    }
+    // Show back button + 6 weapons of selected subtype
+    const subtype = STAFF_SUBTYPES.find(s => s.id === activeStaffSubtype);
+    const cacheKey = 'STAFF_' + activeStaffSubtype;
+    const items = weaponItemsCache[cacheKey];
+    if (!items || !items.length) { container.innerHTML = '<span style="color:var(--text-muted);font-size:0.8em;">Loading ' + (subtype?.name || 'staves') + '…</span>'; loadWeaponItems(cacheKey); return; }
+    const TIER_COLORS = { 1:'#8b7355', 2:'#a8a8a8', 3:'#4a9eff', 4:'#9d4dff', 5:'#ff4d4d', 6:'#ffaa00', 7:'#d4a84b', 8:'#f0d890' };
+    container.innerHTML = `<button onclick="activeStaffSubtype=null;activeIndividualWeapon=null;render();" style="
+      padding:6px 12px;border-radius:6px;border:1px solid ${subtype?.color || 'var(--gold)'};background:transparent;
+      color:${subtype?.color || 'var(--gold)'};cursor:pointer;font-family:var(--font-heading);font-size:0.78em;
+    ">← ${subtype?.name || 'Back'}</button>` +
+    items.map((item, i) => {
+      const selected = activeIndividualWeapon === i;
+      const borderColor = selected ? (subtype?.color || 'var(--gold)') : 'hsl(225 20% 20%)';
+      const bg = selected ? (subtype?.color || '#d4a84b') + '18' : 'hsl(225 25% 14%)';
+      return `<button onclick="activeIndividualWeapon=${i};render();" style="
+        display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;
+        border:2px solid ${borderColor};background:${bg};cursor:pointer;
+        font-family:var(--font-heading);color:${selected ? subtype?.color || '#d4a84b' : 'var(--text-muted)'};
+        font-size:0.82em;font-weight:${selected ? '700' : '500'};transition:all 0.15s;
+        ${selected ? 'box-shadow:0 0 10px '+borderColor+'44;' : ''}
+      "><img src="${item.iconUrl || item.icon || ''}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:3px;" onerror="this.style.display='none'">
+      <span>${item.baseName || item.name}</span></button>`;
+    }).join('');
+    return;
+  }
+
+  // Normal weapons: show 6 individual weapons
   const items = weaponItemsCache[activeWeapon];
   if (!items || !items.length) { container.innerHTML = '<span style="color:var(--text-muted);font-size:0.8em;">Loading weapons…</span>'; loadWeaponItems(activeWeapon); return; }
   const TIER_COLORS = { 1:'#8b7355', 2:'#a8a8a8', 3:'#4a9eff', 4:'#9d4dff', 5:'#ff4d4d', 6:'#ffaa00', 7:'#d4a84b', 8:'#f0d890' };
