@@ -15,7 +15,7 @@ const R2_WORKER_URLS = [
   'https://objectstore.grudge-studio.com',
 ];
 const GITHACK_BASE = 'https://raw.githack.com/molochdagod/ObjectStore/main';
-const GHPAGES_BASE = 'https://info.grudge-studio.com';
+const GHPAGES_BASE = 'https://molochdagod.github.io/ObjectStore';
 const DRACO_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
 
 const REGISTRY_URLS = [
