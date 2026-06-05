@@ -577,6 +577,47 @@
     .class-badge.ranger{background:hsl(120 30% 16%);color:hsl(120 55% 55%)}
     .class-badge.worge{background:hsl(30 40% 18%);color:hsl(30 70% 65%)}
 
+    /* Weapon Picker */
+    .weapon-picker {
+      display:flex;gap:10px;justify-content:center;padding:16px 20px;flex-wrap:wrap;
+      background:linear-gradient(180deg,hsl(225 28% 8%),hsl(225 25% 10%));
+      border-bottom:1px solid hsl(43 40% 18%);min-height:48px;
+    }
+    .weapon-pick-btn {
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      padding:12px 16px;border-radius:6px;
+      border:2px solid hsl(225 20% 22%);
+      background:linear-gradient(180deg,hsl(225 25% 16%),hsl(225 28% 12%));
+      cursor:pointer;transition:all 0.2s;
+      min-width:120px;max-width:160px;
+    }
+    .weapon-pick-btn:hover {
+      border-color:var(--border-gold-hover);
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(212,175,55,0.15);
+    }
+    .weapon-pick-btn.active {
+      border-color:var(--gold);
+      background:linear-gradient(180deg,hsl(43 30% 18%),hsl(43 25% 12%));
+      box-shadow:0 0 16px rgba(212,175,55,0.25);
+    }
+    .weapon-pick-btn img {
+      width:40px;height:40px;object-fit:contain;
+      border-radius:4px;border:2px solid hsl(225 20% 20%);
+      background:hsl(225 28% 8%);padding:2px;
+    }
+    .weapon-pick-btn.active img { border-color:var(--gold); }
+    .wp-name {
+      font-family:var(--font-heading);font-size:0.82em;font-weight:600;
+      color:var(--text-gold);letter-spacing:0.02em;text-align:center;
+    }
+    .weapon-pick-btn.active .wp-name { color:var(--gold-light); }
+    .wp-lore {
+      font-size:0.65em;color:var(--text-muted);
+      text-align:center;line-height:1.3;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+
     /* Loading state */
     .loading-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
     .loading-orb{display:inline-block;width:24px;height:24px;border:3px solid hsl(225 20% 20%);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
@@ -601,16 +642,11 @@
   <p>Equip combat abilities for each weapon type</p>
 </div>
 
-<div class="class-filter" id="classFilter"></div>
 <div class="weapon-tabs" id="weaponTabs"></div>
+<div class="weapon-picker" id="weaponPicker"></div>
 
 <div class="main-content">
-  <div class="tier-bar" id="tierBar"></div>
-  <div class="reset-bar">
-    <button class="reset-btn" onclick="resetSelections()">↺ Reset Selections</button>
-  </div>
-  <div class="action-bar" id="actionBar"></div>
-  <div class="slot-columns" id="slotColumns"></div>
+  <div id="weaponSkillTree"></div>
 </div>
 
 <div class="detail-panel" id="detailPanel">
@@ -625,31 +661,47 @@
 </div>
 
 <script>
-// ===== API-DRIVEN WEAPON SKILLS ENGINE =====
-// All data fetched from ObjectStore API — no hardcoded skill definitions
+// ===== WEAPON SKILLS ENGINE v3 =====
+// Loads named weapons from master-weapons.json — each weapon has its own skill tree
 const API_SOURCES = [
   './api/v1',
   'https://objectstore.grudge-studio.com/api/v1',
   'https://molochdagod.github.io/ObjectStore/api/v1',
 ];
-const CDN = 'https://assets.grudge-studio.com';
+
+const TIER_COLORS = {1:'#8b7355',2:'#a8a8a8',3:'#4a9eff',4:'#9d4dff',5:'#ff4d4d',6:'#ffaa00',7:'#d4a84b',8:'#f0d890'};
+
+const CATEGORY_META = {
+  swords:         { name:'Sword',         icon:'/icons/pack/weapons/Sword_01.png' },
+  axes1h:         { name:'Axe',           icon:'/icons/pack/weapons/Axe_01.png' },
+  daggers:        { name:'Dagger',        icon:'/icons/pack/weapons/Dagger_01.png' },
+  greatswords:    { name:'Greatsword',    icon:'/icons/pack/weapons/Sword_11.png' },
+  greataxes:      { name:'Greataxe',      icon:'/icons/pack/weapons/Axe_49.png' },
+  hammers1h:      { name:'Hammer',        icon:'/icons/pack/weapons/Hammer_01.png' },
+  hammers2h:      { name:'Warhammer',     icon:'/icons/pack/weapons/Hammer_43.png' },
+  spears:         { name:'Spear',         icon:'/icons/pack/weapons/Spear_01.png' },
+  bows:           { name:'Bow',           icon:'/icons/pack/weapons/Bow_01.png' },
+  crossbows:      { name:'Crossbow',      icon:'/icons/pack/weapons/Crossbow_01.png' },
+  guns:           { name:'Gun',           icon:'/icons/pack/weapons/Sword_22.png' },
+  shields:        { name:'Shield',        icon:'/icons/pack/weapons/shield_01.png' },
+  fireStaves:     { name:'Fire Staff',    icon:'/icons/pack/weapons/staff_01.png' },
+  frostStaves:    { name:'Frost Staff',   icon:'/icons/pack/weapons/staff_05.png' },
+  holyStaves:     { name:'Holy Staff',    icon:'/icons/pack/weapons/staff_10.png' },
+  lightningStaves:{ name:'Lightning Staff',icon:'/icons/pack/weapons/staff_15.png' },
+  natureStaves:   { name:'Nature Staff',  icon:'/icons/pack/weapons/staff_20.png' },
+  tools:          { name:'Tool',          icon:'/icons/pack/weapons/Sword_02.png' },
+};
 
 // ── State ──
-let WEAPON_TYPES = [];         // from API
-let CLASS_RESTRICTIONS = {};   // from API
-let WEAPON_CATEGORY_MAP = {};  // built from API
-let SPELL_RECIPES = [];        // arcane staff spells from API
-let activeWeapon = null;
-let activeClass = null;        // class filter (null = all)
-let showingSpellcraft = false; // true when Arcane Staff tab is active
-let activeSpellSchool = null;  // filter spell school (null = all)
-let playerTier = 3;
-let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
-let weaponItemsCache = {};
-const CLASS_COLORS = { Warrior:'warrior', Mage:'mage', Ranger:'ranger', Worge:'worge' };
-const TIER_COLORS = { 1:'#8b7355',2:'#a8a8a8',3:'#4a9eff',4:'#9d4dff',5:'#ff4d4d',6:'#ffaa00',7:'#d4a84b',8:'#f0d890' };
+let ALL_WEAPONS = [];          // all T1 base weapons grouped
+let WEAPONS_BY_CAT = {};       // { swords: [...6 weapons], axes1h: [...6], ... }
+let CATEGORY_ORDER = [];       // ordered category keys
+let SPELL_RECIPES = [];        // arcane staff spells
+let activeCategory = null;     // e.g. 'swords'
+let activeWeaponUuid = null;   // selected weapon UUID
+let showingSpellcraft = false;
+let activeSpellSchool = null;
 
-// ── API Fetch with fallback ──
 async function fetchJSON(file) {
   for (const base of API_SOURCES) {
     try {
@@ -667,86 +719,68 @@ function copyUUID(uuid) {
   );
 }
 
-// ── Load from API ──
+// ── Load ──
 async function loadWeaponSkills() {
-  document.getElementById('slotColumns').innerHTML = '<div class="loading-state"><div class="loading-orb"></div><br>Loading weapon skills from ObjectStore…</div>';
-  const data = await fetchJSON('master-weaponSkills.json');
-  if (!data || !data.weaponTypes) {
-    document.getElementById('slotColumns').innerHTML = '<div class="loading-state" style="color:hsl(0 60% 60%)">Failed to load weapon skills. Check ObjectStore API.</div>';
+  document.getElementById('weaponSkillTree').innerHTML = '<div class="loading-state"><div class="loading-orb"></div><br>Loading weapon skills from ObjectStore…</div>';
+  const data = await fetchJSON('master-weapons.json');
+  if (!data?.items?.length) {
+    document.getElementById('weaponSkillTree').innerHTML = '<div class="loading-state" style="color:hsl(0 60% 60%)">Failed to load weapon data. Check ObjectStore API.</div>';
     return;
   }
-  WEAPON_TYPES = Array.isArray(data.weaponTypes) ? data.weaponTypes : Object.values(data.weaponTypes);
-  CLASS_RESTRICTIONS = data.classRestrictions || {};
-  const catMap = { SWORD:'swords',AXE:'axes1h',BOW:'bows',CROSSBOW:'crossbows',GUN:'guns',DAGGER:'daggers',STAFF:'fireStaves',HAMMER:'hammers1h',SHIELD:'shields',GREATSWORD:'greatswords',GREATAXE:'greataxes',SPEAR:'spears',TOME:'offhand-tome',MACE:'hammers1h',WAND:'lightningStaves',OFFHAND_RELIC:'offhand-relic' };
-  WEAPON_TYPES.forEach(w => { WEAPON_CATEGORY_MAP[w.id] = catMap[w.id] || w.id.toLowerCase(); });
-  activeWeapon = WEAPON_TYPES[0]?.id || null;
+  // Group T1 weapons by category
+  const t1 = data.items.filter(i => i.tier === 1);
+  WEAPONS_BY_CAT = {};
+  for (const w of t1) {
+    if (!WEAPONS_BY_CAT[w.category]) WEAPONS_BY_CAT[w.category] = [];
+    WEAPONS_BY_CAT[w.category].push(w);
+  }
+  CATEGORY_ORDER = Object.keys(CATEGORY_META).filter(k => WEAPONS_BY_CAT[k]?.length);
+  activeCategory = CATEGORY_ORDER[0] || null;
+
   // Load spell recipes for Arcane Staff
   const spellData = await fetchJSON('master-spellRecipes.json');
   if (spellData?.recipes) SPELL_RECIPES = spellData.recipes;
-  const spellCount = SPELL_RECIPES.length;
-  document.querySelector('.header p').textContent = `${WEAPON_TYPES.length} weapon types · ${data.totalSkills} skills · ${spellCount} spell recipes · All with GRUDGE UUIDs`;
-  renderClassFilter();
+
+  const totalWeapons = t1.length;
+  const totalCategories = CATEGORY_ORDER.length;
+  document.querySelector('.header p').textContent = `${totalCategories} weapon types · ${totalWeapons} named weapons · ${SPELL_RECIPES.length} spell recipes · All with GRUDGE UUIDs`;
+
   render();
-  if (activeWeapon) loadWeaponItems(activeWeapon);
 }
 
-// ── Class filter ──
-function renderClassFilter() {
-  const el = document.getElementById('classFilter');
-  let html = `<button class="class-btn ${!activeClass ? 'active' : ''}" onclick="setClassFilter(null)">All Classes</button>`;
-  for (const cls of Object.keys(CLASS_RESTRICTIONS)) {
-    const cssClass = CLASS_COLORS[cls] || '';
-    html += `<button class="class-btn ${activeClass === cls ? 'active' : ''} ${cssClass}" onclick="setClassFilter('${cls}')">${cls}</button>`;
-  }
-  el.innerHTML = html;
-}
-window.setClassFilter = function(cls) {
-  activeClass = cls;
-  // Reset to first allowed weapon
-  const allowed = getFilteredWeaponTypes();
-  if (allowed.length && !allowed.find(w => w.id === activeWeapon)) {
-    activeWeapon = allowed[0].id;
-    selectedSkills = { primary:null, secondary:null, ability:null, ultimate:null };
-  }
-  renderClassFilter();
-  render();
-};
-function getFilteredWeaponTypes() {
-  if (!activeClass) return WEAPON_TYPES;
-  const allowed = CLASS_RESTRICTIONS[activeClass] || [];
-  return WEAPON_TYPES.filter(w => allowed.includes(w.id));
+function getActiveWeapons() {
+  return WEAPONS_BY_CAT[activeCategory] || [];
 }
 
-// ── Get active weapon definition ──
-function getActiveWeapon() {
-  return WEAPON_TYPES.find(w => w.id === activeWeapon) || null;
+function getSelectedWeapon() {
+  if (!activeWeaponUuid) return null;
+  const weapons = getActiveWeapons();
+  return weapons.find(w => w.uuid === activeWeaponUuid) || null;
 }
 
 // ===== RENDER =====
 function render() {
   renderWeaponTabs();
-  renderTierBar();
-  renderActionBar();
-  renderSlotColumns();
+  renderWeaponPicker();
+  renderSkillTree();
 }
 
 function renderWeaponTabs() {
   const container = document.getElementById('weaponTabs');
   container.innerHTML = '';
-  const filtered = getFilteredWeaponTypes();
-  for (const weapon of filtered) {
-    const isActive = weapon.id === activeWeapon && !showingSpellcraft;
-    const classes = Object.entries(CLASS_RESTRICTIONS)
-      .filter(([cls, types]) => types.includes(weapon.id))
-      .map(([cls]) => cls);
-    const classBadges = classes.map(c => `<span class="class-badge ${CLASS_COLORS[c] || ''}">${c}</span>`).join('');
+  for (const cat of CATEGORY_ORDER) {
+    const meta = CATEGORY_META[cat] || { name: cat, icon: '' };
+    const count = WEAPONS_BY_CAT[cat]?.length || 0;
+    const isActive = cat === activeCategory && !showingSpellcraft;
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (isActive ? ' active' : '');
-    tab.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name} ${classBadges}`;
+    tab.innerHTML = `<img src="${meta.icon}" alt="${meta.name}" onerror="this.style.display='none'"> ${meta.name} <span style="font-size:0.65em;opacity:0.6">(${count})</span>`;
     tab.onclick = () => {
-      activeWeapon = weapon.id; showingSpellcraft = false; activeSpellSchool = null;
-      selectedSkills = { primary:null, secondary:null, ability:null, ultimate:null };
-      closeDetail(); render(); loadWeaponItems(weapon.id);
+      activeCategory = cat;
+      showingSpellcraft = false;
+      activeWeaponUuid = null;
+      closeDetail();
+      render();
     };
     container.appendChild(tab);
   }
@@ -757,196 +791,167 @@ function renderWeaponTabs() {
     tab.style.cssText = 'border-color:#a855f7;' + (showingSpellcraft ? 'background:linear-gradient(180deg,hsl(270 40% 22%),hsl(270 35% 14%));color:#e9d5ff;box-shadow:0 0 12px rgba(168,85,247,0.3);' : '');
     tab.innerHTML = `<img src="/icons/pack/weapons/staff_1.png" alt="Arcane Staff" onerror="this.style.display='none'"> Arcane Staff <span style="font-size:0.6em;opacity:0.7;color:#c084fc">SPELLCRAFT</span>`;
     tab.onclick = () => {
-      showingSpellcraft = true; activeSpellSchool = null;
-      selectedSkills = { primary:null, secondary:null, ability:null, ultimate:null };
-      closeDetail(); render();
+      showingSpellcraft = true;
+      activeSpellSchool = null;
+      activeWeaponUuid = null;
+      closeDetail();
+      render();
     };
     container.appendChild(tab);
   }
 }
 
-// ===== WEAPON PICKER =====
-async function loadWeaponItems(weaponTypeId) {
-  const cat = WEAPON_CATEGORY_MAP[weaponTypeId];
-  if (!cat || weaponItemsCache[weaponTypeId]) { renderWeaponPicker(); return; }
-  try {
-    const data = await fetchJSON('master-items.json');
-    if (data?.items) {
-      const t1Items = data.items.filter(i => i.category === cat && i.tier === 1);
-      weaponItemsCache[weaponTypeId] = t1Items.slice(0, 6);
-    }
-    renderWeaponPicker();
-  } catch { /* non-fatal */ }
-}
-
 function renderWeaponPicker() {
-  let container = document.getElementById('weaponPicker');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'weaponPicker';
-    container.style.cssText = 'display:flex;gap:10px;justify-content:center;padding:14px 20px;flex-wrap:wrap;background:hsl(225 28% 8%);border-bottom:1px solid hsl(43 40% 18%);min-height:42px;';
-    const tierBar = document.getElementById('tierBar');
-    tierBar.parentNode.insertBefore(container, tierBar);
-  }
-  const items = weaponItemsCache[activeWeapon];
-  if (!items || !items.length) { container.innerHTML = '<span style="color:var(--text-muted);font-size:0.8em;">Loading weapons…</span>'; return; }
-  container.innerHTML = items.map((item, i) => {
-    const tc = TIER_COLORS[item.tier] || 'var(--gold)';
-    return `<button style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;border:2px solid hsl(225 20% 20%);background:hsl(225 25% 14%);cursor:pointer;transition:all 0.15s;font-family:var(--font-heading);color:var(--text-muted);font-size:0.82em;font-weight:500">
-      <img src="${item.iconUrl || ''}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:3px" onerror="this.style.display='none'">
-      <span>${item.baseName || item.name}</span>
+  const container = document.getElementById('weaponPicker');
+  if (showingSpellcraft) { container.innerHTML = ''; return; }
+  const weapons = getActiveWeapons();
+  if (!weapons.length) { container.innerHTML = ''; return; }
+  container.innerHTML = weapons.map(w => {
+    const isActive = w.uuid === activeWeaponUuid;
+    const tc = TIER_COLORS[w.tier] || 'var(--gold)';
+    return `<button class="weapon-pick-btn${isActive ? ' active' : ''}" onclick="selectWeapon('${w.uuid}')">
+      <img src="${w.iconUrl}" alt="${w.name}" onerror="this.style.display='none'">
+      <span class="wp-name">${w.baseName || w.name}</span>
+      <span class="wp-lore">${w.lore || ''}</span>
     </button>`;
   }).join('');
 }
 
-function renderTierBar() {
-  const container = document.getElementById('tierBar');
-  container.innerHTML = '<span class="tier-label">Player Tier:</span>';
-  for (let t = 1; t <= 8; t++) {
-    const btn = document.createElement('button');
-    btn.className = 'tier-btn' + (t === playerTier ? ' active' : t <= playerTier ? ' unlocked' : '');
-    btn.textContent = 'T' + t;
-    btn.onclick = () => { playerTier = t; render(); };
-    container.appendChild(btn);
-  }
-}
+window.selectWeapon = function(uuid) {
+  activeWeaponUuid = activeWeaponUuid === uuid ? null : uuid;
+  closeDetail();
+  render();
+};
 
-function renderActionBar() {
-  const container = document.getElementById('actionBar');
+function renderSkillTree() {
+  const container = document.getElementById('weaponSkillTree');
   container.innerHTML = '';
-  const weapon = getActiveWeapon();
-  if (!weapon) return;
-  const slotTypes = ['primary','secondary','ability','ultimate'];
-  slotTypes.forEach((type, i) => {
-    const slot = weapon.slots.find(s => s.type === type);
-    const isUnlocked = slot && playerTier >= slot.unlockTier;
-    const selectedId = selectedSkills[type];
-    let skillData = selectedId && slot ? slot.skills.find(s => s.id === selectedId) : null;
-    const el = document.createElement('div');
-    el.className = 'action-slot';
-    el.setAttribute('data-type', type);
-    if (!isUnlocked) el.style.opacity = '0.4';
-    el.innerHTML = `<div class="slot-num">${i+1}</div>
-      ${skillData ? `<img src="${skillData.icon}" alt="${skillData.name}" onerror="this.parentElement.innerHTML+='?'">` : `<span style="color:var(--text-muted);font-size:1.5em;">${isUnlocked ? '—' : '🔒'}</span>`}
-      <div class="slot-label">${type}</div>`;
-    container.appendChild(el);
-  });
-  // Empty slots 5 & 6
-  for (let i = 5; i <= 6; i++) {
-    const el = document.createElement('div');
-    el.className = 'action-slot';
-    el.style.opacity = '0.3'; el.style.borderColor = 'var(--stone)';
-    el.innerHTML = `<div class="slot-num">${i}</div><span style="color:var(--text-muted);font-size:1.2em;">—</span>`;
-    container.appendChild(el);
+
+  if (showingSpellcraft) {
+    container.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;';
+    renderSpellcraftView(container);
+    return;
   }
-}
 
-function renderSlotColumns() {
-  const container = document.getElementById('slotColumns');
-  container.innerHTML = '';
-  if (showingSpellcraft) { renderSpellcraftView(container); return; }
-  const weapon = getActiveWeapon();
-  if (!weapon) { container.innerHTML = '<div class="loading-state">Select a weapon type</div>'; return; }
-
-  weapon.slots.forEach(slot => {
-    const col = document.createElement('div');
-    col.className = 'slot-column';
-    const isSlotUnlocked = playerTier >= slot.unlockTier;
-    col.innerHTML = `<div class="slot-header" data-type="${slot.type}">
-      ${slot.label}
-      <span class="unlock-tag">${isSlotUnlocked ? '✓ Unlocked' : `Requires Tier ${slot.unlockTier}`}</span>
+  const weapon = getSelectedWeapon();
+  if (!weapon) {
+    const weapons = getActiveWeapons();
+    const meta = CATEGORY_META[activeCategory] || { name: activeCategory };
+    container.innerHTML = `<div class="loading-state" style="padding:60px 20px">
+      <div style="font-family:var(--font-heading);font-size:1.4em;color:var(--gold-light);margin-bottom:12px">⚔ ${meta.name} — ${weapons.length} Weapons</div>
+      <div style="color:var(--text-muted);font-size:0.95em">Select a weapon above to view its skill tree</div>
     </div>`;
+    return;
+  }
 
-    slot.skills.forEach(skill => {
-      const isSkillUnlocked = isSlotUnlocked && playerTier >= skill.tier;
-      const isSelected = selectedSkills[slot.type] === skill.id;
-      const card = document.createElement('div');
-      card.className = 'skill-card' + (isSelected ? ' selected' : '') + (!isSkillUnlocked ? ' locked' : '');
-      card.setAttribute('data-slot', slot.type);
+  container.style.cssText = '';
 
-      const dmgText = skill.damage < 0 ? `<span class="value heal">Heal ${Math.abs(skill.damage)}</span>`
-        : skill.damage > 0 ? `<span class="value dmg">${skill.damage}</span>`
-        : `<span class="value" style="color:var(--text-muted);">—</span>`;
-      const castText = skill.castTime ? `${skill.castTime}s` : 'Instant';
-      const rangeText = skill.range ? `${skill.range}m` : '—';
-      const dmgTypeClass = skill.damageType || 'physical';
-      const uuidShort = skill.uuid ? skill.uuid.slice(-8) : '';
+  // ── Weapon Header ──
+  const uuidShort = weapon.uuid ? weapon.uuid.slice(-8) : '';
+  const header = document.createElement('div');
+  header.style.cssText = 'text-align:center;padding:24px 20px 20px;background:linear-gradient(180deg,rgba(212,175,55,0.06),transparent);border:1px solid hsl(43 40% 20%);border-radius:8px;margin-bottom:20px;';
+  header.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px;">
+      <div style="width:72px;height:72px;border:3px solid var(--gold);border-radius:6px;background:hsl(225 28% 8%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.5)">
+        <img src="${weapon.iconUrl}" alt="${weapon.name}" style="width:60px;height:60px;object-fit:contain" onerror="this.style.display='none'">
+      </div>
+      <div style="text-align:left">
+        <div style="font-family:var(--font-heading);font-size:1.6em;color:var(--gold-light);filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${weapon.name}</div>
+        <div style="font-size:0.85em;color:var(--text-muted);margin-top:2px">${weapon.lore || weapon.description}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+          <span style="font-size:0.72em;color:${TIER_COLORS[weapon.tier]||'var(--gold)'};font-family:var(--font-heading);font-weight:700">${weapon.tierLabel || 'T'+weapon.tier}</span>
+          <span style="font-size:0.72em;color:var(--text-muted)">·</span>
+          <span style="font-size:0.72em;color:var(--text-muted)">🔨 Crafted by ${weapon.craftedBy}</span>
+          ${uuidShort ? `<span class="uuid-badge" title="${weapon.uuid}" onclick="copyUUID('${weapon.uuid}')" style="font-size:0.72em">${uuidShort}</span>` : ''}
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      ${Object.entries(weapon.stats||{}).filter(([k,v])=>v).map(([k,v]) => {
+        const colors = {damage:'hsl(0 70% 60%)',speed:'hsl(43 70% 55%)',crit:'hsl(50 80% 55%)',block:'hsl(210 70% 60%)',defense:'hsl(180 50% 55%)',combo:'hsl(270 60% 65%)'};
+        return `<div style="text-align:center;padding:6px 14px;background:hsl(225 28% 10%);border-radius:4px;border:1px solid hsl(225 20% 20%);min-width:60px">
+          <div style="font-size:0.65em;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;font-family:var(--font-heading)">${k}</div>
+          <div style="font-size:1.1em;font-weight:700;color:${colors[k]||'var(--gold)'}">${v}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  container.appendChild(header);
 
-      card.innerHTML = `
-        ${isSelected ? '<div class="selected-check">✓</div>' : ''}
+  // ── Signature Ability ──
+  if (weapon.signature) {
+    const sigSection = document.createElement('div');
+    sigSection.style.cssText = 'margin-bottom:20px;';
+    const sigName = weapon.signature.split('(')[0].trim();
+    const sigDesc = weapon.signature.includes('(') ? weapon.signature.match(/\((.+)\)/)?.[1] || '' : '';
+    sigSection.innerHTML = `
+      <div style="font-family:var(--font-heading);font-size:0.9em;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">⚡ Signature Ability</div>
+      <div class="skill-card" style="border-color:hsl(43 60% 40%);background:linear-gradient(180deg,hsl(43 30% 14%),hsl(225 25% 10%));cursor:default">
         <div class="skill-icon-row">
-          <div class="skill-icon"><img src="${skill.icon}" alt="${skill.name}" onerror="this.style.display='none'"></div>
-          <span class="skill-name">${skill.name}</span>
-          <span class="skill-tier-tag">T${skill.tier}</span>
-          ${uuidShort ? `<span class="uuid-badge" title="${skill.uuid}" onclick="event.stopPropagation();copyUUID('${skill.uuid}')">${uuidShort}</span>` : ''}
+          <div class="skill-icon" style="border-color:var(--gold)"><img src="${weapon.iconUrl}" alt="" onerror="this.style.display='none'"></div>
+          <span class="skill-name" style="color:var(--gold-light);font-size:1.05em">${sigName}</span>
+          <span class="skill-tier-tag" style="background:hsl(43 50% 18%);color:var(--gold)">SIGNATURE</span>
         </div>
-        <div class="skill-desc">${skill.description}</div>
-        <div class="skill-stats">
-          <div class="skill-stat"><span class="label">DMG</span> ${dmgText}</div>
-          <div class="skill-stat"><span class="label">CD</span> <span class="value cd">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</span></div>
-          <div class="skill-stat"><span class="label">Cast</span> <span class="value cast">${castText}</span></div>
-          <div class="skill-stat"><span class="label">Range</span> <span class="value range">${rangeText}</span></div>
-        </div>
-        <div class="skill-meta">
-          ${skill.damageType ? `<span class="meta-tag ${dmgTypeClass}">${skill.damageType}</span>` : ''}
-          ${skill.projectile ? `<span class="meta-tag proj">${skill.projectile}</span>` : ''}
-          ${skill.physics ? `<span class="meta-tag phys">${skill.physics}</span>` : ''}
-        </div>
-        <div class="skill-effects">${(skill.effects||[]).map(e => `<span class="effect-tag">${e}</span>`).join('')}</div>`;
+        <div class="skill-desc" style="color:var(--text-gold)">${sigDesc}</div>
+      </div>`;
+    container.appendChild(sigSection);
+  }
 
-      if (isSkillUnlocked) {
-        card.onclick = () => {
-          if (selectedSkills[slot.type] === skill.id) { selectedSkills[slot.type] = null; closeDetail(); }
-          else { selectedSkills[slot.type] = skill.id; showDetail(skill, slot.type); }
-          render();
-        };
-      }
-      col.appendChild(card);
+  // ── Abilities ──
+  if (weapon.abilities?.length) {
+    const abSection = document.createElement('div');
+    abSection.style.cssText = 'margin-bottom:20px;';
+    abSection.innerHTML = `<div style="font-family:var(--font-heading);font-size:0.9em;color:var(--secondary-color);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">⚔ Abilities (${weapon.abilities.length})</div>`;
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;';
+    weapon.abilities.forEach((ab, i) => {
+      const abName = ab.split('(')[0].trim();
+      const abDesc = ab.includes('(') ? ab.match(/\((.+)\)/)?.[1] || '' : '';
+      const card = document.createElement('div');
+      card.className = 'skill-card';
+      card.style.cssText = 'border-color:hsla(210,70%,50%,0.3);cursor:default;';
+      card.innerHTML = `
+        <div class="skill-icon-row">
+          <div class="skill-icon" style="border-color:hsla(210,70%,50%,0.3)">
+            <span style="font-size:1.2em;color:var(--secondary-color)">${i+1}</span>
+          </div>
+          <span class="skill-name">${abName}</span>
+        </div>
+        ${abDesc ? `<div class="skill-desc">${abDesc}</div>` : ''}`;
+      grid.appendChild(card);
     });
+    abSection.appendChild(grid);
+    container.appendChild(abSection);
+  }
 
-    const placeholder = document.createElement('div');
-    placeholder.style.cssText = 'border:2px dashed hsl(220 15% 25%);border-radius:4px;padding:16px;text-align:center;color:var(--text-muted);font-size:0.8em;margin-top:8px;';
-    placeholder.textContent = 'More skills at higher tiers…';
-    col.appendChild(placeholder);
-    container.appendChild(col);
-  });
-}
-
-function showDetail(skill, slotType) {
-  const panel = document.getElementById('detailPanel');
-  document.getElementById('detailIcon').innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onerror="this.style.display='none'">`;
-  document.getElementById('detailName').textContent = skill.name;
-  document.getElementById('detailDesc').innerHTML = skill.description
-    + (skill.uuid ? `<div class="detail-uuid" onclick="copyUUID('${skill.uuid}')" title="Click to copy UUID">${skill.uuid}</div>` : '');
-
-  const dmgLabel = skill.damage < 0 ? 'Heal' : 'Damage';
-  const dmgVal = Math.abs(skill.damage);
-  const dmgColor = skill.damage < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
-  const detCast = skill.castTime ? skill.castTime + 's' : 'Instant';
-  const detRange = skill.range ? skill.range + 'm' : '—';
-
-  document.getElementById('detailStats').innerHTML = `
-    <div class="detail-stat"><div class="stat-label">${dmgLabel}</div><div class="stat-val" style="color:${dmgColor}">${dmgVal || '—'}</div></div>
-    <div class="detail-stat"><div class="stat-label">Cooldown</div><div class="stat-val" style="color:hsl(210 70% 60%)">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</div></div>
-    <div class="detail-stat"><div class="stat-label">Cast</div><div class="stat-val" style="color:hsl(43 70% 55%)">${detCast}</div></div>
-    <div class="detail-stat"><div class="stat-label">Range</div><div class="stat-val" style="color:hsl(170 60% 50%)">${detRange}</div></div>
-    <div class="detail-stat"><div class="stat-label">Type</div><div class="stat-val" style="color:var(--text-gold)">${(skill.damageType || 'physical').toUpperCase()}</div></div>
-    <div class="detail-stat"><div class="stat-label">Slot</div><div class="stat-val" style="color:var(--text-gold)">${slotType.toUpperCase()}</div></div>
-    <div class="detail-stat"><div class="stat-label">Tier</div><div class="stat-val" style="color:var(--gold)">T${skill.tier}</div></div>
-    ${skill.projectile ? `<div class="detail-stat"><div class="stat-label">Projectile</div><div class="stat-val" style="color:hsl(220 60% 65%)">${skill.projectile}</div></div>` : ''}
-    ${skill.physics ? `<div class="detail-stat"><div class="stat-label">Physics</div><div class="stat-val" style="color:hsl(0 55% 65%)">${skill.physics}</div></div>` : ''}
-    ${skill.animation ? `<div class="detail-stat"><div class="stat-label">Animation</div><div class="stat-val" style="color:hsl(180 50% 60%)">${skill.animation}</div></div>` : ''}`;
-
-  document.getElementById('detailEffects').innerHTML = (skill.effects||[]).map(e => `<span class="effect-tag">${e}</span>`).join('');
-  panel.classList.add('visible');
+  // ── Passives ──
+  if (weapon.passives?.length) {
+    const passSection = document.createElement('div');
+    passSection.style.cssText = 'margin-bottom:20px;';
+    passSection.innerHTML = `<div style="font-family:var(--font-heading);font-size:0.9em;color:hsl(140 55% 55%);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">◈ Passives (${weapon.passives.length})</div>`;
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;';
+    weapon.passives.forEach(p => {
+      const pName = p.split('(')[0].trim();
+      const pDesc = p.includes('(') ? p.match(/\((.+)\)/)?.[1] || '' : '';
+      const card = document.createElement('div');
+      card.className = 'skill-card';
+      card.style.cssText = 'border-color:hsla(140,55%,55%,0.3);cursor:default;';
+      card.innerHTML = `
+        <div class="skill-icon-row">
+          <div class="skill-icon" style="border-color:hsla(140,55%,55%,0.3)">
+            <span style="font-size:1.2em;color:hsl(140 55% 55%)">◈</span>
+          </div>
+          <span class="skill-name" style="color:hsl(140 60% 60%)">${pName}</span>
+        </div>
+        ${pDesc ? `<div class="skill-desc">${pDesc}</div>` : ''}`;
+      grid.appendChild(card);
+    });
+    passSection.appendChild(grid);
+    container.appendChild(passSection);
+  }
 }
 
 function closeDetail() { document.getElementById('detailPanel').classList.remove('visible'); }
-
-function resetSelections() {
-  selectedSkills = { primary:null, secondary:null, ability:null, ultimate:null };
-  closeDetail(); render();
-}
 
 // ===== SPELLCRAFT VIEW (Arcane Staff) =====
 function renderSpellcraftView(container) {
@@ -954,7 +959,6 @@ function renderSpellcraftView(container) {
   const SCHOOL_ICONS = { fire:'/icons/pack/misc/fire_05.png', frost:'/icons/pack/misc/frozen.png', holy:'/icons/pack/misc/Glow.png', lightning:'/icons/pack/misc/Lighting.png', nature:'/icons/pack/misc/Naturecircle.png', shadow:'/icons/pack/misc/smoke.png' };
   const schools = ['fire','frost','holy','lightning','nature','shadow'];
 
-  // Header
   const header = document.createElement('div');
   header.style.cssText = 'grid-column:1/-1;text-align:center;padding:16px;background:linear-gradient(180deg,rgba(168,85,247,0.08),transparent);border:1px solid rgba(168,85,247,0.2);border-radius:8px;margin-bottom:16px;';
   header.innerHTML = `<div style="font-family:var(--font-heading);font-size:1.2em;color:#c084fc;margin-bottom:6px;">✦ Arcane Staff — Spellcraft System</div>
@@ -962,7 +966,6 @@ function renderSpellcraftView(container) {
     <div style="color:var(--text-muted);font-size:0.78em;margin-top:4px;">${SPELL_RECIPES.length} spell recipes across ${schools.length} magic schools</div>`;
   container.appendChild(header);
 
-  // School filter buttons
   const filterBar = document.createElement('div');
   filterBar.style.cssText = 'grid-column:1/-1;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;';
   filterBar.innerHTML = `<button onclick="activeSpellSchool=null;render()" style="padding:6px 14px;border-radius:20px;border:1px solid ${!activeSpellSchool?'var(--gold)':'var(--border-gold)'};background:${!activeSpellSchool?'var(--gold)':'transparent'};color:${!activeSpellSchool?'#0a0e14':'var(--text-muted)'};cursor:pointer;font-family:var(--font-heading);font-size:0.8em;font-weight:600">All (${SPELL_RECIPES.length})</button>` +
@@ -974,9 +977,7 @@ function renderSpellcraftView(container) {
     }).join('');
   container.appendChild(filterBar);
 
-  // Spell cards
   const filtered = activeSpellSchool ? SPELL_RECIPES.filter(r => r.school === activeSpellSchool) : SPELL_RECIPES;
-  container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
 
   for (const spell of filtered) {
     const color = SCHOOL_COLORS[spell.school] || '#c084fc';
@@ -1008,7 +1009,6 @@ function renderSpellcraftView(container) {
         <strong style="color:${color}">Spellwright Lv${spell.spellwrightLevel}</strong> · 
         ${(spell.materials||[]).map(m => `${m.quantity}× ${m.name}`).join(', ')}
       </div>`;
-    card.onclick = () => showDetail(spell, spell.school);
     container.appendChild(card);
   }
 }
