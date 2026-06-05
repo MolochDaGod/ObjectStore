@@ -618,6 +618,22 @@
       display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
     }
 
+    /* 3D Viewer */
+    .viewer-wrap {
+      margin-bottom:20px;border-radius:8px;overflow:hidden;
+      border:2px solid hsl(43 40% 20%);background:hsl(225 28% 6%);
+    }
+    .viewer-wrap grudge-gltf-viewer {
+      min-height:320px;width:100%;
+      --grudge-viewer-bg:#0b0e16;
+    }
+    .viewer-label {
+      font-family:var(--font-heading);font-size:0.8em;color:var(--text-muted);
+      text-align:center;padding:6px;letter-spacing:0.06em;text-transform:uppercase;
+      background:hsl(225 25% 10%);border-top:1px solid hsl(225 20% 18%);
+    }
+    .viewer-label span { color:var(--gold); }
+
     /* Loading state */
     .loading-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
     .loading-orb{display:inline-block;width:24px;height:24px;border:3px solid hsl(225 20% 20%);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
@@ -691,6 +707,46 @@ const CATEGORY_META = {
   natureStaves:   { name:'Nature Staff',  icon:'/icons/pack/weapons/staff_20.png' },
   tools:          { name:'Tool',          icon:'/icons/pack/weapons/Sword_02.png' },
 };
+
+// Category → model folder + GLB files mapping
+const CATEGORY_FOLDERS = {
+  swords:'sword', axes1h:'axe', daggers:'dagger', greatswords:'greatsword',
+  greataxes:'greataxe', hammers1h:'hammer', hammers2h:'hammer', spears:'spear',
+  bows:'bow', crossbows:'crossbow', guns:'gun', shields:'shield',
+  fireStaves:'staff', frostStaves:'staff', holyStaves:'staff',
+  lightningStaves:'staff', natureStaves:'staff', tools:'hammer',
+};
+const CATEGORY_MODELS = {
+  swords:['BroadSword.glb','CurvedSword.glb','Katana.glb','Rapier.glb','ShortSword.glb','Sword.glb'],
+  axes1h:['Axe.glb','DoubleAxe.glb','HandAxe.glb','SmallAxe.glb','LongCleaver.glb','ButcherCleaver.glb'],
+  daggers:['Dagger.glb','Dagger_B.glb','Dagger_C.glb','Dagger_D.glb','Kukri.glb','SmallSickle.glb'],
+  greatswords:['Greatsword.glb','TwoHandedSword.glb','TwoHandedSword_B.glb','TwoHandedSword_Stylized.glb','TwoHandedSword_B_Stylized.glb','BroadSword_Stylized.glb'],
+  greataxes:['Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb'],
+  hammers1h:['Hammer.glb','SmallHammer.glb','BigHammer.glb','Warhammer.glb','hammer_1.glb','hammer_5.glb'],
+  hammers2h:['Warhammer.glb','BigHammer.glb','Hammer.glb','hammer_1.glb','hammer_5.glb','SmallHammer.glb'],
+  spears:['Halberd.glb','BRB_weapon_spear.FBX.glb','ELF_weapon_spear.FBX.glb','Halberd.glb','BRB_weapon_spear.FBX.glb','ELF_weapon_spear.FBX.glb'],
+  bows:['bow_1.glb','bow_10.glb','bow_11.glb','bow_12.glb','bow_13.glb','bow_14.glb'],
+  crossbows:['crossbow_1.glb','crossbow_11.glb','crossbow_12.glb','crossbow_13.glb','crossbow_14.glb','crossbow_15.glb'],
+  guns:['AR.glb','MG.glb','AR.glb','MG.glb','AR.glb','MG.glb'],
+  shields:['Shield.glb','LongShield.glb','WoodenShield.glb','WoodenShield_B.glb','Shield.Buckler.glb','Shield.glb'],
+  fireStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
+  frostStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
+  holyStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
+  lightningStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb'],
+  natureStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
+  tools:['Hammer.glb','SmallHammer.glb','SmallAxe.glb','Hammer.glb','SmallHammer.glb','SmallAxe.glb'],
+};
+
+function getWeaponModelUrl(weapon) {
+  const folder = CATEGORY_FOLDERS[weapon.category];
+  if (!folder) return null;
+  const models = CATEGORY_MODELS[weapon.category] || [];
+  const weapons = WEAPONS_BY_CAT[weapon.category] || [];
+  const idx = weapons.findIndex(w => w.uuid === weapon.uuid);
+  const glb = models[idx >= 0 ? idx % models.length : 0] || models[0];
+  if (!glb) return null;
+  return `/models/weapons/${folder}/${glb}`;
+}
 
 // ── State ──
 let ALL_WEAPONS = [];          // all T1 base weapons grouped
@@ -877,6 +933,17 @@ function renderSkillTree() {
     </div>`;
   container.appendChild(header);
 
+  // ── 3D Model Viewer ──
+  const modelUrl = getWeaponModelUrl(weapon);
+  if (modelUrl) {
+    const viewerWrap = document.createElement('div');
+    viewerWrap.className = 'viewer-wrap';
+    viewerWrap.innerHTML = `
+      <grudge-gltf-viewer src="${modelUrl}" auto-rotate="on" grid="on" background="#0b0e16" exposure="1.2"></grudge-gltf-viewer>
+      <div class="viewer-label">3D Preview — <span>${weapon.name}</span> · ${modelUrl.split('/').pop()}</div>`;
+    container.appendChild(viewerWrap);
+  }
+
   // ── Signature Ability ──
   if (weapon.signature) {
     const sigSection = document.createElement('div');
@@ -1017,6 +1084,7 @@ function renderSpellcraftView(container) {
 loadWeaponSkills();
 </script>
 <div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:hsl(225 25% 12%);border:1px solid var(--gold);color:var(--text-light);padding:10px 18px;border-radius:8px;font-size:12px;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,.6)"></div>
+<script type="module" src="./js/viewer/grudge-viewer.js"></script>
 <script src="./js/nav.js" defer></script>
 </body>
 </html>
