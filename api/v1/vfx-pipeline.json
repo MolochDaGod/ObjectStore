@@ -1,0 +1,407 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-05T06:09:00.000Z",
+  "description": "VFX Pipeline — declarative attachment system for wiring 3DFX effects to weapon skills. Defines WHERE an effect spawns, HOW it travels, WHAT happens on arrival, and HOW LONG it lasts. Used by the weapon prefab editor and runtime skill system.",
+
+  "origins": {
+    "description": "Where the VFX spawns. Every VFX starts at an origin.",
+    "types": {
+      "weapon_tip": {
+        "label": "Weapon Tip",
+        "description": "End of the equipped weapon mesh. For projectile launch, spell cast from staff tip.",
+        "bone": "R_hand_container",
+        "offset": [0, 0, 0.8],
+        "useCases": ["projectile launch", "spell cast", "arrow nock", "gun muzzle"]
+      },
+      "weapon_edge": {
+        "label": "Weapon Edge / Trail",
+        "description": "Along the cutting edge of the weapon. Follows the swing arc during animation.",
+        "bone": "R_hand_container",
+        "trailPoints": ["hilt", "mid", "tip"],
+        "useCases": ["slash trail", "flame sword", "frost edge", "enchant glow"]
+      },
+      "weapon_back": {
+        "label": "Weapon Back / Spine",
+        "description": "Back side of the weapon. For charging effects, runic glow, enchant particles.",
+        "bone": "R_hand_container",
+        "offset": [0, 0, -0.2],
+        "useCases": ["charge buildup", "enchant glow", "runic pulse", "weapon aura"]
+      },
+      "offhand": {
+        "label": "Offhand / Shield / Tome",
+        "description": "Left hand container. For tome spells, shield effects, offhand cast.",
+        "bone": "L_hand_container",
+        "offset": [0, 0, 0],
+        "useCases": ["tome spell cast", "shield block VFX", "offhand projectile"]
+      },
+      "caster_center": {
+        "label": "Caster Body Center",
+        "description": "Center mass of the caster. For auras, buffs, self-heals.",
+        "bone": "Hips",
+        "offset": [0, 1.0, 0],
+        "useCases": ["aura", "buff", "self-heal", "transformation", "level up"]
+      },
+      "caster_feet": {
+        "label": "Caster Feet",
+        "description": "Ground level at caster position. For ground slam, shockwave origin.",
+        "bone": null,
+        "offset": [0, 0, 0],
+        "useCases": ["ground slam", "stomp", "shockwave origin", "dust cloud"]
+      },
+      "caster_above": {
+        "label": "Above Caster",
+        "description": "2-3 units above caster head. For rain of arrows, meteor call, holy beam.",
+        "bone": "Head",
+        "offset": [0, 3.0, 0],
+        "useCases": ["meteor call", "rain of arrows", "divine beam", "lightning strike"]
+      },
+      "caster_forward": {
+        "label": "In Front of Caster",
+        "description": "1-2 units ahead in facing direction. For breath attacks, cone effects.",
+        "bone": null,
+        "offset": [0, 1.0, 1.5],
+        "useCases": ["breath attack", "cone spray", "forward wave", "charge attack"]
+      },
+      "target_position": {
+        "label": "Target Entity",
+        "description": "Center of the targeted enemy/ally. For targeted spells, debuffs.",
+        "bone": null,
+        "offset": [0, 1.0, 0],
+        "useCases": ["targeted spell", "debuff", "DoT", "heal on ally"]
+      },
+      "target_feet": {
+        "label": "Target Feet / Ground",
+        "description": "Ground under target. For root, trap, ground fire.",
+        "bone": null,
+        "offset": [0, 0, 0],
+        "useCases": ["root", "trap", "ground fire", "frost patch"]
+      },
+      "ground_cursor": {
+        "label": "Ground Cursor / AoE Indicator",
+        "description": "Where the player is aiming on the ground (mouse world position). For ground-targeted AoE.",
+        "bone": null,
+        "offset": [0, 0.1, 0],
+        "useCases": ["AoE targeting circle", "meteor strike location", "frost nova center"]
+      },
+      "sky": {
+        "label": "Sky / Above World",
+        "description": "High above the target area. For effects that rain down (meteor, lightning).",
+        "bone": null,
+        "offset": [0, 30.0, 0],
+        "useCases": ["meteor fall", "lightning from sky", "divine judgment", "arrow rain"]
+      }
+    }
+  },
+
+  "travel": {
+    "description": "How the VFX moves from origin to destination. Not all VFX travel — some are instant or stay at origin.",
+    "types": {
+      "instant": {
+        "label": "Instant / No Travel",
+        "description": "Appears at origin immediately. For melee hits, buffs, auras.",
+        "speed": null,
+        "useCases": ["melee slash", "buff apply", "aura toggle", "block impact"]
+      },
+      "projectile_linear": {
+        "label": "Linear Projectile",
+        "description": "Travels in a straight line from origin toward target at constant speed.",
+        "speed": "15-40 units/sec",
+        "useCases": ["fireball", "arrow", "bolt", "thrown dagger"]
+      },
+      "projectile_arc": {
+        "label": "Arced Projectile",
+        "description": "Travels in a parabolic arc from origin to target. For lobbed spells, grenades.",
+        "speed": "10-25 units/sec",
+        "arcHeight": "3-8 units",
+        "useCases": ["meteor", "grenade", "mortar", "lobbed potion"]
+      },
+      "projectile_homing": {
+        "label": "Homing Projectile",
+        "description": "Seeks toward target, adjusting direction each frame. For magic missiles, tracking bolts.",
+        "speed": "12-30 units/sec",
+        "turnRate": "180-360 deg/sec",
+        "useCases": ["magic missile", "tracking bolt", "seeking orb"]
+      },
+      "beam": {
+        "label": "Beam / Ray",
+        "description": "Continuous line from origin to target. Stays connected while channeling.",
+        "speed": null,
+        "useCases": ["laser beam", "chain lightning", "heal beam", "tether"]
+      },
+      "expand_ring": {
+        "label": "Expanding Ring",
+        "description": "Ring expands outward from origin at constant speed.",
+        "speed": "8-20 units/sec",
+        "useCases": ["shockwave", "nova", "ripple", "pulse"]
+      },
+      "fall_from_sky": {
+        "label": "Fall From Sky",
+        "description": "Travels from sky origin straight down to ground target.",
+        "speed": "30-60 units/sec",
+        "useCases": ["meteor", "lightning bolt", "divine pillar", "arrow rain"]
+      },
+      "follow_entity": {
+        "label": "Follow Entity",
+        "description": "Stays attached to an entity and moves with it. For persistent auras and buffs.",
+        "speed": null,
+        "useCases": ["aura", "buff glow", "shield bubble", "DoT cloud"]
+      },
+      "follow_swing": {
+        "label": "Follow Weapon Swing",
+        "description": "Traces along the weapon arc during attack animation. For slash trails.",
+        "speed": null,
+        "useCases": ["sword slash", "axe chop", "spin attack trail", "weapon enchant trail"]
+      },
+      "chain_bounce": {
+        "label": "Chain / Bounce",
+        "description": "Jumps from target to nearby targets. For chain lightning, bouncing heal.",
+        "speed": "25-50 units/sec",
+        "maxBounces": "2-5",
+        "bounceRadius": "8-12 units",
+        "useCases": ["chain lightning", "bouncing heal", "ricochet"]
+      }
+    }
+  },
+
+  "arrival": {
+    "description": "What happens when the VFX reaches its destination or completes its travel.",
+    "types": {
+      "none": {
+        "label": "None / Dissipate",
+        "description": "VFX fades out at destination. No additional effect.",
+        "useCases": ["simple projectile", "trail end", "buff expire"]
+      },
+      "explode": {
+        "label": "Explode",
+        "description": "Burst into AoE damage/particles on arrival. Triggers a secondary AoE VFX.",
+        "params": { "radius": "2-8 units", "damageMultiplier": "0.5-1.5" },
+        "useCases": ["fireball explosion", "meteor impact", "grenade burst"]
+      },
+      "impact_burst": {
+        "label": "Impact Burst",
+        "description": "Short flash/particles at hit point. For direct-hit confirmation.",
+        "params": { "duration": "0.1-0.3 sec" },
+        "useCases": ["arrow hit", "melee contact", "bullet impact"]
+      },
+      "stick": {
+        "label": "Stick to Target",
+        "description": "VFX attaches to the target entity. For DoTs, debuffs, poison.",
+        "params": { "duration": "3-10 sec" },
+        "useCases": ["bleed", "poison", "burn DoT", "slow debuff"]
+      },
+      "bounce": {
+        "label": "Bounce / Ricochet",
+        "description": "Reflects off target and seeks next target. For chain effects.",
+        "params": { "bounceCount": "2-5", "bounceRadius": "8 units" },
+        "useCases": ["chain lightning", "bouncing blade", "ricochet shot"]
+      },
+      "pool": {
+        "label": "Leave Ground Pool",
+        "description": "Creates a persistent area on the ground. For fire patches, frost zones.",
+        "params": { "radius": "3-6 units", "duration": "3-8 sec", "tickRate": "0.5-1.0 sec" },
+        "useCases": ["fire patch", "frost zone", "poison cloud", "healing circle"]
+      },
+      "spawn_secondary": {
+        "label": "Spawn Secondary VFX",
+        "description": "Triggers another VFX on arrival. For combo effects (projectile→explosion→shockwave).",
+        "params": { "secondaryVfxId": "string", "delay": "0-0.5 sec" },
+        "useCases": ["meteor→shockwave", "arrow→poison cloud", "spell→buff on hit"]
+      },
+      "knockback": {
+        "label": "Knockback",
+        "description": "Pushes target away from impact. Pairs with shockwave/slam VFX.",
+        "params": { "force": "5-15 units", "duration": "0.2-0.5 sec" },
+        "useCases": ["shield bash", "ground slam", "force push", "whirlwind"]
+      }
+    }
+  },
+
+  "timing": {
+    "description": "Duration and lifecycle of the VFX.",
+    "types": {
+      "instant": {
+        "label": "Instant (0.1-0.3s)",
+        "description": "Flash effect. One frame burst, rapid fade.",
+        "range": [0.1, 0.3],
+        "useCases": ["hit impact", "parry flash", "crit sparkle"]
+      },
+      "short": {
+        "label": "Short (0.3-1.0s)",
+        "description": "Quick effect with fade. Melee slash trails, projectile travel.",
+        "range": [0.3, 1.0],
+        "useCases": ["slash trail", "projectile", "dodge dash", "block flash"]
+      },
+      "medium": {
+        "label": "Medium (1.0-3.0s)",
+        "description": "Visible effect with clear lifecycle. Spell explosions, AoE nova.",
+        "range": [1.0, 3.0],
+        "useCases": ["explosion", "nova expand", "buff pulse", "charged attack"]
+      },
+      "long": {
+        "label": "Long (3.0-8.0s)",
+        "description": "Persistent effect. Ground pools, channeled spells, DoTs.",
+        "range": [3.0, 8.0],
+        "useCases": ["ground pool", "DoT cloud", "channeled beam", "shield bubble"]
+      },
+      "persistent": {
+        "label": "Persistent (until cancelled)",
+        "description": "Stays until explicitly removed. Auras, toggled buffs, portals.",
+        "range": null,
+        "useCases": ["aura", "portal", "turret", "ward"]
+      },
+      "match_animation": {
+        "label": "Match Animation Duration",
+        "description": "VFX duration matches the skill animation length. Auto-synced.",
+        "range": null,
+        "useCases": ["slash trail matches swing", "charge matches hold", "channel matches cast"]
+      }
+    }
+  },
+
+  "examples": [
+    {
+      "name": "Fireball (Mage basic)",
+      "skillId": "staff_fireball",
+      "pipeline": {
+        "origin": "weapon_tip",
+        "travel": "projectile_linear",
+        "travelSpeed": 25,
+        "arrival": "explode",
+        "arrivalParams": { "radius": 3, "secondaryVfxId": "fire_nova" },
+        "timing": "short",
+        "duration": 0.8,
+        "effectId": "flame_ball",
+        "effectUUID": "GRDG-3DFX-F30284DE"
+      }
+    },
+    {
+      "name": "Sword Slash (Warrior basic)",
+      "skillId": "sword_vengeful_slash",
+      "pipeline": {
+        "origin": "weapon_edge",
+        "travel": "follow_swing",
+        "arrival": "none",
+        "timing": "match_animation",
+        "effectId": "sword_slash",
+        "effectUUID": "GRDG-3DFX-7BD0A8E1"
+      }
+    },
+    {
+      "name": "Frost Nova (AoE freeze)",
+      "skillId": "staff_frost_nova",
+      "pipeline": {
+        "origin": "caster_feet",
+        "travel": "expand_ring",
+        "travelSpeed": 15,
+        "arrival": "pool",
+        "arrivalParams": { "radius": 6, "duration": 4, "tickRate": 1 },
+        "timing": "medium",
+        "duration": 2.0,
+        "effectId": "frost_nova",
+        "effectUUID": "GRDG-3DFX-8FE77BD7"
+      }
+    },
+    {
+      "name": "Meteor Strike (ground targeted)",
+      "skillId": "staff_meteor",
+      "pipeline": {
+        "origin": "sky",
+        "travel": "fall_from_sky",
+        "travelSpeed": 40,
+        "destination": "ground_cursor",
+        "arrival": "explode",
+        "arrivalParams": { "radius": 5, "secondaryVfxId": "shockwave" },
+        "timing": "medium",
+        "duration": 1.5,
+        "effectId": "meteor_impact",
+        "effectUUID": "GRDG-3DFX-B18AAE3C"
+      }
+    },
+    {
+      "name": "Chain Lightning (bouncing beam)",
+      "skillId": "staff_chain_lightning",
+      "pipeline": {
+        "origin": "weapon_tip",
+        "travel": "chain_bounce",
+        "travelSpeed": 40,
+        "arrivalParams": { "bounceCount": 3, "bounceRadius": 10 },
+        "arrival": "impact_burst",
+        "timing": "short",
+        "duration": 0.6,
+        "effectId": "chain_lightning",
+        "effectUUID": "GRDG-3DFX-D3CC51ED"
+      }
+    },
+    {
+      "name": "Divine Aura (persistent buff)",
+      "skillId": "holy_aura_toggle",
+      "pipeline": {
+        "origin": "caster_center",
+        "travel": "follow_entity",
+        "arrival": "none",
+        "timing": "persistent",
+        "effectId": "holy_aura",
+        "effectUUID": "GRDG-3DFX-64A974B3"
+      }
+    },
+    {
+      "name": "Shield Block (impact reaction)",
+      "skillId": "shield_block_react",
+      "pipeline": {
+        "origin": "offhand",
+        "travel": "instant",
+        "arrival": "knockback",
+        "arrivalParams": { "force": 3, "duration": 0.2 },
+        "timing": "instant",
+        "duration": 0.2,
+        "effectId": "shield_block",
+        "effectUUID": "GRDG-3DFX-ADA80FBE"
+      }
+    },
+    {
+      "name": "Arrow Rain (sky AoE)",
+      "skillId": "bow_arrow_rain",
+      "pipeline": {
+        "origin": "sky",
+        "travel": "fall_from_sky",
+        "travelSpeed": 35,
+        "destination": "ground_cursor",
+        "arrival": "pool",
+        "arrivalParams": { "radius": 8, "duration": 5, "tickRate": 0.5 },
+        "timing": "long",
+        "duration": 5.0,
+        "effectId": "blizzard",
+        "effectUUID": "GRDG-3DFX-D30F86F6"
+      }
+    },
+    {
+      "name": "Weapon Enchant Glow (charge effect)",
+      "skillId": "enchant_weapon_fire",
+      "pipeline": {
+        "origin": "weapon_back",
+        "travel": "instant",
+        "arrival": "stick",
+        "arrivalParams": { "duration": 10 },
+        "timing": "long",
+        "duration": 10.0,
+        "effectId": "casting_fire",
+        "effectUUID": "GRDG-3DFX-789B55B0"
+      }
+    },
+    {
+      "name": "Poison Arrow (projectile → DoT pool)",
+      "skillId": "bow_poison_arrow",
+      "pipeline": {
+        "origin": "weapon_tip",
+        "travel": "projectile_linear",
+        "travelSpeed": 30,
+        "arrival": "spawn_secondary",
+        "arrivalParams": { "secondaryVfxId": "ground_fog", "delay": 0.1 },
+        "timing": "short",
+        "duration": 0.5,
+        "effectId": "arrow_trail",
+        "effectUUID": "GRDG-3DFX-8E481340"
+      }
+    }
+  ]
+}
