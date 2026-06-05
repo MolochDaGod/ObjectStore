@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-05T08:46:00.000Z",
+  "description": "Unified skill type system for Grudge Warlords. 14 skill types extracted from uMMORPG, adapted for Three.js/Rapier. Every skill executes a 4-step pipeline: CheckSelf → CheckTarget → CheckDistance → Apply.",
+
+  "castingPipeline": [
+    { "step": 1, "method": "CheckSelf",     "question": "Can I cast? (alive, mana, cooldown, weapon)" },
+    { "step": 2, "method": "CheckTarget",    "question": "Valid target? (exists, attackable/friendly)" },
+    { "step": 3, "method": "CheckDistance",   "question": "In range? (returns move-to point if not)" },
+    { "step": 4, "method": "Apply",           "question": "Execute effect (damage, heal, projectile, buff)" }
+  ],
+
+  "skillTypes": [
+    {
+      "id": "target_damage", "label": "Target Damage", "targeting": "single_enemy",
+      "desc": "Direct damage to targeted enemy.",
+      "fields": ["damage", "stunChance", "stunTime"],
+      "vfx": { "origin": "weapon_tip", "travel": "instant", "arrival": "impact_burst" },
+      "examples": ["Sword slash", "Axe chop", "Dagger stab", "Mace smash"]
+    },
+    {
+      "id": "target_projectile", "label": "Target Projectile", "targeting": "single_enemy",
+      "desc": "Spawns projectile that travels to target. Consumes ammo for ranged.",
+      "fields": ["damage", "stunChance", "stunTime", "projectileSpeed"],
+      "vfx": { "origin": "weapon_tip", "travel": "projectile_linear", "arrival": "impact_burst" },
+      "examples": ["Arrow shot", "Fireball", "Lightning bolt", "Thrown dagger"]
+    },
+    {
+      "id": "area_damage", "label": "Area Damage", "targeting": "aoe_enemies",
+      "desc": "Damages all enemies in radius. No target required. Optional knockback.",
+      "fields": ["damage", "stunChance", "stunTime", "knockbackForce"],
+      "vfx": { "origin": "caster_feet", "travel": "expand_ring", "arrival": "explode" },
+      "examples": ["Ground slam", "Whirlwind", "Nova", "Stomp"]
+    },
+    {
+      "id": "target_heal", "label": "Target Heal", "targeting": "single_friendly",
+      "desc": "Heals targeted ally. Auto-corrects to self if targeting enemy.",
+      "fields": ["healsHealth", "healsMana", "canHealSelf", "canHealOthers"],
+      "vfx": { "origin": "caster_center", "travel": "instant", "arrival": "none" },
+      "examples": ["Holy light", "Nature mend", "First aid"]
+    },
+    {
+      "id": "area_heal", "label": "Area Heal", "targeting": "aoe_friendlies",
+      "desc": "Heals all allies in radius.",
+      "fields": ["healsHealth", "healsMana"],
+      "vfx": { "origin": "caster_center", "travel": "expand_ring", "arrival": "pool" },
+      "examples": ["Healing circle", "Group heal", "Holy nova"]
+    },
+    {
+      "id": "target_buff", "label": "Target Buff", "targeting": "single_friendly",
+      "desc": "Applies stat buff to targeted ally. Duration-based.",
+      "fields": ["buffTime", "canBuffSelf", "canBuffOthers", "statBonuses"],
+      "vfx": { "origin": "caster_center", "travel": "instant", "arrival": "stick" },
+      "examples": ["Empower", "Shield buff", "Haste", "Fortify"]
+    },
+    {
+      "id": "area_buff", "label": "Area Buff", "targeting": "aoe_friendlies",
+      "desc": "Applies buff to all allies in radius.",
+      "fields": ["buffTime", "statBonuses"],
+      "vfx": { "origin": "caster_center", "travel": "expand_ring", "arrival": "none" },
+      "examples": ["War cry", "Aura of protection", "Speed rally"]
+    },
+    {
+      "id": "passive", "label": "Passive Skill", "targeting": "none",
+      "desc": "Always-active stat modifier. Never cast.",
+      "fields": ["statBonuses"],
+      "vfx": null,
+      "examples": ["Bloodlust (+dmg)", "Swift Vengeance (+speed)", "Deep Cuts (+bleed)"]
+    },
+    {
+      "id": "ground_aoe_damage", "label": "Ground Targeted AoE", "targeting": "ground_aoe",
+      "desc": "Aim at ground, AoE explodes there. Requires targeting reticle.",
+      "fields": ["damage", "aoeRadius", "stunChance"],
+      "vfx": { "origin": "sky", "travel": "fall_from_sky", "arrival": "explode" },
+      "examples": ["Meteor strike", "Rain of fire", "Lightning strike"]
+    },
+    {
+      "id": "ground_zone", "label": "Ground Zone (persistent)", "targeting": "ground_aoe",
+      "desc": "Creates persistent damage/heal zone on ground.",
+      "fields": ["damage", "aoeRadius", "zoneDuration", "tickRate"],
+      "vfx": { "origin": "ground_cursor", "travel": "instant", "arrival": "pool" },
+      "examples": ["Fire patch", "Frost zone", "Poison cloud", "Healing circle"]
+    },
+    {
+      "id": "skillshot", "label": "Skillshot (line)", "targeting": "direction",
+      "desc": "Fires in facing direction, hits first enemy in path.",
+      "fields": ["damage", "projectileSpeed", "projectileWidth", "pierceCount"],
+      "vfx": { "origin": "weapon_tip", "travel": "projectile_linear", "arrival": "impact_burst" },
+      "examples": ["Piercing shot", "Sniper shot", "Energy beam"]
+    },
+    {
+      "id": "cone_attack", "label": "Cone Attack", "targeting": "cone_forward",
+      "desc": "Damages all enemies in cone in front of caster.",
+      "fields": ["damage", "coneAngle", "coneRange"],
+      "vfx": { "origin": "caster_forward", "travel": "instant", "arrival": "none" },
+      "examples": ["Dragon breath", "Cleave", "Cone of cold", "Fan of knives"]
+    },
+    {
+      "id": "dash_attack", "label": "Dash Attack", "targeting": "direction_or_target",
+      "desc": "Caster dashes forward dealing damage on contact.",
+      "fields": ["damage", "dashDistance", "dashSpeed", "statusOnHit"],
+      "vfx": { "origin": "caster_center", "travel": "instant", "arrival": "impact_burst" },
+      "statusEffects": ["push", "stun"],
+      "examples": ["Blood Rush", "Charge", "Shadow Step", "Lunge"]
+    },
+    {
+      "id": "summon", "label": "Summon", "targeting": "ground_point",
+      "desc": "Spawns entity (pet, turret, trap, wall) at position.",
+      "fields": ["summonPrefab", "summonDuration", "summonHealth", "maxSummons"],
+      "vfx": { "origin": "ground_cursor", "travel": "instant", "arrival": "none" },
+      "examples": ["Summon GOULD", "Place turret", "Drop trap", "Raise wall"]
+    }
+  ],
+
+  "combatFormulas": {
+    "damage": "max(attackerDamage + skillDamage - victimDefense, 1)",
+    "block": "random() < blockChance → 0 damage (DamageType.Block)",
+    "crit": "random() < critChance → damage × 2 (DamageType.Crit)",
+    "stun": "random() < stunChance → victim.stunEnd = now + stunTime",
+    "knockback": "dir = normalize(victim.pos - attacker.pos); victim.velocity += dir × force",
+    "heal": "target.health = min(target.health + healAmount, target.maxHealth)",
+    "buff": "AddOrRefreshBuff(skill, level) → stat bonuses active for buffTime seconds",
+    "dot": "Apply every tickRate: target.health -= tickDamage; duration countdown"
+  },
+
+  "linearScaling": {
+    "description": "All skill values scale linearly: value = base + (level-1) × bonus",
+    "example": { "base": 10, "bonusPerLevel": 5, "level1": 10, "level4": 25, "level8": 45 }
+  },
+
+  "statBonuses": {
+    "description": "Fields available on BuffSkill and PassiveSkill.",
+    "fields": [
+      { "id": "healthMaxBonus",        "type": "LinearInt",   "desc": "+max HP" },
+      { "id": "manaMaxBonus",          "type": "LinearInt",   "desc": "+max MP" },
+      { "id": "staminaMaxBonus",       "type": "LinearInt",   "desc": "+max stamina" },
+      { "id": "damageBonus",           "type": "LinearInt",   "desc": "+attack damage" },
+      { "id": "defenseBonus",          "type": "LinearInt",   "desc": "+defense" },
+      { "id": "blockChanceBonus",      "type": "LinearFloat", "desc": "+block % (0-1)" },
+      { "id": "criticalChanceBonus",   "type": "LinearFloat", "desc": "+crit % (0-1)" },
+      { "id": "healthRegenBonus",      "type": "LinearFloat", "desc": "HP%/sec (0.1=10%)" },
+      { "id": "manaRegenBonus",        "type": "LinearFloat", "desc": "MP%/sec" },
+      { "id": "speedBonus",            "type": "LinearFloat", "desc": "+move speed (neg=slow)" },
+      { "id": "cannotRemove",          "type": "bool",        "desc": "Persists through cleanse" },
+      { "id": "blockNerfs",            "type": "bool",        "desc": "Prevents debuffs" },
+      { "id": "invincibility",         "type": "bool",        "desc": "Takes no damage" },
+      { "id": "endure",                "type": "bool",        "desc": "Cannot die (HP stays at 1)" },
+      { "id": "boostExperience",       "type": "float",       "desc": "XP gain multiplier" },
+      { "id": "boostGold",             "type": "float",       "desc": "Gold gain multiplier" },
+      { "id": "lifestealPercent",      "type": "float",       "desc": "Heal for % of damage dealt" }
+    ]
+  },
+
+  "statusEffects": {
+    "description": "Effects applied TO targets by skills. Each has VFX, icon, gameplay logic.",
+    "cc": [
+      { "id": "stun",    "dur": "0.5-3s",  "desc": "Cannot act",                    "vfx": "gold_stars_head" },
+      { "id": "freeze",  "dur": "1-4s",    "desc": "Encased in ice, cannot act",     "vfx": "ice_encase" },
+      { "id": "root",    "dur": "1-5s",    "desc": "Cannot move, can attack",        "vfx": "vine_feet" },
+      { "id": "silence", "dur": "2-5s",    "desc": "Cannot cast, can auto-attack",   "vfx": "mute_symbol" },
+      { "id": "fear",    "dur": "1-3s",    "desc": "Runs away uncontrollably",       "vfx": "dark_tendrils" },
+      { "id": "sleep",   "dur": "2-6s",    "desc": "Cannot act, breaks on damage",   "vfx": "zzz_bubbles" },
+      { "id": "blind",   "dur": "2-4s",    "desc": "Miss chance +50%",               "vfx": "dark_screen" },
+      { "id": "slow",    "dur": "2-6s",    "desc": "Movement speed reduced",         "vfx": "frost_feet" },
+      { "id": "taunt",   "dur": "2-4s",    "desc": "Forced to attack taunter",       "vfx": "red_outline" }
+    ],
+    "dot": [
+      { "id": "bleed",     "dur": "3-8s",  "tick": "1s", "desc": "Physical damage/tick, stacks",     "vfx": "blood_drip" },
+      { "id": "poison",    "dur": "4-10s", "tick": "2s", "desc": "Nature damage/tick, -healing",      "vfx": "green_bubbles" },
+      { "id": "burn",      "dur": "3-6s",  "tick": "1s", "desc": "Fire damage/tick, spreads",         "vfx": "flame_body" },
+      { "id": "frostbite", "dur": "3-6s",  "tick": "1s", "desc": "Frost damage/tick, -attack speed",  "vfx": "ice_crystals" },
+      { "id": "shock",     "dur": "2-4s",  "tick": "1s", "desc": "Lightning damage/tick, chains",     "vfx": "spark_arcs" },
+      { "id": "curse",     "dur": "5-10s", "tick": "2s", "desc": "Shadow damage/tick, -stats",        "vfx": "dark_runes" },
+      { "id": "corrode",   "dur": "4-8s",  "tick": "1s", "desc": "Reduces armor per tick",            "vfx": "acid_drip" }
+    ],
+    "force": [
+      { "id": "push",    "dist": "3-10m",  "desc": "Knocks away from caster" },
+      { "id": "pull",    "dist": "3-10m",  "desc": "Drags toward caster" },
+      { "id": "lift",    "height": "2-5m", "desc": "Launches into air" },
+      { "id": "slam",    "desc": "Forces airborne target to ground" },
+      { "id": "vacuum",  "radius": "5-8m", "desc": "Pulls all nearby to center" },
+      { "id": "scatter", "radius": "5-8m", "desc": "Pushes all away from center" }
+    ],
+    "buff": [
+      { "id": "heal",      "desc": "Restore HP" },
+      { "id": "shield",    "desc": "Absorb barrier" },
+      { "id": "haste",     "desc": "+move/attack speed" },
+      { "id": "fortify",   "desc": "+defense/DR" },
+      { "id": "empower",   "desc": "+damage" },
+      { "id": "regen",     "desc": "HP per tick" },
+      { "id": "cleanse",   "desc": "Remove debuffs" },
+      { "id": "immunity",  "desc": "Cannot be damaged" },
+      { "id": "stealth",   "desc": "Invisible, breaks on attack" },
+      { "id": "lifesteal", "desc": "Heal for % of damage" }
+    ],
+    "transform": [
+      { "id": "smoke_form",    "desc": "Become smoke, untargetable" },
+      { "id": "light_form",    "desc": "Become light, +100% speed" },
+      { "id": "blur_form",     "desc": "Phase shift, 50% DR" },
+      { "id": "materialize",   "desc": "Solidify from particles" },
+      { "id": "dematerialize", "desc": "Dissolve into particles" },
+      { "id": "stone_form",    "desc": "Petrify, cannot act" },
+      { "id": "shadow_form",   "desc": "Dark silhouette" },
+      { "id": "enlarge",       "desc": "Grow 2x, +dmg +HP" },
+      { "id": "shrink",        "desc": "Shrink 0.5x, +speed +dodge" }
+    ],
+    "movement": [
+      { "id": "quick_step",  "desc": "Short dash, afterimage trail" },
+      { "id": "blink",       "desc": "Instant teleport, flash both ends" },
+      { "id": "dash",        "desc": "Fast forward, motion blur" },
+      { "id": "leap",        "desc": "Arc through air to location" },
+      { "id": "backstep",    "desc": "Quick backward hop, i-frames" },
+      { "id": "air_dash",    "desc": "Horizontal dash while airborne" },
+      { "id": "slide",       "desc": "Ground-level dash, low profile" }
+    ]
+  }
+}
