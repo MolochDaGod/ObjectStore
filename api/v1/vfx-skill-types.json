@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-05T06:03:00.000Z",
+  "description": "Maps 3DFX effects to skill VFX types for weapon prefab authoring. Each type defines how the VFX attaches to a skill (spawn point, travel behavior, timing).",
+  "vfxTypes": {
+    "projectile": {
+      "label": "Projectile",
+      "description": "Travels from caster to target or in a direction. Spawns at weapon tip or hand.",
+      "spawnPoint": "weapon_tip",
+      "behavior": "travel_to_target",
+      "effects": [
+        { "id": "flame_ball",        "uuid": "GRDG-3DFX-F30284DE", "name": "Flame Ball",        "element": "fire" },
+        { "id": "lava_orb",          "uuid": "GRDG-3DFX-BAFE89F2", "name": "Lava Orb",          "element": "fire" },
+        { "id": "frozen_orb",        "uuid": "GRDG-3DFX-423A3B4F", "name": "Frozen Orb",        "element": "frost" },
+        { "id": "ice_ball",          "uuid": "GRDG-3DFX-DF8F24DC", "name": "Ice Ball",          "element": "frost" },
+        { "id": "water_orb",         "uuid": "GRDG-3DFX-F5EEE9B3", "name": "Water Orb",         "element": "frost" },
+        { "id": "lightning_ball",     "uuid": "GRDG-3DFX-69393D4F", "name": "Lightning Ball",    "element": "lightning" },
+        { "id": "chaos_orb",         "uuid": "GRDG-3DFX-4940C2F4", "name": "Chaos Orb",         "element": "arcane" },
+        { "id": "cured_ball",        "uuid": "GRDG-3DFX-9110DFA3", "name": "Cured Ball",        "element": "holy" },
+        { "id": "arrow_trail",       "uuid": "GRDG-3DFX-8E481340", "name": "Arrow Trail",       "element": "physical" },
+        { "id": "bone_dagger",       "uuid": "GRDG-3DFX-4CBB2E32", "name": "Bone Dagger",       "element": "shadow" },
+        { "id": "magic_fire_blue",   "uuid": "GRDG-3DFX-ECFBAA16", "name": "Magic Fire Blue",   "element": "arcane" },
+        { "id": "magic_fire_purple", "uuid": "GRDG-3DFX-A3EFAEAB", "name": "Magic Fire Purple", "element": "shadow" }
+      ]
+    },
+    "slash": {
+      "label": "Slash / Melee Swing",
+      "description": "Arc or line that follows weapon swing. Spawns at weapon and follows swing arc.",
+      "spawnPoint": "weapon_edge",
+      "behavior": "follow_swing",
+      "effects": [
+        { "id": "sword_slash",        "uuid": "GRDG-3DFX-7BD0A8E1", "name": "Sword Slash",        "element": "physical" },
+        { "id": "slash_horizontal",   "uuid": null,                  "name": "Horizontal Slash",    "element": "physical" },
+        { "id": "slash_vertical",     "uuid": null,                  "name": "Vertical Chop",       "element": "physical" },
+        { "id": "slash_cross",        "uuid": null,                  "name": "Cross Slash",         "element": "physical" },
+        { "id": "slash_spin",         "uuid": null,                  "name": "Whirlwind Slash",     "element": "physical" },
+        { "id": "slash_combo",        "uuid": null,                  "name": "Triple Slash Combo",  "element": "physical" },
+        { "id": "slash_fire",         "uuid": null,                  "name": "Flame Slash",         "element": "fire" },
+        { "id": "slash_frost",        "uuid": null,                  "name": "Frost Slash",         "element": "frost" },
+        { "id": "spikes_attack",      "uuid": "GRDG-3DFX-C74F3EFE", "name": "Spikes Attack",       "element": "earth" }
+      ]
+    },
+    "aoe": {
+      "label": "Area of Effect",
+      "description": "Expands from a center point. Ground-targeted or centered on caster.",
+      "spawnPoint": "ground_target",
+      "behavior": "expand_from_center",
+      "effects": [
+        { "id": "inferno",          "uuid": "GRDG-3DFX-A5BF3982", "name": "Inferno Blast",       "element": "fire" },
+        { "id": "hellfire",         "uuid": "GRDG-3DFX-FFF6F4CD", "name": "Hellfire Vortex",     "element": "fire" },
+        { "id": "fire_nova",        "uuid": "GRDG-3DFX-0106F405", "name": "Fire Nova",           "element": "fire" },
+        { "id": "frost_nova",       "uuid": "GRDG-3DFX-8FE77BD7", "name": "Frost Nova",          "element": "frost" },
+        { "id": "blizzard",         "uuid": "GRDG-3DFX-D30F86F6", "name": "Arctic Storm",        "element": "frost" },
+        { "id": "arcane_burst",     "uuid": "GRDG-3DFX-7DAA576A", "name": "Arcane Burst",        "element": "arcane" },
+        { "id": "meteor_impact",    "uuid": "GRDG-3DFX-B18AAE3C", "name": "Meteor Impact",       "element": "fire" },
+        { "id": "energy_explosion", "uuid": "GRDG-3DFX-F7B25EB6", "name": "Energy Explosion",    "element": "arcane" },
+        { "id": "ground_lightning", "uuid": "GRDG-3DFX-6663F8EB", "name": "Ground Lightning",    "element": "lightning" },
+        { "id": "annihilator_nova", "uuid": null,                  "name": "Annihilation Nova",   "element": "void" },
+        { "id": "annihilator_slam", "uuid": null,                  "name": "Devastation Slam",    "element": "void" }
+      ]
+    },
+    "aura": {
+      "label": "Aura / Buff",
+      "description": "Persistent effect around caster or target. Follows entity position.",
+      "spawnPoint": "caster_center",
+      "behavior": "follow_entity",
+      "effects": [
+        { "id": "holy_aura",       "uuid": "GRDG-3DFX-64A974B3", "name": "Divine Aura",      "element": "holy" },
+        { "id": "dark_aura",       "uuid": "GRDG-3DFX-EEFA71A3", "name": "Shadow Shroud",    "element": "shadow" },
+        { "id": "health_aura",     "uuid": "GRDG-3DFX-C4E6B695", "name": "Health Aura",      "element": "holy" },
+        { "id": "blessing",        "uuid": "GRDG-3DFX-A7D7E1FD", "name": "Blessing",         "element": "holy" },
+        { "id": "casting_fire",    "uuid": "GRDG-3DFX-789B55B0", "name": "Casting Fire",     "element": "fire" },
+        { "id": "arcane_channeling","uuid": "GRDG-3DFX-06BAF7EE", "name": "Arcane Channeling","element": "arcane" },
+        { "id": "light_channeling","uuid": "GRDG-3DFX-E88CEECF", "name": "Light Channeling", "element": "holy" }
+      ]
+    },
+    "shockwave": {
+      "label": "Shockwave / Ring",
+      "description": "Expanding ring from impact point. Used for knockback, stun, ground slam.",
+      "spawnPoint": "impact_point",
+      "behavior": "expand_ring",
+      "effects": [
+        { "id": "shockwave",      "uuid": "GRDG-3DFX-7ADE46CA", "name": "Shockwave",        "element": "physical" },
+        { "id": "stone_strike",   "uuid": "GRDG-3DFX-7A209A5B", "name": "Stone Strike",     "element": "earth" },
+        { "id": "meteor_hit",     "uuid": "GRDG-3DFX-11BDD019", "name": "Meteor Hit",       "element": "fire" },
+        { "id": "level_up",       "uuid": "GRDG-3DFX-38B2ECBA", "name": "Level Up",         "element": "holy" }
+      ]
+    },
+    "line": {
+      "label": "Line / Beam",
+      "description": "Straight line from caster in facing direction. Lightning bolt, beam attack.",
+      "spawnPoint": "caster_forward",
+      "behavior": "line_forward",
+      "effects": [
+        { "id": "chain_lightning",    "uuid": "GRDG-3DFX-D3CC51ED", "name": "Chain Lightning",    "element": "lightning" },
+        { "id": "thunderstrike",      "uuid": "GRDG-3DFX-CE44698D", "name": "Thunder Strike",     "element": "lightning" },
+        { "id": "annihilator_beam",   "uuid": null,                  "name": "Annihilation Beam",  "element": "void" },
+        { "id": "annihilator_vortex", "uuid": null,                  "name": "Void Vortex",        "element": "void" }
+      ]
+    },
+    "impact": {
+      "label": "Impact / Hit",
+      "description": "One-shot effect at point of contact. Spawns at hit location, short duration.",
+      "spawnPoint": "hit_point",
+      "behavior": "single_burst",
+      "effects": [
+        { "id": "shield_block", "uuid": "GRDG-3DFX-ADA80FBE", "name": "Shield Block",   "element": "physical" },
+        { "id": "shield_hit",   "uuid": "GRDG-3DFX-9B71B707", "name": "Shield Hit",     "element": "physical" },
+        { "id": "item_pickup",  "uuid": "GRDG-3DFX-578311C7", "name": "Item Pickup",    "element": "holy" },
+        { "id": "health_orb",   "uuid": "GRDG-3DFX-1009D180", "name": "Health Orb",     "element": "holy" }
+      ]
+    },
+    "portal": {
+      "label": "Portal / Teleport",
+      "description": "Persistent gateway or teleport effect. Placed at ground position.",
+      "spawnPoint": "ground_placed",
+      "behavior": "persistent_placed",
+      "effects": [
+        { "id": "blue_portal",      "uuid": "GRDG-3DFX-860FB318", "name": "Blue Portal",      "element": "arcane" },
+        { "id": "green_portal",     "uuid": "GRDG-3DFX-D2B6C0DB", "name": "Green Portal",     "element": "nature" },
+        { "id": "purple_portal",    "uuid": "GRDG-3DFX-2869A612", "name": "Purple Portal",    "element": "shadow" },
+        { "id": "red_portal",       "uuid": "GRDG-3DFX-26F05A4D", "name": "Red Portal",       "element": "fire" },
+        { "id": "home_portal",      "uuid": "GRDG-3DFX-8CECC0C1", "name": "Home Portal",      "element": "arcane" },
+        { "id": "teleport_channel", "uuid": "GRDG-3DFX-0B25218F", "name": "Teleport Channel", "element": "arcane" },
+        { "id": "teleport_finish",  "uuid": "GRDG-3DFX-B20378CA", "name": "Teleport Finish",  "element": "arcane" },
+        { "id": "void_rift",        "uuid": "GRDG-3DFX-8B971713", "name": "Void Rift",        "element": "shadow" }
+      ]
+    }
+  },
+  "elements": ["physical", "fire", "frost", "lightning", "arcane", "holy", "shadow", "nature", "earth", "void"],
+  "spawnPoints": {
+    "weapon_tip": "Spawns at the end of the equipped weapon mesh",
+    "weapon_edge": "Follows the weapon edge during swing animation",
+    "caster_center": "Spawns at caster body center, follows entity",
+    "caster_forward": "Spawns in front of caster, extends in facing direction",
+    "ground_target": "Spawns at mouse/target ground position",
+    "ground_placed": "Placed on ground, persists at position",
+    "impact_point": "Spawns at collision/hit point between attacker and target",
+    "hit_point": "Single burst at exact contact location"
+  },
+  "totalEffects": 64,
+  "totalClassified": 60
+}

@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
-  "generated": "2026-05-31T08:02:43.361Z",
+  "generated": "2026-06-04T21:01:30.783Z",
   "totalWeaponTypes": 16,
-  "totalSkills": 195,
+  "totalSkills": 198,
   "generatedAt": "2026-04-13T23:32:26.058Z",
   "classRestrictions": {
     "Warrior": [
@@ -3534,319 +3534,418 @@
     {
       "id": "TOME",
       "name": "Tome",
-      "icon": "/icons/pack/weapons/Book_1.png",
-      "classes": [
-        "Mage"
-      ],
-      "totalSkills": 13,
+      "icon": "/icons/weapons/tomes/arcane-tome.png",
+      "classes": [],
+      "mechanic": {
+        "description": "Offhand tome. Hold RMB to access tome skills on slots 1-3. Ability slot (3) changes based on mainhand weapon type.",
+        "inputMode": "rmb_hold",
+        "abilityDependsOn": "mainhand",
+        "validMainhands": [
+          "SWORD",
+          "MACE",
+          "AXE",
+          "DAGGER",
+          "HAMMER",
+          "GUN"
+        ],
+        "tomeElements": [
+          "fire",
+          "frost",
+          "lightning",
+          "nature",
+          "arcane",
+          "holy"
+        ]
+      },
+      "tomeIcons": {
+        "fire": "/icons/weapons/tomes/fire-tome.png",
+        "frost": "/icons/weapons/tomes/frost-tome.png",
+        "lightning": "/icons/weapons/tomes/lightning-tome.png",
+        "nature": "/icons/weapons/tomes/nature-tome.png",
+        "arcane": "/icons/weapons/tomes/arcane-tome.png"
+      },
+      "totalSkills": 16,
       "slots": [
         {
           "type": "primary",
-          "label": "PRIMARY",
+          "label": "PRIMARY (RMB+1)",
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D8B-6EDBA899",
+              "uuid": "SKIL-20260604210130-000000-71313453",
               "id": "tome_arcane_bolt",
               "name": "Arcane Bolt",
-              "description": "Homing arcane projectile",
-              "icon": "/icons/pack/weapons/Book_1.png",
+              "description": "Channel arcane energy through the tome. Hold RMB + press 1.",
+              "icon": "/icons/weapons/tomes/arcane-tome.png",
               "tier": 1,
-              "damage": 45,
+              "damage": 35,
               "cooldown": 0,
-              "castTime": 0.5,
-              "range": 25,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_bolt",
-              "physics": null,
-              "effects": [
-                "Homing",
-                "Range 25m"
-              ],
-              "originalIcon": "/icons/pack/weapons/Book_1.png"
-            },
-            {
-              "uuid": "SKIL-20260531030243-000D8C-38417BD0",
-              "id": "tome_elemental",
-              "name": "Elemental Blast",
-              "description": "Charged elemental projectile",
-              "icon": "/icons/pack/weapons/Book_5.png",
-              "tier": 2,
-              "damage": 65,
-              "cooldown": 2,
-              "castTime": 0.8,
+              "castTime": null,
               "range": 20,
-              "projectile": "spell",
+              "projectile": null,
               "damageType": "arcane",
-              "animation": "cast_charge",
+              "animation": null,
               "physics": null,
               "effects": [
-                "AoE 3m on Impact",
-                "Element Varies"
+                "Ranged projectile"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_5.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
             },
             {
-              "uuid": "SKIL-20260531030243-000D8D-20B3502F",
+              "uuid": "SKIL-20260604210130-000001-0B9873A5",
+              "id": "tome_elemental_blast",
+              "name": "Elemental Blast",
+              "description": "Releases a burst matching the tome's element. Hold RMB + press 1.",
+              "icon": "/icons/weapons/tomes/fire-tome.png",
+              "tier": 2,
+              "damage": 50,
+              "cooldown": 2,
+              "castTime": null,
+              "range": 18,
+              "projectile": null,
+              "damageType": "fire",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "AoE 3m",
+                "Element match"
+              ],
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/fire-tome.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000002-964BCDD9",
               "id": "tome_spirit_surge",
               "name": "Spirit Surge",
-              "description": "Channel spirits from tome pages",
-              "icon": "/icons/pack/weapons/Book_10.png",
+              "description": "Summons a wave of spiritual energy. Hold RMB + press 1.",
+              "icon": "/icons/weapons/tomes/arcane-tome.png",
               "tier": 3,
-              "damage": 55,
-              "cooldown": 4,
-              "castTime": 0.6,
-              "range": 15,
-              "projectile": "spell",
+              "damage": 45,
+              "cooldown": 3,
+              "castTime": null,
+              "range": 22,
+              "projectile": null,
               "damageType": "holy",
-              "animation": "cast_channel",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Heal Allies 30",
-                "DMG Enemies 55"
+                "Pierce 2 targets"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_10.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
             }
           ]
         },
         {
           "type": "secondary",
-          "label": "SECONDARY",
+          "label": "SECONDARY (RMB+2)",
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D8E-D2EF80E4",
+              "uuid": "SKIL-20260604210130-000003-1C99CDD0",
               "id": "tome_mana_shield",
               "name": "Mana Shield",
-              "description": "Convert mana to damage absorption",
-              "icon": "/icons/pack/weapons/Book_15.png",
+              "description": "Conjure a protective barrier that absorbs damage. Hold RMB + press 2.",
+              "icon": "/icons/weapons/tomes/frost-tome.png",
               "tier": 1,
               "damage": 0,
               "cooldown": 15,
-              "castTime": 0.3,
-              "range": 0,
+              "castTime": null,
+              "range": null,
               "projectile": null,
               "damageType": "arcane",
-              "animation": "cast_shield",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Absorb 300",
-                "Drains Mana"
+                "Shield 200 HP 6s"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_15.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/frost-tome.png"
             },
             {
-              "uuid": "SKIL-20260531030243-000D8F-58CDACD0",
+              "uuid": "SKIL-20260604210130-000004-E6D30A94",
               "id": "tome_runic_ward",
               "name": "Runic Ward",
-              "description": "Place ward that heals allies in zone",
-              "icon": "/icons/pack/misc/runic_tablet_03.png",
+              "description": "Place a runic circle that heals allies inside. Hold RMB + press 2.",
+              "icon": "/icons/weapons/tomes/nature-tome.png",
               "tier": 2,
-              "damage": -50,
+              "damage": -60,
               "cooldown": 18,
-              "castTime": 0.8,
-              "range": 12,
+              "castTime": null,
+              "range": 8,
               "projectile": null,
               "damageType": "holy",
-              "animation": "cast_ward",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Heal Zone 6m",
-                "10s Duration"
+                "AoE Heal 6s",
+                "Ground target"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_03.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/nature-tome.png"
             },
             {
-              "uuid": "SKIL-20260531030243-000D90-DC8B1EF4",
+              "uuid": "SKIL-20260604210130-000005-A09E2CD3",
               "id": "tome_knowledge_drain",
               "name": "Knowledge Drain",
-              "description": "Steal mana and buff from target",
-              "icon": "/icons/pack/weapons/Book_20.png",
+              "description": "Drain mana and intelligence from target. Hold RMB + press 2.",
+              "icon": "/icons/weapons/tomes/arcane-tome.png",
               "tier": 3,
-              "damage": 40,
+              "damage": 30,
               "cooldown": 12,
-              "castTime": 0.6,
+              "castTime": null,
               "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_drain",
+              "projectile": null,
+              "damageType": "arcane",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Steal 1 Buff",
-                "Mana Drain 50"
+                "Mana drain 50",
+                "-10% spell power 4s"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_20.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000006-B5A1FF7D",
+              "id": "tome_frost_prison",
+              "name": "Frost Prison",
+              "description": "Encase target in ice. Hold RMB + press 2.",
+              "icon": "/icons/weapons/tomes/frost-tome.png",
+              "tier": 4,
+              "damage": 20,
+              "cooldown": 20,
+              "castTime": null,
+              "range": 18,
+              "projectile": null,
+              "damageType": "frost",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "Root 3s",
+                "Slow 50% 4s after"
+              ],
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/frost-tome.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000007-7691AE21",
+              "id": "tome_thunderstorm",
+              "name": "Thunderstorm",
+              "description": "Call down lightning around you. Hold RMB + press 2.",
+              "icon": "/icons/weapons/tomes/lightning-tome.png",
+              "tier": 5,
+              "damage": 80,
+              "cooldown": 25,
+              "castTime": null,
+              "range": 12,
+              "projectile": null,
+              "damageType": "lightning",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "AoE 8m",
+                "Stun 1s"
+              ],
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/lightning-tome.png"
             }
           ]
         },
         {
           "type": "ability",
-          "label": "ABILITY",
+          "label": "ABILITY (Mainhand Combo)",
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D91-EC3A028B",
-              "id": "tome_grimoire",
-              "name": "Grimoire Burst",
-              "description": "Open tome, release stored energy",
-              "icon": "/icons/pack/weapons/Book_7.png",
+              "uuid": "SKIL-20260604210130-000008-919B1F00",
+              "id": "tome_sword_riposte",
+              "name": "Arcane Riposte",
+              "description": "Parry with sword then counter with a spell blast. Requires: Sword mainhand.",
+              "icon": "/icons/pack/weapons/Sword_01.png",
               "tier": 1,
-              "damage": 90,
-              "cooldown": 14,
-              "castTime": 0.5,
-              "range": 8,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_burst",
-              "physics": "knockback",
-              "effects": [
-                "AoE 8m",
-                "Knockback 4m"
-              ],
-              "originalIcon": "/icons/pack/weapons/Book_7.png"
-            },
-            {
-              "uuid": "SKIL-20260531030243-000D92-37591C2A",
-              "id": "tome_forbidden",
-              "name": "Forbidden Page",
-              "description": "Read forbidden text, massive DoT",
-              "icon": "/icons/pack/weapons/Book_12.png",
-              "tier": 2,
-              "damage": 120,
-              "cooldown": 16,
-              "castTime": 1,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_dark",
+              "damage": 65,
+              "cooldown": 8,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical;arcane",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Shadow DoT 8s",
-                "Self-Damage 5%"
+                "Parry 0.5s",
+                "Counter spell blast"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_12.png"
+              "mainhandReq": "SWORD",
+              "originalIcon": "/icons/pack/weapons/Sword_01.png"
             },
             {
-              "uuid": "SKIL-20260531030243-000D93-7215CD80",
-              "id": "tome_soul_bind",
-              "name": "Soul Bind",
-              "description": "Link to target, share damage taken",
-              "icon": "/icons/pack/misc/Life.png",
-              "tier": 3,
-              "damage": 0,
-              "cooldown": 20,
-              "castTime": 0.5,
-              "range": 20,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_link",
-              "physics": "root",
-              "effects": [
-                "Share 50% DMG 6s",
-                "Root Both 1s"
-              ],
-              "originalIcon": "/icons/pack/misc/Life.png"
-            },
-            {
-              "uuid": "SKIL-20260531030243-000D94-98F3E5AD",
-              "id": "tome_reality_tear",
-              "name": "Reality Tear",
-              "description": "Tear space, creating void zone",
-              "icon": "/icons/pack/misc/ChaosCircle.png",
-              "tier": 4,
-              "damage": 80,
-              "cooldown": 22,
-              "castTime": 1.2,
-              "range": 15,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": "cast_void",
-              "physics": "pull",
-              "effects": [
-                "Void Zone 5m",
-                "Pull",
-                "DoT 6s"
-              ],
-              "originalIcon": "/icons/pack/misc/ChaosCircle.png"
-            },
-            {
-              "uuid": "SKIL-20260531030243-000D95-39EE6016",
-              "id": "tome_ancient",
-              "name": "Ancient Knowledge",
-              "description": "Buff all allies with stats",
-              "icon": "/icons/pack/weapons/Book_25.png",
-              "tier": 5,
-              "damage": 0,
-              "cooldown": 30,
-              "castTime": 1,
-              "range": 12,
+              "uuid": "SKIL-20260604210130-000009-1FD9150A",
+              "id": "tome_mace_smite",
+              "name": "Holy Smite",
+              "description": "Smash with mace channeling tome power. Requires: Mace mainhand.",
+              "icon": "/icons/pack/weapons/Hammer_01.png",
+              "tier": 1,
+              "damage": 70,
+              "cooldown": 8,
+              "castTime": null,
+              "range": null,
               "projectile": null,
               "damageType": "holy",
-              "animation": "cast_buff",
+              "animation": null,
               "physics": null,
               "effects": [
-                "+15% All Stats",
-                "10s",
-                "AoE 12m"
+                "Stun 1s",
+                "Holy damage splash"
               ],
-              "originalIcon": "/icons/pack/weapons/Book_25.png"
+              "mainhandReq": "MACE",
+              "originalIcon": "/icons/pack/weapons/Hammer_01.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000010-4CF0626E",
+              "id": "tome_axe_rend",
+              "name": "Runic Rend",
+              "description": "Axe strike leaves a runic bleed. Requires: Axe mainhand.",
+              "icon": "/icons/pack/weapons/Axe_01.png",
+              "tier": 1,
+              "damage": 55,
+              "cooldown": 8,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical;arcane",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "Bleed 6s",
+                "Runic amplify +20% spell dmg 4s"
+              ],
+              "mainhandReq": "AXE",
+              "originalIcon": "/icons/pack/weapons/Axe_01.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000011-BF017813",
+              "id": "tome_dagger_blink",
+              "name": "Shadow Step",
+              "description": "Blink behind target and backstab with dagger. Requires: Dagger mainhand.",
+              "icon": "/icons/pack/weapons/Dagger_01.png",
+              "tier": 1,
+              "damage": 80,
+              "cooldown": 10,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "Teleport behind",
+                "Crit guaranteed"
+              ],
+              "mainhandReq": "DAGGER",
+              "originalIcon": "/icons/pack/weapons/Dagger_01.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000012-1F245408",
+              "id": "tome_hammer_quake",
+              "name": "Arcane Quake",
+              "description": "Slam hammer into ground releasing tome energy. Requires: Hammer mainhand.",
+              "icon": "/icons/pack/weapons/Hammer_02.png",
+              "tier": 1,
+              "damage": 90,
+              "cooldown": 12,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical;arcane",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "AoE 6m",
+                "Knockdown 1.5s"
+              ],
+              "mainhandReq": "HAMMER",
+              "originalIcon": "/icons/pack/weapons/Hammer_02.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000013-162840F7",
+              "id": "tome_pistol_imbue",
+              "name": "Imbued Shot",
+              "description": "Fire a pistol round charged with tome magic. Requires: Pistol mainhand.",
+              "icon": "/icons/pack/weapons/Gun_01.png",
+              "tier": 1,
+              "damage": 75,
+              "cooldown": 8,
+              "castTime": null,
+              "range": 25,
+              "projectile": null,
+              "damageType": "fire;arcane",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "Ranged 25m",
+                "Pierce armor 30%"
+              ],
+              "mainhandReq": "GUN",
+              "originalIcon": "/icons/pack/weapons/Gun_01.png"
             }
           ]
         },
         {
           "type": "ultimate",
-          "label": "ULTIMATE",
+          "label": "ULTIMATE (RMB+4)",
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D96-3EBAC2A5",
+              "uuid": "SKIL-20260604210130-000014-B602EF34",
               "id": "tome_apocalypse",
               "name": "Apocalypse Tome",
-              "description": "Unleash all pages, massive AoE",
-              "icon": "/icons/pack/weapons/Book_22.png",
+              "description": "Unleash all pages — massive AoE elemental storm. Hold RMB + press 4.",
+              "icon": "/icons/weapons/tomes/fire-tome.png",
               "tier": 1,
-              "damage": 250,
-              "cooldown": 55,
-              "castTime": 1.5,
-              "range": 12,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_ultimate",
-              "physics": "knockup",
-              "effects": [
-                "AoE 12m",
-                "Multi-Element",
-                "Knockup 2s"
-              ],
-              "originalIcon": "/icons/pack/weapons/Book_22.png"
-            },
-            {
-              "uuid": "SKIL-20260531030243-000D97-F938ADDA",
-              "id": "tome_genesis",
-              "name": "Genesis",
-              "description": "Rewrite reality, full heal allies",
-              "icon": "/icons/pack/misc/Lights.png",
-              "tier": 4,
-              "damage": -500,
-              "cooldown": 120,
+              "damage": 200,
+              "cooldown": 60,
               "castTime": 2,
               "range": 15,
               "projectile": null,
-              "damageType": "holy",
-              "animation": "cast_divine",
+              "damageType": "arcane",
+              "animation": null,
               "physics": null,
               "effects": [
-                "Full Heal Allies",
-                "Cleanse All",
-                "AoE 15m"
+                "AoE 15m",
+                "All elements",
+                "5s channel"
               ],
-              "originalIcon": "/icons/pack/misc/Lights.png"
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/fire-tome.png"
+            },
+            {
+              "uuid": "SKIL-20260604210130-000015-8ED3D67E",
+              "id": "tome_genesis",
+              "name": "Genesis",
+              "description": "Rewrite reality — full party heal + damage immunity 3s. Hold RMB + press 4.",
+              "icon": "/icons/weapons/tomes/nature-tome.png",
+              "tier": 4,
+              "damage": -300,
+              "cooldown": 90,
+              "castTime": 1.5,
+              "range": null,
+              "projectile": null,
+              "damageType": "holy",
+              "animation": null,
+              "physics": null,
+              "effects": [
+                "Party heal",
+                "Immunity 3s",
+                "Purge all debuffs"
+              ],
+              "mainhandReq": null,
+              "originalIcon": "/icons/weapons/tomes/nature-tome.png"
             }
           ]
         }
-      ],
-      "uuid": "ITEM-20260531030243-000D8A-B5D74D46"
+      ]
     },
     {
       "id": "MACE",
