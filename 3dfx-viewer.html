@@ -161,8 +161,8 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
 .tl-speed select{background:var(--bg-darker);border:1px solid var(--border-soft);color:var(--text-primary);padding:3px 8px;border-radius:4px;font-size:11px;font-family:inherit}
 
 /* ---------- Shader editor ---------- */
-.shader-editor{display:none;grid-column:2/3;grid-row:3/4;background:var(--card-bg);border-top:1px solid var(--border-soft);overflow:hidden}
-.shader-editor.open{display:flex;flex-direction:column}
+.shader-editor{display:none;grid-column:2/3;grid-row:3/4;background:var(--card-bg);border-top:1px solid var(--border-soft);overflow:hidden;max-height:0;transition:max-height .3s}
+.shader-editor.open{display:flex;flex-direction:column;max-height:200px;overflow:auto}
 .shader-tabs{display:flex;border-bottom:1px solid var(--border-soft);background:var(--card-bg-soft)}
 .shader-tabs button{background:transparent;border:none;color:var(--text-dim);padding:8px 14px;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;letter-spacing:.4px;text-transform:uppercase}
 .shader-tabs button.active{color:var(--accent-gold);border-bottom-color:var(--accent-gold)}
@@ -517,8 +517,11 @@ function initScene() {
   vp.appendChild(renderer.domElement);
 
   composer = new EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  composer.setSize(w, h);
   composer.addPass(new RenderPass(scene, camera));
   bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 1.5, 0.4, 0.2);
+  bloomPass.resolution.set(w, h);
   composer.addPass(bloomPass);
 
   controls = new OrbitControls(camera, renderer.domElement);
@@ -530,7 +533,12 @@ function initScene() {
 
   transformControls = new TransformControls(camera, renderer.domElement);
   transformControls.addEventListener('dragging-changed', e => { controls.enabled = !e.value; });
-  scene.add(transformControls);
+  // r178+: TransformControls may not be a standard Object3D — guard the add
+  try { scene.add(transformControls); } catch(e) {
+    // Fallback: add the gizmo helper if TransformControls itself isn't addable
+    if (transformControls.getHelper) scene.add(transformControls.getHelper());
+    else console.warn('TransformControls.add failed:', e.message);
+  }
 
   ambientLight = new THREE.AmbientLight(0x222233, 0.5);
   scene.add(ambientLight);
@@ -557,7 +565,9 @@ function initScene() {
     camera.aspect = w2 / h2;
     camera.updateProjectionMatrix();
     renderer.setSize(w2, h2);
+    composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     composer.setSize(w2, h2);
+    bloomPass.resolution.set(w2, h2);
   });
 }
 
@@ -1286,8 +1296,16 @@ window.updateTransform = function () {
 // ── Shader editor ──
 window.toggleShaderEditor = function () {
   shaderEditorOpen = !shaderEditorOpen;
-  document.getElementById('shaderEditor').classList.toggle('open', shaderEditorOpen);
-  document.getElementById('timeline').style.display = shaderEditorOpen ? 'none' : '';
+  const editor = document.getElementById('shaderEditor');
+  const timeline = document.getElementById('timeline');
+  editor.classList.toggle('open', shaderEditorOpen);
+  // Show both — don't hide timeline, just collapse the editor below it
+  if (shaderEditorOpen) {
+    timeline.style.display = '';
+    editor.style.maxHeight = '200px';
+  } else {
+    editor.style.maxHeight = '';
+  }
   document.getElementById('btn-shader').classList.toggle('active', shaderEditorOpen);
 };
 window.switchShaderTab = function (tab) {
