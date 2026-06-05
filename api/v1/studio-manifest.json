@@ -1,0 +1,326 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-05T08:00:00.000Z",
+  "description": "Grudge Studio complete asset pipeline manifest. Single source of truth for what exists, what's missing, and how every asset connects to the game engine.",
+
+  "summary": {
+    "totalAPIs": 96,
+    "totalAssetFiles": 19789,
+    "totalSizeMB": 2531,
+    "totalItems": 2344,
+    "totalModels": 1053,
+    "totalSprites": 4887,
+    "totalIcons": 9727,
+    "totalEffects": 755,
+    "totalAudio": 496,
+    "totalBackgrounds": 172,
+    "totalSkills": 198,
+    "totalRecipes": 118,
+    "totalMaterials": 63
+  },
+
+  "categories": {
+
+    "items": {
+      "label": "Items & Equipment",
+      "status": "complete",
+      "apis": {
+        "master-items.json": { "count": 2344, "desc": "All items combined (weapons + armor + consumables)", "uuid": true },
+        "master-weapons.json": { "count": 868, "desc": "Weapons only, 17 categories × T1-T8", "uuid": true },
+        "master-armor.json": { "count": 1344, "desc": "Armor by slot/material/tier", "uuid": true },
+        "master-consumables.json": { "count": 132, "desc": "Foods, potions, engineer items", "uuid": true },
+        "master-materials.json": { "count": 63, "desc": "Crafting materials", "uuid": true },
+        "master-t0-items.json": { "count": 24, "desc": "T0 starter/crude items", "uuid": true },
+        "master-artifacts.json": { "count": 20, "desc": "World-drop artifacts", "uuid": true },
+        "master-relics.json": { "count": 136, "desc": "Equippable relics", "uuid": true },
+        "master-enchants.json": { "count": null, "desc": "Weapon/armor enchantments", "uuid": true },
+        "master-infusions.json": { "count": null, "desc": "Infusion materials", "uuid": true }
+      },
+      "assetDir": "icons/",
+      "assetCount": 9727,
+      "gaps": []
+    },
+
+    "skills": {
+      "label": "Skills & Abilities",
+      "status": "complete",
+      "apis": {
+        "master-weaponSkills.json": { "count": 198, "desc": "16 weapon types × 4 slots with SKIL-* UUIDs", "uuid": true },
+        "master-skillTrees.json": { "count": 69, "desc": "4 class skill trees", "uuid": true },
+        "master-professions.json": { "count": null, "desc": "6 gathering + 5 crafting professions", "uuid": true },
+        "master-professionTrees.json": { "count": null, "desc": "Profession skill nodes", "uuid": true },
+        "weaponSkills.json": { "count": 219, "desc": "Legacy weapon skills (older format)", "uuid": false }
+      },
+      "assetDir": "icons/skills/",
+      "assetCount": 1043,
+      "gaps": []
+    },
+
+    "vfx": {
+      "label": "Visual Effects",
+      "status": "active",
+      "apis": {
+        "3dfx-registry.json": { "count": 64, "desc": "3D shader/particle effects with UUID", "uuid": true },
+        "3dfx-uuids.json": { "count": 52, "desc": "GRDG-3DFX-* UUID mapping", "uuid": true },
+        "vfx-spells.json": { "count": 18, "desc": "Spell VFX definitions", "uuid": false },
+        "vfx-skill-types.json": { "count": 60, "desc": "Effects classified by skill type (projectile/slash/aoe/etc)", "uuid": true },
+        "vfx-pipeline.json": { "count": 10, "desc": "Declarative VFX attachment system (origin→travel→arrival→timing)", "uuid": false },
+        "effect-definitions.json": { "count": 245, "desc": "Detailed effect definitions", "uuid": false },
+        "effects-registry.json": { "count": 755, "desc": "Full effects registry with file paths", "uuid": false },
+        "effectSprites.json": { "count": 143, "desc": "2D effect sprite sheets", "uuid": false },
+        "abilityEffects.json": { "count": null, "desc": "Ability→effect mappings", "uuid": false }
+      },
+      "assetDir": "effects/",
+      "assetCount": 246,
+      "gaps": [
+        "Need status effect VFX: bleed, poison, freeze, stun, burn, slow, root, silence",
+        "Need force/displacement VFX: push, pull, lift, knockback ring, knockup launch",
+        "Need transform VFX: turn to smoke, turn to light, blur/phase shift, materialize, dematerialize",
+        "Need movement VFX: quick step trail, dash blur, blink flash, charge forward trail",
+        "Need healing/cleanse VFX: heal pulse, cleanse purge, barrier shimmer, resurrect light"
+      ]
+    },
+
+    "animations": {
+      "label": "Character Animations",
+      "status": "active",
+      "apis": {
+        "animations.json": { "count": null, "desc": "Animation definitions", "uuid": false },
+        "animations-gltf.json": { "count": null, "desc": "GLTF animation manifest", "uuid": false },
+        "sprite-characters.json": { "count": 313, "desc": "2D animated characters with frame data", "uuid": true },
+        "sprites2d.json": { "count": null, "desc": "Flat 2D sprite registry", "uuid": false }
+      },
+      "assetDir": "sprites/",
+      "assetCount": 4887,
+      "gaps": [
+        "Need standardized 3D animation library per weapon type (idle/walk/run/attack_1h/attack_2h/cast/block/dodge/death)",
+        "Need animation retargeting manifest (which skeleton → which animation set)",
+        "Need combo animation chains defined per weapon type with timing windows"
+      ]
+    },
+
+    "models": {
+      "label": "3D Models",
+      "status": "active",
+      "apis": {
+        "models3d.json": { "count": 1053, "desc": "Full 3D model registry (GLB/GLTF/FBX/OBJ)", "uuid": false },
+        "gltf-manifest.json": { "count": null, "desc": "GLTF-specific manifest with LOD info", "uuid": false },
+        "weapon-models.json": { "count": null, "desc": "Weapon model paths per category", "uuid": false },
+        "rtsModels.json": { "count": null, "desc": "RTS unit models", "uuid": false }
+      },
+      "assetDir": "models/",
+      "assetCount": 4160,
+      "gaps": [
+        "Need model UUID system (MODL-* prefix)",
+        "Need LOD variants registered (high/mid/low per model)",
+        "Need bone/skeleton standardization manifest"
+      ]
+    },
+
+    "audio": {
+      "label": "Audio & SFX",
+      "status": "complete",
+      "apis": {
+        "audio.json": { "count": null, "desc": "Sound effect registry with categories", "uuid": false }
+      },
+      "assetDir": "audio/",
+      "assetCount": 496,
+      "gaps": [
+        "Need audio UUID system (ASFX-* prefix)",
+        "Need skill→sound mappings per weapon type"
+      ]
+    },
+
+    "world": {
+      "label": "World & Environment",
+      "status": "active",
+      "apis": {
+        "worldMap.json": { "count": null, "desc": "33 locations, 79 paths", "uuid": false },
+        "regions.json": { "count": null, "desc": "5 world regions", "uuid": false },
+        "environments.json": { "count": null, "desc": "Environment presets", "uuid": false },
+        "terrain.json": { "count": null, "desc": "Terrain configuration", "uuid": false },
+        "backgrounds-registry.json": { "count": 167, "desc": "Scene backgrounds", "uuid": false },
+        "master-buildings.json": { "count": 15, "desc": "Buildings and crafting stations", "uuid": true },
+        "master-mounts.json": { "count": 8, "desc": "Race mounts", "uuid": true }
+      },
+      "assetDir": "backgrounds/",
+      "assetCount": 172,
+      "gaps": [
+        "Need zone-specific terrain texture sets",
+        "Need building/structure 3D models linked to master-buildings.json",
+        "Need mount 3D models linked to master-mounts.json"
+      ]
+    },
+
+    "characters": {
+      "label": "Characters & Races",
+      "status": "active",
+      "apis": {
+        "races.json": { "count": null, "desc": "6 playable races", "uuid": false },
+        "classes.json": { "count": null, "desc": "4 classes with abilities", "uuid": false },
+        "heroes.json": { "count": null, "desc": "Hero portraits", "uuid": false },
+        "heroCharacterSprites.json": { "count": null, "desc": "Hero sprite sheets", "uuid": false },
+        "factions.json": { "count": null, "desc": "3 factions", "uuid": false },
+        "enemies.json": { "count": null, "desc": "Enemy definitions", "uuid": false },
+        "enemyTemplates.json": { "count": null, "desc": "20+ enemy types, 8+ bosses", "uuid": false },
+        "bosses.json": { "count": null, "desc": "Boss definitions", "uuid": false }
+      },
+      "assetDir": "heroes/",
+      "assetCount": 36,
+      "gaps": [
+        "Need character UUID system (CHAR-* prefix) for all races/classes",
+        "Need faction-specific character model manifest (6 races × armor variants)"
+      ]
+    },
+
+    "crafting": {
+      "label": "Crafting & Recipes",
+      "status": "complete",
+      "apis": {
+        "master-recipes.json": { "count": null, "desc": "Crafting recipes with material UUIDs", "uuid": true },
+        "master-spellRecipes.json": { "count": null, "desc": "Spell crafting recipes", "uuid": true }
+      },
+      "assetDir": null,
+      "assetCount": 0,
+      "gaps": []
+    },
+
+    "lore": {
+      "label": "Lore & Narrative",
+      "status": "minimal",
+      "apis": {
+        "lore.json": { "count": null, "desc": "Gods + hero lore (minimal)", "uuid": false },
+        "dialogue.json": { "count": null, "desc": "NPC dialogue", "uuid": false },
+        "cutscenes.json": { "count": null, "desc": "Zone intro cutscenes", "uuid": false },
+        "quests.json": { "count": null, "desc": "28 zones, 112 quests", "uuid": false },
+        "missions.json": { "count": null, "desc": "Story + arena missions", "uuid": false }
+      },
+      "assetDir": "video/",
+      "assetCount": 6,
+      "gaps": [
+        "Need weapon lore per item (currently empty description on most weapons)",
+        "Need faction lore expansion",
+        "Need boss encounter lore"
+      ]
+    },
+
+    "ui": {
+      "label": "UI Components",
+      "status": "active",
+      "apis": {
+        "ui-components.json": { "count": null, "desc": "UI component registry", "uuid": false },
+        "ui-packs.json": { "count": null, "desc": "UI asset packs", "uuid": false }
+      },
+      "assetDir": "icons/ui/",
+      "assetCount": 26,
+      "gaps": [
+        "Need skill icon standardization (64×64 transparent PNG per skill UUID)",
+        "Need status effect icons for all CC/DoT/buff types"
+      ]
+    }
+  },
+
+  "statusEffects": {
+    "description": "Combat status effects that need VFX, icons, and gameplay definitions. These are applied TO targets by skills.",
+    "types": {
+      "cc": {
+        "label": "Crowd Control",
+        "effects": [
+          { "id": "stun",     "label": "Stun",     "desc": "Cannot act. Gold stars above head.",       "duration": "0.5-3s",  "vfxNeeded": true, "iconNeeded": true },
+          { "id": "freeze",   "label": "Freeze",   "desc": "Encased in ice. Cannot move or act.",      "duration": "1-4s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "root",     "label": "Root",      "desc": "Cannot move. Can still attack/cast.",     "duration": "1-5s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "silence",  "label": "Silence",  "desc": "Cannot cast spells. Can auto-attack.",     "duration": "2-5s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "fear",     "label": "Fear",     "desc": "Runs away uncontrollably.",                "duration": "1-3s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "sleep",    "label": "Sleep",    "desc": "Cannot act. Breaks on damage.",             "duration": "2-6s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "blind",    "label": "Blind",    "desc": "Reduced vision. Miss chance +50%.",         "duration": "2-4s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "slow",     "label": "Slow",     "desc": "Movement speed reduced.",                  "duration": "2-6s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "taunt",    "label": "Taunt",    "desc": "Forced to attack taunter.",                "duration": "2-4s",    "vfxNeeded": true, "iconNeeded": true }
+        ]
+      },
+      "dot": {
+        "label": "Damage Over Time",
+        "effects": [
+          { "id": "bleed",    "label": "Bleed",    "desc": "Physical damage per tick. Stacks.",         "duration": "3-8s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "poison",   "label": "Poison",   "desc": "Nature damage per tick. Reduces healing.",  "duration": "4-10s",   "vfxNeeded": true, "iconNeeded": true },
+          { "id": "burn",     "label": "Burn",     "desc": "Fire damage per tick. Spreads on contact.", "duration": "3-6s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "frostbite","label": "Frostbite","desc": "Frost damage per tick. Slows attack speed.","duration": "3-6s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "shock",    "label": "Shock",    "desc": "Lightning damage per tick. Chains nearby.", "duration": "2-4s",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "curse",    "label": "Curse",    "desc": "Shadow damage per tick. Reduces stats.",    "duration": "5-10s",   "vfxNeeded": true, "iconNeeded": true },
+          { "id": "corrode",  "label": "Corrode",  "desc": "Reduces armor per tick.",                   "duration": "4-8s",    "vfxNeeded": true, "iconNeeded": true }
+        ]
+      },
+      "force": {
+        "label": "Force / Displacement",
+        "effects": [
+          { "id": "push",     "label": "Push",     "desc": "Knocks target away from caster.",           "distance": "3-10m",   "vfxNeeded": true, "iconNeeded": false },
+          { "id": "pull",     "label": "Pull",     "desc": "Drags target toward caster.",               "distance": "3-10m",   "vfxNeeded": true, "iconNeeded": false },
+          { "id": "lift",     "label": "Lift / Knockup", "desc": "Launches target into the air.",       "height": "2-5m",      "vfxNeeded": true, "iconNeeded": false },
+          { "id": "slam",     "label": "Slam Down","desc": "Forces airborne target to ground.",          "force": "instant",    "vfxNeeded": true, "iconNeeded": false },
+          { "id": "charge",   "label": "Charge",   "desc": "Caster rushes forward, displacing targets.","distance": "5-15m",   "vfxNeeded": true, "iconNeeded": false },
+          { "id": "vacuum",   "label": "Vacuum / Vortex", "desc": "Pulls all nearby into center.",      "radius": "5-8m",      "vfxNeeded": true, "iconNeeded": false },
+          { "id": "scatter",  "label": "Scatter",  "desc": "Pushes all nearby away from center.",       "radius": "5-8m",      "vfxNeeded": true, "iconNeeded": false }
+        ]
+      },
+      "buff": {
+        "label": "Buffs & Healing",
+        "effects": [
+          { "id": "heal",       "label": "Heal",        "desc": "Restore HP instantly or over time.",        "vfxNeeded": true, "iconNeeded": true },
+          { "id": "shield",     "label": "Shield",      "desc": "Absorb damage barrier.",                    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "haste",      "label": "Haste",       "desc": "Increased movement and attack speed.",      "vfxNeeded": true, "iconNeeded": true },
+          { "id": "fortify",    "label": "Fortify",     "desc": "Increased defense / damage reduction.",     "vfxNeeded": true, "iconNeeded": true },
+          { "id": "empower",    "label": "Empower",     "desc": "Increased damage output.",                  "vfxNeeded": true, "iconNeeded": true },
+          { "id": "regen",      "label": "Regeneration","desc": "HP restored per tick.",                     "vfxNeeded": true, "iconNeeded": true },
+          { "id": "cleanse",    "label": "Cleanse",     "desc": "Remove all debuffs.",                       "vfxNeeded": true, "iconNeeded": true },
+          { "id": "immunity",   "label": "Immunity",    "desc": "Cannot be damaged or CC'd.",                "vfxNeeded": true, "iconNeeded": true },
+          { "id": "stealth",    "label": "Stealth",     "desc": "Invisible. Breaks on attack.",              "vfxNeeded": true, "iconNeeded": true },
+          { "id": "lifesteal",  "label": "Lifesteal",   "desc": "Heal for % of damage dealt.",               "vfxNeeded": true, "iconNeeded": true }
+        ]
+      },
+      "transform": {
+        "label": "Visual Transforms",
+        "effects": [
+          { "id": "smoke_form",     "label": "Turn to Smoke",   "desc": "Character becomes smoke particles. Untargetable.", "vfxNeeded": true, "iconNeeded": true },
+          { "id": "light_form",     "label": "Turn to Light",   "desc": "Character becomes pure light. Move speed +100%.",  "vfxNeeded": true, "iconNeeded": true },
+          { "id": "blur_form",      "label": "Phase Shift",     "desc": "Character blurs/ghosts. 50% damage reduction.",    "vfxNeeded": true, "iconNeeded": true },
+          { "id": "materialize",    "label": "Materialize",     "desc": "Character solidifies from particles/energy.",      "vfxNeeded": true, "iconNeeded": true },
+          { "id": "dematerialize",  "label": "Dematerialize",   "desc": "Character dissolves into particles.",              "vfxNeeded": true, "iconNeeded": true },
+          { "id": "stone_form",     "label": "Petrify",         "desc": "Target turns to stone. Cannot act.",               "vfxNeeded": true, "iconNeeded": true },
+          { "id": "shadow_form",    "label": "Shadow Form",     "desc": "Character becomes dark silhouette.",               "vfxNeeded": true, "iconNeeded": true },
+          { "id": "enlarge",        "label": "Enlarge",         "desc": "Character grows 2x size. +damage, +HP.",           "vfxNeeded": true, "iconNeeded": true },
+          { "id": "shrink",         "label": "Shrink",          "desc": "Character shrinks 0.5x size. +speed, +dodge.",     "vfxNeeded": true, "iconNeeded": true }
+        ]
+      },
+      "movement": {
+        "label": "Movement Effects",
+        "effects": [
+          { "id": "quick_step",  "label": "Quick Step",    "desc": "Short dash in movement direction. Afterimage trail.", "vfxNeeded": true, "iconNeeded": false },
+          { "id": "blink",       "label": "Blink",         "desc": "Instant teleport short distance. Flash at both ends.", "vfxNeeded": true, "iconNeeded": true },
+          { "id": "dash",        "label": "Dash",          "desc": "Fast forward movement. Motion blur trail.",           "vfxNeeded": true, "iconNeeded": false },
+          { "id": "leap",        "label": "Leap / Jump",   "desc": "Arc through air to target location.",                 "vfxNeeded": true, "iconNeeded": false },
+          { "id": "slide",       "label": "Slide",         "desc": "Ground-level dash. Low profile.",                     "vfxNeeded": true, "iconNeeded": false },
+          { "id": "air_dash",    "label": "Air Dash",      "desc": "Horizontal dash while airborne.",                     "vfxNeeded": true, "iconNeeded": false },
+          { "id": "wall_run",    "label": "Wall Run",      "desc": "Run along vertical surface briefly.",                 "vfxNeeded": true, "iconNeeded": false },
+          { "id": "backstep",    "label": "Backstep",      "desc": "Quick backward hop. I-frames.",                       "vfxNeeded": true, "iconNeeded": false }
+        ]
+      }
+    }
+  },
+
+  "uuidPrefixes": {
+    "ITEM": "Items (weapons, armor, consumables, materials)",
+    "SKIL": "Skills (weapon skills, class skills)",
+    "RECP": "Recipes",
+    "MATL": "Materials",
+    "NODE": "Skill tree nodes",
+    "FOOD": "Food items",
+    "POTN": "Potions",
+    "GRDG-3DFX": "3D VFX effects",
+    "BLDG": "Buildings and structures",
+    "MNT":  "Mounts",
+    "MODL": "3D Models (planned)",
+    "ASFX": "Audio SFX (planned)",
+    "CHAR": "Characters (planned)",
+    "STAT": "Status effects (planned)",
+    "ANIM": "Animation clips (planned)"
+  }
+}
