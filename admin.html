@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grudge Studio Admin — ObjectStore</title>
+  <title>Grudge Studio — Admin Command Center</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/tier-system.css">
   <style>
@@ -60,20 +60,80 @@
   <script>document.addEventListener('DOMContentLoaded',function(){if(typeof GrudgeAuth!=='undefined')GrudgeAuth.renderAuthBar()});</script>
   <div class="container">
     <div class="header">
-      <h1>Admin Dashboard <span class="badge">ADMIN</span></h1>
+      <h1>Admin Command Center <span class="badge">ADMIN</span></h1>
       <div class="api-status">
         <span class="api-dot" id="apiDot"></span>
         <span id="apiLabel" style="font-size:0.8rem;color:var(--text-dim)">Checking API...</span>
       </div>
     </div>
     <div class="tabs">
-      <div class="tab active" data-tab="audit">Sprite Audit</div>
-      <div class="tab" data-tab="upload">Upload</div>
-      <div class="tab" data-tab="characters">Characters</div>
-      <div class="tab" data-tab="export">Export</div>
-      <div class="tab" data-tab="sync">Sync Status</div>
+      <div class="tab active" data-tab="tactical">⚔️ Tactical Infinity</div>
+      <div class="tab" data-tab="fleet">⛵ Fleet</div>
+      <div class="tab" data-tab="players">👥 Players</div>
+      <div class="tab" data-tab="audit">🖼 Sprites</div>
+      <div class="tab" data-tab="upload">⬆️ Upload</div>
+      <div class="tab" data-tab="characters">🧍 Characters</div>
+      <div class="tab" data-tab="export">📦 Export</div>
+      <div class="tab" data-tab="sync">🔄 Sync</div>
     </div>
-    <div class="panel active" id="p-audit">
+    <!-- ═══ TACTICAL INFINITY ═══ -->
+    <div class="panel active" id="p-tactical">
+      <div class="stats-grid" id="tacticalStats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+        <div>
+          <h3 style="color:var(--tier-4);margin-bottom:12px;font-size:0.9rem">🌐 Live Services</h3>
+          <div id="tacticalServices" class="scroll-table" style="max-height:340px"><table><thead><tr><th>Service</th><th>Status</th><th>Latency</th></tr></thead><tbody id="tacticalServicesBody"><tr><td colspan="3">Loading...</td></tr></tbody></table></div>
+        </div>
+        <div>
+          <h3 style="color:var(--tier-4);margin-bottom:12px;font-size:0.9rem">📍 Quick Links</h3>
+          <div style="display:grid;gap:8px" id="quickLinks">
+            <a href="https://grudgewarlords.com" target="_blank" class="btn" style="text-decoration:none;text-align:center">⚔️ Grudge Warlords</a>
+            <a href="https://grudge-studio.com" target="_blank" class="btn" style="text-decoration:none;text-align:center">🏠 The ENGINE</a>
+            <a href="https://grudge-character-creator.vercel.app/game/world" target="_blank" class="btn" style="text-decoration:none;text-align:center">🌍 Character World</a>
+            <a href="https://grudge-character-creator.vercel.app/" target="_blank" class="btn" style="text-decoration:none;text-align:center">🧍 Character Creator</a>
+            <a href="https://libs.grudge-studio.com/" target="_blank" class="btn" style="text-decoration:none;text-align:center">📦 Game Core CDN</a>
+            <a href="https://dash.grudge-studio.com" target="_blank" class="btn" style="text-decoration:none;text-align:center">📊 Dashboard</a>
+            <a href="https://id.grudge-studio.com" target="_blank" class="btn" style="text-decoration:none;text-align:center">🔑 Auth Gateway</a>
+            <a href="https://assets.grudge-studio.com" target="_blank" class="btn" style="text-decoration:none;text-align:center">🖼 Assets CDN (R2)</a>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <h3 style="color:var(--tier-4);margin-bottom:12px;font-size:0.9rem">🛠️ Domain Inventory</h3>
+        <div class="scroll-table" style="max-height:260px"><table><thead><tr><th>Domain</th><th>Platform</th><th>Status</th></tr></thead><tbody id="tacticalDomains"><tr><td colspan="3">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ═══ FLEET ═══ -->
+    <div class="panel" id="p-fleet">
+      <h3 style="margin-bottom:12px;color:var(--tier-4)">⛵ Fleet Health Monitor</h3>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="fleetRefresh">Refresh Fleet</button>
+        <a href="https://grudge-studio.com/admin-harbor" target="_blank" class="btn" style="text-decoration:none">🗺 Open Harbor Map</a>
+      </div>
+      <div class="stats-grid" id="fleetStats" style="margin-top:12px"></div>
+      <div class="scroll-table" style="margin-top:12px"><table><thead><tr><th>Status</th><th>Service</th><th>Region</th><th>Latency</th><th>URL</th></tr></thead><tbody id="fleetBody"><tr><td colspan="5">Click Refresh to load fleet status...</td></tr></tbody></table></div>
+    </div>
+
+    <!-- ═══ PLAYERS ═══ -->
+    <div class="panel" id="p-players">
+      <h3 style="margin-bottom:12px;color:var(--tier-4)">👥 Player Characters</h3>
+      <p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:16px">Characters are managed at <a href="https://grudge-character-creator.vercel.app/" target="_blank" style="color:var(--tier-4)">grudge-character-creator.vercel.app</a>. The game world view is at <a href="https://grudge-character-creator.vercel.app/game/world" target="_blank" style="color:var(--tier-4)">/game/world</a>.</p>
+      <div class="btn-row">
+        <a href="https://grudge-character-creator.vercel.app/" target="_blank" class="btn btn-primary" style="text-decoration:none">🧍 Open Character Creator</a>
+        <a href="https://grudge-character-creator.vercel.app/game/world" target="_blank" class="btn" style="text-decoration:none">🌍 Game World View</a>
+        <button class="btn" id="playersRefresh">Refresh Player Data</button>
+      </div>
+      <div class="stats-grid" id="playerStats" style="margin-top:12px"></div>
+      <input type="text" class="search-input" id="playerSearch" placeholder="Search players by name, class, race..." style="margin-top:12px">
+      <div class="scroll-table" style="margin-top:8px"><table><thead><tr><th>Name</th><th>Race</th><th>Class</th><th>Level</th><th>Faction</th><th>Account</th></tr></thead><tbody id="playerBody"><tr><td colspan="6">Click Refresh to load player data...</td></tr></tbody></table></div>
+      <div style="margin-top:16px;border-radius:12px;overflow:hidden;border:2px solid var(--border-color)">
+        <iframe src="https://grudge-character-creator.vercel.app/" style="width:100%;height:500px;border:none;background:#111"></iframe>
+      </div>
+    </div>
+
+    <!-- ═══ SPRITE AUDIT (existing) ═══ -->
+    <div class="panel" id="p-audit">
       <div class="stats-grid" id="auditStats"></div>
       <input type="text" class="search-input" id="auditSearch" placeholder="Filter sprites by name, UUID, category...">
       <div class="btn-row">
@@ -357,6 +417,126 @@
     window.copyText=function(t){navigator.clipboard.writeText(t).then(function(){var e=document.getElementById('copyToast');e.style.display='block';setTimeout(function(){e.style.display='none'},1200)})};
 
     init();
+
+    // ─── Tactical Infinity tab ───
+    async function loadTactical(){
+      // Service health
+      var services=[
+        {name:'API Gateway',url:'https://api.grudge-studio.com/api/health'},
+        {name:'Auth Gateway',url:'https://id.grudge-studio.com/api/health'},
+        {name:'Assets CDN',url:'https://assets.grudge-studio.com/'},
+        {name:'ObjectStore',url:'https://objectstore.grudge-studio.com/'},
+        {name:'Info Hub',url:'https://info.grudge-studio.com/'},
+        {name:'Grudge Warlords',url:'https://grudgewarlords.com/'},
+        {name:'The ENGINE',url:'https://grudge-studio.com/'},
+        {name:'Character Creator',url:'https://grudge-character-creator.vercel.app/'},
+        {name:'Game Core CDN',url:'https://libs.grudge-studio.com/index.js'},
+        {name:'UI Editor',url:'https://ui.grudge-studio.com/'},
+      ];
+
+      var live=0,down=0;
+      var rows='';
+      for(var i=0;i<services.length;i++){
+        var s=services[i];
+        try{
+          var t0=Date.now();
+          var r=await fetch(s.url,{method:'HEAD',mode:'no-cors',cache:'no-store'});
+          var ms=Date.now()-t0;
+          live++;
+          rows+='<tr><td>'+esc(s.name)+'</td><td><span class="dot dot-ok"></span>Live</td><td>'+ms+'ms</td></tr>';
+        }catch(e){
+          down++;
+          rows+='<tr><td>'+esc(s.name)+'</td><td><span class="dot dot-err"></span>Down</td><td>—</td></tr>';
+        }
+      }
+      document.getElementById('tacticalServicesBody').innerHTML=rows;
+
+      var statsH='<div class="stat-card"><div class="val" style="color:#4caf50">'+live+'</div><div class="lbl">Services Live</div></div>';
+      statsH+='<div class="stat-card"><div class="val" style="color:'+(down>0?'#f44336':'#4caf50')+'">'+down+'</div><div class="lbl">Services Down</div></div>';
+      statsH+='<div class="stat-card"><div class="val">'+(spriteData?spriteData.totalSprites:0)+'</div><div class="lbl">Total Sprites</div></div>';
+      statsH+='<div class="stat-card"><div class="val">'+(charData?charData.totalCharacters:0)+'</div><div class="lbl">2D Characters</div></div>';
+      document.getElementById('tacticalStats').innerHTML=statsH;
+
+      // Domain inventory
+      var domains=[
+        {d:'grudge-studio.com',p:'Vercel (The-ENGINE)',s:'Live'},
+        {d:'grudgewarlords.com',p:'Vercel (Grudge-Builder)',s:'Live'},
+        {d:'api.grudge-studio.com',p:'CF Tunnel → Railway',s:'Live'},
+        {d:'id.grudge-studio.com',p:'CF Tunnel → Railway',s:'Live'},
+        {d:'assets.grudge-studio.com',p:'CF R2 CDN',s:'Live'},
+        {d:'info.grudge-studio.com',p:'Vercel (ObjectStore)',s:'Live'},
+        {d:'libs.grudge-studio.com',p:'Vercel (game-core)',s:'Live'},
+        {d:'ui.grudge-studio.com',p:'Vercel (UI Editor)',s:'Live'},
+        {d:'characters.grudge-studio.com',p:'Vercel (Playground)',s:'Live'},
+        {d:'platform.grudge-studio.com',p:'Vercel (GrudaChain)',s:'Live'},
+        {d:'forge.grudge-studio.com',p:'CF Worker',s:'Live'},
+        {d:'drive.grudge-studio.com',p:'Vercel (Drive)',s:'Live'},
+        {d:'ai.grudge-studio.com',p:'CF Worker',s:'Auth-gated'},
+      ];
+      var dRows='';domains.forEach(function(d){
+        var color=d.s==='Live'?'dot-ok':(d.s==='Auth-gated'?'dot-warn':'dot-err');
+        dRows+='<tr><td><a href="https://'+esc(d.d)+'" target="_blank" style="color:var(--tier-7)">'+esc(d.d)+'</a></td><td>'+esc(d.p)+'</td><td><span class="dot '+color+'"></span>'+esc(d.s)+'</td></tr>';
+      });
+      document.getElementById('tacticalDomains').innerHTML=dRows;
+    }
+    loadTactical();
+
+    // ─── Fleet tab ───
+    document.getElementById('fleetRefresh').addEventListener('click',async function(){
+      document.getElementById('fleetBody').innerHTML='<tr><td colspan="5">Loading fleet health...</td></tr>';
+      try{
+        var r=await fetch('https://grudge-studio.com/api/fleet/health');
+        var data=await r.json();
+        if(data.services){
+          var live=0,warn=0,down=0;
+          var rows='';
+          data.services.forEach(function(s){
+            if(s.status==='live')live++;
+            else if(s.status==='warn')warn++;
+            else down++;
+            var dot=s.status==='live'?'dot-ok':(s.status==='warn'?'dot-warn':'dot-err');
+            rows+='<tr><td><span class="dot '+dot+'"></span>'+esc(s.status)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.region)+'</td><td>'+(s.latencyMs!==null?s.latencyMs+'ms':'—')+'</td><td style="font-size:0.7rem;font-family:monospace">'+esc(s.id)+'</td></tr>';
+          });
+          document.getElementById('fleetBody').innerHTML=rows;
+          document.getElementById('fleetStats').innerHTML='<div class="stat-card"><div class="val" style="color:#4caf50">'+live+'</div><div class="lbl">Live</div></div><div class="stat-card"><div class="val" style="color:#ff9800">'+warn+'</div><div class="lbl">Warn</div></div><div class="stat-card"><div class="val" style="color:#f44336">'+down+'</div><div class="lbl">Down</div></div><div class="stat-card"><div class="val">'+data.services.length+'</div><div class="lbl">Total</div></div>';
+        }
+      }catch(e){
+        document.getElementById('fleetBody').innerHTML='<tr><td colspan="5" style="color:#f44336">Failed to load: '+esc(e.message)+'</td></tr>';
+      }
+    });
+
+    // ─── Players tab ───
+    document.getElementById('playersRefresh').addEventListener('click',async function(){
+      document.getElementById('playerBody').innerHTML='<tr><td colspan="6">Loading...</td></tr>';
+      try{
+        var r=await fetch('https://api.grudge-studio.com/api/characters',{credentials:'include'});
+        var data=await r.json();
+        var chars=Array.isArray(data)?data:(data.characters||[]);
+        var races={},classes={};
+        chars.forEach(function(c){races[c.raceId||'?']=(races[c.raceId||'?']||0)+1;classes[c.classId||'?']=(classes[c.classId||'?']||0)+1;});
+        var statsH='<div class="stat-card"><div class="val">'+chars.length+'</div><div class="lbl">Total Players</div></div>';
+        statsH+='<div class="stat-card"><div class="val">'+Object.keys(races).length+'</div><div class="lbl">Races</div></div>';
+        statsH+='<div class="stat-card"><div class="val">'+Object.keys(classes).length+'</div><div class="lbl">Classes</div></div>';
+        document.getElementById('playerStats').innerHTML=statsH;
+        filterPlayers(chars);
+        window._playerChars=chars;
+      }catch(e){
+        document.getElementById('playerBody').innerHTML='<tr><td colspan="6" style="color:#f44336">Auth required or API error: '+esc(e.message)+'</td></tr>';
+      }
+    });
+    function filterPlayers(chars){
+      var q=(document.getElementById('playerSearch').value||'').toLowerCase();
+      var filtered=chars.filter(function(c){
+        if(!q)return true;
+        return (c.name||'').toLowerCase().indexOf(q)!==-1||(c.raceId||'').indexOf(q)!==-1||(c.classId||'').indexOf(q)!==-1;
+      });
+      var h='';filtered.slice(0,200).forEach(function(c){
+        h+='<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+esc(c.raceId||'—')+'</td><td>'+esc(c.classId||'—')+'</td><td>'+esc(c.level||1)+'</td><td>'+esc(c.faction||'—')+'</td><td class="uuid-cell">'+esc(c.accountId||c.id||'—')+'</td></tr>';
+      });
+      document.getElementById('playerBody').innerHTML=h||'<tr><td colspan="6">No results</td></tr>';
+    }
+    document.getElementById('playerSearch').addEventListener('input',function(){if(window._playerChars)filterPlayers(window._playerChars)});
+
   })();
   </script>
 </body>
