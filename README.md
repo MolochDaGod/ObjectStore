@@ -135,6 +135,22 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 | `/api/v1/terrain.json` | Terrain configuration |
 | `/api/v1/tileMaps.json` | Tile map definitions |
 
+### Large Catalog Loading (Worker API)
+
+For very large catalogs, prefer chunked requests through the Worker instead of downloading full collections in one call.
+
+- `GET /v1/assets?limit=100&offset=0` → paged asset browsing (`total`, `hasMore`, `nextOffset`)
+- `GET /v1/models?limit=60&offset=0` → paged 3D model browsing
+- `GET /v1/game-data/master-items?page=0&pageSize=200` → paged game-data array loading
+- `GET /v1/game-data/master-items?page=0&pageSize=200&q=sword` → server-side filtered page
+- Full static browsing is still supported via GitHub Pages JSON (for exports/tools): `/api/v1/master-items.json`
+
+Recommended client pattern:
+1. Start with `pageSize` 100–250.
+2. Render immediately.
+3. Request the next page only when user scrolls or clicks “Load more” using `nextOffset` (or `page + 1`).
+4. Keep static `/api/v1/*.json` fetches for offline tools and one-shot admin workflows.
+
 ## 🔗 Supported Projects
 
 ObjectStore integrates with all Grudge Studio repositories:
