@@ -45,6 +45,10 @@ export default {
             models: 'GET /v1/models',
             gameData: 'GET /v1/game-data',
             weaponSkills: 'GET /v1/weapon-skills',
+            relics: 'GET /v1/relics',
+            enchants: 'GET /v1/enchants',
+            infusions: 'GET /v1/infusions',
+            artifacts: 'GET /v1/artifacts',
             gltfManifest: 'GET /v1/game-data/gltf-manifest',
             effectDefinitions: 'GET /v1/game-data/effect-definitions',
             animationsGltf: 'GET /v1/game-data/animations-gltf',
@@ -62,6 +66,14 @@ export default {
       // ── Game data routes (/v1/game-data, /v1/weapon-skills) ───────
       if (url.pathname.startsWith('/v1/game-data') || url.pathname.startsWith('/v1/weapon-skills')) {
         return corsResponse(env, await handleGameDataRoutes(url, method, env), origin);
+      }
+
+      // ── Item collection routes (/v1/relics, /v1/enchants, etc.) ──
+      if (url.pathname.startsWith('/v1/relics') ||
+          url.pathname.startsWith('/v1/enchants') ||
+          url.pathname.startsWith('/v1/infusions') ||
+          url.pathname.startsWith('/v1/artifacts')) {
+        return corsResponse(env, await handleItemCollectionRoutes(url, method, env), origin);
       }
 
       // ── Conversion pipeline routes (/v1/convert) ─────────────────
@@ -524,6 +536,217 @@ async function fetchGameData(name, env) {
     if (resp.ok) return await resp.json();
   } catch { /* fall through */ }
   return null;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Item Collection Handlers (/v1/relics, /v1/enchants, etc.)
+// ════════════════════════════════════════════════════════════════════
+
+/**
+ * Route dispatcher for dedicated item collection endpoints.
+ *
+ * Endpoints:
+ *   GET /v1/relics                – list / search relics
+ *   GET /v1/relics/:id            – single relic by id or uuid
+ *   GET /v1/enchants              – list / search enchants
+ *   GET /v1/enchants/:id          – single enchant by id or uuid
+ *   GET /v1/infusions             – list / search infusions
+ *   GET /v1/infusions/:id         – single infusion by id or uuid
+ *   GET /v1/artifacts             – list / search artifacts (undiscovered filtered by default)
+ *   GET /v1/artifacts/:id         – single artifact by id, uuid, or name slug
+ */
+async function handleItemCollectionRoutes(url, method, env) {
+  if (method !== 'GET') return json({ error: 'Method not allowed' }, 405);
+  const path = url.pathname;
+
+  // ── /v1/relics ──────────────────────────────────────────────────
+  if (path === '/v1/relics') {
+    return await listItemCollection('master-relics', 'relics', url, env, applyRelicFilters);
+  }
+  const relicIdMatch = path.match(/^\/v1\/relics\/([^/]+)$/);
+  if (relicIdMatch) {
+    return await getItemById('master-relics', 'relics', relicIdMatch[1], env);
+  }
+
+  // ── /v1/enchants ─────────────────────────────────────────────────
+  if (path === '/v1/enchants') {
+    return await listItemCollection('master-enchants', 'enchants', url, env, applyEnchantFilters);
+  }
+  const enchantIdMatch = path.match(/^\/v1\/enchants\/([^/]+)$/);
+  if (enchantIdMatch) {
+    return await getItemById('master-enchants', 'enchants', enchantIdMatch[1], env);
+  }
+
+  // ── /v1/infusions ────────────────────────────────────────────────
+  if (path === '/v1/infusions') {
+    return await listItemCollection('master-infusions', 'infusions', url, env, applyInfusionFilters);
+  }
+  const infusionIdMatch = path.match(/^\/v1\/infusions\/([^/]+)$/);
+  if (infusionIdMatch) {
+    return await getItemById('master-infusions', 'infusions', infusionIdMatch[1], env);
+  }
+
+  // ── /v1/artifacts ────────────────────────────────────────────────
+  if (path === '/v1/artifacts') {
+    return await listItemCollection('master-artifacts', 'artifacts', url, env, applyArtifactFilters);
+  }
+  const artifactIdMatch = path.match(/^\/v1\/artifacts\/([^/]+)$/);
+  if (artifactIdMatch) {
+    return await getItemById('master-artifacts', 'artifacts', artifactIdMatch[1], env);
+  }
+
+  return json({ error: 'Not found' }, 404);
+}
+
+/**
+ * Generic list handler for item collections.
+ * Fetches the dataset, applies collection-specific filters, and paginates.
+ *
+ * @param {string} collectionName  - key in GAME_DATA_COLLECTIONS (e.g. 'master-relics')
+ * @param {string} arrayKey        - property name of the items array (e.g. 'relics')
+ * @param {URL}    url             - request URL (for query params)
+ * @param {object} env             - Worker env bindings
+ * @param {Function} filterFn      - (items, url) => filtered items
+ */
+async function listItemCollection(collectionName, arrayKey, url, env, filterFn) {
+  const data = await fetchGameData(collectionName, env);
+  if (!data) {
+    return json({ error: `${collectionName} data unavailable` }, 503, {
+      'Cache-Control': 'no-store',
+    });
+  }
+
+  let items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
+
+  // Apply collection-specific filters (category, tier, type, q, etc.)
+  items = filterFn(items, url);
+
+  // Pagination
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 500);
+  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+  const total = items.length;
+  const page = items.slice(offset, offset + limit);
+
+  return json(
+    {
+      collection: collectionName,
+      total,
+      count: page.length,
+      limit,
+      offset,
+      items: page,
+    },
+    200,
+    { 'Cache-Control': 'public, max-age=300' }
+  );
+}
+
+/**
+ * Generic single-item fetch — matches by `id`, `uuid`, or slugified `name`.
+ */
+async function getItemById(collectionName, arrayKey, rawId, env) {
+  const data = await fetchGameData(collectionName, env);
+  if (!data) {
+    return json({ error: `${collectionName} data unavailable` }, 503, {
+      'Cache-Control': 'no-store',
+    });
+  }
+
+  const items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
+  const needle = decodeURIComponent(rawId).toLowerCase();
+
+  const item = items.find(
+    (it) =>
+      it.id === needle ||
+      it.uuid?.toLowerCase() === needle ||
+      it.name?.toLowerCase().replace(/\s+/g, '-') === needle
+  );
+
+  if (!item) {
+    return json({ error: `${arrayKey.slice(0, -1)} not found: ${rawId}` }, 404);
+  }
+
+  return json(item, 200, { 'Cache-Control': 'public, max-age=300' });
+}
+
+// ── Per-collection filter helpers ────────────────────────────────────
+
+/**
+ * Common filters shared by all item types: `q` (name search), `tier`, `category`.
+ * Returns a new filtered array without mutating the original.
+ */
+function applyCommonFilters(items, url) {
+  const q        = url.searchParams.get('q');
+  const tier     = url.searchParams.get('tier');
+  const category = url.searchParams.get('category');
+
+  let out = items;
+  if (category) out = out.filter((it) => it.category === category);
+  if (tier)     out = out.filter((it) => String(it.tier) === tier || it.tierLabel?.toLowerCase() === tier.toLowerCase());
+  if (q) {
+    const s = q.toLowerCase();
+    out = out.filter(
+      (it) =>
+        it.name?.toLowerCase().includes(s) ||
+        it.id?.toLowerCase().includes(s) ||
+        it.description?.toLowerCase().includes(s)
+    );
+  }
+  return out;
+}
+
+/** Filter relics — supports `element` and `slot` in addition to common params. */
+function applyRelicFilters(items, url) {
+  let out = applyCommonFilters(items, url);
+  const element = url.searchParams.get('element');
+  const slot    = url.searchParams.get('slot');
+  if (element) out = out.filter((it) => it.element === element);
+  if (slot)    out = out.filter((it) => it.slot === slot);
+  return out;
+}
+
+/** Filter enchants — supports `target` (weapon|armor) in addition to common params. */
+function applyEnchantFilters(items, url) {
+  let out = applyCommonFilters(items, url);
+  const target = url.searchParams.get('target');
+  if (target) {
+    out = out.filter((it) =>
+      it.target && it.target.split('|').includes(target)
+    );
+  }
+  return out;
+}
+
+/** Filter infusions — supports `scope` and `profession` in addition to common params. */
+function applyInfusionFilters(items, url) {
+  let out = applyCommonFilters(items, url);
+  const scope      = url.searchParams.get('scope');
+  const profession = url.searchParams.get('profession');
+  if (scope)      out = out.filter((it) => it.scope === scope);
+  if (profession) out = out.filter((it) => it.profession === profession);
+  return out;
+}
+
+/**
+ * Filter artifacts — supports `artifactType`, `subtype`, `handedness` and
+ * `discovered` (default: exclude hidden artifacts per D3 decision).
+ */
+function applyArtifactFilters(items, url) {
+  // By default hide undiscovered artifacts (D3). Pass `discovered=all` to include all.
+  const discovered   = url.searchParams.get('discovered');
+  const artifactType = url.searchParams.get('artifactType');
+  const subtype      = url.searchParams.get('subtype');
+  const handedness   = url.searchParams.get('handedness');
+
+  let out = items;
+  if (discovered !== 'all') {
+    out = out.filter((it) => !it.discovery?.hiddenUntilFound);
+  }
+  out = applyCommonFilters(out, url);
+  if (artifactType) out = out.filter((it) => it.artifactType === artifactType);
+  if (subtype)      out = out.filter((it) => it.weaponSubtype === subtype);
+  if (handedness)   out = out.filter((it) => it.handedness === handedness);
+  return out;
 }
 
 // ════════════════════════════════════════════════════════════════════
