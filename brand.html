@@ -576,6 +576,7 @@
     <a href="#attributes">Attributes</a>
     <a href="#environments">Worlds</a>
     <a href="#splash">Splash Art</a>
+    <a href="#ecosystem">Ecosystem</a>
   </div>
 </nav>
 
@@ -1282,6 +1283,137 @@
     </div>
   </section>
 
+
+  <!-- ══════════ ECOSYSTEM ══════════ -->
+  <section id="ecosystem" class="section">
+    <h2 class="section-title">Studio Ecosystem</h2>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:24px;">
+      Live infrastructure powering Grudge Studio — game delivery, identity, and asset pipelines.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:32px;">
+
+      <!-- grudgedot -->
+      <div class="component-card" style="border-color:var(--gold-dim)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.4rem;">⚔️</span>
+          <div>
+            <div style="font-family:var(--font-heading);font-size:1rem;color:var(--gold)">grudgedot</div>
+            <div style="font-size:.72rem;color:var(--text-muted)">Game Launcher / Release Portal</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:12px;">
+          Express + Node ESM server. Streams game library from GitHub Releases API.
+          GitHub OAuth login, 60 s cache with stale-on-error, webhook-busted on new releases.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--cyan)">grudgedot/</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--cyan)">PORT 3300</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--cyan)">/api/games</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--cyan)">/api/webhooks/github</code>
+        </div>
+        <a href="https://github.com/MolochDaGod/GrudaNode/tree/main/grudgedot" target="_blank"
+           style="font-size:.75rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold-dim);padding:4px 12px;border-radius:4px;">
+          View Source ↗
+        </a>
+      </div>
+
+      <!-- GitHub App -->
+      <div class="component-card" style="border-color:var(--purple,#7c3aed)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.4rem;">🔑</span>
+          <div>
+            <div style="font-family:var(--font-heading);font-size:1rem;color:var(--text)">GitHub App</div>
+            <div style="font-size:.72rem;color:var(--text-muted)">Identity &amp; Webhook Auth</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:12px;">
+          OAuth2 for user login. HMAC-SHA256 webhook signature verification on all inbound events.
+          App ID <code style="color:var(--cyan)">3101811</code> — installed on MolochDaGod org.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--cyan)">Client: Iv23liLWxaTCRF5yqw1U</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--green,#22c55e)">scope: read:user read:org</code>
+        </div>
+        <a href="https://github.com/settings/apps" target="_blank"
+           style="font-size:.75rem;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:4px 12px;border-radius:4px;">
+          App Settings ↗
+        </a>
+      </div>
+
+      <!-- ObjectStore / 3D Pipeline -->
+      <div class="component-card" style="border-color:var(--cyan)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.4rem;">📦</span>
+          <div>
+            <div style="font-family:var(--font-heading);font-size:1rem;color:var(--cyan)">ObjectStore</div>
+            <div style="font-size:.72rem;color:var(--text-muted)">3D Asset Registry &amp; CDN</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:12px;">
+          337 real GLBs in <code style="color:var(--cyan)">api/v1/models3d.json</code> (v2).
+          Primary CDN: R2 (<code style="color:var(--cyan)">assets.grudge-studio.com</code>).
+          Fallback: GitHub Pages. FBX source files in <code style="color:var(--cyan)">models/animations/melee-axe/</code>
+          — run <code style="color:var(--cyan)">scripts/fbx2glb.mjs</code> to convert and upload.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="https://molochdagod.github.io/ObjectStore" target="_blank"
+             style="font-size:.75rem;color:var(--cyan);text-decoration:none;border:1px solid var(--cyan);padding:4px 12px;border-radius:4px;">
+            Model Browser ↗
+          </a>
+          <a href="https://github.com/MolochDaGod/ObjectStore/blob/main/scripts/fbx2glb.mjs" target="_blank"
+             style="font-size:.75rem;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:4px 12px;border-radius:4px;">
+            Pipeline Script ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- R2 / CDN -->
+      <div class="component-card" style="border-color:var(--orange,#f59e0b)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.4rem;">☁️</span>
+          <div>
+            <div style="font-family:var(--font-heading);font-size:1rem;color:var(--orange,#f59e0b)">Cloudflare R2</div>
+            <div style="font-size:.72rem;color:var(--text-muted)">Brand &amp; Asset Storage</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:12px;">
+          Bucket <code style="color:var(--cyan)">grudge-assets</code>.
+          Serves all brand imagery on this page — favicons, icons, splash art, backgrounds.
+          3D model GLBs upload here after FBX conversion.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--orange,#f59e0b)">assets.grudge-studio.com</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--text-muted)">fallback → github.io/ObjectStore</code>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CI/CD Workflows -->
+    <h3 style="font-family:var(--font-heading);font-size:.9rem;letter-spacing:.06em;color:var(--text-dim);margin-bottom:14px;">
+      GitHub Actions Workflows
+    </h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:.8rem;color:var(--green,#22c55e);font-family:var(--font-code);margin-bottom:4px;">ci.yml</div>
+        <div style="font-size:.75rem;color:var(--text-dim)">Syntax check + JSON lint on push/PR to main</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:.8rem;color:var(--gold);font-family:var(--font-code);margin-bottom:4px;">release.yml</div>
+        <div style="font-size:.75rem;color:var(--text-dim)">npm publish + GitHub Release on v* tags</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:.8rem;color:var(--cyan);font-family:var(--font-code);margin-bottom:4px;">deploy.yml</div>
+        <div style="font-size:.75rem;color:var(--text-dim)">Vercel + Railway deploy on push to main</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:.8rem;color:var(--cyan);font-family:var(--font-code);margin-bottom:4px;">grudgedot-deploy.yml</div>
+        <div style="font-size:.75rem;color:var(--text-dim)">Railway deploy when grudgedot/** changes</div>
+      </div>
+    </div>
+  </section>
+
   <footer style="text-align:center;color:var(--text-muted);font-size:.75rem;padding-top:32px;border-top:1px solid var(--border)">
     <p style="font-family:var(--font-heading);letter-spacing:.08em">
       GRUDGE STUDIO &mdash; Warlord Crafting Suite Design System<br>
@@ -1298,7 +1430,7 @@
   const OBJECTSTORE = {
     cdn:      'https://assets.grudge-studio.com',
     worker:   'https://objectstore.grudge-studio.com',
-    fallback: 'https://objectstore.grudge-studio.com'
+    fallback: 'https://molochdagod.github.io/ObjectStore'   // GitHub Pages mirror
   };
 
   (function trackAndFallbackImages() {
@@ -1306,17 +1438,19 @@
     const totalEl  = document.getElementById('assetTotal');
     const badge    = document.getElementById('assetSourceBadge');
     const urlEl    = document.getElementById('assetSourceUrl');
-    let loaded = 0, fallbackHits = 0, errors = 0;
+    let loaded = 0, fallbackHits = 0, errors = 0, cdnTotal = 0;
+
+    function setTotal(n) { cdnTotal = n; if (totalEl) totalEl.textContent = n; }
 
     function attach(img) {
-      // Skip non-CDN images and already-handled ones
       if (!img.src || img._osHandled) return;
+      // Only track images served from our CDN
       if (img.src.indexOf(OBJECTSTORE.cdn) !== 0) return;
       img._osHandled = true;
+      setTotal(cdnTotal + 1);
 
       const onLoad = () => { loaded++; if (loadedEl) loadedEl.textContent = loaded; };
       const onError = () => {
-        // Single-shot retry against GitHub Pages mirror
         if (!img._osFallback) {
           img._osFallback = true;
           fallbackHits++;
@@ -1326,20 +1460,41 @@
             badge.classList.add('fallback');
             if (urlEl) urlEl.textContent = 'fallback: github.io/ObjectStore';
           }
+          // retry load listener after src swap
+          img.addEventListener('load', onLoad, { once: true });
         } else {
           errors++;
+          setTotal(cdnTotal - 1); // don't count truly broken images
           if (errors > 0 && badge) badge.classList.add('error');
         }
       };
 
-      if (img.complete && img.naturalWidth > 0) onLoad();
-      else { img.addEventListener('load', onLoad, { once: true }); img.addEventListener('error', onError); }
+      if (img.complete && img.naturalWidth > 0) { onLoad(); return; }
+      img.addEventListener('load', onLoad, { once: true });
+      img.addEventListener('error', onError, { once: true });
+    }
+
+    // IntersectionObserver picks up lazy-loaded images as they scroll into view
+    const io = ('IntersectionObserver' in window)
+      ? new IntersectionObserver((entries) => {
+          entries.forEach(e => { if (e.isIntersecting) attach(e.target); });
+        }, { rootMargin: '200px' })
+      : null;
+
+    function observe(img) {
+      if (img.loading === 'lazy' && io) io.observe(img);
+      else attach(img);
     }
 
     function init() {
-      const imgs = document.querySelectorAll('img');
-      if (totalEl) totalEl.textContent = imgs.length;
-      imgs.forEach(attach);
+      document.querySelectorAll('img').forEach(observe);
+      // Also watch for any images added dynamically
+      new MutationObserver(muts => {
+        muts.forEach(m => m.addedNodes.forEach(n => {
+          if (n.tagName === 'IMG') observe(n);
+          else if (n.querySelectorAll) n.querySelectorAll('img').forEach(observe);
+        }));
+      }).observe(document.body, { childList: true, subtree: true });
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
