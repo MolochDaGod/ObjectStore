@@ -55,7 +55,7 @@ function staffIconPath(category, indexInCategory) {
   const offsets = { fireStaves: 0, frostStaves: 8, holyStaves: 16, lightningStaves: 24, arcaneStaves: 32, natureStaves: 40 };
   const n = (offsets[category] || 0) + indexInCategory + 1;
   const clamped = ((n - 1) % 50) + 1;
-  return `${CDN_ASSETS}/icons/weapons/staff_${clamped}.png`;
+  return `${CDN_ASSETS}/icons/pack/weapons/staff_${clamped}.png`;
 }
 
 function readJson(path) {
@@ -239,7 +239,7 @@ for (const cat of STAFF_CATEGORIES) {
         element: block.element || null,
         craftedBy: w.craftedBy || master?.craftedBy || 'Mystic',
         iconUrl,
-        spritePath: `/icons/weapons/staff_${((idx % 50) + 1)}.png`,
+        spritePath: `/icons/pack/weapons/staff_${((idx % 50) + 1)}.png`,
         itemUuid: master?.uuid || null,
         recipeUuid: master?.recipeUuid || recipe?.uuid || null,
         recipeMaterials: recipe?.materials || null,
@@ -256,7 +256,7 @@ for (const cat of STAFF_CATEGORIES) {
   // Patch weapons.json sprite paths in-place
   block.items.forEach((w, idx) => {
     w.iconUrl = staffIconPath(cat, idx);
-    w.spritePath = `/icons/weapons/staff_${((idx % 50) + 1)}.png`;
+    w.spritePath = `/icons/pack/weapons/staff_${((idx % 50) + 1)}.png`;
   });
 }
 
