@@ -2,6 +2,6 @@
 All notable changes to the ObjectStore API and assets.
 
 ## 2026-06-17
-### Changed
-- Consolidate game data SSOT: recipes, harvest links, staff icons (60e8568)
+### Fixed
+- Fix staff icon paths to icons/pack/weapons on CDN (af23843)
 
