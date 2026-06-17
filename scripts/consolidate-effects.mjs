@@ -55,7 +55,9 @@ const packFilter = process.argv.find(a => a.startsWith('--pack='))?.split('=')[1
 // ═══════════════════════════════════════════════════════════
 // SOURCE PACK DEFINITIONS
 // ═══════════════════════════════════════════════════════════
-const UNITY_ROOT = 'F:\\GitHub\\FRESH-GRUDGE\\Assets';
+const UNITY_ROOT = process.env.FRESH_GRUDGE_ROOT
+  ? `${process.env.FRESH_GRUDGE_ROOT}\\Assets`
+  : 'C:\\Users\\david\\Desktop\\FRESH-GRUDGE\\Assets';
 
 const PACKS = [
   {
