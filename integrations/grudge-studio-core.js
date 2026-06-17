@@ -57,6 +57,7 @@ export class GrudgeStudioAPI {
       await this.objectStore.loadManifest();
       await Promise.all([
         this.objectStore.loadMasterItems(),
+        this.objectStore.loadMasterRecipes(),
         this.objectStore.loadHarvestNodes(),
         this.objectStore.loadStaffLooks(),
         this.objectStore.loadWeapons(),
@@ -209,7 +210,11 @@ class ObjectStoreClient {
   }
 
   async loadMaterials() {
-    return await this._fetch('materials.json', 'materials');
+    return await this._fetch('master-materials.json', 'materials');
+  }
+
+  async loadMasterRecipes() {
+    return await this._fetch('master-recipes.json', 'masterRecipes');
   }
 
   async loadArmor() {

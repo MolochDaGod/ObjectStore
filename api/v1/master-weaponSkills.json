@@ -1,9 +1,8 @@
 {
-  "version": "2.0.0",
-  "generated": "2026-06-04T21:01:30.783Z",
-  "totalWeaponTypes": 16,
-  "totalSkills": 198,
-  "generatedAt": "2026-04-13T23:32:26.058Z",
+  "version": "3.0.0",
+  "generated": "2026-06-17T06:19:21.676Z",
+  "totalWeaponTypes": 17,
+  "totalSkills": 207,
   "classRestrictions": {
     "Warrior": [
       "SWORD",
@@ -11,15 +10,15 @@
       "HAMMER",
       "SHIELD",
       "GREATSWORD",
-      "GREATAXE",
-      "SCYTHE"
+      "GREATAXE"
     ],
     "Mage": [
       "STAFF",
       "TOME",
       "MACE",
       "WAND",
-      "OFFHAND_RELIC"
+      "OFFHAND_RELIC",
+      "DAGGER"
     ],
     "Ranger": [
       "BOW",
@@ -35,9 +34,7 @@
       "DAGGER",
       "BOW",
       "HAMMER",
-      "MACE",
-      "OFFHAND_RELIC",
-      "SCYTHE"
+      "MACE"
     ]
   },
   "weaponTypes": [
@@ -46,6 +43,7 @@
       "name": "Sword",
       "icon": "/icons/pack/weapons/Sword_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 13,
       "slots": [
         {
@@ -54,7 +52,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CEE-2DCF2298",
+              "uuid": "SKIL-20260604081946-000001--4DB4FBA",
               "id": "sword_vengeful_slash",
               "name": "Vengeful Slash",
               "description": "Single-target slash, builds 1 Grudge Mark stack, max 3",
@@ -71,10 +69,17 @@
               "effects": [
                 "Builds Grudge Mark"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CEF-9AA35B67",
+              "uuid": "SKIL-20260604081946-000002--1898A72",
               "id": "sword_lunging_strike",
               "name": "Lunging Strike",
               "description": "Ranged thrust attack",
@@ -91,10 +96,17 @@
               "effects": [
                 "Extended Range"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_02.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF0-6B89F3C8",
+              "uuid": "SKIL-20260604081946-000003-7EA6698D",
               "id": "sword_fearful_swipe",
               "name": "Fearful Swipe",
               "description": "AoE fear attack",
@@ -111,7 +123,14 @@
               "effects": [
                 "AoE Fear 2s"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -121,7 +140,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CF1-F7353E3A",
+              "uuid": "SKIL-20260604081946-000004--6C184BC",
               "id": "sword_blood_rush",
               "name": "Blood Rush",
               "description": "Dash forward 8m, AoE damage",
@@ -139,10 +158,17 @@
                 "Dash 8m",
                 "AoE Damage"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF2-123CD4D2",
+              "uuid": "SKIL-20260604081946-000005-7E447735",
               "id": "sword_iron_grudge",
               "name": "Iron Grudge",
               "description": "3s damage reduction + reflect",
@@ -160,10 +186,17 @@
                 "30% DR",
                 "Reflect 20%"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF3-083FD23E",
+              "uuid": "SKIL-20260604081946-000006--7C2F383",
               "id": "sword_clan_charge",
               "name": "Clan Charge",
               "description": "Gap-closer charge + 1s stun",
@@ -181,7 +214,14 @@
                 "Charge",
                 "Stun 1s"
               ],
-              "originalIcon": "/icons/pack/misc/Power.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -191,7 +231,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CF4-B9655931",
+              "uuid": "SKIL-20260604081946-000007-39355B5A",
               "id": "sword_heroic_cleave",
               "name": "Heroic Cleave",
               "description": "Cone AoE clear",
@@ -208,10 +248,17 @@
               "effects": [
                 "Cone AoE"
               ],
-              "originalIcon": "/icons/pack/misc/Slash_07.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF5-C885CB64",
+              "uuid": "SKIL-20260604081946-000008--3411A5D",
               "id": "sword_parry_counter",
               "name": "Parry Counter",
               "description": "Block + counter damage",
@@ -229,10 +276,17 @@
                 "Block",
                 "Counter Attack"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF6-37CCD421",
+              "uuid": "SKIL-20260604081946-000009-55A157EC",
               "id": "sword_deep_wound",
               "name": "Deep Wound",
               "description": "Apply bleed stack",
@@ -249,10 +303,17 @@
               "effects": [
                 "Bleed 5s"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF7-76B8B9FF",
+              "uuid": "SKIL-20260604081946-00000A-784B2CEB",
               "id": "sword_shadow_edge",
               "name": "Shadow Edge",
               "description": "Dash + stun",
@@ -270,10 +331,17 @@
                 "Dash",
                 "Stun 1.5s"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CF8-5269C9E9",
+              "uuid": "SKIL-20260604081946-00000B--6CB7A78",
               "id": "sword_execute",
               "name": "Execute",
               "description": "Bonus dmg below 30% HP",
@@ -290,7 +358,14 @@
               "effects": [
                 "2x dmg <30% HP"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos_2.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -300,7 +375,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CF9-201EC00C",
+              "uuid": "SKIL-20260604081946-00000C-7DF5EBF2",
               "id": "sword_crimson_reprisal",
               "name": "Crimson Reprisal",
               "description": "Large AoE slash, heals per enemy hit",
@@ -318,10 +393,17 @@
                 "Large AoE",
                 "Lifesteal"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CFA-A6224ACA",
+              "uuid": "SKIL-20260604081946-00000D--37D7125",
               "id": "sword_nights_judgment",
               "name": "Night's Judgment",
               "description": "Teleport behind + bleed DoT",
@@ -339,18 +421,26 @@
                 "Teleport",
                 "Bleed DoT"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000CED-E3A4989F"
+      "uuid": "ITEM-20260617011921-000CED-74985528"
     },
     {
       "id": "AXE",
       "name": "Axe",
       "icon": "/icons/pack/weapons/Axe_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -359,7 +449,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CFC-BB85E499",
+              "uuid": "SKIL-20260604081946-00000E-77322E8B",
               "id": "axe_rending_chop",
               "name": "Rending Chop",
               "description": "Single target, applies Bleed stack",
@@ -376,10 +466,17 @@
               "effects": [
                 "Applies Bleed"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CFD-F70C81DA",
+              "uuid": "SKIL-20260604081946-00000F--4839DE3",
               "id": "axe_lunging_chop",
               "name": "Lunging Chop",
               "description": "Extended range chop",
@@ -396,10 +493,17 @@
               "effects": [
                 "Extended Range"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_02.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000CFE-2AD92D7A",
+              "uuid": "SKIL-20260604081946-000010-00FCA8EC",
               "id": "axe_ground_slam",
               "name": "Ground Slam",
               "description": "AoE slow attack",
@@ -416,7 +520,14 @@
               "effects": [
                 "AoE Slow 30%"
               ],
-              "originalIcon": "/icons/pack/misc/Power.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -426,7 +537,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000CFF-D8AA3A73",
+              "uuid": "SKIL-20260604081946-000011-3FB42DEF",
               "id": "axe_adrenaline_surge",
               "name": "Adrenaline Surge",
               "description": "+Attack speed buff",
@@ -443,10 +554,17 @@
               "effects": [
                 "+30% Atk Speed 5s"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D00-94935AE4",
+              "uuid": "SKIL-20260604081946-000012-0617F366",
               "id": "axe_whirl_pain",
               "name": "Whirl of Pain",
               "description": "Channeled AoE spin",
@@ -464,10 +582,17 @@
                 "Channel 3s",
                 "360° AoE"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D01-77F0463B",
+              "uuid": "SKIL-20260604081946-000013--73A7EA9",
               "id": "axe_bloodletting",
               "name": "Bloodletting",
               "description": "AoE bleed apply",
@@ -484,7 +609,14 @@
               "effects": [
                 "AoE Bleed 6s"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -494,7 +626,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D02-4EE30BED",
+              "uuid": "SKIL-20260604081946-000014--6DD3D1C",
               "id": "axe_carnage_spin",
               "name": "Carnage Spin",
               "description": "360 AoE refresh bleed",
@@ -511,10 +643,17 @@
               "effects": [
                 "Refresh all bleeds"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D03-7DB16ACA",
+              "uuid": "SKIL-20260604081946-000015-77FA52DE",
               "id": "axe_headcracker",
               "name": "Headcracker",
               "description": "Single stun attack",
@@ -531,10 +670,17 @@
               "effects": [
                 "Stun 2s"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D04-E8181536",
+              "uuid": "SKIL-20260604081946-000016-68825E2B",
               "id": "axe_veinreaver",
               "name": "Veinreaver",
               "description": "AoE lifesteal attack",
@@ -551,10 +697,17 @@
               "effects": [
                 "Lifesteal 25%"
               ],
-              "originalIcon": "/icons/pack/misc/Life.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D05-671ADA5A",
+              "uuid": "SKIL-20260604081946-000017-162D0E53",
               "id": "axe_frenzied_chop",
               "name": "Frenzied Chop",
               "description": "High burst, self-damage",
@@ -571,7 +724,14 @@
               "effects": [
                 "Take 10% max HP"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -581,7 +741,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D06-F4FAF024",
+              "uuid": "SKIL-20260604081946-000018-4E970C25",
               "id": "axe_apocalypse_cleave",
               "name": "Apocalypse Cleave",
               "description": "Large knockback AoE",
@@ -599,10 +759,17 @@
                 "Huge AoE",
                 "Knockback"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos_2.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D07-6BF31672",
+              "uuid": "SKIL-20260604081946-000019-35B7054C",
               "id": "axe_blood_harvest",
               "name": "Blood Harvest",
               "description": "AoE heal on hit",
@@ -619,18 +786,26 @@
               "effects": [
                 "Heal 30% per hit"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000CFB-158B506B"
+      "uuid": "ITEM-20260617011921-000CFB-8C3C849A"
     },
     {
       "id": "BOW",
       "name": "Bow",
       "icon": "/icons/pack/weapons/Bow_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 10,
       "slots": [
         {
@@ -639,7 +814,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D09-377F9A54",
+              "uuid": "SKIL-20260604081946-00001A-1D573A4C",
               "id": "bow_quick_shot",
               "name": "Quick Shot",
               "description": "Basic arrow shot",
@@ -656,10 +831,17 @@
               "effects": [
                 "Range 25m"
               ],
-              "originalIcon": "/icons/pack/weapons/Arrow_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D0A-2169F628",
+              "uuid": "SKIL-20260604081946-00001B--5C9BCCF",
               "id": "bow_aimed_shot",
               "name": "Aimed Shot",
               "description": "Charged precision shot",
@@ -676,10 +858,17 @@
               "effects": [
                 "Guaranteed Crit"
               ],
-              "originalIcon": "/icons/pack/weapons/Arrow_04.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D0B-4A8E9070",
+              "uuid": "SKIL-20260604081946-00001C-0A6C4F9A",
               "id": "bow_fire_arrow",
               "name": "Fire Arrow",
               "description": "Ignites target for DoT",
@@ -696,7 +885,14 @@
               "effects": [
                 "Burn 6s"
               ],
-              "originalIcon": "/icons/pack/misc/Fires.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -706,7 +902,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D0C-54574D2D",
+              "uuid": "SKIL-20260604081946-00001D--6D9EFBA",
               "id": "bow_multishot",
               "name": "Multishot",
               "description": "Fire 3 arrows at once",
@@ -724,10 +920,17 @@
                 "3 Arrows",
                 "Cone"
               ],
-              "originalIcon": "/icons/pack/weapons/Arrow_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D0D-50E3F63C",
+              "uuid": "SKIL-20260604081946-00001E-5AC2E14A",
               "id": "bow_piercing",
               "name": "Piercing Shot",
               "description": "Arrow pierces through enemies",
@@ -744,7 +947,14 @@
               "effects": [
                 "Pierce All"
               ],
-              "originalIcon": "/icons/pack/weapons/Arrow_06.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -754,7 +964,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D0E-4A7F6AA3",
+              "uuid": "SKIL-20260604081946-00001F--293C134",
               "id": "bow_bear_trap",
               "name": "Bear Trap",
               "description": "Place trap that roots enemies",
@@ -771,10 +981,17 @@
               "effects": [
                 "Root 3s"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D0F-D57E10F9",
+              "uuid": "SKIL-20260604081946-000020-56E5C596",
               "id": "bow_swift_quiver",
               "name": "Swift Quiver",
               "description": "+50% attack speed for 6s",
@@ -791,10 +1008,17 @@
               "effects": [
                 "+50% Atk Speed"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D10-841D4650",
+              "uuid": "SKIL-20260604081946-000021-4B567BFC",
               "id": "bow_poison_arrow",
               "name": "Poison Arrow",
               "description": "Spread poison DoT",
@@ -811,7 +1035,14 @@
               "effects": [
                 "Poison 8s"
               ],
-              "originalIcon": "/icons/pack/misc/Naturecircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -821,7 +1052,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D11-677F6B73",
+              "uuid": "SKIL-20260604081946-000022--667C53E",
               "id": "bow_arrow_rain",
               "name": "Arrow Rain",
               "description": "Rain arrows on large area",
@@ -839,10 +1070,17 @@
                 "AoE 10m",
                 "5s Duration"
               ],
-              "originalIcon": "/icons/pack/weapons/Arrow_08.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D12-F6264736",
+              "uuid": "SKIL-20260604081946-000023--6D2F5DB",
               "id": "bow_sniper_shot",
               "name": "Sniper Shot",
               "description": "Long range massive damage",
@@ -860,18 +1098,26 @@
                 "50m Range",
                 "Ignore Armor"
               ],
-              "originalIcon": "/icons/pack/weapons/Bow_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D08-571F82C1"
+      "uuid": "ITEM-20260617011921-000D08-7C0959C2"
     },
     {
       "id": "CROSSBOW",
       "name": "Crossbow",
       "icon": "/icons/pack/weapons/Crossbow_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -880,7 +1126,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D14-04442A5D",
+              "uuid": "SKIL-20260604081946-000024--BF88488",
               "id": "xbow_heavy_bolt",
               "name": "Heavy Bolt",
               "description": "Single shot, builds Mark",
@@ -897,10 +1143,17 @@
               "effects": [
                 "Builds Mark"
               ],
-              "originalIcon": "/icons/pack/weapons/Bolt_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D15-440F508B",
+              "uuid": "SKIL-20260604081946-000025--6B91C89",
               "id": "xbow_rapid_fire",
               "name": "Rapid Fire",
               "description": "Quick successive shots",
@@ -917,10 +1170,17 @@
               "effects": [
                 "3 Rapid Shots"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D16-14A38A61",
+              "uuid": "SKIL-20260604081946-000026-40D6635A",
               "id": "xbow_explosive_round",
               "name": "Explosive Round",
               "description": "AoE explosion on hit",
@@ -937,7 +1197,14 @@
               "effects": [
                 "AoE 3m"
               ],
-              "originalIcon": "/icons/pack/misc/fire_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -947,7 +1214,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D17-66B8D500",
+              "uuid": "SKIL-20260604081946-000027-4E9AE312",
               "id": "xbow_knockback_bolt",
               "name": "Knockback Bolt",
               "description": "Push enemy back",
@@ -964,10 +1231,17 @@
               "effects": [
                 "Knockback 5m"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D18-CF847B06",
+              "uuid": "SKIL-20260604081946-000028--21C7C62",
               "id": "xbow_trap_bolt",
               "name": "Trap Bolt",
               "description": "Root trap on ground",
@@ -984,10 +1258,17 @@
               "effects": [
                 "Root 2s"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D19-98C8CB87",
+              "uuid": "SKIL-20260604081946-000029-3CE5EB6A",
               "id": "xbow_sniper_shot",
               "name": "Sniper Shot",
               "description": "Long range precision",
@@ -1004,7 +1285,14 @@
               "effects": [
                 "30m Range"
               ],
-              "originalIcon": "/icons/pack/weapons/Crossbow_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1014,7 +1302,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D1A-E445F781",
+              "uuid": "SKIL-20260604081946-00002A--26DBFF6",
               "id": "xbow_barrage",
               "name": "Barrage of Vengeance",
               "description": "Channeled 5 bolts",
@@ -1031,10 +1319,17 @@
               "effects": [
                 "Channel 2s"
               ],
-              "originalIcon": "/icons/pack/weapons/Bolt_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D1B-B40693F3",
+              "uuid": "SKIL-20260604081946-00002B--7D51695",
               "id": "xbow_headshot",
               "name": "Headshot",
               "description": "Silence single target",
@@ -1051,10 +1346,17 @@
               "effects": [
                 "Silence 3s"
               ],
-              "originalIcon": "/icons/pack/weapons/Crossbow_03.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D1C-C894E722",
+              "uuid": "SKIL-20260604081946-00002C--5F3A00D",
               "id": "xbow_crimson_bolt",
               "name": "Crimson Bolt",
               "description": "Bleed AoE damage",
@@ -1071,10 +1373,17 @@
               "effects": [
                 "Bleed AoE"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D1D-54953781",
+              "uuid": "SKIL-20260604081946-00002D--2679BCE",
               "id": "xbow_shrapnel",
               "name": "Shrapnel Burst",
               "description": "Armor break AoE",
@@ -1091,7 +1400,14 @@
               "effects": [
                 "-30% Armor 6s"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1101,7 +1417,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D1E-2A752920",
+              "uuid": "SKIL-20260604081946-00002E--23E48CF",
               "id": "xbow_sweeping_bolt",
               "name": "Sweeping Bolt",
               "description": "Piercing AoE line",
@@ -1119,10 +1435,17 @@
                 "Pierce Line",
                 "Full Width"
               ],
-              "originalIcon": "/icons/pack/weapons/Bolt_08.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D1F-EA9033E4",
+              "uuid": "SKIL-20260604081946-00002F--81AB482",
               "id": "xbow_noise_eraser",
               "name": "Noise Eraser",
               "description": "Massive silence burst",
@@ -1139,12 +1462,19 @@
               "effects": [
                 "AoE Silence 5s"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D13-5EFE23FE"
+      "uuid": "ITEM-20260617011921-000D13-F30BFF66"
     },
     {
       "id": "GUN",
@@ -1153,6 +1483,7 @@
       "classes": [
         "Ranger"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -1161,7 +1492,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D21-9834F5FE",
+              "uuid": "SKIL-20260604081946-000030--2AC2162",
               "id": "gun_grudge_shot",
               "name": "Grudge Shot",
               "description": "Single shot, builds Powder Mark. Hitscan 30m range.",
@@ -1179,10 +1510,18 @@
                 "Builds Powder Mark",
                 "Hitscan 30m"
               ],
-              "originalIcon": "/icons/weapons/blackpowder.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D22-63332EDE",
+              "uuid": "SKIL-20260604081946-000031--75BAD7F",
               "id": "gun_quick_reload",
               "name": "Quick Reload",
               "description": "Rapidly cycle the chamber, +40% attack speed for 4s",
@@ -1200,10 +1539,17 @@
                 "+40% Atk Speed 4s",
                 "Self-Buff"
               ],
-              "originalIcon": "/icons/weapons/ironstorm.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_reload",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D23-95C70404",
+              "uuid": "SKIL-20260604081946-000032--6892D93",
               "id": "gun_smoke_shot",
               "name": "Smoke Shot",
               "description": "Fire a flashbang round, blinding enemies in 4m",
@@ -1221,7 +1567,15 @@
                 "Blind 3s",
                 "AoE 4m"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1231,7 +1585,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D24-2CD049FD",
+              "uuid": "SKIL-20260604081946-000033--7C8B163",
               "id": "gun_explosive_round",
               "name": "Explosive Round",
               "description": "Fire incendiary shell that explodes on impact",
@@ -1250,10 +1604,18 @@
                 "Knockback 2m",
                 "Burn 3s"
               ],
-              "originalIcon": "/icons/weapons/emberrifle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_heavy_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D25-BDA00FD4",
+              "uuid": "SKIL-20260604081946-000034-149E61FF",
               "id": "gun_flame_burst",
               "name": "Flame Burst",
               "description": "Spray ignited powder in a cone, setting ground ablaze",
@@ -1272,10 +1634,17 @@
                 "Burn 5s",
                 "Ground Fire 4s"
               ],
-              "originalIcon": "/icons/pack/misc/Fires.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_spray",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D26-3BFA6F66",
+              "uuid": "SKIL-20260604081946-000035-68CAEC70",
               "id": "gun_sniper_round",
               "name": "Sniper Round",
               "description": "Steady aim, charged shot that pierces armor at extreme range",
@@ -1294,7 +1663,15 @@
                 "Ignore 50% Armor",
                 "Guaranteed Crit"
               ],
-              "originalIcon": "/icons/weapons/duskblaster.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_aim_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1304,7 +1681,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D27-58A2E366",
+              "uuid": "SKIL-20260604081946-000036--7AC3411",
               "id": "gun_hellfire_barrage",
               "name": "Hellfire Barrage",
               "description": "Unload entire magazine in sustained fire, AoE incendiary",
@@ -1324,10 +1701,18 @@
                 "12 Rounds",
                 "Burn 4s"
               ],
-              "originalIcon": "/icons/weapons/bloodcannon.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_channel_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D28-A9B73EC8",
+              "uuid": "SKIL-20260604081946-000037-41D82BE2",
               "id": "gun_crimson_blast",
               "name": "Crimson Blast",
               "description": "Blood-infused shell that heals on hit, AoE splash",
@@ -1346,10 +1731,18 @@
                 "AoE 5m",
                 "Bleed 4s"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_heavy_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D29-966EDC5D",
+              "uuid": "SKIL-20260604081946-000038-6B2BF078",
               "id": "gun_shadow_shot",
               "name": "Shadow Shot",
               "description": "Void-touched round that silences on impact and leaves darkness",
@@ -1368,10 +1761,18 @@
                 "AoE 4m",
                 "Darkness Zone 3s"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D2A-ED457642",
+              "uuid": "SKIL-20260604081946-000039--528A931",
               "id": "gun_cannon_execute",
               "name": "Cannon Execute",
               "description": "Overcharged shot that deals 3x damage to targets below 25% HP",
@@ -1390,7 +1791,15 @@
                 "Knockback 6m",
                 "Armor Break"
               ],
-              "originalIcon": "/icons/weapons/wraithbarrel.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_aim_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1400,7 +1809,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D2B-6671BD70",
+              "uuid": "SKIL-20260604081946-00003A-113C41DB",
               "id": "gun_demon_blast",
               "name": "Demon Blast",
               "description": "Channel dark energy into the barrel, releasing a massive explosion that sends enemies flying",
@@ -1420,10 +1829,18 @@
                 "Burn 6s",
                 "Stagger All"
               ],
-              "originalIcon": "/icons/weapons/bloodcannon.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_ultimate_fire",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D2C-8B7059F8",
+              "uuid": "SKIL-20260604081946-00003B-4F854FF3",
               "id": "gun_thunder_blast",
               "name": "Thunder Blast",
               "description": "Summon a lightning storm through the barrel, chain-electrocuting all enemies in range",
@@ -1443,18 +1860,27 @@
                 "Stun 2s",
                 "AoE 12m"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "gun_storm_channel",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D20-7E0ED218"
+      "uuid": "ITEM-20260617011921-000D20-F3376B74"
     },
     {
       "id": "DAGGER",
       "name": "Dagger",
       "icon": "/icons/pack/weapons/Dagger_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 13,
       "slots": [
         {
@@ -1463,7 +1889,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D2E-DC243DC0",
+              "uuid": "SKIL-20260604081946-00003C-1E299088",
               "id": "dagger_shadow_stab",
               "name": "Shadow Stab",
               "description": "Single stab, builds Mark",
@@ -1480,10 +1906,17 @@
               "effects": [
                 "Builds Mark"
               ],
-              "originalIcon": "/icons/pack/weapons/Dagger_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D2F-44DADCAA",
+              "uuid": "SKIL-20260604081946-00003D--39C365E",
               "id": "dagger_chain_slash",
               "name": "Chain Slash",
               "description": "Rapid burst combo",
@@ -1500,10 +1933,17 @@
               "effects": [
                 "3 Hit Combo"
               ],
-              "originalIcon": "/icons/pack/weapons/Dagger_02.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D30-BC2A23A6",
+              "uuid": "SKIL-20260604081946-00003E--2A7C07F",
               "id": "dagger_poison_shiv",
               "name": "Poison Shiv",
               "description": "Apply DoT poison",
@@ -1520,7 +1960,14 @@
               "effects": [
                 "Poison 8s"
               ],
-              "originalIcon": "/icons/pack/misc/Naturecircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1530,7 +1977,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D31-86590FDD",
+              "uuid": "SKIL-20260604081946-00003F-57F571BB",
               "id": "dagger_phantom_dash",
               "name": "Phantom Dash",
               "description": "Dash through enemies",
@@ -1548,10 +1995,17 @@
                 "Dash 6m",
                 "Invincible"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D32-D3457B13",
+              "uuid": "SKIL-20260604081946-000040-2D1DF771",
               "id": "dagger_assassin_focus",
               "name": "Assassin's Focus",
               "description": "+Attack speed buff",
@@ -1568,10 +2022,17 @@
               "effects": [
                 "+50% Atk Speed 5s"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D33-8A0E444C",
+              "uuid": "SKIL-20260604081946-000041--694D103",
               "id": "dagger_lunging_stabs",
               "name": "Lunging Stabs",
               "description": "Burst mobility combo",
@@ -1588,7 +2049,14 @@
               "effects": [
                 "Dash + 4 Stabs"
               ],
-              "originalIcon": "/icons/pack/weapons/Dagger_03.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1598,7 +2066,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D34-0DEABB8D",
+              "uuid": "SKIL-20260604081946-000042--7C1FB41",
               "id": "dagger_vengeful_ambush",
               "name": "Vengeful Ambush",
               "description": "Teleport behind burst",
@@ -1616,10 +2084,17 @@
                 "Teleport Behind",
                 "+50% Dmg"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D35-E7CBB7F0",
+              "uuid": "SKIL-20260604081946-000043-5D90CEB4",
               "id": "dagger_crimson_stab",
               "name": "Crimson Stab",
               "description": "Heavy bleed burst",
@@ -1637,10 +2112,17 @@
                 "Bleed 6s",
                 "High DoT"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D36-BAD6E7BB",
+              "uuid": "SKIL-20260604081946-000044-043495DA",
               "id": "dagger_shadow_strike",
               "name": "Shadow Strike",
               "description": "AoE silence attack",
@@ -1658,10 +2140,17 @@
                 "Silence 3s",
                 "AoE"
               ],
-              "originalIcon": "/icons/pack/misc/smokes_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D37-6D83E17E",
+              "uuid": "SKIL-20260604081946-000045--5F0B80B",
               "id": "dagger_flame_dagger",
               "name": "Flame Dagger",
               "description": "DoT AoE fire",
@@ -1679,10 +2168,17 @@
                 "Burn 5s",
                 "AoE"
               ],
-              "originalIcon": "/icons/pack/misc/Fires.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D38-3A13ACA9",
+              "uuid": "SKIL-20260604081946-000046-0CC874F6",
               "id": "dagger_bloodletter_rage",
               "name": "Bloodletter Rage",
               "description": "Heal burst frenzy",
@@ -1700,7 +2196,14 @@
                 "Heal 40%",
                 "Frenzy"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1710,7 +2213,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D39-E69938CA",
+              "uuid": "SKIL-20260604081946-000047--650045C",
               "id": "dagger_deathgiver",
               "name": "Deathgiver's Fatal",
               "description": "Execute low HP targets",
@@ -1727,10 +2230,17 @@
               "effects": [
                 "Instant Kill <20%"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos_2.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D3A-050097B8",
+              "uuid": "SKIL-20260604081946-000048--39110F1",
               "id": "dagger_death_blossom",
               "name": "Death Blossom",
               "description": "360 spin attack",
@@ -1748,18 +2258,26 @@
                 "360° AoE",
                 "Rapid Hits"
               ],
-              "originalIcon": "/icons/pack/misc/NatureFlower.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D2D-1815CE7F"
+      "uuid": "ITEM-20260617011921-000D2D-38B0FA4F"
     },
     {
       "id": "STAFF",
       "name": "Staff",
       "icon": "/icons/pack/weapons/staff_1.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 13,
       "slots": [
         {
@@ -1768,7 +2286,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D3C-879030D7",
+              "uuid": "SKIL-20260604081946-000049-41DF348E",
               "id": "staff_fire_bolt",
               "name": "Fire Bolt",
               "description": "Single-target, builds Burn stack",
@@ -1785,10 +2303,17 @@
               "effects": [
                 "Builds Burn Stack"
               ],
-              "originalIcon": "/icons/pack/misc/fire_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D3D-0DFF7CA4",
+              "uuid": "SKIL-20260604081946-00004A-32A83EAF",
               "id": "staff_frost_bolt",
               "name": "Frost Bolt",
               "description": "Single-target, builds Chill",
@@ -1805,10 +2330,17 @@
               "effects": [
                 "Slow 30%"
               ],
-              "originalIcon": "/icons/pack/misc/frozen.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D3E-7D82EFF6",
+              "uuid": "SKIL-20260604081946-00004B--6FF342E",
               "id": "staff_holy_light",
               "name": "Holy Light",
               "description": "Heal single ally",
@@ -1825,7 +2357,14 @@
               "effects": [
                 "Heal Ally"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1835,7 +2374,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D3F-096B81A4",
+              "uuid": "SKIL-20260604081946-00004C-6807F9E0",
               "id": "staff_flame_wave",
               "name": "Flame Wave",
               "description": "Cone AoE DoT",
@@ -1853,10 +2392,17 @@
                 "Cone",
                 "Burn 4s"
               ],
-              "originalIcon": "/icons/pack/misc/Fires.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D40-8CD26142",
+              "uuid": "SKIL-20260604081946-00004D-4239C6C3",
               "id": "staff_ice_nova",
               "name": "Ice Nova",
               "description": "AoE slow around caster",
@@ -1874,10 +2420,17 @@
                 "AoE 6m",
                 "Slow 50%"
               ],
-              "originalIcon": "/icons/pack/misc/frozen.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D41-E6D3CAB4",
+              "uuid": "SKIL-20260604081946-00004E--2DA22E9",
               "id": "staff_divine_wave",
               "name": "Divine Wave",
               "description": "AoE heal allies",
@@ -1894,7 +2447,14 @@
               "effects": [
                 "Heal All Allies"
               ],
-              "originalIcon": "/icons/pack/misc/Lights.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -1904,7 +2464,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D42-DE7E705A",
+              "uuid": "SKIL-20260604081946-00004F-17111AC4",
               "id": "staff_inferno_shield",
               "name": "Inferno Shield",
               "description": "Reflect damage",
@@ -1922,10 +2482,17 @@
                 "Absorb 200",
                 "Reflect 30%"
               ],
-              "originalIcon": "/icons/pack/misc/Firestar.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D43-E0A1A6AD",
+              "uuid": "SKIL-20260604081946-000050--7076815",
               "id": "staff_glacial_shield",
               "name": "Glacial Shield",
               "description": "Absorb + slow attackers",
@@ -1943,10 +2510,17 @@
                 "Absorb 250",
                 "Slow Attackers"
               ],
-              "originalIcon": "/icons/pack/misc/AquaCore.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D44-75F75B73",
+              "uuid": "SKIL-20260604081946-000051--E6564C6",
               "id": "staff_meteor_strike",
               "name": "Meteor Strike",
               "description": "Delayed massive burst",
@@ -1964,10 +2538,17 @@
                 "Delay 1.5s",
                 "AoE 5m"
               ],
-              "originalIcon": "/icons/pack/misc/Lava.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D45-7D8F78F9",
+              "uuid": "SKIL-20260604081946-000052-27190023",
               "id": "staff_blizzard",
               "name": "Blizzard",
               "description": "Channeled freeze zone",
@@ -1985,10 +2566,17 @@
                 "Channel",
                 "Freeze Chance"
               ],
-              "originalIcon": "/icons/pack/misc/AquaCircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D46-0E42097A",
+              "uuid": "SKIL-20260604081946-000053-2CF0DAF0",
               "id": "staff_radiant_heal",
               "name": "Radiant Salvation",
               "description": "AoE heal + cleanse",
@@ -2005,7 +2593,14 @@
               "effects": [
                 "Cleanse Debuffs"
               ],
-              "originalIcon": "/icons/pack/misc/Life.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2015,7 +2610,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D47-A33A2579",
+              "uuid": "SKIL-20260604081946-000054--56F60DB",
               "id": "staff_hellstorm",
               "name": "Hellstorm",
               "description": "Large AoE DoT",
@@ -2033,10 +2628,17 @@
                 "AoE 12m",
                 "Burn 8s"
               ],
-              "originalIcon": "/icons/pack/misc/Lava.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D48-8CF2FA5B",
+              "uuid": "SKIL-20260604081946-000055-64428B0F",
               "id": "staff_absolute_zero",
               "name": "Absolute Zero",
               "description": "Mass freeze all enemies",
@@ -2054,18 +2656,26 @@
                 "Freeze 4s",
                 "AoE 15m"
               ],
-              "originalIcon": "/icons/pack/misc/CircleW.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D3B-5065F780"
+      "uuid": "ITEM-20260617011921-000D3B-281306B9"
     },
     {
       "id": "HAMMER",
       "name": "Hammer",
       "icon": "/icons/pack/weapons/Hammer_01.png",
       "classes": [],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -2074,7 +2684,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D4A-9122DB0D",
+              "uuid": "SKIL-20260604081946-000056-2D915DF9",
               "id": "hammer_earthshatter",
               "name": "Earthshatter",
               "description": "AoE, applies Slow",
@@ -2092,10 +2702,17 @@
                 "Slow 30%",
                 "AoE 3m"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D4B-197AB779",
+              "uuid": "SKIL-20260604081946-000057-7E4216E4",
               "id": "hammer_skullbash",
               "name": "Skullbash",
               "description": "Single target slow",
@@ -2112,10 +2729,17 @@
               "effects": [
                 "Slow 50%"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_02.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D4C-C30309E9",
+              "uuid": "SKIL-20260604081946-000058-47014B70",
               "id": "hammer_ground_pound",
               "name": "Ground Pound",
               "description": "Armor break attack",
@@ -2132,7 +2756,14 @@
               "effects": [
                 "-25% Armor 5s"
               ],
-              "originalIcon": "/icons/pack/misc/Power.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2142,7 +2773,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D4D-F0D0EF78",
+              "uuid": "SKIL-20260604081946-000059-42C551A0",
               "id": "hammer_thunderous_charge",
               "name": "Thunderous Charge",
               "description": "Charge stun",
@@ -2160,10 +2791,17 @@
                 "Charge 8m",
                 "Stun 1.5s"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D4E-D16D2D1F",
+              "uuid": "SKIL-20260604081946-00005A--21E8171",
               "id": "hammer_quake_strike",
               "name": "Quake Strike",
               "description": "Knockup AoE",
@@ -2181,10 +2819,17 @@
                 "Knockup 1s",
                 "AoE 4m"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D4F-03F97486",
+              "uuid": "SKIL-20260604081946-00005B-2C845C2C",
               "id": "hammer_iron_skin",
               "name": "Iron Skin",
               "description": "Damage reduction",
@@ -2201,7 +2846,14 @@
               "effects": [
                 "40% DR 5s"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2211,7 +2863,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D50-AADF3FAD",
+              "uuid": "SKIL-20260604081946-00005C-3CE65F10",
               "id": "hammer_cataclysm_blow",
               "name": "Cataclysm Blow",
               "description": "AoE stun attack",
@@ -2229,10 +2881,17 @@
                 "Stun 2s",
                 "AoE 5m"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D51-EA8A2EE0",
+              "uuid": "SKIL-20260604081946-00005D--539D843",
               "id": "hammer_crimson_smash",
               "name": "Crimson Smash",
               "description": "Bleed AoE",
@@ -2250,10 +2909,17 @@
                 "Bleed 5s",
                 "AoE"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D52-67616443",
+              "uuid": "SKIL-20260604081946-00005E-10234E32",
               "id": "hammer_shockwave",
               "name": "Shockwave",
               "description": "Knockback AoE",
@@ -2271,10 +2937,17 @@
                 "Knockback 6m",
                 "AoE 6m"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D53-C5764431",
+              "uuid": "SKIL-20260604081946-00005F-7F9908E1",
               "id": "hammer_titan_crush",
               "name": "Titan Crush",
               "description": "Massive single target",
@@ -2291,7 +2964,14 @@
               "effects": [
                 "Armor Break 50%"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2301,7 +2981,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D54-F228C26F",
+              "uuid": "SKIL-20260604081946-000060-77244E3D",
               "id": "hammer_seismic_slam",
               "name": "Seismic Slam",
               "description": "Large stun AoE",
@@ -2319,10 +2999,17 @@
                 "Stun 3s",
                 "AoE 10m"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D55-5A866FC0",
+              "uuid": "SKIL-20260604081946-000061--7CDBEF6",
               "id": "hammer_mjolnir_strike",
               "name": "Mjolnir Strike",
               "description": "Lightning AoE storm",
@@ -2340,12 +3027,19 @@
                 "Lightning Storm",
                 "Chain"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null,
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D49-F58C3D0C"
+      "uuid": "ITEM-20260617011921-000D49-476E7094"
     },
     {
       "id": "SHIELD",
@@ -2354,6 +3048,7 @@
       "classes": [
         "Warrior"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -2362,7 +3057,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D57-D7FE72A1",
+              "uuid": "SKIL-20260604081946-000062--3C536E5",
               "id": "shield_bash",
               "name": "Shield Bash",
               "description": "Slam shield into target, dazes for 1s",
@@ -2380,10 +3075,17 @@
                 "Daze 1s",
                 "Builds Block"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_bash",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D58-9A4F28FD",
+              "uuid": "SKIL-20260604081946-000063-78A3716F",
               "id": "shield_slam",
               "name": "Shield Slam",
               "description": "Heavy overhead slam, stuns briefly",
@@ -2401,10 +3103,17 @@
                 "Stun 0.8s",
                 "Threat+"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_03.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_slam",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D59-B672FB0C",
+              "uuid": "SKIL-20260604081946-000064-41F91715",
               "id": "shield_concussive",
               "name": "Concussive Strike",
               "description": "AoE bash that slows all nearby",
@@ -2422,7 +3131,14 @@
                 "AoE 3m",
                 "Slow 40% 3s"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_sweep",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2432,7 +3148,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D5A-58E55777",
+              "uuid": "SKIL-20260604081946-000065--5EA29E5",
               "id": "shield_wall",
               "name": "Shield Wall",
               "description": "Raise shield, block 60% damage for 4s",
@@ -2450,10 +3166,17 @@
                 "60% DR 4s",
                 "Immobile"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_10.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_raise",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D5B-74792140",
+              "uuid": "SKIL-20260604081946-000066--2A472E4",
               "id": "shield_charge",
               "name": "Bulwark Charge",
               "description": "Charge forward 8m, knockback targets",
@@ -2471,10 +3194,17 @@
                 "Charge 8m",
                 "Knockback 4m"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_charge",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D5C-2CCA53EE",
+              "uuid": "SKIL-20260604081946-000067-6633FDC2",
               "id": "shield_reflect",
               "name": "Aegis Reflect",
               "description": "Reflect next 3 projectiles back",
@@ -2491,7 +3221,14 @@
               "effects": [
                 "Reflect 3 Projectiles"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_15.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_parry",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2501,7 +3238,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D5D-7D2648BB",
+              "uuid": "SKIL-20260604081946-000068-37FA83DA",
               "id": "shield_phalanx",
               "name": "Phalanx Guard",
               "description": "Allies behind you gain 25% DR",
@@ -2519,10 +3256,17 @@
                 "25% DR Allies 6s",
                 "Cone Behind"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_20.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_stance",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D5E-4857B217",
+              "uuid": "SKIL-20260604081946-000069--816A742",
               "id": "shield_throw",
               "name": "Shield Throw",
               "description": "Hurl shield, bounces to 3 targets",
@@ -2540,10 +3284,18 @@
                 "Bounces x3",
                 "Stun 0.5s each"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_25.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_throw",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D5F-7C7F1D65",
+              "uuid": "SKIL-20260604081946-00006A-1D678815",
               "id": "shield_taunt",
               "name": "Grudge Taunt",
               "description": "Force all enemies in 8m to target you",
@@ -2561,10 +3313,17 @@
                 "AoE Taunt 4s",
                 "10% DR self"
               ],
-              "originalIcon": "/icons/pack/misc/Power.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "war_cry",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D60-87DCAF8B",
+              "uuid": "SKIL-20260604081946-00006B-55C9FA4A",
               "id": "shield_bastion",
               "name": "Iron Bastion",
               "description": "Plant shield, create AoE barrier zone",
@@ -2582,7 +3341,14 @@
                 "40% DR Zone 5m",
                 "8s Duration"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_30.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_plant",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2592,7 +3358,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D61-4DF18757",
+              "uuid": "SKIL-20260604081946-00006C--6EAB227",
               "id": "shield_unbreakable",
               "name": "Unbreakable",
               "description": "Become immune for 3s, then AoE knockback",
@@ -2610,10 +3376,17 @@
                 "Immune 3s",
                 "AoE Knockback 6m"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_40.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_ultimate",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D62-BAB0252D",
+              "uuid": "SKIL-20260604081946-00006D-6DE87646",
               "id": "shield_titan_bulwark",
               "name": "Titan's Bulwark",
               "description": "Group invincibility shield for 4s",
@@ -2631,12 +3404,19 @@
                 "Group Invincible 4s",
                 "AoE 8m"
               ],
-              "originalIcon": "/icons/pack/weapons/shield_50.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shield_divine",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D56-047CAD5C"
+      "uuid": "ITEM-20260617011921-000D56-774CF79D"
     },
     {
       "id": "GREATSWORD",
@@ -2646,6 +3426,7 @@
         "Warrior",
         "Ranger"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -2654,7 +3435,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D64-DF970CC0",
+              "uuid": "SKIL-20260604081946-00006E-135C6E89",
               "id": "gs_cleave",
               "name": "Cleaving Strike",
               "description": "Wide arc slash hitting all in front",
@@ -2672,10 +3453,17 @@
                 "180° Arc",
                 "Builds Momentum"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_27.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_slash",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D65-24F709F8",
+              "uuid": "SKIL-20260604081946-00006F--4C8B3F4",
               "id": "gs_overhead",
               "name": "Overhead Slash",
               "description": "Slow powerful downward strike",
@@ -2693,10 +3481,17 @@
                 "Stagger 1s",
                 "+50% vs Armor"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_33.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_overhead",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D66-CF4849CF",
+              "uuid": "SKIL-20260604081946-000070-7995707B",
               "id": "gs_executioner",
               "name": "Executioner's Swing",
               "description": "Massive hit, bonus on low HP targets",
@@ -2714,7 +3509,14 @@
                 "2x dmg <30% HP",
                 "Armor Break"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_55.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_execute",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2724,7 +3526,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D67-39FFD3E7",
+              "uuid": "SKIL-20260604081946-000071--4BB3E73",
               "id": "gs_whirlwind",
               "name": "Whirlwind Slash",
               "description": "360° spin dealing AoE damage",
@@ -2742,10 +3544,17 @@
                 "360° AoE 4m",
                 "Mobile"
               ],
-              "originalIcon": "/icons/pack/misc/Slash_07.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_spin",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D68-34492D45",
+              "uuid": "SKIL-20260604081946-000072--7946FBA",
               "id": "gs_impale",
               "name": "Impaling Thrust",
               "description": "Lunge forward, pin target",
@@ -2763,10 +3572,17 @@
                 "Lunge 6m",
                 "Root 1.5s"
               ],
-              "originalIcon": "/icons/pack/weapons/Sword_45.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_thrust",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D69-79001EEE",
+              "uuid": "SKIL-20260604081946-000073--4E0D83C",
               "id": "gs_giant_reach",
               "name": "Giant's Reach",
               "description": "Extended range wave slash",
@@ -2784,7 +3600,15 @@
                 "Line 8m",
                 "Pierce All"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_wave",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2794,7 +3618,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D6A-03177C08",
+              "uuid": "SKIL-20260604081946-000074-6B7B38D2",
               "id": "gs_bladestorm",
               "name": "Blade Storm",
               "description": "Channeled rapid spin, 3s",
@@ -2813,10 +3637,17 @@
                 "360° AoE",
                 "Mobile"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_channel_spin",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D6B-0A1039A9",
+              "uuid": "SKIL-20260604081946-000075-7CBC491B",
               "id": "gs_colossus",
               "name": "Colossus Cleave",
               "description": "Overhead slam creating shockwave",
@@ -2834,10 +3665,18 @@
                 "Cone 6m",
                 "Knockup 1s"
               ],
-              "originalIcon": "/icons/pack/misc/Power.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_slam",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D6C-B9D3145B",
+              "uuid": "SKIL-20260604081946-000076-7A4B4F48",
               "id": "gs_sunder",
               "name": "Sundering Strike",
               "description": "Break target armor permanently",
@@ -2855,10 +3694,17 @@
                 "-40% Armor 10s",
                 "Cannot Stack"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_heavy",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D6D-4BEDBB42",
+              "uuid": "SKIL-20260604081946-000077-01944784",
               "id": "gs_judgement",
               "name": "Judgement Cut",
               "description": "Teleport slash through enemies in line",
@@ -2877,7 +3723,14 @@
                 "Line AoE",
                 "Bleed 4s"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_teleport_slash",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -2887,7 +3740,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D6E-2F654760",
+              "uuid": "SKIL-20260604081946-000078-3E10EB27",
               "id": "gs_apocalypse",
               "name": "Apocalypse Edge",
               "description": "Massive AoE ground slam with shockwave",
@@ -2906,10 +3759,18 @@
                 "Knockup 2s",
                 "Armor Break"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos_2.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_ultimate_slam",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D6F-D588CB42",
+              "uuid": "SKIL-20260604081946-000079-4214735B",
               "id": "gs_rift",
               "name": "Dimensional Rift",
               "description": "Tear reality with blade, pulling enemies",
@@ -2928,12 +3789,20 @@
                 "AoE",
                 "Shadow DoT 6s"
               ],
-              "originalIcon": "/icons/pack/misc/ChaosCircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_rift",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D63-D4D9B448"
+      "uuid": "ITEM-20260617011921-000D63-282619AD"
     },
     {
       "id": "GREATAXE",
@@ -2942,6 +3811,7 @@
       "classes": [
         "Warrior"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -2950,7 +3820,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D71-63BBADFB",
+              "uuid": "SKIL-20260604081946-00007A--394FE1F",
               "id": "ga_brutal",
               "name": "Brutal Chop",
               "description": "Slow powerful cleave with bleed",
@@ -2968,10 +3838,17 @@
                 "Bleed 4s",
                 "180° Arc"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_30.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_axe_chop",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D72-D6A6867A",
+              "uuid": "SKIL-20260604081946-00007B-7F890A4D",
               "id": "ga_rending",
               "name": "Rending Swing",
               "description": "Wide arc, amplifies existing bleeds",
@@ -2989,10 +3866,17 @@
                 "Refresh Bleeds",
                 "+25% Bleed DMG"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_35.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_axe_swing",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D73-B2400438",
+              "uuid": "SKIL-20260604081946-00007C--6E8C59E",
               "id": "ga_skull_split",
               "name": "Skull Splitter",
               "description": "Overhead smash, ignores 50% armor",
@@ -3010,7 +3894,14 @@
                 "Ignore 50% Armor",
                 "Stagger 1.5s"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_40.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_axe_overhead",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3020,7 +3911,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D74-5BE09F3D",
+              "uuid": "SKIL-20260604081946-00007D--15D4978",
               "id": "ga_primal_rage",
               "name": "Primal Rage",
               "description": "Enter rage, +40% damage, take 15% more",
@@ -3038,10 +3929,17 @@
                 "+40% DMG 8s",
                 "+15% DMG Taken"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "war_cry",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D75-B295419E",
+              "uuid": "SKIL-20260604081946-00007E-21887030",
               "id": "ga_berserker_charge",
               "name": "Berserker Charge",
               "description": "Unstoppable charge, cleave on arrival",
@@ -3060,10 +3958,17 @@
                 "Unstoppable",
                 "Knockback 3m"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_charge",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D76-285694ED",
+              "uuid": "SKIL-20260604081946-00007F-008ED97E",
               "id": "ga_war_cry",
               "name": "War Cry",
               "description": "AoE fear, allies gain attack speed",
@@ -3081,7 +3986,14 @@
                 "Fear 2s 8m",
                 "Allies +20% Atk Speed"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "war_cry",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3091,7 +4003,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D77-DFF0C9EB",
+              "uuid": "SKIL-20260604081946-000080-19433516",
               "id": "ga_devastate",
               "name": "Devastate",
               "description": "3-hit combo finishing with slam",
@@ -3109,10 +4021,17 @@
                 "3-Hit Combo",
                 "Knockdown 1.5s"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_45.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_axe_combo",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D78-5B1E3F0B",
+              "uuid": "SKIL-20260604081946-000081--64DB6EC",
               "id": "ga_guillotine",
               "name": "Guillotine",
               "description": "Leap slam, massive single target",
@@ -3131,10 +4050,17 @@
                 "AoE 3m",
                 "Knockdown"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_leap_slam",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D79-75EFFC64",
+              "uuid": "SKIL-20260604081946-000082-0E4CDABB",
               "id": "ga_earthshaker",
               "name": "Earthshaker",
               "description": "Ground slam creating quake line",
@@ -3153,10 +4079,18 @@
                 "Knockup 1s",
                 "Slow 3s"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_ground_slam",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D7A-E4738ECE",
+              "uuid": "SKIL-20260604081946-000083--5521408",
               "id": "ga_blood_frenzy",
               "name": "Blood Frenzy",
               "description": "Each hit heals, speed increases",
@@ -3174,7 +4108,14 @@
                 "Lifesteal 35% 6s",
                 "+10% Speed/hit"
               ],
-              "originalIcon": "/icons/pack/misc/Burns.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_frenzy",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3184,7 +4125,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D7B-D2294025",
+              "uuid": "SKIL-20260604081946-000084-06E83837",
               "id": "ga_ragnarok",
               "name": "Ragnarok Cleave",
               "description": "Massive 360° spin into ground slam",
@@ -3203,10 +4144,17 @@
                 "Knockback 8m",
                 "Bleed 8s"
               ],
-              "originalIcon": "/icons/pack/weapons/Axe_48.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_ultimate_spin",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D7C-77E1A0F5",
+              "uuid": "SKIL-20260604081946-000085-2F1AD84A",
               "id": "ga_blood_reaper",
               "name": "Blood Reaper",
               "description": "Become death incarnate, chain kills reset CD",
@@ -3225,12 +4173,19 @@
                 "+60% DMG 10s",
                 "Lifesteal 50%"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos_2.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "2h_reaper",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D70-B4CF46FC"
+      "uuid": "ITEM-20260617011921-000D70-433FE04B"
     },
     {
       "id": "SPEAR",
@@ -3240,6 +4195,7 @@
         "Ranger",
         "Worge"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -3248,7 +4204,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D7E-120836D9",
+              "uuid": "SKIL-20260604081946-000086--36C4968",
               "id": "spear_thrust",
               "name": "Quick Thrust",
               "description": "Fast jab with extended reach",
@@ -3266,10 +4222,17 @@
                 "Range 4m",
                 "Builds Mark"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_thrust",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D7F-6B97816D",
+              "uuid": "SKIL-20260604081946-000087--81C8667",
               "id": "spear_lunge",
               "name": "Piercing Lunge",
               "description": "Lunge forward with armor-piercing stab",
@@ -3287,10 +4250,17 @@
                 "Lunge 3m",
                 "Ignore 30% Armor"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_lunge",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D80-64159479",
+              "uuid": "SKIL-20260604081946-000088-0B6EFE36",
               "id": "spear_sweep",
               "name": "Sweeping Stab",
               "description": "Low sweep knocking enemies off balance",
@@ -3308,7 +4278,14 @@
                 "180° Arc",
                 "Knockdown 1s"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_10.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_sweep",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3318,7 +4295,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D81-5D219550",
+              "uuid": "SKIL-20260604081946-000089--4D41E0A",
               "id": "spear_javelin",
               "name": "Javelin Throw",
               "description": "Hurl spear as ranged projectile",
@@ -3336,10 +4313,18 @@
                 "Range 20m",
                 "Pierce First Target"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_15.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_throw",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D82-517FDD06",
+              "uuid": "SKIL-20260604081946-00008A--8E392E1",
               "id": "spear_vault",
               "name": "Vaulting Strike",
               "description": "Pole-vault over, strike from above",
@@ -3358,10 +4343,17 @@
                 "Stun 1s",
                 "AoE 3m"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_20.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_vault",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D83-90BE8979",
+              "uuid": "SKIL-20260604081946-00008B-01B30A22",
               "id": "spear_wall",
               "name": "Wall of Spears",
               "description": "Plant spears creating damage zone",
@@ -3380,7 +4372,14 @@
                 "Slow 50%",
                 "8s Duration"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_25.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_plant",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3390,7 +4389,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D84-CDDFBFC9",
+              "uuid": "SKIL-20260604081946-00008C--58E6872",
               "id": "spear_impale",
               "name": "Impale",
               "description": "Pin target, dealing DoT",
@@ -3408,10 +4407,17 @@
                 "Root 2s",
                 "Bleed 6s"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_30.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_impale",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D85-A97FBCDD",
+              "uuid": "SKIL-20260604081946-00008D-299A3D4F",
               "id": "spear_cyclone",
               "name": "Cyclone Sweep",
               "description": "Rapid spinning sweep",
@@ -3429,10 +4435,17 @@
                 "360° AoE",
                 "Knockback 4m"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_spin",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D86-29865B26",
+              "uuid": "SKIL-20260604081946-00008E--48728D5",
               "id": "spear_dragon",
               "name": "Dragon Strike",
               "description": "Charged thrust with fire damage",
@@ -3451,10 +4464,17 @@
                 "Burn 5s",
                 "Pierce"
               ],
-              "originalIcon": "/icons/pack/misc/Fires.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_dragon",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D87-EEEA9862",
+              "uuid": "SKIL-20260604081946-00008F-7594C858",
               "id": "spear_phantom",
               "name": "Phantom Lance",
               "description": "Create spectral spear copies",
@@ -3473,7 +4493,15 @@
                 "Homing",
                 "Pierce"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_phantom",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -3483,7 +4511,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D88-D5F116CF",
+              "uuid": "SKIL-20260604081946-000090--77D1ACE",
               "id": "spear_storm",
               "name": "Storm of Spears",
               "description": "Rain spectral spears on area",
@@ -3502,10 +4530,18 @@
                 "5s Rain",
                 "Slow 60%"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_35.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_rain",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D89-4178E719",
+              "uuid": "SKIL-20260604081946-000091-7EEE4E5B",
               "id": "spear_dragontail",
               "name": "Dragontail Sweep",
               "description": "360° sweep launching into air combo",
@@ -3524,428 +4560,436 @@
                 "Knockup 3s",
                 "Air Combo"
               ],
-              "originalIcon": "/icons/pack/weapons/Spear_40.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spear_ultimate",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D7D-7AFA83B3"
+      "uuid": "ITEM-20260617011921-000D7D-DC83EFD3"
     },
     {
       "id": "TOME",
       "name": "Tome",
-      "icon": "/icons/weapons/tomes/arcane-tome.png",
-      "classes": [],
-      "mechanic": {
-        "description": "Offhand tome. Hold RMB to access tome skills on slots 1-3. Ability slot (3) changes based on mainhand weapon type.",
-        "inputMode": "rmb_hold",
-        "abilityDependsOn": "mainhand",
-        "validMainhands": [
-          "SWORD",
-          "MACE",
-          "AXE",
-          "DAGGER",
-          "HAMMER",
-          "GUN"
-        ],
-        "tomeElements": [
-          "fire",
-          "frost",
-          "lightning",
-          "nature",
-          "arcane",
-          "holy"
-        ]
-      },
-      "tomeIcons": {
-        "fire": "/icons/weapons/tomes/fire-tome.png",
-        "frost": "/icons/weapons/tomes/frost-tome.png",
-        "lightning": "/icons/weapons/tomes/lightning-tome.png",
-        "nature": "/icons/weapons/tomes/nature-tome.png",
-        "arcane": "/icons/weapons/tomes/arcane-tome.png"
-      },
-      "totalSkills": 16,
+      "icon": "/icons/pack/weapons/Book_1.png",
+      "classes": [
+        "Mage"
+      ],
+      "classification": "standard",
+      "totalSkills": 13,
       "slots": [
         {
           "type": "primary",
-          "label": "PRIMARY (RMB+1)",
+          "label": "PRIMARY",
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260604210130-000000-71313453",
+              "uuid": "SKIL-20260604081946-000092--79CECF9",
               "id": "tome_arcane_bolt",
               "name": "Arcane Bolt",
-              "description": "Channel arcane energy through the tome. Hold RMB + press 1.",
-              "icon": "/icons/weapons/tomes/arcane-tome.png",
+              "description": "Homing arcane projectile",
+              "icon": "/icons/pack/weapons/Book_1.png",
               "tier": 1,
-              "damage": 35,
+              "damage": 45,
               "cooldown": 0,
-              "castTime": null,
-              "range": 20,
-              "projectile": null,
+              "castTime": 0.5,
+              "range": 25,
+              "projectile": "spell",
               "damageType": "arcane",
-              "animation": null,
+              "animation": "cast_bolt",
               "physics": null,
               "effects": [
-                "Ranged projectile"
+                "Homing",
+                "Range 25m"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_bolt",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260604210130-000001-0B9873A5",
-              "id": "tome_elemental_blast",
+              "uuid": "SKIL-20260604081946-000093--38DAE94",
+              "id": "tome_elemental",
               "name": "Elemental Blast",
-              "description": "Releases a burst matching the tome's element. Hold RMB + press 1.",
-              "icon": "/icons/weapons/tomes/fire-tome.png",
+              "description": "Charged elemental projectile",
+              "icon": "/icons/pack/weapons/Book_5.png",
               "tier": 2,
-              "damage": 50,
+              "damage": 65,
               "cooldown": 2,
-              "castTime": null,
-              "range": 18,
-              "projectile": null,
-              "damageType": "fire",
-              "animation": null,
+              "castTime": 0.8,
+              "range": 20,
+              "projectile": "spell",
+              "damageType": "arcane",
+              "animation": "cast_charge",
               "physics": null,
               "effects": [
-                "AoE 3m",
-                "Element match"
+                "AoE 3m on Impact",
+                "Element Varies"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/fire-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_charge",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260604210130-000002-964BCDD9",
+              "uuid": "SKIL-20260604081946-000094--337C7AC",
               "id": "tome_spirit_surge",
               "name": "Spirit Surge",
-              "description": "Summons a wave of spiritual energy. Hold RMB + press 1.",
-              "icon": "/icons/weapons/tomes/arcane-tome.png",
+              "description": "Channel spirits from tome pages",
+              "icon": "/icons/pack/weapons/Book_10.png",
               "tier": 3,
-              "damage": 45,
-              "cooldown": 3,
-              "castTime": null,
-              "range": 22,
-              "projectile": null,
+              "damage": 55,
+              "cooldown": 4,
+              "castTime": 0.6,
+              "range": 15,
+              "projectile": "spell",
               "damageType": "holy",
-              "animation": null,
+              "animation": "cast_channel",
               "physics": null,
               "effects": [
-                "Pierce 2 targets"
+                "Heal Allies 30",
+                "DMG Enemies 55"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_channel",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
         {
           "type": "secondary",
-          "label": "SECONDARY (RMB+2)",
+          "label": "SECONDARY",
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260604210130-000003-1C99CDD0",
+              "uuid": "SKIL-20260604081946-000095-05CA6AEB",
               "id": "tome_mana_shield",
               "name": "Mana Shield",
-              "description": "Conjure a protective barrier that absorbs damage. Hold RMB + press 2.",
-              "icon": "/icons/weapons/tomes/frost-tome.png",
+              "description": "Convert mana to damage absorption",
+              "icon": "/icons/pack/weapons/Book_15.png",
               "tier": 1,
               "damage": 0,
               "cooldown": 15,
-              "castTime": null,
-              "range": null,
+              "castTime": 0.3,
+              "range": 0,
               "projectile": null,
               "damageType": "arcane",
-              "animation": null,
+              "animation": "cast_shield",
               "physics": null,
               "effects": [
-                "Shield 200 HP 6s"
+                "Absorb 300",
+                "Drains Mana"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/frost-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_shield",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260604210130-000004-E6D30A94",
+              "uuid": "SKIL-20260604081946-000096--1FFF17D",
               "id": "tome_runic_ward",
               "name": "Runic Ward",
-              "description": "Place a runic circle that heals allies inside. Hold RMB + press 2.",
-              "icon": "/icons/weapons/tomes/nature-tome.png",
+              "description": "Place ward that heals allies in zone",
+              "icon": "/icons/pack/misc/runic_tablet_03.png",
               "tier": 2,
-              "damage": -60,
+              "damage": -50,
               "cooldown": 18,
-              "castTime": null,
-              "range": 8,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "AoE Heal 6s",
-                "Ground target"
-              ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/nature-tome.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000005-A09E2CD3",
-              "id": "tome_knowledge_drain",
-              "name": "Knowledge Drain",
-              "description": "Drain mana and intelligence from target. Hold RMB + press 2.",
-              "icon": "/icons/weapons/tomes/arcane-tome.png",
-              "tier": 3,
-              "damage": 30,
-              "cooldown": 12,
-              "castTime": null,
-              "range": 15,
-              "projectile": null,
-              "damageType": "arcane",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Mana drain 50",
-                "-10% spell power 4s"
-              ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/arcane-tome.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000006-B5A1FF7D",
-              "id": "tome_frost_prison",
-              "name": "Frost Prison",
-              "description": "Encase target in ice. Hold RMB + press 2.",
-              "icon": "/icons/weapons/tomes/frost-tome.png",
-              "tier": 4,
-              "damage": 20,
-              "cooldown": 20,
-              "castTime": null,
-              "range": 18,
-              "projectile": null,
-              "damageType": "frost",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Root 3s",
-                "Slow 50% 4s after"
-              ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/frost-tome.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000007-7691AE21",
-              "id": "tome_thunderstorm",
-              "name": "Thunderstorm",
-              "description": "Call down lightning around you. Hold RMB + press 2.",
-              "icon": "/icons/weapons/tomes/lightning-tome.png",
-              "tier": 5,
-              "damage": 80,
-              "cooldown": 25,
-              "castTime": null,
+              "castTime": 0.8,
               "range": 12,
               "projectile": null,
-              "damageType": "lightning",
-              "animation": null,
+              "damageType": "holy",
+              "animation": "cast_ward",
               "physics": null,
               "effects": [
-                "AoE 8m",
-                "Stun 1s"
+                "Heal Zone 6m",
+                "10s Duration"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/lightning-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_ward",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-000097-30E4C434",
+              "id": "tome_knowledge_drain",
+              "name": "Knowledge Drain",
+              "description": "Steal mana and buff from target",
+              "icon": "/icons/pack/weapons/Book_20.png",
+              "tier": 3,
+              "damage": 40,
+              "cooldown": 12,
+              "castTime": 0.6,
+              "range": 15,
+              "projectile": "spell",
+              "damageType": "shadow",
+              "animation": "cast_drain",
+              "physics": null,
+              "effects": [
+                "Steal 1 Buff",
+                "Mana Drain 50"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_drain",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
         {
           "type": "ability",
-          "label": "ABILITY (Mainhand Combo)",
+          "label": "ABILITY",
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260604210130-000008-919B1F00",
-              "id": "tome_sword_riposte",
-              "name": "Arcane Riposte",
-              "description": "Parry with sword then counter with a spell blast. Requires: Sword mainhand.",
-              "icon": "/icons/pack/weapons/Sword_01.png",
-              "tier": 1,
-              "damage": 65,
-              "cooldown": 8,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical;arcane",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Parry 0.5s",
-                "Counter spell blast"
-              ],
-              "mainhandReq": "SWORD",
-              "originalIcon": "/icons/pack/weapons/Sword_01.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000009-1FD9150A",
-              "id": "tome_mace_smite",
-              "name": "Holy Smite",
-              "description": "Smash with mace channeling tome power. Requires: Mace mainhand.",
-              "icon": "/icons/pack/weapons/Hammer_01.png",
-              "tier": 1,
-              "damage": 70,
-              "cooldown": 8,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Stun 1s",
-                "Holy damage splash"
-              ],
-              "mainhandReq": "MACE",
-              "originalIcon": "/icons/pack/weapons/Hammer_01.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000010-4CF0626E",
-              "id": "tome_axe_rend",
-              "name": "Runic Rend",
-              "description": "Axe strike leaves a runic bleed. Requires: Axe mainhand.",
-              "icon": "/icons/pack/weapons/Axe_01.png",
-              "tier": 1,
-              "damage": 55,
-              "cooldown": 8,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical;arcane",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Bleed 6s",
-                "Runic amplify +20% spell dmg 4s"
-              ],
-              "mainhandReq": "AXE",
-              "originalIcon": "/icons/pack/weapons/Axe_01.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000011-BF017813",
-              "id": "tome_dagger_blink",
-              "name": "Shadow Step",
-              "description": "Blink behind target and backstab with dagger. Requires: Dagger mainhand.",
-              "icon": "/icons/pack/weapons/Dagger_01.png",
-              "tier": 1,
-              "damage": 80,
-              "cooldown": 10,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "Teleport behind",
-                "Crit guaranteed"
-              ],
-              "mainhandReq": "DAGGER",
-              "originalIcon": "/icons/pack/weapons/Dagger_01.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000012-1F245408",
-              "id": "tome_hammer_quake",
-              "name": "Arcane Quake",
-              "description": "Slam hammer into ground releasing tome energy. Requires: Hammer mainhand.",
-              "icon": "/icons/pack/weapons/Hammer_02.png",
+              "uuid": "SKIL-20260604081946-000098-0EAA5664",
+              "id": "tome_grimoire",
+              "name": "Grimoire Burst",
+              "description": "Open tome, release stored energy",
+              "icon": "/icons/pack/weapons/Book_7.png",
               "tier": 1,
               "damage": 90,
-              "cooldown": 12,
-              "castTime": null,
-              "range": null,
-              "projectile": null,
-              "damageType": "physical;arcane",
-              "animation": null,
-              "physics": null,
+              "cooldown": 14,
+              "castTime": 0.5,
+              "range": 8,
+              "projectile": "spell",
+              "damageType": "arcane",
+              "animation": "cast_burst",
+              "physics": "knockback",
               "effects": [
-                "AoE 6m",
-                "Knockdown 1.5s"
+                "AoE 8m",
+                "Knockback 4m"
               ],
-              "mainhandReq": "HAMMER",
-              "originalIcon": "/icons/pack/weapons/Hammer_02.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_burst",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260604210130-000013-162840F7",
-              "id": "tome_pistol_imbue",
-              "name": "Imbued Shot",
-              "description": "Fire a pistol round charged with tome magic. Requires: Pistol mainhand.",
-              "icon": "/icons/pack/weapons/Gun_01.png",
-              "tier": 1,
-              "damage": 75,
-              "cooldown": 8,
-              "castTime": null,
-              "range": 25,
-              "projectile": null,
-              "damageType": "fire;arcane",
-              "animation": null,
+              "uuid": "SKIL-20260604081946-000099--61B3967",
+              "id": "tome_forbidden",
+              "name": "Forbidden Page",
+              "description": "Read forbidden text, massive DoT",
+              "icon": "/icons/pack/weapons/Book_12.png",
+              "tier": 2,
+              "damage": 120,
+              "cooldown": 16,
+              "castTime": 1,
+              "range": 15,
+              "projectile": "spell",
+              "damageType": "shadow",
+              "animation": "cast_dark",
               "physics": null,
               "effects": [
-                "Ranged 25m",
-                "Pierce armor 30%"
+                "Shadow DoT 8s",
+                "Self-Damage 5%"
               ],
-              "mainhandReq": "GUN",
-              "originalIcon": "/icons/pack/weapons/Gun_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_dark",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-00009A-6008F981",
+              "id": "tome_soul_bind",
+              "name": "Soul Bind",
+              "description": "Link to target, share damage taken",
+              "icon": "/icons/pack/misc/Life.png",
+              "tier": 3,
+              "damage": 0,
+              "cooldown": 20,
+              "castTime": 0.5,
+              "range": 20,
+              "projectile": "spell",
+              "damageType": "shadow",
+              "animation": "cast_link",
+              "physics": "root",
+              "effects": [
+                "Share 50% DMG 6s",
+                "Root Both 1s"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_link",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-00009B-4A8D2B32",
+              "id": "tome_reality_tear",
+              "name": "Reality Tear",
+              "description": "Tear space, creating void zone",
+              "icon": "/icons/pack/misc/ChaosCircle.png",
+              "tier": 4,
+              "damage": 80,
+              "cooldown": 22,
+              "castTime": 1.2,
+              "range": 15,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "cast_void",
+              "physics": "pull",
+              "effects": [
+                "Void Zone 5m",
+                "Pull",
+                "DoT 6s"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_void",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-00009C--1B39A9F",
+              "id": "tome_ancient",
+              "name": "Ancient Knowledge",
+              "description": "Buff all allies with stats",
+              "icon": "/icons/pack/weapons/Book_25.png",
+              "tier": 5,
+              "damage": 0,
+              "cooldown": 30,
+              "castTime": 1,
+              "range": 12,
+              "projectile": null,
+              "damageType": "holy",
+              "animation": "cast_buff",
+              "physics": null,
+              "effects": [
+                "+15% All Stats",
+                "10s",
+                "AoE 12m"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_buff",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
         {
           "type": "ultimate",
-          "label": "ULTIMATE (RMB+4)",
+          "label": "ULTIMATE",
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260604210130-000014-B602EF34",
+              "uuid": "SKIL-20260604081946-00009D-2A4603E0",
               "id": "tome_apocalypse",
               "name": "Apocalypse Tome",
-              "description": "Unleash all pages — massive AoE elemental storm. Hold RMB + press 4.",
-              "icon": "/icons/weapons/tomes/fire-tome.png",
+              "description": "Unleash all pages, massive AoE",
+              "icon": "/icons/pack/weapons/Book_22.png",
               "tier": 1,
-              "damage": 200,
-              "cooldown": 60,
+              "damage": 250,
+              "cooldown": 55,
+              "castTime": 1.5,
+              "range": 12,
+              "projectile": "spell",
+              "damageType": "arcane",
+              "animation": "cast_ultimate",
+              "physics": "knockup",
+              "effects": [
+                "AoE 12m",
+                "Multi-Element",
+                "Knockup 2s"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_ultimate",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-00009E--2540A87",
+              "id": "tome_genesis",
+              "name": "Genesis",
+              "description": "Rewrite reality, full heal allies",
+              "icon": "/icons/pack/misc/Lights.png",
+              "tier": 4,
+              "damage": -500,
+              "cooldown": 120,
               "castTime": 2,
               "range": 15,
               "projectile": null,
-              "damageType": "arcane",
-              "animation": null,
-              "physics": null,
-              "effects": [
-                "AoE 15m",
-                "All elements",
-                "5s channel"
-              ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/fire-tome.png"
-            },
-            {
-              "uuid": "SKIL-20260604210130-000015-8ED3D67E",
-              "id": "tome_genesis",
-              "name": "Genesis",
-              "description": "Rewrite reality — full party heal + damage immunity 3s. Hold RMB + press 4.",
-              "icon": "/icons/weapons/tomes/nature-tome.png",
-              "tier": 4,
-              "damage": -300,
-              "cooldown": 90,
-              "castTime": 1.5,
-              "range": null,
-              "projectile": null,
               "damageType": "holy",
-              "animation": null,
+              "animation": "cast_divine",
               "physics": null,
               "effects": [
-                "Party heal",
-                "Immunity 3s",
-                "Purge all debuffs"
+                "Full Heal Allies",
+                "Cleanse All",
+                "AoE 15m"
               ],
-              "mainhandReq": null,
-              "originalIcon": "/icons/weapons/tomes/nature-tome.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_divine",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
-      ]
+      ],
+      "uuid": "ITEM-20260617011921-000D8A-74229518"
     },
     {
       "id": "MACE",
@@ -3955,6 +4999,7 @@
         "Mage",
         "Worge"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -3963,7 +5008,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D99-B786A320",
+              "uuid": "SKIL-20260604081946-00009F--46217A7",
               "id": "mace_holy_strike",
               "name": "Holy Strike",
               "description": "Mace hit infused with holy energy",
@@ -3981,10 +5026,17 @@
                 "Holy DMG",
                 "Builds Devotion"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_21.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "1h_mace_swing",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D9A-03C8B78F",
+              "uuid": "SKIL-20260604081946-0000A0-023C7F92",
               "id": "mace_crushing",
               "name": "Crushing Blow",
               "description": "Overhead smash, stuns briefly",
@@ -4002,10 +5054,17 @@
                 "Stun 1s",
                 "-20% Armor 4s"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_23.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "1h_mace_overhead",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D9B-8550EE13",
+              "uuid": "SKIL-20260604081946-0000A1-0881A21F",
               "id": "mace_judgement",
               "name": "Judgement Smite",
               "description": "Holy-empowered strike with splash",
@@ -4023,7 +5082,14 @@
                 "Holy Splash 3m",
                 "Heal Self 20"
               ],
-              "originalIcon": "/icons/pack/weapons/Hammer_25.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "1h_mace_smite",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4033,7 +5099,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D9C-989761A4",
+              "uuid": "SKIL-20260604081946-0000A2-135CA2AA",
               "id": "mace_sanctify",
               "name": "Sanctify",
               "description": "Bless ground, heal allies in zone",
@@ -4051,10 +5117,17 @@
                 "Heal Zone 6m",
                 "6s Duration"
               ],
-              "originalIcon": "/icons/pack/misc/Lights.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_ground",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D9D-28D2A2AF",
+              "uuid": "SKIL-20260604081946-0000A3-7A5A25E6",
               "id": "mace_divine_rush",
               "name": "Divine Rush",
               "description": "Dash empowered with holy energy",
@@ -4073,10 +5146,17 @@
                 "Knockback 3m",
                 "Heal 30"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "1h_charge",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000D9E-7DD7D19F",
+              "uuid": "SKIL-20260604081946-0000A4-0319EFD8",
               "id": "mace_consecrate",
               "name": "Consecrate",
               "description": "Create holy ground damaging undead",
@@ -4095,7 +5175,14 @@
                 "2x vs Undead",
                 "8s"
               ],
-              "originalIcon": "/icons/pack/misc/Life.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_consecrate",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4105,7 +5192,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000D9F-C789E2A2",
+              "uuid": "SKIL-20260604081946-0000A5--4E5D13A",
               "id": "mace_smite",
               "name": "Smite",
               "description": "Call down holy bolt on target",
@@ -4123,10 +5210,18 @@
                 "Range 20m",
                 "Stun 1s"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_smite",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA0-26D5E468",
+              "uuid": "SKIL-20260604081946-0000A6--7B16F21",
               "id": "mace_holy_ground",
               "name": "Holy Ground",
               "description": "Create persistent heal/damage zone",
@@ -4145,10 +5240,17 @@
                 "DMG Enemies 50/s",
                 "8s"
               ],
-              "originalIcon": "/icons/pack/misc/NautreLight.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_zone",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA1-6E60E331",
+              "uuid": "SKIL-20260604081946-0000A7-61110970",
               "id": "mace_purify",
               "name": "Purifying Light",
               "description": "Cleanse debuffs and heal burst",
@@ -4167,10 +5269,17 @@
                 "Heal 100",
                 "AoE 10m"
               ],
-              "originalIcon": "/icons/pack/misc/Glow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_cleanse",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA2-B318BAC0",
+              "uuid": "SKIL-20260604081946-0000A8--1367BDB",
               "id": "mace_retribution",
               "name": "Retribution",
               "description": "Store damage taken, release as holy burst",
@@ -4189,7 +5298,14 @@
                 "AoE 6m",
                 "Knockback"
               ],
-              "originalIcon": "/icons/pack/misc/Effect.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "1h_mace_burst",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4199,7 +5315,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DA3-B0F445F4",
+              "uuid": "SKIL-20260604081946-0000A9--5C12A52",
               "id": "mace_divine_wrath",
               "name": "Divine Wrath",
               "description": "Massive holy explosion",
@@ -4218,10 +5334,17 @@
                 "Knockup 2s",
                 "Heal Allies Full"
               ],
-              "originalIcon": "/icons/pack/misc/Lights.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_divine_wrath",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA4-46B03F2D",
+              "uuid": "SKIL-20260604081946-0000AA--413786B",
               "id": "mace_armageddon",
               "name": "Armageddon",
               "description": "Rain holy fire from sky",
@@ -4240,12 +5363,20 @@
                 "Holy Fire 8s",
                 "6s Rain"
               ],
-              "originalIcon": "/icons/pack/misc/Lava.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_armageddon",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000D98-DD11F59A"
+      "uuid": "ITEM-20260617011921-000D98-E5D3C354"
     },
     {
       "id": "WAND",
@@ -4254,6 +5385,7 @@
       "classes": [
         "Mage"
       ],
+      "classification": "standard",
       "totalSkills": 13,
       "slots": [
         {
@@ -4262,7 +5394,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DA6-36F8064C",
+              "uuid": "SKIL-20260604081946-0000AB-7ACC17A5",
               "id": "wand_missile",
               "name": "Magic Missile",
               "description": "3 homing arcane bolts",
@@ -4281,10 +5413,18 @@
                 "Homing",
                 "Range 25m"
               ],
-              "originalIcon": "/icons/pack/weapons/staff_34.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_cast",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA7-89861B3E",
+              "uuid": "SKIL-20260604081946-0000AC-084E2282",
               "id": "wand_pulse",
               "name": "Arcane Pulse",
               "description": "Charged pulse with AoE splash",
@@ -4302,10 +5442,18 @@
                 "AoE 3m Splash",
                 "Mana Efficient"
               ],
-              "originalIcon": "/icons/pack/weapons/staff_46.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_charge",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DA8-AEA75AC6",
+              "uuid": "SKIL-20260604081946-0000AD--19F7ED4",
               "id": "wand_void_bolt",
               "name": "Void Bolt",
               "description": "Shadow bolt that silences",
@@ -4323,7 +5471,15 @@
                 "Silence 2s",
                 "Shadow DMG"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_dark",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4333,7 +5489,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DA9-392F88F6",
+              "uuid": "SKIL-20260604081946-0000AE-5F9B08F7",
               "id": "wand_blink",
               "name": "Blink",
               "description": "Instant teleport to target location",
@@ -4351,10 +5507,17 @@
                 "Teleport 15m",
                 "Invulnerable 0.5s"
               ],
-              "originalIcon": "/icons/pack/misc/Flow.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "blink",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DAA-0979DD32",
+              "uuid": "SKIL-20260604081946-0000AF-1C644FB1",
               "id": "wand_barrier",
               "name": "Arcane Barrier",
               "description": "Create damage absorption shield",
@@ -4372,10 +5535,17 @@
                 "Absorb 400",
                 "Reflects 15%"
               ],
-              "originalIcon": "/icons/pack/misc/CircleE.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_shield",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DAB-5D92CF2C",
+              "uuid": "SKIL-20260604081946-0000B0--11ABBDB",
               "id": "wand_time_warp",
               "name": "Time Warp",
               "description": "Slow time in zone, speed allies",
@@ -4394,7 +5564,14 @@
                 "Allies +30% Speed",
                 "6s"
               ],
-              "originalIcon": "/icons/pack/misc/Electro.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_time",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4404,7 +5581,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DAC-03B814F0",
+              "uuid": "SKIL-20260604081946-0000B1--79CCD3D",
               "id": "wand_chain",
               "name": "Chain Lightning",
               "description": "Lightning bouncing between enemies",
@@ -4422,10 +5599,18 @@
                 "Bounces x5",
                 "-15% per Bounce"
               ],
-              "originalIcon": "/icons/pack/misc/Lighting.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_lightning",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DAD-6A208CCA",
+              "uuid": "SKIL-20260604081946-0000B2--2364746",
               "id": "wand_polymorph",
               "name": "Polymorph",
               "description": "Turn enemy into harmless creature",
@@ -4443,10 +5628,18 @@
                 "Disable 4s",
                 "Breaks on DMG"
               ],
-              "originalIcon": "/icons/pack/misc/Naturecircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_transform",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DAE-3382A142",
+              "uuid": "SKIL-20260604081946-0000B3--442198A",
               "id": "wand_gravity",
               "name": "Gravity Well",
               "description": "Create vortex pulling enemies",
@@ -4465,10 +5658,17 @@
                 "DoT 5s",
                 "AoE 6m"
               ],
-              "originalIcon": "/icons/pack/misc/ChaosCircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_vortex",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DAF-3420AFE0",
+              "uuid": "SKIL-20260604081946-0000B4-59FE104A",
               "id": "wand_disintegrate",
               "name": "Disintegrate",
               "description": "Channeled beam, massive single-target",
@@ -4487,10 +5687,18 @@
                 "Beam",
                 "Armor Melt"
               ],
-              "originalIcon": "/icons/pack/misc/CircleL.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "wand_beam",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB0-0BBC6769",
+              "uuid": "SKIL-20260604081946-0000B5-4E2489AD",
               "id": "wand_arcane_explosion",
               "name": "Arcane Explosion",
               "description": "Instant AoE burst around caster",
@@ -4509,7 +5717,14 @@
                 "AoE 6m",
                 "Knockback 4m"
               ],
-              "originalIcon": "/icons/pack/misc/CircleE.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_explosion",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4519,7 +5734,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DB1-9C82C1D1",
+              "uuid": "SKIL-20260604081946-0000B6-06A56DF3",
               "id": "wand_meteor_shower",
               "name": "Meteor Shower",
               "description": "Rain meteors on large area",
@@ -4538,10 +5753,18 @@
                 "6s Duration",
                 "Burn 8s"
               ],
-              "originalIcon": "/icons/pack/misc/Lava.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_meteor",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB2-1C1090E6",
+              "uuid": "SKIL-20260604081946-0000B7--7914383",
               "id": "wand_singularity",
               "name": "Void Singularity",
               "description": "Black hole pulling all, then explodes",
@@ -4560,12 +5783,19 @@
                 "3s Charge",
                 "Explode"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_void",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000DA5-F8E86177"
+      "uuid": "ITEM-20260617011921-000DA5-FAC77DCD"
     },
     {
       "id": "OFFHAND_RELIC",
@@ -4575,6 +5805,7 @@
         "Mage",
         "Worge"
       ],
+      "classification": "standard",
       "totalSkills": 12,
       "slots": [
         {
@@ -4583,7 +5814,7 @@
           "unlockTier": 1,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DB4-5F847660",
+              "uuid": "SKIL-20260604081946-0000B8--4D4AA28",
               "id": "relic_spirit_touch",
               "name": "Spirit Touch",
               "description": "Channel spirit energy at target",
@@ -4601,10 +5832,18 @@
                 "Spirit DMG",
                 "Builds Charge"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_01.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_cast",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB5-93313D1A",
+              "uuid": "SKIL-20260604081946-0000B9-658E2684",
               "id": "relic_runic_pulse",
               "name": "Runic Pulse",
               "description": "Emit runic energy wave",
@@ -4622,10 +5861,18 @@
                 "Cone Wave",
                 "Mana Return 10"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_03.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_pulse",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB6-6914BB59",
+              "uuid": "SKIL-20260604081946-0000BA--446E00E",
               "id": "relic_essence_drain",
               "name": "Essence Drain",
               "description": "Drain life force from target",
@@ -4643,7 +5890,15 @@
                 "Lifesteal 50%",
                 "Mana Drain 20"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_05.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_drain",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4653,7 +5908,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DB7-4B3B36E5",
+              "uuid": "SKIL-20260604081946-0000BB-2355630D",
               "id": "relic_mystic_shield",
               "name": "Mystic Shield",
               "description": "Create ward absorbing spell damage",
@@ -4671,10 +5926,17 @@
                 "Absorb 350 Spell DMG",
                 "8s"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_07.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_shield",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB8-C4E8A6F9",
+              "uuid": "SKIL-20260604081946-0000BC--56F000E",
               "id": "relic_soul_link",
               "name": "Soul Link",
               "description": "Link to ally, share healing",
@@ -4693,10 +5955,17 @@
                 "Range 20m",
                 "10s"
               ],
-              "originalIcon": "/icons/pack/misc/Life.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_link",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DB9-5AAF9766",
+              "uuid": "SKIL-20260604081946-0000BD-4179BA1C",
               "id": "relic_spirit_walk",
               "name": "Spirit Walk",
               "description": "Become ethereal, pass through enemies",
@@ -4715,7 +5984,14 @@
                 "Immune to Physical",
                 "+40% Speed"
               ],
-              "originalIcon": "/icons/pack/misc/smoke.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "spirit_walk",
+                "soundRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4725,7 +6001,7 @@
           "unlockTier": 2,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DBA-0C97D126",
+              "uuid": "SKIL-20260604081946-0000BE--3069556",
               "id": "relic_curse",
               "name": "Curse of Weakness",
               "description": "Reduce target damage output",
@@ -4743,10 +6019,18 @@
                 "-30% DMG 8s",
                 "Range 20m"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_08.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_curse",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DBB-85C58AEC",
+              "uuid": "SKIL-20260604081946-0000BF--44F8D4B",
               "id": "relic_hex",
               "name": "Hex",
               "description": "Transform enemy, reducing stats",
@@ -4764,10 +6048,18 @@
                 "Disable Abilities 3s",
                 "-25% All Stats"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_09.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_hex",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DBC-DD7C6A82",
+              "uuid": "SKIL-20260604081946-0000C0-55EEF80B",
               "id": "relic_soul_leech",
               "name": "Soul Leech",
               "description": "AoE drain around caster",
@@ -4785,10 +6077,17 @@
                 "AoE 6m",
                 "Heal 100% of DMG"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_10.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_leech",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DBD-59A53DE1",
+              "uuid": "SKIL-20260604081946-0000C1--7AB76C0",
               "id": "relic_doom",
               "name": "Doom",
               "description": "Mark target, explodes after delay",
@@ -4807,7 +6106,15 @@
                 "AoE 5m on Explode",
                 "Knockback"
               ],
-              "originalIcon": "/icons/pack/misc/runic_tablet_12.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_doom",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         },
@@ -4817,7 +6124,7 @@
           "unlockTier": 3,
           "skills": [
             {
-              "uuid": "SKIL-20260531030243-000DBE-46D17582",
+              "uuid": "SKIL-20260604081946-0000C2-22687B34",
               "id": "relic_banshee",
               "name": "Banshee's Wail",
               "description": "Spectral scream, fear + massive DoT",
@@ -4836,10 +6143,17 @@
                 "Shadow DoT 8s",
                 "AoE 10m"
               ],
-              "originalIcon": "/icons/pack/misc/Chaos.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_scream",
+                "soundRef": null,
+                "cameraShake": null
+              }
             },
             {
-              "uuid": "SKIL-20260531030243-000DBF-66C47D9B",
+              "uuid": "SKIL-20260604081946-0000C3--7DD0C9C",
               "id": "relic_soul_storm",
               "name": "Soul Storm",
               "description": "Unleash captured souls as projectiles",
@@ -4858,12 +6172,406 @@
                 "Homing",
                 "Heal per Hit"
               ],
-              "originalIcon": "/icons/pack/misc/ChaosCircle.png"
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "offhand_ultimate",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
             }
           ]
         }
       ],
-      "uuid": "ITEM-20260531030243-000DB3-CAA8B1F7"
+      "uuid": "ITEM-20260617011921-000DB3-45D410E7"
+    },
+    {
+      "id": "SCYTHE",
+      "name": "Scythe",
+      "icon": "/icons/pack/weapons/Scythe_01.png",
+      "classes": [
+        "Worge",
+        "Warrior"
+      ],
+      "classification": "standard",
+      "totalSkills": 12,
+      "slots": [
+        {
+          "type": "primary",
+          "label": "PRIMARY",
+          "unlockTier": 1,
+          "skills": [
+            {
+              "uuid": "SKIL-20260604081946-0000C4--4D34EBA",
+              "id": "scythe_reap",
+              "name": "Reaping Slash",
+              "description": "Wide sweeping arc, builds Soul stacks",
+              "icon": "/icons/pack/weapons/Scythe_01.png",
+              "tier": 1,
+              "damage": 50,
+              "cooldown": 0,
+              "castTime": 0.4,
+              "range": 3,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_slash",
+              "physics": null,
+              "effects": [
+                "270° Arc",
+                "Builds Soul Stack"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_slash",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000C5--34B676B",
+              "id": "scythe_harvest",
+              "name": "Soul Harvest",
+              "description": "Consume souls for burst damage",
+              "icon": "/icons/pack/weapons/Scythe_03.png",
+              "tier": 2,
+              "damage": 70,
+              "cooldown": 3,
+              "castTime": 0.3,
+              "range": 3,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_harvest",
+              "physics": null,
+              "effects": [
+                "+20 DMG per Soul",
+                "Consume Stacks"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_harvest",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000C6--15EED4B",
+              "id": "scythe_embrace",
+              "name": "Death's Embrace",
+              "description": "Pull target in, heavy hit",
+              "icon": "/icons/pack/weapons/Scythe_05.png",
+              "tier": 3,
+              "damage": 65,
+              "cooldown": 5,
+              "castTime": 0.3,
+              "range": 8,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_pull",
+              "physics": "pull",
+              "effects": [
+                "Pull 8m",
+                "Root 1s"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_pull",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "secondary",
+          "label": "SECONDARY",
+          "unlockTier": 2,
+          "skills": [
+            {
+              "uuid": "SKIL-20260604081946-0000C7--1452537",
+              "id": "scythe_shadow_step",
+              "name": "Shadow Step",
+              "description": "Teleport behind target",
+              "icon": "/icons/pack/misc/smoke.png",
+              "tier": 1,
+              "damage": 40,
+              "cooldown": 10,
+              "castTime": 0,
+              "range": 12,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "shadow_step",
+              "physics": null,
+              "effects": [
+                "Teleport Behind",
+                "+30% Next Hit"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "shadow_step",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000C8-3C427589",
+              "id": "scythe_life_drain",
+              "name": "Life Drain",
+              "description": "Channeled drain, heals self",
+              "icon": "/icons/pack/misc/Life.png",
+              "tier": 2,
+              "damage": 80,
+              "cooldown": 12,
+              "castTime": 0,
+              "range": 10,
+              "projectile": "beam",
+              "damageType": "shadow",
+              "animation": "scythe_drain",
+              "physics": null,
+              "effects": [
+                "Channel 3s",
+                "Heal 100% of DMG"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_drain",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000C9-21E87A14",
+              "id": "scythe_chains",
+              "name": "Spectral Chains",
+              "description": "Root multiple targets in area",
+              "icon": "/icons/pack/misc/ChaosCircle.png",
+              "tier": 3,
+              "damage": 30,
+              "cooldown": 15,
+              "castTime": 0.5,
+              "range": 8,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_chains",
+              "physics": "root",
+              "effects": [
+                "Root 3s",
+                "AoE 8m",
+                "Shadow DoT"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_chains",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "ability",
+          "label": "ABILITY",
+          "unlockTier": 2,
+          "skills": [
+            {
+              "uuid": "SKIL-20260604081946-0000CA-20046134",
+              "id": "scythe_spiral",
+              "name": "Death Spiral",
+              "description": "Spinning scythe AoE channel",
+              "icon": "/icons/pack/weapons/Scythe_06.png",
+              "tier": 1,
+              "damage": 100,
+              "cooldown": 14,
+              "castTime": 0,
+              "range": 4,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_spin",
+              "physics": null,
+              "effects": [
+                "Channel 3s",
+                "360° AoE",
+                "Lifesteal 20%"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_spin",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000CB-451A3044",
+              "id": "scythe_corpse",
+              "name": "Corpse Explosion",
+              "description": "Detonate nearby corpses for AoE",
+              "icon": "/icons/pack/misc/Burns.png",
+              "tier": 2,
+              "damage": 90,
+              "cooldown": 10,
+              "castTime": 0.3,
+              "range": 8,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "cast_explosion",
+              "physics": "knockback",
+              "effects": [
+                "Per Corpse +40 DMG",
+                "AoE 5m"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_explosion",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000CC-6CDB3F9F",
+              "id": "scythe_plague",
+              "name": "Plague Swarm",
+              "description": "Release disease cloud, spreading DoT",
+              "icon": "/icons/pack/misc/Naturecircle.png",
+              "tier": 3,
+              "damage": 60,
+              "cooldown": 16,
+              "castTime": 0.5,
+              "range": 10,
+              "projectile": null,
+              "damageType": "nature",
+              "animation": "cast_plague",
+              "physics": "slow",
+              "effects": [
+                "Spread on Contact",
+                "DoT 8s",
+                "Slow 30%"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "cast_plague",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000CD-6C16C917",
+              "id": "scythe_necrotic",
+              "name": "Necrotic Wave",
+              "description": "Send death wave forward",
+              "icon": "/icons/pack/misc/Chaos_2.png",
+              "tier": 4,
+              "damage": 120,
+              "cooldown": 18,
+              "castTime": 0.6,
+              "range": 12,
+              "projectile": "wave",
+              "damageType": "shadow",
+              "animation": "scythe_wave",
+              "physics": null,
+              "effects": [
+                "Line 12m",
+                "Heal Reduction 50%",
+                "Pierce"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_wave",
+                "soundRef": null,
+                "projectileRef": null,
+                "cameraShake": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "ultimate",
+          "label": "ULTIMATE",
+          "unlockTier": 3,
+          "skills": [
+            {
+              "uuid": "SKIL-20260604081946-0000CE--363736B",
+              "id": "scythe_grim_reaper",
+              "name": "Grim Reaper",
+              "description": "Transform into Death, AoE execute",
+              "icon": "/icons/pack/weapons/Scythe_07.png",
+              "tier": 1,
+              "damage": 200,
+              "cooldown": 55,
+              "castTime": 0.5,
+              "range": 8,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_ultimate",
+              "physics": null,
+              "effects": [
+                "Transform 8s",
+                "Execute <25%",
+                "+50% Speed"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_ultimate",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            },
+            {
+              "uuid": "SKIL-20260604081946-0000CF--5B07328",
+              "id": "scythe_apocalypse_harvest",
+              "name": "Apocalypse Harvest",
+              "description": "Mark all enemies, reap souls after delay",
+              "icon": "/icons/pack/misc/Chaos.png",
+              "tier": 4,
+              "damage": 300,
+              "cooldown": 75,
+              "castTime": 1,
+              "range": 15,
+              "projectile": null,
+              "damageType": "shadow",
+              "animation": "scythe_apocalypse",
+              "physics": null,
+              "effects": [
+                "Mark All 15m",
+                "3s Delay",
+                "Unavoidable"
+              ],
+              "prefab": {
+                "modelRef": null,
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": "scythe_apocalypse",
+                "soundRef": null,
+                "cameraShake": null
+              }
+            }
+          ]
+        }
+      ],
+      "uuid": "ITEM-20260617011921-000DC0-AE63F887"
     }
   ]
 }

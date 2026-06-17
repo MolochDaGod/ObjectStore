@@ -122,8 +122,21 @@ for (const item of masterItems.items || []) {
 }
 
 const recipeByResultId = new Map();
+const recipesByMaterialUuid = new Map();
 for (const r of masterRecipes.recipes || []) {
-  recipeByResultId.set(r.resultItemId, r);
+  if (r.resultItemId) recipeByResultId.set(r.resultItemId, r);
+  for (const m of r.materials || []) {
+    if (!m.uuid) continue;
+    if (!recipesByMaterialUuid.has(m.uuid)) recipesByMaterialUuid.set(m.uuid, []);
+    recipesByMaterialUuid.get(m.uuid).push(r.uuid);
+  }
+}
+
+function resolveIconUrl(url) {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  const path = url.startsWith('/') ? url : `/${url}`;
+  return `${CDN_ASSETS}${path}`;
 }
 
 // ── Enrich harvest nodes ──
@@ -131,15 +144,17 @@ const enrichedNodes = (harvestSource.nodes || []).map((node) => {
   const drops = (node.drops || []).map((drop) => {
     const matName = DROP_ITEM_MAP[drop.itemId] || drop.itemId;
     const mat = materialByName.get(normalizeName(matName));
-    const recipesUsing = (masterRecipes.recipes || []).filter((r) =>
+    const byUuid = mat?.uuid ? (recipesByMaterialUuid.get(mat.uuid) || []) : [];
+    const byName = (masterRecipes.recipes || []).filter((r) =>
       (r.materials || []).some((m) => normalizeName(m.name) === normalizeName(matName))
-    );
+    ).map((r) => r.uuid);
+    const recipeUuids = [...new Set([...byUuid, ...byName])];
     return {
       ...drop,
       materialName: matName,
       materialUuid: mat?.uuid || null,
-      iconUrl: mat?.iconUrl || null,
-      recipeUuids: recipesUsing.map((r) => r.uuid),
+      iconUrl: resolveIconUrl(mat?.iconUrl),
+      recipeUuids,
     };
   });
   const dropMaterials = [...new Set(drops.map((d) => d.materialName))];
@@ -167,6 +182,21 @@ const harvestOut = {
 };
 writeJson(join(API, 'master-harvest-nodes.json'), harvestOut);
 console.log(`  master-harvest-nodes.json — ${enrichedNodes.length} nodes`);
+
+// ── Backfill recipeUuid on master-items from merged recipes ──
+let recipeLinkFixes = 0;
+for (const item of masterItems.items || []) {
+  const recipe = recipeByResultId.get(item.uuid);
+  if (recipe && item.recipeUuid !== recipe.uuid) {
+    item.recipeUuid = recipe.uuid;
+    recipeLinkFixes++;
+  }
+}
+if (recipeLinkFixes) {
+  masterItems.generated = now;
+  writeJson(join(API, 'master-items.json'), masterItems);
+  console.log(`  master-items.json — ${recipeLinkFixes} recipeUuid links`);
+}
 
 // ── Fix master-items staff iconUrls before building staff-looks ──
 let staffIconFixes = 0;
@@ -264,13 +294,18 @@ const manifest = {
     materials: masterMaterials.totalMaterials || masterMaterials.materials?.length,
     harvestNodes: enrichedNodes.length,
     staffCategories: Object.keys(staffLooks.categories).length,
+    itemsWithRecipes: (masterItems.items || []).filter((i) => i.recipeUuid).length,
+    harvestDropsLinked: enrichedNodes.flatMap((n) => n.drops).filter((d) => d.materialUuid).length,
+    staffWithRecipes: Object.values(staffLooks.categories).flatMap((c) => c.items).filter((i) => i.recipeUuid).length,
   },
   graph: {
     harvestToMaterial: 'master-harvest-nodes.json → drops[].materialUuid',
     materialToRecipe: 'master-recipes.json → materials[].uuid',
     recipeToItem: 'master-recipes.json → resultItemId → master-items.json',
     itemToIcon: 'master-items.json → iconUrl | staff-looks.json → iconUrl',
+    staffToRecipe: 'staff-looks.json → recipeUuid → master-recipes.json',
   },
+  recipeSources: masterRecipes.sources || null,
   deprecated: {
     'items-database.json': 'Use master-items.json',
     'grudge-game-data-hub': 'Archived — do not use',
