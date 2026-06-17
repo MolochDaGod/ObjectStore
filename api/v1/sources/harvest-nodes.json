@@ -1,0 +1,188 @@
+{
+  "version": "1.0.0",
+  "source": "warlord-crafting-suite/shared/gameDefinitions/resourceNodes.ts",
+  "migratedTo": "ObjectStore/api/v1/master-harvest-nodes.json",
+  "rarityChances": {
+    "common": 0.7,
+    "uncommon": 0.2,
+    "rare": 0.08,
+    "epic": 0.015,
+    "legendary": 0.005
+  },
+  "nodes": [
+    {
+      "id": "copper-ore-node",
+      "name": "Copper Deposit",
+      "type": "ore",
+      "tier": 1,
+      "profession": "Mining",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 10,
+      "drops": [
+        { "itemId": "ORE_COPPER_ORE_T1", "quantity": 2, "chance": 1.0, "rarity": "common" },
+        { "itemId": "ORE_COPPER_ORE_T1", "quantity": 1, "chance": 0.3, "rarity": "common" },
+        { "itemId": "GEM_ROUGH_GEM", "quantity": 1, "chance": 0.1, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/ore/copper-ore.png",
+      "description": "A rich deposit of copper ore."
+    },
+    {
+      "id": "pine-tree-node",
+      "name": "Pine Tree",
+      "type": "wood",
+      "tier": 1,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 3,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 10,
+      "drops": [
+        { "itemId": "WOOD_PINE_LOG_T1", "quantity": 3, "chance": 1.0, "rarity": "common" },
+        { "itemId": "WOOD_PINE_LOG_T1", "quantity": 1, "chance": 0.25, "rarity": "common" },
+        { "itemId": "LOOM_HEMP_FIBER", "quantity": 1, "chance": 0.15, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/wood/pine-log.png",
+      "description": "A tall pine tree suitable for logging."
+    },
+    {
+      "id": "basic-herb-node",
+      "name": "Herb Patch",
+      "type": "herb",
+      "tier": 1,
+      "profession": "Herbalism",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 2,
+      "respawnTime": 45,
+      "xpReward": 8,
+      "drops": [
+        { "itemId": "POT_RED_FLOWER", "quantity": 2, "chance": 0.8, "rarity": "common" },
+        { "itemId": "POT_BLUE_FLOWER", "quantity": 2, "chance": 0.8, "rarity": "common" },
+        { "itemId": "ESSENCE_MINOR_ESSENCE", "quantity": 1, "chance": 0.15, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/herb/basic-herb.png",
+      "description": "A small patch of medicinal herbs."
+    },
+    {
+      "id": "iron-ore-node",
+      "name": "Iron Deposit",
+      "type": "ore",
+      "tier": 2,
+      "profession": "Mining",
+      "requiredLevel": 10,
+      "baseYield": 2,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 20,
+      "drops": [
+        { "itemId": "ORE_IRON_ORE_T2", "quantity": 2, "chance": 1.0, "rarity": "common" },
+        { "itemId": "ORE_IRON_ORE_T2", "quantity": 1, "chance": 0.35, "rarity": "common" },
+        { "itemId": "GEM_FLAWED_GEM", "quantity": 1, "chance": 0.12, "rarity": "uncommon" },
+        { "itemId": "COMPONENT_COAL", "quantity": 1, "chance": 0.25, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/ore/iron-ore.png",
+      "description": "A solid deposit of iron ore."
+    },
+    {
+      "id": "oak-tree-node",
+      "name": "Oak Tree",
+      "type": "wood",
+      "tier": 2,
+      "profession": "Logging",
+      "requiredLevel": 10,
+      "baseYield": 3,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 20,
+      "drops": [
+        { "itemId": "WOOD_OAK_LOG_T2", "quantity": 3, "chance": 1.0, "rarity": "common" },
+        { "itemId": "WOOD_OAK_LOG_T2", "quantity": 1, "chance": 0.3, "rarity": "common" },
+        { "itemId": "LOOM_SILK", "quantity": 1, "chance": 0.08, "rarity": "rare" }
+      ],
+      "spritePath": "/2dassets/sprites/wood/oak-log.png",
+      "description": "A sturdy oak tree with quality wood."
+    },
+    {
+      "id": "uncommon-herb-node",
+      "name": "Wildflower Patch",
+      "type": "herb",
+      "tier": 2,
+      "profession": "Herbalism",
+      "requiredLevel": 10,
+      "baseYield": 2,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 15,
+      "drops": [
+        { "itemId": "POT_WHITE_FLOWER", "quantity": 2, "chance": 0.9, "rarity": "common" },
+        { "itemId": "POT_YELLOW_FLOWER", "quantity": 2, "chance": 0.9, "rarity": "common" },
+        { "itemId": "ESSENCE_LESSER_ESSENCE", "quantity": 1, "chance": 0.2, "rarity": "uncommon" },
+        { "itemId": "POT_MUSHROOM_M", "quantity": 1, "chance": 0.15, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/herb/uncommon-herb.png",
+      "description": "A vibrant patch of wildflowers."
+    },
+    {
+      "id": "steel-ore-node",
+      "name": "Steel Deposit",
+      "type": "ore",
+      "tier": 3,
+      "profession": "Mining",
+      "requiredLevel": 20,
+      "baseYield": 2,
+      "harvestTime": 5,
+      "respawnTime": 120,
+      "xpReward": 35,
+      "drops": [
+        { "itemId": "ORE_STEEL_ORE_T3", "quantity": 2, "chance": 1.0, "rarity": "common" },
+        { "itemId": "ORE_STEEL_ORE_T3", "quantity": 1, "chance": 0.4, "rarity": "common" },
+        { "itemId": "GEM_STANDARD_GEM", "quantity": 1, "chance": 0.15, "rarity": "uncommon" },
+        { "itemId": "COMPONENT_FLUX", "quantity": 1, "chance": 0.2, "rarity": "rare" }
+      ],
+      "spritePath": "/2dassets/sprites/ore/steel-ore.png",
+      "description": "A rare deposit of high-quality steel ore."
+    },
+    {
+      "id": "maple-tree-node",
+      "name": "Maple Tree",
+      "type": "wood",
+      "tier": 3,
+      "profession": "Logging",
+      "requiredLevel": 20,
+      "baseYield": 3,
+      "harvestTime": 5,
+      "respawnTime": 120,
+      "xpReward": 35,
+      "drops": [
+        { "itemId": "WOOD_MAPLE_LOG_T3", "quantity": 3, "chance": 1.0, "rarity": "common" },
+        { "itemId": "WOOD_MAPLE_LOG_T3", "quantity": 2, "chance": 0.35, "rarity": "common" },
+        { "itemId": "COMPONENT_STRING", "quantity": 2, "chance": 0.25, "rarity": "uncommon" }
+      ],
+      "spritePath": "/2dassets/sprites/wood/maple-log.png",
+      "description": "A majestic maple tree with premium wood."
+    },
+    {
+      "id": "rare-herb-node",
+      "name": "Mystic Herb Cluster",
+      "type": "herb",
+      "tier": 3,
+      "profession": "Herbalism",
+      "requiredLevel": 20,
+      "baseYield": 3,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 30,
+      "drops": [
+        { "itemId": "ESSENCE_GREATER_ESSENCE", "quantity": 2, "chance": 0.8, "rarity": "uncommon" },
+        { "itemId": "POT_MUSHROOM_L", "quantity": 1, "chance": 0.3, "rarity": "uncommon" },
+        { "itemId": "POT_BLUE_WHISP", "quantity": 1, "chance": 0.15, "rarity": "rare" }
+      ],
+      "spritePath": "/2dassets/sprites/herb/rare-herb.png",
+      "description": "A cluster of rare magical herbs."
+    }
+  ]
+}

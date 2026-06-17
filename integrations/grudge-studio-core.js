@@ -21,7 +21,7 @@ export { aiBackend, AIBackendClient } from './grudge-ai-backend.js';
 export class GrudgeStudioAPI {
   constructor(config = {}) {
     this.config = {
-      objectStoreUrl: config.objectStoreUrl || 'https://objectstore.grudge-studio.com',
+      objectStoreUrl: config.objectStoreUrl || 'https://molochdagod.github.io/ObjectStore',
       arsenalUrl: config.arsenalUrl || 'https://warlord-crafting-suite.vercel.app',
       aiBackendUrl: config.aiBackendUrl || 'http://localhost:3001/api/ai',
       gameApiUrl: config.gameApiUrl || 'http://localhost:4000/api/gruda',
@@ -54,7 +54,11 @@ export class GrudgeStudioAPI {
     
     try {
       // Load core data
+      await this.objectStore.loadManifest();
       await Promise.all([
+        this.objectStore.loadMasterItems(),
+        this.objectStore.loadHarvestNodes(),
+        this.objectStore.loadStaffLooks(),
         this.objectStore.loadWeapons(),
         this.objectStore.loadMaterials(),
         this.objectStore.loadArmor(),
@@ -177,6 +181,27 @@ class ObjectStoreClient {
     this.baseUrl = `${config.objectStoreUrl}/api/v1`;
     this.cache = new Map();
     this.cacheEnabled = config.cacheEnabled;
+  }
+
+  /** Canonical index — start here for all game data URLs */
+  async loadManifest() {
+    return await this._fetch('game-data-manifest.json', 'manifest');
+  }
+
+  async loadMasterItems() {
+    return await this._fetch('master-items.json', 'masterItems');
+  }
+
+  async loadMasterRecipes() {
+    return await this._fetch('master-recipes.json', 'masterRecipes');
+  }
+
+  async loadHarvestNodes() {
+    return await this._fetch('master-harvest-nodes.json', 'harvestNodes');
+  }
+
+  async loadStaffLooks() {
+    return await this._fetch('staff-looks.json', 'staffLooks');
   }
 
   async loadWeapons() {

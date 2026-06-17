@@ -1,0 +1,563 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-17T06:17:22.249Z",
+  "source": "api/v1/sources/harvest-nodes.json",
+  "totalNodes": 9,
+  "rarityChances": {
+    "common": 0.7,
+    "uncommon": 0.2,
+    "rare": 0.08,
+    "epic": 0.015,
+    "legendary": 0.005
+  },
+  "nodes": [
+    {
+      "id": "copper-ore-node",
+      "name": "Copper Deposit",
+      "type": "ore",
+      "tier": 1,
+      "profession": "Mining",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 10,
+      "drops": [
+        {
+          "itemId": "ORE_COPPER_ORE_T1",
+          "quantity": 2,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Copper Ore",
+          "materialUuid": "MATL-20260531030243-0009ED-99670B38",
+          "iconUrl": "/icons/materials/copper-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "ORE_COPPER_ORE_T1",
+          "quantity": 1,
+          "chance": 0.3,
+          "rarity": "common",
+          "materialName": "Copper Ore",
+          "materialUuid": "MATL-20260531030243-0009ED-99670B38",
+          "iconUrl": "/icons/materials/copper-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "GEM_ROUGH_GEM",
+          "quantity": 1,
+          "chance": 0.1,
+          "rarity": "uncommon",
+          "materialName": "Rough Gem",
+          "materialUuid": "MATL-20260531030243-000A23-668C48B8",
+          "iconUrl": "/icons/materials/rough-gem.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/ore/copper-ore.png",
+      "description": "A rich deposit of copper ore.",
+      "nodeUuid": "NODE-COPPER-ORE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/ore/copper-ore.png",
+      "links": {
+        "materials": [
+          "Copper Ore",
+          "Rough Gem"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "pine-tree-node",
+      "name": "Pine Tree",
+      "type": "wood",
+      "tier": 1,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 3,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 10,
+      "drops": [
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 3,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260531030243-0009FF-102ABF55",
+          "iconUrl": "/icons/materials/pine-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 1,
+          "chance": 0.25,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260531030243-0009FF-102ABF55",
+          "iconUrl": "/icons/materials/pine-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "LOOM_HEMP_FIBER",
+          "quantity": 1,
+          "chance": 0.15,
+          "rarity": "uncommon",
+          "materialName": "Hemp Fiber",
+          "materialUuid": "MATL-HARVEST-HEMP-FIBER",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/hemp_fiber.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/wood/pine-log.png",
+      "description": "A tall pine tree suitable for logging.",
+      "nodeUuid": "NODE-PINE-TREE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/wood/pine-log.png",
+      "links": {
+        "materials": [
+          "Pine Log",
+          "Hemp Fiber"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "basic-herb-node",
+      "name": "Herb Patch",
+      "type": "herb",
+      "tier": 1,
+      "profession": "Herbalism",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 2,
+      "respawnTime": 45,
+      "xpReward": 8,
+      "drops": [
+        {
+          "itemId": "POT_RED_FLOWER",
+          "quantity": 2,
+          "chance": 0.8,
+          "rarity": "common",
+          "materialName": "Red Flower",
+          "materialUuid": "MATL-HARVEST-RED-FLOWER",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/red_flower.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "POT_BLUE_FLOWER",
+          "quantity": 2,
+          "chance": 0.8,
+          "rarity": "common",
+          "materialName": "Blue Flower",
+          "materialUuid": "MATL-HARVEST-BLUE-FLOWER",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/blue_flower.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "ESSENCE_MINOR_ESSENCE",
+          "quantity": 1,
+          "chance": 0.15,
+          "rarity": "uncommon",
+          "materialName": "Minor Essence",
+          "materialUuid": "MATL-20260531030243-000A1A-1D876387",
+          "iconUrl": "/icons/materials/minor-essence.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/herb/basic-herb.png",
+      "description": "A small patch of medicinal herbs.",
+      "nodeUuid": "NODE-BASIC-HERB-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/herb/basic-herb.png",
+      "links": {
+        "materials": [
+          "Red Flower",
+          "Blue Flower",
+          "Minor Essence"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "iron-ore-node",
+      "name": "Iron Deposit",
+      "type": "ore",
+      "tier": 2,
+      "profession": "Mining",
+      "requiredLevel": 10,
+      "baseYield": 2,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 20,
+      "drops": [
+        {
+          "itemId": "ORE_IRON_ORE_T2",
+          "quantity": 2,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Iron Ore",
+          "materialUuid": "MATL-20260531030243-0009EE-3E281642",
+          "iconUrl": "/icons/materials/iron-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "ORE_IRON_ORE_T2",
+          "quantity": 1,
+          "chance": 0.35,
+          "rarity": "common",
+          "materialName": "Iron Ore",
+          "materialUuid": "MATL-20260531030243-0009EE-3E281642",
+          "iconUrl": "/icons/materials/iron-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "GEM_FLAWED_GEM",
+          "quantity": 1,
+          "chance": 0.12,
+          "rarity": "uncommon",
+          "materialName": "Flawed Gem",
+          "materialUuid": "MATL-20260531030243-000A24-0726C1F9",
+          "iconUrl": "/icons/materials/flawed-gem.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "COMPONENT_COAL",
+          "quantity": 1,
+          "chance": 0.25,
+          "rarity": "uncommon",
+          "materialName": "Coal",
+          "materialUuid": "MATL-HARVEST-COAL",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/coal.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/ore/iron-ore.png",
+      "description": "A solid deposit of iron ore.",
+      "nodeUuid": "NODE-IRON-ORE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/ore/iron-ore.png",
+      "links": {
+        "materials": [
+          "Iron Ore",
+          "Flawed Gem",
+          "Coal"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "oak-tree-node",
+      "name": "Oak Tree",
+      "type": "wood",
+      "tier": 2,
+      "profession": "Logging",
+      "requiredLevel": 10,
+      "baseYield": 3,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 20,
+      "drops": [
+        {
+          "itemId": "WOOD_OAK_LOG_T2",
+          "quantity": 3,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Oak Log",
+          "materialUuid": "MATL-20260531030243-000A00-7EECB2C0",
+          "iconUrl": "/icons/materials/oak-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "WOOD_OAK_LOG_T2",
+          "quantity": 1,
+          "chance": 0.3,
+          "rarity": "common",
+          "materialName": "Oak Log",
+          "materialUuid": "MATL-20260531030243-000A00-7EECB2C0",
+          "iconUrl": "/icons/materials/oak-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "LOOM_SILK",
+          "quantity": 1,
+          "chance": 0.08,
+          "rarity": "rare",
+          "materialName": "Silk",
+          "materialUuid": "MATL-HARVEST-SILK",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/silk.png",
+          "recipeUuids": [
+            "RECP-20260531030243-000BE0-94E89C16"
+          ]
+        }
+      ],
+      "spritePath": "/2dassets/sprites/wood/oak-log.png",
+      "description": "A sturdy oak tree with quality wood.",
+      "nodeUuid": "NODE-OAK-TREE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/wood/oak-log.png",
+      "links": {
+        "materials": [
+          "Oak Log",
+          "Silk"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260531030243-000BE0-94E89C16"
+        ]
+      }
+    },
+    {
+      "id": "uncommon-herb-node",
+      "name": "Wildflower Patch",
+      "type": "herb",
+      "tier": 2,
+      "profession": "Herbalism",
+      "requiredLevel": 10,
+      "baseYield": 2,
+      "harvestTime": 3,
+      "respawnTime": 60,
+      "xpReward": 15,
+      "drops": [
+        {
+          "itemId": "POT_WHITE_FLOWER",
+          "quantity": 2,
+          "chance": 0.9,
+          "rarity": "common",
+          "materialName": "White Flower",
+          "materialUuid": "MATL-HARVEST-WHITE-FLOWER",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/white_flower.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "POT_YELLOW_FLOWER",
+          "quantity": 2,
+          "chance": 0.9,
+          "rarity": "common",
+          "materialName": "Yellow Flower",
+          "materialUuid": "MATL-HARVEST-YELLOW-FLOWER",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/yellow_flower.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "ESSENCE_LESSER_ESSENCE",
+          "quantity": 1,
+          "chance": 0.2,
+          "rarity": "uncommon",
+          "materialName": "Lesser Essence",
+          "materialUuid": "MATL-20260531030243-000A1B-98EE92BE",
+          "iconUrl": "/icons/materials/lesser-essence.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "POT_MUSHROOM_M",
+          "quantity": 1,
+          "chance": 0.15,
+          "rarity": "uncommon",
+          "materialName": "Medium Mushroom",
+          "materialUuid": "MATL-HARVEST-MEDIUM-MUSHROOM",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/medium_mushroom.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/herb/uncommon-herb.png",
+      "description": "A vibrant patch of wildflowers.",
+      "nodeUuid": "NODE-UNCOMMON-HERB-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/herb/uncommon-herb.png",
+      "links": {
+        "materials": [
+          "White Flower",
+          "Yellow Flower",
+          "Lesser Essence",
+          "Medium Mushroom"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "steel-ore-node",
+      "name": "Steel Deposit",
+      "type": "ore",
+      "tier": 3,
+      "profession": "Mining",
+      "requiredLevel": 20,
+      "baseYield": 2,
+      "harvestTime": 5,
+      "respawnTime": 120,
+      "xpReward": 35,
+      "drops": [
+        {
+          "itemId": "ORE_STEEL_ORE_T3",
+          "quantity": 2,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Steel Ore",
+          "materialUuid": "MATL-20260531030243-0009EF-1EBDAB3A",
+          "iconUrl": "/icons/materials/steel-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "ORE_STEEL_ORE_T3",
+          "quantity": 1,
+          "chance": 0.4,
+          "rarity": "common",
+          "materialName": "Steel Ore",
+          "materialUuid": "MATL-20260531030243-0009EF-1EBDAB3A",
+          "iconUrl": "/icons/materials/steel-ore.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "GEM_STANDARD_GEM",
+          "quantity": 1,
+          "chance": 0.15,
+          "rarity": "uncommon",
+          "materialName": "Standard Gem",
+          "materialUuid": "MATL-20260531030243-000A25-D8F29F2B",
+          "iconUrl": "/icons/materials/standard-gem.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "COMPONENT_FLUX",
+          "quantity": 1,
+          "chance": 0.2,
+          "rarity": "rare",
+          "materialName": "Flux",
+          "materialUuid": "MATL-HARVEST-FLUX",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/flux.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/ore/steel-ore.png",
+      "description": "A rare deposit of high-quality steel ore.",
+      "nodeUuid": "NODE-STEEL-ORE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/ore/steel-ore.png",
+      "links": {
+        "materials": [
+          "Steel Ore",
+          "Standard Gem",
+          "Flux"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "maple-tree-node",
+      "name": "Maple Tree",
+      "type": "wood",
+      "tier": 3,
+      "profession": "Logging",
+      "requiredLevel": 20,
+      "baseYield": 3,
+      "harvestTime": 5,
+      "respawnTime": 120,
+      "xpReward": 35,
+      "drops": [
+        {
+          "itemId": "WOOD_MAPLE_LOG_T3",
+          "quantity": 3,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Maple Log",
+          "materialUuid": "MATL-20260531030243-000A01-380360A3",
+          "iconUrl": "/icons/materials/maple-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "WOOD_MAPLE_LOG_T3",
+          "quantity": 2,
+          "chance": 0.35,
+          "rarity": "common",
+          "materialName": "Maple Log",
+          "materialUuid": "MATL-20260531030243-000A01-380360A3",
+          "iconUrl": "/icons/materials/maple-log.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "COMPONENT_STRING",
+          "quantity": 2,
+          "chance": 0.25,
+          "rarity": "uncommon",
+          "materialName": "String",
+          "materialUuid": "MATL-HARVEST-STRING",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/string.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/wood/maple-log.png",
+      "description": "A majestic maple tree with premium wood.",
+      "nodeUuid": "NODE-MAPLE-TREE-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/wood/maple-log.png",
+      "links": {
+        "materials": [
+          "Maple Log",
+          "String"
+        ],
+        "recipeCount": 0,
+        "recipeUuids": []
+      }
+    },
+    {
+      "id": "rare-herb-node",
+      "name": "Mystic Herb Cluster",
+      "type": "herb",
+      "tier": 3,
+      "profession": "Herbalism",
+      "requiredLevel": 20,
+      "baseYield": 3,
+      "harvestTime": 4,
+      "respawnTime": 90,
+      "xpReward": 30,
+      "drops": [
+        {
+          "itemId": "ESSENCE_GREATER_ESSENCE",
+          "quantity": 2,
+          "chance": 0.8,
+          "rarity": "uncommon",
+          "materialName": "Greater Essence",
+          "materialUuid": "MATL-20260531030243-000A1C-E0E17551",
+          "iconUrl": "/icons/materials/greater-essence.png",
+          "recipeUuids": []
+        },
+        {
+          "itemId": "POT_MUSHROOM_L",
+          "quantity": 1,
+          "chance": 0.3,
+          "rarity": "uncommon",
+          "materialName": "Large Mushroom",
+          "materialUuid": "MATL-HARVEST-LARGE-MUSHROOM",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/large_mushroom.png",
+          "recipeUuids": [
+            "RECP-20260531030243-000AA9-7FDF1DC7"
+          ]
+        },
+        {
+          "itemId": "POT_BLUE_WHISP",
+          "quantity": 1,
+          "chance": 0.15,
+          "rarity": "rare",
+          "materialName": "Blue Whisp",
+          "materialUuid": "MATL-HARVEST-BLUE-WHISP",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/blue_whisp.png",
+          "recipeUuids": []
+        }
+      ],
+      "spritePath": "/2dassets/sprites/herb/rare-herb.png",
+      "description": "A cluster of rare magical herbs.",
+      "nodeUuid": "NODE-RARE-HERB-NODE",
+      "spriteUrl": "https://assets.grudge-studio.com/2dassets/sprites/herb/rare-herb.png",
+      "links": {
+        "materials": [
+          "Greater Essence",
+          "Large Mushroom",
+          "Blue Whisp"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260531030243-000AA9-7FDF1DC7"
+        ]
+      }
+    }
+  ]
+}

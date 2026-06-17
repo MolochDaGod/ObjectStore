@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-17T06:17:22.249Z",
+  "canonical": true,
+  "description": "Grudge Studio unified game data — single source of truth",
+  "endpoints": {
+    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json",
+    "items": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
+    "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
+    "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
+    "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
+    "staffLooks": "https://molochdagod.github.io/ObjectStore/api/v1/staff-looks.json",
+    "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
+    "armor": "https://molochdagod.github.io/ObjectStore/api/v1/armor.json",
+    "consumables": "https://molochdagod.github.io/ObjectStore/api/v1/consumables.json",
+    "professions": "https://molochdagod.github.io/ObjectStore/api/v1/professions.json",
+    "weaponSkills": "https://molochdagod.github.io/ObjectStore/api/v1/weaponSkills.json",
+    "iconResolver": "https://molochdagod.github.io/ObjectStore/utils/icon-resolver.js"
+  },
+  "assetCdn": "https://assets.grudge-studio.com",
+  "counts": {
+    "items": 2188,
+    "recipes": 132,
+    "materials": 75,
+    "harvestNodes": 9,
+    "staffCategories": 6
+  },
+  "graph": {
+    "harvestToMaterial": "master-harvest-nodes.json → drops[].materialUuid",
+    "materialToRecipe": "master-recipes.json → materials[].uuid",
+    "recipeToItem": "master-recipes.json → resultItemId → master-items.json",
+    "itemToIcon": "master-items.json → iconUrl | staff-looks.json → iconUrl"
+  },
+  "deprecated": {
+    "items-database.json": "Use master-items.json",
+    "grudge-game-data-hub": "Archived — do not use"
+  }
+}
