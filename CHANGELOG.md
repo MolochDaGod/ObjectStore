@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-06-15
-### Fixed
-- fix: models3d.json v2 — 337 verified GitHub Pages GLBs with real _cdnUrl paths (7da98e8)
+## 2026-06-17
+### Changed
+- Consolidate game data SSOT: recipes, harvest links, staff icons (60e8568)
 
