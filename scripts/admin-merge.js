@@ -20,7 +20,8 @@
  *   lightningStaves 5 Mystic + 1 Engineer (new variant)
  *
  * Safety: makes timestamped .bak copies of every file it writes into
- * api/v1/_backups/ (one per run, named <file>.<timestamp>.bak).
+ * _backups/admin-merge/ (outside the published api/ tree, one per run,
+ * named <file>.<timestamp>.bak).
  */
 
 const fs = require('fs');
@@ -28,7 +29,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const API_DIR = path.join(__dirname, '..', 'api', 'v1');
-const BACKUP_DIR = path.join(API_DIR, '_backups');
+const BACKUP_DIR = path.join(__dirname, '..', '_backups', 'admin-merge');
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const writeJson = (p, obj) => {
   if (fs.existsSync(p)) {
