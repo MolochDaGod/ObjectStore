@@ -19,7 +19,8 @@
  *   natureStaves    0 Mystic + 4 Forester + 1 Miner + 1 Chef
  *   lightningStaves 5 Mystic + 1 Engineer (new variant)
  *
- * Safety: makes .bak copies of every file it writes (one per run).
+ * Safety: makes timestamped .bak copies of every file it writes into
+ * api/v1/_backups/ (one per run, named <file>.<timestamp>.bak).
  */
 
 const fs = require('fs');
@@ -27,9 +28,15 @@ const path = require('path');
 const crypto = require('crypto');
 
 const API_DIR = path.join(__dirname, '..', 'api', 'v1');
+const BACKUP_DIR = path.join(API_DIR, '_backups');
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const writeJson = (p, obj) => {
-  if (fs.existsSync(p)) fs.copyFileSync(p, p + '.bak');
+  if (fs.existsSync(p)) {
+    fs.mkdirSync(BACKUP_DIR, { recursive: true });
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const bname = path.basename(p) + '.' + ts + '.bak';
+    fs.copyFileSync(p, path.join(BACKUP_DIR, bname));
+  }
   fs.writeFileSync(p, JSON.stringify(obj, null, 2));
 };
 
