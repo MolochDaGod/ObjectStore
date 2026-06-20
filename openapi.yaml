@@ -30,6 +30,8 @@ tags:
     description: Game engine data (units, maps, AI, animations)
   - name: grudgeDot
     description: Unified asset manifest for grudgeDot game engine
+  - name: Worker
+    description: Cloudflare Worker live API endpoints (objectstore.grudge-studio.com)
   - name: Serverless
     description: Vercel-only dynamic endpoints
 
@@ -308,6 +310,261 @@ paths:
       responses:
         '200': { description: Category summary }
 
+  # ── Cloudflare Worker — Item Collection Endpoints ──────────────────────────
+  # Base URL: https://objectstore.grudge-studio.com
+  # All endpoints return: { collection, total, count, limit, offset, items[] }
+  # CORS headers are set automatically on all responses.
+
+  /v1/relics:
+    get:
+      tags: [Worker]
+      summary: List relics
+      description: >
+        Returns equippable relic items from master-relics.json. Supports filtering
+        by category, tier, element, and slot. Undiscovered relics are never hidden
+        (relics are always visible unlike artifacts).
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Full-text search on name, id, or description
+        - name: category
+          in: query
+          schema: { type: string, enum: [elemental, combat, defensive, utility] }
+          description: Filter by relic category
+        - name: tier
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 8 }
+          description: Filter by numeric tier (1–8)
+        - name: element
+          in: query
+          schema: { type: string }
+          description: Filter by element (e.g. frost, flame, storm)
+        - name: slot
+          in: query
+          schema: { type: string, enum: [relic] }
+          description: Filter by gear slot
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 500 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Paginated relic list
+          headers:
+            Cache-Control:
+              schema: { type: string }
+              description: public, max-age=300
+            Access-Control-Allow-Origin:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ItemCollectionResponse' }
+        '503': { description: Upstream data unavailable }
+
+  /v1/relics/{id}:
+    get:
+      tags: [Worker]
+      summary: Get a single relic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Relic `id`, `uuid`, or name slug (e.g. relic-frost, RELC-…)
+      responses:
+        '200': { description: Relic item object }
+        '404': { description: Relic not found }
+        '503': { description: Upstream data unavailable }
+
+  /v1/enchants:
+    get:
+      tags: [Worker]
+      summary: List enchants
+      description: >
+        Returns Mystic-crafted enchants from master-enchants.json. Enchants are
+        consumed on apply and permanently bake a stat bonus onto the target item.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Full-text search on name, id, or description
+        - name: category
+          in: query
+          schema: { type: string }
+          description: Filter by category (e.g. enchant)
+        - name: tier
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 8 }
+          description: Filter by numeric tier (1–8)
+        - name: target
+          in: query
+          schema: { type: string, enum: [weapon, armor] }
+          description: Filter by applicable item type
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 500 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Paginated enchant list
+          headers:
+            Cache-Control:
+              schema: { type: string }
+              description: public, max-age=300
+            Access-Control-Allow-Origin:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ItemCollectionResponse' }
+        '503': { description: Upstream data unavailable }
+
+  /v1/enchants/{id}:
+    get:
+      tags: [Worker]
+      summary: Get a single enchant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Enchant `id`, `uuid`, or name slug
+      responses:
+        '200': { description: Enchant item object }
+        '404': { description: Enchant not found }
+        '503': { description: Upstream data unavailable }
+
+  /v1/infusions:
+    get:
+      tags: [Worker]
+      summary: List infusions
+      description: >
+        Returns infusion essences from master-infusions.json. Infusions are consumed
+        at the Mystic Enchanting Bench to advance an item toward its next tier.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Full-text search on name, id, or description
+        - name: tier
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 8 }
+          description: Filter by numeric tier (1–8)
+        - name: scope
+          in: query
+          schema: { type: string, enum: [universal, profession] }
+          description: Filter by scope — universal essences drop from enemies; profession-scoped require unlock
+        - name: profession
+          in: query
+          schema: { type: string }
+          description: Filter by required profession (e.g. Mystic, Smith)
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 500 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Paginated infusion list
+          headers:
+            Cache-Control:
+              schema: { type: string }
+              description: public, max-age=300
+            Access-Control-Allow-Origin:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ItemCollectionResponse' }
+        '503': { description: Upstream data unavailable }
+
+  /v1/infusions/{id}:
+    get:
+      tags: [Worker]
+      summary: Get a single infusion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Infusion `id` or `uuid`
+      responses:
+        '200': { description: Infusion item object }
+        '404': { description: Infusion not found }
+        '503': { description: Upstream data unavailable }
+
+  /v1/artifacts:
+    get:
+      tags: [Worker]
+      summary: List artifacts
+      description: >
+        Returns end-game magic weapons (Artifact category) from master-artifacts.json.
+        Per D3, items with `discovery.hiddenUntilFound: true` are excluded by default.
+        Pass `discovered=all` to include all artifacts regardless of discovery state.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Full-text search on name or description
+        - name: tier
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 8 }
+          description: Filter by numeric tier (1–8)
+        - name: artifactType
+          in: query
+          schema: { type: string }
+          description: Filter by artifact sub-type (e.g. lightning, fire, arcane)
+        - name: subtype
+          in: query
+          schema: { type: string }
+          description: Filter by weapon sub-type (e.g. sword, staff, bow)
+        - name: handedness
+          in: query
+          schema: { type: string, enum: ['1h', '2h', offhand] }
+          description: Filter by handedness
+        - name: discovered
+          in: query
+          schema: { type: string, enum: [all] }
+          description: Pass `discovered=all` to include undiscovered artifacts
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 500 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Paginated artifact list
+          headers:
+            Cache-Control:
+              schema: { type: string }
+              description: public, max-age=300
+            Access-Control-Allow-Origin:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ItemCollectionResponse' }
+        '503': { description: Upstream data unavailable }
+
+  /v1/artifacts/{id}:
+    get:
+      tags: [Worker]
+      summary: Get a single artifact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Artifact `uuid` or name slug (e.g. sword-of-the-storm)
+      responses:
+        '200': { description: Artifact item object }
+        '404': { description: Artifact not found }
+        '503': { description: Upstream data unavailable }
+
   /api/search:
     get:
       tags: [Serverless]
@@ -367,6 +624,30 @@ paths:
 
 components:
   schemas:
+    ItemCollectionResponse:
+      type: object
+      description: Standard paginated response for item collection endpoints (/v1/relics, /v1/enchants, /v1/infusions, /v1/artifacts)
+      properties:
+        collection:
+          type: string
+          description: Source dataset name (e.g. master-relics)
+        total:
+          type: integer
+          description: Total number of items after filtering
+        count:
+          type: integer
+          description: Number of items in this page
+        limit:
+          type: integer
+          description: Page size requested
+        offset:
+          type: integer
+          description: Offset into the result set
+        items:
+          type: array
+          items: { type: object }
+          description: Array of item objects for this page
+
     Weapon:
       type: object
       properties:
