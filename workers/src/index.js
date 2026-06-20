@@ -202,8 +202,8 @@ async function handleList(url, env) {
   const tag = url.searchParams.get('tag');
   const prefix = url.searchParams.get('prefix');
   const q = url.searchParams.get('q');             // filename search
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200);
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+  const limit = parsePositiveInt(url.searchParams.get('limit'), 50, { min: 1, max: 200 });
+  const offset = parsePositiveInt(url.searchParams.get('offset'), 0, { min: 0, max: 1_000_000 });
 
   let where = ["visibility = 'public'"];
   const params = [];
@@ -221,12 +221,23 @@ async function handleList(url, env) {
                ORDER BY created_at DESC
                LIMIT ? OFFSET ?`;
 
+  const [{ total = 0 } = {}] = (await env.DB.prepare(
+    `SELECT COUNT(*) AS total FROM assets WHERE ${where.join(' AND ')}`
+  ).bind(...params.slice(0, -2)).all()).results || [];
   const { results } = await env.DB.prepare(sql).bind(...params).all();
 
   // Parse tags JSON for each row
   const items = results.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]') }));
 
-  return json({ items, count: items.length, limit, offset });
+  return json({
+    items,
+    count: items.length,
+    total,
+    limit,
+    offset,
+    hasMore: offset + items.length < total,
+    nextOffset: offset + items.length < total ? offset + items.length : null,
+  });
 }
 
 /** GET /v1/assets/:id — single asset metadata */
@@ -439,6 +450,10 @@ async function handleGameDataRoutes(url, method, env) {
         url: `/v1/game-data/${name}`,
         source: `${GITHUB_PAGES_BASE}/${name}.json`,
       })),
+      pagination: {
+        supportedQueryParams: ['page', 'pageSize', 'offset', 'limit', 'arrayKey', 'q'],
+        note: 'Collection endpoints return full JSON by default. Add pagination query params for chunked loading.',
+      },
     });
   }
 
@@ -449,12 +464,12 @@ async function handleGameDataRoutes(url, method, env) {
     if (!GAME_DATA_COLLECTIONS.includes(name)) {
       return json({ error: `Unknown collection: ${name}`, available: GAME_DATA_COLLECTIONS }, 404);
     }
-    return await serveGameDataCollection(name, env);
+    return await serveGameDataCollection(name, env, url);
   }
 
   // GET /v1/weapon-skills — proxy weaponSkills.json
   if (path === '/v1/weapon-skills') {
-    return await serveGameDataCollection('weaponSkills', env);
+    return await serveGameDataCollection('weaponSkills', env, url);
   }
 
   // GET /v1/weapon-skills/:type — filter by weapon type
@@ -472,7 +487,22 @@ async function handleGameDataRoutes(url, method, env) {
 }
 
 /** Serve a game data JSON, trying R2 cache first, then GitHub Pages */
-async function serveGameDataCollection(name, env) {
+async function serveGameDataCollection(name, env, url = null) {
+  const wantsPage = !!url && (
+    url.searchParams.has('page') ||
+    url.searchParams.has('pageSize') ||
+    url.searchParams.has('offset') ||
+    url.searchParams.has('limit') ||
+    url.searchParams.has('arrayKey') ||
+    url.searchParams.has('q')
+  );
+
+  if (wantsPage) {
+    const data = await fetchGameData(name, env);
+    if (!data) return json({ error: `Failed to fetch ${name} from source` }, 502);
+    return paginateGameDataCollection(name, data, url);
+  }
+
   const cacheKey = `game-data/${name}.json`;
 
   // Try R2 first (cached copy)
@@ -541,8 +571,8 @@ async function handleListModels(url, env) {
     const format = url.searchParams.get('format');       // glb, fbx, obj
     const animated = url.searchParams.get('animated');    // true/false
     const q = url.searchParams.get('q');
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200);
-    const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+    const limit = parsePositiveInt(url.searchParams.get('limit'), 50, { min: 1, max: 200 });
+    const offset = parsePositiveInt(url.searchParams.get('offset'), 0, { min: 0, max: 1_000_000 });
 
     // Match any 3D model by file extension
     let where = ["visibility = 'public'"];
@@ -564,6 +594,9 @@ async function handleListModels(url, env) {
                  ORDER BY created_at DESC
                  LIMIT ? OFFSET ?`;
 
+    const [{ total = 0 } = {}] = (await env.DB.prepare(
+      `SELECT COUNT(*) AS total FROM assets WHERE ${where.join(' AND ')}`
+    ).bind(...params.slice(0, -2)).all()).results || [];
     const { results } = await env.DB.prepare(sql).bind(...params).all();
     const items = (results || []).map(r => ({
       ...r,
@@ -572,7 +605,15 @@ async function handleListModels(url, env) {
       thumbnail_url: `/v1/models/${r.id}/thumbnail`,
     }));
 
-    return json({ models: items, count: items.length, total: items.length, limit, offset });
+    return json({
+      models: items,
+      count: items.length,
+      total,
+      limit,
+      offset,
+      hasMore: offset + items.length < total,
+      nextOffset: offset + items.length < total ? offset + items.length : null,
+    });
   } catch (err) {
     console.error('handleListModels error:', err);
     return json({ models: [], count: 0, total: 0, error: err.message });
@@ -654,6 +695,73 @@ async function handleModelThumbnail(id, env) {
 // ════════════════════════════════════════════════════════════════════
 //  Utilities
 // ════════════════════════════════════════════════════════════════════
+
+function parsePositiveInt(raw, fallback, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
+  const parsed = Number.parseInt(raw ?? '', 10);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+export function paginateGameDataCollection(name, data, url) {
+  const page = parsePositiveInt(url.searchParams.get('page'), 0, { min: 0, max: 1_000_000 });
+  const pageSize = parsePositiveInt(
+    url.searchParams.get('pageSize') || url.searchParams.get('limit'),
+    200,
+    { min: 1, max: 500 }
+  );
+  const requestedOffset = url.searchParams.has('offset')
+    ? parsePositiveInt(url.searchParams.get('offset'), 0, { min: 0, max: 1_000_000_000 })
+    : null;
+  const offset = requestedOffset ?? page * pageSize;
+  const q = (url.searchParams.get('q') || '').trim().toLowerCase();
+
+  const customArrayKey = url.searchParams.get('arrayKey');
+  const arrayKey = customArrayKey
+    || (Array.isArray(data) ? null : Object.keys(data).find(k => Array.isArray(data[k])) || null);
+  const sourceArray = arrayKey ? data[arrayKey] : data;
+
+  if (!Array.isArray(sourceArray)) {
+    return json({
+      error: `Collection "${name}" is not paginatable`,
+      arrayKey,
+      hint: 'Use arrayKey=<field> when the collection has multiple array fields.',
+    }, 400);
+  }
+
+  const filterKeys = ['id', 'uuid', 'name', 'category', 'type', 'subType', 'description', 'tags'];
+  const filtered = q
+    ? sourceArray.filter((entry) => {
+      if (!entry || typeof entry !== 'object') return String(entry ?? '').toLowerCase().includes(q);
+      return filterKeys.some((k) => {
+        const value = entry[k];
+        if (Array.isArray(value)) return value.some(v => String(v).toLowerCase().includes(q));
+        return value != null && String(value).toLowerCase().includes(q);
+      });
+    })
+    : sourceArray;
+
+  const items = filtered.slice(offset, offset + pageSize);
+  const total = filtered.length;
+  const hasMore = offset + items.length < total;
+  const meta = !Array.isArray(data)
+    ? Object.fromEntries(Object.entries(data).filter(([k, v]) => k !== arrayKey && !Array.isArray(v)))
+    : {};
+
+  return json({
+    collection: name,
+    arrayKey,
+    query: { q: q || null },
+    page,
+    pageSize,
+    offset,
+    count: items.length,
+    total,
+    hasMore,
+    nextOffset: hasMore ? offset + items.length : null,
+    items,
+    meta,
+  }, 200, { 'Cache-Control': 'public, max-age=120' });
+}
 
 /** Check X-API-Key header against the API_KEY secret */
 function requireAuth(request, env) {

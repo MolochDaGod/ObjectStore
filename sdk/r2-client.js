@@ -79,15 +79,21 @@ export class ObjectStoreR2Client {
 
   /**
    * List assets in the bucket
-   * @param {object} [query] - { prefix, limit, cursor, category }
-   * @returns {Promise<object>} { assets: [], cursor?, truncated }
+   * @param {object} [query] - { prefix, category, tag, q, limit, offset, page, pageSize }
+   * @returns {Promise<object>} { items: [], total, hasMore, nextOffset, ... }
    */
   async listAssets(query = {}) {
     const params = new URLSearchParams();
     if (query.prefix) params.set('prefix', query.prefix);
-    if (query.limit) params.set('limit', String(query.limit));
-    if (query.cursor) params.set('cursor', query.cursor);
     if (query.category) params.set('category', query.category);
+    if (query.tag) params.set('tag', query.tag);
+    if (query.q) params.set('q', query.q);
+    if (query.limit) params.set('limit', String(query.limit));
+    if (query.offset != null) params.set('offset', String(query.offset));
+    if (query.page != null && query.pageSize != null) {
+      params.set('offset', String(Number(query.page) * Number(query.pageSize)));
+      params.set('limit', String(query.pageSize));
+    }
     const qs = params.toString();
     return this._fetch(`/v1/assets${qs ? '?' + qs : ''}`);
   }
@@ -188,7 +194,7 @@ export class ObjectStoreR2Client {
 
   /**
    * List all 3D models (prefix = models/)
-   * @param {object} [query] - { limit, cursor, category }
+   * @param {object} [query] - { limit, offset, page, pageSize, q, category }
    * @returns {Promise<object>}
    */
   async list3DModels(query = {}) {
