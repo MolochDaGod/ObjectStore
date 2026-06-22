@@ -59,14 +59,26 @@ function sha256File(path) {
   return createHash('sha256').update(buf).digest('hex').slice(0, 16);
 }
 
+function pickTotal(primary, ...fields) {
+  if (!primary) return 0;
+  for (const f of fields) {
+    if (typeof primary[f] === 'number') return primary[f];
+  }
+  return 0;
+}
+
 function buildStats() {
-  const weapons = loadJSON('weapons.json');
-  const armor = loadJSON('armor.json');
-  const materials = loadJSON('materials.json');
-  const consumables = loadJSON('consumables.json');
+  const masterWeapons = loadJSON('master-weapons.json');
+  const masterArmor = loadJSON('master-armor.json');
+  const masterMaterials = loadJSON('master-materials.json');
+  const masterConsumables = loadJSON('master-consumables.json');
+  const weapons = masterWeapons || loadJSON('weapons.json');
+  const armor = masterArmor || loadJSON('armor.json');
+  const materials = masterMaterials || loadJSON('materials.json');
+  const consumables = masterConsumables || loadJSON('master-consumables.json') || loadJSON('consumables.json');
   const enemies = loadJSON('enemies.json');
   const bosses = loadJSON('bosses.json');
-  const weaponSkills = loadJSON('weaponSkills.json');
+  const weaponSkills = loadJSON('master-weaponSkills.json') || loadJSON('weaponSkills.json');
   const effectSprites = loadJSON('effectSprites.json');
   const abilityEffects = loadJSON('abilityEffects.json');
   const sprites2d = loadJSON('sprites2d.json');
@@ -101,10 +113,10 @@ function buildStats() {
     generated: new Date().toISOString(),
     version: '5.0.0',
     totals: {
-      weapons: countWeapons(weapons),
-      armor: armor?.totalItems ?? countArray(armor, 'armor') ?? 0,
-      materials: countArray(materials, 'materials') || materials?.totalItems || 0,
-      consumables: consumables?.totalItems ?? countArray(consumables, 'consumables') ?? 0,
+      weapons: pickTotal(masterWeapons, 'totalWeapons', 'total') || countWeapons(weapons) || countMasterItems(masterWeapons),
+      armor: pickTotal(masterArmor, 'totalArmor', 'total') || countMasterItems(masterArmor),
+      materials: pickTotal(masterMaterials, 'totalMaterials', 'total') || countArray(materials, 'materials'),
+      consumables: pickTotal(masterConsumables, 'totalConsumables', 'total') || countMasterItems(masterConsumables),
       enemies: countArray(enemies, 'enemies'),
       bosses: countArray(bosses, 'bosses'),
       weaponSkills: weaponSkills?.totalSkills ?? countArray(weaponSkills, 'skills') ?? 0,
@@ -113,8 +125,8 @@ function buildStats() {
       sprites2d: sprites2d?.totalSprites ?? countArray(sprites2d, 'sprites') ?? 0,
       factionUnits: factionUnits?.totalUnits ?? countArray(factionUnits, 'units') ?? 0,
       masterItems: countMasterItems(masterItems),
-      masterRecipes: countMasterItems(masterRecipes),
-      masterProfessions: masterProfessions?.professions?.length ?? countArray(masterProfessions, 'professions') ?? 0,
+      masterRecipes: pickTotal(masterRecipes, 'totalRecipes', 'total') || countMasterItems(masterRecipes),
+      masterProfessions: pickTotal(masterProfessions, 'totalProfessions', 'total') || masterProfessions?.professions?.length || 0,
       registryEntries: masterRegistry?.totalEntries ?? Object.keys(masterRegistry?.entries || {}).length,
       unifiedItems: itemsDb?.totalItems ?? itemsDb?.items?.length ?? countMasterItems(itemsDb),
       spriteCharacters: spriteChars?.totalCharacters ?? spriteChars?.characters?.length ?? 0,
