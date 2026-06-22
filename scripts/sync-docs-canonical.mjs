@@ -46,6 +46,26 @@ function countWeapons(weapons) {
   return n;
 }
 
+function countCategorized(data) {
+  if (!data?.categories) return 0;
+  let n = 0;
+  for (const cat of Object.values(data.categories)) {
+    n += (cat.items || []).length;
+  }
+  return n;
+}
+
+function countProfessions(masterProfessions) {
+  if (!masterProfessions) return 0;
+  if (typeof masterProfessions.totalProfessions === 'number') return masterProfessions.totalProfessions;
+  const gathering = typeof masterProfessions.totalGathering === 'number' ? masterProfessions.totalGathering : 0;
+  const crafting = typeof masterProfessions.totalCrafting === 'number' ? masterProfessions.totalCrafting : 0;
+  if (gathering || crafting) return gathering + crafting;
+  const g = masterProfessions.gathering ? Object.keys(masterProfessions.gathering).length : 0;
+  const c = masterProfessions.crafting ? Object.keys(masterProfessions.crafting).length : 0;
+  return g + c;
+}
+
 function countMasterItems(master) {
   if (!master) return 0;
   if (typeof master.totalItems === 'number') return master.totalItems;
@@ -115,9 +135,12 @@ function buildStats() {
     totals: {
       weapons: pickTotal(masterWeapons, 'totalWeapons', 'total') || countWeapons(weapons) || countMasterItems(masterWeapons),
       armor: pickTotal(masterArmor, 'totalArmor', 'total') || countMasterItems(masterArmor),
-      materials: pickTotal(masterMaterials, 'totalMaterials', 'total') || countArray(materials, 'materials'),
+      materials:
+        pickTotal(masterMaterials, 'totalMaterials', 'total') ||
+        countArray(materials, 'materials') ||
+        countMasterItems(masterMaterials),
       consumables: pickTotal(masterConsumables, 'totalConsumables', 'total') || countMasterItems(masterConsumables),
-      enemies: countArray(enemies, 'enemies'),
+      enemies: pickTotal(enemies, 'total', 'totalEnemies') || countCategorized(enemies) || countArray(enemies, 'enemies'),
       bosses: countArray(bosses, 'bosses'),
       weaponSkills: weaponSkills?.totalSkills ?? countArray(weaponSkills, 'skills') ?? 0,
       vfxEffects: effectSprites?.totalEffects ?? countArray(effectSprites, 'effects') ?? 0,
@@ -126,7 +149,7 @@ function buildStats() {
       factionUnits: factionUnits?.totalUnits ?? countArray(factionUnits, 'units') ?? 0,
       masterItems: countMasterItems(masterItems),
       masterRecipes: pickTotal(masterRecipes, 'totalRecipes', 'total') || countMasterItems(masterRecipes),
-      masterProfessions: pickTotal(masterProfessions, 'totalProfessions', 'total') || masterProfessions?.professions?.length || 0,
+      masterProfessions: countProfessions(masterProfessions),
       registryEntries: masterRegistry?.totalEntries ?? Object.keys(masterRegistry?.entries || {}).length,
       unifiedItems: itemsDb?.totalItems ?? itemsDb?.items?.length ?? countMasterItems(itemsDb),
       spriteCharacters: spriteChars?.totalCharacters ?? spriteChars?.characters?.length ?? 0,

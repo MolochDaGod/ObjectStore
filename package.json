@@ -73,7 +73,7 @@
     "consolidate:game-data": "node scripts/consolidate-game-data.mjs",
     "link:canonical": "node scripts/link-canonical-graph.mjs",
     "consolidate:items": "node scripts/consolidate-items.mjs",
-    "generate:all": "npm run generate:master && npm run import:recipes && npm run link:canonical && npm run consolidate:game-data && npm run consolidate:items",
+    "generate:all": "npm run generate:master && npm run import:recipes && npm run link:canonical && npm run consolidate:game-data && npm run consolidate:items && npm run sync:docs",
     "build:grudgedot": "node scripts/build-grudgedot-manifest.mjs",
     "export:weapon-skills": "node scripts/export-weapon-skills.mjs",
     "build:all": "npm run export:weapon-skills && npm run build:grudgedot",
