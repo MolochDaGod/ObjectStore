@@ -90,7 +90,7 @@
       <div class="c"><div class="n">6</div><div class="l">Per Weapon Type</div></div>
       <div class="c"><div class="n">8</div><div class="l">Tier Levels</div></div>
       <div class="c"><div class="n">4</div><div class="l">Classes</div></div>
-      <div class="c"><div class="n">250+</div><div class="l">Skill Tree Nodes</div></div>
+      <div class="c"><div class="n" id="countSkillNodes">—</div><div class="l">Skill Tree Nodes</div></div>
       <div class="c"><div class="n">20</div><div class="l">Infusion Types</div></div>
     </div>
   </header>
@@ -499,6 +499,17 @@ document.querySelectorAll('.tabs button').forEach(btn => {
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
   });
 });
+
+// Canonical skill node count: profession (148) + class (69) = 217
+Promise.all([
+  fetch('./api/v1/master-professionTrees.json').then(r => r.json()),
+  fetch('./api/v1/master-skillTrees.json').then(r => r.json()),
+]).then(([prof, cls]) => {
+  const total = (prof.totalNodes || 0) + (cls.totalSkills || 0);
+  const el = document.getElementById('countSkillNodes');
+  if (el) el.textContent = total;
+}).catch(() => {});
 </script>
+<script src="./js/nav.js" defer></script>
 </body>
 </html>
