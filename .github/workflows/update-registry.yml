@@ -41,6 +41,9 @@ jobs:
       - name: Generate changelog
         run: node scripts/generate-changelog.mjs 2>/dev/null || true
 
+      - name: Sync canonical docs (/docs)
+        run: node scripts/sync-docs-canonical.mjs
+
       - name: Check for changes
         id: changes
         run: |

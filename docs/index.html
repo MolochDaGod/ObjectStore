@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>API Documentation v5.0 - Grudge Studio ObjectStore</title>
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
+  <!-- CANONICAL_META:START -->
+    <link rel="canonical" href="https://info.grudge-studio.com/docs">
+    <meta name="grudge-canonical-generated" content="2026-06-22T14:21:54.620Z">
+    <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../favicon.ico" sizes="any">
   <style>
     :root {
       --bg: #0f1419;
@@ -225,7 +230,7 @@
 
   <nav class="sidebar">
     <h2><img src="../favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:4px;">ObjectStore</h2>
-    <a href="../">← Back to Home</a>
+    <a href="../hub.html">← Browse Hub</a>
     
     <div class="section-title">Getting Started</div>
     <a href="#overview">Overview</a>
@@ -297,27 +302,31 @@
   </nav>
 
   <main class="main">
-    <a href="../" class="back-link">← Back to ObjectStore</a>
+    <a href="../hub.html" class="back-link">← Browse Hub (tools &amp; browsers)</a>
     
     <h1>📖 API Documentation</h1>
-    <p class="intro">Complete reference for the Grudge Studio ObjectStore API - access game data for Grudge Warlords including weapons, materials, armor, consumables, and more.</p>
+    <p class="intro">Canonical API reference for Grudge Studio ObjectStore — synced from <code class="inline-code">api/v1/master-*.json</code> on <strong>Mon, 22 Jun 2026 14:21:54 GMT</strong>.</p>
 
     <section id="overview">
       <h2>Overview</h2>
       <p>The ObjectStore API provides read-only access to all static game data for Grudge Warlords. This includes:</p>
       <ul>
-      <li><strong>816+ Weapons</strong> across 17 categories with 8 tiers each (6 weapons × 17 categories × 8 tiers)</li>
-        <li><strong>150 Equipment</strong> items (armor sets, gems, accessories)</li>
-        <li><strong>112 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
-        <li><strong>132 Consumables</strong> including foods, potions, and engineer items</li>
-        <li><strong>473 Weapon Skills</strong> across 24 weapon types with icons, cooldowns, and effects</li>
-        <li><strong>147 VFX Effect Sprites</strong> with frame data and blend modes</li>
+        <!-- CANONICAL_STATS:START -->
+        <li><strong>139 Weapons</strong> across weapon categories with tier expansion (canonical: <code class="inline-code">master-weapons.json</code>)</li>
+        <li><strong>0 Equipment</strong> items — armor sets, gems, accessories</li>
+        <li><strong>0 Materials</strong> for crafting (ore, wood, cloth, leather, gems, essences)</li>
+        <li><strong>0 Consumables</strong> including foods, potions, and engineer items</li>
+        <li><strong>219 Weapon Skills</strong> with icons, cooldowns, and prefab wiring</li>
+        <li><strong>143 VFX Effect Sprites</strong> with frame data and blend modes</li>
         <li><strong>209 Battle Abilities</strong> with effect chains and follow-ups</li>
-        <li><strong>5 Professions</strong> with complete skill trees and 363+ recipes</li>
-        <li><strong>19 Faction Units</strong> for the RTS game mode</li>
-        <li><strong>3,425 Unified Items</strong> with icon URLs, stats, and tooltips (items-database.json)</li>
-        <li><strong>275 Animated Characters</strong> with grid/frame-sequence support (sprite-characters.json)</li>
-        <li><strong>58+ API Endpoints</strong> — all static JSON, no auth required</li>
+        <li><strong>0 Professions</strong> with skill trees and <strong>0</strong> recipes</li>
+        <li><strong>19 Faction Units</strong> for RTS game mode</li>
+        <li><strong>2,188 Master Items</strong> with GRUDGE UUIDs (<code class="inline-code">master-items.json</code>)</li>
+        <li><strong>2,743 Registry Entries</strong> in <code class="inline-code">master-registry.json</code></li>
+        <li><strong>2,743 Unified Items</strong> in items-database.json (browser UI)</li>
+        <li><strong>313 Animated Characters</strong> in sprite-characters.json</li>
+        <li><strong>101 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
+      <!-- CANONICAL_STATS:END -->
       </ul>
       
       <div class="tip">
@@ -328,7 +337,7 @@
 
     <section id="base-url">
       <h2>Base URL</h2>
-      <pre><code>https://info.grudge-studio.com</code></pre>
+      <pre><code>https://info.grudge-studio.com/docs</code></pre>
       <p>All endpoints are relative to this base URL. For example:</p>
       <pre><code>GET https://info.grudge-studio.com/api/v1/weapons.json</code></pre>
       <p>Mirror: <code class="inline-code">https://molochdagod.github.io/ObjectStore/api/v1/</code></p>

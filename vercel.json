@@ -1,7 +1,12 @@
 {
-  "buildCommand": null,
+  "alias": ["info.grudge-studio.com"],
+  "buildCommand": "node scripts/sync-docs-canonical.mjs",
   "outputDirectory": ".",
   "framework": null,
+  "redirects": [
+    { "source": "/", "destination": "/docs", "permanent": true },
+    { "source": "/index.html", "destination": "/docs", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/api/v1/(.*).json",

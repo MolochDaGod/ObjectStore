@@ -4,8 +4,8 @@
 
   // Internal ObjectStore pages — icon is now image path relative to ICN
   var pages = [
-    { label: 'Home',         href: './',                          icon: ICN + '/Icons_Essential/v1.2/Icons/Home.png' },
     { label: 'API Docs',     href: './docs/',                     icon: ICN + '/496_rpg_icons/I_Scroll.png' },
+    { label: 'Browse Hub',   href: './hub.html',                  icon: ICN + '/Icons_Essential/v1.2/Icons/Home.png' },
     { label: 'Items',        href: './GRUDGE_Item_Database.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/ChestTreasure.png' },
     { label: 'Item Browser', href: './ItemBrowser.html',           icon: ICN + '/Icons_Essential/v1.2/Icons/MagnifyingGlass.png' },
     { label: 'Sprites',      href: './SPRITE_DATABASE.html',       icon: ICN + '/ui/buttons/people.png' },
@@ -30,7 +30,7 @@
   // Grudge front-end apps (external, open in same tab)
   var apps = [
     { label: 'Warlords',      href: 'https://grudgewarlords.com',         icon: ICN + '/496_rpg_icons/S_Sword01.png',     title: 'Grudge Warlords - player-facing game' },
-    { label: 'Info Hub',      href: 'https://info.grudge-studio.com',     icon: ICN + '/496_rpg_icons/I_Book.png',        title: 'Game Data Hub - items, stats, skills, professions' },
+    { label: 'Info Hub',      href: 'https://info.grudge-studio.com/docs', icon: ICN + '/496_rpg_icons/I_Book.png',        title: 'Canonical API docs - info.grudge-studio.com/docs' },
     { label: 'Client',        href: 'https://client.grudge-studio.com',   icon: ICN + '/Icons_Essential/v1.2/Icons/Gamepad.png', title: 'Grudge Builder / client.grudge-studio.com' },
     { label: 'Dashboard',     href: 'https://dash.grudge-studio.com',     icon: ICN + '/Icons_Essential/v1.2/Icons/Document.png', title: 'Grudge Studio dashboard' },
     { label: 'ID',            href: 'https://id.grudge-studio.com',       icon: ICN + '/Icons_Essential/v1.2/Icons/Key.png',     title: 'Grudge Auth / identity' },

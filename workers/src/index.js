@@ -55,7 +55,7 @@ export default {
             upload: 'POST /v1/assets (API key required)',
             convert: 'POST /v1/convert (API key required)',
           },
-          docs: 'https://objectstore.grudge-studio.com/docs',
+          docs: 'https://info.grudge-studio.com/docs',
         }), origin);
       }
 
