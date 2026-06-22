@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-06-21
-### Changed
-- Unify canonical game data: harvest, skills, items, recipes (7c6e6e5)
+## 2026-06-22
+### Fixed
+- fix(item-db): canonical icon URLs via assets.grudge-studio.com (7e72e99)
 
