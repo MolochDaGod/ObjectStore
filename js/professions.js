@@ -2,6 +2,7 @@
 // Sources: api/v1/master-professions.json (canonical) and master-weaponSkills.json
 (async function () {
   const PROF_URL = "./api/v1/master-professions.json";
+  const TREE_URL = "./api/v1/master-professionTrees.json";
   const WEAP_URL = "./api/v1/master-weaponSkills.json";
   const WPNS_URL = "./api/v1/master-weapons.json";
   const CONS_URL = "./api/v1/master-consumables.json";
@@ -53,13 +54,15 @@
   }
 
   let prof = null,
+    profTrees = null,
     weap = null,
     wpns = null,
     cons = null,
     armr = null;
   try {
-    [prof, weap, wpns, cons, armr] = await Promise.all([
+    [prof, profTrees, weap, wpns, cons, armr] = await Promise.all([
       fetch(PROF_URL).then((r) => r.json()),
+      fetch(TREE_URL).then((r) => r.json()),
       fetch(WEAP_URL).then((r) => r.json()),
       fetch(WPNS_URL)
         .then((r) => r.json())
@@ -146,6 +149,7 @@
   el("countGather").textContent = gatherList.length;
   el("countCraft").textContent = craftList.length;
   el("countNodes").textContent =
+    profTrees?.totalNodes ??
     prof.totalNodes ??
     craftList.reduce((s, c) => s + (c.skillTree?.length || 0), 0);
   el("countMiles").textContent = milestones.length;

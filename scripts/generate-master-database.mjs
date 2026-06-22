@@ -657,27 +657,36 @@ console.log(`  ${Object.keys(masterSkillTrees).length} class skill trees (${clas
 // WEAPON SKILLS (with UUIDs per skill)
 // ============================================================
 let weaponSkillCount = 0;
+function mapWeaponSkillSlots(wt, idPrefix) {
+  return (wt.slots || []).map(slot => ({
+    ...slot,
+    skills: (slot.skills || []).map((sk, i) => {
+      weaponSkillCount++;
+      const resolved = resolveSkillIcon(sk, idPrefix, i);
+      return {
+        uuid: uuid('skill', `weapon-${idPrefix}-${sk.id}`),
+        ...sk,
+        icon: resolved,
+        originalIcon: sk.icon !== resolved ? (sk.icon ?? null) : undefined,
+      };
+    }),
+  }));
+}
 const masterWeaponSkills = {
   version: WSKILLS.version, generatedAt: WSKILLS.generatedAt,
   classRestrictions: WSKILLS.classRestrictions || {},
   weaponTypes: (WSKILLS.weaponTypes || []).map(wt => ({
     ...wt, uuid: uuid('item', `weapontype-${wt.id}`),
-    slots: (wt.slots || []).map(slot => ({
-      ...slot,
-      skills: (slot.skills || []).map((sk, i) => {
-        weaponSkillCount++;
-        const resolved = resolveSkillIcon(sk, wt.id, i);
-        return {
-          uuid: uuid('skill', `weapon-${wt.id}-${sk.id}`),
-          ...sk,
-          icon: resolved,
-          originalIcon: sk.icon !== resolved ? (sk.icon ?? null) : undefined,
-        };
-      }),
-    })),
+    slots: mapWeaponSkillSlots(wt, wt.id),
+  })),
+  artifactWeapons: (WSKILLS.artifactWeapons || []).map(wt => ({
+    ...wt, uuid: uuid('item', `artifact-${wt.id}`),
+    slots: mapWeaponSkillSlots(wt, wt.id),
   })),
 };
-console.log(`  ${masterWeaponSkills.weaponTypes.length} weapon types (${weaponSkillCount} weapon skills)`);
+const artifactSkillCount = (masterWeaponSkills.artifactWeapons || [])
+  .reduce((s, wt) => s + (wt.slots || []).reduce((ss, sl) => ss + (sl.skills?.length || 0), 0), 0);
+console.log(`  ${masterWeaponSkills.weaponTypes.length} weapon types + ${masterWeaponSkills.artifactWeapons.length} artifact weapons (${weaponSkillCount} weapon skills, ${artifactSkillCount} artifact)`);
 
 // ============================================================
 // WRITE OUTPUTS
@@ -740,6 +749,7 @@ const outputs = [
   ['master-weaponSkills.json', {
     version: '3.0.0', generated: now,
     totalWeaponTypes: masterWeaponSkills.weaponTypes.length,
+    totalArtifactWeapons: masterWeaponSkills.artifactWeapons.length,
     totalSkills: weaponSkillCount,
     ...masterWeaponSkills,
   }],

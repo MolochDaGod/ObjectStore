@@ -693,7 +693,7 @@ class GrudgeSDK {
   async getAttribute(attributeId) { const d = await this.getAttributes(); return d.attributes.find(a => a.id === attributeId) || null; }
 
   // ── Weapon Skills (17 types, 207 skills with enhanced combat data) ──
-  async getWeaponSkills() { return this.fetch('/api/v1/weaponSkills.json'); }
+  async getWeaponSkills() { return this.fetch('/api/v1/master-weaponSkills.json'); }
   async getWeaponSkillsByType(weaponType) {
     // Try Worker API first (filtered, cached)
     try {
@@ -701,7 +701,8 @@ class GrudgeSDK {
       if (res.ok) return res.json();
     } catch { /* fall through */ }
     const d = await this.getWeaponSkills();
-    return (d.weaponTypes || []).find(wt => wt.id === weaponType.toUpperCase() || wt.name?.toLowerCase() === weaponType.toLowerCase()) || null;
+    const all = [...(d.weaponTypes || []), ...(d.artifactWeapons || [])];
+    return all.find(wt => wt.id === weaponType.toUpperCase() || wt.name?.toLowerCase() === weaponType.toLowerCase()) || null;
   }
   async getWeaponSkillsForClass(className) {
     // Try Worker API first
@@ -807,7 +808,11 @@ class GrudgeSDK {
   async getRegions() { return this.fetch('/api/v1/regions.json'); }
   async getBattleFormations() { return this.fetch('/api/v1/battleFormations.json'); }
   async getEquipment() { return this.fetch('/api/v1/equipment.json'); }
-  async getSkillTrees() { return this.fetch('/api/v1/skillTrees.json'); }
+  async getSkillTrees() { return this.fetch('/api/v1/master-skillTrees.json'); }
+  async getGameDataManifest() { return this.fetch('/api/v1/game-data-manifest.json'); }
+  async getMasterHarvestNodes() { return this.fetch('/api/v1/master-harvest-nodes.json'); }
+  async getMasterProfessions() { return this.fetch('/api/v1/master-professions.json'); }
+  async getMasterProfessionTrees() { return this.fetch('/api/v1/master-professionTrees.json'); }
   async getEnemyTemplates() { return this.fetch('/api/v1/enemyTemplates.json'); }
   async getLore() { return this.fetch('/api/v1/lore.json'); }
 

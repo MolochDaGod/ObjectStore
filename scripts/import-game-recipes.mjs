@@ -136,7 +136,8 @@ for (const [cat, block] of Object.entries(weapons.categories || {})) {
 
 function resolveResultItem(outputId, recipeName, tier = 1) {
   // Material output (copper-ingot, pine-plank)
-  const mat = resolveMaterial(outputId);
+  const mat = resolveMaterial(outputId)
+    || resolveMaterial(recipeName.replace(/^Smelt\s+/i, '').replace(/^Saw\s+/i, '').replace(/^Weave\s+/i, '').replace(/^Spin\s+/i, '').replace(/^Tan\s+/i, ''));
   if (mat) return { uuid: mat.uuid, name: mat.name, type: 'material' };
 
   // Weapon slug patterns: t1-staff-fire-emberwrath, t1-sword-bloodfeud
