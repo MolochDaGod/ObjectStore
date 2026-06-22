@@ -232,37 +232,37 @@
   <nav class="sidebar">
     <div class="sidebar-label">Browse</div>
     <button class="nav-btn active" data-type="all" onclick="setType('all')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/Icons_Essential/v1.2/Icons/ChestTreasure.png" width="16" height="16" alt=""></span> All Items <span class="badge" id="count-all">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/Icons_Essential/v1.2/Icons/ChestTreasure.png" width="16" height="16" alt=""></span> All Items <span class="badge" id="count-all">—</span>
     </button>
 
     <div class="sidebar-label">Equipment</div>
     <button class="nav-btn" data-type="weapon" onclick="setType('weapon')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/496_rpg_icons/S_Sword07.png" width="16" height="16" alt=""></span> Weapons <span class="badge" id="count-weapon">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/496_rpg_icons/S_Sword07.png" width="16" height="16" alt=""></span> Weapons <span class="badge" id="count-weapon">—</span>
     </button>
     <button class="nav-btn" data-type="armor" onclick="setType('armor')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/armor_full/Chest_01.png" width="16" height="16" alt=""></span> Armor <span class="badge" id="count-armor">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/armor_full/Chest_01.png" width="16" height="16" alt=""></span> Armor <span class="badge" id="count-armor">—</span>
     </button>
     <button class="nav-btn" data-type="relic" onclick="setType('relic')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/items/artifacts/artifacts_01_framed.png" width="16" height="16" alt=""></span> Relics <span class="badge" id="count-relic">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/artifacts/artifacts_01_framed.png" width="16" height="16" alt=""></span> Relics <span class="badge" id="count-relic">—</span>
     </button>
 
     <div class="sidebar-label">Consumables</div>
     <button class="nav-btn" data-type="consumable" onclick="setType('consumable')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> Consumables <span class="badge" id="count-consumable">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> Consumables <span class="badge" id="count-consumable">—</span>
     </button>
     <button class="nav-btn" data-type="material" onclick="setType('material')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt=""></span> Materials <span class="badge" id="count-material">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt=""></span> Materials <span class="badge" id="count-material">—</span>
     </button>
     <button class="nav-btn" data-type="artifact" onclick="setType('artifact')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/loot/loot_1.png" width="16" height="16" alt=""></span> Artifacts <span class="badge" id="count-artifact">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/loot/loot_1.png" width="16" height="16" alt=""></span> Artifacts <span class="badge" id="count-artifact">—</span>
     </button>
 
     <div class="sidebar-label">Mystic System</div>
     <button class="nav-btn" data-type="enchant" onclick="setType('enchant')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/abilities/ability_arcane_bolt.png" width="16" height="16" alt=""></span> Enchants <span class="badge" id="count-enchant">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/abilities/ability_arcane_bolt.png" width="16" height="16" alt=""></span> Enchants <span class="badge" id="count-enchant">—</span>
     </button>
     <button class="nav-btn" data-type="infusion" onclick="setType('infusion')">
-      <span class="ico"><img src="https://objectstore.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt=""></span> Infusions <span class="badge" id="count-infusion">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt=""></span> Infusions <span class="badge" id="count-infusion">—</span>
     </button>
 
     <div class="sidebar-divider"></div>
@@ -349,7 +349,12 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { resolveCatalogIcon } from './utils/icon-resolver.js';
+import { ICON_CDN } from './utils/asset-config.js';
+
+const CDN = ICON_CDN;
+
 // ─── Data sources ─────────────────────────────────────────────────────────
 const SOURCES = [
   { url: './api/v1/master-weapons.json',     key: 'items',      type: 'weapon',     ico: '⚔️' },
@@ -362,261 +367,8 @@ const SOURCES = [
   { url: './api/v1/master-artifacts.json',   key: 'artifacts',  type: 'artifact',   ico: '🏺' },
 ];
 
-// ─── Icon resolution ──────────────────────────────────────────────────────
-const CDN = 'https://objectstore.grudge-studio.com';
-
-// Enchant stat → existing ability icon
-const ENCH_ICON = {
-  damage:      `${CDN}/icons/abilities/ability_arcane_bolt.png`,
-  defense:     `${CDN}/icons/abilities/ability_bark_skin.png`,
-  speed:       `${CDN}/icons/abilities/ability_arrow_storm.png`,
-  crit:        `${CDN}/icons/abilities/ability_arcane_focus.png`,
-  critChance:  `${CDN}/icons/abilities/ability_arcane_focus.png`,
-  critDamage:  `${CDN}/icons/abilities/ability_arcane_focus.png`,
-  fire:        `${CDN}/icons/abilities/ability_arcane_cataclysm.png`,
-  lightning:   `${CDN}/icons/abilities/ability_arcane_cataclysm.png`,
-  frost:       `${CDN}/icons/abilities/ability_avatar_form.png`,
-  health:      `${CDN}/icons/abilities/ability_avatar.png`,
-  mana:        `${CDN}/icons/abilities/ability_arcane_focus.png`,
-  elementResist:`${CDN}/icons/abilities/ability_bark_skin.png`,
-};
-const defaultEnchIcon = `${CDN}/icons/abilities/ability_arcane_bolt.png`;
-
-// Infusions → alchemy framed icons (tier-indexed)
-const INFU_ICON = Array.from({length:12},(_,i)=>`${CDN}/icons/items/alchemy/alchemy_${String(i+1).padStart(2,'0')}_framed.png`);
-
-// Relics → artifacts framed icons (tier-indexed)
-const RELIC_ICON = Array.from({length:12},(_,i)=>`${CDN}/icons/items/artifacts/artifacts_${String(i+1).padStart(2,'0')}_framed.png`);
-
-// Armor slot → icon prefix and count (in icons/armor_full/)
-const ARMOR_SLOT_ICON = {
-  Helm:     { prefix: 'Helm',     count: 72 },
-  Shoulder: { prefix: 'Shoulder', count: 71 },
-  Chest:    { prefix: 'Chest',    count: 83 },
-  Hands:    { prefix: 'Gloves',   count: 28 },
-  Feet:     { prefix: 'Boots',    count: 56 },
-  Ring:     { prefix: 'Ring',     count: 57 },
-  Necklace: { prefix: 'necklace', count: 36 },
-  Legs:     { prefix: 'Pants',    count: 42 },
-  Offhand:  { prefix: 'Bracer',   count: 7  },
-  Relic:    { prefix: 'Ring',     count: 57 },
-};
-const MAT_OFFSET = { cloth: 0, leather: 0.33, metal: 0.66, gem: 0.5 };
-function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;} return Math.abs(h); }
-// Shoulder_63.png is missing from the asset pack (goes 62 → 64)
-const SKIP_ICONS = { Shoulder: [63] };
-function armorIcon(item) {
-  const slot = ARMOR_SLOT_ICON[item.slotType];
-  if (!slot) return `${CDN}/icons/armor/armor_${((item._tierNum||1)%30)+1}.png`;
-  const matShift = MAT_OFFSET[item.material] || 0;
-  const base = Math.floor(matShift * slot.count);
-  let num = (base + hashStr(item.baseName||item.name||'') % Math.ceil(slot.count / 3)) % slot.count + 1;
-  const skip = SKIP_ICONS[item.slotType];
-  if (skip && skip.includes(num)) num++;
-  return `${CDN}/icons/armor_full/${slot.prefix}_${String(num).padStart(2, '0')}.png`;
-}
-
-// ─── Weapon icon resolver ─────────────────────────────────────────────────
-// weaponType → { prefix, count } in icons/pack/weapons/
-const WEAPON_TYPE_ICON = {
-  swords:       { prefix: 'Sword',    count: 61 },
-  greatswords:  { prefix: 'Sword',    count: 61 },
-  axes1h:       { prefix: 'Axe',      count: 50 },
-  greataxes:    { prefix: 'Axe',      count: 50 },
-  daggers:      { prefix: 'Dagger',   count: 60 },
-  hammers1h:    { prefix: 'Hammer',   count: 50 },
-  hammers2h:    { prefix: 'Hammer',   count: 50 },
-  wands:        { prefix: 'staff',    count: 50, nopad: true },
-  spears:       { prefix: 'Spear',    count: 40 },
-  bows:         { prefix: 'Bow',      count: 40 },
-  crossbows:    { prefix: 'Crossbow', count: 10 },
-  guns:         { prefix: 'Crossbow', count: 10 },
-  shields:      { prefix: 'shield',   count: 51 },
-  tools:        { prefix: 'Hammer',   count: 50 },
-  'offhand-tome':{ prefix: 'Book',    count: 25, nopad: true },
-};
-// Staves use lowercase + no zero-padding (staff_1..staff_50, Staff_51..Staff_54)
-function staffIcon(item) {
-  const n = hashStr(item.baseName||item.name||'') % 50 + 1;
-  const prefix = n >= 51 ? 'Staff' : 'staff';
-  return `${CDN}/icons/pack/weapons/${prefix}_${n}.png`;
-}
-function weaponIcon(item) {
-  const raw = item.iconUrl || '';
-  // Named weapon icons (kebab-case in /icons/weapons/) — keep if valid
-  if (raw.includes('/icons/weapons/') && !raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i)) {
-    return raw;
-  }
-  // Staves (fire/frost/lightning/nature/holy/arcane) → staff icons
-  const wt = (item.weaponType || item.subType || item.category || '').toLowerCase();
-  if (wt.includes('stav') || wt.includes('staff')) return staffIcon(item);
-  // Map weaponType → pack/weapons/ generic icons
-  const slot = WEAPON_TYPE_ICON[wt];
-  if (slot) {
-    const n = hashStr(item.baseName||item.name||'') % slot.count + 1;
-    const num = slot.nopad ? String(n) : String(n).padStart(2, '0');
-    return `${CDN}/icons/pack/weapons/${slot.prefix}_${num}.png`;
-  }
-  // Fallback: keep raw if set, else generic sword
-  return raw || `${CDN}/icons/pack/weapons/Sword_01.png`;
-}
-
-// ─── Food icon resolver (keyword-matched) ───────────────────────────────
-function foodIcon(item) {
-  const n = (item.baseName||item.name||'').toLowerCase();
-  const C = `${CDN}/icons/consumables`;
-  const F = `${CDN}/icons/food`;
-  // redFoods → meat/protein matched by name
-  if ((item.category||'') === 'redFoods') {
-    if (n.includes('steak')||n.includes('seared'))   return `${C}/food_steak_cooked.png`;
-    if (n.includes('roast')||n.includes('cuts'))     return `${F}/85_roastedchicken.png`;
-    if (n.includes('ribs')||n.includes('bbq'))       return `${C}/food_steak_rare.png`;
-    if (n.includes('bacon')||n.includes('sausage'))   return `${C}/food_ham.png`;
-    if (n.includes('burger'))                        return `${F}/15_burger.png`;
-    if (n.includes('skewer')||n.includes('kebab'))   return `${F}/54_hotdog.png`;
-    if (n.includes('wings'))                         return `${C}/food_crab.png`;
-    if (n.includes('curry'))                         return `${F}/32_curry.png`;
-    if (n.includes('stew'))                          return `${F}/87_ramen.png`;
-    if (n.includes('sashimi')||n.includes('fish'))   return `${C}/food_fish_red.png`;
-    if (n.includes('feast')||n.includes('platter'))  return `${F}/95_steak.png`;
-    if (n.includes('charred')||n.includes('burnt'))  return `${C}/food_steak_raw.png`;
-    return `${C}/food_meat_raw.png`;
-  }
-  // greenFoods → veggies/herbs matched by name
-  if ((item.category||'') === 'greenFoods') {
-    if (n.includes('salad')||n.includes('greens'))   return `${C}/food_grapes.png`;
-    if (n.includes('soup')||n.includes('stew'))      return `${C}/food_mushroom.png`;
-    if (n.includes('herb')||n.includes('tea'))       return `${C}/herb_herb_leaf.png`;
-    if (n.includes('mushroom'))                      return `${C}/food_mushroom.png`;
-    if (n.includes('fruit')||n.includes('blossom'))  return `${C}/food_apple.png`;
-    if (n.includes('nectar'))                        return `${C}/food_mango.png`;
-    if (n.includes('wrap')||n.includes('roll'))      return `${C}/food_carrot.png`;
-    if (n.includes('garden')||n.includes('medley'))  return `${C}/food_carrot.png`;
-    if (n.includes('feast')||n.includes('bowl'))     return `${C}/food_banana.png`;
-    return `${C}/food_wheat.png`;
-  }
-  // blueFoods → baked goods/mana matched by name
-  if ((item.category||'') === 'blueFoods') {
-    if (n.includes('bread')||n.includes('biscuit'))  return `${C}/food_bread.png`;
-    if (n.includes('cake')||n.includes('pastry')||n.includes('pie')) return `${C}/food_croissant.png`;
-    if (n.includes('soup')||n.includes('stew')||n.includes('broth')||n.includes('chowder')||n.includes('bisque')||n.includes('gumbo')) return `${C}/food_fish_silver.png`;
-    if (n.includes('brew')||n.includes('grog')||n.includes('nectar')) return `${C}/food_beer.png`;
-    if (n.includes('fish'))                          return `${C}/food_fish_silver.png`;
-    return `${C}/food_bread.png`;
-  }
-  return `${C}/food_cheese.png`;
-}
-
-// ─── Potion icon resolver (keyword-matched) ─────────────────────────────
-function potionIcon(item) {
-  const n = (item.baseName||item.name||'').toLowerCase();
-  const C = `${CDN}/icons/consumables`;
-  const P = `${CDN}/icons/potions`;
-  if (n.includes('health'))                          return `${C}/health_potion.png`;
-  if (n.includes('mana'))                            return `${C}/mana_potion.png`;
-  if (n.includes('stamina'))                         return `${P}/P_Green05.png`;
-  if (n.includes('antidote')||n.includes('poison'))  return `${P}/P_Yellow01.png`;
-  if (n.includes('fire')||n.includes('incendiar'))   return `${P}/fire_potion.png`;
-  if (n.includes('frost')||n.includes('ice'))        return `${P}/P_Blue05.png`;
-  if (n.includes('lightning'))                       return `${P}/P_Yellow01.png`;
-  if (n.includes('earth'))                           return `${P}/earth_potion.png`;
-  if (n.includes('air')||n.includes('wind'))         return `${P}/air_potion.png`;
-  if (n.includes('speed')||n.includes('swift'))      return `${P}/P_Green03.png`;
-  if (n.includes('rage')||n.includes('berserker')||n.includes('strength')||n.includes('titan')) return `${P}/P_Red07.png`;
-  if (n.includes('defense')||n.includes('ward'))     return `${P}/P_Blue03.png`;
-  if (n.includes('invisib'))                         return `${P}/P_White05.png`;
-  if (n.includes('invulner'))                        return `${P}/P_Medicine06.png`;
-  if (n.includes('elixir')||n.includes('ultimate')||n.includes('divine')||n.includes('immortal')) return `${P}/P_Red05.png`;
-  if (n.includes('elemental'))                       return `${P}/P_Blue06.png`;
-  if (n.includes('super')||n.includes('greater'))    return `${P}/P_Red03.png`;
-  if (n.includes('mega'))                            return `${P}/P_Red05.png`;
-  return `${C}/potion_${hashStr(item.baseName||item.name||'')%48+1}.png`;
-}
-
-// ─── Consumable icon resolver (keyword-matched) ─────────────────────────
-function consumableIcon(item) {
-  const n = (item.baseName||item.name||'').toLowerCase();
-  const C = `${CDN}/icons/consumables`;
-  if (n.includes('bandage')||n.includes('medkit'))   return `${C}/alchemy_1.png`;
-  if (n.includes('repair'))                          return `${C}/alchemy_5.png`;
-  if (n.includes('grenade')||n.includes('bomb'))     return `${C}/alchemy_30.png`;
-  if (n.includes('smoke'))                           return `${C}/alchemy_25.png`;
-  if (n.includes('flash'))                           return `${C}/alchemy_28.png`;
-  if (n.includes('turret'))                          return `${C}/alchemy_40.png`;
-  if (n.includes('lure')||n.includes('fish'))        return `${C}/food_fish_silver.png`;
-  if (n.includes('emp'))                             return `${C}/alchemy_35.png`;
-  return `${C}/alchemy_${hashStr(item.baseName||item.name||'')%48+1}.png`;
-}
-
-// ─── Material icon resolver (name-matched) ──────────────────────────────
-// Most materials have exact-match icons in /icons/materials/
-const MAT_FALLBACK = {
-  'hemp':'rag-thread','rough stone':'ore_t1','wild herb':'herb_herb_leaf',
-  'water flask':'food_beer','raw meat':'food_meat_raw','raw fish':'food_fish_red',
-  'moonweave thread':'celestial-thread','starweave thread':'arcane-thread',
-  'voidweave thread':'enchanted-thread','wyrm leather':'rugged-leather',
-  'infernal leather':'hardened-leather','titan leather':'thick-hide',
-  'divine leather':'rawhide',
-};
-function materialIcon(item) {
-  const name = (item.name||'').toLowerCase();
-  // Check fallback map for items without exact icon files
-  const fb = MAT_FALLBACK[name];
-  if (fb) {
-    if (fb.startsWith('food_')||fb.startsWith('herb_')) return `${CDN}/icons/consumables/${fb}.png`;
-    return `${CDN}/icons/materials/${fb}.png`;
-  }
-  // Convert name to kebab-case for direct icon match
-  const kebab = name.replace(/\s+/g, '-');
-  return `${CDN}/icons/materials/${kebab}.png`;
-}
-
-// Artifacts → loot icons
-const LOOT_ICON = Array.from({length:16},(_,i)=>`${CDN}/icons/loot/loot_${i+1}.png`);
-
 function resolveIcon(item) {
-  const raw = item.iconUrl || '';
-
-  // Broken enchant path → map by stat
-  if (!raw || raw.includes('/icons/enchants/')) {
-    if (item._type === 'enchant') {
-      const stat = item.effect?.stat || 'damage';
-      return ENCH_ICON[stat] || defaultEnchIcon;
-    }
-  }
-  // Broken infusion path → alchemy icons
-  if (!raw || raw.includes('/icons/infusions/')) {
-    if (item._type === 'infusion') {
-      return INFU_ICON[Math.min((item._tierNum||1)-1, INFU_ICON.length-1)];
-    }
-  }
-  // Broken relic path → artifacts icons
-  if (!raw || raw.includes('/icons/relics/')) {
-    if (item._type === 'relic') {
-      return RELIC_ICON[Math.min((item._tierNum||1)-1, RELIC_ICON.length-1)];
-    }
-  }
-  // No icon for artifact → loot icons
-  if (!raw && item._type === 'artifact') {
-    return LOOT_ICON[Math.min((item._tierNum||1)-1, LOOT_ICON.length-1)];
-  }
-  // Armor → always use slot-type icon resolver
-  if (item._type === 'armor') return armorIcon(item);
-  // Weapons → fix broken paths (staves, training weapons, wrong dirs)
-  if (item._type === 'weapon') return weaponIcon(item);
-  // Food → map to /icons/food/
-  if (item._type === 'food') return foodIcon(item);
-  // Potions → map to /icons/items/potions/ framed
-  if (item._type === 'potion') return potionIcon(item);
-  // Consumables → map to rpg-general framed
-  if (item._type === 'consumable') return consumableIcon(item);
-  // Materials → fix broken paths, fallback to resource icons
-  if (item._type === 'material') return materialIcon(item);
-  // Craftpix plain icons → try framed variant first
-  if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {
-    return raw.replace(/\.png$/, '_framed.png');
-  }
-  return raw || null;
+  return resolveCatalogIcon(item);
 }
 
 // ─── State ────────────────────────────────────────────────────────────────
@@ -1023,6 +775,11 @@ function e(s) {
 document.addEventListener('keydown', ev => {
   if ((ev.metaKey||ev.ctrlKey) && ev.key==='k') { ev.preventDefault(); document.getElementById('searchBox').focus(); }
   if (ev.key==='Escape') closeDrawer();
+});
+
+Object.assign(window, {
+  setType, setTier, setSub, onSearch, onSort, loadMore, closeDrawer,
+  selectWeaponType, backToWeaponTypes,
 });
 </script>
 <script src="./js/nav.js"></script>

@@ -1,19 +1,19 @@
 /**
  * icon-resolver.js — Single Source of Truth for Item Icon URLs
  *
- * Aligned with GRUDGE_Item_Database.html icon resolution (the canonical reference).
- * Uses the same directories: pack/weapons/, armor_full/, items/artifacts/,
- * items/alchemy/, abilities/, consumables/, food/, materials/.
+ * Canonical icons: https://assets.grudge-studio.com/icons/...
  *
  * Usage:
- *   import { getIconUrl, getFallbackUrl } from './utils/icon-resolver.js';
- *   const url = getIconUrl(item);         // primary icon
+ *   import { resolveCatalogIcon, getIconUrl, getFallbackUrl } from './utils/icon-resolver.js';
+ *   const url = resolveCatalogIcon(item); // catalog UI + bake script
  *   const fb  = getFallbackUrl(item);     // guaranteed-exists fallback
  *
  * item shape expected:
  *   { id, name, type, tier?, category?, slotType?, material?,
  *     weaponType?, subType?, baseName?, iconUrl?, iconBase? }
  */
+
+import { ICON_CDN, absAssetUrl } from './asset-config.js';
 
 // ── Armor slot → icon prefix + count in icons/armor_full/ ──
 const ARMOR_SLOT_ICON = {
@@ -178,9 +178,19 @@ export function hashStr(s) {
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 
+// Catalog material name overrides (items without exact icon files)
+const CATALOG_MAT_FALLBACK = {
+  'hemp': 'rag-thread', 'rough stone': 'ore_t1', 'wild herb': 'herb_herb_leaf',
+  'water flask': 'food_beer', 'raw meat': 'food_meat_raw', 'raw fish': 'food_fish_red',
+  'moonweave thread': 'celestial-thread', 'starweave thread': 'arcane-thread',
+  'voidweave thread': 'enchanted-thread', 'wyrm leather': 'rugged-leather',
+  'infernal leather': 'hardened-leather', 'titan leather': 'thick-hide',
+  'divine leather': 'rawhide',
+};
+
 // ── Primary icon URL ──
 export function getIconUrl(item, base) {
-  base = base || '.';
+  base = base || ICON_CDN;
   var baseId = String(item.id).replace(/-t\d+$/, '');
   if (item.type === 'weapon')     return getWeaponIcon(item, baseId, base);
   if (item.type === 'armor')      return getArmorIcon(item, baseId, base);
@@ -196,7 +206,7 @@ export function getIconUrl(item, base) {
 
 // ── Fallback icon URL (guaranteed to exist) ──
 export function getFallbackUrl(item, base) {
-  base = base || '.';
+  base = base || ICON_CDN;
   var baseId = String(item.id).replace(/-t\d+$/, '');
   if (item.type === 'weapon')     return getWeaponPackIcon(item, baseId, base);
   if (item.type === 'armor')      return base + '/icons/armor_full/Chest_01.png';
@@ -215,10 +225,7 @@ function getWeaponIcon(item, baseId, base) {
   // If the item already has a working iconUrl path, use it
   var raw = item.iconUrl || '';
   if (raw && raw.includes('/icons/weapons/') && !raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i)) {
-    // Convert absolute GitHub Pages / CDN URLs to relative for same-origin loading
-    var relMatch = raw.match(/\/icons\/weapons\/.+$/);
-    if (relMatch) return base + relMatch[0];
-    return raw;
+    return absAssetUrl(raw, base);
   }
   // Staves special case: lowercase staff_1..staff_50, uppercase Staff_51..54
   var wt = (item.weaponType || item.subType || item.category || '').toLowerCase();
@@ -235,7 +242,7 @@ function getWeaponIcon(item, baseId, base) {
     return base + '/icons/pack/weapons/' + slot.prefix + '_' + num + '.png';
   }
   // Fallback: try named file, then generic sword
-  return raw ? (raw.startsWith('http') ? raw : base + raw) : base + '/icons/pack/weapons/Sword_01.png';
+  return raw ? absAssetUrl(raw, base) : base + '/icons/pack/weapons/Sword_01.png';
 }
 
 // ── Weapon fallback (pack/weapons/) ──
@@ -376,4 +383,139 @@ function getConsumableIcon(item, baseId, base) {
   // Default: deterministic food icon
   var fIdx = hashStr(baseId) % ALL_FOODS.length;
   return base + '/icons/consumables/' + ALL_FOODS[fIdx] + '.png';
+}
+
+// ── Catalog resolvers (food / potion / engineer consumables) ───────────────
+
+function catalogFoodIcon(item, base) {
+  var n = (item.baseName || item.name || '').toLowerCase();
+  var C = base + '/icons/consumables';
+  var F = base + '/icons/food';
+  var cat = item.category || '';
+
+  if (cat === 'redFoods') {
+    if (n.includes('steak') || n.includes('seared')) return C + '/food_steak_cooked.png';
+    if (n.includes('roast') || n.includes('cuts')) return F + '/85_roastedchicken.png';
+    if (n.includes('ribs') || n.includes('bbq')) return C + '/food_steak_rare.png';
+    if (n.includes('bacon') || n.includes('sausage')) return C + '/food_ham.png';
+    if (n.includes('burger')) return F + '/15_burger.png';
+    if (n.includes('skewer') || n.includes('kebab')) return F + '/54_hotdog.png';
+    if (n.includes('wings')) return C + '/food_crab.png';
+    if (n.includes('curry')) return F + '/32_curry.png';
+    if (n.includes('stew')) return F + '/87_ramen.png';
+    if (n.includes('sashimi') || n.includes('fish')) return C + '/food_fish_red.png';
+    if (n.includes('feast') || n.includes('platter')) return F + '/95_steak.png';
+    if (n.includes('charred') || n.includes('burnt')) return C + '/food_steak_raw.png';
+    return C + '/food_meat_raw.png';
+  }
+  if (cat === 'greenFoods') {
+    if (n.includes('salad') || n.includes('greens')) return C + '/food_grapes.png';
+    if (n.includes('soup') || n.includes('stew')) return C + '/food_mushroom.png';
+    if (n.includes('herb') || n.includes('tea')) return C + '/herb_herb_leaf.png';
+    if (n.includes('mushroom')) return C + '/food_mushroom.png';
+    if (n.includes('fruit') || n.includes('blossom')) return C + '/food_apple.png';
+    if (n.includes('nectar')) return C + '/food_mango.png';
+    if (n.includes('wrap') || n.includes('roll')) return C + '/food_carrot.png';
+    if (n.includes('garden') || n.includes('medley')) return C + '/food_carrot.png';
+    if (n.includes('feast') || n.includes('bowl')) return C + '/food_banana.png';
+    return C + '/food_wheat.png';
+  }
+  if (cat === 'blueFoods') {
+    if (n.includes('bread') || n.includes('biscuit')) return C + '/food_bread.png';
+    if (n.includes('cake') || n.includes('pastry') || n.includes('pie')) return C + '/food_croissant.png';
+    if (n.includes('soup') || n.includes('stew') || n.includes('broth') || n.includes('chowder') || n.includes('bisque') || n.includes('gumbo')) return C + '/food_fish_silver.png';
+    if (n.includes('brew') || n.includes('grog') || n.includes('nectar')) return C + '/food_beer.png';
+    if (n.includes('fish')) return C + '/food_fish_silver.png';
+    return C + '/food_bread.png';
+  }
+  return C + '/food_cheese.png';
+}
+
+function catalogPotionIcon(item, base) {
+  var n = (item.baseName || item.name || '').toLowerCase();
+  var C = base + '/icons/consumables';
+  var P = base + '/icons/potions';
+  if (n.includes('health')) return C + '/health_potion.png';
+  if (n.includes('mana')) return C + '/mana_potion.png';
+  if (n.includes('stamina')) return P + '/P_Green05.png';
+  if (n.includes('antidote') || n.includes('poison')) return P + '/P_Yellow01.png';
+  if (n.includes('fire') || n.includes('incendiar')) return P + '/fire_potion.png';
+  if (n.includes('frost') || n.includes('ice')) return P + '/P_Blue05.png';
+  if (n.includes('lightning')) return P + '/P_Yellow01.png';
+  if (n.includes('earth')) return P + '/earth_potion.png';
+  if (n.includes('air') || n.includes('wind')) return P + '/air_potion.png';
+  if (n.includes('speed') || n.includes('swift')) return P + '/P_Green03.png';
+  if (n.includes('rage') || n.includes('berserker') || n.includes('strength') || n.includes('titan')) return P + '/P_Red07.png';
+  if (n.includes('defense') || n.includes('ward')) return P + '/P_Blue03.png';
+  if (n.includes('invisib')) return P + '/P_White05.png';
+  if (n.includes('invulner')) return P + '/P_Medicine06.png';
+  if (n.includes('elixir') || n.includes('ultimate') || n.includes('divine') || n.includes('immortal')) return P + '/P_Red05.png';
+  if (n.includes('elemental')) return P + '/P_Blue06.png';
+  if (n.includes('super') || n.includes('greater')) return P + '/P_Red03.png';
+  if (n.includes('mega')) return P + '/P_Red05.png';
+  return C + '/potion_' + (hashStr(item.baseName || item.name || '') % 48 + 1) + '.png';
+}
+
+function catalogEngineerIcon(item, base) {
+  var n = (item.baseName || item.name || '').toLowerCase();
+  var C = base + '/icons/consumables';
+  if (n.includes('bandage') || n.includes('medkit')) return C + '/alchemy_1.png';
+  if (n.includes('repair')) return C + '/alchemy_5.png';
+  if (n.includes('grenade') || n.includes('bomb')) return C + '/alchemy_30.png';
+  if (n.includes('smoke')) return C + '/alchemy_25.png';
+  if (n.includes('flash')) return C + '/alchemy_28.png';
+  if (n.includes('turret')) return C + '/alchemy_40.png';
+  if (n.includes('lure') || n.includes('fish')) return C + '/food_fish_silver.png';
+  if (n.includes('emp')) return C + '/alchemy_35.png';
+  return C + '/alchemy_' + (hashStr(item.baseName || item.name || '') % 48 + 1) + '.png';
+}
+
+function catalogMaterialIcon(item, base) {
+  var name = (item.name || '').toLowerCase();
+  var fb = CATALOG_MAT_FALLBACK[name];
+  if (fb) {
+    if (fb.startsWith('food_') || fb.startsWith('herb_')) return base + '/icons/consumables/' + fb + '.png';
+    return base + '/icons/materials/' + fb + '.png';
+  }
+  return base + '/icons/materials/' + name.replace(/\s+/g, '-') + '.png';
+}
+
+/**
+ * Full catalog resolver — used by GRUDGE_Item_Database.html and bake-icons-and-models.mjs.
+ * Handles food/potion subtypes and always returns absolute canonical CDN URLs.
+ */
+export function resolveCatalogIcon(item, base) {
+  base = base || ICON_CDN;
+  var t = item.type || item._type || '';
+  var raw = item.iconUrl || '';
+  var tier = parseInt(item.tier || item._tierNum, 10) || 1;
+
+  if (t === 'enchant' || (!raw && t === 'enchant') || raw.includes('/icons/enchants/')) {
+    return getEnchantIcon(item, String(item.id || '').replace(/-t\d+$/, ''), base);
+  }
+  if (t === 'infusion' || (!raw && t === 'infusion') || raw.includes('/icons/infusions/')) {
+    return getInfusionIcon(item, '', base);
+  }
+  if (t === 'relic' || (!raw && t === 'relic') || raw.includes('/icons/relics/')) {
+    return getRelicIcon(item, '', base);
+  }
+  if (t === 'artifact' && !raw) {
+    var n = (hashStr(String(item.id || item.uuid || '')) % 16) + 1;
+    return base + '/icons/loot/loot_' + n + '.png';
+  }
+  if (t === 'armor') return getArmorIcon(item, String(item.id || '').replace(/-t\d+$/, ''), base);
+  if (t === 'weapon' || t === 'tool' || t === 'offhand-tome') {
+    return getWeaponIcon(item, String(item.id || '').replace(/-t\d+$/, ''), base);
+  }
+  if (t === 'food') return catalogFoodIcon(item, base);
+  if (t === 'potion') return catalogPotionIcon(item, base);
+  if (t === 'consumable') return catalogEngineerIcon(item, base);
+  if (t === 'material') return catalogMaterialIcon(item, base);
+
+  if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {
+    return absAssetUrl(raw.replace(/\.png$/, '_framed.png'), base);
+  }
+  if (raw) return absAssetUrl(raw, base);
+
+  return getIconUrl(Object.assign({}, item, { type: t }), base);
 }
