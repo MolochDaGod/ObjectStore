@@ -16,7 +16,13 @@
  *   GET    /v1/convert/:id/ws     WebSocket for conversion progress
  *   GET    /v1/convert/jobs       List recent conversion jobs
  *   GET    /health                Health check
+ *   GET    /api/v1/catalog        Fleet catalog index (SSOT for game data endpoints)
+ *   GET    /api/v1/:name.json     Static game data JSON (R2 cache → info.grudge-studio.com)
  */
+
+const API_VERSION = '3.2.0';
+/** Canonical static JSON upstream — never self-proxy via objectstore (circular). */
+const STATIC_JSON_BASE = 'https://info.grudge-studio.com/api/v1';
 
 // Re-export the Durable Object class so Wrangler can find it
 export { ConversionPipeline } from './ConversionPipeline.js';
@@ -37,10 +43,14 @@ export default {
       if (url.pathname === '/' || url.pathname === '') {
         return corsResponse(env, json({
           service: 'objectstore-api',
-          version: '3.0.0',
+          version: API_VERSION,
           status: 'ok',
+          canonicalUrl: 'https://objectstore.grudge-studio.com',
+          fleet: 'https://grudachain.grudge-studio.com/api/fleet/connect',
           endpoints: {
             health: 'GET /health',
+            catalog: 'GET /api/v1/catalog',
+            staticJson: 'GET /api/v1/:name.json',
             assets: 'GET /v1/assets',
             models: 'GET /v1/models',
             gameData: 'GET /v1/game-data',
@@ -60,7 +70,20 @@ export default {
       }
 
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
-        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: '3.0.0', timestamp: new Date().toISOString() }), origin);
+        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: API_VERSION, timestamp: new Date().toISOString() }), origin);
+      }
+
+      // ── Static JSON catalog (/api/v1/*) — fleet games consume these ──
+      if (url.pathname === '/api/v1/catalog' && method === 'GET') {
+        return corsResponse(env, await serveStaticJson('catalog', env), origin);
+      }
+      const staticJsonMatch = url.pathname.match(/^\/api\/v1\/([a-zA-Z0-9_.-]+)\.json$/);
+      if (staticJsonMatch && method === 'GET') {
+        return corsResponse(env, await serveStaticJson(staticJsonMatch[1], env), origin);
+      }
+
+      if (url.pathname === '/docs' || url.pathname.startsWith('/docs/')) {
+        return Response.redirect(`https://info.grudge-studio.com${url.pathname}${url.search}`, 301);
       }
 
       // ── Game data routes (/v1/game-data, /v1/weapon-skills) ───────
@@ -446,7 +469,7 @@ const GAME_DATA_COLLECTIONS = [
   'gltf-manifest', 'effect-definitions', 'animations-gltf',
 ];
 
-const GITHUB_PAGES_BASE = 'https://objectstore.grudge-studio.com/api/v1';
+const GITHUB_PAGES_BASE = STATIC_JSON_BASE;
 
 /** Route handler for /v1/game-data/* and /v1/weapon-skills/* */
 async function handleGameDataRoutes(url, method, env) {
@@ -498,7 +521,46 @@ async function handleGameDataRoutes(url, method, env) {
   return json({ error: 'Not found' }, 404);
 }
 
-/** Serve a game data JSON, trying R2 cache first, then GitHub Pages */
+/** Serve static /api/v1/:name.json — R2 cache first, then canonical Vercel upstream */
+async function serveStaticJson(name, env) {
+  const cacheKey = `static-json/${name}.json`;
+  const cached = await env.BUCKET.get(cacheKey);
+  if (cached) {
+    return new Response(cached.body, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
+        'X-Source': 'r2-cache',
+      },
+    });
+  }
+
+  const base = (env.STATIC_JSON_BASE || STATIC_JSON_BASE).replace(/\/$/, '');
+  const sourceUrl = `${base}/${name}.json`;
+  try {
+    const resp = await fetch(sourceUrl);
+    if (!resp.ok) {
+      return json({ error: `Failed to fetch ${name}.json`, status: resp.status, source: sourceUrl }, resp.status === 404 ? 404 : 502);
+    }
+    const body = await resp.arrayBuffer();
+    env.BUCKET.put(cacheKey, body, {
+      httpMetadata: { contentType: 'application/json' },
+      customMetadata: { source: 'upstream', cachedAt: new Date().toISOString() },
+    }).catch(() => {});
+
+    return new Response(body, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=300, s-maxage=3600',
+        'X-Source': 'upstream',
+      },
+    });
+  } catch (e) {
+    return json({ error: `Upstream fetch failed: ${e.message}`, source: sourceUrl }, 502);
+  }
+}
+
+/** Serve a game data JSON, trying R2 cache first, then canonical static upstream */
 async function serveGameDataCollection(name, env, url = null) {
   const wantsPage = !!url && (
     url.searchParams.has('page') ||

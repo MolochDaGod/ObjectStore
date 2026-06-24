@@ -1,0 +1,463 @@
+{
+  "service": "objectstore",
+  "version": "5.0.0",
+  "canonicalUrl": "https://objectstore.grudge-studio.com",
+  "docs": "https://info.grudge-studio.com/docs",
+  "staticJsonBase": "https://objectstore.grudge-studio.com/api/v1",
+  "workerApiBase": "https://objectstore.grudge-studio.com/v1",
+  "fleet": "https://grudachain.grudge-studio.com/api/fleet/connect",
+  "auth": {
+    "login": "https://id.grudge-studio.com/api/auth/page",
+    "verify": "https://id.grudge-studio.com/api/auth/verify"
+  },
+  "generated": "2026-06-24T01:00:06.786Z",
+  "totals": {
+    "weapons": 868,
+    "armor": 1344,
+    "materials": 104,
+    "consumables": 132,
+    "enemies": 38,
+    "bosses": 12,
+    "weaponSkills": 219,
+    "vfxEffects": 143,
+    "battleAbilities": 209,
+    "sprites2d": 3038,
+    "factionUnits": 19,
+    "masterItems": 2188,
+    "masterRecipes": 1058,
+    "masterProfessions": 11,
+    "registryEntries": 2743,
+    "unifiedItems": 2743,
+    "spriteCharacters": 313,
+    "apiEndpoints": 101,
+    "masterDatasets": 20
+  },
+  "endpoints": [
+    {
+      "name": "3dEffects.json",
+      "path": "/api/v1/3dEffects.json"
+    },
+    {
+      "name": "3dfx-examples.json",
+      "path": "/api/v1/3dfx-examples.json"
+    },
+    {
+      "name": "3dfx-registry.json",
+      "path": "/api/v1/3dfx-registry.json"
+    },
+    {
+      "name": "3dfx-uuids.json",
+      "path": "/api/v1/3dfx-uuids.json"
+    },
+    {
+      "name": "abilityEffects.json",
+      "path": "/api/v1/abilityEffects.json"
+    },
+    {
+      "name": "ai.json",
+      "path": "/api/v1/ai.json"
+    },
+    {
+      "name": "animations-gltf.json",
+      "path": "/api/v1/animations-gltf.json"
+    },
+    {
+      "name": "animations.json",
+      "path": "/api/v1/animations.json"
+    },
+    {
+      "name": "armor.json",
+      "path": "/api/v1/armor.json"
+    },
+    {
+      "name": "asset-categories.json",
+      "path": "/api/v1/asset-categories.json"
+    },
+    {
+      "name": "asset-registry.json",
+      "path": "/api/v1/asset-registry.json"
+    },
+    {
+      "name": "attributes.json",
+      "path": "/api/v1/attributes.json"
+    },
+    {
+      "name": "audio.json",
+      "path": "/api/v1/audio.json"
+    },
+    {
+      "name": "backgrounds-registry.json",
+      "path": "/api/v1/backgrounds-registry.json"
+    },
+    {
+      "name": "battleFormations.json",
+      "path": "/api/v1/battleFormations.json"
+    },
+    {
+      "name": "bosses.json",
+      "path": "/api/v1/bosses.json"
+    },
+    {
+      "name": "classes.json",
+      "path": "/api/v1/classes.json"
+    },
+    {
+      "name": "consumables.json",
+      "path": "/api/v1/consumables.json"
+    },
+    {
+      "name": "controllers.json",
+      "path": "/api/v1/controllers.json"
+    },
+    {
+      "name": "cutscenes.json",
+      "path": "/api/v1/cutscenes.json"
+    },
+    {
+      "name": "dialogue.json",
+      "path": "/api/v1/dialogue.json"
+    },
+    {
+      "name": "ecs.json",
+      "path": "/api/v1/ecs.json"
+    },
+    {
+      "name": "effect-definitions.json",
+      "path": "/api/v1/effect-definitions.json"
+    },
+    {
+      "name": "effectSprites.json",
+      "path": "/api/v1/effectSprites.json"
+    },
+    {
+      "name": "effects-registry.json",
+      "path": "/api/v1/effects-registry.json"
+    },
+    {
+      "name": "enemies.json",
+      "path": "/api/v1/enemies.json"
+    },
+    {
+      "name": "enemyTemplates.json",
+      "path": "/api/v1/enemyTemplates.json"
+    },
+    {
+      "name": "entities.json",
+      "path": "/api/v1/entities.json"
+    },
+    {
+      "name": "environments.json",
+      "path": "/api/v1/environments.json"
+    },
+    {
+      "name": "equipment.json",
+      "path": "/api/v1/equipment.json"
+    },
+    {
+      "name": "factionUnits.json",
+      "path": "/api/v1/factionUnits.json"
+    },
+    {
+      "name": "factions.json",
+      "path": "/api/v1/factions.json"
+    },
+    {
+      "name": "game-data-manifest.json",
+      "path": "/api/v1/game-data-manifest.json"
+    },
+    {
+      "name": "gltf-manifest.json",
+      "path": "/api/v1/gltf-manifest.json"
+    },
+    {
+      "name": "grudgedot-assets.json",
+      "path": "/api/v1/grudgedot-assets.json"
+    },
+    {
+      "name": "grudgedot-hero-aliases.json",
+      "path": "/api/v1/grudgedot-hero-aliases.json"
+    },
+    {
+      "name": "heroCharacterSprites.json",
+      "path": "/api/v1/heroCharacterSprites.json"
+    },
+    {
+      "name": "heroes.json",
+      "path": "/api/v1/heroes.json"
+    },
+    {
+      "name": "items-database.json",
+      "path": "/api/v1/items-database.json"
+    },
+    {
+      "name": "items-legacy.json",
+      "path": "/api/v1/items-legacy.json"
+    },
+    {
+      "name": "lore.json",
+      "path": "/api/v1/lore.json"
+    },
+    {
+      "name": "master-armor.json",
+      "path": "/api/v1/master-armor.json"
+    },
+    {
+      "name": "master-artifacts.json",
+      "path": "/api/v1/master-artifacts.json"
+    },
+    {
+      "name": "master-buildings.json",
+      "path": "/api/v1/master-buildings.json"
+    },
+    {
+      "name": "master-consumables.json",
+      "path": "/api/v1/master-consumables.json"
+    },
+    {
+      "name": "master-enchants.json",
+      "path": "/api/v1/master-enchants.json"
+    },
+    {
+      "name": "master-harvest-nodes.json",
+      "path": "/api/v1/master-harvest-nodes.json"
+    },
+    {
+      "name": "master-infusions.json",
+      "path": "/api/v1/master-infusions.json"
+    },
+    {
+      "name": "master-items.json",
+      "path": "/api/v1/master-items.json"
+    },
+    {
+      "name": "master-materials.json",
+      "path": "/api/v1/master-materials.json"
+    },
+    {
+      "name": "master-mounts.json",
+      "path": "/api/v1/master-mounts.json"
+    },
+    {
+      "name": "master-professionTrees.json",
+      "path": "/api/v1/master-professionTrees.json"
+    },
+    {
+      "name": "master-professions.json",
+      "path": "/api/v1/master-professions.json"
+    },
+    {
+      "name": "master-recipes.json",
+      "path": "/api/v1/master-recipes.json"
+    },
+    {
+      "name": "master-registry.json",
+      "path": "/api/v1/master-registry.json"
+    },
+    {
+      "name": "master-relics.json",
+      "path": "/api/v1/master-relics.json"
+    },
+    {
+      "name": "master-skillTrees.json",
+      "path": "/api/v1/master-skillTrees.json"
+    },
+    {
+      "name": "master-spellRecipes.json",
+      "path": "/api/v1/master-spellRecipes.json"
+    },
+    {
+      "name": "master-t0-items.json",
+      "path": "/api/v1/master-t0-items.json"
+    },
+    {
+      "name": "master-weaponSkills.json",
+      "path": "/api/v1/master-weaponSkills.json"
+    },
+    {
+      "name": "master-weapons.json",
+      "path": "/api/v1/master-weapons.json"
+    },
+    {
+      "name": "materials.json",
+      "path": "/api/v1/materials.json"
+    },
+    {
+      "name": "missions.json",
+      "path": "/api/v1/missions.json"
+    },
+    {
+      "name": "models.json",
+      "path": "/api/v1/models.json"
+    },
+    {
+      "name": "models3d.json",
+      "path": "/api/v1/models3d.json"
+    },
+    {
+      "name": "nodeUpgrades.json",
+      "path": "/api/v1/nodeUpgrades.json"
+    },
+    {
+      "name": "professions.json",
+      "path": "/api/v1/professions.json"
+    },
+    {
+      "name": "quests.json",
+      "path": "/api/v1/quests.json"
+    },
+    {
+      "name": "races.json",
+      "path": "/api/v1/races.json"
+    },
+    {
+      "name": "randomEvents.json",
+      "path": "/api/v1/randomEvents.json"
+    },
+    {
+      "name": "regions.json",
+      "path": "/api/v1/regions.json"
+    },
+    {
+      "name": "remaining.json",
+      "path": "/api/v1/remaining.json"
+    },
+    {
+      "name": "rendering.json",
+      "path": "/api/v1/rendering.json"
+    },
+    {
+      "name": "rtsModels.json",
+      "path": "/api/v1/rtsModels.json"
+    },
+    {
+      "name": "skill-icon-packs.json",
+      "path": "/api/v1/skill-icon-packs.json"
+    },
+    {
+      "name": "skill-types.json",
+      "path": "/api/v1/skill-types.json"
+    },
+    {
+      "name": "skillTrees.json",
+      "path": "/api/v1/skillTrees.json"
+    },
+    {
+      "name": "skills.json",
+      "path": "/api/v1/skills.json"
+    },
+    {
+      "name": "sprite-characters.json",
+      "path": "/api/v1/sprite-characters.json"
+    },
+    {
+      "name": "sprite-overrides.json",
+      "path": "/api/v1/sprite-overrides.json"
+    },
+    {
+      "name": "spriteMaps.json",
+      "path": "/api/v1/spriteMaps.json"
+    },
+    {
+      "name": "sprites.json",
+      "path": "/api/v1/sprites.json"
+    },
+    {
+      "name": "sprites2d.json",
+      "path": "/api/v1/sprites2d.json"
+    },
+    {
+      "name": "staff-looks.json",
+      "path": "/api/v1/staff-looks.json"
+    },
+    {
+      "name": "studio-manifest.json",
+      "path": "/api/v1/studio-manifest.json"
+    },
+    {
+      "name": "studio.json",
+      "path": "/api/v1/studio.json"
+    },
+    {
+      "name": "terrain.json",
+      "path": "/api/v1/terrain.json"
+    },
+    {
+      "name": "tileMaps.json",
+      "path": "/api/v1/tileMaps.json"
+    },
+    {
+      "name": "ui-components.json",
+      "path": "/api/v1/ui-components.json"
+    },
+    {
+      "name": "ui-packs.json",
+      "path": "/api/v1/ui-packs.json"
+    },
+    {
+      "name": "unified-registry.json",
+      "path": "/api/v1/unified-registry.json"
+    },
+    {
+      "name": "vfx-pipeline.json",
+      "path": "/api/v1/vfx-pipeline.json"
+    },
+    {
+      "name": "vfx-skill-types.json",
+      "path": "/api/v1/vfx-skill-types.json"
+    },
+    {
+      "name": "vfx-spells.json",
+      "path": "/api/v1/vfx-spells.json"
+    },
+    {
+      "name": "video.json",
+      "path": "/api/v1/video.json"
+    },
+    {
+      "name": "voxelAssets.json",
+      "path": "/api/v1/voxelAssets.json"
+    },
+    {
+      "name": "weapon-models.json",
+      "path": "/api/v1/weapon-models.json"
+    },
+    {
+      "name": "weaponSkills.json",
+      "path": "/api/v1/weaponSkills.json"
+    },
+    {
+      "name": "weapons.json",
+      "path": "/api/v1/weapons.json"
+    },
+    {
+      "name": "worldMap.json",
+      "path": "/api/v1/worldMap.json"
+    },
+    {
+      "name": "worlds.json",
+      "path": "/api/v1/worlds.json"
+    }
+  ],
+  "masterDatasets": [
+    "master-armor.json",
+    "master-artifacts.json",
+    "master-buildings.json",
+    "master-consumables.json",
+    "master-enchants.json",
+    "master-harvest-nodes.json",
+    "master-infusions.json",
+    "master-items.json",
+    "master-materials.json",
+    "master-mounts.json",
+    "master-professionTrees.json",
+    "master-professions.json",
+    "master-recipes.json",
+    "master-registry.json",
+    "master-relics.json",
+    "master-skillTrees.json",
+    "master-spellRecipes.json",
+    "master-t0-items.json",
+    "master-weaponSkills.json",
+    "master-weapons.json"
+  ]
+}

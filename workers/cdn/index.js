@@ -23,7 +23,7 @@
  *   - CORS with Vary: Origin for CDN correctness
  */
 
-const GITHUB_PAGES_BASE = 'https://objectstore.grudge-studio.com';
+const GITHUB_PAGES_BASE = 'https://info.grudge-studio.com';
 
 // ════════════════════════════════════════════════════════════════════════
 //  CORS — all Grudge domains + local dev

@@ -8,7 +8,7 @@ main = "workers/src/index.js"
 compatibility_date = "2024-12-01"
 workers_dev = true
 
-# ── Custom domain (must be top-level, before [[array]] sections) ───
+# ── Custom domain (grudge-edge-proxy owns zone route; worker also binds here) ───
 routes = [
   { pattern = "objectstore.grudge-studio.com", custom_domain = true }
 ]
@@ -17,7 +17,8 @@ routes = [
 # Wildcards (a leading '*.') are supported and match any subdomain.
 # The matcher in workers/src/index.js:corsResponse() handles them.
 [vars]
-ALLOWED_ORIGINS = "https://objectstore.grudge-studio.com,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,*.grudge-studio.com,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,https://grudge-warlords-game.vercel.app,*.vercel.app,*.puter.site,https://app.puter.com,https://grudgestudio.com,*.grudgestudio.com,http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
+ALLOWED_ORIGINS = "https://objectstore.grudge-studio.com,https://info.grudge-studio.com,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,*.grudge-studio.com,https://gdevelop-assistant.vercel.app,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,https://grudge-warlords-game.vercel.app,https://grudachain.grudge-studio.com,*.vercel.app,*.puter.site,https://app.puter.com,https://grudgestudio.com,*.grudgestudio.com,http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
+STATIC_JSON_BASE = "https://info.grudge-studio.com/api/v1"
 MAX_UPLOAD_SIZE = "104857600"   # 100 MB
 
 # ── Durable Objects ─────────────────────────────────────────────────

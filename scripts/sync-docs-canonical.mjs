@@ -18,7 +18,9 @@ const ROOT = join(__dirname, '..');
 const DATA_DIR = join(ROOT, 'api', 'v1');
 const DOCS_INDEX = join(ROOT, 'docs', 'index.html');
 const MANIFEST_PATH = join(ROOT, 'docs', 'canonical-manifest.json');
+const CATALOG_PATH = join(ROOT, 'api', 'v1', 'catalog.json');
 const CANONICAL_URL = 'https://info.grudge-studio.com/docs';
+const OBJECTSTORE_URL = 'https://objectstore.grudge-studio.com';
 
 function loadJSON(filename) {
   try {
@@ -214,11 +216,34 @@ function patchDocsIndex(stats) {
   writeFileSync(DOCS_INDEX, html);
 }
 
+function buildCatalog(stats) {
+  return {
+    service: 'objectstore',
+    version: stats.version,
+    canonicalUrl: OBJECTSTORE_URL,
+    docs: CANONICAL_URL,
+    staticJsonBase: `${OBJECTSTORE_URL}/api/v1`,
+    workerApiBase: `${OBJECTSTORE_URL}/v1`,
+    fleet: 'https://grudachain.grudge-studio.com/api/fleet/connect',
+    auth: {
+      login: 'https://id.grudge-studio.com/api/auth/page',
+      verify: 'https://id.grudge-studio.com/api/auth/verify',
+    },
+    generated: stats.generated,
+    totals: stats.totals,
+    endpoints: stats.files.map((f) => ({ name: f.name, path: f.path })),
+    masterDatasets: stats.masterFiles,
+  };
+}
+
 function main() {
   const stats = buildStats();
+  const catalog = buildCatalog(stats);
   writeFileSync(MANIFEST_PATH, JSON.stringify(stats, null, 2) + '\n');
+  writeFileSync(CATALOG_PATH, JSON.stringify(catalog, null, 2) + '\n');
   patchDocsIndex(stats);
   console.log(`[sync-docs] canonical manifest → ${MANIFEST_PATH}`);
+  console.log(`[sync-docs] fleet catalog → ${CATALOG_PATH}`);
   console.log(`[sync-docs] refreshed docs/index.html (${stats.totals.apiEndpoints} endpoints, ${stats.totals.masterItems} master items)`);
   console.log(`[sync-docs] canonical URL: ${CANONICAL_URL}`);
 }

@@ -67,6 +67,7 @@
     "mcp": "node ./mcp/objectstore-server.js",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
+    "edge-proxy:deploy": "wrangler deploy -c workers/edge-proxy/wrangler.toml",
     "worker:tail": "wrangler tail",
     "generate:master": "node scripts/generate-master-database.mjs",
     "import:recipes": "node scripts/import-game-recipes.mjs",

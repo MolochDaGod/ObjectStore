@@ -403,7 +403,8 @@
 </head>
 <body>
   <!-- Auth SDK -->
-  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
+  <script src="https://grudachain.grudge-studio.com/grudge-fleet-sdk.js"></script>
+  <script>GrudgeFleet.init({ sso: false }).catch(function(){});</script>
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
 
   <!-- Hero -->

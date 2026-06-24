@@ -1,5 +1,5 @@
 {
-  "alias": ["info.grudge-studio.com"],
+  "alias": ["info.grudge-studio.com", "objectstore.grudge-studio.com"],
   "buildCommand": "node scripts/sync-docs-canonical.mjs",
   "outputDirectory": ".",
   "framework": null,
@@ -54,7 +54,10 @@
   "rewrites": [
     { "source": "/api/search", "destination": "/api/search.js" },
     { "source": "/api/stats", "destination": "/api/stats.js" },
-    { "source": "/api/export", "destination": "/api/export.js" }
+    { "source": "/api/export", "destination": "/api/export.js" },
+    { "source": "/health", "destination": "https://grudgeassets.grudge.workers.dev/health" },
+    { "source": "/v1/:path*", "destination": "https://grudgeassets.grudge.workers.dev/v1/:path*" },
+    { "source": "/api/v1/:file", "destination": "/api/v1/:file" }
   ],
   "cleanUrls": false,
   "trailingSlash": false
