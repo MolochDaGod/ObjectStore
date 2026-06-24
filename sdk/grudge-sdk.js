@@ -821,6 +821,8 @@ class GrudgeSDK {
   async getVideoRegistry() { return this.fetch('/api/v1/video.json'); }
   async getHeroesRegistry() { return this.fetch('/api/v1/heroes.json'); }
   async getModels3d() { return this.fetch('/api/v1/models3d.json'); }
+  /** Grudge Armada fleet packs (units, vehicles, environments) on assets.grudge-studio.com */
+  async getGrudgeArmada() { return this.fetch('/api/v1/grudge-armada.json'); }
   async getStudioManifest() { return this.fetch('/api/v1/studio.json'); }
   async getAnimations() { return this.fetch('/api/v1/animations.json'); }
   async getEntities() { return this.fetch('/api/v1/entities.json'); }

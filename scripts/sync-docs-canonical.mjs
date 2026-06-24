@@ -111,6 +111,7 @@ function buildStats() {
   const masterRegistry = loadJSON('master-registry.json');
   const spriteChars = loadJSON('sprite-characters.json');
   const itemsDb = loadJSON('items-database.json');
+  const grudgeArmada = loadJSON('grudge-armada.json');
 
   const jsonFiles = readdirSync(DATA_DIR)
     .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
@@ -155,6 +156,8 @@ function buildStats() {
       registryEntries: masterRegistry?.totalEntries ?? Object.keys(masterRegistry?.entries || {}).length,
       unifiedItems: itemsDb?.totalItems ?? itemsDb?.items?.length ?? countMasterItems(itemsDb),
       spriteCharacters: spriteChars?.totalCharacters ?? spriteChars?.characters?.length ?? 0,
+      armadaPacks: grudgeArmada?.totalPacks ?? grudgeArmada?.categories?.reduce((n, c) => n + (c.packCount || c.packs?.length || 0), 0) ?? 0,
+      armadaModels: grudgeArmada?.totalModels ?? grudgeArmada?.models?.length ?? 0,
       apiEndpoints: jsonFiles.length,
       masterDatasets: masterFiles.length,
     },
