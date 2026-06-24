@@ -38,8 +38,15 @@ Published via GitHub Pages. These are the CANONICAL definitions:
 - `master-materials.json` — materials with GRUDGE UUIDs (incl. harvest drops)
 - `master-harvest-nodes.json` — harvest nodes → material UUIDs → recipe UUIDs
 - `staff-looks.json` — staff appearances, icons, tiers, recipe materials (linked to master-items)
+- **Icon image library (ICON-* UUIDs)** — canonical image assets on R2 CDN:
+  - `icon-registry.json` — 9,724 icons, deterministic `ICON-XXXX-XXXX-XXXX` UUIDs
+  - `icon-path-index.json` — `/icons/...` → UUID + CDN URL lookup
+  - `assets-api.json` — REST + SDK manifest (**start here for icon integration**)
+  - `icon-upload-status.json` — CDN upload progress by category
+  - Docs: `docs/ICON-ASSET-LIBRARY.md`
 
-Regenerate: `npm run generate:all` (master DB + consolidation pipeline).
+Regenerate items: `npm run generate:all` (master DB + consolidation pipeline).
+Regenerate icons: `npm run sync:icons` (registry + truth sync). Upload: see `docs/ICON-ASSET-LIBRARY.md`.
 Harvest source of truth: `api/v1/sources/harvest-nodes.json` (migrated from warlord-crafting-suite).
 Previously in grudge-game-data-hub (now archived) — merged into this repo.
 
@@ -49,6 +56,13 @@ Every Grudge app reads from ObjectStore:
 - `grudge-engine-web` → `asset-catalog.ts` (model paths)
 - `GDevelopAssistant` → direct fetch via VITE_OBJECTSTORE_URL
 - `grudge-studio-backend` → R2 via OBJECT_STORAGE_* env vars
+
+## Icon assets (ICON-*)
+- **Source of truth:** `api/v1/icon-registry.json` + `assets.grudge-studio.com/game-assets/icons/...`
+- **Resolve URLs:** `grudgeSDK.resolveIconUrl(pathOrUuid)` or `GET /api/v1/icons/by-path`
+- **Do not use** legacy `asset-registry.json` `SPRT-*` UUIDs for new integrations
+- **Item cross-refs:** `master-registry.json` entries include `iconUuid` + `iconCdnUrl` where linked
+- After icon changes: `npm run sync:icons` then `npm run icons:status`
 
 ## Coding Rules
 - NEVER duplicate game data in frontend code. Always fetch from ObjectStore — no hardcoded fallbacks.

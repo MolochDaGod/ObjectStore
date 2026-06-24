@@ -16,6 +16,7 @@
 import { createHash } from 'node:crypto';
 import { readdir, stat, readFile, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { dirname, join, relative, basename, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,6 +37,7 @@ const SKIP_UPLOAD = !!argv['skip-upload'];
 const REGISTRY_ONLY = !!argv['registry-only'];
 const CATEGORY_FILTER = argv.category || null;
 const SKIP_REMOTE_VERIFY = !!argv['skip-remote-verify'];
+const SKIP_EXISTING = !!argv['skip-existing'];
 const MAX_FILES = argv.limit ? Number(argv.limit) : Infinity;
 
 const IMAGE_RE = /\.(png|jpg|jpeg|webp|gif|svg)$/i;
@@ -111,16 +113,46 @@ async function* walkIcons(dir) {
   }
 }
 
-function wrangler(args, retries = 3) {
+/** Invoke wrangler via node + wrangler.js (reliable on Windows; handles paths with spaces). */
+function resolveWranglerSpawn(args) {
+  const candidates = [
+    join(ROOT, 'node_modules', 'wrangler', 'bin', 'wrangler.js'),
+    join(process.env.APPDATA || '', 'npm', 'node_modules', 'wrangler', 'bin', 'wrangler.js'),
+    'C:/Users/nugye/npm-global/node_modules/wrangler/bin/wrangler.js',
+  ].filter(p => p && existsSync(p));
+  if (candidates.length) {
+    return spawnSync(process.execPath, [candidates[0], ...args], { stdio: 'inherit', shell: false });
+  }
+  return spawnSync('wrangler', args, { stdio: 'inherit', shell: true });
+}
+
+function sleepMs(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+async function cdnObjectExists(cdnUrl) {
+  try {
+    let res = await fetch(cdnUrl, { method: 'HEAD' });
+    if (res.status === 405 || res.status === 403) {
+      res = await fetch(cdnUrl, { method: 'GET', headers: { Range: 'bytes=0-0' } });
+    }
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+function wrangler(args, retries = 5) {
   for (let attempt = 1; attempt <= retries; attempt++) {
-    const res = spawnSync('wrangler', args, { stdio: 'inherit', shell: true });
+    const res = resolveWranglerSpawn(args);
     if (res.status === 0) return;
+    const detail = res.error?.message || res.status;
     if (attempt < retries) {
-      const delay = attempt * 2000;
-      console.warn(`wrangler failed (attempt ${attempt}/${retries}), retrying in ${delay}ms...`);
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delay);
+      const delay = attempt * 3000;
+      console.warn(`wrangler failed (${detail}, attempt ${attempt}/${retries}), retrying in ${delay}ms...`);
+      sleepMs(delay);
     } else {
-      throw new Error(`wrangler ${args.join(' ')} failed (${res.status}) after ${retries} attempts`);
+      throw new Error(`wrangler ${args.join(' ')} failed (${detail}) after ${retries} attempts`);
     }
   }
 }
@@ -161,6 +193,7 @@ async function main() {
 
   const entries = {};
   const categories = {};
+  let skippedExisting = 0;
 
   for (const { rel, relFromIcons, category } of files) {
     const r2Key = `${KEY_PREFIX}/icons/${relFromIcons}`;
@@ -188,11 +221,20 @@ async function main() {
     if (!REGISTRY_ONLY && !SKIP_UPLOAD) {
       if (DRY) {
         console.log(`[dry] ${r2Key} → ${grudgeUuid} (${category})`);
+      } else if (SKIP_EXISTING && await cdnObjectExists(cdnUrl)) {
+        skippedExisting++;
+        if (skippedExisting % 100 === 1) {
+          console.log(`[skip] ${r2Key} (already on CDN)`);
+        }
       } else {
         console.log(`put ${r2Key} (${grudgeUuid})`);
-        wrangler(['r2', 'object', 'put', `${BUCKET}/${r2Key}`, `--file=${full}`, '--remote']);
+        wrangler(['r2', 'object', 'put', `${BUCKET}/${r2Key}`, '--file', full, '--remote']);
       }
     }
+  }
+
+  if (skippedExisting) {
+    console.log(`\nSkipped ${skippedExisting} files already on CDN (--skip-existing).`);
   }
 
   const registry = {
@@ -206,16 +248,17 @@ async function main() {
   };
 
   const registryPath = join(ROOT, 'api/v1/icon-registry.json');
-  if (!DRY) {
+  const writeRegistry = !DRY && (REGISTRY_ONLY || !CATEGORY_FILTER);
+  if (writeRegistry) {
     await writeFile(registryPath, JSON.stringify(registry, null, 2), 'utf8');
     console.log(`\nWrote ${registryPath} (${registry.totalEntries} entries)`);
 
     const r2RegistryKey = `${KEY_PREFIX}/api/v1/icon-registry.json`;
-    if (!SKIP_UPLOAD && !REGISTRY_ONLY) {
+    if (!SKIP_UPLOAD && REGISTRY_ONLY) {
       console.log(`put ${r2RegistryKey}`);
-      wrangler(['r2', 'object', 'put', `${BUCKET}/${r2RegistryKey}`, `--file=${registryPath}`, '--remote']);
+      wrangler(['r2', 'object', 'put', `${BUCKET}/${r2RegistryKey}`, '--file', registryPath, '--remote']);
     }
-  } else {
+  } else if (DRY) {
     console.log(`\n[dry] Would write ${registryPath} with ${registry.totalEntries} entries`);
     console.log('[dry] Categories:', categories);
   }

@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-06-24T23:27:41.796Z",
+  "description": "Grudge Studio image asset library — ICON UUIDs on R2 CDN",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "objectStoreBase": "https://objectstore.grudge-studio.com",
+  "uuidScheme": {
+    "ICON": "Deterministic sha1(grudge-asset:{r2Key}) — canonical image assets",
+    "ITEM": "Runtime item instances (master-registry)",
+    "HERO": "Player characters (grudge-backend)",
+    "EQIP": "Equipment models (grudge-backend)"
+  },
+  "datasets": {
+    "iconRegistry": "/api/v1/icon-registry.json",
+    "iconPathIndex": "/api/v1/icon-path-index.json",
+    "masterRegistry": "/api/v1/master-registry.json",
+    "assetRegistry": "/api/v1/asset-registry.json"
+  },
+  "rest": {
+    "listIcons": "GET /api/v1/icons?category=skill&page=1&limit=50",
+    "searchIcons": "GET /api/v1/icons/search?q=fire&category=spell",
+    "iconByUuid": "GET /api/v1/icons/:grudgeUuid",
+    "iconByPath": "GET /api/v1/icons/by-path?path=/icons/sigils/strength.png",
+    "categories": "GET /api/v1/icons/categories"
+  },
+  "sdk": {
+    "getIconRegistry": "grudgeSDK.getIconRegistry()",
+    "getIconByUuid": "grudgeSDK.getIconByUuid(uuid)",
+    "resolveIconUrl": "grudgeSDK.resolveIconUrl(pathOrUuid)",
+    "getIconsByCategory": "grudgeSDK.getIconsByCategory(category)"
+  },
+  "categories": {
+    "misc": 3796,
+    "race": 166,
+    "ability": 86,
+    "armor": 1036,
+    "consumable": 128,
+    "faction": 6,
+    "item": 1301,
+    "material": 86,
+    "entity": 65,
+    "class": 18,
+    "weapon": 1588,
+    "profession": 13,
+    "sigil": 8,
+    "skill": 1043,
+    "spell": 358,
+    "ui": 26
+  },
+  "totalIcons": 9724,
+  "documentation": "/docs/ICON-ASSET-LIBRARY.md",
+  "uploadStatus": "/api/v1/icon-upload-status.json",
+  "scripts": {
+    "upload": "node scripts/upload-icon-registry-r2.mjs --skip-existing --skip-remote-verify",
+    "registryOnly": "node scripts/upload-icon-registry-r2.mjs --registry-only",
+    "sync": "npm run sync:icon-truth",
+    "status": "npm run icons:status"
+  }
+}

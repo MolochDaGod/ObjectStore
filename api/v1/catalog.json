@@ -1,6 +1,6 @@
 {
   "service": "objectstore",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "canonicalUrl": "https://objectstore.grudge-studio.com",
   "docs": "https://info.grudge-studio.com/docs",
   "staticJsonBase": "https://objectstore.grudge-studio.com/api/v1",
@@ -10,7 +10,7 @@
     "login": "https://id.grudge-studio.com/api/auth/page",
     "verify": "https://id.grudge-studio.com/api/auth/verify"
   },
-  "generated": "2026-06-24T04:47:35.385Z",
+  "generated": "2026-06-24T23:27:41.819Z",
   "totals": {
     "weapons": 868,
     "armor": 1344,
@@ -32,7 +32,9 @@
     "armadaPacks": 46,
     "armadaModels": 23,
     "apiEndpoints": 104,
-    "masterDatasets": 20
+    "masterDatasets": 20,
+    "iconRegistry": 9724,
+    "iconCategories": 16
   },
   "endpoints": [
     {
@@ -450,6 +452,18 @@
     {
       "name": "worlds.json",
       "path": "/api/v1/worlds.json"
+    },
+    {
+      "name": "assets-api.json",
+      "path": "/api/v1/assets-api.json"
+    },
+    {
+      "name": "icon-path-index.json",
+      "path": "/api/v1/icon-path-index.json"
+    },
+    {
+      "name": "icon-upload-status.json",
+      "path": "/api/v1/icon-upload-status.json"
     }
   ],
   "masterDatasets": [
@@ -473,5 +487,34 @@
     "master-t0-items.json",
     "master-weaponSkills.json",
     "master-weapons.json"
-  ]
+  ],
+  "iconLibrary": {
+    "registry": "/api/v1/icon-registry.json",
+    "pathIndex": "/api/v1/icon-path-index.json",
+    "assetsApi": "/api/v1/assets-api.json",
+    "uploadStatus": "/api/v1/icon-upload-status.json",
+    "documentation": "/docs/ICON-ASSET-LIBRARY.md",
+    "cdnBase": "https://assets.grudge-studio.com",
+    "keyPrefix": "game-assets",
+    "uuidPrefix": "ICON",
+    "totalEntries": 9724,
+    "categories": {
+      "misc": 3796,
+      "race": 166,
+      "ability": 86,
+      "armor": 1036,
+      "consumable": 128,
+      "faction": 6,
+      "item": 1301,
+      "material": 86,
+      "entity": 65,
+      "class": 18,
+      "weapon": 1588,
+      "profession": 13,
+      "sigil": 8,
+      "skill": 1043,
+      "spell": 358,
+      "ui": 26
+    }
+  }
 }

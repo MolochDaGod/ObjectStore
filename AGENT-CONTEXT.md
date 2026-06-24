@@ -2,7 +2,7 @@
 
 > **Purpose**: This document is the authoritative continuation prompt for any AI agent (Oz or successor) working on this repository. Update it whenever a session ends, a milestone completes, or task priorities change.
 >
-> **Last Updated**: 2026-03-29
+> **Last Updated**: 2026-06-24
 
 ---
 
@@ -53,6 +53,23 @@ Priority order based on last session state:
 | 8 | TypeScript definitions (`types/index.d.ts`) | ⏳ Pending | 🟡 Medium |
 | 9 | NPM package publication (`@grudgstudio/core`) | ⏳ Pending | 🟡 Medium |
 | 10 | Auto-generate missing item icons (Puter AI) | ⏳ Pending | 🟢 Low |
+| 11 | **ICON-* image library** — R2 CDN + registry + API | 🔄 In progress | 🔴 High |
+
+### Icon library task (2026-06-24)
+
+| Component | Status |
+|-----------|--------|
+| `icon-registry.json` (9,724 ICON UUIDs) | ✅ Generated + on CDN + synced June 2026 |
+| `docs/API-AND-UUID-GUIDE.md` | ✅ Master API + UUID reference |
+| `icon-path-index.json`, `assets-api.json` | ✅ Synced |
+| `master-registry.json` iconUuid links | ✅ 2,534 items linked |
+| REST `/api/v1/icons/*` | ✅ server.js |
+| SDK `resolveIconUrl`, `getIconRegistry` | ✅ grudge-sdk.js |
+| Docs | ✅ `docs/ICON-ASSET-LIBRARY.md` |
+| R2 binary upload (all PNGs) | 🔄 ~15% CDN (resume: `npm run icons:status`) |
+
+**Canonical doc:** [docs/ICON-ASSET-LIBRARY.md](docs/ICON-ASSET-LIBRARY.md)  
+**Machine manifest:** [api/v1/assets-api.json](api/v1/assets-api.json)
 
 ---
 
@@ -79,6 +96,13 @@ Priority order based on last session state:
 | `integrations/GrudgeWarlords-Unity-Integration.cs` | Unity C# MonoBehaviour | ✅ Active |
 | `sdk/grudge-sdk.js` | SDK v5.0 — unified client for all backend services + static data | ✅ Active |
 | `utils/item-registry.js` | Item registry (single source of truth) | ✅ Active |
+| `lib/icon-resolver.js` | ICON UUID + CDN URL resolver | ✅ Active |
+| `docs/ICON-ASSET-LIBRARY.md` | Icon library canonical documentation | ✅ Active |
+| `api/v1/icon-registry.json` | ICON-* image asset catalog (9,724) | ✅ Active |
+| `api/v1/assets-api.json` | Icon/asset API manifest for games | ✅ Active |
+| `scripts/upload-icon-registry-r2.mjs` | Upload icons → R2 + build registry | ✅ Active |
+| `scripts/sync-icon-source-of-truth.mjs` | Sync icon truth into master-registry | ✅ Active |
+| `scripts/check-icon-cdn-status.mjs` | CDN upload progress reporter | ✅ Active |
 | `utils/image-generator.js` | Puter.js AI image generation | ✅ Active |
 | `types/index.d.ts` | TypeScript definitions | ⏳ Incomplete |
 | `api/v1/*.json` | Static game data served by GitHub Pages | ✅ Active |

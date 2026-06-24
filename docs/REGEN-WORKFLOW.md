@@ -17,6 +17,12 @@ This document describes the canonical workflow for regenerating the master JSON 
 | `api/v1/master-artifacts.json` | `npm run generate:master` | `arcaneStaves` category in `weapons.json` |
 | `api/v1/master-registry.json` | `npm run generate:master` | all master datasets |
 | `api/v1/master-relics.json` | `npm run generate:relics` | `scripts/generate-master-relics.js` |
+| `api/v1/icon-registry.json` | `npm run sync:icons` | local `icons/**` → R2 CDN UUID catalog |
+| `api/v1/icon-path-index.json` | `npm run sync:icon-truth` | derived from `icon-registry.json` |
+| `api/v1/assets-api.json` | `npm run sync:icon-truth` | icon REST/SDK manifest |
+| `api/v1/icon-upload-status.json` | `npm run icons:status` | CDN coverage check |
+
+See **[ICON-ASSET-LIBRARY.md](./ICON-ASSET-LIBRARY.md)** for the full icon pipeline.
 
 ---
 
@@ -68,6 +74,26 @@ npm run deploy:pages
 ```
 
 This pushes the lightweight publish set (static JSON + HTML) to the `gh-pages` branch. See `scripts/deploy-pages.mjs` for what is included.
+
+---
+
+## Icon library sync (after adding/changing icons in `icons/`)
+
+```bash
+# 1. Regenerate icon-registry.json from local files
+node scripts/upload-icon-registry-r2.mjs --registry-only
+
+# 2. Upload binaries to R2 (resume with --skip-existing)
+node scripts/upload-icon-registry-r2.mjs --skip-existing --skip-remote-verify
+
+# 3. Sync path index, master-registry iconUuid links, catalog
+npm run sync:icon-truth
+
+# 4. Verify CDN coverage
+npm run icons:status
+```
+
+One-liner after registry exists: `npm run sync:icons`
 
 ---
 
