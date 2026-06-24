@@ -117,6 +117,35 @@
     .error-banner { padding: 12px 16px; background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); border-radius: 6px; color: #ff6666; font-size: 11px; margin-bottom: 12px; display: none; }
     .error-banner.visible { display: block; }
 
+    /* Weapon skill tree (equipped weapon) */
+    .wst-header { display:flex; gap:14px; align-items:center; margin-bottom:16px; padding:14px; background:linear-gradient(180deg,rgba(212,175,55,0.06),transparent); border:1px solid rgba(212,175,55,0.2); border-radius:8px; }
+    .wst-icon { width:56px; height:56px; object-fit:contain; border:2px solid var(--gold-dim); border-radius:6px; background:#221710; padding:4px; }
+    .wst-title { font-family:var(--font-display); font-size:15px; color:var(--gold); font-weight:700; }
+    .wst-lore { font-size:10px; color:var(--muted); margin-top:4px; line-height:1.4; }
+    .wst-meta { font-size:9px; color:var(--dim); margin-top:4px; }
+    .wst-empty { text-align:center; padding:40px 16px; color:var(--muted); font-size:12px; }
+    .tree-container { margin-top:8px; }
+    .tree-title { font-family:var(--font-display); font-size:12px; color:var(--gold); margin-bottom:14px; letter-spacing:0.04em; }
+    .tier-row { display:flex; gap:14px; margin-bottom:12px; align-items:flex-start; }
+    .tier-marker { display:flex; flex-direction:column; align-items:center; width:42px; flex-shrink:0; }
+    .tier-badge { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:9px; font-weight:700; border:2px solid var(--gold-dim); background:#221710; color:var(--gold); }
+    .tier-badge.active { background:linear-gradient(180deg,var(--gold),var(--gold-dark)); color:#1a100a; border-color:var(--gold); }
+    .tier-badge.unlocked { border-color:#4a9eff; color:#4a9eff; }
+    .tier-line { width:2px; flex:1; min-height:20px; background:linear-gradient(180deg,var(--gold-dim),transparent); margin-top:4px; }
+    .tier-row:last-child .tier-line { display:none; }
+    .tier-nodes { display:flex; flex-wrap:wrap; gap:8px; flex:1; }
+    .tree-node { min-width:140px; flex:1; max-width:220px; padding:10px 12px; border-radius:6px; border:1px solid #3a2a1a; background:linear-gradient(180deg,#221710,#1a120c); }
+    .tree-node.locked { opacity:0.45; }
+    .tree-node .node-type { font-size:7px; letter-spacing:0.08em; padding:2px 6px; border-radius:3px; display:inline-block; margin-bottom:4px; font-weight:700; }
+    .tree-node .node-name { font-size:11px; font-weight:700; color:var(--text-light); }
+    .tree-node .node-desc { font-size:9px; color:var(--muted); margin-top:3px; line-height:1.35; }
+    .tree-node.sig { border-color:hsl(43 60% 35%); }
+    .tree-node.sig .node-name { color:var(--gold); }
+    .tree-node.sig .node-type { background:rgba(212,168,75,0.15); color:var(--gold); }
+    .tree-node.ability .node-type { background:rgba(74,158,255,0.12); color:#4a9eff; }
+    .tree-node.passive .node-name { color:#6ec96e; }
+    .tree-node.passive .node-type { background:rgba(110,201,110,0.12); color:#6ec96e; }
+
     @media(max-width:1000px) { .left-col, .right-col { display: none; } }
     @media(max-width:700px) { .eq-col { width: 70px; } .eq-slot { width: 58px; height: 58px; } .eq-slot .slot-icon { width: 36px; height: 36px; } }
   </style>
@@ -155,8 +184,19 @@
 <!-- Item Hover Tooltip -->
 <div class="eq-tooltip" id="eqTooltip"></div>
 
+<script src="./js/weapon-skill-tree.js"></script>
 <script>
   const CDN = 'https://assets.grudge-studio.com';
+  const PAGE_BASE = (() => {
+    const slash = window.location.pathname.lastIndexOf('/');
+    return slash <= 0 ? '' : window.location.pathname.slice(0, slash);
+  })();
+  function asset(url) {
+    if (!url) return url;
+    if (/^(https?:|data:|blob:)/i.test(url)) return url;
+    if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
+    return url;
+  }
   const API_SOURCES = [
     'https://objectstore.grudge-studio.com/api/v1',
     'https://assets.grudge-studio.com/api/v1',
@@ -598,7 +638,7 @@
     renderLeftCol();
     renderInventory();
     renderHotbar();
-    if (activeTab === 'Equipment') renderTab();
+    if (activeTab === 'Equipment' || activeTab === 'Skills') renderTab();
   }
 
   function switchTab(t) {
@@ -918,85 +958,38 @@ return `<div class="section-title">Attributes</div><p style="color:var(--muted)"
     return h;
   }
 
-  // ── Skills Tab: Class Skill Trees + Weapon Skills ───────────────────
+  function getEquippedMainhandWeapon() {
+    const uuid = equippedItems['Mainhand'];
+    if (!uuid) return null;
+    const item = findEquippedItem(uuid);
+    if (!item || item.type !== 'weapon') return null;
+    return item;
+  }
+
+  // ── Skills Tab: equipped weapon's individual skill tree ─────────────
   function renderSkillsTab() {
-    let html = '';
+    const weapon = getEquippedMainhandWeapon();
+    let html = '<div class="section-title">Equipped Weapon — Skill Tree</div>';
 
-    // Class skill trees
-    if (allSkillTrees.length) {
-      html += `<div class="section-title">Class Skill Trees (${allSkillTrees.length} classes)</div>`;
-      allSkillTrees.forEach(cls => {
-        const name = cls.className || cls.name || 'Unknown';
-        const skills = cls.skills || cls.nodes || [];
-        html += `<div style="padding:12px;margin-bottom:8px;background:#1e1510;border-radius:8px;border-left:3px solid var(--gold);">`;
-        html += `<div style="font-weight:700;font-size:13px;color:var(--gold);font-family:var(--font-display);">${esc(name)}</div>`;
-        html += `<div style="font-size:10px;color:var(--muted);margin:4px 0 8px;">${skills.length} skills</div>`;
-        html += `<div style="display:flex;flex-wrap:wrap;gap:4px;">`;
-        skills.forEach(sk => {
-          const skName = sk.name || sk.skillName || 'Skill';
-          const tier = sk.tier || sk.unlockLevel || 1;
-          const tc = TIER_COLORS[Math.min(tier, 8)] || '#3a2a1a';
-          const icon = sk.iconUrl || '';
-          html += `<div style="display:flex;align-items:center;gap:4px;padding:4px 8px;background:rgba(0,0,0,0.3);border-radius:6px;border:1px solid ${tc};font-size:10px;" title="${esc(sk.description || skName)}">`;
-          if (icon) html += `<img src="${esc(icon)}" style="width:16px;height:16px;object-fit:contain;image-rendering:pixelated;" onerror="this.style.display='none'">`;
-          html += `<span style="color:${tc};">${esc(skName)}</span></div>`;
-        });
-        html += `</div></div>`;
-      });
-    } else {
-      html += `<div class="section-title">Class Skill Trees</div><p style="color:var(--muted);font-size:11px;">No class skill tree data loaded from ObjectStore API.</p>`;
+    if (!weapon) {
+      html += `<div class="wst-empty">Equip a weapon in <strong>Mainhand</strong> to view its signature, abilities, and passives.<br><span style="font-size:10px;color:var(--dim)">Each named weapon has a unique skill tree.</span></div>`;
+      html += `<div style="margin-top:12px;text-align:center;"><a href="./WEAPON_SKILLS.html" style="font-size:11px;color:var(--gold);">Browse all weapon skill trees →</a></div>`;
+      return html;
     }
 
-    // Weapon skills
-    if (allWeaponSkills.length) {
-      html += `<div class="section-title" style="margin-top:20px;">Weapon Skills (${allWeaponSkills.length} weapon types)</div>`;
-      allWeaponSkills.forEach(wt => {
-        const name = wt.weaponType || wt.name || 'Unknown';
-        const skills = wt.skills || wt.nodes || [];
-        const classes = wt.allowedClasses || wt.classRestrictions || [];
-        html += `<div style="padding:10px;margin-bottom:6px;background:#1e1510;border-radius:8px;border-left:3px solid #4a9eff;">`;
-        html += `<div style="font-weight:700;font-size:12px;">${esc(name)}</div>`;
-        html += `<div style="font-size:9px;color:var(--muted);margin:2px 0 6px;">${skills.length} skills`;
-        if (classes.length) html += ` · Classes: ${classes.map(c => esc(c)).join(', ')}`;
-        html += `</div>`;
-        html += `<div style="display:flex;flex-wrap:wrap;gap:3px;">`;
-        skills.slice(0, 12).forEach(sk => {
-          const skName = sk.name || sk.skillName || 'Skill';
-          const icon = sk.iconUrl || '';
-          html += `<div style="padding:3px 6px;background:rgba(74,158,255,0.1);border-radius:4px;font-size:9px;color:#4a9eff;" title="${esc(sk.description || skName)}">`;
-          if (icon) html += `<img src="${esc(icon)}" style="width:12px;height:12px;object-fit:contain;vertical-align:middle;margin-right:2px;" onerror="this.style.display='none'">`;
-          html += `${esc(skName)}</div>`;
-        });
-        if (skills.length > 12) html += `<div style="padding:3px 6px;font-size:9px;color:var(--dim);">+${skills.length - 12} more</div>`;
-        html += `</div></div>`;
-      });
-    } else {
-      html += `<div class="section-title" style="margin-top:20px;">Weapon Skills</div><p style="color:var(--muted);font-size:11px;">No weapon skill data loaded.</p>`;
-    }
+    const w = { ...weapon };
+    if (w.iconUrl) w.iconUrl = asset(fixIconUrl(w.iconUrl));
+    html += WeaponSkillTree.renderWeaponSkillTreeHTML(w, {
+      asset,
+      tierColor: TIER_COLORS[weapon.tier] || 'var(--gold)',
+      showHeader: true,
+    });
 
-    // Artifacts
-    if (allArtifacts.length) {
-      html += `<div class="section-title" style="margin-top:20px;">Artifacts (${allArtifacts.length})</div>`;
-      allArtifacts.forEach(art => {
-        const name = art.name || 'Unknown Artifact';
-        const hidden = art.hiddenUntilFound;
-        html += `<div style="padding:10px;margin-bottom:6px;background:#1e1510;border-radius:8px;border-left:3px solid #f0d890;">`;
-        if (hidden) {
-          html += `<div style="font-weight:700;font-size:12px;color:var(--dim);">??? Hidden Artifact</div>`;
-          html += `<div style="font-size:10px;color:var(--dim);font-style:italic;">Discover this artifact in the world</div>`;
-        } else {
-          html += `<div style="font-weight:700;font-size:12px;color:#f0d890;">${esc(name)}</div>`;
-          if (art.description) html += `<div style="font-size:10px;color:var(--muted);margin-top:4px;">${esc(art.description)}</div>`;
-        }
-        html += `</div>`;
-      });
-    }
-
-    // Summary
-    const totalWeapons = allItems.filter(i => i.type === 'weapon').length;
-    html += `<div style="margin-top:16px;padding:10px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:10px;color:var(--dim);text-align:center;">`;
-    html += `${totalWeapons} weapons · ${allSkillTrees.length} class trees · ${allWeaponSkills.length} weapon types · ${allArtifacts.length} artifacts`;
-    html += `<br>Source: <a href="https://objectstore.grudge-studio.com/api/v1/" style="font-size:10px;">objectstore.grudge-studio.com</a></div>`;
+    const tiers = WeaponSkillTree.buildWeaponSkillTiers(weapon);
+    const nodeCount = tiers.reduce((n, t) => n + t.nodes.length, 0);
+    html += `<div style="margin-top:14px;padding:10px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:10px;color:var(--dim);text-align:center;">`;
+    html += `${nodeCount} skills · ${weapon.category || 'weapon'} · Updates when you change Mainhand equipment`;
+    html += ` · <a href="./WEAPON_SKILLS.html" style="font-size:10px;">All weapons</a></div>`;
     return html;
   }
 
