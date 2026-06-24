@@ -767,6 +767,19 @@
 <script>
 // ===== WEAPON SKILLS ENGINE v3 =====
 // Loads named weapons from master-weapons.json — each weapon has its own skill tree
+const PAGE_BASE = (() => {
+  const slash = window.location.pathname.lastIndexOf('/');
+  return slash <= 0 ? '' : window.location.pathname.slice(0, slash);
+})();
+
+/** Prefix root-relative asset paths for GitHub Pages (/ObjectStore/) hosting. */
+function asset(url) {
+  if (!url) return url;
+  if (/^(https?:|data:|blob:)/i.test(url)) return url;
+  if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
+  return url;
+}
+
 const API_SOURCES = [
   './api/v1',
   'https://objectstore.grudge-studio.com/api/v1',
@@ -833,7 +846,7 @@ function getWeaponModelUrl(weapon) {
   const idx = weapons.findIndex(w => w.uuid === weapon.uuid);
   const glb = models[idx >= 0 ? idx % models.length : 0] || models[0];
   if (!glb) return null;
-  return `/models/weapons/${folder}/${glb}`;
+  return asset(`/models/weapons/${folder}/${glb}`);
 }
 
 // ── State ──
@@ -875,6 +888,7 @@ async function loadWeaponSkills() {
   const t1 = data.items.filter(i => i.tier === 1);
   WEAPONS_BY_CAT = {};
   for (const w of t1) {
+    if (w.iconUrl) w.iconUrl = asset(w.iconUrl);
     if (!WEAPONS_BY_CAT[w.category]) WEAPONS_BY_CAT[w.category] = [];
     WEAPONS_BY_CAT[w.category].push(w);
   }
@@ -883,7 +897,9 @@ async function loadWeaponSkills() {
 
   // Load spell recipes for Arcane Staff
   const spellData = await fetchJSON('master-spellRecipes.json');
-  if (spellData?.recipes) SPELL_RECIPES = spellData.recipes;
+  if (spellData?.recipes) {
+    SPELL_RECIPES = spellData.recipes.map(r => ({ ...r, icon: asset(r.icon) }));
+  }
 
   const totalWeapons = t1.length;
   const totalCategories = CATEGORY_ORDER.length;
@@ -918,7 +934,7 @@ function renderWeaponTabs() {
     const isActive = cat === activeCategory && !showingSpellcraft;
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (isActive ? ' active' : '');
-    tab.innerHTML = `<img src="${meta.icon}" alt="${meta.name}" onerror="this.style.display='none'"> ${meta.name} <span style="font-size:0.65em;opacity:0.6">(${count})</span>`;
+    tab.innerHTML = `<img src="${asset(meta.icon)}" alt="${meta.name}" onerror="this.style.display='none'"> ${meta.name} <span style="font-size:0.65em;opacity:0.6">(${count})</span>`;
     tab.onclick = () => {
       activeCategory = cat;
       showingSpellcraft = false;
@@ -933,7 +949,7 @@ function renderWeaponTabs() {
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (showingSpellcraft ? ' active' : '');
     tab.style.cssText = 'border-color:#a855f7;' + (showingSpellcraft ? 'background:linear-gradient(180deg,hsl(270 40% 22%),hsl(270 35% 14%));color:#e9d5ff;box-shadow:0 0 12px rgba(168,85,247,0.3);' : '');
-    tab.innerHTML = `<img src="/icons/pack/weapons/staff_1.png" alt="Arcane Staff" onerror="this.style.display='none'"> Arcane Staff <span style="font-size:0.6em;opacity:0.7;color:#c084fc">SPELLCRAFT</span>`;
+    tab.innerHTML = `<img src="${asset('/icons/pack/weapons/staff_1.png')}" alt="Arcane Staff" onerror="this.style.display='none'"> Arcane Staff <span style="font-size:0.6em;opacity:0.7;color:#c084fc">SPELLCRAFT</span>`;
     tab.onclick = () => {
       showingSpellcraft = true;
       activeSpellSchool = null;
@@ -1127,6 +1143,7 @@ function closeDetail() { document.getElementById('detailPanel').classList.remove
 function renderSpellcraftView(container) {
   const SCHOOL_COLORS = { fire:'#ff6b35', frost:'#7dd3fc', holy:'#fde68a', lightning:'#4dc3ff', nature:'#6bdc8b', shadow:'#a78bfa' };
   const SCHOOL_ICONS = { fire:'/icons/pack/misc/fire_05.png', frost:'/icons/pack/misc/frozen.png', holy:'/icons/pack/misc/Glow.png', lightning:'/icons/pack/misc/Lighting.png', nature:'/icons/pack/misc/Naturecircle.png', shadow:'/icons/pack/misc/smoke.png' };
+  const schoolIcon = (school) => asset(SCHOOL_ICONS[school]);
   const schools = ['fire','frost','holy','lightning','nature','shadow'];
 
   const header = document.createElement('div');
@@ -1143,7 +1160,7 @@ function renderSpellcraftView(container) {
       const c = SCHOOL_COLORS[s];
       const active = activeSpellSchool === s;
       const count = SPELL_RECIPES.filter(r => r.school === s).length;
-      return `<button onclick="activeSpellSchool='${s}';render()" style="padding:6px 14px;border-radius:20px;border:1px solid ${active?c:c+'33'};background:${active?c+'22':'transparent'};color:${active?c:'var(--text-muted)'};cursor:pointer;font-family:var(--font-heading);font-size:0.8em;font-weight:600;display:flex;align-items:center;gap:4px"><img src="${SCHOOL_ICONS[s]}" style="width:16px;height:16px" onerror="this.style.display='none'"> ${s.charAt(0).toUpperCase()+s.slice(1)} (${count})</button>`;
+      return `<button onclick="activeSpellSchool='${s}';render()" style="padding:6px 14px;border-radius:20px;border:1px solid ${active?c:c+'33'};background:${active?c+'22':'transparent'};color:${active?c:'var(--text-muted)'};cursor:pointer;font-family:var(--font-heading);font-size:0.8em;font-weight:600;display:flex;align-items:center;gap:4px"><img src="${schoolIcon(s)}" style="width:16px;height:16px" onerror="this.style.display='none'"> ${s.charAt(0).toUpperCase()+s.slice(1)} (${count})</button>`;
     }).join('');
   container.appendChild(filterBar);
 

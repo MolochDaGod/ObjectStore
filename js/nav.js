@@ -1,6 +1,11 @@
 (function() {
-  // Use relative icon paths so they work on any host
-  var ICN = '/icons';
+  // Prefix root-relative paths for GitHub Pages (/ObjectStore/) subpath hosting
+  var path = window.location.pathname;
+  var pageBase = (function() {
+    var slash = path.lastIndexOf('/');
+    return slash <= 0 ? '' : path.slice(0, slash);
+  })();
+  var ICN = pageBase + '/icons';
 
   // Internal ObjectStore pages — icon is now image path relative to ICN
   var pages = [
@@ -40,7 +45,6 @@
   ];
 
   // Detect if we're in a subdirectory (like docs/)
-  var path = window.location.pathname;
   var inSubdir = path.indexOf('/docs/') !== -1 || path.endsWith('/docs');
 
   function resolveHref(href) {
