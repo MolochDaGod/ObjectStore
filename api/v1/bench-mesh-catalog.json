@@ -70,6 +70,12 @@
       "childObjectCount": 19,
       "preferred": true,
       "note": "Original Grudge Warlords uMMORPG race housing workbench — prefer over voxel GLB props",
+      "sourceMeshes": [
+        "Assets/!MAP Assets/Tent_CR_MAX_550/Model/BG/Fbx/desert_tent003.FBX",
+        "Assets/uMMORPG/Unity Essentials - Lighting Optimisation Tutorial/Models/Environment/WoodFloors01_decimated.FBX",
+        "Assets/!MAP Assets/Forge/Models/Anvil.fbx"
+      ],
+      "exportScript": "scripts/export-ummorpg-benches.mjs --unity",
       "r2Match": null,
       "glbProductionMatch": null
     },
@@ -207,37 +213,14 @@
       "category": "bench",
       "normalized": "anvil_low_weaponstoolsmat_0",
       "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
+        "name": "Weapon.FBX",
+        "path": "monsters/models/fantasy-monster-pack_Weapon.FBX",
+        "r2Key": "game-assets/monsters/models/fantasy-monster-pack_Weapon.FBX",
+        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/models/fantasy-monster-pack_Weapon.FBX"
       },
       "recipeStation": "anvil",
       "ummorpgPreferred": null,
       "useProductionGlb": true
-    },
-    {
-      "name": "Bench_low",
-      "category": "bench",
-      "normalized": "bench",
-      "r2Match": null,
-      "recipeStation": "workbench",
-      "ummorpgPreferred": "crusade-workbench",
-      "useProductionGlb": false
-    },
-    {
-      "name": "Bench_low_WoodExteriorMat_0",
-      "category": "bench",
-      "normalized": "bench_low_woodexteriormat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
-      "recipeStation": "workbench",
-      "ummorpgPreferred": "crusade-workbench",
-      "useProductionGlb": false
     },
     {
       "name": "Bench2_low",
@@ -252,20 +235,24 @@
       "name": "Bench2_low_WoodExteriorMat_0",
       "category": "bench",
       "normalized": "bench2_low_woodexteriormat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
     },
     {
-      "name": "chemistry_tablefbx",
+      "name": "Bench_low",
       "category": "bench",
-      "normalized": "chemistry_table",
+      "normalized": "bench",
+      "r2Match": null,
+      "recipeStation": "workbench",
+      "ummorpgPreferred": "crusade-workbench",
+      "useProductionGlb": false
+    },
+    {
+      "name": "Bench_low_WoodExteriorMat_0",
+      "category": "bench",
+      "normalized": "bench_low_woodexteriormat_0",
       "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
@@ -275,6 +262,20 @@
       "name": "CraftingBenchobjcleanermaterialmergergles",
       "category": "bench",
       "normalized": "craftingbench",
+      "r2Match": {
+        "name": "In.FBX",
+        "path": "monsters/models/fantasy-monster-pack_In.FBX",
+        "r2Key": "game-assets/monsters/models/fantasy-monster-pack_In.FBX",
+        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/models/fantasy-monster-pack_In.FBX"
+      },
+      "recipeStation": "workbench",
+      "ummorpgPreferred": "crusade-workbench",
+      "useProductionGlb": false
+    },
+    {
+      "name": "ForgeScene",
+      "category": "bench",
+      "normalized": "forgescene",
       "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
@@ -293,23 +294,9 @@
       "name": "Forge_low_ForgeMat_0",
       "category": "bench",
       "normalized": "forge_low_forgemat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "forge",
       "ummorpgPreferred": "legion-workbench",
-      "useProductionGlb": false
-    },
-    {
-      "name": "ForgeScene",
-      "category": "bench",
-      "normalized": "forgescene",
-      "r2Match": null,
-      "recipeStation": "workbench",
-      "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
     },
     {
@@ -327,24 +314,15 @@
       "useProductionGlb": false
     },
     {
-      "name": "Stump_Mat_tree_0",
-      "category": "bench",
-      "normalized": "stump_mat_tree_0",
-      "r2Match": {
-        "name": "explosive-llc_Tree-Stump",
-        "path": "effects/models/explosive-llc_Tree-Stump.FBX",
-        "r2Key": "game-assets/effects/models/explosive-llc_Tree-Stump.FBX",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/models/explosive-llc_Tree-Stump.FBX"
-      },
-      "recipeStation": "workbench",
-      "ummorpgPreferred": "crusade-workbench",
-      "useProductionGlb": false
-    },
-    {
       "name": "Stump001",
       "category": "bench",
       "normalized": "stump001",
-      "r2Match": null,
+      "r2Match": {
+        "name": "1.fbx",
+        "path": "environment/models/medieval-castle_1.fbx",
+        "r2Key": "game-assets/environment/models/medieval-castle_1.fbx",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/models/medieval-castle_1.fbx"
+      },
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -354,10 +332,10 @@
       "category": "bench",
       "normalized": "stump001_mat_tree_0",
       "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
+        "name": "1.fbx",
+        "path": "environment/models/medieval-castle_1.fbx",
+        "r2Key": "game-assets/environment/models/medieval-castle_1.fbx",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/models/medieval-castle_1.fbx"
       },
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
@@ -376,12 +354,7 @@
       "name": "Stump002_Mat_tree_0",
       "category": "bench",
       "normalized": "stump002_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -399,12 +372,7 @@
       "name": "Stump003_Mat_tree_0",
       "category": "bench",
       "normalized": "stump003_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -422,12 +390,7 @@
       "name": "Stump004_Mat_tree_0",
       "category": "bench",
       "normalized": "stump004_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -445,12 +408,7 @@
       "name": "Stump005_Mat_tree_0",
       "category": "bench",
       "normalized": "stump005_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -468,12 +426,7 @@
       "name": "Stump006_Mat_tree_0",
       "category": "bench",
       "normalized": "stump006_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -491,12 +444,7 @@
       "name": "Stump007_Mat_tree_0",
       "category": "bench",
       "normalized": "stump007_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -514,12 +462,7 @@
       "name": "Stump008_Mat_tree_0",
       "category": "bench",
       "normalized": "stump008_mat_tree_0",
-      "r2Match": {
-        "name": "troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "path": "monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "r2Key": "game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga",
-        "cdn": "https://assets.grudge-studio.com/game-assets/monsters/textures/cave-troll_troll_low_troll_body_mat_AlbedoTransparency.tga"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -537,12 +480,7 @@
       "name": "StumpAnvil_low_WoodExteriorMat_0",
       "category": "bench",
       "normalized": "stumpanvil_low_woodexteriormat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "anvil",
       "ummorpgPreferred": null,
       "useProductionGlb": true
@@ -560,12 +498,16 @@
       "name": "StumpWoodcutter_low_WoodExteriorMat_0",
       "category": "bench",
       "normalized": "stumpwoodcutter_low_woodexteriormat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
+      "recipeStation": "workbench",
+      "ummorpgPreferred": "crusade-workbench",
+      "useProductionGlb": false
+    },
+    {
+      "name": "Stump_Mat_tree_0",
+      "category": "bench",
+      "normalized": "stump_mat_tree_0",
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -574,12 +516,7 @@
       "name": "Vase_low_ForgeMat_0",
       "category": "bench",
       "normalized": "vase_low_forgemat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -597,12 +534,7 @@
       "name": "WorkbenchStone_low_ForgeMat_0",
       "category": "bench",
       "normalized": "workbenchstone_low_forgemat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "workbench",
       "ummorpgPreferred": "crusade-workbench",
       "useProductionGlb": false
@@ -620,15 +552,19 @@
       "name": "WorkbenchWood_low_ForgeMat_0",
       "category": "bench",
       "normalized": "workbenchwood_low_forgemat_0",
-      "r2Match": {
-        "name": "sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency",
-        "path": "effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "r2Key": "game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png",
-        "cdn": "https://assets.grudge-studio.com/game-assets/effects/3d/misc/sine-vfx_Sword_low_DefaultMaterial_AlbedoTransparency.png"
-      },
+      "r2Match": null,
       "recipeStation": "woodworking-bench",
       "ummorpgPreferred": null,
       "useProductionGlb": true
+    },
+    {
+      "name": "chemistry_tablefbx",
+      "category": "bench",
+      "normalized": "chemistry_table",
+      "r2Match": null,
+      "recipeStation": "workbench",
+      "ummorpgPreferred": "crusade-workbench",
+      "useProductionGlb": false
     }
   ],
   "stationMapping": {
