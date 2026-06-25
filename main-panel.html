@@ -164,6 +164,11 @@
     .wst-compact-cols .skill-icon img { width:100%; height:100%; object-fit:contain; }
     .wst-compact-cols .effect-tag { display:inline-block; font-size:8px; padding:1px 5px; border-radius:8px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); color:var(--muted); margin:2px 2px 0 0; }
     .wst-slot-placeholder { border:1px dashed #3a2a1a; border-radius:4px; padding:8px; text-align:center; color:var(--dim); font-size:8px; margin-top:4px; }
+    .wst-offhand-chip { font-size:10px; color:var(--muted); margin:-8px 0 10px; padding:6px 10px; border:1px solid #3a2a1a; border-radius:6px; background:#1a120c; }
+    .wst-modifier-banner { font-size:10px; padding:8px 12px; border-radius:6px; margin-bottom:10px; line-height:1.4; }
+    .wst-modifier-banner strong { display:block; color:var(--gold); margin-bottom:3px; }
+    .wst-banner-shield { border:1px solid hsl(210 50% 35%); background:hsl(210 40% 12%); }
+    .wst-banner-tome { border:1px solid hsl(270 40% 35%); background:hsl(270 30% 12%); }
 
     @media(max-width:1000px) { .left-col, .right-col { display: none; } }
     @media(max-width:700px) { .eq-col { width: 70px; } .eq-slot { width: 58px; height: 58px; } .eq-slot .slot-icon { width: 36px; height: 36px; } }
@@ -617,7 +622,8 @@
       return item && (item.type === 'food' || item.type === 'potion');
     }).slice(0, 3);
     const weapon = getEquippedMainhandWeapon();
-    const hotbarSkills = weapon ? WeaponSkillTree.getHotbarSkills(weapon, weapon.tier || 1) : [];
+    const offhand = getEquippedOffhandItem();
+    const hotbarSkills = weapon ? WeaponSkillTree.getHotbarSkills(weapon, weapon.tier || 1, { offhand, blockActive: true }) : [];
     let html = '';
     for (let i = 0; i < 5; i++) {
       const s = hotbarSkills[i];
@@ -986,26 +992,41 @@ return `<div class="section-title">Attributes</div><p style="color:var(--muted)"
     const uuid = equippedItems['Mainhand'];
     if (!uuid) return null;
     const item = findEquippedItem(uuid);
-    if (!item || item.type !== 'weapon') return null;
-    return item;
+    if (!item) return null;
+    if (item.type === 'weapon' || item.type === 'tool') return item;
+    return null;
+  }
+
+  function getEquippedOffhandItem() {
+    const uuid = equippedItems['Offhand'];
+    if (!uuid) return null;
+    const item = findEquippedItem(uuid);
+    if (!item) return null;
+    if (item.type === 'weapon' || item.type === 'offhand-tome') return item;
+    return null;
   }
 
   // ── Skills Tab: canonical slot loadout from master-weaponSkills.json ─
   function renderSkillsTab() {
     let html = '<div class="section-title">Equipped Weapon — Skill Loadout</div>';
     const weapon = getEquippedMainhandWeapon();
+    const offhand = getEquippedOffhandItem();
 
     if (!weapon) {
-      html += `<div class="wst-empty">Equip a weapon in <strong>Mainhand</strong> to view slot 1 (LMB combo) and tier-unlock skills (slots 2–4).<br><span style="font-size:10px;color:var(--dim)">Data: master-weaponSkills.json</span></div>`;
+      html += `<div class="wst-empty">Equip a weapon in <strong>Mainhand</strong> to view slot 1 (LMB combo) and tier-unlock skills (slots 2–4).<br><span style="font-size:10px;color:var(--dim)">Shield mods slots 1–3 while blocking · Tome couples 1H slots 1–4</span></div>`;
       html += `<div style="margin-top:12px;text-align:center;"><a href="./WEAPON_SKILLS.html" style="font-size:11px;color:var(--gold);">Browse all weapon types →</a></div>`;
       return html;
     }
 
     const w = { ...weapon };
     if (w.iconUrl) w.iconUrl = fixIconUrl(w.iconUrl);
+    const o = offhand ? { ...offhand } : null;
+    if (o?.iconUrl) o.iconUrl = fixIconUrl(o.iconUrl);
     html += WeaponSkillTree.renderEquippedWeaponPanel(w, {
       asset: (u) => asset(fixIconUrl(u)),
       playerTier: weapon.tier || 1,
+      offhand: o,
+      blockActive: true,
     });
     return html;
   }

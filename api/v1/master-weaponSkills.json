@@ -1,9 +1,9 @@
 {
-  "version": "3.0.0",
-  "generated": "2026-06-22T04:21:30.192Z",
-  "totalWeaponTypes": 17,
+  "version": "3.1.0",
+  "generated": "2026-06-25T00:59:06.601Z",
+  "totalWeaponTypes": 16,
   "totalArtifactWeapons": 1,
-  "totalSkills": 219,
+  "totalSkills": 268,
   "classRestrictions": {
     "Warrior": [
       "SWORD",
@@ -18,7 +18,6 @@
       "TOME",
       "MACE",
       "WAND",
-      "OFFHAND_RELIC",
       "DAGGER"
     ],
     "Ranger": [
@@ -3044,380 +3043,1227 @@
     },
     {
       "id": "SHIELD",
-      "name": "Shield",
+      "name": "Shield (Off-Hand)",
       "icon": "/icons/pack/weapons/shield_01.png",
       "classes": [
         "Warrior"
       ],
-      "classification": "standard",
-      "totalSkills": 12,
-      "slots": [
-        {
-          "type": "primary",
-          "label": "PRIMARY",
-          "unlockTier": 1,
-          "skills": [
+      "classification": "offhandModifier",
+      "role": "offhandModifier",
+      "mechanic": {
+        "description": "While blocking, shield type replaces mainhand slots 1–3 with tank abilities. Slot 4 is unchanged.",
+        "requiresBlock": true,
+        "affectedSlots": [
+          "primary",
+          "secondary",
+          "ability"
+        ],
+        "doesNotAffectSlot4": true,
+        "shieldTypes": [
+          "buckler",
+          "kite",
+          "tower",
+          "spiked",
+          "magic",
+          "relic"
+        ]
+      },
+      "shieldTypes": {
+        "buckler": {
+          "id": "buckler",
+          "name": "Buckler",
+          "icon": "/icons/pack/weapons/shield_01.png",
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000062--3C536E5",
-              "id": "shield_bash",
-              "name": "Shield Bash",
-              "description": "Slam shield into target, dazes for 1s",
-              "icon": "/icons/pack/weapons/shield_01.png",
-              "tier": 1,
-              "damage": 35,
-              "cooldown": 0,
-              "castTime": 0,
-              "range": 2,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_bash",
-              "physics": "daze",
-              "effects": [
-                "Daze 1s",
-                "Builds Block"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_bash",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "buckler_deflect",
+                  "name": "Quick Deflect",
+                  "description": "Rapid parry while blocking — minimal recovery",
+                  "icon": "/icons/pack/weapons/shield_01.png",
+                  "tier": 1,
+                  "damage": 20,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Parry window +0.3s",
+                    "Builds Block"
+                  ]
+                },
+                {
+                  "id": "buckler_riposte",
+                  "name": "Riposte",
+                  "description": "Counter immediately after a perfect block",
+                  "icon": "/icons/pack/weapons/shield_03.png",
+                  "tier": 2,
+                  "damage": 45,
+                  "cooldown": 3,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Counter 150% weapon dmg",
+                    "Requires Block"
+                  ]
+                },
+                {
+                  "id": "buckler_flurry",
+                  "name": "Flurry Guard",
+                  "description": "Chain rapid blocks, each faster than the last",
+                  "icon": "/icons/pack/misc/Flow.png",
+                  "tier": 3,
+                  "damage": 30,
+                  "cooldown": 6,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+15% attack speed per block",
+                    "Max 3 stacks"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000063-78A3716F",
-              "id": "shield_slam",
-              "name": "Shield Slam",
-              "description": "Heavy overhead slam, stuns briefly",
-              "icon": "/icons/pack/weapons/shield_03.png",
-              "tier": 2,
-              "damage": 50,
-              "cooldown": 3,
-              "castTime": 0.3,
-              "range": 2,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_slam",
-              "physics": "stun",
-              "effects": [
-                "Stun 0.8s",
-                "Threat+"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_slam",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "buckler_bash",
+                  "name": "Shield Bash",
+                  "description": "Light bash that staggers — only while blocking",
+                  "icon": "/icons/pack/weapons/shield_05.png",
+                  "tier": 1,
+                  "damage": 35,
+                  "cooldown": 4,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Stagger 0.5s",
+                    "Threat+"
+                  ]
+                },
+                {
+                  "id": "buckler_step",
+                  "name": "Shadow Step Block",
+                  "description": "Teleport behind attacker after perfect block",
+                  "icon": "/icons/pack/misc/smoke.png",
+                  "tier": 2,
+                  "damage": 55,
+                  "cooldown": 10,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Teleport behind",
+                    "Crit bonus"
+                  ]
+                },
+                {
+                  "id": "buckler_ghost",
+                  "name": "Ghost Shield",
+                  "description": "Briefly untargetable while holding block",
+                  "icon": "/icons/pack/misc/smoke.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 18,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Untargetable 1.5s",
+                    "While Blocking"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000064-41F91715",
-              "id": "shield_concussive",
-              "name": "Concussive Strike",
-              "description": "AoE bash that slows all nearby",
-              "icon": "/icons/pack/weapons/shield_05.png",
-              "tier": 3,
-              "damage": 40,
-              "cooldown": 5,
-              "castTime": 0.2,
-              "range": 3,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_sweep",
-              "physics": "slow",
-              "effects": [
-                "AoE 3m",
-                "Slow 40% 3s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_sweep",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "buckler_wind",
+                  "name": "Wind Guard",
+                  "description": "Auto-deflect next projectile while blocking",
+                  "icon": "/icons/pack/weapons/shield_10.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Deflect 1 projectile",
+                    "6s window"
+                  ]
+                },
+                {
+                  "id": "buckler_mark",
+                  "name": "Spectral Mark",
+                  "description": "Bash applies ghost-mark reducing enemy accuracy",
+                  "icon": "/icons/pack/weapons/shield_15.png",
+                  "tier": 2,
+                  "damage": 40,
+                  "cooldown": 8,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "-15% enemy accuracy 4s"
+                  ]
+                },
+                {
+                  "id": "buckler_barrage",
+                  "name": "Wraith Barrage",
+                  "description": "Unleash stored parry energy as rapid strikes",
+                  "icon": "/icons/pack/weapons/shield_20.png",
+                  "tier": 3,
+                  "damage": 90,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "5-hit combo",
+                    "Requires 3 perfect blocks"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "secondary",
-          "label": "SECONDARY",
-          "unlockTier": 2,
-          "skills": [
+        "kite": {
+          "id": "kite",
+          "name": "Kite Shield",
+          "icon": "/icons/pack/weapons/shield_14.png",
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000065--5EA29E5",
-              "id": "shield_wall",
-              "name": "Shield Wall",
-              "description": "Raise shield, block 60% damage for 4s",
-              "icon": "/icons/pack/weapons/shield_10.png",
-              "tier": 1,
-              "damage": 0,
-              "cooldown": 18,
-              "castTime": 0,
-              "range": 0,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_raise",
-              "physics": null,
-              "effects": [
-                "60% DR 4s",
-                "Immobile"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_raise",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "kite_guard",
+                  "name": "Kite Guard",
+                  "description": "Balanced block stance — moderate DR while blocking",
+                  "icon": "/icons/pack/weapons/shield_14.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+25% block effect",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "kite_bash",
+                  "name": "Shield Bash",
+                  "description": "Standard bash with daze",
+                  "icon": "/icons/pack/weapons/shield_16.png",
+                  "tier": 2,
+                  "damage": 40,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Daze 1s",
+                    "Builds Block"
+                  ]
+                },
+                {
+                  "id": "kite_slam",
+                  "name": "Shield Slam",
+                  "description": "Heavy overhead slam while blocking",
+                  "icon": "/icons/pack/weapons/shield_18.png",
+                  "tier": 3,
+                  "damage": 55,
+                  "cooldown": 4,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Stun 0.8s",
+                    "Threat++"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000066--2A472E4",
-              "id": "shield_charge",
-              "name": "Bulwark Charge",
-              "description": "Charge forward 8m, knockback targets",
-              "icon": "/icons/pack/misc/Flow.png",
-              "tier": 2,
-              "damage": 45,
-              "cooldown": 12,
-              "castTime": 0,
-              "range": 8,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_charge",
-              "physics": "knockback",
-              "effects": [
-                "Charge 8m",
-                "Knockback 4m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_charge",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "kite_wall",
+                  "name": "Shield Wall",
+                  "description": "Raise kite shield — 50% DR for 4s",
+                  "icon": "/icons/pack/weapons/shield_20.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 16,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "50% DR 4s",
+                    "Immobile"
+                  ]
+                },
+                {
+                  "id": "kite_charge",
+                  "name": "Bulwark Charge",
+                  "description": "Charge forward 6m while blocking",
+                  "icon": "/icons/pack/misc/Flow.png",
+                  "tier": 2,
+                  "damage": 45,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Charge 6m",
+                    "Knockback 3m"
+                  ]
+                },
+                {
+                  "id": "kite_phalanx",
+                  "name": "Phalanx Guard",
+                  "description": "Allies behind gain 20% DR",
+                  "icon": "/icons/pack/weapons/shield_25.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "20% DR allies 6s",
+                    "Cone behind"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000067-6633FDC2",
-              "id": "shield_reflect",
-              "name": "Aegis Reflect",
-              "description": "Reflect next 3 projectiles back",
-              "icon": "/icons/pack/weapons/shield_15.png",
-              "tier": 3,
-              "damage": 0,
-              "cooldown": 15,
-              "castTime": 0,
-              "range": 0,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_parry",
-              "physics": null,
-              "effects": [
-                "Reflect 3 Projectiles"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_parry",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "kite_taunt",
+                  "name": "Grudge Taunt",
+                  "description": "Force enemies in 6m to target you while blocking",
+                  "icon": "/icons/pack/misc/Power.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 15,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE Taunt 3s",
+                    "10% DR self"
+                  ]
+                },
+                {
+                  "id": "kite_bastion",
+                  "name": "Iron Bastion",
+                  "description": "Plant shield — AoE barrier zone",
+                  "icon": "/icons/pack/weapons/shield_30.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 22,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "35% DR zone 5m",
+                    "6s duration"
+                  ]
+                },
+                {
+                  "id": "kite_rally",
+                  "name": "Rally Guard",
+                  "description": "Grant nearby allies +15% defense",
+                  "icon": "/icons/pack/weapons/shield_35.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 18,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+15% defense allies",
+                    "8m radius 6s"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "ability",
-          "label": "ABILITY",
-          "unlockTier": 2,
-          "skills": [
+        "tower": {
+          "id": "tower",
+          "name": "Tower Shield",
+          "icon": "/icons/pack/weapons/shield_40.png",
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000068-37FA83DA",
-              "id": "shield_phalanx",
-              "name": "Phalanx Guard",
-              "description": "Allies behind you gain 25% DR",
-              "icon": "/icons/pack/weapons/shield_20.png",
-              "tier": 1,
-              "damage": 0,
-              "cooldown": 20,
-              "castTime": 0,
-              "range": 6,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_stance",
-              "physics": null,
-              "effects": [
-                "25% DR Allies 6s",
-                "Cone Behind"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_stance",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "tower_fortress",
+                  "name": "Iron Fortress",
+                  "description": "Maximum block — taunt all nearby while blocking",
+                  "icon": "/icons/pack/weapons/shield_40.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+50% block 4s",
+                    "AoE Taunt"
+                  ]
+                },
+                {
+                  "id": "tower_slam",
+                  "name": "Grudge Slam",
+                  "description": "Shield bash that stuns",
+                  "icon": "/icons/pack/weapons/shield_42.png",
+                  "tier": 2,
+                  "damage": 50,
+                  "cooldown": 5,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Stun 1.5s",
+                    "Threat+++"
+                  ]
+                },
+                {
+                  "id": "tower_stance",
+                  "name": "Bulwark Stance",
+                  "description": "+30% defense, -20% speed while blocking",
+                  "icon": "/icons/pack/weapons/shield_45.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+30% defense",
+                    "Toggle while blocking"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000069--816A742",
-              "id": "shield_throw",
-              "name": "Shield Throw",
-              "description": "Hurl shield, bounces to 3 targets",
-              "icon": "/icons/pack/weapons/shield_25.png",
-              "tier": 2,
-              "damage": 60,
-              "cooldown": 10,
-              "castTime": 0.4,
-              "range": 15,
-              "projectile": "thrown",
-              "damageType": "physical",
-              "animation": "shield_throw",
-              "physics": "stun",
-              "effects": [
-                "Bounces x3",
-                "Stun 0.5s each"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_throw",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tower_wall",
+                  "name": "Immovable Wall",
+                  "description": "Block 100% frontal damage for 2s",
+                  "icon": "/icons/pack/weapons/shield_48.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "100% frontal block 2s",
+                    "Rooted"
+                  ]
+                },
+                {
+                  "id": "tower_endure",
+                  "name": "Enduring Wall",
+                  "description": "Blocking does not consume stamina for 4s",
+                  "icon": "/icons/pack/weapons/shield_50.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "No stamina cost blocking",
+                    "4s"
+                  ]
+                },
+                {
+                  "id": "tower_regen",
+                  "name": "Regenerating Block",
+                  "description": "Each block heals 3% max HP",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 3,
+                  "damage": -30,
+                  "cooldown": 15,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Heal 3% per block",
+                    "While Blocking"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-00006A-1D678815",
-              "id": "shield_taunt",
-              "name": "Grudge Taunt",
-              "description": "Force all enemies in 8m to target you",
-              "icon": "/icons/pack/misc/Power.png",
-              "tier": 3,
-              "damage": 0,
-              "cooldown": 15,
-              "castTime": 0,
-              "range": 8,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "war_cry",
-              "physics": null,
-              "effects": [
-                "AoE Taunt 4s",
-                "10% DR self"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "war_cry",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-00006B-55C9FA4A",
-              "id": "shield_bastion",
-              "name": "Iron Bastion",
-              "description": "Plant shield, create AoE barrier zone",
-              "icon": "/icons/pack/weapons/shield_30.png",
-              "tier": 4,
-              "damage": 0,
-              "cooldown": 25,
-              "castTime": 0.5,
-              "range": 0,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_plant",
-              "physics": null,
-              "effects": [
-                "40% DR Zone 5m",
-                "8s Duration"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_plant",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tower_plant",
+                  "name": "Immovable Grudge",
+                  "description": "Plant shield — impassable barrier wall",
+                  "icon": "/icons/pack/weapons/shield_30.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 30,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Barrier wall 5s",
+                    "Blocks passage"
+                  ]
+                },
+                {
+                  "id": "tower_ancestral",
+                  "name": "Ancestral Shield",
+                  "description": "Spirit shield absorbs next 3 attacks",
+                  "icon": "/icons/pack/misc/runic_tablet_07.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 22,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Absorb 3 hits",
+                    "8s"
+                  ]
+                },
+                {
+                  "id": "tower_last",
+                  "name": "Last of the Line",
+                  "description": "Invulnerable 3s while below 30% HP",
+                  "icon": "/icons/pack/weapons/shield_40.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 60,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Immune 3s",
+                    "Emergency only"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "ultimate",
-          "label": "ULTIMATE",
-          "unlockTier": 3,
-          "skills": [
+        "spiked": {
+          "id": "spiked",
+          "name": "Spiked Shield",
+          "icon": "/icons/pack/weapons/shield_05.png",
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-00006C--6EAB227",
-              "id": "shield_unbreakable",
-              "name": "Unbreakable",
-              "description": "Become immune for 3s, then AoE knockback",
-              "icon": "/icons/pack/weapons/shield_40.png",
-              "tier": 1,
-              "damage": 100,
-              "cooldown": 55,
-              "castTime": 0,
-              "range": 6,
-              "projectile": null,
-              "damageType": "physical",
-              "animation": "shield_ultimate",
-              "physics": "knockback",
-              "effects": [
-                "Immune 3s",
-                "AoE Knockback 6m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_ultimate",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "spiked_strike",
+                  "name": "Shield Strike",
+                  "description": "Bash with shield edge — damage + stagger",
+                  "icon": "/icons/pack/weapons/shield_05.png",
+                  "tier": 1,
+                  "damage": 35,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Stagger 0.5s",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "spiked_counter",
+                  "name": "Crimson Counter",
+                  "description": "Perfect block triggers 150% counter",
+                  "icon": "/icons/pack/weapons/shield_08.png",
+                  "tier": 2,
+                  "damage": 65,
+                  "cooldown": 6,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Counter 150% dmg",
+                    "Requires perfect block"
+                  ]
+                },
+                {
+                  "id": "spiked_throw",
+                  "name": "Shield Throw",
+                  "description": "Hurl shield — returns automatically",
+                  "icon": "/icons/pack/weapons/shield_25.png",
+                  "tier": 3,
+                  "damage": 60,
+                  "cooldown": 10,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Ranged 15m",
+                    "Bounces x2"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-00006D-6DE87646",
-              "id": "shield_titan_bulwark",
-              "name": "Titan's Bulwark",
-              "description": "Group invincibility shield for 4s",
-              "icon": "/icons/pack/weapons/shield_50.png",
-              "tier": 4,
-              "damage": 0,
-              "cooldown": 90,
-              "castTime": 0.5,
-              "range": 8,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": "shield_divine",
-              "physics": null,
-              "effects": [
-                "Group Invincible 4s",
-                "AoE 8m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "shield_divine",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "spiked_retaliation",
+                  "name": "Retaliation Aura",
+                  "description": "5% of damage taken reflected while blocking",
+                  "icon": "/icons/pack/misc/Power.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "5% reflect passive",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "spiked_aegis",
+                  "name": "Aegis of Spite",
+                  "description": "Reflect 20% blocked damage back",
+                  "icon": "/icons/pack/weapons/shield_15.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 14,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "20% reflect blocked dmg",
+                    "6s"
+                  ]
+                },
+                {
+                  "id": "spiked_carnage",
+                  "name": "Aegis of Carnage",
+                  "description": "Shield erupts — AoE damage + self-heal",
+                  "icon": "/icons/pack/weapons/shield_20.png",
+                  "tier": 3,
+                  "damage": 80,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 6m",
+                    "Self-heal 50"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "spiked_riposte",
+                  "name": "Parry Riposte",
+                  "description": "Timed block into swift counter-slash",
+                  "icon": "/icons/pack/weapons/Sword_01.png",
+                  "tier": 1,
+                  "damage": 55,
+                  "cooldown": 8,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Parry 0.4s",
+                    "Counter slash"
+                  ]
+                },
+                {
+                  "id": "spiked_rush",
+                  "name": "Bloodguard Rush",
+                  "description": "Charge with shield — knock enemies aside",
+                  "icon": "/icons/pack/misc/Flow.png",
+                  "tier": 2,
+                  "damage": 50,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Charge 8m",
+                    "Knockback 4m"
+                  ]
+                },
+                {
+                  "id": "spiked_fury",
+                  "name": "Crimson Fury",
+                  "description": "+15% crit after blocking 3 attacks",
+                  "icon": "/icons/pack/weapons/shield_30.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+15% crit 8s",
+                    "Requires 3 blocks"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "magic": {
+          "id": "magic",
+          "name": "Magic Shield",
+          "icon": "/icons/pack/misc/runic_tablet_03.png",
+          "slots": [
+            {
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "magic_ward",
+                  "name": "Spell Ward",
+                  "description": "Raise shield to absorb incoming spell",
+                  "icon": "/icons/pack/misc/runic_tablet_01.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Absorb 1 spell",
+                    "Restore mana"
+                  ]
+                },
+                {
+                  "id": "magic_drain",
+                  "name": "Mana Drain Guard",
+                  "description": "Blocked spells restore 10% as mana",
+                  "icon": "/icons/pack/misc/runic_tablet_03.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 8,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Mana return 10%",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "magic_reflect",
+                  "name": "Aegis Reflect",
+                  "description": "Reflect next 3 projectiles back",
+                  "icon": "/icons/pack/weapons/shield_15.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 15,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Reflect 3 projectiles"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "magic_nullify",
+                  "name": "Nullify Aura",
+                  "description": "Reduce nearby enemy spell damage 15%",
+                  "icon": "/icons/pack/misc/runic_tablet_05.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 18,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "-15% enemy spell dmg",
+                    "6m 6s"
+                  ]
+                },
+                {
+                  "id": "magic_shatter",
+                  "name": "Oath Shatter",
+                  "description": "Break enemy buff on perfect block",
+                  "icon": "/icons/pack/misc/runic_tablet_07.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Dispel 1 buff",
+                    "Perfect block"
+                  ]
+                },
+                {
+                  "id": "magic_pulse",
+                  "name": "Ward Pulse",
+                  "description": "AoE magic shield on allies",
+                  "icon": "/icons/pack/misc/runic_tablet_09.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 22,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Spell absorb allies",
+                    "8m 5s"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "magic_arcane",
+                  "name": "Arcane Reflection",
+                  "description": "Reflect next spell at caster",
+                  "icon": "/icons/pack/weapons/Book_1.png",
+                  "tier": 1,
+                  "damage": 45,
+                  "cooldown": 10,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Reflect spell",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "magic_silence",
+                  "name": "Silence Bash",
+                  "description": "Shield strike silences target 2s",
+                  "icon": "/icons/pack/weapons/shield_20.png",
+                  "tier": 2,
+                  "damage": 30,
+                  "cooldown": 14,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Silence 2s",
+                    "Melee range"
+                  ]
+                },
+                {
+                  "id": "magic_covenant",
+                  "name": "Broken Covenant",
+                  "description": "Anti-magic zone — spells fail 4s",
+                  "icon": "/icons/pack/misc/runic_tablet_11.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 45,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Anti-magic zone 4s",
+                    "8m radius"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "relic": {
+          "id": "relic",
+          "name": "Relic Shield",
+          "icon": "/icons/pack/weapons/shield_50.png",
+          "slots": [
+            {
+              "type": "primary",
+              "label": "Slot 1 · While Blocking",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "relic_guard",
+                  "name": "Relic Guard",
+                  "description": "Unique block — +35% DR while blocking",
+                  "icon": "/icons/pack/weapons/shield_50.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+35% DR",
+                    "While Blocking"
+                  ]
+                },
+                {
+                  "id": "relic_bash",
+                  "name": "Concussive Strike",
+                  "description": "AoE bash that slows nearby",
+                  "icon": "/icons/pack/weapons/shield_30.png",
+                  "tier": 2,
+                  "damage": 40,
+                  "cooldown": 5,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 3m",
+                    "Slow 40% 3s"
+                  ]
+                },
+                {
+                  "id": "relic_unbreakable",
+                  "name": "Unbreakable",
+                  "description": "Immune 2s then AoE knockback",
+                  "icon": "/icons/pack/weapons/shield_40.png",
+                  "tier": 3,
+                  "damage": 80,
+                  "cooldown": 40,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Immune 2s",
+                    "AoE knockback"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "secondary",
+              "label": "Slot 2 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "relic_bond",
+                  "name": "Bloodline Bond",
+                  "description": "Link HP with ally — share damage 50/50",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Share 50% dmg",
+                    "20m 10s"
+                  ]
+                },
+                {
+                  "id": "relic_titan",
+                  "name": "Titan's Bulwark",
+                  "description": "Group invincibility 3s",
+                  "icon": "/icons/pack/weapons/shield_45.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 60,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Group immune 3s",
+                    "8m"
+                  ]
+                },
+                {
+                  "id": "relic_inferno",
+                  "name": "Dragon Barrier",
+                  "description": "Fire dragon head — breathe fire cone",
+                  "icon": "/icons/pack/misc/Burns.png",
+                  "tier": 3,
+                  "damage": 100,
+                  "cooldown": 30,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Fire cone AoE",
+                    "Burn 4s"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ability",
+              "label": "Slot 3 · While Blocking",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "relic_taunt",
+                  "name": "Grudge Taunt",
+                  "description": "Force all enemies in 8m to target you",
+                  "icon": "/icons/pack/misc/Power.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 15,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE Taunt 4s",
+                    "10% DR self"
+                  ]
+                },
+                {
+                  "id": "relic_bastion",
+                  "name": "Iron Bastion",
+                  "description": "40% DR zone 5m for 8s",
+                  "icon": "/icons/pack/weapons/shield_35.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "40% DR zone",
+                    "8s duration"
+                  ]
+                },
+                {
+                  "id": "relic_will",
+                  "name": "Unbreakable Will",
+                  "description": "Immune to stun/knockback 3s",
+                  "icon": "/icons/pack/weapons/shield_48.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 35,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "physical",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "CC immune 3s",
+                    "While Blocking"
+                  ]
+                }
+              ]
             }
           ]
         }
-      ],
-      "uuid": "ITEM-20260621232130-000D7B-3343B720"
+      },
+      "totalSkills": 54,
+      "slots": []
     },
     {
       "id": "GREATSWORD",
@@ -4577,420 +5423,1043 @@
     },
     {
       "id": "TOME",
-      "name": "Tome",
+      "name": "Tome (Off-Hand Relic)",
       "icon": "/icons/pack/weapons/Book_1.png",
       "classes": [
-        "Mage"
+        "Mage",
+        "Worge"
       ],
-      "classification": "standard",
-      "totalSkills": 13,
-      "slots": [
-        {
-          "type": "primary",
-          "label": "PRIMARY",
-          "unlockTier": 1,
-          "skills": [
+      "classification": "offhandCoupling",
+      "role": "offhandCoupling",
+      "mechanic": {
+        "description": "Canonical off-hand relic. When paired with a one-hand mainhand, tomes transform slots 1–4 into elemental, ranged, heal, or buff variants based on tome school.",
+        "requiresOneHandMainhand": true,
+        "affectedSlots": [
+          "primary",
+          "secondary",
+          "ability",
+          "ultimate"
+        ],
+        "couplingModes": [
+          "elemental",
+          "ranged",
+          "heal",
+          "buff"
+        ],
+        "schoolToMode": {
+          "fire": "elemental",
+          "frost": "elemental",
+          "lightning": "elemental",
+          "nature": "buff",
+          "arcane": "buff",
+          "holy": "heal"
+        },
+        "validMainhands": [
+          "SWORD",
+          "AXE",
+          "DAGGER",
+          "HAMMER",
+          "MACE",
+          "GUN",
+          "WAND"
+        ]
+      },
+      "couplingModes": {
+        "elemental": {
+          "id": "elemental",
+          "name": "Elemental",
+          "description": "Slots become elemental spell variants (fire, frost, lightning, nature)",
+          "schools": [
+            "fire",
+            "frost",
+            "lightning",
+            "nature"
+          ],
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000092--79CECF9",
-              "id": "tome_arcane_bolt",
-              "name": "Arcane Bolt",
-              "description": "Homing arcane projectile",
-              "icon": "/icons/pack/weapons/Book_1.png",
-              "tier": 1,
-              "damage": 45,
-              "cooldown": 0,
-              "castTime": 0.5,
-              "range": 25,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_bolt",
-              "physics": null,
-              "effects": [
-                "Homing",
-                "Range 25m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_bolt",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · Coupled",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "tome_elem_bolt",
+                  "name": "Elemental Bolt",
+                  "description": "Channel tome element through mainhand strike",
+                  "icon": "/icons/weapons/tomes/fire-tome.png",
+                  "tier": 1,
+                  "damage": 45,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 20,
+                  "projectile": "spell",
+                  "damageType": "fire",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Elemental projectile",
+                    "Matches tome school"
+                  ]
+                },
+                {
+                  "id": "tome_elem_blast",
+                  "name": "Elemental Blast",
+                  "description": "Charged burst matching tome element",
+                  "icon": "/icons/weapons/tomes/fire-tome.png",
+                  "tier": 2,
+                  "damage": 65,
+                  "cooldown": 2,
+                  "castTime": 0.8,
+                  "range": 18,
+                  "projectile": null,
+                  "damageType": "fire",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 3m",
+                    "Element match"
+                  ]
+                },
+                {
+                  "id": "tome_elem_surge",
+                  "name": "Elemental Surge",
+                  "description": "Wave of elemental energy",
+                  "icon": "/icons/weapons/tomes/lightning-tome.png",
+                  "tier": 3,
+                  "damage": 55,
+                  "cooldown": 4,
+                  "castTime": 0,
+                  "range": 22,
+                  "projectile": null,
+                  "damageType": "lightning",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Pierce 2 targets",
+                    "Element match"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000093--38DAE94",
-              "id": "tome_elemental",
-              "name": "Elemental Blast",
-              "description": "Charged elemental projectile",
-              "icon": "/icons/pack/weapons/Book_5.png",
-              "tier": 2,
-              "damage": 65,
-              "cooldown": 2,
-              "castTime": 0.8,
-              "range": 20,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_charge",
-              "physics": null,
-              "effects": [
-                "AoE 3m on Impact",
-                "Element Varies"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_charge",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_elem_nova",
+                  "name": "Elemental Nova",
+                  "description": "Radial burst of tome element",
+                  "icon": "/icons/weapons/tomes/frost-tome.png",
+                  "tier": 1,
+                  "damage": 50,
+                  "cooldown": 8,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "frost",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 5m",
+                    "Element match"
+                  ]
+                },
+                {
+                  "id": "tome_elem_prison",
+                  "name": "Frost Prison",
+                  "description": "Encase target — root 3s",
+                  "icon": "/icons/weapons/tomes/frost-tome.png",
+                  "tier": 2,
+                  "damage": 20,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 18,
+                  "projectile": null,
+                  "damageType": "frost",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Root 3s",
+                    "Slow after"
+                  ]
+                },
+                {
+                  "id": "tome_elem_storm",
+                  "name": "Thunderstorm",
+                  "description": "Lightning strikes around you",
+                  "icon": "/icons/weapons/tomes/lightning-tome.png",
+                  "tier": 3,
+                  "damage": 80,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 12,
+                  "projectile": null,
+                  "damageType": "lightning",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 8m",
+                    "Stun 1s"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000094--337C7AC",
-              "id": "tome_spirit_surge",
-              "name": "Spirit Surge",
-              "description": "Channel spirits from tome pages",
-              "icon": "/icons/pack/weapons/Book_10.png",
-              "tier": 3,
-              "damage": 55,
-              "cooldown": 4,
-              "castTime": 0.6,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "holy",
-              "animation": "cast_channel",
-              "physics": null,
-              "effects": [
-                "Heal Allies 30",
-                "DMG Enemies 55"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_channel",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_elem_ward",
+                  "name": "Elemental Ward",
+                  "description": "Ground rune of tome element",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 1,
+                  "damage": 40,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 10,
+                  "projectile": null,
+                  "damageType": "nature",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Ground AoE 6m",
+                    "6s duration"
+                  ]
+                },
+                {
+                  "id": "tome_elem_drain",
+                  "name": "Knowledge Drain",
+                  "description": "Drain mana and debuff target",
+                  "icon": "/icons/weapons/tomes/arcane-tome.png",
+                  "tier": 2,
+                  "damage": 30,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 15,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Mana drain 50",
+                    "-10% spell power 4s"
+                  ]
+                },
+                {
+                  "id": "tome_elem_forbidden",
+                  "name": "Forbidden Page",
+                  "description": "Massive DoT from tome pages",
+                  "icon": "/icons/pack/weapons/Book_12.png",
+                  "tier": 3,
+                  "damage": 120,
+                  "cooldown": 16,
+                  "castTime": 1,
+                  "range": 15,
+                  "projectile": null,
+                  "damageType": "shadow",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "DoT 8s",
+                    "Shadow element"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ultimate",
+              "label": "Slot 4 · Coupled",
+              "unlockTier": 3,
+              "skills": [
+                {
+                  "id": "tome_elem_apocalypse",
+                  "name": "Apocalypse Tome",
+                  "description": "Massive AoE elemental storm",
+                  "icon": "/icons/weapons/tomes/fire-tome.png",
+                  "tier": 1,
+                  "damage": 200,
+                  "cooldown": 60,
+                  "castTime": 2,
+                  "range": 15,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 15m",
+                    "All elements",
+                    "5s channel"
+                  ]
+                },
+                {
+                  "id": "tome_elem_cataclysm",
+                  "name": "Elemental Cataclysm",
+                  "description": "Unleash pure elemental devastation",
+                  "icon": "/icons/weapons/tomes/lightning-tome.png",
+                  "tier": 4,
+                  "damage": 250,
+                  "cooldown": 75,
+                  "castTime": 2.5,
+                  "range": 20,
+                  "projectile": null,
+                  "damageType": "lightning",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 20m",
+                    "Element storm"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "secondary",
-          "label": "SECONDARY",
-          "unlockTier": 2,
-          "skills": [
+        "ranged": {
+          "id": "ranged",
+          "name": "Ranged",
+          "description": "Slots become ranged spell/projectile variants",
+          "schools": [
+            "arcane"
+          ],
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000095-05CA6AEB",
-              "id": "tome_mana_shield",
-              "name": "Mana Shield",
-              "description": "Convert mana to damage absorption",
-              "icon": "/icons/pack/weapons/Book_15.png",
-              "tier": 1,
-              "damage": 0,
-              "cooldown": 15,
-              "castTime": 0.3,
-              "range": 0,
-              "projectile": null,
-              "damageType": "arcane",
-              "animation": "cast_shield",
-              "physics": null,
-              "effects": [
-                "Absorb 300",
-                "Drains Mana"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_shield",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · Coupled",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "tome_rng_bolt",
+                  "name": "Arcane Bolt",
+                  "description": "Homing arcane projectile via mainhand",
+                  "icon": "/icons/weapons/tomes/arcane-tome.png",
+                  "tier": 1,
+                  "damage": 45,
+                  "cooldown": 0,
+                  "castTime": 0.5,
+                  "range": 25,
+                  "projectile": "spell",
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Homing",
+                    "Range 25m"
+                  ]
+                },
+                {
+                  "id": "tome_rng_lance",
+                  "name": "Arcane Lance",
+                  "description": "Piercing beam through tome focus",
+                  "icon": "/icons/weapons/tomes/arcane-tome.png",
+                  "tier": 2,
+                  "damage": 60,
+                  "cooldown": 3,
+                  "castTime": 0.6,
+                  "range": 30,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Pierce 3 targets",
+                    "Range 30m"
+                  ]
+                },
+                {
+                  "id": "tome_rng_orb",
+                  "name": "Arcane Orb",
+                  "description": "Slow heavy orb with large impact",
+                  "icon": "/icons/pack/weapons/Book_5.png",
+                  "tier": 3,
+                  "damage": 75,
+                  "cooldown": 5,
+                  "castTime": 0,
+                  "range": 22,
+                  "projectile": "spell",
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 4m impact",
+                    "Knockback"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000096--1FFF17D",
-              "id": "tome_runic_ward",
-              "name": "Runic Ward",
-              "description": "Place ward that heals allies in zone",
-              "icon": "/icons/pack/misc/runic_tablet_03.png",
-              "tier": 2,
-              "damage": -50,
-              "cooldown": 18,
-              "castTime": 0.8,
-              "range": 12,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": "cast_ward",
-              "physics": null,
-              "effects": [
-                "Heal Zone 6m",
-                "10s Duration"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_ward",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_rng_volley",
+                  "name": "Spell Volley",
+                  "description": "3 rapid arcane projectiles",
+                  "icon": "/icons/pack/weapons/Book_7.png",
+                  "tier": 1,
+                  "damage": 35,
+                  "cooldown": 6,
+                  "castTime": 0,
+                  "range": 20,
+                  "projectile": "spell",
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "3 projectiles",
+                    "Range 20m"
+                  ]
+                },
+                {
+                  "id": "tome_rng_snare",
+                  "name": "Arcane Snare",
+                  "description": "Ranged root — binds target in place",
+                  "icon": "/icons/pack/weapons/Book_10.png",
+                  "tier": 2,
+                  "damage": 25,
+                  "cooldown": 14,
+                  "castTime": 0,
+                  "range": 18,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Root 2.5s",
+                    "Range 18m"
+                  ]
+                },
+                {
+                  "id": "tome_rng_ricochet",
+                  "name": "Ricochet Bolt",
+                  "description": "Bolt bounces between 4 targets",
+                  "icon": "/icons/pack/weapons/Book_15.png",
+                  "tier": 3,
+                  "damage": 50,
+                  "cooldown": 10,
+                  "castTime": 0,
+                  "range": 25,
+                  "projectile": "spell",
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Bounce x4",
+                    "Range 25m"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000097-30E4C434",
-              "id": "tome_knowledge_drain",
-              "name": "Knowledge Drain",
-              "description": "Steal mana and buff from target",
-              "icon": "/icons/pack/weapons/Book_20.png",
-              "tier": 3,
-              "damage": 40,
-              "cooldown": 12,
-              "castTime": 0.6,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_drain",
-              "physics": null,
-              "effects": [
-                "Steal 1 Buff",
-                "Mana Drain 50"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_drain",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_rng_burst",
+                  "name": "Grimoire Burst",
+                  "description": "Open tome — release stored energy",
+                  "icon": "/icons/pack/weapons/Book_7.png",
+                  "tier": 1,
+                  "damage": 90,
+                  "cooldown": 14,
+                  "castTime": 0,
+                  "range": 8,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 8m",
+                    "Knockback 4m"
+                  ]
+                },
+                {
+                  "id": "tome_rng_beam",
+                  "name": "Focused Beam",
+                  "description": "Channeled ranged beam",
+                  "icon": "/icons/pack/weapons/Book_12.png",
+                  "tier": 2,
+                  "damage": 100,
+                  "cooldown": 18,
+                  "castTime": 2,
+                  "range": 25,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Beam 25m",
+                    "2s channel"
+                  ]
+                },
+                {
+                  "id": "tome_rng_meteor",
+                  "name": "Arcane Meteor",
+                  "description": "Call down ranged AoE strike",
+                  "icon": "/icons/pack/weapons/Book_20.png",
+                  "tier": 3,
+                  "damage": 130,
+                  "cooldown": 22,
+                  "castTime": 0,
+                  "range": 30,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 6m",
+                    "Range 30m"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ultimate",
+              "label": "Slot 4 · Coupled",
+              "unlockTier": 3,
+              "skills": [
+                {
+                  "id": "tome_rng_storm",
+                  "name": "Arcane Barrage",
+                  "description": "Rain of arcane bolts across area",
+                  "icon": "/icons/weapons/tomes/arcane-tome.png",
+                  "tier": 1,
+                  "damage": 180,
+                  "cooldown": 55,
+                  "castTime": 0,
+                  "range": 20,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "AoE 12m",
+                    "12 bolts"
+                  ]
+                },
+                {
+                  "id": "tome_rng_annihilate",
+                  "name": "Annihilation Ray",
+                  "description": "Devastating long-range beam",
+                  "icon": "/icons/pack/weapons/Book_25.png",
+                  "tier": 4,
+                  "damage": 220,
+                  "cooldown": 70,
+                  "castTime": 3,
+                  "range": 40,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Beam 40m",
+                    "3s channel"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "ability",
-          "label": "ABILITY",
-          "unlockTier": 2,
-          "skills": [
+        "heal": {
+          "id": "heal",
+          "name": "Heal",
+          "description": "Slots become healing and support variants",
+          "schools": [
+            "holy"
+          ],
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-000098-0EAA5664",
-              "id": "tome_grimoire",
-              "name": "Grimoire Burst",
-              "description": "Open tome, release stored energy",
-              "icon": "/icons/pack/weapons/Book_7.png",
-              "tier": 1,
-              "damage": 90,
-              "cooldown": 14,
-              "castTime": 0.5,
-              "range": 8,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_burst",
-              "physics": "knockback",
-              "effects": [
-                "AoE 8m",
-                "Knockback 4m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_burst",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · Coupled",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "tome_heal_touch",
+                  "name": "Holy Touch",
+                  "description": "Melee strike that heals self and ally",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 1,
+                  "damage": -40,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 3,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Heal self 40",
+                    "Heal ally 20"
+                  ]
+                },
+                {
+                  "id": "tome_heal_wave",
+                  "name": "Healing Wave",
+                  "description": "Pulse of holy energy — party heal",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 2,
+                  "damage": -80,
+                  "cooldown": 6,
+                  "castTime": 0,
+                  "range": 8,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Party heal 80",
+                    "8m radius"
+                  ]
+                },
+                {
+                  "id": "tome_heal_surge",
+                  "name": "Spirit Surge",
+                  "description": "Channel spirits — heal allies, harm undead",
+                  "icon": "/icons/pack/weapons/Book_10.png",
+                  "tier": 3,
+                  "damage": -60,
+                  "cooldown": 8,
+                  "castTime": 0.6,
+                  "range": 12,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Heal allies 60",
+                    "DMG undead 60"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-000099--61B3967",
-              "id": "tome_forbidden",
-              "name": "Forbidden Page",
-              "description": "Read forbidden text, massive DoT",
-              "icon": "/icons/pack/weapons/Book_12.png",
-              "tier": 2,
-              "damage": 120,
-              "cooldown": 16,
-              "castTime": 1,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_dark",
-              "physics": null,
-              "effects": [
-                "Shadow DoT 8s",
-                "Self-Damage 5%"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_dark",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_heal_ward",
+                  "name": "Runic Ward",
+                  "description": "Ground circle heals allies inside",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 2,
+                  "damage": -60,
+                  "cooldown": 18,
+                  "castTime": 0.8,
+                  "range": 12,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Heal zone 6m",
+                    "10s duration"
+                  ]
+                },
+                {
+                  "id": "tome_heal_shield",
+                  "name": "Mana Shield",
+                  "description": "Convert mana to damage absorption",
+                  "icon": "/icons/pack/weapons/Book_15.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 15,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Absorb 200",
+                    "Drains mana"
+                  ]
+                },
+                {
+                  "id": "tome_heal_link",
+                  "name": "Soul Link",
+                  "description": "Link to ally — share 40% healing",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 20,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Share 40% healing",
+                    "20m 10s"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-00009A-6008F981",
-              "id": "tome_soul_bind",
-              "name": "Soul Bind",
-              "description": "Link to target, share damage taken",
-              "icon": "/icons/pack/misc/Life.png",
-              "tier": 3,
-              "damage": 0,
-              "cooldown": 20,
-              "castTime": 0.5,
-              "range": 20,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "cast_link",
-              "physics": "root",
-              "effects": [
-                "Share 50% DMG 6s",
-                "Root Both 1s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_link",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "ability",
+              "label": "Slot 3 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_heal_cleanse",
+                  "name": "Purifying Strike",
+                  "description": "Attack cleanses 1 debuff from self",
+                  "icon": "/icons/pack/weapons/Book_7.png",
+                  "tier": 1,
+                  "damage": 30,
+                  "cooldown": 10,
+                  "castTime": 0,
+                  "range": 3,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Cleanse 1 debuff",
+                    "Heal 30"
+                  ]
+                },
+                {
+                  "id": "tome_heal_resurrect",
+                  "name": "Grace Touch",
+                  "description": "Revive fallen ally at 25% HP",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 90,
+                  "castTime": 2,
+                  "range": 30,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Revive 25% HP",
+                    "30m range"
+                  ]
+                },
+                {
+                  "id": "tome_heal_beacon",
+                  "name": "Holy Beacon",
+                  "description": "Mark ally — all healing +50% to them",
+                  "icon": "/icons/pack/weapons/Book_20.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 25,
+                  "castTime": 0,
+                  "range": 25,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+50% healing received",
+                    "12s"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-00009B-4A8D2B32",
-              "id": "tome_reality_tear",
-              "name": "Reality Tear",
-              "description": "Tear space, creating void zone",
-              "icon": "/icons/pack/misc/ChaosCircle.png",
-              "tier": 4,
-              "damage": 80,
-              "cooldown": 22,
-              "castTime": 1.2,
-              "range": 15,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": "cast_void",
-              "physics": "pull",
-              "effects": [
-                "Void Zone 5m",
-                "Pull",
-                "DoT 6s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_void",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-00009C--1B39A9F",
-              "id": "tome_ancient",
-              "name": "Ancient Knowledge",
-              "description": "Buff all allies with stats",
-              "icon": "/icons/pack/weapons/Book_25.png",
-              "tier": 5,
-              "damage": 0,
-              "cooldown": 30,
-              "castTime": 1,
-              "range": 12,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": "cast_buff",
-              "physics": null,
-              "effects": [
-                "+15% All Stats",
-                "10s",
-                "AoE 12m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_buff",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "ultimate",
+              "label": "Slot 4 · Coupled",
+              "unlockTier": 3,
+              "skills": [
+                {
+                  "id": "tome_heal_genesis",
+                  "name": "Genesis",
+                  "description": "Full party heal + damage immunity 3s",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 4,
+                  "damage": -300,
+                  "cooldown": 90,
+                  "castTime": 1.5,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Party heal",
+                    "Immunity 3s",
+                    "Purge debuffs"
+                  ]
+                },
+                {
+                  "id": "tome_heal_sanctuary",
+                  "name": "Sanctuary",
+                  "description": "Create zone of total healing immunity",
+                  "icon": "/icons/pack/misc/Life.png",
+                  "tier": 1,
+                  "damage": -150,
+                  "cooldown": 60,
+                  "castTime": 0,
+                  "range": 8,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Immune zone 5s",
+                    "8m radius"
+                  ]
+                }
+              ]
             }
           ]
         },
-        {
-          "type": "ultimate",
-          "label": "ULTIMATE",
-          "unlockTier": 3,
-          "skills": [
+        "buff": {
+          "id": "buff",
+          "name": "Buff",
+          "description": "Slots become buff and enhancement variants",
+          "schools": [
+            "nature",
+            "arcane"
+          ],
+          "slots": [
             {
-              "uuid": "SKIL-20260604081946-00009D-2A4603E0",
-              "id": "tome_apocalypse",
-              "name": "Apocalypse Tome",
-              "description": "Unleash all pages, massive AoE",
-              "icon": "/icons/pack/weapons/Book_22.png",
-              "tier": 1,
-              "damage": 250,
-              "cooldown": 55,
-              "castTime": 1.5,
-              "range": 12,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "cast_ultimate",
-              "physics": "knockup",
-              "effects": [
-                "AoE 12m",
-                "Multi-Element",
-                "Knockup 2s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_ultimate",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
+              "type": "primary",
+              "label": "Slot 1 · Coupled",
+              "unlockTier": 1,
+              "skills": [
+                {
+                  "id": "tome_buff_strike",
+                  "name": "Empowered Strike",
+                  "description": "Mainhand attack buffs self +10% dmg 6s",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 1,
+                  "damage": 40,
+                  "cooldown": 0,
+                  "castTime": 0,
+                  "range": 3,
+                  "projectile": null,
+                  "damageType": "nature",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+10% dmg 6s",
+                    "Self buff"
+                  ]
+                },
+                {
+                  "id": "tome_buff_haste",
+                  "name": "Haste Sigil",
+                  "description": "Attack grants +20% attack speed 5s",
+                  "icon": "/icons/pack/weapons/Book_5.png",
+                  "tier": 2,
+                  "damage": 35,
+                  "cooldown": 4,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+20% attack speed",
+                    "5s"
+                  ]
+                },
+                {
+                  "id": "tome_buff_might",
+                  "name": "Might Infusion",
+                  "description": "Strike empowers next 3 attacks +25%",
+                  "icon": "/icons/pack/weapons/Book_10.png",
+                  "tier": 3,
+                  "damage": 50,
+                  "cooldown": 6,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "nature",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+25% next 3 hits"
+                  ]
+                }
+              ]
             },
             {
-              "uuid": "SKIL-20260604081946-00009E--2540A87",
-              "id": "tome_genesis",
-              "name": "Genesis",
-              "description": "Rewrite reality, full heal allies",
-              "icon": "/icons/pack/misc/Lights.png",
-              "tier": 4,
-              "damage": -500,
-              "cooldown": 120,
-              "castTime": 2,
-              "range": 15,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": "cast_divine",
-              "physics": null,
-              "effects": [
-                "Full Heal Allies",
-                "Cleanse All",
-                "AoE 15m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "cast_divine",
-                "soundRef": null,
-                "cameraShake": null
-              }
+              "type": "secondary",
+              "label": "Slot 2 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_buff_ward",
+                  "name": "Protective Ward",
+                  "description": "Buff self +20% defense 8s",
+                  "icon": "/icons/pack/weapons/Book_15.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 12,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "nature",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+20% defense 8s"
+                  ]
+                },
+                {
+                  "id": "tome_buff_rally",
+                  "name": "Battle Rally",
+                  "description": "Buff nearby allies +15% all stats 6s",
+                  "icon": "/icons/pack/misc/Power.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 18,
+                  "castTime": 0,
+                  "range": 8,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+15% stats allies",
+                    "8m 6s"
+                  ]
+                },
+                {
+                  "id": "tome_buff_focus",
+                  "name": "Arcane Focus",
+                  "description": "Buff spell power +30% 10s",
+                  "icon": "/icons/weapons/tomes/arcane-tome.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 20,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+30% spell power",
+                    "10s"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ability",
+              "label": "Slot 3 · Coupled",
+              "unlockTier": 2,
+              "skills": [
+                {
+                  "id": "tome_buff_grasp",
+                  "name": "Grasp of Growth",
+                  "description": "Roots enemy, buffs self +15% HP",
+                  "icon": "/icons/weapons/tomes/nature-tome.png",
+                  "tier": 1,
+                  "damage": 20,
+                  "cooldown": 14,
+                  "castTime": 0,
+                  "range": 8,
+                  "projectile": null,
+                  "damageType": "nature",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Root 2s",
+                    "+15% max HP 8s"
+                  ]
+                },
+                {
+                  "id": "tome_buff_mirror",
+                  "name": "Mirror Image",
+                  "description": "Buff creates 2 decoys absorbing hits",
+                  "icon": "/icons/pack/misc/smoke.png",
+                  "tier": 2,
+                  "damage": 0,
+                  "cooldown": 22,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "2 decoys",
+                    "Absorb 1 hit each"
+                  ]
+                },
+                {
+                  "id": "tome_buff_ascend",
+                  "name": "Ascension",
+                  "description": "Buff — immune to CC, +25% speed 4s",
+                  "icon": "/icons/pack/weapons/Book_20.png",
+                  "tier": 3,
+                  "damage": 0,
+                  "cooldown": 30,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "CC immune 4s",
+                    "+25% speed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ultimate",
+              "label": "Slot 4 · Coupled",
+              "unlockTier": 3,
+              "skills": [
+                {
+                  "id": "tome_buff_avatar",
+                  "name": "Avatar of War",
+                  "description": "Transform — +50% all stats 8s",
+                  "icon": "/icons/pack/misc/Power.png",
+                  "tier": 1,
+                  "damage": 0,
+                  "cooldown": 75,
+                  "castTime": 0,
+                  "range": 0,
+                  "projectile": null,
+                  "damageType": "arcane",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "+50% all stats",
+                    "8s duration"
+                  ]
+                },
+                {
+                  "id": "tome_buff_legion",
+                  "name": "Legion Blessing",
+                  "description": "Party-wide +30% stats 10s",
+                  "icon": "/icons/pack/weapons/Book_25.png",
+                  "tier": 4,
+                  "damage": 0,
+                  "cooldown": 90,
+                  "castTime": 0,
+                  "range": 15,
+                  "projectile": null,
+                  "damageType": "holy",
+                  "animation": null,
+                  "physics": null,
+                  "effects": [
+                    "Party +30% stats",
+                    "10s"
+                  ]
+                }
+              ]
             }
           ]
         }
-      ],
-      "uuid": "ITEM-20260621232130-000DAF-DF6CCA81"
+      },
+      "totalSkills": 44,
+      "slots": []
     },
     {
       "id": "MACE",
@@ -5799,396 +7268,6 @@
       "uuid": "ITEM-20260621232130-000DCA-99331940"
     },
     {
-      "id": "OFFHAND_RELIC",
-      "name": "Off-Hand Relic",
-      "icon": "/icons/pack/misc/runic_tablet_01.png",
-      "classes": [
-        "Mage",
-        "Worge"
-      ],
-      "classification": "standard",
-      "totalSkills": 12,
-      "slots": [
-        {
-          "type": "primary",
-          "label": "PRIMARY",
-          "unlockTier": 1,
-          "skills": [
-            {
-              "uuid": "SKIL-20260604081946-0000B8--4D4AA28",
-              "id": "relic_spirit_touch",
-              "name": "Spirit Touch",
-              "description": "Channel spirit energy at target",
-              "icon": "/icons/pack/misc/runic_tablet_01.png",
-              "tier": 1,
-              "damage": 40,
-              "cooldown": 0,
-              "castTime": 0.4,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_cast",
-              "physics": null,
-              "effects": [
-                "Spirit DMG",
-                "Builds Charge"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_cast",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000B9-658E2684",
-              "id": "relic_runic_pulse",
-              "name": "Runic Pulse",
-              "description": "Emit runic energy wave",
-              "icon": "/icons/pack/misc/runic_tablet_03.png",
-              "tier": 2,
-              "damage": 55,
-              "cooldown": 2,
-              "castTime": 0.3,
-              "range": 10,
-              "projectile": "spell",
-              "damageType": "arcane",
-              "animation": "offhand_pulse",
-              "physics": null,
-              "effects": [
-                "Cone Wave",
-                "Mana Return 10"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_pulse",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000BA--446E00E",
-              "id": "relic_essence_drain",
-              "name": "Essence Drain",
-              "description": "Drain life force from target",
-              "icon": "/icons/pack/misc/runic_tablet_05.png",
-              "tier": 3,
-              "damage": 45,
-              "cooldown": 5,
-              "castTime": 0.5,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_drain",
-              "physics": null,
-              "effects": [
-                "Lifesteal 50%",
-                "Mana Drain 20"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_drain",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            }
-          ]
-        },
-        {
-          "type": "secondary",
-          "label": "SECONDARY",
-          "unlockTier": 2,
-          "skills": [
-            {
-              "uuid": "SKIL-20260604081946-0000BB-2355630D",
-              "id": "relic_mystic_shield",
-              "name": "Mystic Shield",
-              "description": "Create ward absorbing spell damage",
-              "icon": "/icons/pack/misc/runic_tablet_07.png",
-              "tier": 1,
-              "damage": 0,
-              "cooldown": 15,
-              "castTime": 0.3,
-              "range": 0,
-              "projectile": null,
-              "damageType": "arcane",
-              "animation": "offhand_shield",
-              "physics": null,
-              "effects": [
-                "Absorb 350 Spell DMG",
-                "8s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_shield",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000BC--56F000E",
-              "id": "relic_soul_link",
-              "name": "Soul Link",
-              "description": "Link to ally, share healing",
-              "icon": "/icons/pack/misc/Life.png",
-              "tier": 2,
-              "damage": 0,
-              "cooldown": 20,
-              "castTime": 0.5,
-              "range": 20,
-              "projectile": null,
-              "damageType": "holy",
-              "animation": "offhand_link",
-              "physics": null,
-              "effects": [
-                "Share 40% Healing",
-                "Range 20m",
-                "10s"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_link",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000BD-4179BA1C",
-              "id": "relic_spirit_walk",
-              "name": "Spirit Walk",
-              "description": "Become ethereal, pass through enemies",
-              "icon": "/icons/pack/misc/smoke.png",
-              "tier": 3,
-              "damage": 0,
-              "cooldown": 25,
-              "castTime": 0,
-              "range": 0,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": "spirit_walk",
-              "physics": null,
-              "effects": [
-                "Ethereal 3s",
-                "Immune to Physical",
-                "+40% Speed"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "spirit_walk",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            }
-          ]
-        },
-        {
-          "type": "ability",
-          "label": "ABILITY",
-          "unlockTier": 2,
-          "skills": [
-            {
-              "uuid": "SKIL-20260604081946-0000BE--3069556",
-              "id": "relic_curse",
-              "name": "Curse of Weakness",
-              "description": "Reduce target damage output",
-              "icon": "/icons/pack/misc/runic_tablet_08.png",
-              "tier": 1,
-              "damage": 0,
-              "cooldown": 12,
-              "castTime": 0.5,
-              "range": 20,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_curse",
-              "physics": null,
-              "effects": [
-                "-30% DMG 8s",
-                "Range 20m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_curse",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000BF--44F8D4B",
-              "id": "relic_hex",
-              "name": "Hex",
-              "description": "Transform enemy, reducing stats",
-              "icon": "/icons/pack/misc/runic_tablet_09.png",
-              "tier": 2,
-              "damage": 30,
-              "cooldown": 18,
-              "castTime": 0.8,
-              "range": 15,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_hex",
-              "physics": null,
-              "effects": [
-                "Disable Abilities 3s",
-                "-25% All Stats"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_hex",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000C0-55EEF80B",
-              "id": "relic_soul_leech",
-              "name": "Soul Leech",
-              "description": "AoE drain around caster",
-              "icon": "/icons/pack/misc/runic_tablet_10.png",
-              "tier": 3,
-              "damage": 60,
-              "cooldown": 14,
-              "castTime": 0,
-              "range": 6,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": "offhand_leech",
-              "physics": null,
-              "effects": [
-                "AoE 6m",
-                "Heal 100% of DMG"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_leech",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000C1--7AB76C0",
-              "id": "relic_doom",
-              "name": "Doom",
-              "description": "Mark target, explodes after delay",
-              "icon": "/icons/pack/misc/runic_tablet_12.png",
-              "tier": 4,
-              "damage": 200,
-              "cooldown": 22,
-              "castTime": 0.6,
-              "range": 20,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_doom",
-              "physics": "knockback",
-              "effects": [
-                "Delay 3s",
-                "AoE 5m on Explode",
-                "Knockback"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_doom",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            }
-          ]
-        },
-        {
-          "type": "ultimate",
-          "label": "ULTIMATE",
-          "unlockTier": 3,
-          "skills": [
-            {
-              "uuid": "SKIL-20260604081946-0000C2-22687B34",
-              "id": "relic_banshee",
-              "name": "Banshee's Wail",
-              "description": "Spectral scream, fear + massive DoT",
-              "icon": "/icons/pack/misc/Chaos.png",
-              "tier": 1,
-              "damage": 180,
-              "cooldown": 50,
-              "castTime": 0.5,
-              "range": 10,
-              "projectile": null,
-              "damageType": "shadow",
-              "animation": "offhand_scream",
-              "physics": null,
-              "effects": [
-                "Fear 3s",
-                "Shadow DoT 8s",
-                "AoE 10m"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_scream",
-                "soundRef": null,
-                "cameraShake": null
-              }
-            },
-            {
-              "uuid": "SKIL-20260604081946-0000C3--7DD0C9C",
-              "id": "relic_soul_storm",
-              "name": "Soul Storm",
-              "description": "Unleash captured souls as projectiles",
-              "icon": "/icons/pack/misc/ChaosCircle.png",
-              "tier": 4,
-              "damage": 280,
-              "cooldown": 65,
-              "castTime": 1,
-              "range": 12,
-              "projectile": "spell",
-              "damageType": "shadow",
-              "animation": "offhand_ultimate",
-              "physics": "pull",
-              "effects": [
-                "12 Soul Projectiles",
-                "Homing",
-                "Heal per Hit"
-              ],
-              "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": "offhand_ultimate",
-                "soundRef": null,
-                "projectileRef": null,
-                "cameraShake": null
-              }
-            }
-          ]
-        }
-      ],
-      "uuid": "ITEM-20260621232130-000DD8-359981DF"
-    },
-    {
       "id": "SCYTHE",
       "name": "Scythe",
       "icon": "/icons/pack/weapons/Scythe_01.png",
@@ -6968,5 +8047,48 @@
       ],
       "uuid": "ITEM-20260621232130-000DF2-703D3C1D"
     }
-  ]
+  ],
+  "offhandMechanics": {
+    "version": "1.0.0",
+    "canonicalOffhandRelic": "TOME",
+    "shield": {
+      "requiresBlock": true,
+      "affectedSlots": [
+        "primary",
+        "secondary",
+        "ability"
+      ],
+      "shieldTypes": [
+        "buckler",
+        "kite",
+        "tower",
+        "spiked",
+        "magic",
+        "relic"
+      ]
+    },
+    "tome": {
+      "requiresOneHandMainhand": true,
+      "affectedSlots": [
+        "primary",
+        "secondary",
+        "ability",
+        "ultimate"
+      ],
+      "couplingModes": [
+        "elemental",
+        "ranged",
+        "heal",
+        "buff"
+      ],
+      "schoolToMode": {
+        "fire": "elemental",
+        "frost": "elemental",
+        "lightning": "elemental",
+        "nature": "buff",
+        "arcane": "buff",
+        "holy": "heal"
+      }
+    }
+  }
 }

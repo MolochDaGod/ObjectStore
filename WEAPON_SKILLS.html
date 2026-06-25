@@ -570,6 +570,60 @@
       margin-top: 8px;
     }
 
+    .wst-modifier-intro {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.92em;
+      margin-bottom: 20px;
+      padding: 14px 20px;
+      border: 1px solid hsl(43 40% 25%);
+      border-radius: 6px;
+      background: hsl(225 25% 10%);
+      line-height: 1.5;
+    }
+    .wst-variant-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .wst-variant-btn {
+      padding: 8px 16px;
+      font-family: var(--font-heading);
+      font-size: 0.82em;
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      background: hsl(225 25% 14%);
+      color: var(--text-gold);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .wst-variant-btn:hover, .wst-variant-btn.active {
+      background: linear-gradient(180deg, hsl(43 70% 45%) 0%, hsl(38 65% 32%) 100%);
+      border-color: hsl(43 50% 50%);
+      color: hsl(225 30% 10%);
+    }
+    .wst-preview-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .wst-preview-bar label {
+      font-family: var(--font-heading);
+      color: var(--text-gold);
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .meta-tag.shield-mod { background: hsl(210 50% 20%); color: hsl(210 70% 70%); }
+    .meta-tag.tome-mod { background: hsl(270 40% 20%); color: hsl(270 60% 75%); }
+
     /* Responsive */
     @media (max-width: 900px) {
       .slot-columns { grid-template-columns: repeat(2, 1fr); }
@@ -593,6 +647,7 @@
 
 <div class="main-content">
   <div class="tier-bar" id="tierBar"></div>
+  <div class="wst-preview-bar" id="previewBar" style="display:none"></div>
   <div class="reset-bar">
     <button class="reset-btn" onclick="resetSelections()">↺ Reset Selections</button>
   </div>
@@ -629,22 +684,32 @@ const API_SOURCES = ['./api/v1', 'https://info.grudge-studio.com/api/v1', 'https
 
 let activeWeapon = 'SWORD';
 let playerTier = 3;
+let variantKey = 'kite';
+let blockPreview = true;
 let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
 
+function isOffhandModifierTab() {
+  return WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(activeWeapon);
+}
+
 function getActiveTypeDef() {
+  if (isOffhandModifierTab()) return null;
   return WeaponSkillTree.getTypeDef(activeWeapon);
 }
 
 function render() {
   renderWeaponTabs();
   renderTierBar();
+  renderPreviewBar();
   renderActionBar();
   renderSlotColumns();
 }
 
 function renderWeaponTabs() {
   const container = document.getElementById('weaponTabs');
-  const types = WeaponSkillTree.listTypeIds();
+  const playable = WeaponSkillTree.listPlayableTypeIds();
+  const offhand = ['SHIELD', 'TOME'];
+  const types = [...playable, ...offhand.filter((id) => WeaponSkillTree.getTypeDef(id))];
   if (!types.length) {
     container.innerHTML = '<span style="color:var(--text-muted);padding:12px">Loading weapon types…</span>';
     return;
@@ -654,15 +719,44 @@ function renderWeaponTabs() {
     const weapon = WeaponSkillTree.getTypeDef(key);
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
-    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}`;
+    const suffix = key === 'TOME' ? ' (Off-Hand)' : key === 'SHIELD' ? ' (Block)' : '';
+    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
+      variantKey = key === 'SHIELD' ? 'kite' : key === 'TOME' ? 'elemental' : variantKey;
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
       closeDetail();
       render();
     };
     container.appendChild(tab);
   });
+}
+
+function renderPreviewBar() {
+  const bar = document.getElementById('previewBar');
+  if (!bar) return;
+  if (!isOffhandModifierTab()) {
+    bar.innerHTML = '';
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  let html = WeaponSkillTree.renderOffhandVariantBar(activeWeapon, { variantKey });
+  if (activeWeapon === 'SHIELD') {
+    html += `<label><input type="checkbox" id="blockPreviewToggle" ${blockPreview ? 'checked' : ''}> Preview while blocking (slots 1–3 active)</label>`;
+  }
+  bar.innerHTML = html;
+  bar.querySelectorAll('[data-wst-variant]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      variantKey = btn.dataset.wstVariant;
+      closeDetail();
+      render();
+    });
+  });
+  const toggle = document.getElementById('blockPreviewToggle');
+  if (toggle) {
+    toggle.onchange = () => { blockPreview = toggle.checked; render(); };
+  }
 }
 
 function renderTierBar() {
@@ -678,15 +772,32 @@ function renderTierBar() {
 }
 
 function renderActionBar() {
+  const bar = document.getElementById('actionBar');
+  if (isOffhandModifierTab()) {
+    bar.innerHTML = '';
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = '';
   const typeDef = getActiveTypeDef();
-  document.getElementById('actionBar').innerHTML = WeaponSkillTree.renderActionBarHTML(typeDef, {
+  bar.innerHTML = WeaponSkillTree.renderActionBarHTML(typeDef, {
     asset, playerTier, selectedSkills,
   });
 }
 
 function renderSlotColumns() {
-  const typeDef = getActiveTypeDef();
   const container = document.getElementById('slotColumns');
+  if (isOffhandModifierTab()) {
+    if (activeWeapon === 'SHIELD' && !blockPreview) {
+      container.innerHTML = '<div class="wst-modifier-intro">Shield skills are <strong>inactive</strong> until block is held. Toggle preview above to see tank abilities for slots 1–3.</div>';
+      return;
+    }
+    container.innerHTML = WeaponSkillTree.renderOffhandModifierColumns(activeWeapon, {
+      asset, playerTier, variantKey,
+    });
+    return;
+  }
+  const typeDef = getActiveTypeDef();
   container.innerHTML = WeaponSkillTree.renderSlotColumnsHTML(typeDef, {
     asset, playerTier, selectedSkills,
   });
@@ -753,10 +864,9 @@ function resetSelections() {
   }
   activeWeapon = data.weaponTypes[0].id;
   document.querySelector('.header p').textContent =
-    `${data.totalWeaponTypes || data.weaponTypes.length} weapon types · ${data.totalSkills || '—'} skills · Slot 1 = LMB combo · Slots 2–4 tier unlock`;
+    `${data.totalWeaponTypes || data.weaponTypes.length} weapon types · ${data.totalSkills || '—'} skills · Shield: slots 1–3 while blocking · Tome: couples 1H slots 1–4`;
   render();
 })();
-</script>
 </script>
 <script src="./js/nav.js" defer></script>
 </body>
