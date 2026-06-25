@@ -125,7 +125,7 @@ npx tsx scripts/seed-d1.ts
 # CDN binary
 curl -sI https://assets.grudge-studio.com/builtin/map-underground-wars.glb | head -3
 
-# D1 registry (after worker deploy)
+# D1 registry (asset-api worker must bind DB + R2 in wrangler env.production)
 curl -s "https://api.grudge-studio.com/assets/category/character?limit=5"
 
 # ObjectStore design JSON (prefab wiring)
