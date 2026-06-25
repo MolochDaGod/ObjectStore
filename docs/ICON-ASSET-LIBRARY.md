@@ -47,7 +47,11 @@ Example:
 |------|------|
 | [`api/v1/icon-registry.json`](../api/v1/icon-registry.json) | Full catalog: 9,724 entries, categories, `grudgeUuid`, `r2Key`, `iconPath`, `cdnUrl` |
 | [`api/v1/icon-path-index.json`](../api/v1/icon-path-index.json) | Lightweight path → UUID index for games |
+| [`api/v1/icon-category-index.json`](../api/v1/icon-category-index.json) | Category counts + shard paths for browsers |
+| [`api/v1/icon-search-index.json`](../api/v1/icon-search-index.json) | Compact name/UUID search index |
+| [`api/v1/icon-shards/{category}.json`](../api/v1/icon-shards/weapon.json) | Per-category icon lists (weapon, skill, armor, …) |
 | [`api/v1/assets-api.json`](../api/v1/assets-api.json) | REST + SDK manifest — **start here for integration** |
+| [`ICON_BROWSER.html`](../ICON_BROWSER.html) | **Visual browser** — search, filter, copy UUID/path/CDN |
 | [`api/v1/icon-upload-status.json`](../api/v1/icon-upload-status.json) | CDN upload progress by category |
 | [`api/v1/master-registry.json`](../api/v1/master-registry.json) | Item UUIDs + `iconUuid` / `iconCdnUrl` cross-refs |
 | [`api/v1/catalog.json`](../api/v1/catalog.json) | Fleet catalog; see `iconLibrary` block |

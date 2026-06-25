@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-06-24T23:27:41.796Z",
+  "generatedAt": "2026-06-25T00:29:05.832Z",
   "description": "Grudge Studio image asset library — ICON UUIDs on R2 CDN",
   "cdnBase": "https://assets.grudge-studio.com",
   "objectStoreBase": "https://objectstore.grudge-studio.com",
@@ -13,8 +13,16 @@
   "datasets": {
     "iconRegistry": "/api/v1/icon-registry.json",
     "iconPathIndex": "/api/v1/icon-path-index.json",
+    "iconCategoryIndex": "/api/v1/icon-category-index.json",
+    "iconSearchIndex": "/api/v1/icon-search-index.json",
+    "iconShards": "/api/v1/icon-shards/{category}.json",
     "masterRegistry": "/api/v1/master-registry.json",
     "assetRegistry": "/api/v1/asset-registry.json"
+  },
+  "browser": {
+    "page": "/ICON_BROWSER.html",
+    "hub": "/hub.html",
+    "documentation": "/docs/ICON-ASSET-LIBRARY.md"
   },
   "rest": {
     "listIcons": "GET /api/v1/icons?category=skill&page=1&limit=50",

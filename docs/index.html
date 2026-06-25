@@ -294,6 +294,7 @@
     <div class="section-title">Resources</div>
     <a href="./DATABASE.md">Database Schema</a>
     <a href="../sdk/grudge-sdk.js">Download SDK</a>
+    <a href="../ICON_BROWSER.html">Icon Library (ICON UUIDs)</a>
     <a href="../SPRITE_DATABASE.html">Sprite Browser</a>
     <a href="../VFX_BROWSER.html">VFX Browser</a>
     <a href="../2D_MODELS.html">2D Models Browser</a>
@@ -357,7 +358,7 @@
         <p><strong>GRUDGE UUID links everything:</strong> <code class="inline-code">SKIL-...(skill)</code> → <code class="inline-code">prefab.vfxRef</code> → <code class="inline-code">R2 path</code>. Game client resolves UUIDs via the ObjectStore API at runtime.</p>
       </div>
       <h3>Icon &amp; Asset Paths</h3>
-      <p>All icon URLs in JSON data use <strong>relative paths</strong> (e.g. <code class="inline-code">/icons/pack/weapons/Sword_01.png</code>). The game client prepends the appropriate base URL depending on environment.</p>
+      <p>All icon URLs in JSON data use <strong>relative paths</strong> (e.g. <code class="inline-code">/icons/weapons/Sword_01.png</code>). Each file also has a stable <code class="inline-code">ICON-*</code> UUID in <a href="../api/v1/icon-registry.json">icon-registry.json</a>. Browse visually at <a href="../ICON_BROWSER.html">Icon Library</a> or resolve at runtime via <code class="inline-code">grudgeSDK.resolveIconUrl()</code>.</p>
       <h3>Prefab Connection Fields</h3>
       <p>Every weapon skill has a <code class="inline-code">prefab</code> block for game engine wiring:</p>
       <pre><code>"prefab": {
@@ -798,6 +799,40 @@
     <section id="sprites">
       <h2>Sprite Database</h2>
       
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/icon-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Canonical <strong>9,724</strong> ICON-* image catalog — skills, weapons, armor, sigils, UI. Each entry: <code class="inline-code">grudgeUuid</code>, <code class="inline-code">iconPath</code>, <code class="inline-code">cdnUrl</code>, category.</p>
+          <div class="tip">
+            <div class="tip-title">💡 Live Browser</div>
+            <p>Search and copy UUIDs at <a href="../ICON_BROWSER.html">Icon Library</a> · lightweight shards: <code class="inline-code">/api/v1/icon-shards/{category}.json</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/icon-category-index.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Category manifest for browsers — counts, labels, sample thumbnails, shard paths. Pair with <code class="inline-code">icon-search-index.json</code> for client-side search.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">objectstore…/api/v1/icons/search?q=</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Live REST search on ObjectStore worker — paginated results with CDN URLs. Also: <code class="inline-code">/icons/categories</code>, <code class="inline-code">/icons/by-path?path=</code>, <code class="inline-code">/icons/:grudgeUuid</code>.</p>
+        </div>
+      </div>
+
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="method">GET</span>

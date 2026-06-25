@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Icon Library — Grudge Studio ObjectStore</title>
+  <meta name="description" content="Browse 9,700+ Grudge Studio icons by category — skills, weapons, armor, sigils, UI. Copy ICON UUIDs, paths, and CDN URLs for any game or app.">
+  <link rel="canonical" href="https://info.grudge-studio.com/ICON_BROWSER.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --card: #151d2b;
+      --card-hover: #1a2435;
+      --gold: #d4a84b;
+      --gold-light: #f0d890;
+      --gold-dim: rgba(212,168,75,0.15);
+      --accent: #22c55e;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --text: #e8e6e3;
+      --text-dim: #7a7877;
+      --border: #1e2a3a;
+      --border-light: #2a3a4e;
+      --code-bg: #0d1117;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 30% 0%, rgba(212,168,75,0.06) 0%, transparent 45%),
+        radial-gradient(ellipse at 90% 80%, rgba(59,130,246,0.04) 0%, transparent 40%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+    .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .sidebar {
+      background: #111821;
+      border-right: 1px solid var(--border);
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 1rem; color: var(--gold); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .sidebar .sub { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 16px; }
+    .back-link { color: var(--text-dim); text-decoration: none; font-size: 0.82rem; display: block; margin-bottom: 16px; }
+    .back-link:hover { color: var(--gold); }
+    .cat-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 8px 10px; margin-bottom: 4px;
+      background: transparent; border: 1px solid transparent; border-radius: 8px;
+      color: var(--text-dim); cursor: pointer; font-size: 0.82rem; text-align: left;
+      transition: all 0.15s;
+    }
+    .cat-btn:hover { background: var(--card); color: var(--text); border-color: var(--border-light); }
+    .cat-btn.active { background: var(--gold-dim); color: var(--gold); border-color: rgba(212,168,75,0.35); font-weight: 600; }
+    .cat-btn .emoji { font-size: 1rem; width: 22px; text-align: center; }
+    .cat-btn .label { flex: 1; }
+    .cat-btn .count { font-size: 0.7rem; opacity: 0.6; }
+    .sidebar-section { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 16px 0 8px; }
+    .api-box {
+      margin-top: 20px; padding: 12px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 0.72rem; color: var(--text-dim); line-height: 1.5;
+    }
+    .api-box a { color: var(--gold); text-decoration: none; }
+    .api-box a:hover { text-decoration: underline; }
+    .api-box code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 0.68rem; color: var(--gold-light); }
+
+    .main { padding: 24px 28px 48px; overflow-x: hidden; }
+    .header h1 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .header .desc { color: var(--text-dim); font-size: 0.92rem; max-width: 720px; }
+    .controls { display: flex; gap: 10px; margin: 18px 0 12px; flex-wrap: wrap; align-items: center; }
+    .search-input {
+      flex: 1; min-width: 200px; padding: 10px 14px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 0.9rem; outline: none;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .sub-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .pill {
+      background: var(--card); border: 1px solid var(--border); color: var(--text-dim);
+      padding: 5px 12px; border-radius: 16px; cursor: pointer; font-size: 0.76rem;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .pill:hover { border-color: var(--gold); color: var(--text); }
+    .pill.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+    .stats { display: flex; gap: 18px; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 16px; flex-wrap: wrap; }
+    .stats .v { color: var(--gold); font-weight: 700; }
+    .btn {
+      padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--card); color: var(--text); cursor: pointer; font-size: 0.82rem;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-gold { background: var(--gold); border-color: var(--gold); color: var(--bg); font-weight: 600; }
+    .btn-gold:hover { background: #c49a3d; color: var(--bg); }
+    .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+    .icon-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .icon-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,168,75,0.12); }
+    .icon-thumb {
+      width: 100%; height: 112px; background: #0d1117;
+      display: flex; align-items: center; justify-content: center; padding: 10px;
+    }
+    .icon-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: auto; }
+    .icon-info { padding: 8px 10px; }
+    .icon-name { font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .icon-meta { font-size: 0.62rem; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .icon-cat-badge {
+      position: absolute; top: 6px; left: 6px; font-size: 0.58rem; padding: 2px 6px;
+      border-radius: 4px; background: rgba(0,0,0,0.65); color: var(--gold); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+
+    .pager { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .pager span { font-size: 0.82rem; color: var(--text-dim); }
+    .loading { text-align: center; padding: 60px; color: var(--text-dim); }
+    .spin { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.82); display: none; justify-content: center; align-items: center; z-index: 300; padding: 16px; }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border-light); border-radius: 16px;
+      padding: 28px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;
+    }
+    .modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; line-height: 1; }
+    .modal-close:hover { color: var(--text); }
+    .modal-preview {
+      width: 128px; height: 128px; margin: 0 auto 16px; background: #0d1117; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; padding: 12px;
+    }
+    .modal-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .modal h2 { color: var(--gold); font-size: 1.1rem; text-align: center; margin-bottom: 4px; word-break: break-word; }
+    .modal .sub { text-align: center; color: var(--text-dim); font-size: 0.82rem; margin-bottom: 16px; }
+    .copy-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+      padding: 8px 10px; background: var(--code-bg); border-radius: 8px; border: 1px solid var(--border);
+    }
+    .copy-row .lbl { font-size: 0.68rem; color: var(--text-dim); width: 52px; flex-shrink: 0; text-transform: uppercase; }
+    .copy-row .val { flex: 1; font-size: 0.75rem; font-family: ui-monospace, monospace; color: var(--gold-light); word-break: break-all; }
+    .copy-row button { flex-shrink: 0; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: var(--bg); padding: 10px 22px; border-radius: 8px;
+      font-weight: 600; font-size: 0.85rem; z-index: 400; display: none;
+    }
+
+    footer { text-align: center; color: var(--text-dim); padding: 32px 16px; font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px; }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .cat-list { display: flex; flex-wrap: wrap; gap: 4px; }
+      .cat-btn { width: auto; flex: 0 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <script src="https://id.grudge-studio.com/grudge-auth-sdk.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="./docs" class="back-link">← ObjectStore Docs</a>
+      <h2><img src="favicon.svg" alt="" style="height:1em"> Icon Library</h2>
+      <p class="sub">ICON-* UUIDs on R2 CDN</p>
+
+      <div class="sidebar-section">Categories</div>
+      <div class="cat-list" id="catList">
+        <div class="loading"><div class="spin"></div></div>
+      </div>
+
+      <div class="api-box">
+        <strong style="color:var(--gold)">Quick integrate</strong><br>
+        SDK: <code>grudgeSDK.resolveIconUrl(path)</code><br>
+        REST: <code>GET /api/v1/icons/search?q=</code><br>
+        <a href="./docs/ICON-ASSET-LIBRARY.md">Full docs →</a> ·
+        <a href="./api/v1/assets-api.json">assets-api.json</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="header">
+        <h1>Grudge Studio Icon Library</h1>
+        <p class="desc">
+          Every skill, weapon, armor, sigil, class, and UI icon across Grudge Warlords and the fleet —
+          each with a stable <strong>ICON-*</strong> UUID and CDN URL. Click any icon to copy identifiers for your game or app.
+        </p>
+      </header>
+
+      <div class="controls">
+        <input type="text" class="search-input" id="search" placeholder="Search by name, path, UUID, or subcategory…" autocomplete="off">
+        <button class="btn btn-gold" id="btnSearch">Search</button>
+        <select class="btn" id="pageSize" style="appearance:auto">
+          <option value="60">60 / page</option>
+          <option value="100" selected>100 / page</option>
+          <option value="200">200 / page</option>
+        </select>
+      </div>
+
+      <div class="sub-pills" id="subPills"></div>
+
+      <div class="stats">
+        <span>Total: <span class="v" id="statTotal">—</span></span>
+        <span>Category: <span class="v" id="statCat">—</span></span>
+        <span>Showing: <span class="v" id="statShow">—</span></span>
+        <span>Page: <span class="v" id="statPage">—</span></span>
+      </div>
+
+      <div id="gridWrap">
+        <div class="loading" id="loadingEl"><div class="spin"></div><p>Loading icon index…</p></div>
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div class="pager" id="pager" style="display:none">
+        <button class="btn btn-sm" id="btnPrev">← Prev</button>
+        <span id="pageLabel">Page 1</span>
+        <button class="btn btn-sm" id="btnNext">Next →</button>
+      </div>
+
+      <footer>
+        <p>© 2026 Grudge Studio ·
+          <a href="./hub.html">Hub</a> ·
+          <a href="./api/v1/icon-registry.json">Registry JSON</a> ·
+          <a href="https://objectstore.grudge-studio.com/api/v1/icons/categories">Live API</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Copied!</div>
+
+  <script>
+    const API = './api/v1';
+    const REST = 'https://objectstore.grudge-studio.com/api/v1';
+    const PAGE_SIZE_KEY = 'grudge-icon-browser-page-size';
+
+    let catIndex = null;
+    let searchIndex = null;
+    let activeCat = 'all';
+    let activeSub = '';
+    let filtered = [];
+    let page = 1;
+    let searchMode = false;
+    let shardCache = {};
+
+    const $ = id => document.getElementById(id);
+
+    async function init() {
+      const savedSize = localStorage.getItem(PAGE_SIZE_KEY);
+      if (savedSize) $('pageSize').value = savedSize;
+
+      const params = new URLSearchParams(location.search);
+      if (params.get('cat')) activeCat = params.get('cat');
+      if (params.get('q')) { $('search').value = params.get('q'); searchMode = true; }
+
+      try {
+        const [ci, si] = await Promise.all([
+          fetch(`${API}/icon-category-index.json`).then(r => r.json()),
+          fetch(`${API}/icon-search-index.json`).then(r => r.json()),
+        ]);
+        catIndex = ci;
+        searchIndex = si;
+        $('statTotal').textContent = (ci.totalEntries || 0).toLocaleString();
+        buildCategorySidebar();
+        if (searchMode || $('search').value.trim()) {
+          runSearch();
+        } else {
+          await loadCategory(activeCat === 'all' ? firstCategory() : activeCat);
+        }
+        $('loadingEl').style.display = 'none';
+      } catch (e) {
+        $('loadingEl').innerHTML = `<p style="color:#ef4444">Failed to load icon index: ${e.message}</p>`;
+      }
+    }
+
+    function firstCategory() {
+      const cats = sortedCategories();
+      return cats[0]?.[0] || 'weapon';
+    }
+
+    function sortedCategories() {
+      return Object.entries(catIndex.categories || {})
+        .sort((a, b) => (a[1].order || 50) - (b[1].order || 50));
+    }
+
+    function buildCategorySidebar() {
+      const el = $('catList');
+      let html = `<button class="cat-btn${activeCat === 'all' ? ' active' : ''}" data-cat="all">
+        <span class="emoji">🌐</span><span class="label">All (search)</span>
+        <span class="count">${(catIndex.totalEntries || 0).toLocaleString()}</span>
+      </button>`;
+      for (const [key, meta] of sortedCategories()) {
+        html += `<button class="cat-btn${activeCat === key ? ' active' : ''}" data-cat="${key}">
+          <span class="emoji">${meta.emoji || '🖼️'}</span>
+          <span class="label">${meta.label || key}</span>
+          <span class="count">${(meta.count || 0).toLocaleString()}</span>
+        </button>`;
+      }
+      el.innerHTML = html;
+      el.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectCategory(btn.dataset.cat));
+      });
+    }
+
+    async function selectCategory(cat) {
+      activeCat = cat;
+      activeSub = '';
+      searchMode = false;
+      $('search').value = '';
+      page = 1;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+      history.replaceState(null, '', cat === 'all' ? location.pathname : `?cat=${cat}`);
+      if (cat === 'all') {
+        filtered = [];
+        $('statCat').textContent = 'Search mode';
+        renderGrid();
+        return;
+      }
+      await loadCategory(cat);
+    }
+
+    async function loadCategory(cat) {
+      $('loadingEl').style.display = 'block';
+      $('grid').innerHTML = '';
+      const meta = catIndex.categories[cat];
+      $('statCat').textContent = meta ? `${meta.emoji} ${meta.label}` : cat;
+
+      let icons;
+      if (shardCache[cat]) {
+        icons = shardCache[cat];
+      } else {
+        const res = await fetch(`${API}/icon-shards/${cat}.json`);
+        const data = await res.json();
+        icons = data.icons || [];
+        shardCache[cat] = icons;
+      }
+
+      buildSubPills(meta, icons);
+      filtered = icons;
+      if (activeSub) filtered = icons.filter(i => (i.s || '_root') === activeSub);
+      page = 1;
+      $('loadingEl').style.display = 'none';
+      renderGrid();
+    }
+
+    function buildSubPills(meta, icons) {
+      const el = $('subPills');
+      if (!meta?.subcategories || Object.keys(meta.subcategories).length <= 1) {
+        el.innerHTML = '';
+        return;
+      }
+      const subs = Object.entries(meta.subcategories).sort((a, b) => b[1] - a[1]);
+      let html = `<span class="pill active" data-sub="">All</span>`;
+      for (const [sc, count] of subs.slice(0, 24)) {
+        const label = sc === '_root' ? '(root)' : sc;
+        html += `<span class="pill" data-sub="${sc}">${label} (${count})</span>`;
+      }
+      el.innerHTML = html;
+      el.querySelectorAll('.pill').forEach(p => {
+        p.addEventListener('click', () => {
+          activeSub = p.dataset.sub;
+          el.querySelectorAll('.pill').forEach(x => x.classList.toggle('active', x === p));
+          const all = shardCache[activeCat] || [];
+          filtered = activeSub ? all.filter(i => (i.s || '_root') === activeSub) : all;
+          page = 1;
+          renderGrid();
+        });
+      });
+    }
+
+    function runSearch() {
+      const q = $('search').value.toLowerCase().trim();
+      searchMode = true;
+      activeCat = 'all';
+      activeSub = '';
+      $('subPills').innerHTML = '';
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'all'));
+      $('statCat').textContent = q ? `“${q}”` : 'Search mode';
+
+      if (!q) {
+        filtered = [];
+        page = 1;
+        renderGrid();
+        return;
+      }
+
+      history.replaceState(null, '', `?q=${encodeURIComponent(q)}`);
+      const rows = searchIndex.icons || [];
+      const hits = [];
+      for (const row of rows) {
+        const [u, n, p, cat, sub, c] = row;
+        const blob = `${u} ${n} ${p} ${cat} ${sub}`.toLowerCase();
+        if (blob.includes(q)) hits.push({ u, n, p, c, s: sub || null, cat });
+        if (hits.length >= 2000) break;
+      }
+      filtered = hits;
+      page = 1;
+      renderGrid();
+    }
+
+    function pageSize() {
+      return parseInt($('pageSize').value, 10) || 100;
+    }
+
+    function renderGrid() {
+      const size = pageSize();
+      const total = filtered.length;
+      const pages = Math.max(1, Math.ceil(total / size));
+      if (page > pages) page = pages;
+      const start = (page - 1) * size;
+      const slice = filtered.slice(start, start + size);
+
+      $('statShow').textContent = total ? `${start + 1}–${Math.min(start + size, total)} of ${total.toLocaleString()}` : '0';
+      $('statPage').textContent = total ? `${page} / ${pages}` : '—';
+
+      const grid = $('grid');
+      grid.innerHTML = '';
+
+      if (!total) {
+        grid.innerHTML = `<div class="loading" style="grid-column:1/-1">
+          <p>${searchMode ? 'Type a search term or pick a category from the sidebar.' : 'No icons in this view.'}</p>
+        </div>`;
+        $('pager').style.display = 'none';
+        return;
+      }
+
+      for (const ic of slice) {
+        const card = document.createElement('div');
+        card.className = 'icon-card';
+        const catLabel = ic.cat || activeCat;
+        card.innerHTML = `
+          <span class="icon-cat-badge">${catLabel}</span>
+          <div class="icon-thumb"><img src="${ic.c}" alt="" loading="lazy" onerror="this.style.opacity=0.3"></div>
+          <div class="icon-info">
+            <div class="icon-name" title="${esc(ic.n)}">${esc(ic.n)}</div>
+            <div class="icon-meta" title="${esc(ic.u)}">${esc(ic.u)}</div>
+          </div>`;
+        card.addEventListener('click', () => openModal(ic, catLabel));
+        grid.appendChild(card);
+      }
+
+      $('pager').style.display = pages > 1 ? 'flex' : 'none';
+      $('pageLabel').textContent = `Page ${page} of ${pages}`;
+      $('btnPrev').disabled = page <= 1;
+      $('btnNext').disabled = page >= pages;
+    }
+
+    function openModal(ic, catLabel) {
+      const meta = catIndex.categories[catLabel] || {};
+      $('modalBody').innerHTML = `
+        <div class="modal-preview"><img src="${ic.c}" alt="${esc(ic.n)}"></div>
+        <h2>${esc(ic.n)}</h2>
+        <p class="sub">${meta.emoji || ''} ${meta.label || catLabel}${ic.s ? ' · ' + esc(ic.s) : ''}</p>
+        ${copyRow('UUID', ic.u)}
+        ${copyRow('Path', ic.p)}
+        ${copyRow('CDN', ic.c)}
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button class="btn btn-gold btn-sm" data-copy-all>Copy all</button>
+          <a class="btn btn-sm" href="${ic.c}" target="_blank" rel="noopener">Open image</a>
+        </div>`;
+      $('modalBg').classList.add('open');
+      $('modalBody').querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', () => copyText(btn.dataset.copy));
+      });
+      $('modalBody').querySelector('[data-copy-all]')?.addEventListener('click', () => {
+        copyText(`uuid: ${ic.u}\npath: ${ic.p}\ncdn: ${ic.c}`);
+      });
+    }
+
+    function copyRow(label, value) {
+      return `<div class="copy-row">
+        <span class="lbl">${label}</span>
+        <span class="val">${esc(value)}</span>
+        <button class="btn btn-sm" data-copy="${escAttr(value)}">Copy</button>
+      </div>`;
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const t = $('toast');
+        t.style.display = 'block';
+        setTimeout(() => { t.style.display = 'none'; }, 1600);
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    }
+    function escAttr(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    }
+
+    $('btnSearch').addEventListener('click', runSearch);
+    $('search').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+    $('pageSize').addEventListener('change', () => {
+      localStorage.setItem(PAGE_SIZE_KEY, $('pageSize').value);
+      page = 1;
+      renderGrid();
+    });
+    $('btnPrev').addEventListener('click', () => { page--; renderGrid(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    $('btnNext').addEventListener('click', () => { page++; renderGrid(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    $('modalClose').addEventListener('click', () => $('modalBg').classList.remove('open'));
+    $('modalBg').addEventListener('click', e => { if (e.target === $('modalBg')) $('modalBg').classList.remove('open'); });
+
+    init();
+  </script>
+</body>
+</html>

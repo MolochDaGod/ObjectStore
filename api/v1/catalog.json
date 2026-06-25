@@ -10,7 +10,7 @@
     "login": "https://id.grudge-studio.com/api/auth/page",
     "verify": "https://id.grudge-studio.com/api/auth/verify"
   },
-  "generated": "2026-06-24T23:27:41.819Z",
+  "generated": "2026-06-25T00:29:05.871Z",
   "totals": {
     "weapons": 868,
     "armor": 1344,
@@ -464,6 +464,14 @@
     {
       "name": "icon-upload-status.json",
       "path": "/api/v1/icon-upload-status.json"
+    },
+    {
+      "name": "icon-category-index.json",
+      "path": "/api/v1/icon-category-index.json"
+    },
+    {
+      "name": "icon-search-index.json",
+      "path": "/api/v1/icon-search-index.json"
     }
   ],
   "masterDatasets": [
@@ -491,6 +499,10 @@
   "iconLibrary": {
     "registry": "/api/v1/icon-registry.json",
     "pathIndex": "/api/v1/icon-path-index.json",
+    "categoryIndex": "/api/v1/icon-category-index.json",
+    "searchIndex": "/api/v1/icon-search-index.json",
+    "shards": "/api/v1/icon-shards/{category}.json",
+    "browser": "/ICON_BROWSER.html",
     "assetsApi": "/api/v1/assets-api.json",
     "uploadStatus": "/api/v1/icon-upload-status.json",
     "documentation": "/docs/ICON-ASSET-LIBRARY.md",

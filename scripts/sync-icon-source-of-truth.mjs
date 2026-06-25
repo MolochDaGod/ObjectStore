@@ -54,6 +54,96 @@ async function main() {
     index: pathIndex,
   });
 
+  // ── icon-category-index.json + per-category shards (browser-friendly) ──
+  const CATEGORY_META = {
+    weapon: { label: 'Weapons', emoji: '⚔️', order: 1 },
+    armor: { label: 'Armor', emoji: '🛡️', order: 2 },
+    skill: { label: 'Skills', emoji: '✨', order: 3 },
+    spell: { label: 'Spells', emoji: '🔮', order: 4 },
+    ability: { label: 'Abilities', emoji: '⚡', order: 5 },
+    sigil: { label: 'Sigils', emoji: '🔱', order: 6 },
+    class: { label: 'Classes', emoji: '👤', order: 7 },
+    race: { label: 'Races', emoji: '🧝', order: 8 },
+    faction: { label: 'Factions', emoji: '🏴', order: 9 },
+    profession: { label: 'Professions', emoji: '🔨', order: 10 },
+    consumable: { label: 'Consumables', emoji: '🧪', order: 11 },
+    material: { label: 'Materials', emoji: '📦', order: 12 },
+    item: { label: 'Items', emoji: '📋', order: 13 },
+    entity: { label: 'Entities', emoji: '👾', order: 14 },
+    ui: { label: 'UI', emoji: '🖥️', order: 15 },
+    misc: { label: 'Misc', emoji: '📁', order: 99 },
+  };
+
+  const byCategory = {};
+  const searchRows = [];
+  for (const e of entries) {
+    const cat = e.category || 'misc';
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push({
+      u: e.grudgeUuid,
+      n: e.name,
+      p: e.iconPath,
+      c: e.cdnUrl,
+      s: e.subcategory || null,
+      f: e.fileName,
+    });
+    searchRows.push([e.grudgeUuid, e.name, e.iconPath, cat, e.subcategory || '', e.cdnUrl]);
+  }
+
+  const shardsDir = join(API, 'icon-shards');
+  const { mkdir } = await import('node:fs/promises');
+  await mkdir(shardsDir, { recursive: true });
+
+  const categoryIndex = {
+    version: '1.0.0',
+    generatedAt: new Date().toISOString(),
+    cdnBase: iconRegistry.cdnBase || ASSET_CDN_BASE,
+    totalEntries: entries.length,
+    browser: '/ICON_BROWSER.html',
+    categories: {},
+  };
+
+  for (const [cat, icons] of Object.entries(byCategory)) {
+    icons.sort((a, b) => a.n.localeCompare(b.n));
+    const meta = CATEGORY_META[cat] || { label: cat, emoji: '🖼️', order: 50 };
+    const subcats = {};
+    for (const ic of icons) {
+      const sc = ic.s || '_root';
+      subcats[sc] = (subcats[sc] || 0) + 1;
+    }
+    categoryIndex.categories[cat] = {
+      label: meta.label,
+      emoji: meta.emoji,
+      order: meta.order,
+      count: icons.length,
+      shard: `/api/v1/icon-shards/${cat}.json`,
+      subcategories: subcats,
+      samples: icons.slice(0, 8).map(i => ({ u: i.u, n: i.n, p: i.p, c: i.c })),
+    };
+    await writeFile(
+      join(shardsDir, `${cat}.json`),
+      JSON.stringify({
+        version: '1.0.0',
+        category: cat,
+        label: meta.label,
+        count: icons.length,
+        cdnBase: iconRegistry.cdnBase || ASSET_CDN_BASE,
+        icons,
+      }),
+      'utf8',
+    );
+    console.log(`[sync] wrote icon-shards/${cat}.json (${icons.length})`);
+  }
+
+  await saveJson('icon-category-index.json', categoryIndex);
+  await saveJson('icon-search-index.json', {
+    version: '1.0.0',
+    generatedAt: new Date().toISOString(),
+    totalEntries: searchRows.length,
+    fields: ['grudgeUuid', 'name', 'iconPath', 'category', 'subcategory', 'cdnUrl'],
+    icons: searchRows,
+  });
+
   // ── assets-api.json ──
   await saveJson('assets-api.json', {
     version: '1.0.0',
@@ -70,8 +160,16 @@ async function main() {
     datasets: {
       iconRegistry: '/api/v1/icon-registry.json',
       iconPathIndex: '/api/v1/icon-path-index.json',
+      iconCategoryIndex: '/api/v1/icon-category-index.json',
+      iconSearchIndex: '/api/v1/icon-search-index.json',
+      iconShards: '/api/v1/icon-shards/{category}.json',
       masterRegistry: '/api/v1/master-registry.json',
       assetRegistry: '/api/v1/asset-registry.json',
+    },
+    browser: {
+      page: '/ICON_BROWSER.html',
+      hub: '/hub.html',
+      documentation: '/docs/ICON-ASSET-LIBRARY.md',
     },
     rest: {
       listIcons: 'GET /api/v1/icons?category=skill&page=1&limit=50',
@@ -145,7 +243,12 @@ async function main() {
       iconCategories: Object.keys(iconRegistry.categories || {}).length,
     };
     const endpointNames = new Set((catalog.endpoints || []).map(e => e.name));
-    for (const name of ['assets-api.json', 'icon-path-index.json']) {
+    for (const name of [
+      'assets-api.json',
+      'icon-path-index.json',
+      'icon-category-index.json',
+      'icon-search-index.json',
+    ]) {
       if (!endpointNames.has(name)) {
         catalog.endpoints.push({ name, path: `/api/v1/${name}` });
       }
@@ -153,6 +256,10 @@ async function main() {
     catalog.iconLibrary = {
       registry: '/api/v1/icon-registry.json',
       pathIndex: '/api/v1/icon-path-index.json',
+      categoryIndex: '/api/v1/icon-category-index.json',
+      searchIndex: '/api/v1/icon-search-index.json',
+      shards: '/api/v1/icon-shards/{category}.json',
+      browser: '/ICON_BROWSER.html',
       assetsApi: '/api/v1/assets-api.json',
       uploadStatus: '/api/v1/icon-upload-status.json',
       documentation: '/docs/ICON-ASSET-LIBRARY.md',
