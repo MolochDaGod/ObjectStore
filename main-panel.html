@@ -146,6 +146,25 @@
     .tree-node.passive .node-name { color:#6ec96e; }
     .tree-node.passive .node-type { background:rgba(110,201,110,0.12); color:#6ec96e; }
 
+    /* Canonical weapon skill slots (master-weaponSkills.json) */
+    .wst-action-bar-compact { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:12px 0; }
+    .wst-action-bar-compact .action-slot { width:48px; height:48px; border-radius:6px; border:2px solid #3a2a1a; background:#221710; position:relative; display:flex; align-items:center; justify-content:center; }
+    .wst-action-bar-compact .action-slot img { width:34px; height:34px; object-fit:contain; }
+    .wst-action-bar-compact .slot-num { position:absolute; top:-6px; left:-6px; width:16px; height:16px; border-radius:50%; background:#1a100a; border:1px solid var(--gold); font-size:8px; color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .wst-compact-cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:8px; }
+    .wst-compact-cols .slot-header { text-align:center; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #3a2a1a; font-family:var(--font-display); font-size:9px; font-weight:700; text-transform:uppercase; color:var(--gold); }
+    .wst-compact-cols .unlock-tag { display:block; font-size:8px; color:var(--dim); margin-top:3px; text-transform:none; font-weight:400; }
+    .wst-compact-cols .skill-card { border:1px solid #3a2a1a; border-radius:6px; padding:8px; margin-bottom:6px; background:#1a120c; font-size:10px; }
+    .wst-compact-cols .skill-card.locked { opacity:0.45; }
+    .wst-compact-cols .skill-name { font-weight:700; color:var(--gold); font-size:10px; }
+    .wst-compact-cols .skill-desc { color:var(--muted); font-size:9px; margin-top:3px; line-height:1.35; }
+    .wst-compact-cols .skill-tier-tag { font-size:8px; color:var(--dim); margin-left:auto; }
+    .wst-compact-cols .skill-icon-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .wst-compact-cols .skill-icon { width:32px; height:32px; border:1px solid #3a2a1a; border-radius:4px; display:flex; align-items:center; justify-content:center; background:#221710; flex-shrink:0; }
+    .wst-compact-cols .skill-icon img { width:100%; height:100%; object-fit:contain; }
+    .wst-compact-cols .effect-tag { display:inline-block; font-size:8px; padding:1px 5px; border-radius:8px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); color:var(--muted); margin:2px 2px 0 0; }
+    .wst-slot-placeholder { border:1px dashed #3a2a1a; border-radius:4px; padding:8px; text-align:center; color:var(--dim); font-size:8px; margin-top:4px; }
+
     @media(max-width:1000px) { .left-col, .right-col { display: none; } }
     @media(max-width:700px) { .eq-col { width: 70px; } .eq-slot { width: 58px; height: 58px; } .eq-slot .slot-icon { width: 36px; height: 36px; } }
   </style>
@@ -325,6 +344,7 @@
       allProfessions = profsRes?.professions || profsRes?.gathering?.concat?.(profsRes?.crafting || []) || [];
       allSkillTrees = skillsRes?.classes || skillsRes?.skillTrees || [];
       allWeaponSkills = wpnSkillsRes?.weaponTypes || wpnSkillsRes?.weapons || [];
+      if (wpnSkillsRes?.weaponTypes?.length) WeaponSkillTree.setCatalog(wpnSkillsRes);
       allArtifacts = artsRes?.artifacts || [];
       // Load armor separately (master-items has them but master-armor has slotType/material)
       const armorRes = await fetchJSON('master-armor.json');
@@ -590,20 +610,24 @@
     }
   }
 
-  // ── Hotbar: slots 1-4 skills, 5 divider, 6-8 consumables ──────────
+  // ── Hotbar: slots 1-5 canonical weapon skills, 6-8 consumables ────
   function renderHotbar() {
     const consumables = inventoryItems.filter(inv => {
       const item = findItemByUuid(inv.uuid);
       return item && (item.type === 'food' || item.type === 'potion');
     }).slice(0, 3);
+    const weapon = getEquippedMainhandWeapon();
+    const hotbarSkills = weapon ? WeaponSkillTree.getHotbarSkills(weapon, weapon.tier || 1) : [];
     let html = '';
-    // Skills (1-4)
-    for (let i = 0; i < 4; i++) {
-      html += `<div class="hb-slot skill"><span class="key">${i+1}</span></div>`;
+    for (let i = 0; i < 5; i++) {
+      const s = hotbarSkills[i];
+      const icon = s?.icon || '';
+      const title = s?.label || `Slot ${i + 1}`;
+      html += `<div class="hb-slot skill" title="${esc(title)}"><span class="key">${i + 1}</span>`;
+      if (icon) html += `<img src="${icon}" alt="${esc(title)}" onerror="this.style.display='none'">`;
+      html += `</div>`;
     }
-    // Divider (slot 5 empty)
     html += `<div class="hb-divider"></div>`;
-    // Consumables (6-8)
     for (let i = 0; i < 3; i++) {
       const c = consumables[i];
       if (c) {
@@ -966,30 +990,23 @@ return `<div class="section-title">Attributes</div><p style="color:var(--muted)"
     return item;
   }
 
-  // ── Skills Tab: equipped weapon's individual skill tree ─────────────
+  // ── Skills Tab: canonical slot loadout from master-weaponSkills.json ─
   function renderSkillsTab() {
+    let html = '<div class="section-title">Equipped Weapon — Skill Loadout</div>';
     const weapon = getEquippedMainhandWeapon();
-    let html = '<div class="section-title">Equipped Weapon — Skill Tree</div>';
 
     if (!weapon) {
-      html += `<div class="wst-empty">Equip a weapon in <strong>Mainhand</strong> to view its signature, abilities, and passives.<br><span style="font-size:10px;color:var(--dim)">Each named weapon has a unique skill tree.</span></div>`;
-      html += `<div style="margin-top:12px;text-align:center;"><a href="./WEAPON_SKILLS.html" style="font-size:11px;color:var(--gold);">Browse all weapon skill trees →</a></div>`;
+      html += `<div class="wst-empty">Equip a weapon in <strong>Mainhand</strong> to view slot 1 (LMB combo) and tier-unlock skills (slots 2–4).<br><span style="font-size:10px;color:var(--dim)">Data: master-weaponSkills.json</span></div>`;
+      html += `<div style="margin-top:12px;text-align:center;"><a href="./WEAPON_SKILLS.html" style="font-size:11px;color:var(--gold);">Browse all weapon types →</a></div>`;
       return html;
     }
 
     const w = { ...weapon };
-    if (w.iconUrl) w.iconUrl = asset(fixIconUrl(w.iconUrl));
-    html += WeaponSkillTree.renderWeaponSkillTreeHTML(w, {
-      asset,
-      tierColor: TIER_COLORS[weapon.tier] || 'var(--gold)',
-      showHeader: true,
+    if (w.iconUrl) w.iconUrl = fixIconUrl(w.iconUrl);
+    html += WeaponSkillTree.renderEquippedWeaponPanel(w, {
+      asset: (u) => asset(fixIconUrl(u)),
+      playerTier: weapon.tier || 1,
     });
-
-    const tiers = WeaponSkillTree.buildWeaponSkillTiers(weapon);
-    const nodeCount = tiers.reduce((n, t) => n + t.nodes.length, 0);
-    html += `<div style="margin-top:14px;padding:10px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:10px;color:var(--dim);text-align:center;">`;
-    html += `${nodeCount} skills · ${weapon.category || 'weapon'} · Updates when you change Mainhand equipment`;
-    html += ` · <a href="./WEAPON_SKILLS.html" style="font-size:10px;">All weapons</a></div>`;
     return html;
   }
 

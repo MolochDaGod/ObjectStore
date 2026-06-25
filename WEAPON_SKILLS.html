@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weapon Skills — Warlord Crafting Suite</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <script type="importmap">
-  {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"}}
-  </script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Spectral+SC:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English+SC&family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -563,169 +560,15 @@
       border-color: hsl(0 60% 50%);
     }
 
-    /* UUID badge */
-    .uuid-badge{font-size:0.65em;color:var(--gold);background:hsla(43,85%,55%,0.1);padding:1px 5px;border-radius:3px;cursor:pointer;font-family:'Cascadia Code','Fira Code',monospace;border:1px solid hsla(43,85%,55%,0.25);margin-left:auto;flex-shrink:0;transition:background 0.15s}
-    .uuid-badge:hover{background:hsla(43,85%,55%,0.25)}
-    .detail-uuid{font-size:0.78em;color:var(--gold);font-family:'Cascadia Code','Fira Code',monospace;background:hsl(225 28% 10%);padding:4px 8px;border-radius:4px;border:1px solid hsl(225 20% 20%);word-break:break-all;cursor:pointer;margin:6px 0 10px;transition:border-color 0.15s}
-    .detail-uuid:hover{border-color:var(--gold)}
-
-    /* Class filter bar */
-    .class-filter{display:flex;gap:8px;justify-content:center;padding:12px 20px;background:hsl(225 28% 9%);border-bottom:1px solid hsl(225 20% 16%)}
-    .class-btn{padding:8px 18px;font-family:var(--font-heading);font-size:0.85em;font-weight:600;border:2px solid hsl(225 20% 20%);border-radius:4px;background:hsl(225 25% 14%);color:var(--text-muted);cursor:pointer;transition:all 0.2s}
-    .class-btn:hover{border-color:var(--gold);color:var(--gold-light)}
-    .class-btn.active{background:linear-gradient(180deg,hsl(43 50% 30%) 0%,hsl(43 40% 20%) 100%);border-color:var(--gold);color:var(--gold-light)}
-    .class-badge{display:inline-block;font-size:0.6em;padding:1px 5px;border-radius:3px;margin-left:4px;font-family:var(--font-body);letter-spacing:0}
-    .class-badge.warrior{background:hsl(0 40% 18%);color:hsl(0 60% 65%)}
-    .class-badge.mage{background:hsl(220 40% 18%);color:hsl(220 70% 65%)}
-    .class-badge.ranger{background:hsl(120 30% 16%);color:hsl(120 55% 55%)}
-    .class-badge.worge{background:hsl(30 40% 18%);color:hsl(30 70% 65%)}
-
-    /* Weapon Picker */
-    .weapon-picker {
-      display:flex;gap:10px;justify-content:center;padding:16px 20px;flex-wrap:wrap;
-      background:linear-gradient(180deg,hsl(225 28% 8%),hsl(225 25% 10%));
-      border-bottom:1px solid hsl(43 40% 18%);min-height:48px;
+    .wst-slot-placeholder {
+      border: 2px dashed hsl(220 15% 25%);
+      border-radius: 4px;
+      padding: 12px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.78em;
+      margin-top: 8px;
     }
-    .weapon-pick-btn {
-      display:flex;flex-direction:column;align-items:center;gap:6px;
-      padding:12px 16px;border-radius:6px;
-      border:2px solid hsl(225 20% 22%);
-      background:linear-gradient(180deg,hsl(225 25% 16%),hsl(225 28% 12%));
-      cursor:pointer;transition:all 0.2s;
-      min-width:120px;max-width:160px;
-    }
-    .weapon-pick-btn:hover {
-      border-color:var(--border-gold-hover);
-      transform:translateY(-2px);
-      box-shadow:0 4px 12px rgba(212,175,55,0.15);
-    }
-    .weapon-pick-btn.active {
-      border-color:var(--gold);
-      background:linear-gradient(180deg,hsl(43 30% 18%),hsl(43 25% 12%));
-      box-shadow:0 0 16px rgba(212,175,55,0.25);
-    }
-    .weapon-pick-btn img {
-      width:40px;height:40px;object-fit:contain;
-      border-radius:4px;border:2px solid hsl(225 20% 20%);
-      background:hsl(225 28% 8%);padding:2px;
-    }
-    .weapon-pick-btn.active img { border-color:var(--gold); }
-    .wp-name {
-      font-family:var(--font-heading);font-size:0.82em;font-weight:600;
-      color:var(--text-gold);letter-spacing:0.02em;text-align:center;
-    }
-    .weapon-pick-btn.active .wp-name { color:var(--gold-light); }
-    .wp-lore {
-      font-size:0.65em;color:var(--text-muted);
-      text-align:center;line-height:1.3;
-      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    }
-
-    /* 3D Viewer */
-    .viewer-wrap {
-      border-radius:8px;overflow:hidden;
-      border:2px solid hsl(43 40% 20%);background:hsl(225 28% 6%);
-      max-height:340px;position:relative;
-    }
-    .viewer-wrap grudge-gltf-viewer {
-      height:280px;width:100%;display:block;
-      --grudge-viewer-bg:#0b0e16;
-    }
-    .viewer-label {
-      font-family:var(--font-heading);font-size:0.72em;color:var(--text-muted);
-      text-align:center;padding:5px;letter-spacing:0.06em;text-transform:uppercase;
-      background:hsl(225 25% 10%);border-top:1px solid hsl(225 20% 18%);
-    }
-    .viewer-label span { color:var(--gold); }
-
-    /* Skill Tree Container */
-    .tree-container {
-      background:linear-gradient(180deg,hsl(225 25% 10%),hsl(225 28% 8%));
-      border:2px solid hsl(225 20% 18%);border-radius:8px;
-      padding:20px;position:relative;
-    }
-    .tree-title {
-      font-family:var(--font-heading);font-size:1em;color:var(--gold);
-      text-align:center;letter-spacing:0.1em;text-transform:uppercase;
-      margin-bottom:16px;padding-bottom:10px;
-      border-bottom:1px solid hsl(43 40% 20%);
-    }
-    .tier-row {
-      display:flex;align-items:stretch;gap:0;margin-bottom:0;
-      position:relative;
-    }
-    .tier-marker {
-      width:54px;flex-shrink:0;display:flex;flex-direction:column;
-      align-items:center;position:relative;
-    }
-    .tier-badge {
-      width:38px;height:38px;border-radius:50%;
-      border:2px solid hsl(225 20% 25%);background:hsl(225 28% 12%);
-      display:flex;align-items:center;justify-content:center;
-      font-family:var(--font-heading);font-weight:700;font-size:0.75em;
-      color:var(--text-muted);z-index:2;position:relative;
-    }
-    .tier-badge.unlocked {
-      border-color:var(--gold-dark);color:var(--gold);
-      background:linear-gradient(180deg,hsl(43 30% 16%),hsl(43 25% 10%));
-    }
-    .tier-badge.active {
-      border-color:var(--gold);color:hsl(225 30% 10%);
-      background:linear-gradient(180deg,var(--gold-light),var(--gold));
-      box-shadow:0 0 12px rgba(212,175,55,0.35);
-    }
-    .tier-line {
-      width:2px;flex:1;background:hsl(225 20% 20%);margin:0 auto;
-    }
-    .tier-row:last-child .tier-line { display:none; }
-    .tier-nodes {
-      flex:1;display:flex;flex-wrap:wrap;gap:8px;
-      padding:8px 0 16px 12px;align-content:flex-start;
-    }
-    .tree-node {
-      padding:10px 14px;border-radius:6px;
-      border:2px solid hsl(225 20% 20%);background:hsl(225 25% 12%);
-      flex:1 1 200px;max-width:320px;min-width:160px;
-      transition:all 0.2s;
-    }
-    .tree-node.locked { opacity:0.4; }
-    .tree-node .node-name {
-      font-family:var(--font-heading);font-size:0.85em;font-weight:600;
-      color:var(--text-gold);margin-bottom:2px;
-    }
-    .tree-node .node-desc {
-      font-size:0.75em;color:var(--text-muted);line-height:1.3;
-    }
-    .tree-node .node-type {
-      font-size:0.6em;padding:1px 5px;border-radius:3px;
-      font-family:var(--font-heading);letter-spacing:0.04em;
-      display:inline-block;margin-bottom:4px;
-    }
-    .tree-node.sig { border-color:hsl(43 60% 35%);background:linear-gradient(180deg,hsl(43 25% 14%),hsl(225 25% 10%)); }
-    .tree-node.sig .node-name { color:var(--gold-light); }
-    .tree-node.sig .node-type { background:hsl(43 40% 18%);color:var(--gold); }
-    .tree-node.ability { border-color:hsla(210,60%,45%,0.35); }
-    .tree-node.ability .node-type { background:hsla(210,60%,50%,0.15);color:hsl(210 70% 65%); }
-    .tree-node.passive { border-color:hsla(140,50%,40%,0.3); }
-    .tree-node.passive .node-name { color:hsl(140 60% 60%); }
-    .tree-node.passive .node-type { background:hsla(140,50%,50%,0.12);color:hsl(140 55% 55%); }
-
-    /* Weapon Detail Top */
-    .weapon-detail-top {
-      display:grid;grid-template-columns:1fr 1fr;gap:16px;
-      margin-bottom:20px;
-    }
-    @media (max-width:800px) { .weapon-detail-top { grid-template-columns:1fr; } }
-    .weapon-info-panel {
-      background:linear-gradient(180deg,rgba(212,175,55,0.06),transparent);
-      border:1px solid hsl(43 40% 20%);border-radius:8px;padding:20px;
-      display:flex;flex-direction:column;justify-content:center;
-    }
-
-    /* Loading state */
-    .loading-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
-    .loading-orb{display:inline-block;width:24px;height:24px;border:3px solid hsl(225 20% 20%);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
-    @keyframes spin{to{transform:rotate(360deg)}}
 
     /* Responsive */
     @media (max-width: 900px) {
@@ -747,10 +590,14 @@
 </div>
 
 <div class="weapon-tabs" id="weaponTabs"></div>
-<div class="weapon-picker" id="weaponPicker"></div>
 
 <div class="main-content">
-  <div id="weaponSkillTree"></div>
+  <div class="tier-bar" id="tierBar"></div>
+  <div class="reset-bar">
+    <button class="reset-btn" onclick="resetSelections()">↺ Reset Selections</button>
+  </div>
+  <div class="action-bar" id="actionBar"></div>
+  <div class="slot-columns" id="slotColumns"></div>
 </div>
 
 <div class="detail-panel" id="detailPanel">
@@ -763,371 +610,154 @@
   </div>
   <button class="close-detail" onclick="closeDetail()">✕</button>
 </div>
-
 <script src="./js/weapon-skill-tree.js"></script>
 <script>
-// ===== WEAPON SKILLS ENGINE v3 =====
-// Loads named weapons from master-weapons.json — each weapon has its own skill tree
 const PAGE_BASE = (() => {
   const slash = window.location.pathname.lastIndexOf('/');
   return slash <= 0 ? '' : window.location.pathname.slice(0, slash);
 })();
 
-/** Prefix root-relative asset paths for GitHub Pages (/ObjectStore/) hosting. */
 function asset(url) {
   if (!url) return url;
   if (/^(https?:|data:|blob:)/i.test(url)) return url;
+  if (url.startsWith('/icons/')) return `https://assets.grudge-studio.com${url}`;
   if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
   return url;
 }
 
-const API_SOURCES = [
-  './api/v1',
-  'https://objectstore.grudge-studio.com/api/v1',
-  'https://molochdagod.github.io/ObjectStore/api/v1',
-];
+const API_SOURCES = ['./api/v1', 'https://info.grudge-studio.com/api/v1', 'https://objectstore.grudge-studio.com/api/v1'];
 
-const TIER_COLORS = {1:'#8b7355',2:'#a8a8a8',3:'#4a9eff',4:'#9d4dff',5:'#ff4d4d',6:'#ffaa00',7:'#d4a84b',8:'#f0d890'};
+let activeWeapon = 'SWORD';
+let playerTier = 3;
+let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
 
-const CATEGORY_META = {
-  swords:         { name:'Sword',         icon:'/icons/pack/weapons/Sword_01.png' },
-  axes1h:         { name:'Axe',           icon:'/icons/pack/weapons/Axe_01.png' },
-  daggers:        { name:'Dagger',        icon:'/icons/pack/weapons/Dagger_01.png' },
-  greatswords:    { name:'Greatsword',    icon:'/icons/pack/weapons/Sword_11.png' },
-  greataxes:      { name:'Greataxe',      icon:'/icons/pack/weapons/Axe_49.png' },
-  hammers1h:      { name:'Hammer',        icon:'/icons/pack/weapons/Hammer_01.png' },
-  hammers2h:      { name:'Warhammer',     icon:'/icons/pack/weapons/Hammer_43.png' },
-  spears:         { name:'Spear',         icon:'/icons/pack/weapons/Spear_01.png' },
-  bows:           { name:'Bow',           icon:'/icons/pack/weapons/Bow_01.png' },
-  crossbows:      { name:'Crossbow',      icon:'/icons/pack/weapons/Crossbow_01.png' },
-  guns:           { name:'Gun',           icon:'/icons/pack/weapons/Sword_22.png' },
-  shields:        { name:'Shield',        icon:'/icons/pack/weapons/shield_01.png' },
-  fireStaves:     { name:'Fire Staff',    icon:'/icons/pack/weapons/staff_1.png' },
-  frostStaves:    { name:'Frost Staff',   icon:'/icons/pack/weapons/staff_05.png' },
-  holyStaves:     { name:'Holy Staff',    icon:'/icons/pack/weapons/staff_10.png' },
-  lightningStaves:{ name:'Lightning Staff',icon:'/icons/pack/weapons/staff_15.png' },
-  natureStaves:   { name:'Nature Staff',  icon:'/icons/pack/weapons/staff_20.png' },
-  tools:          { name:'Tool',          icon:'/icons/pack/weapons/Sword_02.png' },
-};
-
-// Category → model folder + GLB files mapping
-const CATEGORY_FOLDERS = {
-  swords:'sword', axes1h:'axe', daggers:'dagger', greatswords:'greatsword',
-  greataxes:'greataxe', hammers1h:'hammer', hammers2h:'hammer', spears:'spear',
-  bows:'bow', crossbows:'crossbow', guns:'gun', shields:'shield',
-  fireStaves:'staff', frostStaves:'staff', holyStaves:'staff',
-  lightningStaves:'staff', natureStaves:'staff', tools:'hammer',
-};
-const CATEGORY_MODELS = {
-  swords:['BroadSword.glb','CurvedSword.glb','Katana.glb','Rapier.glb','ShortSword.glb','Sword.glb'],
-  axes1h:['Axe.glb','DoubleAxe.glb','HandAxe.glb','SmallAxe.glb','LongCleaver.glb','ButcherCleaver.glb'],
-  daggers:['Dagger.glb','Dagger_B.glb','Dagger_C.glb','Dagger_D.glb','Kukri.glb','SmallSickle.glb'],
-  greatswords:['Greatsword.glb','TwoHandedSword.glb','TwoHandedSword_B.glb','TwoHandedSword_Stylized.glb','TwoHandedSword_B_Stylized.glb','BroadSword_Stylized.glb'],
-  greataxes:['Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb','Greataxe.glb'],
-  hammers1h:['Hammer.glb','SmallHammer.glb','BigHammer.glb','Warhammer.glb','hammer_1.glb','hammer_5.glb'],
-  hammers2h:['Warhammer.glb','BigHammer.glb','Hammer.glb','hammer_1.glb','hammer_5.glb','SmallHammer.glb'],
-  spears:['Halberd.glb','BRB_weapon_spear.FBX.glb','ELF_weapon_spear.FBX.glb','Halberd.glb','BRB_weapon_spear.FBX.glb','ELF_weapon_spear.FBX.glb'],
-  bows:['bow_1.glb','bow_10.glb','bow_11.glb','bow_12.glb','bow_13.glb','bow_14.glb'],
-  crossbows:['crossbow_1.glb','crossbow_11.glb','crossbow_12.glb','crossbow_13.glb','crossbow_14.glb','crossbow_15.glb'],
-  guns:['AR.glb','MG.glb','AR.glb','MG.glb','AR.glb','MG.glb'],
-  shields:['Shield.glb','LongShield.glb','WoodenShield.glb','WoodenShield_B.glb','Shield.Buckler.glb','Shield.glb'],
-  fireStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
-  frostStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
-  holyStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
-  lightningStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb'],
-  natureStaves:['Staff.glb','Staff_B.glb','Staff_C.glb','BattleStaff.glb','Staff.glb','Staff_B.glb'],
-  tools:['Hammer.glb','SmallHammer.glb','SmallAxe.glb','Hammer.glb','SmallHammer.glb','SmallAxe.glb'],
-};
-
-function getWeaponModelUrl(weapon) {
-  const folder = CATEGORY_FOLDERS[weapon.category];
-  if (!folder) return null;
-  const models = CATEGORY_MODELS[weapon.category] || [];
-  const weapons = WEAPONS_BY_CAT[weapon.category] || [];
-  const idx = weapons.findIndex(w => w.uuid === weapon.uuid);
-  const glb = models[idx >= 0 ? idx % models.length : 0] || models[0];
-  if (!glb) return null;
-  return asset(`/models/weapons/${folder}/${glb}`);
+function getActiveTypeDef() {
+  return WeaponSkillTree.getTypeDef(activeWeapon);
 }
 
-// ── State ──
-let ALL_WEAPONS = [];          // all T1 base weapons grouped
-let WEAPONS_BY_CAT = {};       // { swords: [...6 weapons], axes1h: [...6], ... }
-let CATEGORY_ORDER = [];       // ordered category keys
-let SPELL_RECIPES = [];        // arcane staff spells
-let activeCategory = null;     // e.g. 'swords'
-let activeWeaponUuid = null;   // selected weapon UUID
-let showingSpellcraft = false;
-let activeSpellSchool = null;
-
-async function fetchJSON(file) {
-  for (const base of API_SOURCES) {
-    try {
-      const res = await fetch(`${base}/${file}`);
-      if (res.ok) return await res.json();
-    } catch { /* next */ }
-  }
-  return null;
-}
-
-function copyUUID(uuid) {
-  navigator.clipboard?.writeText(uuid).then(
-    () => { const t = document.getElementById('toast'); if(t){t.textContent='Copied: '+uuid;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2000)} },
-    () => {}
-  );
-}
-
-// ── Load ──
-async function loadWeaponSkills() {
-  document.getElementById('weaponSkillTree').innerHTML = '<div class="loading-state"><div class="loading-orb"></div><br>Loading weapon skills from ObjectStore…</div>';
-  const data = await fetchJSON('master-weapons.json');
-  if (!data?.items?.length) {
-    document.getElementById('weaponSkillTree').innerHTML = '<div class="loading-state" style="color:hsl(0 60% 60%)">Failed to load weapon data. Check ObjectStore API.</div>';
-    return;
-  }
-  // Group T1 weapons by category
-  const t1 = data.items.filter(i => i.tier === 1);
-  WEAPONS_BY_CAT = {};
-  for (const w of t1) {
-    if (w.iconUrl) w.iconUrl = asset(w.iconUrl);
-    if (!WEAPONS_BY_CAT[w.category]) WEAPONS_BY_CAT[w.category] = [];
-    WEAPONS_BY_CAT[w.category].push(w);
-  }
-  CATEGORY_ORDER = Object.keys(CATEGORY_META).filter(k => WEAPONS_BY_CAT[k]?.length);
-  activeCategory = CATEGORY_ORDER[0] || null;
-  activeWeaponUuid = (WEAPONS_BY_CAT[activeCategory] || [])[0]?.uuid || null;
-
-  // Load spell recipes for Arcane Staff
-  const spellData = await fetchJSON('master-spellRecipes.json');
-  if (spellData?.recipes) {
-    SPELL_RECIPES = spellData.recipes.map(r => ({ ...r, icon: asset(r.icon) }));
-  }
-
-  const totalWeapons = t1.length;
-  const totalCategories = CATEGORY_ORDER.length;
-  document.querySelector('.header p').textContent = `${totalCategories} weapon types · ${totalWeapons} named weapons · ${SPELL_RECIPES.length} spell recipes · All with GRUDGE UUIDs`;
-
-  render();
-}
-
-function getActiveWeapons() {
-  return WEAPONS_BY_CAT[activeCategory] || [];
-}
-
-function getSelectedWeapon() {
-  if (!activeWeaponUuid) return null;
-  const weapons = getActiveWeapons();
-  return weapons.find(w => w.uuid === activeWeaponUuid) || null;
-}
-
-// ===== RENDER =====
 function render() {
   renderWeaponTabs();
-  renderWeaponPicker();
-  renderSkillTree();
+  renderTierBar();
+  renderActionBar();
+  renderSlotColumns();
 }
 
 function renderWeaponTabs() {
   const container = document.getElementById('weaponTabs');
+  const types = WeaponSkillTree.listTypeIds();
+  if (!types.length) {
+    container.innerHTML = '<span style="color:var(--text-muted);padding:12px">Loading weapon types…</span>';
+    return;
+  }
   container.innerHTML = '';
-  for (const cat of CATEGORY_ORDER) {
-    const meta = CATEGORY_META[cat] || { name: cat, icon: '' };
-    const count = WEAPONS_BY_CAT[cat]?.length || 0;
-    const isActive = cat === activeCategory && !showingSpellcraft;
+  types.forEach((key) => {
+    const weapon = WeaponSkillTree.getTypeDef(key);
     const tab = document.createElement('button');
-    tab.className = 'weapon-tab' + (isActive ? ' active' : '');
-    tab.innerHTML = `<img src="${asset(meta.icon)}" alt="${meta.name}" onerror="this.style.display='none'"> ${meta.name} <span style="font-size:0.65em;opacity:0.6">(${count})</span>`;
+    tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
+    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}`;
     tab.onclick = () => {
-      activeCategory = cat;
-      showingSpellcraft = false;
-      activeWeaponUuid = (WEAPONS_BY_CAT[cat] || [])[0]?.uuid || null;
+      activeWeapon = key;
+      selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
       closeDetail();
       render();
     };
     container.appendChild(tab);
+  });
+}
+
+function renderTierBar() {
+  const container = document.getElementById('tierBar');
+  container.innerHTML = '<span class="tier-label">Weapon Tier:</span>';
+  for (let t = 1; t <= 8; t++) {
+    const btn = document.createElement('button');
+    btn.className = 'tier-btn' + (t === playerTier ? ' active' : t <= playerTier ? ' unlocked' : '');
+    btn.textContent = 'T' + t;
+    btn.onclick = () => { playerTier = t; render(); };
+    container.appendChild(btn);
   }
-  // Arcane Staff spellcraft tab
-  if (SPELL_RECIPES.length) {
-    const tab = document.createElement('button');
-    tab.className = 'weapon-tab' + (showingSpellcraft ? ' active' : '');
-    tab.style.cssText = 'border-color:#a855f7;' + (showingSpellcraft ? 'background:linear-gradient(180deg,hsl(270 40% 22%),hsl(270 35% 14%));color:#e9d5ff;box-shadow:0 0 12px rgba(168,85,247,0.3);' : '');
-    tab.innerHTML = `<img src="${asset('/icons/pack/weapons/staff_1.png')}" alt="Arcane Staff" onerror="this.style.display='none'"> Arcane Staff <span style="font-size:0.6em;opacity:0.7;color:#c084fc">SPELLCRAFT</span>`;
-    tab.onclick = () => {
-      showingSpellcraft = true;
-      activeSpellSchool = null;
-      activeWeaponUuid = null;
-      closeDetail();
+}
+
+function renderActionBar() {
+  const typeDef = getActiveTypeDef();
+  document.getElementById('actionBar').innerHTML = WeaponSkillTree.renderActionBarHTML(typeDef, {
+    asset, playerTier, selectedSkills,
+  });
+}
+
+function renderSlotColumns() {
+  const typeDef = getActiveTypeDef();
+  const container = document.getElementById('slotColumns');
+  container.innerHTML = WeaponSkillTree.renderSlotColumnsHTML(typeDef, {
+    asset, playerTier, selectedSkills,
+  });
+  container.querySelectorAll('[data-wst-select]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const slotType = card.dataset.wstSelect;
+      const skillId = card.dataset.wstSkill;
+      const def = getActiveTypeDef();
+      const skill = WeaponSkillTree.findSkill(def, slotType, skillId);
+      if (!skill) return;
+      if (selectedSkills[slotType] === skillId) {
+        selectedSkills[slotType] = null;
+        closeDetail();
+      } else {
+        selectedSkills[slotType] = skillId;
+        showDetail(skill, slotType);
+      }
       render();
-    };
-    container.appendChild(tab);
-  }
+    });
+  });
 }
 
-function renderWeaponPicker() {
-  const container = document.getElementById('weaponPicker');
-  if (showingSpellcraft) { container.innerHTML = ''; return; }
-  const weapons = getActiveWeapons();
-  if (!weapons.length) { container.innerHTML = ''; return; }
-  container.innerHTML = weapons.map(w => {
-    const isActive = w.uuid === activeWeaponUuid;
-    const tc = TIER_COLORS[w.tier] || 'var(--gold)';
-    return `<button class="weapon-pick-btn${isActive ? ' active' : ''}" onclick="selectWeapon('${w.uuid}')">
-      <img src="${w.iconUrl}" alt="${w.name}" onerror="this.style.display='none'">
-      <span class="wp-name">${w.baseName || w.name}</span>
-      <span class="wp-lore">${w.lore || ''}</span>
-    </button>`;
-  }).join('');
+function showDetail(skill, slotType) {
+  const panel = document.getElementById('detailPanel');
+  document.getElementById('detailIcon').innerHTML = `<img src="${asset(skill.icon)}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailName').textContent = skill.name;
+  document.getElementById('detailDesc').textContent = skill.description;
+
+  const dmgLabel = skill.damage < 0 ? 'Heal' : 'Damage';
+  const dmgVal = Math.abs(skill.damage);
+  const dmgColor = skill.damage < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
+  const detCast = skill.castTime ? skill.castTime + 's' : 'Instant';
+  const detRange = skill.range ? skill.range + 'm' : '—';
+
+  document.getElementById('detailStats').innerHTML = `
+    <div class="detail-stat"><div class="stat-label">${dmgLabel}</div><div class="stat-val" style="color:${dmgColor}">${dmgVal || '—'}</div></div>
+    <div class="detail-stat"><div class="stat-label">Cooldown</div><div class="stat-val" style="color:hsl(210 70% 60%)">${skill.cooldown > 0 ? skill.cooldown + 's' : '—'}</div></div>
+    <div class="detail-stat"><div class="stat-label">Cast</div><div class="stat-val" style="color:hsl(43 70% 55%)">${detCast}</div></div>
+    <div class="detail-stat"><div class="stat-label">Range</div><div class="stat-val" style="color:hsl(170 60% 50%)">${detRange}</div></div>
+    <div class="detail-stat"><div class="stat-label">Type</div><div class="stat-val" style="color:var(--text-gold)">${(skill.damageType || 'physical').toUpperCase()}</div></div>
+    <div class="detail-stat"><div class="stat-label">Slot</div><div class="stat-val" style="color:var(--text-gold)">${slotType.toUpperCase()}</div></div>
+    <div class="detail-stat"><div class="stat-label">Tier</div><div class="stat-val" style="color:var(--gold)">T${skill.tier}</div></div>`;
+
+  document.getElementById('detailEffects').innerHTML = (skill.effects || []).map(e => `<span class="effect-tag">${e}</span>`).join('');
+  panel.classList.add('visible');
 }
 
-window.selectWeapon = function(uuid) {
-  activeWeaponUuid = activeWeaponUuid === uuid ? null : uuid;
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+}
+
+function resetSelections() {
+  selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
   closeDetail();
   render();
-};
-
-function renderSkillTree() {
-  const container = document.getElementById('weaponSkillTree');
-  container.innerHTML = '';
-  container.style.cssText = '';
-
-  if (showingSpellcraft) {
-    container.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;';
-    renderSpellcraftView(container);
-    return;
-  }
-
-  const weapon = getSelectedWeapon();
-  if (!weapon) {
-    const weapons = getActiveWeapons();
-    const meta = CATEGORY_META[activeCategory] || { name: activeCategory };
-    container.innerHTML = `<div class="loading-state" style="padding:60px 20px">
-      <div style="font-family:var(--font-heading);font-size:1.4em;color:var(--gold-light);margin-bottom:12px">⚔ ${meta.name} — ${weapons.length} Weapons</div>
-      <div style="color:var(--text-muted);font-size:0.95em">Select a weapon above to view its skill tree</div>
-    </div>`;
-    return;
-  }
-
-  const uuidShort = weapon.uuid ? weapon.uuid.slice(-8) : '';
-  const modelUrl = getWeaponModelUrl(weapon);
-  const statColors = {damage:'hsl(0 70% 60%)',speed:'hsl(43 70% 55%)',crit:'hsl(50 80% 55%)',block:'hsl(210 70% 60%)',defense:'hsl(180 50% 55%)',combo:'hsl(270 60% 65%)'};
-
-  // ── Top: Info + Viewer side by side ──
-  const top = document.createElement('div');
-  top.className = 'weapon-detail-top';
-
-  // Info panel
-  const infoHTML = `<div class="weapon-info-panel">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-      <div style="width:64px;height:64px;border:3px solid var(--gold);border-radius:6px;background:hsl(225 28% 8%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.5);flex-shrink:0">
-        <img src="${weapon.iconUrl}" alt="${weapon.name}" style="width:52px;height:52px;object-fit:contain" onerror="this.style.display='none'">
-      </div>
-      <div>
-        <div style="font-family:var(--font-heading);font-size:1.4em;color:var(--gold-light)">${weapon.name}</div>
-        <div style="font-size:0.82em;color:var(--text-muted);margin-top:2px">${weapon.lore || weapon.description}</div>
-        <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">
-          <span style="font-size:0.7em;color:${TIER_COLORS[weapon.tier]||'var(--gold)'};font-family:var(--font-heading);font-weight:700">${weapon.tierLabel||'T'+weapon.tier}</span>
-          <span style="font-size:0.7em;color:var(--text-muted)">·</span>
-          <span style="font-size:0.7em;color:var(--text-muted)">🔨 ${weapon.craftedBy}</span>
-          ${uuidShort ? `<span class="uuid-badge" title="${weapon.uuid}" onclick="copyUUID('${weapon.uuid}')" style="font-size:0.68em">${uuidShort}</span>` : ''}
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      ${Object.entries(weapon.stats||{}).filter(([k,v])=>v).map(([k,v]) => `<div style="text-align:center;padding:5px 12px;background:hsl(225 28% 10%);border-radius:4px;border:1px solid hsl(225 20% 20%);flex:1;min-width:50px">
-        <div style="font-size:0.6em;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-family:var(--font-heading)">${k}</div>
-        <div style="font-size:1em;font-weight:700;color:${statColors[k]||'var(--gold)'}">${v}</div>
-      </div>`).join('')}
-    </div>
-  </div>`;
-  top.innerHTML = infoHTML;
-
-  // Viewer panel
-  if (modelUrl) {
-    const vp = document.createElement('div');
-    vp.className = 'viewer-wrap';
-    vp.innerHTML = `<grudge-gltf-viewer src="${modelUrl}" auto-rotate="on" grid="on" background="#0b0e16" exposure="1.2"></grudge-gltf-viewer>
-      <div class="viewer-label">3D — <span>${weapon.name}</span> · ${modelUrl.split('/').pop()}</div>`;
-    top.appendChild(vp);
-  }
-  container.appendChild(top);
-
-  const treeWrap = document.createElement('div');
-  treeWrap.innerHTML = WeaponSkillTree.renderWeaponSkillTreeHTML(weapon, {
-    asset,
-    tierColor: TIER_COLORS[weapon.tier] || 'var(--gold)',
-    showHeader: false,
-  });
-  container.appendChild(treeWrap);
 }
 
-function closeDetail() { document.getElementById('detailPanel').classList.remove('visible'); }
-
-// ===== SPELLCRAFT VIEW (Arcane Staff) =====
-function renderSpellcraftView(container) {
-  const SCHOOL_COLORS = { fire:'#ff6b35', frost:'#7dd3fc', holy:'#fde68a', lightning:'#4dc3ff', nature:'#6bdc8b', shadow:'#a78bfa' };
-  const SCHOOL_ICONS = { fire:'/icons/pack/misc/fire_05.png', frost:'/icons/pack/misc/frozen.png', holy:'/icons/pack/misc/Glow.png', lightning:'/icons/pack/misc/Lighting.png', nature:'/icons/pack/misc/Naturecircle.png', shadow:'/icons/pack/misc/smoke.png' };
-  const schoolIcon = (school) => asset(SCHOOL_ICONS[school]);
-  const schools = ['fire','frost','holy','lightning','nature','shadow'];
-
-  const header = document.createElement('div');
-  header.style.cssText = 'grid-column:1/-1;text-align:center;padding:16px;background:linear-gradient(180deg,rgba(168,85,247,0.08),transparent);border:1px solid rgba(168,85,247,0.2);border-radius:8px;margin-bottom:16px;';
-  header.innerHTML = `<div style="font-family:var(--font-heading);font-size:1.2em;color:#c084fc;margin-bottom:6px;">✦ Arcane Staff — Spellcraft System</div>
-    <div style="color:var(--text-muted);font-size:0.85em;">Spells are crafted by <strong style="color:#fbbf24">Mystic Spellwright</strong> profession. Equip any 4 crafted spells to your Arcane Staff.</div>
-    <div style="color:var(--text-muted);font-size:0.78em;margin-top:4px;">${SPELL_RECIPES.length} spell recipes across ${schools.length} magic schools</div>`;
-  container.appendChild(header);
-
-  const filterBar = document.createElement('div');
-  filterBar.style.cssText = 'grid-column:1/-1;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;';
-  filterBar.innerHTML = `<button onclick="activeSpellSchool=null;render()" style="padding:6px 14px;border-radius:20px;border:1px solid ${!activeSpellSchool?'var(--gold)':'var(--border-gold)'};background:${!activeSpellSchool?'var(--gold)':'transparent'};color:${!activeSpellSchool?'#0a0e14':'var(--text-muted)'};cursor:pointer;font-family:var(--font-heading);font-size:0.8em;font-weight:600">All (${SPELL_RECIPES.length})</button>` +
-    schools.map(s => {
-      const c = SCHOOL_COLORS[s];
-      const active = activeSpellSchool === s;
-      const count = SPELL_RECIPES.filter(r => r.school === s).length;
-      return `<button onclick="activeSpellSchool='${s}';render()" style="padding:6px 14px;border-radius:20px;border:1px solid ${active?c:c+'33'};background:${active?c+'22':'transparent'};color:${active?c:'var(--text-muted)'};cursor:pointer;font-family:var(--font-heading);font-size:0.8em;font-weight:600;display:flex;align-items:center;gap:4px"><img src="${schoolIcon(s)}" style="width:16px;height:16px" onerror="this.style.display='none'"> ${s.charAt(0).toUpperCase()+s.slice(1)} (${count})</button>`;
-    }).join('');
-  container.appendChild(filterBar);
-
-  const filtered = activeSpellSchool ? SPELL_RECIPES.filter(r => r.school === activeSpellSchool) : SPELL_RECIPES;
-
-  for (const spell of filtered) {
-    const color = SCHOOL_COLORS[spell.school] || '#c084fc';
-    const card = document.createElement('div');
-    card.className = 'skill-card';
-    card.style.borderColor = color + '44';
-    const dmgText = spell.damage < 0 ? `<span class="value heal">Heal ${Math.abs(spell.damage)}</span>` : spell.damage > 0 ? `<span class="value dmg">${spell.damage}</span>` : '<span class="value" style="color:var(--text-muted)">—</span>';
-    const castText = spell.castTime ? `${spell.castTime}s` : 'Instant';
-    const uuidShort = spell.uuid ? spell.uuid.slice(-8) : '';
-    card.innerHTML = `
-      <div class="skill-icon-row">
-        <div class="skill-icon" style="border-color:${color}44"><img src="${spell.icon}" alt="${spell.name}" onerror="this.style.display='none'"></div>
-        <span class="skill-name" style="color:${color}">${spell.name}</span>
-        <span class="skill-tier-tag" style="background:${color}22;color:${color}">${spell.school}</span>
-        ${uuidShort ? `<span class="uuid-badge" title="${spell.uuid}" onclick="event.stopPropagation();copyUUID('${spell.uuid}')">${uuidShort}</span>` : ''}
-      </div>
-      <div class="skill-desc">${spell.description}</div>
-      <div class="skill-stats">
-        <div class="skill-stat"><span class="label">DMG</span> ${dmgText}</div>
-        <div class="skill-stat"><span class="label">CD</span> <span class="value cd">${spell.cooldown > 0 ? spell.cooldown + 's' : '—'}</span></div>
-        <div class="skill-stat"><span class="label">Cast</span> <span class="value cast">${castText}</span></div>
-        <div class="skill-stat"><span class="label">Range</span> <span class="value range">${spell.range ? spell.range + 'm' : '—'}</span></div>
-      </div>
-      <div class="skill-meta">
-        <span class="meta-tag ${spell.damageType}">${spell.damageType}</span>
-      </div>
-      <div class="skill-effects">${(spell.effects||[]).map(e => `<span class="effect-tag">${e}</span>`).join('')}</div>
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid hsl(225 20% 18%);font-size:0.72em;color:var(--text-dim)">
-        <strong style="color:${color}">Spellwright Lv${spell.spellwrightLevel}</strong> · 
-        ${(spell.materials||[]).map(m => `${m.quantity}× ${m.name}`).join(', ')}
-      </div>`;
-    container.appendChild(card);
+(async function init() {
+  document.querySelector('.header p').textContent = 'Loading canonical weapon skills…';
+  const data = await WeaponSkillTree.loadCatalog(API_SOURCES);
+  if (!data?.weaponTypes?.length) {
+    document.querySelector('.header p').textContent = 'Failed to load master-weaponSkills.json';
+    return;
   }
-}
-
-// ===== INIT =====
-loadWeaponSkills();
+  activeWeapon = data.weaponTypes[0].id;
+  document.querySelector('.header p').textContent =
+    `${data.totalWeaponTypes || data.weaponTypes.length} weapon types · ${data.totalSkills || '—'} skills · Slot 1 = LMB combo · Slots 2–4 tier unlock`;
+  render();
+})();
 </script>
-<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:hsl(225 25% 12%);border:1px solid var(--gold);color:var(--text-light);padding:10px 18px;border-radius:8px;font-size:12px;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,.6)"></div>
-<script type="module" src="./js/viewer/grudge-viewer.js"></script>
+</script>
 <script src="./js/nav.js" defer></script>
 </body>
 </html>
