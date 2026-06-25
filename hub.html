@@ -427,7 +427,7 @@
       <div class="stat-item"><div class="stat-num" data-count="58">58+</div><div class="stat-label">API Endpoints</div></div>
       <div class="stat-item"><div class="stat-num" data-count="7324">7,324</div><div class="stat-label">2D Sprites</div></div>
       <div class="stat-item"><div class="stat-num" data-count="5653">5,653</div><div class="stat-label">Icons</div></div>
-      <div class="stat-item"><div class="stat-num" data-count="471">471</div><div class="stat-label">3D Models</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="600">600+</div><div class="stat-label">3D Models (R2)</div></div>
       <div class="stat-item"><div class="stat-num" data-count="450">450</div><div class="stat-label">Audio SFX</div></div>
       <div class="stat-item"><div class="stat-num" data-count="816">816+</div><div class="stat-label">Weapons</div></div>
       <div class="stat-item"><div class="stat-num" data-count="167">167</div><div class="stat-label">Backgrounds</div></div>
@@ -463,7 +463,17 @@
         <a href="./3D_MODELS.html" class="tool-card">
           <div class="tool-thumb" style="background-image:url('./backgrounds/crystal_caves.png')"></div>
           <span class="tool-name">3D Models</span>
-          <span class="tool-desc">471 models — Three.js viewer</span>
+          <span class="tool-desc">600+ GLBs on R2 — Three.js viewer</span>
+        </a>
+        <a href="https://forge.grudge-studio.com" class="tool-card" target="_blank" rel="noopener">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1028,#0d2030)"></div>
+          <span class="tool-name">Game Forge</span>
+          <span class="tool-desc">Scene editor — builtin maps &amp; R3F</span>
+        </a>
+        <a href="./docs#3d-storage" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#102018,#0d1520)"></div>
+          <span class="tool-name">3D Storage Guide</span>
+          <span class="tool-desc">R2 CDN · D1 registry · access tabs</span>
         </a>
         <a href="./VFX_BROWSER.html" class="tool-card">
           <div class="tool-thumb" style="background-image:url('./backgrounds/magic_portal.jpg')"></div>
@@ -575,7 +585,7 @@
           </div>
           <div class="asset-info">
             <div class="asset-title">3D Models</div>
-            <div class="asset-meta"><span>GLB/GLTF/FBX/OBJ</span><span>471 models</span></div>
+            <div class="asset-meta"><span>GLB on R2 CDN</span><span>600+ models</span></div>
           </div>
         </a>
       </div>
@@ -648,7 +658,7 @@
           <a class="ep" href="./api/v1/heroes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/heroes.json</span><span class="ep-desc">36 hero portraits</span></a>
           <a class="ep" href="./api/v1/audio.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/audio.json</span><span class="ep-desc">450 SFX</span></a>
           <a class="ep" href="./api/v1/video.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/video.json</span><span class="ep-desc">6 cinematics</span></a>
-          <a class="ep" href="./api/v1/models3d.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/models3d.json</span><span class="ep-desc">471 3D models</span></a>
+          <a class="ep" href="./api/v1/models3d.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/models3d.json</span><span class="ep-desc">ObjectStore 3D index</span></a>
           <a class="ep" href="./api/v1/spriteMaps.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/spriteMaps.json</span><span class="ep-desc">246 sprite maps</span></a>
         </div>
       </div>
@@ -665,6 +675,16 @@
           <a class="ep" href="./api/v1/3dfx-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/3dfx-registry.json</span><span class="ep-desc">3D FX shaders</span></a>
           <a class="ep" href="./api/v1/3dfx-examples.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/3dfx-examples.json</span><span class="ep-desc">3DFX downloadable starter examples</span></a>
           <a class="ep" href="./api/v1/ui-packs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ui-packs.json</span><span class="ep-desc">UI pack assets</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#9729; 3D Storage &amp; CDN (live binaries)</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="https://assets.grudge-studio.com/models/" target="_blank" rel="noopener"><span class="ep-method">CDN</span><span class="ep-path">assets.grudge-studio.com/models/</span><span class="ep-desc">GLB/GLTF files</span></a>
+          <a class="ep" href="https://api.grudge-studio.com/assets?limit=20" target="_blank" rel="noopener"><span class="ep-method">GET</span><span class="ep-path">api.grudge-studio.com/assets</span><span class="ep-desc">D1 asset registry</span></a>
+          <a class="ep" href="https://assets.grudge-studio.com/builtin/map-underground-wars.glb" target="_blank" rel="noopener"><span class="ep-method">GLB</span><span class="ep-path">/builtin/map-underground-wars.glb</span><span class="ep-desc">Forge map example</span></a>
+          <a class="ep" href="./docs#3d-storage"><span class="ep-method">DOC</span><span class="ep-path">docs#3d-storage</span><span class="ep-desc">Access guide &amp; upload pipeline</span></a>
         </div>
       </div>
 

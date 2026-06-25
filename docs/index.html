@@ -283,7 +283,7 @@
     <a href="#ai-integration">AI Integration</a>
     
     <div class="section-title">Studio &amp; Engine</div>
-    <a href="#grudgedot-assets">grudgeDot Assets</a>
+    <a href="#3d-storage">3D Storage &amp; CDN</a>
     <a href="#rts-models">RTS Models</a>
     <a href="#worlds">Worlds</a>
 
@@ -350,12 +350,14 @@
         <p><strong>ObjectStore</strong> (this repo) is the single source of truth for all game data schemas.</p>
         <ul>
           <li><strong>ObjectStore JSON</strong> (<code class="inline-code">api/v1/master-*.json</code>) — canonical item definitions, skills, weapon skills, recipes, materials, tiers. Every entry has a GRUDGE UUID.</li>
-          <li><strong>R2 CDN</strong> (<code class="inline-code">assets.grudge-studio.com</code>) — binary assets: GLB models, textures, audio, VFX shaders. Referenced by GRUDGE UUID in ObjectStore data.</li>
-          <li><strong>D1 Database</strong> (Cloudflare) — metadata index for search, analytics, and asset manifests. Synced from ObjectStore via Workers.</li>
+          <li><strong>R2 CDN</strong> (<code class="inline-code">assets.grudge-studio.com</code>) — binary files only: GLB/GLTF models, PNG icons, textures, audio. Served by the <code class="inline-code">r2-cdn</code> Worker with CORS <code class="inline-code">*</code>. Never commit large GLBs to git — upload to R2.</li>
+          <li><strong>D1 <code class="inline-code">asset_registry</code></strong> (<code class="inline-code">grudge-assets-db</code>) — searchable index for 3D models: category, R2 key, bone map, animation packs, deterministic <code class="inline-code">grudgeUuid</code>. API: <code class="inline-code">api.grudge-studio.com/assets</code>.</li>
+          <li><strong>ObjectStore D1</strong> (<code class="inline-code">grudge-objectstore</code>) — icon search index + catalog metadata. API: <code class="inline-code">objectstore.grudge-studio.com/api/v1/icons/*</code>.</li>
           <li><strong>info.grudge-studio.com</strong> — public browsable UI for all game data (this site).</li>
           <li><strong>api.grudge-studio.com</strong> — live game API consuming ObjectStore data + player state from PostgreSQL.</li>
         </ul>
         <p><strong>GRUDGE UUID links everything:</strong> <code class="inline-code">SKIL-...(skill)</code> → <code class="inline-code">prefab.vfxRef</code> → <code class="inline-code">R2 path</code>. Game client resolves UUIDs via the ObjectStore API at runtime.</p>
+        <p><strong>3D GLB binaries</strong> are a separate stack from ObjectStore JSON — see <a href="#3d-storage">3D Storage &amp; CDN</a> for R2 URLs, D1 <code class="inline-code">asset_registry</code>, and Forge <code class="inline-code">builtin:</code> keys. Do not use <code class="inline-code">/api/v1/asset-registry.json</code> for live GLB lookup.</p>
       </div>
       <h3>Icon &amp; Asset Paths</h3>
       <p>All icon URLs in JSON data use <strong>relative paths</strong> (e.g. <code class="inline-code">/icons/weapons/Sword_01.png</code>). Each file also has a stable <code class="inline-code">ICON-*</code> UUID in <a href="../api/v1/icon-registry.json">icon-registry.json</a>. Browse visually at <a href="../ICON_BROWSER.html">Icon Library</a> or resolve at runtime via <code class="inline-code">grudgeSDK.resolveIconUrl()</code>.</p>
@@ -892,8 +894,70 @@
       </div>
     </section>
 
+    <section id="3d-storage">
+      <h2>3D Storage &amp; CDN Access</h2>
+      <p>Grudge uses <strong>three layers</strong> for 3D content. Use the right tab/API for each — do not mix ObjectStore JSON paths with raw R2 GLB URLs.</p>
+
+      <table>
+        <tr><th>Layer</th><th>Base URL</th><th>What's stored</th><th>Browse / access</th></tr>
+        <tr>
+          <td><strong>R2 CDN</strong></td>
+          <td><code class="inline-code">https://assets.grudge-studio.com/</code></td>
+          <td>GLB/GLTF binaries under <code class="inline-code">models/</code>, <code class="inline-code">builtin/</code>, <code class="inline-code">game-assets/icons/</code></td>
+          <td><a href="../3D_MODELS.html">3D Models Browser</a> · <a href="../3dfx-viewer.html">3DFX Viewer</a> · direct <code class="inline-code">HEAD</code> on CDN URL</td>
+        </tr>
+        <tr>
+          <td><strong>D1 asset registry</strong></td>
+          <td><code class="inline-code">https://api.grudge-studio.com/assets</code></td>
+          <td>Category, R2 key, bone map, animation pack names, file size, deterministic UUID</td>
+          <td><code class="inline-code">GET /assets?limit=50</code> · <code class="inline-code">/assets/category/character</code> · <code class="inline-code">/assets/uuid/:uuid</code></td>
+        </tr>
+        <tr>
+          <td><strong>ObjectStore JSON</strong></td>
+          <td><code class="inline-code">https://objectstore.grudge-studio.com/api/v1/</code></td>
+          <td>Game design registries (<code class="inline-code">models3d.json</code>, <code class="inline-code">rtsModels.json</code>, prefab wiring)</td>
+          <td><a href="#rts-models">RTS Models</a> · <a href="#asset-registries">Asset Registries</a> · this docs sidebar</td>
+        </tr>
+        <tr>
+          <td><strong>Game Forge builtins</strong></td>
+          <td><code class="inline-code">builtin:&lt;key&gt;</code> in scene JSON</td>
+          <td>Editor starter maps/characters; large maps on R2 at <code class="inline-code">/builtin/*.glb</code></td>
+          <td><a href="https://forge.grudge-studio.com">forge.grudge-studio.com</a> · resolves to CDN at runtime</td>
+        </tr>
+      </table>
+
+      <h3>R2 key layout (3D models)</h3>
+      <pre><code>models/characters/&lt;name&gt;.glb     — rigged humanoids (Mixamo / grudge6)
+models/environments/&lt;name&gt;.glb  — maps, arenas, terrain GLBs
+models/weapons/&lt;name&gt;.glb       — attachable weapon meshes
+models/animations/&lt;name&gt;.glb    — standalone animation clips
+models/buildings/&lt;name&gt;.glb      — structures
+builtin/&lt;name&gt;.glb              — Game Forge editor starters (some CDN-only)</code></pre>
+
+      <h3>Animation &amp; mesh wiring</h3>
+      <p>Character GLBs in <code class="inline-code">models/characters/</code> get default animation packs in D1: <code class="inline-code">glocomotion</code>, <code class="inline-code">glocomotion_combat</code>, <code class="inline-code">gestures_basic</code>. Bone map is detected from filename/path (<code class="inline-code">mixamo</code>, <code class="inline-code">bip001</code> for grudge6, <code class="inline-code">kaykit</code>). Weapons declare <code class="inline-code">attachmentProfile</code> (<code class="inline-code">main_hand</code>, <code class="inline-code">off_hand</code>, <code class="inline-code">ranged_2h</code>) and universal skeleton compatibility.</p>
+      <p>grudge6 race characters use <strong>FBX on CDN</strong> (not GLB) for material fidelity — see RTS-Grudge <code class="inline-code">FactionCharacterRegistry</code>. ObjectStore <code class="inline-code">prefab.modelRef</code> points at registry UUIDs; games resolve UUID → R2 URL via the asset API or icon resolver.</p>
+
+      <h3>Upload pipeline (local → R2 → D1)</h3>
+      <p>Run from <code class="inline-code">RTS-Grudge</code> after placing files or auditing <code class="inline-code">Documents</code>:</p>
+      <pre><code># Audit + upload + purge local copies (≤50 MB default)
+npx tsx scripts/audit-documents-assets.ts --from-json scan.ndjson --upload --purge --priority
+
+# Seed Cloudflare D1 asset_registry
+npx tsx scripts/seed-d1.ts
+
+# Bulk upload from client/public/models (fleet repo)
+npx tsx scripts/upload-to-r2.ts
+npx tsx scripts/seed-d1.ts</code></pre>
+      <div class="tip">
+        <div class="tip-title">June 2026 migration (in progress)</div>
+        <p>~2,200 local GLB/GLTF files under <code class="inline-code">Documents</code> are deduped by MD5 hash, uploaded to <code class="inline-code">assets.grudge-studio.com</code>, registered in D1 via <code class="inline-code">RTS-Grudge/scripts/seed-d1.ts</code>, and purged from disk after CDN <code class="inline-code">HEAD</code> verification. Pipeline script: <code class="inline-code">audit-documents-assets.ts</code>. Live examples: <code class="inline-code">builtin/map-underground-wars.glb</code>, <code class="inline-code">models/weapons/bow_23.glb</code>.</p>
+      </div>
+    </section>
+
     <section id="maps-terrain">
       <h2>Maps & Terrain</h2>
+      <p>2D tile maps and biome presets are JSON here. Full 3D arena/map GLBs (e.g. <code class="inline-code">map-underground-wars</code>) are on R2 under <code class="inline-code">builtin/</code> and referenced in Game Forge as <code class="inline-code">builtin:&lt;key&gt;</code> — see <a href="#3d-storage">3D Storage &amp; CDN</a>.</p>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -928,6 +992,7 @@
 
     <section id="animations">
       <h2>Animations</h2>
+      <p><code class="inline-code">animations.json</code> defines clip names, blend rules, and state-machine wiring. Actual Mixamo / combat GLB clips live on R2 at <code class="inline-code">models/animations/*.glb</code> and are indexed in D1 — see <a href="#3d-storage">3D Storage &amp; CDN</a>.</p>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -935,7 +1000,7 @@
           <span class="endpoint-url">/api/v1/animations.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Animation system v2.0 — 18 common anims, transition rules, blend config.</p>
+          <p class="endpoint-desc">Animation system v2.0 — 18 common anims, transition rules, blend config. Resolve binary clips via D1 <code class="inline-code">/assets/category/animation</code>.</p>
         </div>
       </div>
 
@@ -1114,6 +1179,7 @@
 
     <section id="asset-registries">
       <h2>Asset Registries</h2>
+      <p>JSON catalogs for <strong>2D icons, sprites, VFX, and UI</strong>. For live 3D GLB binaries use <a href="#3d-storage">3D Storage &amp; CDN</a> (<code class="inline-code">assets.grudge-studio.com</code> + <code class="inline-code">api.grudge-studio.com/assets</code>) — not this section.</p>
 
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -1121,7 +1187,7 @@
           <span class="endpoint-url">/api/v1/asset-registry.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Master asset registry — aggregated index of all assets served by ObjectStore across all categories.</p>
+          <p class="endpoint-desc">ObjectStore master index (sprites, icons, paths) — <strong>not</strong> the Cloudflare D1 <code class="inline-code">asset_registry</code> table. For 3D model UUID → CDN URL, query <code class="inline-code">GET https://api.grudge-studio.com/assets/uuid/:uuid</code>.</p>
         </div>
       </div>
 
@@ -1168,6 +1234,11 @@
 
     <section id="rts-models">
       <h2>RTS Models</h2>
+      <p>Two registries serve RTS 3D content — use both, for different purposes:</p>
+      <ul>
+        <li><strong>ObjectStore</strong> <code class="inline-code">/api/v1/rtsModels.json</code> — design-time paths and prefab wiring for the RTS game mode.</li>
+        <li><strong>Live D1 + R2</strong> <code class="inline-code">api.grudge-studio.com/assets</code> — production GLB binaries on CDN with searchable metadata (category, bone map, animation packs).</li>
+      </ul>
 
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -1175,7 +1246,17 @@
           <span class="endpoint-url">/api/v1/rtsModels.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">RTS-specific 3D model registry — buildings, units, and terrain objects for the real-time strategy game mode.</p>
+          <p class="endpoint-desc">RTS-specific 3D model registry — buildings, units, and terrain objects for the real-time strategy game mode. JSON only; resolve GLB URLs via <a href="#3d-storage">3D Storage</a>.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">https://api.grudge-studio.com/assets/category/environment</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Live D1 index of environment GLBs (maps, arenas). Each row includes <code class="inline-code">r2_key</code> → <code class="inline-code">https://assets.grudge-studio.com/{r2_key}</code>.</p>
         </div>
       </div>
     </section>

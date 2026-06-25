@@ -75,8 +75,64 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 | Field | Value |
 |-------|-------|
 | **Scope** | GLB/FBX/texture files in RTS-Grudge pipeline |
-| **Algorithm** | UUID v5 from R2 key (same idea as `ICON-*`, different namespace) |
-| **API** | `GET https://api.grudge-studio.com/assets?limit=5` |
+| **Algorithm** | `sha1("grudge-asset:" + r2Key)` → UUID (same stable-key idea as `ICON-*`) |
+| **D1 database** | `grudge-assets-db` · table `asset_registry` |
+| **R2 bucket** | `grudge-assets` → `https://assets.grudge-studio.com/{r2Key}` |
+| **API** | `GET https://api.grudge-studio.com/assets?limit=50` |
+| **By category** | `GET /assets/category/character` · `weapon` · `environment` · `animation` |
+| **By UUID** | `GET /assets/uuid/{grudgeUuid}` |
+
+**Do not confuse with** ObjectStore `api/v1/asset-registry.json` — that is the JSON game-design index on `objectstore.grudge-studio.com`, not the live D1 search API.
+
+---
+
+## 3D GLB upload pipeline (June 2026)
+
+Migrate local `.glb`/`.gltf` from disk → R2 → D1 → delete local copy after CDN verify.
+
+```bash
+cd RTS-Grudge
+
+# 1. Scan Documents (or any folder) → NDJSON manifest
+#    agent-tools/scan-documents-glb.ps1
+
+# 2. Audit, classify, upload missing, purge verified locals
+npx tsx scripts/audit-documents-assets.ts \
+  --from-json path/to/documents-glb-scan.ndjson \
+  --upload --purge --priority --max-mb 50
+
+# 3. Register in D1
+npx tsx scripts/seed-d1.ts
+
+# 4. Fleet repo bulk upload (client/public/models)
+npx tsx scripts/upload-to-r2.ts
+npx tsx scripts/seed-d1.ts
+```
+
+### R2 key → game use
+
+| Path prefix | Category | Animation packs (D1) | Browse |
+|-------------|----------|----------------------|--------|
+| `models/characters/` | character | glocomotion, glocomotion_combat, gestures_basic | [3D_MODELS.html](../3D_MODELS.html) |
+| `models/environments/` | environment | — | Game Forge `builtin:map-*` or direct CDN |
+| `models/weapons/` | weapon | universal skeleton list | 3D Models / Forge attach |
+| `models/animations/` | animation | mixamo, rts_toon, generic | paired with character bone map |
+| `builtin/` | environment (Forge) | — | [forge.grudge-studio.com](https://forge.grudge-studio.com) |
+
+### Verification
+
+```bash
+# CDN binary
+curl -sI https://assets.grudge-studio.com/builtin/map-underground-wars.glb | head -3
+
+# D1 registry (after worker deploy)
+curl -s "https://api.grudge-studio.com/assets/category/character?limit=5"
+
+# ObjectStore design JSON (prefab wiring)
+curl -s https://objectstore.grudge-studio.com/api/v1/models3d.json | jq '.total // .models | length'
+```
+
+Full access matrix: [docs/index.html#3d-storage](./index.html#3d-storage)
 
 ---
 
