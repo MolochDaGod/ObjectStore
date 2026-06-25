@@ -76,8 +76,11 @@
         "Assets/!MAP Assets/Forge/Models/Anvil.fbx"
       ],
       "exportScript": "scripts/export-ummorpg-benches.mjs --unity",
-      "r2Match": null,
-      "glbProductionMatch": null
+      "r2Match": {
+        "r2Key": "game-assets/environment/benches/ummorpg/legion-workbench.glb",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/legion-workbench.glb"
+      },
+      "glbProductionMatch": "legion-workbench.glb"
     },
     {
       "id": "fabled-workbench",
@@ -121,8 +124,11 @@
       "childObjectCount": 19,
       "preferred": true,
       "note": "Original Grudge Warlords uMMORPG race housing workbench — prefer over voxel GLB props",
-      "r2Match": null,
-      "glbProductionMatch": null
+      "r2Match": {
+        "r2Key": "game-assets/environment/benches/ummorpg/fabled-workbench.glb",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/fabled-workbench.glb"
+      },
+      "glbProductionMatch": "fabled-workbench.glb"
     },
     {
       "id": "crusade-workbench",
@@ -166,8 +172,11 @@
       "childObjectCount": 19,
       "preferred": true,
       "note": "Original Grudge Warlords uMMORPG race housing workbench — prefer over voxel GLB props",
-      "r2Match": null,
-      "glbProductionMatch": null
+      "r2Match": {
+        "r2Key": "game-assets/environment/benches/ummorpg/crusade-workbench.glb",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/crusade-workbench.glb"
+      },
+      "glbProductionMatch": "crusade-workbench.glb"
     },
     {
       "id": "workbench",
@@ -194,8 +203,11 @@
       "childObjectCount": 7,
       "preferred": true,
       "note": "Original Grudge Warlords uMMORPG race housing workbench — prefer over voxel GLB props",
-      "r2Match": null,
-      "glbProductionMatch": null
+      "r2Match": {
+        "r2Key": "game-assets/environment/benches/ummorpg/workbench.glb",
+        "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/workbench.glb"
+      },
+      "glbProductionMatch": "workbench.glb"
     }
   ],
   "glbBenches": [
@@ -567,6 +579,12 @@
       "useProductionGlb": false
     }
   ],
+  "componentMeshes": [
+    { "id": "alchemy-table", "station": "alchemy-station", "r2Key": "game-assets/environment/benches/ummorpg/alchemy-table.glb", "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/alchemy-table.glb" },
+    { "id": "anvil-crafting-extended", "station": "anvil", "r2Key": "game-assets/environment/benches/ummorpg/anvil-crafting-extended.glb", "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/anvil-crafting-extended.glb" },
+    { "id": "blacksmith-building", "station": "forge", "r2Key": "game-assets/environment/benches/ummorpg/blacksmith-building.glb", "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/blacksmith-building.glb" },
+    { "id": "forge-anvil", "station": "anvil", "r2Key": "game-assets/environment/benches/ummorpg/forge-anvil.glb", "cdn": "https://assets.grudge-studio.com/game-assets/environment/benches/ummorpg/forge-anvil.glb" }
+  ],
   "stationMapping": {
     "anvil_low": "anvil",
     "stumpanvil": "anvil",
@@ -582,6 +600,8 @@
     "preferSource": "ummorpg",
     "fallbackSource": "production-glb",
     "doNotUploadMonolith": true,
-    "splitStrategy": "export named roots as individual GLBs to R2"
-  }
+    "splitStrategy": "export named roots as individual GLBs to R2",
+    "optimizeBeforeUpload": "gltf-transform optimize --texture-compress webp"
+  },
+  "uploaded": "2026-06-25"
 }

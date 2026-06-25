@@ -70,6 +70,7 @@ const runUpload = runAll || args.has('--upload');
 
 function findFbx2Gltf() {
   const candidates = [
+    path.join(ROOT, 'node_modules', 'fbx2gltf', 'bin', 'Windows_NT', 'FBX2glTF.exe'),
     path.join(ROOT, 'tools', 'bin', 'FBX2glTF-windows-x86_64', 'FBX2glTF-windows-x86_64.exe'),
     'FBX2glTF',
     'fbx2gltf',
@@ -116,14 +117,13 @@ function convertFbxDir(srcDir, outDir, converter) {
     const base = path.basename(f, path.extname(f));
     const outPath = path.join(outDir, `${base}.glb`);
     console.log(`  ${f} → ${path.relative(ROOT, outPath)}`);
-    const r = spawnSync(converter, ['--binary', '--input', inPath, '--output', outDir], { stdio: 'pipe' });
+    const r = spawnSync(converter, ['--binary', '--input', inPath, '--output', outPath], { stdio: 'pipe' });
     if (r.status !== 0) {
       console.error(`  ❌ ${f}: ${r.stderr?.toString().slice(0, 200)}`);
       continue;
     }
-    const produced = fs.readdirSync(outDir).find((x) => x.startsWith(base) && x.endsWith('.glb'));
-    if (produced && produced !== `${base}.glb`) {
-      fs.renameSync(path.join(outDir, produced), outPath);
+    if (!fs.existsSync(outPath)) {
+      console.error(`  ❌ ${f}: expected ${outPath} but file missing`);
     }
   }
 }
@@ -147,14 +147,12 @@ function runConvertStep() {
   if (fs.existsSync(BENCH_FBX_DIR)) {
     convertFbxDir(BENCH_FBX_DIR, BENCH_GLB_DIR, converter);
   }
-  const compDir = path.join(BENCH_GLB_DIR, '_components');
-  fs.mkdirSync(compDir, { recursive: true });
   for (const c of COMPONENT_FBX) {
     if (!fs.existsSync(c.source)) continue;
-    const tmp = path.join(compDir, `${c.slug}.fbx`);
-    fs.copyFileSync(c.source, tmp);
-    convertFbxDir(compDir, BENCH_GLB_DIR, converter);
+    const dest = path.join(BENCH_GLB_DIR, `${c.slug}.fbx`);
+    if (!fs.existsSync(dest)) fs.copyFileSync(c.source, dest);
   }
+  convertFbxDir(BENCH_GLB_DIR, BENCH_GLB_DIR, converter);
 }
 
 function runUploadStep() {
@@ -172,7 +170,7 @@ function runUploadStep() {
     const r2Key = `${R2_PREFIX}/${f}`;
     try {
       execSync(
-        `npx wrangler r2 object put "${r2Key}" --file="${local}" --bucket="${R2_BUCKET}" --content-type="model/gltf-binary"`,
+        `npx wrangler r2 object put "${R2_BUCKET}/${r2Key}" --file="${local}" --content-type="model/gltf-binary" --remote`,
         { stdio: 'pipe', cwd: ROOT, timeout: 120000 }
       );
       uploads.push({
