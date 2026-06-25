@@ -29,8 +29,8 @@
       --transition: 0.18s ease;
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'Spectral SC',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+    html{scroll-behavior:smooth;height:100%;}
+    body{font-family:'Spectral SC',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
     /* Header */
     .site-header{background:linear-gradient(180deg,hsl(225 28% 13%) 0%,hsl(225 30% 8%) 100%);border-bottom:1px solid var(--border-gold);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.5);}
@@ -41,8 +41,8 @@
     .hcount{text-align:center;background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:2px 9px;font-family:'Cinzel',serif;font-size:0.68rem;}
     .hcount strong{display:block;color:var(--gold);font-size:0.9rem;line-height:1.2;}
 
-    /* Layout */
-    .layout{display:flex;height:calc(100vh - 65px);overflow:hidden;}
+    /* Layout — flex fill below header + ObjectStore nav bars */
+    .layout{display:flex;flex:1;min-height:0;overflow:hidden;}
 
     /* Sidebar */
     .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg-mid);border-right:1px solid var(--border);overflow-y:auto;padding:8px 0;}
@@ -63,14 +63,17 @@
     .tier-btn:hover{border-color:var(--gold);color:var(--gold);}
     .tier-btn.active{background:var(--gold);color:#0a0e14;border-color:var(--gold);}
 
-    /* Weapon sub-filter strip */
-    .subfilter-strip{display:none;padding:6px 12px;gap:4px;flex-wrap:wrap;background:var(--bg-mid);border-bottom:1px solid var(--border);}
+    /* Armor / weapon sub-filter strip */
+    .subfilter-strip{display:none;padding:6px 12px;gap:6px;flex-wrap:nowrap;overflow-x:auto;background:var(--bg-mid);border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
     .subfilter-strip.visible{display:flex;}
+    #armorSubfilterStrip{display:none;}
+    #armorSubfilterStrip.visible{display:flex;}
     .sf-btn{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text-muted);font-family:'Cinzel',serif;font-size:0.66rem;cursor:pointer;transition:all var(--transition);white-space:nowrap;}
     .sf-btn:hover{border-color:var(--gold);color:var(--gold);}
     .sf-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
 
     /* Weapon type drill-down grid */
+    #weaponTypeGrid{flex:1;min-height:0;overflow-y:auto;}
     .weapon-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;padding:16px;}
     .weapon-type-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;cursor:pointer;text-align:center;transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:8px;}
     .weapon-type-card:hover{border-color:var(--border-gold-hover);background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.45);}
@@ -206,13 +209,14 @@
     @media(max-width:768px){
       .site-header h1{font-size:1rem;}
       .header-counts,.header-sub{display:none;}
-      .layout{flex-direction:column;height:auto;}
-      .sidebar{width:100%;height:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:5px;border-right:none;border-bottom:1px solid var(--border);}
-      .sidebar-label,.sidebar-divider,.tier-filters{display:none;}
+      .layout{flex-direction:column;}
+      .sidebar{width:100%;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:5px;border-right:none;border-bottom:1px solid var(--border);flex-shrink:0;}
+      .sidebar-label,.sidebar-divider{display:none;}
+      .tier-filters{display:block;padding:0 8px 6px;min-width:max-content;}
       .nav-btn{white-space:nowrap;padding:5px 11px;border-left:none;border-bottom:3px solid transparent;flex-shrink:0;font-size:0.74rem;}
       .nav-btn.active{border-left:none;border-bottom-color:var(--gold);}
-      .main{overflow:visible;}
-      .grid-wrap{overflow-y:visible;padding:8px;}
+      .main{min-height:0;flex:1;}
+      .subfilter-strip.visible{flex-wrap:nowrap;}
       .detail-drawer{width:100%;border-left:none;border-top:1px solid var(--border-gold);}
     }
   </style>
@@ -349,6 +353,29 @@
   </div>
 </div>
 
+<script>
+/* Tab handlers available immediately (module registers real impl when ready) */
+(function () {
+  const pending = [];
+  const names = ['setType','setTier','setSub','onSearch','onSort','loadMore','closeDrawer','selectWeaponType','backToWeaponTypes'];
+  names.forEach((name) => {
+    window[name] = function (...args) {
+      if (window.__catalogApi && window.__catalogApi[name]) {
+        return window.__catalogApi[name](...args);
+      }
+      pending.push([name, args]);
+    };
+  });
+  window.__bindCatalogApi = function (api) {
+    window.__catalogApi = api;
+    while (pending.length) {
+      const [n, a] = pending.shift();
+      api[n](...a);
+    }
+  };
+})();
+</script>
+
 <script type="module">
 import { resolveCatalogIcon } from './utils/icon-resolver.js';
 import { ICON_CDN } from './utils/asset-config.js';
@@ -395,6 +422,52 @@ const WEAPON_TYPES = [
   { key: 'shield',   label: 'Shields',   icon: `${CDN}/icons/pack/weapons/shield_01.png` },
 ];
 
+const WEAPON_CATEGORY_MAP = {
+  swords: 'sword', greatswords: 'sword',
+  axes1h: 'axe', greataxes: 'axe',
+  hammers1h: 'hammer', hammers2h: 'hammer',
+  daggers: 'dagger',
+  bows: 'bow',
+  crossbows: 'crossbow',
+  spears: 'spear',
+  firestaves: 'staff', froststaves: 'staff', holystaves: 'staff',
+  lightningstaves: 'staff', naturestaves: 'staff', staves: 'staff', staff: 'staff',
+  'offhand-tome': 'tome', tome: 'tome',
+  guns: 'gun', gun: 'gun',
+  shields: 'shield', shield: 'shield',
+  scythes: 'scythe', scythe: 'scythe',
+  wands: 'wand', wand: 'wand',
+};
+
+function normalizeWeaponKey(raw) {
+  const s = String(raw || '').toLowerCase().replace(/\s+/g, '');
+  if (!s) return '';
+  if (WEAPON_CATEGORY_MAP[s]) return WEAPON_CATEGORY_MAP[s];
+  if (s.endsWith('s')) {
+    const singular = s.slice(0, -1);
+    if (WEAPON_TYPES.some(w => w.key === singular)) return singular;
+  }
+  return WEAPON_TYPES.some(w => w.key === s) ? s : '';
+}
+
+function restoreListView() {
+  document.getElementById('weaponTypeGrid').style.display = 'none';
+  document.getElementById('weaponBackBar').style.display = 'none';
+  const gridWrap = document.querySelector('.grid-wrap');
+  if (gridWrap) gridWrap.style.display = '';
+}
+
+function showCatalogError(message) {
+  document.getElementById('itemsGrid').innerHTML = `
+    <div class="state-message" style="grid-column:1/-1">
+      <div class="big">⚠️</div>
+      <p>${e(message)}</p>
+      <p style="margin-top:10px;font-size:0.72rem">Sources: ./api/v1/master-*.json</p>
+    </div>`;
+  document.getElementById('resultInfo').textContent = 'Unavailable';
+  document.getElementById('loadMoreWrap').style.display = 'none';
+}
+
 // ─── Bootstrap ────────────────────────────────────────────────────────────
 (async () => {
   const results = await Promise.allSettled(SOURCES.map(s => loadSource(s)));
@@ -428,6 +501,11 @@ const WEAPON_TYPES = [
         hc.appendChild(d);
       });
   }
+
+  if (!allItems.length) {
+    showCatalogError('Could not load the item catalog. Check your connection and refresh the page.');
+    return;
+  }
   applyFilters();
 })();
 
@@ -438,14 +516,18 @@ async function loadSource({ url, key, type, ico }) {
   const raw = data[key] || [];
   return {
     type,
-    items: raw.map(item => ({
-      ...item,
-      _type:    item.type || type,
-      _ico:     ico,
-      _tierNum: parseInt(item.tier) || 1,
-      _subType: (item.subType || item.weaponType || item.category || '').toLowerCase(),
-      _slotType: item.slotType || '',
-    }))
+    items: raw.map(item => {
+      const rawCat = item.subType || item.weaponType || item.category || '';
+      return {
+        ...item,
+        _type:      item.type || type,
+        _ico:       ico,
+        _tierNum:   parseInt(item.tier) || 1,
+        _subType:   String(rawCat).toLowerCase(),
+        _weaponKey: type === 'weapon' ? normalizeWeaponKey(rawCat) : '',
+        _slotType:  item.slotType || '',
+      };
+    })
   };
 }
 
@@ -456,7 +538,7 @@ function applyFilters() {
     if (activeType !== 'all' && item._type !== activeType) return false;
     if (activeTier !== 'all' && item._tierNum !== parseInt(activeTier)) return false;
     if (activeSub !== 'all' && activeType === 'weapon') {
-      if (!(item._subType||'').includes(activeSub)) return false;
+      if (item._weaponKey !== activeSub) return false;
     }
     if (activeSub !== 'all' && activeType === 'armor') {
       if ((item._slotType||'') !== activeSub) return false;
@@ -691,20 +773,18 @@ function closeDrawer() {
 
 // ─── Controls ─────────────────────────────────────────────────────────────
 function setType(type) {
+  closeDrawer();
   activeType = type; activeSub = 'all';
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
   document.querySelectorAll('.sf-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === 'all'));
   document.getElementById('armorSubfilterStrip').classList.toggle('visible', type === 'armor');
 
-  // Weapon drill-down: show type grid when Weapons selected
   if (type === 'weapon') {
     weaponViewMode = 'types';
     showWeaponTypeGrid();
-    return; // don't call applyFilters yet
+    return;
   }
-  // Hide weapon UI for other types
-  document.getElementById('weaponTypeGrid').style.display = 'none';
-  document.getElementById('weaponBackBar').style.display = 'none';
+  restoreListView();
   applyFilters();
 }
 
@@ -715,10 +795,14 @@ function showWeaponTypeGrid() {
   backBar.style.display = 'none';
 
   // Count items per weapon type
-  const weapons = allItems.filter(i => i._type === 'weapon');
+  let weapons = allItems.filter(i => i._type === 'weapon');
+  if (activeTier !== 'all') {
+    const tierNum = parseInt(activeTier);
+    weapons = weapons.filter(i => i._tierNum === tierNum);
+  }
   const counts = {};
   WEAPON_TYPES.forEach(wt => {
-    counts[wt.key] = weapons.filter(i => (i._subType||'').includes(wt.key)).length;
+    counts[wt.key] = weapons.filter(i => i._weaponKey === wt.key).length;
   });
 
   let html = '<div class="weapon-type-grid">';
@@ -755,6 +839,10 @@ function backToWeaponTypes() {
 function setTier(tier) {
   activeTier = tier;
   document.querySelectorAll('.tier-btn').forEach(b => b.classList.toggle('active', b.dataset.tier === tier));
+  if (activeType === 'weapon' && weaponViewMode === 'types') {
+    showWeaponTypeGrid();
+    return;
+  }
   applyFilters();
 }
 function setSub(sub) {
@@ -763,7 +851,18 @@ function setSub(sub) {
   applyFilters();
 }
 let _st;
-function onSearch() { clearTimeout(_st); _st = setTimeout(()=>{ searchQ = document.getElementById('searchBox').value; applyFilters(); }, 200); }
+function onSearch() {
+  clearTimeout(_st);
+  _st = setTimeout(() => {
+    searchQ = document.getElementById('searchBox').value;
+    if (searchQ && activeType === 'weapon' && weaponViewMode === 'types') {
+      restoreListView();
+      activeSub = 'all';
+      weaponViewMode = 'list';
+    }
+    applyFilters();
+  }, 200);
+}
 function onSort(v) { sortKey = v; applyFilters(); }
 
 // ─── Escape helper ────────────────────────────────────────────────────────
@@ -777,7 +876,7 @@ document.addEventListener('keydown', ev => {
   if (ev.key==='Escape') closeDrawer();
 });
 
-Object.assign(window, {
+window.__bindCatalogApi({
   setType, setTier, setSub, onSearch, onSort, loadMore, closeDrawer,
   selectWeaponType, backToWeaponTypes,
 });
