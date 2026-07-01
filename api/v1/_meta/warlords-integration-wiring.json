@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "generated": "2026-07-01T00:00:00.000Z",
   "description": "Grudge Warlords integration map — WCS, accounts, Puter GS app, home islands, ObjectStore",
-  "startHere": "https://molochdagod.github.io/ObjectStore/api/v1/games-library.json",
+  "startHere": "https://objectstore.grudge-studio.com/api/v1/games-library.json",
   "auth": {
     "grudgeId": "https://id.grudge-studio.com",
     "identityApi": "https://api.grudge-studio.com",
@@ -42,7 +42,7 @@
     }
   },
   "homeIsland": {
-    "contract": "https://molochdagod.github.io/ObjectStore/api/v1/home-island-contract.json",
+    "contract": "https://objectstore.grudge-studio.com/api/v1/home-island-contract.json",
     "saveOrder": [
       "1. PATCH /api/island/state (Railway Postgres)",
       "2. puter.kv grudge:island:{id}:state (user cache)",
@@ -54,7 +54,10 @@
       "3. localStorage"
     ],
     "scale3dM": 1024,
-    "scaleRtsM": 200
+    "scaleRtsM": 200,
+    "specApi": "GET /api/island/spec",
+    "specVersion": "2.0.0",
+    "colyseusRoomSizeM": 1024
   },
   "objectStore": {
     "runtimeIndex": "games-library.json",
@@ -68,7 +71,8 @@
     "natureScatterPerf": "RTS foliage uses per-instance clones; InstancedMesh + wind sway planned",
     "rtsHeightmap3d": "complete — see MISSION-01-rts-heightmap-3d.json",
     "natureScatterExport": "complete — see MISSION-02-nature-scatter-export.json",
-    "scaleUnification": "Colyseus room 400m vs 3D 1024m — use home-island-contract.json when placing entities",
+    "scaleUnification": "resolved — Colyseus HOME_ISLAND_SYNC_SIZE_M = 1024m (see home-island-contract.json)",
+    "regrowRegionsBackfill": "pending — backfill regrowRegions on legacy home_islands.state rows",
     "armorPrefabs": "planned — armor catalog live in master-armor.json only",
     "economySpiderChart": "complete — economy-coverage.json + docs/economy-spider.html (MISSION-03)",
     "economyRecipeGaps": "recipe chain ~2% — MISSION-05 pending harvest↔material expansion"

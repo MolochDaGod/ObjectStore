@@ -1,0 +1,137 @@
+{
+  "version": "1.1.0",
+  "generated": "2026-07-01T23:30:00.000Z",
+  "description": "Grudge Studio fleet ONE TRUTH — canonical domains, API roles, contracts, and probe manifest",
+  "ssot": {
+    "code": "GrudgeBuilder/shared/fleet/manifest.ts",
+    "storage": "GrudgeBuilder/shared/fleet/storage.ts",
+    "probes": "GrudgeBuilder/shared/fleet/truthProbes.ts",
+    "vercelSync": "GrudgeBuilder/scripts/sync-vercel-fleet.mjs",
+    "verify": "GrudgeBuilder/scripts/verify-fleet-truth.mjs",
+    "grudge6FleetUrls": "grudge6/lib/fleet-urls/src/index.ts"
+  },
+  "services": [
+    {
+      "id": "grudge-id",
+      "role": "identity",
+      "domain": "id.grudge-studio.com",
+      "proxy": "/api/auth/:path*",
+      "notes": "OAuth gateway — catch-all after Railway auth exceptions"
+    },
+    {
+      "id": "identity-api",
+      "role": "identity",
+      "domain": "api.grudge-studio.com",
+      "proxy": "/api/:path*",
+      "notes": "The-ENGINE identity catch-all — session exchange, scoped profile"
+    },
+    {
+      "id": "game-data",
+      "role": "game-data",
+      "domain": "grudge-api-production-0d46.up.railway.app",
+      "proxy": "/api/characters|wallet|island|account|…",
+      "database": "PostgreSQL (Railway)",
+      "notes": "Characters, islands, inventory, wallet — Postgres SSOT"
+    },
+    {
+      "id": "objectstore",
+      "role": "objectstore",
+      "domain": "objectstore.grudge-studio.com",
+      "proxy": "/api/objectstore/:path*",
+      "database": "D1 + R2",
+      "notes": "JSON catalogs — master-items, recipes, games-library"
+    },
+    {
+      "id": "assets-cdn",
+      "role": "assets",
+      "domain": "assets.grudge-studio.com",
+      "proxy": "/api/assets/:path*",
+      "storage": "R2 grudge-assets",
+      "notes": "Models, textures, icons, animations"
+    },
+    {
+      "id": "ai-gateway",
+      "role": "ai",
+      "domain": "ai.grudge-studio.com",
+      "proxy": "/api/ai/:path*"
+    },
+    {
+      "id": "warlords-client",
+      "role": "hub",
+      "domains": ["grudgewarlords.com", "client.grudge-studio.com", "warlord3d.grudge-studio.com"],
+      "deploy": "Vercel (GrudgeBuilder)",
+      "notes": "Same-origin /api/* rewrites to fleet backends"
+    },
+    {
+      "id": "grudge6-world",
+      "role": "hub",
+      "domains": ["character.grudge-studio.com", "forge.grudge-studio.com"],
+      "deploy": "Vercel / character-viewer proxy",
+      "notes": "grudge-game /world — must use objectstore.grudge-studio.com for JSON catalogs"
+    }
+  ],
+  "contracts": [
+    {
+      "id": "home-island-spec",
+      "version": "2.0.0",
+      "code": "GrudgeBuilder/shared/definitions/homeIslandSpec.ts",
+      "liveApi": "GET https://grudge-api-production-0d46.up.railway.app/api/island/spec",
+      "browserProxy": "/api/island/spec",
+      "objectStoreMirror": "api/v1/home-island-contract.json"
+    },
+    {
+      "id": "home-island-wiring",
+      "path": "api/v1/_meta/warlords-integration-wiring.json"
+    },
+    {
+      "id": "games-library",
+      "path": "api/v1/games-library.json"
+    },
+    {
+      "id": "master-items",
+      "path": "api/v1/master-items.json"
+    }
+  ],
+  "probes": [
+    "fleet-manifest",
+    "supabase-health",
+    "auth-verify",
+    "game-characters",
+    "game-account",
+    "game-island-spec",
+    "os-items",
+    "os-recipes",
+    "os-games-library",
+    "os-fleet-truth"
+  ],
+  "railwayAuthPaths": [
+    "popup-token",
+    "grudge-bridge",
+    "session/exchange",
+    "puter",
+    "guest",
+    "login",
+    "register",
+    "me",
+    "verify",
+    "wallet"
+  ],
+  "deprecated": {
+    "hosts": ["molochdagod.github.io", "grudge-objectstore.pages.dev"],
+    "mirrorOnly": "https://molochdagod.github.io/ObjectStore/api/v1",
+    "replacement": "https://objectstore.grudge-studio.com/api/v1"
+  },
+  "frontendDomains": {
+    "grudgewarlords.com": "Grudge Warlords primary",
+    "client.grudge-studio.com": "Studio client alias",
+    "wcs.grudge-studio.com": "WCS character shell",
+    "forge.grudge-studio.com": "RTS-Grudge / Studio Forge",
+    "character.grudge-studio.com": "GCS character studio"
+  },
+  "verify": {
+    "cli": "npx tsx scripts/verify-fleet-truth.mjs --mode cli",
+    "browser": "npx tsx scripts/verify-fleet-truth.mjs --mode browser",
+    "grudge6FleetUrls": "node scripts/validate-fleet-urls.mjs",
+    "minScore": 85
+  }
+}

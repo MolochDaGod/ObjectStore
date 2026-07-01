@@ -77,7 +77,7 @@ export default {
       if (url.pathname === '/api/v1/catalog' && method === 'GET') {
         return corsResponse(env, await serveStaticJson('catalog', env), origin);
       }
-      const staticJsonMatch = url.pathname.match(/^\/api\/v1\/([a-zA-Z0-9_.-]+)\.json$/);
+      const staticJsonMatch = url.pathname.match(/^\/api\/v1\/(.+)\.json$/);
       if (staticJsonMatch && method === 'GET') {
         return corsResponse(env, await serveStaticJson(staticJsonMatch[1], env), origin);
       }
@@ -521,9 +521,10 @@ async function handleGameDataRoutes(url, method, env) {
   return json({ error: 'Not found' }, 404);
 }
 
-/** Serve static /api/v1/:name.json — R2 cache first, then canonical Vercel upstream */
+/** Serve static /api/v1/:name.json (supports nested paths like _meta/fleet-truth) */
 async function serveStaticJson(name, env) {
-  const cacheKey = `static-json/${name}.json`;
+  const relativePath = String(name).replace(/^\/+/, '');
+  const cacheKey = `static-json/${relativePath}.json`;
   const cached = await env.BUCKET.get(cacheKey);
   if (cached) {
     return new Response(cached.body, {
@@ -536,7 +537,7 @@ async function serveStaticJson(name, env) {
   }
 
   const base = (env.STATIC_JSON_BASE || STATIC_JSON_BASE).replace(/\/$/, '');
-  const sourceUrl = `${base}/${name}.json`;
+  const sourceUrl = `${base}/${relativePath}.json`;
   try {
     const resp = await fetch(sourceUrl);
     if (!resp.ok) {
