@@ -172,7 +172,34 @@ console.log('==========================');
 console.log(`Prefabs: ${prefabs.total}`);
 console.log(`T0: ${t0Actual} (expected ${t0Expected})`);
 console.log(`With skills: ${prefabs.totals?.withSkills ?? 'n/a'}`);
+function normSigName(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const sigMismatches = prefabs.prefabs.filter((p) => {
+  if (p.tier < 1 || p.weaponType === 'TOOL') return false;
+  const ult = p.skills.slots?.find((s) => s.type === 'ultimate');
+  const expected = parseAbilityName(p.signature);
+  if (!expected || !ult?.signature) return false;
+  return normSigName(ult.signature) !== normSigName(expected);
+});
+if (sigMismatches.length > 20) {
+  warnings.push(
+    `Slot 4 signature mismatches: ${sigMismatches.length} (e.g. ${sigMismatches.slice(0, 2).map((p) => `${p.name}: want ${parseAbilityName(p.signature)}, got ${p.skills.slots?.find((s) => s.type === 'ultimate')?.signature}`).join('; ')})`,
+  );
+}
+
+function parseAbilityName(str) {
+  if (!str) return null;
+  return String(str).replace(/\s*\([^)]*\)\s*/g, ' ').trim().split(/\s{2,}/)[0].trim() || null;
+}
+
 console.log(`Slot 1 wrong (not exactly 1 attack): ${badSlot1.length}`);
+console.log(`Slot 4 signature mismatches: ${sigMismatches.length}`);
 console.log(`T1+ missing skills: ${noSkills.length}`);
 console.log(`TOOLS (gather, no combat skills): ${prefabs.prefabs.filter((p) => p.weaponType === 'TOOL').length}`);
 console.log(`Cast times: ${castSet}/${skillRows} (${castPct}%)`);

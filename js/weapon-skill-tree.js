@@ -456,9 +456,14 @@
   function pickSignature(ultimateSkills, variant) {
     const pool = ultimateSkills || [];
     if (!pool.length) return [];
-    const sigRaw = variant?.signatureAbility;
+    const sigRaw = variant?.signatureAbility || variant?.signature;
     if (sigRaw) {
       const sigKey = normalizeSkillKey(parseAbilityName(sigRaw));
+      const sigSlug = sigKey.replace(/\s+/g, '_');
+      const exact = pool.find((sk) => normalizeSkillKey(sk.name) === sigKey);
+      if (exact) return [exact];
+      const idMatch = pool.find((sk) => sk.id?.endsWith(`_${sigSlug}`));
+      if (idMatch) return [idMatch];
       const matched = pool.find((sk) => skillNameMatches(sk.name, [sigKey]));
       if (matched) return [matched];
     }
@@ -859,6 +864,65 @@
     return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
+  /** Paired loadout controls — preview mainhand + shield/tome with F toggle */
+  function renderPairedLoadoutBar(opts = {}) {
+    const offhand = opts.pairedOffhand || 'none';
+    const toggleOn = opts.offhandToggleActive === true;
+    const shieldKey = opts.shieldKey || 'kite';
+    const tomeKey = opts.tomeKey || 'elemental';
+
+    let html = '<div class="wst-paired-bar">';
+    html += '<span class="wst-variant-label">Paired off-hand:</span>';
+    html += '<div class="wst-variant-bar">';
+    for (const [id, label] of [
+      ['none', 'None'],
+      ['shield', 'Shield'],
+      ['tome', 'Tome (1H)'],
+    ]) {
+      html += `<button type="button" class="wst-variant-btn${offhand === id ? ' active' : ''}" data-wst-paired="${esc(id)}">${esc(label)}</button>`;
+    }
+    html += '</div>';
+
+    if (offhand === 'shield') {
+      const def = getTypeDef('SHIELD');
+      html += '<div class="wst-variant-bar wst-paired-sub">';
+      for (const [key, variant] of Object.entries(def?.shieldTypes || {})) {
+        html += `<button type="button" class="wst-variant-btn${key === shieldKey ? ' active' : ''}" data-wst-paired-shield="${esc(key)}">${esc(variant.name)}</button>`;
+      }
+      html += '</div>';
+    }
+    if (offhand === 'tome') {
+      const def = getTypeDef('TOME');
+      html += '<div class="wst-variant-bar wst-paired-sub">';
+      for (const [key, mode] of Object.entries(def?.couplingModes || {})) {
+        html += `<button type="button" class="wst-variant-btn${key === tomeKey ? ' active' : ''}" data-wst-paired-tome="${esc(key)}">${esc(mode.name)}</button>`;
+      }
+      html += '</div>';
+    }
+
+    if (offhand !== 'none') {
+      html += `<label class="wst-paired-toggle"><input type="checkbox" id="pairedOffhandToggle" ${toggleOn ? 'checked' : ''}>
+        <kbd>${OFFHAND_TOGGLE_KEY}</kbd> active — off-hand replaces slots 1–3</label>`;
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function buildPairedOffhandItem(mode, opts = {}) {
+    if (mode === 'shield') {
+      const key = opts.shieldKey || 'kite';
+      const def = getShieldVariant(key);
+      return { name: def?.name || 'Shield', category: 'shields', id: `preview-shield-${key}`, shieldType: key };
+    }
+    if (mode === 'tome') {
+      const key = opts.tomeKey || 'elemental';
+      const def = getTomeCoupling(key);
+      const schoolMap = { elemental: 'fire', heal: 'holy', buff: 'nature', ranged: 'arcane' };
+      return { name: def?.name || 'Tome', category: 'fireTomes', id: `preview-tome-${key}`, school: schoolMap[key] || 'fire' };
+    }
+    return null;
+  }
+
   function renderOffhandVariantBar(typeId, opts = {}) {
     const def = getTypeDef(typeId);
     if (!def) return '';
@@ -984,6 +1048,8 @@
     renderPassiveColumn,
     renderOffhandModifierColumns,
     renderOffhandVariantBar,
+    renderPairedLoadoutBar,
+    buildPairedOffhandItem,
     renderModifierBanner,
     renderEquippedWeaponPanel,
     getHotbarSkills,

@@ -31,8 +31,10 @@ export function skillNameMatches(allowedKeys, skillName, weaponType, aliases) {
     const aliased = resolveAlias(aliases, weaponType, raw);
     if (key === aliased || key.includes(aliased) || aliased.includes(key)) return true;
     const tokens = (s) => s.split(' ').filter((t) => t.length > 3);
-    const overlap = [...new Set([...tokens(raw), ...tokens(aliased)])].some((t) => tokens(key).includes(t));
-    if (overlap) return true;
+    const rawTokens = [...new Set([...tokens(raw), ...tokens(aliased)])];
+    const keyTokens = tokens(key);
+    const overlap = rawTokens.filter((t) => keyTokens.includes(t));
+    if (overlap.length >= 2 || (overlap.length === 1 && rawTokens.length === 1 && keyTokens.length === 1)) return true;
   }
   return false;
 }
@@ -56,7 +58,24 @@ export function pickSignature(ultimateSkills, variantMeta, weaponType, aliases) 
 
   const sigRaw = variantMeta?.signatureAbility || variantMeta?.signature;
   if (sigRaw) {
-    const sigKey = normalizeKey(parseAbilityName(sigRaw));
+    const sigName = parseAbilityName(sigRaw);
+    const sigKey = normalizeKey(sigName);
+    const sigSlug = sigKey.replace(/\s+/g, '_');
+
+    const exact = pool.find((sk) => normalizeKey(sk.name) === sigKey);
+    if (exact) return exact;
+
+    const aliased = resolveAlias(aliases, weaponType, sigKey);
+    const aliasExact = pool.find(
+      (sk) => normalizeKey(sk.name) === normalizeKey(aliased) || normalizeKey(sk.name) === aliased,
+    );
+    if (aliasExact) return aliasExact;
+
+    const idMatch = pool.find(
+      (sk) => sk.id === `${weaponType.toLowerCase()}_${sigSlug}` || sk.id?.endsWith(`_${sigSlug}`),
+    );
+    if (idMatch) return idMatch;
+
     const matched = pool.find((sk) => skillNameMatches(new Set([sigKey]), sk.name, weaponType, aliases));
     if (matched) return matched;
   }

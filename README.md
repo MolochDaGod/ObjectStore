@@ -96,8 +96,10 @@ Reference: `/api/v1/_meta/weapon-loadout-pattern.json` · prefab field `loadout`
 ### Build & validate
 
 ```bash
-npm run enrich:weapon-skills    # UUIDs + resourceCost for SHIELD/TOME nested skills
-npm run build:weapon-pipeline   # build prefabs + run audit (must pass before deploy)
+npm run enrich:weapon-skills       # UUIDs + resourceCost for SHIELD/TOME nested skills
+npm run enrich:t0-starter-skills   # T0 three-slot starter skills into master-weaponSkills
+npm run enrich:variant-signatures  # named variant signatures → slot 4 ultimate pools
+npm run build:weapon-pipeline      # all enrich steps + prefabs + audit
 ```
 
 Outputs:
