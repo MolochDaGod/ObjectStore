@@ -26,13 +26,22 @@ Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static d
 - `POST /v1/convert` — 3D model conversion pipeline (Durable Object)
 
 ### Static Game Data (api/v1/)
-Published via GitHub Pages. These are the CANONICAL definitions:
-- `races.json`, `classes.json`, `attributes.json`, `factions.json`
-- `weapons.json`, `armor.json`, `materials.json`, `consumables.json`
-- `weaponSkills.json`, `enemies.json`, `bosses.json`
-- `effectSprites.json`, `abilityEffects.json`, `sprites2d.json`, `spriteMaps.json`
-- `professions.json`, `skillTrees.json`, `items-database.json`
-- `game-data-manifest.json` — **start here** — index of all datasets + cross-link graph
+Published via GitHub Pages.
+
+**Runtime index (start here):** `games-library.json` → `game-data-manifest.json`
+
+**Canonical runtime (weapons, stats, items):**
+- `master-weapon-prefabs.json`, `master-weaponSkills.json`, `master-attributes.json`
+- `weapon-stat-bridge.json`, `t0-weapons.json`, `master-items.json`
+- `master-recipes.json`, `master-materials.json`, `master-harvest-nodes.json`
+
+**Design layer (editors, not runtime ITEM-*):** `weapons.json`, `armor.json`
+
+**World / content:** `races.json`, `classes.json`, `factions.json`, `enemies.json`, `bosses.json`, …
+
+**Archived (stubs at old paths → full data in `api/v1/archive/`):**
+- `attributes.json`, `weaponSkills.json`, `items-database.json`, `master-t0-items.json`
+- Index: `api/v1/archive/manifest.json`
 - `master-items.json` — items with GRUDGE UUIDs, tier expansion (T1-T8), recipe + icon links
 - `master-recipes.json` — recipes with GRUDGE UUIDs, material references
 - `master-materials.json` — materials with GRUDGE UUIDs (incl. harvest drops)

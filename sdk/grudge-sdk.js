@@ -688,9 +688,12 @@ class GrudgeSDK {
   async getFactions() { return this.fetch('/api/v1/factions.json'); }
   async getFaction(factionId) { const d = await this.getFactions(); return d.factions[factionId] || null; }
 
-  // ── Attributes ──
-  async getAttributes() { return this.fetch('/api/v1/attributes.json'); }
-  async getAttribute(attributeId) { const d = await this.getAttributes(); return d.attributes.find(a => a.id === attributeId) || null; }
+  // ── Attributes (canonical: master-attributes.json) ──
+  async getAttributes() { return this.getMasterAttributes(); }
+  async getAttribute(attributeId) {
+    const d = await this.getMasterAttributes();
+    return d?.attributes?.find((a) => a.id === attributeId || a.abbrev === attributeId) || null;
+  }
 
   // ── Weapon Skills (17 types, 207 skills with enhanced combat data) ──
   async getWeaponSkills() { return this.fetch('/api/v1/master-weaponSkills.json'); }
@@ -1064,6 +1067,7 @@ class GrudgeSDK {
   async getHarvestNodes()       { return this.fetch('/api/v1/master-harvest-nodes.json'); }
   async getMasterAttributes()   { return this.fetch('/api/v1/master-attributes.json'); }
   async getWeaponStatBridge()   { return this.fetch('/api/v1/weapon-stat-bridge.json'); }
+  async getArchiveManifest()    { return this.fetch('/api/v1/archive/manifest.json'); }
   async getMasterArtifacts()  { return this.fetch('/api/v1/master-artifacts.json'); }
   /** Resolve a single item/artifact by uuid, slug, or base name. */
   async getItemByIdOrUuid(idOrUuid) {
@@ -1131,10 +1135,13 @@ class GrudgeSDK {
       objectStore: {
         weapons: `${this.baseUrl}/api/v1/weapons.json`, armor: `${this.baseUrl}/api/v1/armor.json`,
         materials: `${this.baseUrl}/api/v1/materials.json`, consumables: `${this.baseUrl}/api/v1/consumables.json`,
-        skills: `${this.baseUrl}/api/v1/skills.json`, weaponSkills: `${this.baseUrl}/api/v1/weaponSkills.json`,
+        skills: `${this.baseUrl}/api/v1/skills.json`, weaponSkills: `${this.baseUrl}/api/v1/master-weaponSkills.json`,
         professions: `${this.baseUrl}/api/v1/professions.json`, races: `${this.baseUrl}/api/v1/races.json`,
         classes: `${this.baseUrl}/api/v1/classes.json`, factions: `${this.baseUrl}/api/v1/factions.json`,
-        attributes: `${this.baseUrl}/api/v1/attributes.json`, enemies: `${this.baseUrl}/api/v1/enemies.json`,
+        attributes: `${this.baseUrl}/api/v1/master-attributes.json`, enemies: `${this.baseUrl}/api/v1/enemies.json`,
+        gamesLibrary: `${this.baseUrl}/api/v1/games-library.json`,
+        weaponStatBridge: `${this.baseUrl}/api/v1/weapon-stat-bridge.json`,
+        archive: `${this.baseUrl}/api/v1/archive/manifest.json`,
         bosses: `${this.baseUrl}/api/v1/bosses.json`,
       },
       gltfPipeline: {

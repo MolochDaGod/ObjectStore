@@ -80,6 +80,7 @@
     "enrich:skill-stat-connections": "node scripts/enrich-skill-stat-connections.mjs",
     "build:weapon-stat-bridge": "node scripts/build-weapon-stat-bridge.mjs",
     "build:weapon-pipeline": "npm run enrich:t0-starter-skills && npm run enrich:variant-signatures && npm run enrich:skill-stat-connections && npm run build:weapon-prefabs && npm run build:weapon-stat-bridge && npm run build:games-library && npm run validate:weapon-pipeline",
+    "archive:legacy": "node scripts/archive-legacy-endpoints.mjs",
     "build:games-library": "node scripts/build-games-library.mjs",
     "import:recipes": "node scripts/import-game-recipes.mjs",
     "consolidate:game-data": "node scripts/consolidate-game-data.mjs",

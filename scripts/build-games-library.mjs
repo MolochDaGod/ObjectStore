@@ -63,6 +63,7 @@ const out = {
     statPattern: `${CDN_JSON}/_meta/weapon-stats-attributes.json`,
     equipmentPattern: `${CDN_JSON}/_meta/canonical-equipment-pattern.json`,
     manifest: `${CDN_JSON}/game-data-manifest.json`,
+    archive: `${CDN_JSON}/archive/manifest.json`,
   },
   design: {
     weapons: `${CDN_JSON}/weapons.json`,

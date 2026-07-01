@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-07-01T05:24:27.505Z",
+  "generated": "2026-07-01T05:34:05.115Z",
   "description": "Grudge Studio games library — runtime equipment prefabs and economy wiring",
   "canonical": true,
   "assetCdn": "https://assets.grudge-studio.com",
@@ -25,7 +25,8 @@
     "weaponStatBridge": "https://molochdagod.github.io/ObjectStore/api/v1/weapon-stat-bridge.json",
     "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json",
     "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
-    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json"
+    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json",
+    "archive": "https://molochdagod.github.io/ObjectStore/api/v1/archive/manifest.json"
   },
   "design": {
     "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
@@ -85,8 +86,11 @@
     "drops": "partial"
   },
   "deprecated": {
-    "items-database.json": "Use master-items.json or master-weapon-prefabs.json",
-    "master-t0-items.json": "Use t0-weapons.json + master-weapon-prefabs.json",
+    "attributes.json": "Archived — use master-attributes.json (see api/v1/archive/manifest.json)",
+    "weaponSkills.json": "Archived — use master-weaponSkills.json",
+    "items-database.json": "Archived — use master-items.json or master-weapon-prefabs.json",
+    "items-legacy.json": "Archived — use master-items.json",
+    "master-t0-items.json": "Archived — use t0-weapons.json + master-weapon-prefabs.json",
     "weapons.json alone": "Design templates only — runtime uses master-weapon-prefabs.json",
     "grudge-game-data-hub": "Archived",
     "molochdagod.github.io icons in item JSON": "Use /icons/... paths resolved to assets.grudge-studio.com",

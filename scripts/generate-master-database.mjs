@@ -217,7 +217,7 @@ const MATERIALS = readJson('api/v1/materials.json');
 const CONSUMES  = readJson('api/v1/consumables.json');
 const PROFS     = readJson('api/v1/professions.json');
 const SKILLTREES= readJson('api/v1/skillTrees.json');
-const WSKILLS   = readJson('api/v1/weaponSkills.json');
+const WSKILLS   = readJson('api/v1/master-weaponSkills.json');
 
 console.log('Generating ObjectStore master database (data-driven)...');
 

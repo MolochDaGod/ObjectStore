@@ -155,33 +155,6 @@ const registryOut = {
 writeFileSync(join(API, 'master-registry.json'), JSON.stringify(registryOut, null, 2));
 console.log(`[consolidate] Wrote master-registry.json: ${Object.keys(uuidIndex).length} entries`);
 
-// ── Write items-database.json (legacy mirror — same data, backward compat) ──
-const legacyOut = {
-  version: '2.0.0',
-  generated: new Date().toISOString(),
-  description: 'Legacy item database format — auto-generated from master-items.json. DO NOT EDIT DIRECTLY.',
-  totalItems: deduped.length,
-  items: deduped.map(item => ({
-    uuid: item.uuid,
-    name: item.name,
-    baseName: item.baseName || item.name,
-    type: item.type,
-    category: item.category,
-    tier: item.tier || 0,
-    tierLabel: item.tierLabel || '',
-    tierColor: item.tierColor || '',
-    iconUrl: item.iconUrl || '',
-    description: item.description || item.lore || '',
-    stats: item.stats || {},
-    craftedBy: item.craftedBy || null,
-    tags: item.tags || [],
-  })),
-};
-writeFileSync(join(API, 'items-database.json'), JSON.stringify(legacyOut, null, 2));
-console.log(`[consolidate] Wrote items-database.json: ${deduped.length} items (legacy mirror)`);
+// Legacy items-database.json / items-legacy.json archived — see api/v1/archive/manifest.json
 
-// ── Also update items-legacy.json to be identical ──
-writeFileSync(join(API, 'items-legacy.json'), JSON.stringify(legacyOut, null, 2));
-console.log(`[consolidate] Wrote items-legacy.json (same as items-database.json)`);
-
-console.log('[consolidate] Done. All items have UUIDs. One source of truth.');
+console.log('[consolidate] Done. All items have UUIDs. One source of truth (master-items.json).');

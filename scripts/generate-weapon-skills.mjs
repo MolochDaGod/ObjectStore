@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Generate weaponSkills.json from WCS weaponSkills.ts
+ * DEPRECATED — use master-weaponSkills.json pipeline instead.
+ * Reference export only → api/v1/archive/weaponSkills.v1.json
  * Parses all 13 existing weapon types + adds missing types
  * (Arcane Staves, Hammers, Spears, Scythes, Tools, Tomes)
  */
@@ -10,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WCS_PATH = resolve(__dirname, '../../Warlord-Crafting-Suite-Clean/client/src/data/weaponSkills.ts');
-const OUT_PATH = resolve(__dirname, '../api/v1/weaponSkills.json');
+const OUT_PATH = resolve(__dirname, '../api/v1/archive/weaponSkills.v1.json');
 const ICON_BASE = './icons/wcs';
 
 const raw = readFileSync(WCS_PATH, 'utf-8');

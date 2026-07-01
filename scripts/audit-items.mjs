@@ -50,7 +50,7 @@ function loadJson(relPath) {
 const master = loadJson('api/v1/master-items.json') || { items: [] };
 const recipes = loadJson('api/v1/master-recipes.json') || { recipes: [] };
 const materialsRegistry = loadJson('api/v1/master-materials.json') || { materials: [] };
-const legacy = loadJson('api/v1/items-database.json') || { items: [] };
+const legacy = loadJson('api/v1/archive/items-database.v1.json') || { items: [] };
 const armor = loadJson('api/v1/armor.json') || { materials: {} };
 const iconIndex = loadJson('icons/icon-index.json') || {};
 

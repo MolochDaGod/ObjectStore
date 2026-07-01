@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "archivedAt": "2026-07-01",
+  "description": "Legacy ObjectStore endpoints superseded by master-* runtime APIs",
+  "runtimeIndex": "/api/v1/games-library.json",
+  "files": [
+    {
+      "original": "attributes.json",
+      "archive": "archive/attributes.v1.json",
+      "replacement": "master-attributes.json",
+      "alsoUse": null,
+      "reason": "WCS canonical — 8 ATTR-* UUIDs, 37 derived stats, combatFormulas"
+    },
+    {
+      "original": "weaponSkills.json",
+      "archive": "archive/weaponSkills.v1.json",
+      "replacement": "master-weaponSkills.json",
+      "alsoUse": null,
+      "reason": "Canonical SKIL-* skills with statConnections and slot patterns"
+    },
+    {
+      "original": "items-database.json",
+      "archive": "archive/items-database.v1.json",
+      "replacement": "master-items.json",
+      "alsoUse": "master-weapon-prefabs.json",
+      "reason": "Unified ITEM-* catalog + runtime weapon prefabs"
+    },
+    {
+      "original": "items-legacy.json",
+      "archive": "archive/items-legacy.v1.json",
+      "replacement": "master-items.json",
+      "alsoUse": null,
+      "reason": "Duplicate of legacy items-database mirror"
+    },
+    {
+      "original": "master-t0-items.json",
+      "archive": "archive/master-t0-items.v1.json",
+      "replacement": "t0-weapons.json",
+      "alsoUse": "master-weapon-prefabs.json",
+      "reason": "T0 starters now in t0-weapons.json + prefab pipeline"
+    }
+  ]
+}

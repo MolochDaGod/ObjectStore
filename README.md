@@ -187,7 +187,8 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 | `/api/v1/races.json` | 6 playable races with bonuses, lore, and faction affiliations |
 | `/api/v1/classes.json` | 4 classes with abilities, weapon/armor types, and signature moves |
 | `/api/v1/factions.json` | 3 factions (Crusade, Legion, Fabled) with race mappings |
-| `/api/v1/attributes.json` | 8 attribute definitions with stat formulas |
+| `/api/v1/master-attributes.json` | 8 ATTR-* attributes, 37 derived stats, combat pipeline |
+| `/api/v1/archive/manifest.json` | Archived legacy endpoints + canonical replacements |
 | `/api/v1/quests.json` | Zone quests (28 zones, 112 quests) |
 | `/api/v1/missions.json` | Story missions + arena templates |
 | `/api/v1/skillTrees.json` | Full skill trees (4 classes, 5 tiers each) |
@@ -216,7 +217,7 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 | `/api/v1/sprite-characters.json` | 275 animated characters with animations, grid/frame-sequence support |
 | `/api/v1/sprites2d.json` | 2,388 unique 2D sprites (flat registry) |
 | `/api/v1/grudgedot-hero-aliases.json` | 25 hero class → sprite mappings for grudgeDot Assistant |
-| `/api/v1/items-database.json` | Unified item database — 3,425 items with icon URLs, stats, tooltips (8 categories) |
+| `/api/v1/master-items.json` | Unified ITEM-* catalog (runtime) |
 | `/api/v1/terrain.json` | Terrain configuration |
 | `/api/v1/tileMaps.json` | Tile map definitions |
 
@@ -246,7 +247,7 @@ ObjectStore integrates with all Grudge Studio repositories:
 - **GrudgeStudioNPM** — NPM package aggregator for all Grudge modules
 
 ### Medium Priority
-- **[Grudge Crafting (Puter)](https://grudge-crafting.puter.site)** — Puter-hosted crafting suite, fetches items-database.json for Item Database tab and real icons
+- **[Grudge Crafting (Puter)](https://grudge-crafting.puter.site)** — Puter-hosted crafting suite; should use `master-items.json` / `games-library.json` (not archived `items-database.json`)
 - **grudge-warlords** — Voxel RPG with ItemRegistry integration
 - **PuterGrudge** — Backend server with AI image generation endpoints
 - **GrudgeGameIslands** — WebGL island exploration with materials system
@@ -601,7 +602,8 @@ ObjectStore/
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
 │   ├── sprite-characters.json # 275 animated characters (3 sources)
 │   ├── sprites2d.json       # 2,220+ animations across all sprites
-│   ├── items-database.json  # 3,425 items with icons, stats, categories
+│   ├── archive/           # Superseded legacy payloads (*.v1.json) + manifest.json
+│   ├── master-items.json    # Unified ITEM-* catalog
 │   ├── grudgedot-hero-aliases.json # Hero class → sprite mappings
 │   ├── quests.json          # 28 zones, 112 quests
 │   ├── missions.json        # Story + arena templates
@@ -636,7 +638,7 @@ ObjectStore/
 │   ├── build-weapon-prefabs.mjs    # Join master-weapons + skills → prefabs
 │   ├── validate-weapon-pipeline.mjs # Audit T0 count, skill bindings, duplicates
 │   ├── enrich-weapon-skills.mjs    # UUIDs + resourceCost for off-hand skills
-│   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
+│   └── build-items-json.js  # Legacy HTML parser (outputs archived format only)
 ├── tools/                    # Sprite tools
 │   └── scan-sprites.js      # Walk sprites/, auto-detect layouts, regenerate JSON
 ├── workers/ai/               # AI Worker (Cloudflare Workers AI)

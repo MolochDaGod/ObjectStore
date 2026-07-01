@@ -502,16 +502,16 @@ async function handleGameDataRoutes(url, method, env) {
     return await serveGameDataCollection(name, env, url);
   }
 
-  // GET /v1/weapon-skills — proxy weaponSkills.json
+  // GET /v1/weapon-skills — canonical master-weaponSkills.json
   if (path === '/v1/weapon-skills') {
-    return await serveGameDataCollection('weaponSkills', env, url);
+    return await serveGameDataCollection('master-weaponSkills', env, url);
   }
 
   // GET /v1/weapon-skills/:type — filter by weapon type
   const wsMatch = path.match(/^\/v1\/weapon-skills\/([a-zA-Z_-]+)$/);
   if (wsMatch) {
     const type = wsMatch[1].toUpperCase();
-    const data = await fetchGameData('weaponSkills', env);
+    const data = await fetchGameData('master-weaponSkills', env);
     if (!data) return json({ error: 'Weapon skills data unavailable' }, 503);
     const wt = data.weaponTypes?.find(w => w.id === type || w.name.toLowerCase() === wsMatch[1].toLowerCase());
     if (!wt) return json({ error: `Weapon type not found: ${wsMatch[1]}` }, 404);

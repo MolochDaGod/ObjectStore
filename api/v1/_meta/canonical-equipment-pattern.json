@@ -98,12 +98,19 @@
     "objectstore-meta D1 weapon_prefabs (runtime Worker cache)"
   ],
   "deprecated": {
-    "items-database.json": "Use master-items.json or master-weapon-prefabs.json",
-    "master-t0-items.json": "Use t0-weapons.json + master-weapon-prefabs.json",
+    "attributes.json": "Archived — use master-attributes.json (see api/v1/archive/manifest.json)",
+    "weaponSkills.json": "Archived — use master-weaponSkills.json",
+    "items-database.json": "Archived — use master-items.json or master-weapon-prefabs.json",
+    "items-legacy.json": "Archived — use master-items.json",
+    "master-t0-items.json": "Archived — use t0-weapons.json + master-weapon-prefabs.json",
     "weapons.json alone": "Design templates only — runtime uses master-weapon-prefabs.json",
     "grudge-game-data-hub": "Archived",
     "molochdagod.github.io icons in item JSON": "Use /icons/... paths resolved to assets.grudge-studio.com",
     "objectstore.grudge-studio.com for binary files": "Use assets.grudge-studio.com"
+  },
+  "archive": {
+    "manifest": "api/v1/archive/manifest.json",
+    "note": "Full legacy payloads live under api/v1/archive/*.v1.json; stubs at original paths return replacement URLs"
   },
   "pipelines": {
     "weaponsAndTools": "npm run build:weapon-pipeline",

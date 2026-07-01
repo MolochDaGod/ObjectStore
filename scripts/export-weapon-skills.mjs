@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Export Weapon Skills → api/v1/weaponSkills.json
+ * DEPRECATED — canonical skills live in master-weaponSkills.json (npm run build:weapon-pipeline).
+ * Optional export for reference only → api/v1/archive/weaponSkills.v1.json
  *
  * Extracts WEAPON_TYPE_DEFINITIONS + CLASS_WEAPONS from WEAPON_SKILLS.html
  * and writes a production-ready JSON file.
@@ -15,7 +16,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const HTML_PATH = path.join(ROOT, 'WEAPON_SKILLS.html');
-const OUT_PATH = path.join(ROOT, 'api', 'v1', 'weaponSkills.json');
+const OUT_PATH = path.join(ROOT, 'api', 'v1', 'archive', 'weaponSkills.v1.json');
 
 console.log('📦 Exporting weapon skills from WEAPON_SKILLS.html...');
 

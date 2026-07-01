@@ -172,7 +172,7 @@ function loadData() {
   } catch (e) { /* optional — run npm run build:grudgedot */ }
 
   try {
-    weaponSkillsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/weaponSkills.json'), 'utf-8'));
+    weaponSkillsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'api/v1/master-weaponSkills.json'), 'utf-8'));
     // Build flat search index
     weaponSkillIndex = [];
     for (const wt of weaponSkillsData.weaponTypes) {
@@ -190,7 +190,7 @@ function loadData() {
     }
     console.log(`⚔  Weapon skills loaded: ${weaponSkillsData.totalWeaponTypes} types, ${weaponSkillsData.totalSkills} skills`);
   } catch (e) {
-    console.warn('⚠️  weaponSkills.json not found. Run: node scripts/export-weapon-skills.mjs');
+    console.warn('⚠️  master-weaponSkills.json not found. Run: npm run build:weapon-pipeline');
   }
 }
 
