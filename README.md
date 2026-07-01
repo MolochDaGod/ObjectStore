@@ -52,7 +52,7 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 | Endpoint | Description |
 |----------|-------------|
 | `/api/v1/master-weapon-prefabs.json` | **871 runtime prefabs** (15 T0 starters + 856 T1–8) with skills, assets, recipes, `attributeAffinity` |
-| `/api/v1/t0-weapons.json` | 15 canonical starter weapons (Training Sword, Hand Axe, Novice Tome, etc.) |
+| `/api/v1/t0-weapons.json` | 15 canonical starters — each row includes `weaponSkills` (slot1, slot2, slot3Options) + `skills.slots` 1–3 |
 | `/api/v1/master-weaponSkills.json` | 268 skills across 16 weapon types (+ SHIELD/TOME nested off-hand skills) |
 | `/api/v1/ummorpg-systems-bridge.json` | uMMORPG drop/chest/craft/enchant mappings from canonical prefabs |
 | `/api/v1/_meta/ability-aliases.json` | Design-layer ability names → canonical SKIL-* names |

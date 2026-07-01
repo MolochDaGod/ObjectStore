@@ -84,7 +84,8 @@ function prefabHasSkills(p) {
 
 const badT0Starter = prefabs.prefabs.filter((p) => {
   if (p.tier !== 0 || p.weaponType === 'TOOL') return false;
-  if (p.skills.slotPattern !== 'three-slot-starter') return true;
+  const okPattern = p.skills.slotPattern === 'three-slot-starter' || p.skills.slotPattern === 'gather-starter';
+  if (!okPattern) return true;
   const slots = p.skills.slots || [];
   if (slots.length !== 3) return true;
   const prim = slots.find((s) => s.type === 'primary');

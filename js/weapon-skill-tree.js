@@ -37,6 +37,7 @@
     scythes: 'SCYTHE',
     scythe: 'SCYTHE',
     maces: 'MACE',
+    tools: 'TOOL',
   };
 
   const ONE_HAND_TYPES = new Set(['SWORD', 'AXE', 'DAGGER', 'HAMMER', 'MACE', 'GUN', 'WAND']);
@@ -353,12 +354,31 @@
       passives: item.passives || [],
       craftingRecipe: item.craftingRecipe || null,
       usedInT1Crafting: item.usedInT1Crafting !== false,
+      weaponSkills: item.weaponSkills || null,
+      skills: item.skills || null,
+      slotPattern: item.slotPattern || item.skills?.slotPattern || null,
       isT0: !!isT0,
     };
   }
 
   function isStarterPattern(typeDef) {
-    return typeDef?.slotPattern === 'three-slot-starter';
+    const p = typeDef?.slotPattern;
+    return p === 'three-slot-starter' || p === 'gather-starter';
+  }
+
+  function slotsFromT0Variant(variant) {
+    const raw = variant?.skills?.slots;
+    if (!raw?.length) return null;
+    return raw.map((slot) => ({
+      type: slot.type,
+      label: slot.label,
+      unlockTier: slot.unlockTier ?? 0,
+      fixed: slot.fixed,
+      choice: slot.choice,
+      skills: slot.skills?.length
+        ? slot.skills
+        : (slot.skillIds || []).map((id) => ({ id, name: id, tier: 0 })),
+    }));
   }
 
   function buildVariantsIndex(t0Payload) {
@@ -482,10 +502,17 @@
     const byType = Object.fromEntries((cloned.slots || []).map((s) => [s.type, s]));
 
     if (variant.isT0) {
+      const fromWeapon = slotsFromT0Variant(variant);
+      if (fromWeapon?.length >= 3) {
+        cloned.slots = fromWeapon;
+        cloned.slotPattern = variant.slotPattern || variant.skills?.slotPattern || 'three-slot-starter';
+        cloned._passives = [];
+        return cloned;
+      }
       const starter = cloned.starterSlots || [];
-      if (starter.length) {
+      if (starter.length >= 3) {
         cloned.slots = JSON.parse(JSON.stringify(starter));
-        cloned.slotPattern = 'three-slot-starter';
+        cloned.slotPattern = variant.slotPattern || 'three-slot-starter';
         cloned._passives = [];
         return cloned;
       }

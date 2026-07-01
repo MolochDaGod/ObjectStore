@@ -161,7 +161,16 @@ function bindFiveSlot(slots, variantMeta, weaponType, item, skillTypeDef) {
   const raw = applyFiveSlotPattern(slots, variantMeta, weaponType, meta, {
     tier: item?.tier ?? 0,
     bindingMode,
-    starterSlots: skillTypeDef?.starterSlots,
+    starterSlots:
+      skillTypeDef?.starterSlots ||
+      (item?.skills?.slots || []).map((slot) => ({
+        type: slot.type,
+        label: slot.label,
+        unlockTier: slot.unlockTier ?? 0,
+        fixed: slot.fixed,
+        choice: slot.choice,
+        skills: slot.skills || [],
+      })),
   });
 
   const skillPool = [

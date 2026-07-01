@@ -128,13 +128,41 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
 
   if (isT0) {
     if (weaponType === 'TOOL') {
+      const starter = opts.starterSlots;
+      if (starter?.length) {
+        const outSlots = [];
+        const skillUuids = [];
+        for (const slot of starter) {
+          const ids = (slot.skills || []).map((s) => s.id);
+          const uuids = (slot.skills || []).map((s) => s.uuid).filter(Boolean);
+          outSlots.push({
+            type: slot.type,
+            label: slot.label || T0_SLOT_LABELS[slot.type] || slot.type,
+            unlockTier: 0,
+            skillIds: ids,
+            skillUuids: uuids,
+            fixed: !!slot.fixed,
+            choice: !!slot.choice,
+            shared: !slot.choice,
+          });
+          skillUuids.push(...uuids);
+        }
+        return {
+          slots: outSlots,
+          passives: [],
+          skillUuids: [...new Set(skillUuids)],
+          slotPattern: 'gather-starter',
+          bindingMode: 'gather',
+          craftsInto: 'T1',
+        };
+      }
       return {
         slots: [],
         passives: [],
         skillUuids: [],
         slotPattern: 'gather',
         bindingMode: 'gather',
-        note: 'T0 tool — profession gather actions, not combat SKIL-*',
+        note: 'T0 tool — run enrich:t0-starter-skills to populate gather slots 1–3',
       };
     }
 
@@ -282,7 +310,14 @@ export function buildLoadoutMeta(weaponType, skillBinding, opts = {}) {
     };
   }
   if (tier === 0 && weaponType === 'TOOL') {
-    return { pattern: 'gather', role: 'tool', noTierUpgrades: true, craftsInto: 'T1', bindings: skillBinding };
+    return {
+      pattern: skillBinding?.slotPattern || 'gather-starter',
+      role: 'tool',
+      noTierUpgrades: true,
+      craftsInto: 'T1',
+      slotRoles: { 1: 'gatherPrimary', 2: 'gatherStyle', 3: 'gatherChoice' },
+      bindings: skillBinding,
+    };
   }
 
   const isOffhand = weaponType === 'SHIELD' || weaponType === 'TOME';

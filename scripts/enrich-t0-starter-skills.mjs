@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Merge T0 starter slot pattern into master-weaponSkills.json as starterSlots per type.
+ * Merge T0 starter slot pattern into master-weaponSkills.json (starterSlots per type)
+ * and embed slots 1–3 weapon skills on each row in t0-weapons.json.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -10,7 +11,26 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const API = join(resolve(__dirname, '..'), 'api', 'v1');
 const SKILLS_PATH = join(API, 'master-weaponSkills.json');
+const T0_PATH = join(API, 't0-weapons.json');
 const PATTERN_PATH = join(API, '_meta', 't0-starter-slot-pattern.json');
+
+const CATEGORY_TO_WEAPON_TYPE = {
+  swords: 'SWORD',
+  axes1h: 'AXE',
+  greataxes: 'GREATAXE',
+  greatswords: 'GREATSWORD',
+  daggers: 'DAGGER',
+  bows: 'BOW',
+  crossbows: 'CROSSBOW',
+  guns: 'GUN',
+  hammers1h: 'HAMMER',
+  hammers2h: 'HAMMER',
+  spears: 'SPEAR',
+  natureStaves: 'STAFF',
+  wands: 'WAND',
+  tools: 'TOOL',
+  'offhand-tome': 'TOME',
+};
 
 function synthUuid(skillId, weaponType) {
   const hash = createHash('sha1').update(`T0:${weaponType}:${skillId}`).digest('hex').slice(0, 12).toUpperCase();
@@ -40,18 +60,22 @@ function enrichStarterSkill(raw, weaponType, typeDef, defaults) {
   };
 }
 
-function buildStarterSlots(typeDef, pattern) {
-  if (!pattern) return null;
-  const defaults = {
-    castTime: ['WAND', 'STAFF', 'TOME'].includes(typeDef.id) ? 0.5 : null,
-    mana: ['WAND', 'STAFF', 'TOME'].includes(typeDef.id) ? 4 : 0,
-    stamina: ['SWORD', 'AXE', 'DAGGER', 'HAMMER', 'BOW', 'CROSSBOW', 'GUN', 'GREATSWORD', 'GREATAXE', 'SPEAR'].includes(typeDef.id) ? 2 : 0,
-    damageType: typeDef.id === 'STAFF' ? 'nature' : typeDef.id === 'TOME' ? 'arcane' : 'physical',
+function typeDefaults(weaponType) {
+  return {
+    castTime: ['WAND', 'STAFF', 'TOME'].includes(weaponType) ? 0.5 : null,
+    mana: ['WAND', 'STAFF', 'TOME'].includes(weaponType) ? 4 : 0,
+    stamina: ['SWORD', 'AXE', 'DAGGER', 'HAMMER', 'BOW', 'CROSSBOW', 'GUN', 'GREATSWORD', 'GREATAXE', 'SPEAR', 'TOOL'].includes(weaponType) ? 2 : 0,
+    damageType: weaponType === 'STAFF' ? 'nature' : weaponType === 'TOME' ? 'arcane' : 'physical',
   };
+}
 
-  const slot1 = enrichStarterSkill(pattern.slot1, typeDef.id, typeDef, defaults);
-  const slot2 = enrichStarterSkill(pattern.slot2, typeDef.id, typeDef, defaults);
-  const slot3 = (pattern.slot3Options || []).map((sk) => enrichStarterSkill(sk, typeDef.id, typeDef, defaults));
+function buildStarterSlots(typeDef, pattern, weaponType) {
+  if (!pattern) return null;
+  const defaults = typeDefaults(weaponType);
+
+  const slot1 = enrichStarterSkill(pattern.slot1, weaponType, typeDef, defaults);
+  const slot2 = enrichStarterSkill(pattern.slot2, weaponType, typeDef, defaults);
+  const slot3 = (pattern.slot3Options || []).map((sk) => enrichStarterSkill(sk, weaponType, typeDef, defaults));
 
   return [
     {
@@ -78,20 +102,73 @@ function buildStarterSlots(typeDef, pattern) {
   ];
 }
 
+function toPrefabSlots(starterSlots) {
+  return starterSlots.map((slot) => ({
+    type: slot.type,
+    label: slot.label,
+    unlockTier: slot.unlockTier,
+    fixed: slot.fixed,
+    choice: slot.choice,
+    shared: !slot.choice,
+    skillIds: slot.skills.map((s) => s.id),
+    skillUuids: slot.skills.map((s) => s.uuid),
+    skills: slot.skills,
+  }));
+}
+
 const pattern = JSON.parse(readFileSync(PATTERN_PATH, 'utf8'));
 const data = JSON.parse(readFileSync(SKILLS_PATH, 'utf8'));
-let merged = 0;
+const t0Data = JSON.parse(readFileSync(T0_PATH, 'utf8'));
+const byType = Object.fromEntries((data.weaponTypes || []).map((wt) => [wt.id, wt]));
+
+let mergedTypes = 0;
+let mergedWeapons = 0;
 
 for (const wt of data.weaponTypes || []) {
   const typePattern = pattern.types?.[wt.id];
   if (!typePattern) continue;
-  wt.starterSlots = buildStarterSlots(wt, typePattern);
-  merged++;
+  wt.starterSlots = buildStarterSlots(wt, typePattern, wt.id);
+  mergedTypes++;
+}
+
+for (const weapon of t0Data.weapons || []) {
+  const weaponType = CATEGORY_TO_WEAPON_TYPE[weapon.category];
+  const typePattern = pattern.types?.[weaponType];
+  if (!typePattern) continue;
+
+  const typeDef = byType[weaponType] || { id: weaponType, icon: weapon.iconUrl };
+  const starterSlots = buildStarterSlots(typeDef, typePattern, weaponType);
+  const prefabSlots = toPrefabSlots(starterSlots);
+  const skillUuids = [...new Set(starterSlots.flatMap((s) => s.skills.map((sk) => sk.uuid)))];
+
+  const slotPattern = weaponType === 'TOOL' ? 'gather-starter' : 'three-slot-starter';
+
+  weapon.slotPattern = slotPattern;
+  weapon.weaponSkills = {
+    slot1: starterSlots[0].skills[0],
+    slot2: starterSlots[1].skills[0],
+    slot3Options: starterSlots[2].skills,
+  };
+  weapon.skills = {
+    slots: prefabSlots,
+    passives: [],
+    skillUuids,
+    slotPattern,
+    bindingMode: weaponType === 'TOOL' ? 'gather' : 'starter',
+    craftsInto: 'T1',
+  };
+  mergedWeapons++;
 }
 
 data.t0StarterPattern = pattern.slotPattern;
 data.t0StarterEnriched = new Date().toISOString();
+t0Data.t0StarterEnriched = new Date().toISOString();
+t0Data.note =
+  'Canonical T0 starter weapons — each row includes weaponSkills (slot1, slot2, slot3Options) and full skills.slots 1–3 bindings.';
 
 writeFileSync(SKILLS_PATH, JSON.stringify(data, null, 2));
-console.log(`Merged T0 starterSlots into ${merged} weapon types → ${SKILLS_PATH}`);
+writeFileSync(T0_PATH, JSON.stringify(t0Data, null, 2));
+
+console.log(`Merged T0 starterSlots into ${mergedTypes} weapon types → ${SKILLS_PATH}`);
+console.log(`Embedded slots 1–3 on ${mergedWeapons} T0 weapons → ${T0_PATH}`);
 console.log('  Next: npm run build:weapon-pipeline');
