@@ -61,6 +61,15 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 **Equipment standard:** [docs/CANONICAL-EQUIPMENT.md](docs/CANONICAL-EQUIPMENT.md) — weapons + harvest tool (live), armor next. Meta: `/api/v1/_meta/canonical-equipment-pattern.json`
 
+**Stats & attributes:** [docs/WEAPON-STATS-ATTRIBUTES.md](docs/WEAPON-STATS-ATTRIBUTES.md) — canonical links between weapon base stats, SKIL-*, 8 attributes, and 37 derived stats.
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/v1/weapon-stat-bridge.json` | Connection graph — prefab stats ↔ ATTR-* ↔ SKIL-* ↔ combat pipeline |
+| `/api/v1/master-attributes.json` | 8 attributes, derived stats, `combatFormulas` (8-step pipeline) |
+| `/api/v1/master-weaponSkills.json` | 268 skills with per-skill `statConnections` |
+| `/api/v1/_meta/weapon-stats-attributes.json` | Agent/codegen connection pattern |
+
 **T0 starter pattern** (15 crafting starters — no tier upgrades):
 
 | Slot | Role | Notes |
@@ -103,11 +112,13 @@ Reference: `/api/v1/_meta/weapon-loadout-pattern.json` · prefab field `loadout`
 npm run enrich:weapon-skills       # UUIDs + resourceCost for SHIELD/TOME nested skills
 npm run enrich:t0-starter-skills   # T0 three-slot starter skills into master-weaponSkills
 npm run enrich:variant-signatures  # named variant signatures → slot 4 ultimate pools
-npm run build:weapon-pipeline      # all enrich steps + prefabs + audit
+npm run enrich:skill-stat-connections  # SKIL-*.statConnections (attributes + derived stats)
+npm run build:weapon-pipeline      # all enrich steps + prefabs + stat bridge + audit
 ```
 
 Outputs:
-- `api/v1/master-weapon-prefabs.json`
+- `api/v1/master-weapon-prefabs.json` (each prefab has `statConnections`)
+- `api/v1/weapon-stat-bridge.json`
 - `api/v1/ummorpg-systems-bridge.json`
 - `workers/seed/weapon-prefabs.sql` (D1 `weapon_prefabs` table)
 

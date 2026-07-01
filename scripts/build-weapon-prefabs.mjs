@@ -27,6 +27,10 @@ import {
   SLOT_LABELS,
   LOADOUT_PATTERN,
 } from './lib/weapon-five-slot.mjs';
+import {
+  buildAttributeIndex,
+  buildPrefabStatConnections,
+} from './lib/stat-connections.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -354,7 +358,46 @@ function resolveSkillBindings(weaponType, variantMeta, skillTypeDef, item) {
   return bindFiveSlot(slots, variantMeta, weaponType, item, skillTypeDef);
 }
 
-function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
+function collectSkillPool(skillTypeDef, skillBindings, item) {
+  const byId = new Map();
+  const add = (sk) => {
+    if (sk?.id && !byId.has(sk.id)) byId.set(sk.id, sk);
+  };
+  for (const slot of item?.skills?.slots || []) {
+    for (const sk of slot.skills || []) add(sk);
+  }
+  for (const slot of skillTypeDef?.starterSlots || []) {
+    for (const sk of slot.skills || []) add(sk);
+  }
+  for (const slot of skillTypeDef?.slots || []) {
+    for (const sk of slot.skills || []) add(sk);
+  }
+  if (skillTypeDef?.shieldTypes) {
+    for (const st of Object.values(skillTypeDef.shieldTypes)) {
+      for (const slot of st.slots || []) {
+        for (const sk of slot.skills || []) add(sk);
+      }
+    }
+  }
+  if (skillTypeDef?.couplingModes) {
+    for (const mode of Object.values(skillTypeDef.couplingModes)) {
+      for (const slot of mode.slots || []) {
+        for (const sk of slot.skills || []) add(sk);
+      }
+    }
+  }
+  for (const slot of skillBindings?.slots || []) {
+    for (let i = 0; i < (slot.skillIds || []).length; i++) {
+      const id = slot.skillIds[i];
+      if (!byId.has(id)) {
+        add({ id, uuid: slot.skillUuids?.[i], tier: 0, damageType: 'physical' });
+      }
+    }
+  }
+  return [...byId.values()];
+}
+
+function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe, ctx) {
   const weaponType = CATEGORY_TO_WEAPON_TYPE[item.category] || item.weaponType || 'UNKNOWN';
   const baseNameKey = normalizeKey(item.baseName || item.name.replace(/\s+T\d+$/i, ''));
   const variant = variantMeta || {};
@@ -421,6 +464,22 @@ function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
       allowedEnchantStats: ['damage', 'crit', 'speed', 'block', 'defense', 'combo'],
       equipmentLevelUp: item.tier >= 1,
     },
+
+    statConnections: ctx
+      ? buildPrefabStatConnections(
+          {
+            stats: item.stats || {},
+            primaryStat: item.primaryStat || variant.primaryStat,
+            secondaryStat: item.secondaryStat || variant.secondaryStat,
+            attributeAffinity: affinity,
+            weaponType,
+            skills: skillBindings,
+          },
+          collectSkillPool(skillTypeDef, skillBindings, item),
+          ctx.attrIndex,
+          ctx.primaryStatMap,
+        )
+      : undefined,
   };
 }
 
@@ -592,8 +651,13 @@ const weaponSkills = load('master-weaponSkills.json');
 const weaponsTemplates = load('weapons.json');
 const recipes = load('master-recipes.json');
 const enchants = load('master-enchants.json');
+const attributes = load('master-attributes.json');
 
 const variantIndex = buildNamedVariantIndex(weaponsTemplates);
+const prefabCtx = {
+  attrIndex: buildAttributeIndex(attributes),
+  primaryStatMap: loadAbilityMeta().primaryStatToAttribute || {},
+};
 const recipeIndex = buildRecipeIndex(recipes);
 const skillIndex = buildSkillIndex(weaponSkills);
 
@@ -610,7 +674,7 @@ const prefabs = allItems.map((item) => {
   const weaponType = CATEGORY_TO_WEAPON_TYPE[item.category] || 'UNKNOWN';
   const skillTypeDef = skillIndex[weaponType] || null;
   const recipe = recipeIndex.get(item.uuid) || recipeIndex.get(item.id) || null;
-  return buildPrefab(item, reg, variantMeta, skillTypeDef, recipe);
+  return buildPrefab(item, reg, variantMeta, skillTypeDef, recipe, prefabCtx);
 });
 
 const output = {

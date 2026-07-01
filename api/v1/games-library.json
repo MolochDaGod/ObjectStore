@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-07-01T04:37:40.168Z",
+  "generated": "2026-07-01T05:24:27.505Z",
   "description": "Grudge Studio games library — runtime equipment prefabs and economy wiring",
   "canonical": true,
   "assetCdn": "https://assets.grudge-studio.com",
@@ -21,6 +21,9 @@
     "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
     "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
     "enchants": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json",
+    "attributes": "https://molochdagod.github.io/ObjectStore/api/v1/master-attributes.json",
+    "weaponStatBridge": "https://molochdagod.github.io/ObjectStore/api/v1/weapon-stat-bridge.json",
+    "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json",
     "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
     "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json"
   },
@@ -59,8 +62,10 @@
   },
   "loadOrder": [
     "games-library.json",
+    "master-attributes.json",
     "master-weapon-prefabs.json",
     "master-weaponSkills.json",
+    "weapon-stat-bridge.json",
     "master-harvest-nodes.json",
     "master-recipes.json",
     "ummorpg-systems-bridge.json"

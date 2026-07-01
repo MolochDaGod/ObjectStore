@@ -177,6 +177,18 @@ if (t0NoSkills.length) {
   warnings.push(`T0 starters without skills: ${t0NoSkills.map((p) => p.name).join(', ')}`);
 }
 
+const noStatConn = prefabs.prefabs.filter((p) => !p.statConnections?.weaponStats && Object.keys(p.stats || {}).length > 0);
+if (noStatConn.length > 20) {
+  warnings.push(`${noStatConn.length} prefabs missing statConnections (rebuild prefabs)`);
+}
+
+const t1WithPrimaryNoConn = prefabs.prefabs.filter(
+  (p) => p.tier >= 1 && p.primaryStat && !p.statConnections?.primaryAttribute,
+);
+if (t1WithPrimaryNoConn.length > 20) {
+  warnings.push(`${t1WithPrimaryNoConn.length} T1+ prefabs with primaryStat but no statConnections.primaryAttribute`);
+}
+
 const noAffinity = prefabs.prefabs.filter((p) => p.primaryStat && !p.attributeAffinity?.primary);
 if (noAffinity.length) {
   warnings.push(`${noAffinity.length} prefabs with unmapped primaryStat → attribute`);

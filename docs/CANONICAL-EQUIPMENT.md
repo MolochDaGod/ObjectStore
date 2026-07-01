@@ -140,8 +140,23 @@ Same pattern as weapons:
 
 ---
 
+## Stats, attributes & skills
+
+Weapon **base stats**, **SKIL-*** abilities, and **8 attributes** are wired on every prefab via `statConnections`.
+
+| File | Role |
+|------|------|
+| `weapon-stat-bridge.json` | Connection graph + attribute index |
+| `_meta/weapon-stats-attributes.json` | Pattern for codegen |
+| `master-attributes.json` | ATTR-* + 37 derived stats + combat formulas |
+
+Full guide: [WEAPON-STATS-ATTRIBUTES.md](./WEAPON-STATS-ATTRIBUTES.md)
+
+---
+
 ## Related docs
 
+- [Weapon Stats & Attributes](./WEAPON-STATS-ATTRIBUTES.md)
 - [API & UUID Guide](./API-AND-UUID-GUIDE.md)
 - [AGENTS.md](../AGENTS.md) — repo rules for contributors
 - [game-data-manifest.json](../api/v1/game-data-manifest.json) — full dataset index

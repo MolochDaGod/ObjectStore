@@ -27,6 +27,8 @@
     "t0Weapons": "https://molochdagod.github.io/ObjectStore/api/v1/t0-weapons.json",
     "canonicalEquipment": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
     "gamesLibrary": "https://molochdagod.github.io/ObjectStore/api/v1/games-library.json",
+    "weaponStatBridge": "https://molochdagod.github.io/ObjectStore/api/v1/weapon-stat-bridge.json",
+    "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json",
     "enchants": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json",
     "registry": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
     "iconResolver": "https://molochdagod.github.io/ObjectStore/utils/icon-resolver.js"
@@ -52,6 +54,8 @@
     "itemToIcon": "master-items.json → iconUrl | staff-looks.json → iconUrl",
     "staffToRecipe": "staff-looks.json → recipeUuid → master-recipes.json",
     "weaponToPrefab": "master-weapon-prefabs.json → prefabs[].uuid (ITEM-*) + assets.modelR2Key + skills.skillUuids (SKIL-*)",
+    "statsToAttributes": "prefab.statConnections + weapon-stat-bridge.json → master-attributes.json (ATTR-*)",
+    "skillsToStats": "SKIL-*.statConnections.derivedStats → combatFormulas (8-step pipeline)",
     "weaponToEnchant": "master-enchants.json → ENCH-* → ummorpg-systems-bridge.json → enchantApply[]",
     "weaponToDrop": "ummorpg-systems-bridge.json → systems.drops.tables → uMMORPG ItemDropChance[]"
   },

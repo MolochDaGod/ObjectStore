@@ -1062,6 +1062,8 @@ class GrudgeSDK {
   async getUmmorpgBridge()      { return this.fetch('/api/v1/ummorpg-systems-bridge.json'); }
   async getCanonicalEquipment() { return this.fetch('/api/v1/_meta/canonical-equipment-pattern.json'); }
   async getHarvestNodes()       { return this.fetch('/api/v1/master-harvest-nodes.json'); }
+  async getMasterAttributes()   { return this.fetch('/api/v1/master-attributes.json'); }
+  async getWeaponStatBridge()   { return this.fetch('/api/v1/weapon-stat-bridge.json'); }
   async getMasterArtifacts()  { return this.fetch('/api/v1/master-artifacts.json'); }
   /** Resolve a single item/artifact by uuid, slug, or base name. */
   async getItemByIdOrUuid(idOrUuid) {

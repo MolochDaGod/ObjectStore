@@ -1,0 +1,125 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T05:24:27.002Z",
+  "description": "Weapon stats ↔ attributes ↔ SKIL-* connection pattern",
+  "weaponStatFields": [
+    "damage",
+    "speed",
+    "crit",
+    "block",
+    "defense",
+    "combo"
+  ],
+  "attributes": [
+    "STR",
+    "VIT",
+    "END",
+    "INT",
+    "WIS",
+    "DEX",
+    "AGI",
+    "TAC"
+  ],
+  "primaryStatToAttribute": {
+    "damage": "STR",
+    "block": "STR",
+    "defense": "VIT",
+    "crit": "DEX",
+    "burn": "INT",
+    "lifesteal": "STR",
+    "armorPen": "TAC",
+    "speed": "AGI",
+    "mana": "INT",
+    "health": "VIT",
+    "heal": "WIS",
+    "stun": "END",
+    "range": "TAC",
+    "fire": "INT",
+    "bleed": "DEX",
+    "charge": "STR",
+    "combo": "DEX",
+    "hp": "VIT",
+    "slow": "AGI",
+    "freeze": "INT",
+    "root": "WIS",
+    "luck": "DEX",
+    "quality": "TAC",
+    "efficiency": "END"
+  },
+  "damageTypeScaling": {
+    "physical": [
+      "STR",
+      "DEX"
+    ],
+    "nature": [
+      "WIS",
+      "INT"
+    ],
+    "arcane": [
+      "INT",
+      "WIS"
+    ],
+    "fire": [
+      "INT",
+      "WIS"
+    ],
+    "frost": [
+      "INT",
+      "WIS"
+    ],
+    "holy": [
+      "WIS",
+      "INT"
+    ],
+    "lightning": [
+      "INT",
+      "DEX"
+    ],
+    "poison": [
+      "DEX",
+      "INT"
+    ]
+  },
+  "weaponTypePrimaryAttribute": {
+    "SWORD": "STR",
+    "AXE": "STR",
+    "GREATSWORD": "STR",
+    "GREATAXE": "STR",
+    "HAMMER": "STR",
+    "SPEAR": "DEX",
+    "DAGGER": "DEX",
+    "BOW": "DEX",
+    "CROSSBOW": "DEX",
+    "GUN": "DEX",
+    "STAFF": "INT",
+    "WAND": "INT",
+    "TOME": "INT",
+    "SHIELD": "VIT",
+    "TOOL": "END",
+    "MACE": "INT",
+    "SCYTHE": "DEX"
+  },
+  "skillFields": [
+    "damage",
+    "cooldown",
+    "castTime",
+    "damageType",
+    "resourceCost",
+    "effects",
+    "statConnections"
+  ],
+  "prefabFields": [
+    "stats",
+    "primaryStat",
+    "secondaryStat",
+    "attributeAffinity",
+    "statConnections",
+    "skills"
+  ],
+  "loadOrder": [
+    "master-attributes.json",
+    "master-weaponSkills.json",
+    "master-weapon-prefabs.json",
+    "weapon-stat-bridge.json"
+  ]
+}

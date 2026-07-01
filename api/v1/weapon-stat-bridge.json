@@ -1,0 +1,1140 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T05:24:27.002Z",
+  "description": "Canonical connections — weapon stats, SKIL-*, 8 attributes, 37 derived stats",
+  "endpoints": {
+    "attributes": "https://molochdagod.github.io/ObjectStore/api/v1/master-attributes.json",
+    "weaponSkills": "https://molochdagod.github.io/ObjectStore/api/v1/master-weaponSkills.json",
+    "weaponPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json",
+    "primaryStatMap": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/ability-aliases.json",
+    "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json"
+  },
+  "attributes": {
+    "count": 8,
+    "abbreviations": [
+      "STR",
+      "VIT",
+      "END",
+      "INT",
+      "WIS",
+      "DEX",
+      "AGI",
+      "TAC"
+    ],
+    "index": {
+      "STR": {
+        "uuid": "ATTR-20260624203742-000001--6906BEC",
+        "id": "strength",
+        "name": "Strength",
+        "role": "Tank / Melee DPS"
+      },
+      "VIT": {
+        "uuid": "ATTR-20260624203742-000002--6EDB743",
+        "id": "vitality",
+        "name": "Vitality",
+        "role": "Tank / Survivability"
+      },
+      "END": {
+        "uuid": "ATTR-20260624203742-000003--612FEE3",
+        "id": "endurance",
+        "name": "Endurance",
+        "role": "Defensive Specialist"
+      },
+      "INT": {
+        "uuid": "ATTR-20260624203742-000004-55FF5892",
+        "id": "intellect",
+        "name": "Intellect",
+        "role": "Mage / Caster"
+      },
+      "WIS": {
+        "uuid": "ATTR-20260624203742-000005--27F1B53",
+        "id": "wisdom",
+        "name": "Wisdom",
+        "role": "Healer / Support"
+      },
+      "DEX": {
+        "uuid": "ATTR-20260624203742-000006--29C9572",
+        "id": "dexterity",
+        "name": "Dexterity",
+        "role": "Rogue / Precision Fighter"
+      },
+      "AGI": {
+        "uuid": "ATTR-20260624203742-000007--2C78C6E",
+        "id": "agility",
+        "name": "Agility",
+        "role": "Mobile DPS / Dodge Tank"
+      },
+      "TAC": {
+        "uuid": "ATTR-20260624203742-000008-36B09C18",
+        "id": "tactics",
+        "name": "Tactics",
+        "role": "Strategic Fighter / Commander"
+      }
+    }
+  },
+  "derivedStats": {
+    "count": 37,
+    "combatFormulas": {
+      "mitigation": "Damage Taken = Incoming × (100 - √Defense) / 100",
+      "block": "IF Random < Block Chance → Damage = Damage × (1 - Block Factor)",
+      "critical": "IF Random < Crit Chance → Damage = Damage × Crit Factor (blocked hits cannot crit)",
+      "debuff": "Success = clamp(Accuracy - Resistance, 5%, 95%)"
+    },
+    "statCaps": {
+      "block": {
+        "value": 0.75,
+        "display": "75%",
+        "rationale": "Prevents permanent immunity"
+      },
+      "blockEffect": {
+        "value": 0.9,
+        "display": "90%",
+        "rationale": "Blocked hits must still deal some damage"
+      },
+      "criticalChance": {
+        "value": 0.75,
+        "display": "75%",
+        "rationale": "Balanced with Critical Evasion"
+      },
+      "criticalDamage": {
+        "value": 3,
+        "display": "3%",
+        "rationale": "Crit multiplier ceiling"
+      },
+      "accuracy": {
+        "value": 0.95,
+        "display": "95%",
+        "rationale": "Debuffs must have failure chance"
+      },
+      "resistance": {
+        "value": 0.95,
+        "display": "95%",
+        "rationale": "Magic damage remains relevant"
+      },
+      "drainHealth": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Lifesteal cap prevents full sustain"
+      },
+      "manaRegen": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Combat balance cap from gameConstants.ts"
+      },
+      "damageReduction": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Reflect/absorb cannot negate all damage"
+      },
+      "healthRegen": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Combat balance cap from gameConstants.ts"
+      },
+      "abilityCost": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Combat balance cap from gameConstants.ts"
+      },
+      "defenseBreak": {
+        "value": 0.75,
+        "display": "75%",
+        "rationale": "Armor cannot be fully ignored"
+      },
+      "blockPenetration": {
+        "value": 0.75,
+        "display": "75%",
+        "rationale": "Block builds remain viable"
+      },
+      "criticalEvasion": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Counters excessive crit stacking"
+      },
+      "evasion": {
+        "value": 0.5,
+        "display": "50%",
+        "rationale": "Cannot dodge more than half of attacks"
+      }
+    },
+    "allocation": {
+      "startingPoints": 20,
+      "pointsPerLevel": 7,
+      "maxLevel": 20,
+      "maxPoints": 160,
+      "diminishingReturns": {
+        "enabled": true,
+        "threshold": 25,
+        "tier1Efficiency": 0.5,
+        "tier2Efficiency": 0.25
+      }
+    }
+  },
+  "weaponStatSchema": {
+    "damage": {
+      "derivedStat": "damage",
+      "label": "Damage",
+      "scalesWith": [
+        "STR",
+        "DEX"
+      ],
+      "combatStep": 1
+    },
+    "speed": {
+      "derivedStat": "attackSpeed",
+      "label": "Attack Speed",
+      "scalesWith": [
+        "AGI",
+        "DEX"
+      ],
+      "combatStep": 1
+    },
+    "crit": {
+      "derivedStat": "criticalChance",
+      "label": "Critical Chance",
+      "scalesWith": [
+        "DEX",
+        "AGI"
+      ],
+      "combatStep": 6
+    },
+    "block": {
+      "derivedStat": "block",
+      "label": "Block Chance",
+      "scalesWith": [
+        "STR",
+        "VIT"
+      ],
+      "combatStep": 5
+    },
+    "defense": {
+      "derivedStat": "defense",
+      "label": "Defense",
+      "scalesWith": [
+        "VIT",
+        "END"
+      ],
+      "combatStep": 3
+    },
+    "combo": {
+      "derivedStat": "comboCooldownRed",
+      "label": "Combo Reduction",
+      "scalesWith": [
+        "DEX",
+        "TAC"
+      ],
+      "combatStep": 1
+    }
+  },
+  "primaryStatToAttribute": {
+    "damage": "STR",
+    "block": "STR",
+    "defense": "VIT",
+    "crit": "DEX",
+    "burn": "INT",
+    "lifesteal": "STR",
+    "armorPen": "TAC",
+    "speed": "AGI",
+    "mana": "INT",
+    "health": "VIT",
+    "heal": "WIS",
+    "stun": "END",
+    "range": "TAC",
+    "fire": "INT",
+    "bleed": "DEX",
+    "charge": "STR",
+    "combo": "DEX",
+    "hp": "VIT",
+    "slow": "AGI",
+    "freeze": "INT",
+    "root": "WIS",
+    "luck": "DEX",
+    "quality": "TAC",
+    "efficiency": "END"
+  },
+  "damageTypeScaling": {
+    "physical": [
+      "STR",
+      "DEX"
+    ],
+    "nature": [
+      "WIS",
+      "INT"
+    ],
+    "arcane": [
+      "INT",
+      "WIS"
+    ],
+    "fire": [
+      "INT",
+      "WIS"
+    ],
+    "frost": [
+      "INT",
+      "WIS"
+    ],
+    "holy": [
+      "WIS",
+      "INT"
+    ],
+    "lightning": [
+      "INT",
+      "DEX"
+    ],
+    "poison": [
+      "DEX",
+      "INT"
+    ]
+  },
+  "weaponTypePrimaryAttribute": {
+    "SWORD": "STR",
+    "AXE": "STR",
+    "GREATSWORD": "STR",
+    "GREATAXE": "STR",
+    "HAMMER": "STR",
+    "SPEAR": "DEX",
+    "DAGGER": "DEX",
+    "BOW": "DEX",
+    "CROSSBOW": "DEX",
+    "GUN": "DEX",
+    "STAFF": "INT",
+    "WAND": "INT",
+    "TOME": "INT",
+    "SHIELD": "VIT",
+    "TOOL": "END",
+    "MACE": "INT",
+    "SCYTHE": "DEX"
+  },
+  "graph": {
+    "prefabToStats": "prefab.stats.{damage,speed,crit,block,defense,combo} → derived stats",
+    "prefabToAttributes": "prefab.primaryStat → primaryStatToAttribute → ATTR-* uuid",
+    "skillToAttributes": "SKIL-*.statConnections.scalesWith → STR|DEX|INT|…",
+    "skillToDerived": "SKIL-*.statConnections.derivedStats → damage|block|criticalChance|…",
+    "skillResource": "SKIL-*.resourceCost.mana → INT · stamina → END",
+    "combatPipeline": [
+      "mitigation",
+      "block",
+      "critical",
+      "debuff"
+    ]
+  },
+  "counts": {
+    "prefabs": 871,
+    "skillsInPool": 402,
+    "prefabsWithPrimaryStat": 856,
+    "prefabsWithAffinity": 856
+  },
+  "samples": {
+    "SWORD": {
+      "weaponStats": {
+        "damage": {
+          "base": 18,
+          "derivedStat": "damage",
+          "label": "Damage",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "speed": {
+          "base": 95,
+          "derivedStat": "attackSpeed",
+          "label": "Attack Speed",
+          "scalesWith": [
+            "AGI",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000007--2C78C6E",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "crit": {
+          "base": 1,
+          "derivedStat": "criticalChance",
+          "label": "Critical Chance",
+          "scalesWith": [
+            "DEX",
+            "AGI"
+          ],
+          "combatStep": 6,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000007--2C78C6E"
+          ]
+        },
+        "block": {
+          "base": 2,
+          "derivedStat": "block",
+          "label": "Block Chance",
+          "scalesWith": [
+            "STR",
+            "VIT"
+          ],
+          "combatStep": 5,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000002--6EDB743"
+          ]
+        },
+        "defense": {
+          "base": 6,
+          "derivedStat": "defense",
+          "label": "Defense",
+          "scalesWith": [
+            "VIT",
+            "END"
+          ],
+          "combatStep": 3,
+          "attributeUuids": [
+            "ATTR-20260624203742-000002--6EDB743",
+            "ATTR-20260624203742-000003--612FEE3"
+          ]
+        },
+        "combo": {
+          "base": 0,
+          "derivedStat": "comboCooldownRed",
+          "label": "Combo Reduction",
+          "scalesWith": [
+            "DEX",
+            "TAC"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000008-36B09C18"
+          ]
+        }
+      },
+      "primaryAttribute": null,
+      "secondaryAttribute": null,
+      "attributeAffinity": {
+        "primary": null,
+        "secondary": null
+      },
+      "canonicalAttributes": "master-attributes.json",
+      "canonicalSkills": "master-weaponSkills.json",
+      "combatPipeline": "master-attributes.json → combatFormulas (8 steps)",
+      "skills": {
+        "SKIL-T0-AAB723-6F43B6": {
+          "skillId": "t0_sword_practice_slash",
+          "slotType": "primary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage"
+          ],
+          "damageType": "physical",
+          "slotRole": "primary"
+        },
+        "SKIL-T0-6228E2-DDBEA0": {
+          "skillId": "t0_sword_guard_stance",
+          "slotType": "secondary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "secondary"
+        },
+        "SKIL-T0-C0DE2D-41913A": {
+          "skillId": "t0_sword_quick_thrust",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        },
+        "SKIL-T0-8A519A-906D3B": {
+          "skillId": "t0_sword_wide_sweep",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        }
+      }
+    },
+    "AXE": {
+      "weaponStats": {
+        "damage": {
+          "base": 20,
+          "derivedStat": "damage",
+          "label": "Damage",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "speed": {
+          "base": 105,
+          "derivedStat": "attackSpeed",
+          "label": "Attack Speed",
+          "scalesWith": [
+            "AGI",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000007--2C78C6E",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "crit": {
+          "base": 1,
+          "derivedStat": "criticalChance",
+          "label": "Critical Chance",
+          "scalesWith": [
+            "DEX",
+            "AGI"
+          ],
+          "combatStep": 6,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000007--2C78C6E"
+          ]
+        },
+        "block": {
+          "base": 2,
+          "derivedStat": "block",
+          "label": "Block Chance",
+          "scalesWith": [
+            "STR",
+            "VIT"
+          ],
+          "combatStep": 5,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000002--6EDB743"
+          ]
+        },
+        "defense": {
+          "base": 5,
+          "derivedStat": "defense",
+          "label": "Defense",
+          "scalesWith": [
+            "VIT",
+            "END"
+          ],
+          "combatStep": 3,
+          "attributeUuids": [
+            "ATTR-20260624203742-000002--6EDB743",
+            "ATTR-20260624203742-000003--612FEE3"
+          ]
+        },
+        "combo": {
+          "base": 0,
+          "derivedStat": "comboCooldownRed",
+          "label": "Combo Reduction",
+          "scalesWith": [
+            "DEX",
+            "TAC"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000008-36B09C18"
+          ]
+        }
+      },
+      "primaryAttribute": null,
+      "secondaryAttribute": null,
+      "attributeAffinity": {
+        "primary": null,
+        "secondary": null
+      },
+      "canonicalAttributes": "master-attributes.json",
+      "canonicalSkills": "master-weaponSkills.json",
+      "combatPipeline": "master-attributes.json → combatFormulas (8 steps)",
+      "skills": {
+        "SKIL-T0-2CEAFD-39E243": {
+          "skillId": "t0_axe_practice_chop",
+          "slotType": "primary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage"
+          ],
+          "damageType": "physical",
+          "slotRole": "primary"
+        },
+        "SKIL-T0-72620F-56670A": {
+          "skillId": "t0_axe_wind_up",
+          "slotType": "secondary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "secondary"
+        },
+        "SKIL-T0-D82548-CB8261": {
+          "skillId": "t0_axe_cleaving_swing",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        },
+        "SKIL-T0-A5647D-1CD7D8": {
+          "skillId": "t0_axe_heavy_blow",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        }
+      }
+    },
+    "DAGGER": {
+      "weaponStats": {
+        "damage": {
+          "base": 14,
+          "derivedStat": "damage",
+          "label": "Damage",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "speed": {
+          "base": 70,
+          "derivedStat": "attackSpeed",
+          "label": "Attack Speed",
+          "scalesWith": [
+            "AGI",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000007--2C78C6E",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "crit": {
+          "base": 2,
+          "derivedStat": "criticalChance",
+          "label": "Critical Chance",
+          "scalesWith": [
+            "DEX",
+            "AGI"
+          ],
+          "combatStep": 6,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000007--2C78C6E"
+          ]
+        },
+        "block": {
+          "base": 0,
+          "derivedStat": "block",
+          "label": "Block Chance",
+          "scalesWith": [
+            "STR",
+            "VIT"
+          ],
+          "combatStep": 5,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000002--6EDB743"
+          ]
+        },
+        "defense": {
+          "base": 3,
+          "derivedStat": "defense",
+          "label": "Defense",
+          "scalesWith": [
+            "VIT",
+            "END"
+          ],
+          "combatStep": 3,
+          "attributeUuids": [
+            "ATTR-20260624203742-000002--6EDB743",
+            "ATTR-20260624203742-000003--612FEE3"
+          ]
+        },
+        "combo": {
+          "base": 10,
+          "derivedStat": "comboCooldownRed",
+          "label": "Combo Reduction",
+          "scalesWith": [
+            "DEX",
+            "TAC"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000008-36B09C18"
+          ]
+        }
+      },
+      "primaryAttribute": null,
+      "secondaryAttribute": null,
+      "attributeAffinity": {
+        "primary": null,
+        "secondary": null
+      },
+      "canonicalAttributes": "master-attributes.json",
+      "canonicalSkills": "master-weaponSkills.json",
+      "combatPipeline": "master-attributes.json → combatFormulas (8 steps)",
+      "skills": {
+        "SKIL-T0-F82777-D317CC": {
+          "skillId": "t0_dagger_practice_stab",
+          "slotType": "primary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage"
+          ],
+          "damageType": "physical",
+          "slotRole": "primary"
+        },
+        "SKIL-T0-67C7D5-2931F5": {
+          "skillId": "t0_dagger_evade_step",
+          "slotType": "secondary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "secondary"
+        },
+        "SKIL-T0-D5B526-F3890F": {
+          "skillId": "t0_dagger_backstab",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        },
+        "SKIL-T0-2E3C38-34B385": {
+          "skillId": "t0_dagger_poison_scratch",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        }
+      }
+    },
+    "HAMMER": {
+      "weaponStats": {
+        "damage": {
+          "base": 22,
+          "derivedStat": "damage",
+          "label": "Damage",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "speed": {
+          "base": 115,
+          "derivedStat": "attackSpeed",
+          "label": "Attack Speed",
+          "scalesWith": [
+            "AGI",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000007--2C78C6E",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "crit": {
+          "base": 0,
+          "derivedStat": "criticalChance",
+          "label": "Critical Chance",
+          "scalesWith": [
+            "DEX",
+            "AGI"
+          ],
+          "combatStep": 6,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000007--2C78C6E"
+          ]
+        },
+        "block": {
+          "base": 3,
+          "derivedStat": "block",
+          "label": "Block Chance",
+          "scalesWith": [
+            "STR",
+            "VIT"
+          ],
+          "combatStep": 5,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000002--6EDB743"
+          ]
+        },
+        "defense": {
+          "base": 7,
+          "derivedStat": "defense",
+          "label": "Defense",
+          "scalesWith": [
+            "VIT",
+            "END"
+          ],
+          "combatStep": 3,
+          "attributeUuids": [
+            "ATTR-20260624203742-000002--6EDB743",
+            "ATTR-20260624203742-000003--612FEE3"
+          ]
+        },
+        "combo": {
+          "base": 0,
+          "derivedStat": "comboCooldownRed",
+          "label": "Combo Reduction",
+          "scalesWith": [
+            "DEX",
+            "TAC"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000008-36B09C18"
+          ]
+        }
+      },
+      "primaryAttribute": null,
+      "secondaryAttribute": null,
+      "attributeAffinity": {
+        "primary": null,
+        "secondary": null
+      },
+      "canonicalAttributes": "master-attributes.json",
+      "canonicalSkills": "master-weaponSkills.json",
+      "combatPipeline": "master-attributes.json → combatFormulas (8 steps)",
+      "skills": {
+        "SKIL-T0-06FF4C-194B7A": {
+          "skillId": "t0_hammer_practice_smash",
+          "slotType": "primary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage"
+          ],
+          "damageType": "physical",
+          "slotRole": "primary"
+        },
+        "SKIL-T0-6FDFDE-1264A4": {
+          "skillId": "t0_hammer_brace",
+          "slotType": "secondary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "cooldownReduction",
+            "accuracy",
+            "ccResistance"
+          ],
+          "damageType": "physical",
+          "slotRole": "secondary"
+        },
+        "SKIL-T0-C1B14B-792618": {
+          "skillId": "t0_hammer_shockwave",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction",
+            "accuracy",
+            "ccResistance"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        },
+        "SKIL-T0-61C781-9DFECD": {
+          "skillId": "t0_hammer_stagger_blow",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        }
+      }
+    },
+    "SPEAR": {
+      "weaponStats": {
+        "damage": {
+          "base": 24,
+          "derivedStat": "damage",
+          "label": "Damage",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "speed": {
+          "base": 110,
+          "derivedStat": "attackSpeed",
+          "label": "Attack Speed",
+          "scalesWith": [
+            "AGI",
+            "DEX"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000007--2C78C6E",
+            "ATTR-20260624203742-000006--29C9572"
+          ]
+        },
+        "crit": {
+          "base": 1,
+          "derivedStat": "criticalChance",
+          "label": "Critical Chance",
+          "scalesWith": [
+            "DEX",
+            "AGI"
+          ],
+          "combatStep": 6,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000007--2C78C6E"
+          ]
+        },
+        "block": {
+          "base": 2,
+          "derivedStat": "block",
+          "label": "Block Chance",
+          "scalesWith": [
+            "STR",
+            "VIT"
+          ],
+          "combatStep": 5,
+          "attributeUuids": [
+            "ATTR-20260624203742-000001--6906BEC",
+            "ATTR-20260624203742-000002--6EDB743"
+          ]
+        },
+        "defense": {
+          "base": 7,
+          "derivedStat": "defense",
+          "label": "Defense",
+          "scalesWith": [
+            "VIT",
+            "END"
+          ],
+          "combatStep": 3,
+          "attributeUuids": [
+            "ATTR-20260624203742-000002--6EDB743",
+            "ATTR-20260624203742-000003--612FEE3"
+          ]
+        },
+        "combo": {
+          "base": 0,
+          "derivedStat": "comboCooldownRed",
+          "label": "Combo Reduction",
+          "scalesWith": [
+            "DEX",
+            "TAC"
+          ],
+          "combatStep": 1,
+          "attributeUuids": [
+            "ATTR-20260624203742-000006--29C9572",
+            "ATTR-20260624203742-000008-36B09C18"
+          ]
+        }
+      },
+      "primaryAttribute": null,
+      "secondaryAttribute": null,
+      "attributeAffinity": {
+        "primary": null,
+        "secondary": null
+      },
+      "canonicalAttributes": "master-attributes.json",
+      "canonicalSkills": "master-weaponSkills.json",
+      "combatPipeline": "master-attributes.json → combatFormulas (8 steps)",
+      "skills": {
+        "SKIL-T0-7A4B3D-34568E": {
+          "skillId": "t0_spear_practice_thrust",
+          "slotType": "primary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage"
+          ],
+          "damageType": "physical",
+          "slotRole": "primary"
+        },
+        "SKIL-T0-28E14F-D36B01": {
+          "skillId": "t0_spear_pole_guard",
+          "slotType": "secondary",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "cooldownReduction",
+            "block",
+            "blockEffect"
+          ],
+          "damageType": "physical",
+          "slotRole": "secondary"
+        },
+        "SKIL-T0-0B7AD7-731072": {
+          "skillId": "t0_spear_reach_strike",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        },
+        "SKIL-T0-6C94BC-C7C7BB": {
+          "skillId": "t0_spear_sweeping_jab",
+          "slotType": "ability",
+          "scalesWith": [
+            "STR",
+            "DEX"
+          ],
+          "primaryAttribute": "STR",
+          "resourceAttribute": "END",
+          "derivedStats": [
+            "damage",
+            "cooldownReduction"
+          ],
+          "damageType": "physical",
+          "slotRole": "ability"
+        }
+      }
+    }
+  }
+}
