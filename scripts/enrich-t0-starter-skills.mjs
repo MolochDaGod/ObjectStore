@@ -77,6 +77,7 @@ function buildStarterSlots(typeDef, pattern, weaponType) {
   if (!slot3Pool.length) return null;
 
   const defaults = typeDefaults(weaponType);
+  const isTool = weaponType === 'TOOL';
   const slot1 = enrichStarterSkill(pattern.slot1, weaponType, typeDef, defaults);
   const slot2 = enrichStarterSkill(pattern.slot2, weaponType, typeDef, defaults);
   const slot3Skills = slot3Pool.map((raw) => enrichStarterSkill(raw, weaponType, typeDef, defaults));
@@ -84,7 +85,7 @@ function buildStarterSlots(typeDef, pattern, weaponType) {
   return [
     {
       type: 'primary',
-      label: 'Slot 1 · Starter Attack',
+      label: isTool ? 'Slot 1 · Chop' : 'Slot 1 · Starter Attack',
       unlockTier: 0,
       fixed: true,
       autoAssigned: true,
@@ -92,7 +93,7 @@ function buildStarterSlots(typeDef, pattern, weaponType) {
     },
     {
       type: 'secondary',
-      label: 'Slot 2 · Starter Style',
+      label: isTool ? 'Slot 2 · Mine' : 'Slot 2 · Starter Style',
       unlockTier: 0,
       fixed: true,
       autoAssigned: true,
@@ -145,10 +146,31 @@ const byType = Object.fromEntries((data.weaponTypes || []).map((wt) => [wt.id, w
 let mergedTypes = 0;
 let mergedWeapons = 0;
 
+// TOOL is gather-only — ensure weapon type exists for starterSlots + prefab pipeline
+const toolPattern = pattern.types?.TOOL;
+if (toolPattern && !byType.TOOL) {
+  const toolDef = {
+    id: 'TOOL',
+    name: 'Harvest Tool',
+    icon: '/icons/tools/tool_01.png',
+    classes: [],
+    classification: 'gather',
+    totalSkills: 0,
+    slots: [],
+  };
+  data.weaponTypes = data.weaponTypes || [];
+  data.weaponTypes.push(toolDef);
+  byType.TOOL = toolDef;
+}
+
 for (const wt of data.weaponTypes || []) {
   const typePattern = pattern.types?.[wt.id];
   if (!typePattern) continue;
   wt.starterSlots = buildStarterSlots(wt, typePattern, wt.id);
+  if (wt.id === 'TOOL' && wt.starterSlots) {
+    wt.totalSkills = wt.starterSlots.flatMap((s) => s.skills).length;
+    wt.classification = 'gather';
+  }
   mergedTypes++;
 }
 

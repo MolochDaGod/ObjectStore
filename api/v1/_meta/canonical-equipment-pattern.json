@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-30T00:00:00.000Z",
+  "description": "Industry-standard item/equipment layering for Grudge Studio — definition vs instance vs economy",
+  "status": {
+    "weapons": "live",
+    "harvestTools": "live",
+    "armor": "planned",
+    "consumables": "partial",
+    "materials": "live",
+    "drops": "partial"
+  },
+  "layers": {
+    "itemDefinition": {
+      "uuidPrefix": "ITEM-*",
+      "role": "Static catalog row — name, tier, equip slot, base stats, tags",
+      "canonicalWeapons": "master-weapon-prefabs.json",
+      "canonicalItems": "master-items.json",
+      "d1Mirror": "objectstore-meta.weapon_prefabs (prefab_json column)"
+    },
+    "abilityBinding": {
+      "uuidPrefix": "SKIL-*",
+      "role": "What equipment does when equipped (hotbar slots 1–5 or gather actions)",
+      "canonicalSource": "master-weaponSkills.json",
+      "embeddedOnPrefab": "prefabs[].skills.slots"
+    },
+    "assets": {
+      "role": "Binary files only — never inline blobs in JSON",
+      "iconCdn": "https://assets.grudge-studio.com/game-assets/icons/...",
+      "modelCdn": "https://assets.grudge-studio.com/models/weapons/...",
+      "iconUuid": "ICON-* (icon-registry.json)",
+      "resolver": "utils/icon-resolver.js"
+    },
+    "recipe": {
+      "uuidPrefix": "RECP-*",
+      "canonicalSource": "master-recipes.json",
+      "graph": "materials[].uuid → result ITEM-*"
+    },
+    "lootTable": {
+      "role": "References ITEM-* + weight + stack range — not embedded in item def",
+      "canonicalSource": "ummorpg-systems-bridge.json → systems.drops.tables"
+    },
+    "harvestNode": {
+      "role": "World node → tool action → material drop",
+      "canonicalSource": "master-harvest-nodes.json",
+      "materialSource": "master-materials.json"
+    },
+    "itemInstance": {
+      "role": "Runtime only — durability, enchants, quantity, soulbound",
+      "authority": "api.grudge-studio.com (characters, inventory)"
+    }
+  },
+  "equipmentTypes": {
+    "combatWeapon": {
+      "prefabSource": "master-weapon-prefabs.json",
+      "t0Pattern": "three-slot-starter",
+      "t1PlusPattern": "five-slot",
+      "slotRoles": {
+        "1": "standardAttack",
+        "2": "sharedStyle",
+        "3": "sharedStyle",
+        "4": "signature",
+        "5": "passives"
+      },
+      "offhandModifier": "SHIELD/TOME inject slots 1–3 via F toggle (weapon-loadout-pattern.json)"
+    },
+    "harvestTool": {
+      "prefabSource": "master-weapon-prefabs.json (weaponType=TOOL)",
+      "t0Pattern": "gather-starter",
+      "t0Starter": "t0-weapons.json → Crude Tool (t0-tool)",
+      "slotRoles": {
+        "1": "gatherPrimary (auto)",
+        "2": "gatherStyle (auto)",
+        "3": "gatherChoice (player picks one)"
+      },
+      "t1PlusPattern": "gather",
+      "t1PlusNote": "Profession harvest nodes — master-harvest-nodes.json, no combat SKIL-*"
+    },
+    "armor": {
+      "status": "planned",
+      "targetPrefab": "master-armor-prefabs.json",
+      "equipSlots": ["Head", "Chest", "Legs", "Feet", "Hands", "Shoulders", "Cloak"],
+      "pattern": "Same ITEM-* + RECP + drop + enchant layering as weapons"
+    }
+  },
+  "canonicalEndpoints": {
+    "staticJsonPrimary": "https://molochdagod.github.io/ObjectStore/api/v1/",
+    "staticJsonWorker": "https://objectstore.grudge-studio.com/api/v1/",
+    "assetCdn": "https://assets.grudge-studio.com/",
+    "workerApi": "https://objectstore.grudge-studio.com/v1/",
+    "d1Database": "objectstore-meta",
+    "gameApi": "https://api.grudge-studio.com/"
+  },
+  "fetchOrder": [
+    "molochdagod.github.io/ObjectStore/api/v1/*.json (GitHub Pages — canonical static)",
+    "objectstore.grudge-studio.com/api/v1/*.json (Worker mirror)",
+    "assets.grudge-studio.com/* (binary CDN)",
+    "objectstore-meta D1 weapon_prefabs (runtime Worker cache)"
+  ],
+  "deprecated": {
+    "items-database.json": "Use master-items.json or master-weapon-prefabs.json",
+    "master-t0-items.json": "Use t0-weapons.json + master-weapon-prefabs.json",
+    "weapons.json alone": "Design templates only — runtime uses master-weapon-prefabs.json",
+    "grudge-game-data-hub": "Archived",
+    "molochdagod.github.io icons in item JSON": "Use /icons/... paths resolved to assets.grudge-studio.com",
+    "objectstore.grudge-studio.com for binary files": "Use assets.grudge-studio.com"
+  },
+  "pipelines": {
+    "weaponsAndTools": "npm run build:weapon-pipeline",
+    "allMasterData": "npm run generate:master && npm run consolidate:game-data",
+    "d1Seed": "workers/seed/weapon-prefabs.sql"
+  }
+}

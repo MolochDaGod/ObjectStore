@@ -59,6 +59,8 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 **Live browser:** [WEAPON_SKILLS.html](https://molochdagod.github.io/ObjectStore/WEAPON_SKILLS.html) — pick weapon class → named variant → filtered skills/passives.
 
+**Equipment standard:** [docs/CANONICAL-EQUIPMENT.md](docs/CANONICAL-EQUIPMENT.md) — weapons + harvest tool (live), armor next. Meta: `/api/v1/_meta/canonical-equipment-pattern.json`
+
 **T0 starter pattern** (15 crafting starters — no tier upgrades):
 
 | Slot | Role | Notes |
@@ -66,6 +68,8 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 | 1 | Starter attack | Fixed · tier-0 skill only |
 | 2 | Starter style | Fixed · tier-0 skill only |
 | 3 | Starter ability | **Player choice** · pick one from 2–3 tier-0 options |
+
+**Harvest tool (Crude Tool):** `gather-starter` — Chop · Mine · choose Skin or Pry. T1+ tools link to `master-harvest-nodes.json`.
 
 Craft **T1** named weapons from the matching T0 starter + materials (`usedInT1Crafting`). Reference: `/api/v1/_meta/t0-starter-slot-pattern.json`
 

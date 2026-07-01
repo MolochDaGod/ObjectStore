@@ -103,6 +103,26 @@ if (badT0Starter.length) {
   );
 }
 
+const badT0Tool = prefabs.prefabs.filter((p) => {
+  if (p.tier !== 0 || p.weaponType !== 'TOOL') return false;
+  if (p.skills.slotPattern !== 'gather-starter') return true;
+  const slots = p.skills.slots || [];
+  if (slots.length !== 3) return true;
+  const prim = slots.find((s) => s.type === 'primary');
+  const sec = slots.find((s) => s.type === 'secondary');
+  const abil = slots.find((s) => s.type === 'ability');
+  if (!prim || prim.skillIds?.length !== 1) return true;
+  if (!sec || sec.skillIds?.length !== 1) return true;
+  if (!abil || abil.skillIds?.length < 2) return true;
+  if (!abil.choice) return true;
+  return false;
+});
+if (badT0Tool.length) {
+  issues.push(
+    `T0 harvest tool needs gather-starter (slots 1–2 fixed, slot 3 choice): ${badT0Tool.length} wrong`,
+  );
+}
+
 const badSlot1 = prefabs.prefabs.filter((p) => {
   if (p.tier < 1 || p.weaponType === 'TOOL') return false;
   const prim = p.skills.slots?.find((s) => s.type === 'primary');
@@ -132,7 +152,7 @@ if (noSkills.length) {
   issues.push(`T1+ prefabs without SKIL-* bindings: ${noSkills.length} (${JSON.stringify(byType)})`);
 }
 
-const t0NoSkills = prefabs.prefabs.filter((p) => p.tier === 0 && !prefabHasSkills(p) && p.weaponType !== 'TOOL');
+const t0NoSkills = prefabs.prefabs.filter((p) => p.tier === 0 && !prefabHasSkills(p));
 if (t0NoSkills.length) {
   warnings.push(`T0 starters without skills: ${t0NoSkills.map((p) => p.name).join(', ')}`);
 }
@@ -203,7 +223,9 @@ function parseAbilityName(str) {
 console.log(`Slot 1 wrong (not exactly 1 attack): ${badSlot1.length}`);
 console.log(`Slot 4 signature mismatches: ${sigMismatches.length}`);
 console.log(`T1+ missing skills: ${noSkills.length}`);
-console.log(`TOOLS (gather, no combat skills): ${prefabs.prefabs.filter((p) => p.weaponType === 'TOOL').length}`);
+const toolPrefabs = prefabs.prefabs.filter((p) => p.weaponType === 'TOOL');
+const t0ToolWithGather = toolPrefabs.filter((p) => p.tier === 0 && prefabHasSkills(p)).length;
+console.log(`TOOLS: ${toolPrefabs.length} (T0 gather-starter with skills: ${t0ToolWithGather})`);
 console.log(`Cast times: ${castSet}/${skillRows} (${castPct}%)`);
 console.log(`Alias map types: ${Object.keys(aliases.byWeaponType || {}).length}`);
 

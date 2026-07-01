@@ -129,16 +129,25 @@
   </div>
 
   <script>
-    const BASE = 'https://objectstore.grudge-studio.com';
+    const BASE = 'https://molochdagod.github.io/ObjectStore';
+    const BASE_FALLBACK = 'https://objectstore.grudge-studio.com';
     let allAudio = [];
     let currentAudioEl = null;
     let currentItem = null;
     let progressInterval = null;
 
+    async function fetchCanonicalJson(path) {
+      for (const base of [BASE, BASE_FALLBACK, '']) {
+        const url = base ? `${base}${path}` : path;
+        const res = await fetch(url);
+        if (res.ok) return res.json();
+      }
+      throw new Error('canonical fetch failed: ' + path);
+    }
+
     async function loadAudio() {
       try {
-        const res = await fetch(`${BASE}/api/v1/audio.json`);
-        const data = await res.json();
+        const data = await fetchCanonicalJson('/api/v1/audio.json');
         allAudio = Array.isArray(data) ? data : (data.files || data.audio || Object.values(data).flat());
         // normalize entries
         allAudio = allAudio.map(a => {

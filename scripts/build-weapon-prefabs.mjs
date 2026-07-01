@@ -258,15 +258,52 @@ function buildSkillIndex(skillsJson) {
   return byType;
 }
 
+function slotsFromEmbeddedT0(item) {
+  const raw = item?.skills?.slots;
+  if (!raw?.length) return null;
+  return raw.map((slot) => ({
+    type: slot.type,
+    label: slot.label,
+    unlockTier: slot.unlockTier ?? 0,
+    fixed: slot.fixed,
+    choice: slot.choice,
+    autoAssigned: slot.autoAssigned,
+    defaultSkillId: slot.defaultSkillId,
+    skills: slot.skills?.length
+      ? slot.skills
+      : (slot.skillIds || []).map((id) => ({ id, tier: 0 })),
+  }));
+}
+
 function resolveSkillBindings(weaponType, variantMeta, skillTypeDef, item) {
   if (weaponType === 'TOOL') {
+    const tier = item?.tier ?? 0;
+    if (tier === 0) {
+      const embedded = slotsFromEmbeddedT0(item);
+      const starterSlots = skillTypeDef?.starterSlots || embedded;
+      if (starterSlots?.length >= 3) {
+        return bindFiveSlot([], variantMeta, weaponType, item, { starterSlots });
+      }
+      return {
+        slots: [],
+        skillUuids: [],
+        passives: [],
+        slotPattern: 'gather',
+        bindingMode: 'gather',
+        note: 'T0 tool — run enrich:t0-starter-skills to populate gather slots 1–3',
+      };
+    }
     return {
       slots: [],
       skillUuids: [],
       passives: [],
       slotPattern: 'gather',
       bindingMode: 'gather',
-      note: 'Tools use profession gather actions, not combat SKIL-*',
+      note: 'T1+ tools use profession harvest nodes — see master-harvest-nodes.json',
+      harvestProfile: {
+        canonicalSource: 'master-harvest-nodes.json',
+        materialSource: 'master-materials.json',
+      },
     };
   }
 
@@ -447,9 +484,12 @@ function buildUmmorpgBridge(prefabs, enchants, recipes) {
         'master-registry.json',
       ],
       deprecated: [
-        'weapons.json (119 templates only)',
+        'weapons.json (119 design templates only)',
+        'items-database.json',
+        'master-t0-items.json',
         'StreamingAssets/GameData/recipes.json',
         'GrudgeDataImporter weaponRecipes',
+        'grudge-game-data-hub (archived)',
       ],
       unityMenu: 'Grudge Studio → Import Canonical Weapon Prefabs',
     },
@@ -535,7 +575,7 @@ const output = {
   version: '1.0.0',
   generated: new Date().toISOString(),
   description:
-    'Canonical weapon prefabs — five-slot pattern (1=standard attack, 2–3=shared, 4=signature, 5=passives)',
+    'Canonical weapon + harvest tool prefabs — T0 three-slot/gather-starter, T1+ five-slot combat, T1+ gather profession',
   slotPattern: 'five-slot',
   loadoutPattern: LOADOUT_PATTERN,
   assetCdn: CDN,

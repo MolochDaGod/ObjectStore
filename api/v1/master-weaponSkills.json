@@ -11977,6 +11977,130 @@
         }
       ],
       "uuid": "ITEM-20260621232130-000DE5-A61195C2"
+    },
+    {
+      "id": "TOOL",
+      "name": "Harvest Tool",
+      "icon": "/icons/tools/tool_01.png",
+      "classes": [],
+      "classification": "gather",
+      "totalSkills": 4,
+      "slots": [],
+      "starterSlots": [
+        {
+          "type": "primary",
+          "label": "Slot 1 · Chop",
+          "unlockTier": 0,
+          "fixed": true,
+          "autoAssigned": true,
+          "skills": [
+            {
+              "uuid": "SKIL-T0-A6635E-EB85FE",
+              "id": "t0_tool_chop",
+              "name": "Chop",
+              "description": "Chop wood, fiber, and soft nodes",
+              "icon": "/icons/tools/tool_01.png",
+              "tier": 0,
+              "damage": 8,
+              "cooldown": 0,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical",
+              "effects": [
+                "Gather wood"
+              ],
+              "resourceCost": {
+                "mana": 0,
+                "stamina": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "secondary",
+          "label": "Slot 2 · Mine",
+          "unlockTier": 0,
+          "fixed": true,
+          "autoAssigned": true,
+          "skills": [
+            {
+              "uuid": "SKIL-T0-B85A6C-A8D10E",
+              "id": "t0_tool_mine",
+              "name": "Mine",
+              "description": "Chip stone and scrap ore",
+              "icon": "/icons/tools/tool_01.png",
+              "tier": 0,
+              "damage": 8,
+              "cooldown": 0,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical",
+              "effects": [
+                "Gather ore"
+              ],
+              "resourceCost": {
+                "mana": 0,
+                "stamina": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "ability",
+          "label": "Slot 3 · Choose One",
+          "unlockTier": 0,
+          "fixed": false,
+          "choice": true,
+          "autoAssigned": false,
+          "defaultSkillId": "t0_tool_skin",
+          "skills": [
+            {
+              "uuid": "SKIL-T0-531705-33B025",
+              "id": "t0_tool_skin",
+              "name": "Skin",
+              "description": "Skin game and salvage leather",
+              "icon": "/icons/tools/tool_01.png",
+              "tier": 0,
+              "damage": 6,
+              "cooldown": 2,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical",
+              "effects": [
+                "Gather hide"
+              ],
+              "resourceCost": {
+                "mana": 0,
+                "stamina": 2
+              }
+            },
+            {
+              "uuid": "SKIL-T0-13965C-48643A",
+              "id": "t0_tool_pry",
+              "name": "Pry",
+              "description": "Pry loose components and crates",
+              "icon": "/icons/tools/tool_01.png",
+              "tier": 0,
+              "damage": 6,
+              "cooldown": 3,
+              "castTime": null,
+              "range": null,
+              "projectile": null,
+              "damageType": "physical",
+              "effects": [
+                "Gather misc"
+              ],
+              "resourceCost": {
+                "mana": 0,
+                "stamina": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "artifactWeapons": [
@@ -12467,8 +12591,8 @@
   "enriched": "2026-07-01T00:33:15.971Z",
   "enrichmentNote": "UUIDs + resourceCost added by enrich-weapon-skills.mjs",
   "t0StarterPattern": "three-slot-starter",
-  "t0StarterEnriched": "2026-07-01T03:12:42.536Z",
-  "variantSignaturesEnriched": "2026-07-01T03:12:43.123Z",
+  "t0StarterEnriched": "2026-07-01T03:50:52.493Z",
+  "variantSignaturesEnriched": "2026-07-01T03:50:52.940Z",
   "signatureSkillsAdded": 0,
   "t0StarterAutoAssign": {
     "slot1": true,

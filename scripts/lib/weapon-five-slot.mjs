@@ -105,6 +105,12 @@ export const T0_SLOT_LABELS = {
   ability: 'Slot 3 · Choose One',
 };
 
+export const T0_GATHER_SLOT_LABELS = {
+  primary: 'Slot 1 · Chop',
+  secondary: 'Slot 2 · Mine',
+  ability: 'Slot 3 · Choose One',
+};
+
 export const OFFHAND_ACTIVE_LABELS = {
   primary: `Slot 1 · ${OFFHAND_TOGGLE_KEY} Active`,
   secondary: `Slot 2 · ${OFFHAND_TOGGLE_KEY} Active`,
@@ -129,6 +135,7 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
   if (isT0) {
     if (weaponType === 'TOOL') {
       const starter = opts.starterSlots;
+      const gatherLabels = T0_GATHER_SLOT_LABELS;
       if (starter?.length) {
         const outSlots = [];
         const skillUuids = [];
@@ -137,7 +144,7 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
           const uuids = (slot.skills || []).map((s) => s.uuid).filter(Boolean);
           outSlots.push({
             type: slot.type,
-            label: slot.label || T0_SLOT_LABELS[slot.type] || slot.type,
+            label: slot.label || gatherLabels[slot.type] || slot.type,
             unlockTier: 0,
             skillIds: ids,
             skillUuids: uuids,
