@@ -63,9 +63,11 @@
     "harvestNodes": "master-harvest-nodes.json",
     "recipes": "master-recipes.json"
   },
+  "missions": "api/v1/_meta/missions/",
   "gaps": {
-    "natureScatterExport": "RTS tree scatter not yet merged into Warlords 3D GLB export",
-    "rtsHeightmap3d": "RTS heightmap now upsampled into Island3DEngine center (200m → 1024m); NatureScatter foliage still RTS-only",
+    "natureScatterPerf": "RTS foliage uses per-instance clones; InstancedMesh + wind sway planned",
+    "rtsHeightmap3d": "complete — see MISSION-01-rts-heightmap-3d.json",
+    "natureScatterExport": "complete — see MISSION-02-nature-scatter-export.json",
     "scaleUnification": "Colyseus room 400m vs 3D 1024m — use home-island-contract.json when placing entities",
     "armorPrefabs": "planned — armor catalog live in master-armor.json only",
     "economySpiderChart": "not built — achievability radar for materials/recipes/chests pending"

@@ -1,0 +1,31 @@
+{
+  "id": "MISSION-01",
+  "title": "RTS heightmap → Warlords 3D terrain",
+  "status": "complete",
+  "completedAt": "2026-07-01",
+  "repos": ["GrudgeBuilder"],
+  "summary": "Upsample RTS-Grudge 200m/128² heightmap export into the center of the 1024m Warlords 3D home island mesh.",
+  "trigger": "POST /api/island/export-from-rts with heightmap payload",
+  "authority": {
+    "contract": "api/v1/home-island-contract.json",
+    "shared": "GrudgeBuilder/shared/definitions/rtsTerrainBridge.ts",
+    "generator": "GrudgeBuilder/client/src/island3d/terrain/IslandTerrainGenerator.ts"
+  },
+  "dataFlow": [
+    "RTS-Grudge builds heightmap via buildRtsHeightmapPayload()",
+    "Railway stores rtsHeightmap in home_islands.state JSONB",
+    "home-island.tsx passes rtsHeightmap to Island3DEngine",
+    "generateIslandTerrainFromRts() upsamples center; outer ring blends procedural shoreline"
+  ],
+  "scale": {
+    "rtsWorldSizeM": 200,
+    "warlords3dWorldSizeM": 1024,
+    "placement": "RTS island centered at world origin"
+  },
+  "verify": [
+    "Export island from RTS-Grudge while signed in",
+    "Open /home-island — console shows [Island3D] Terrain from RTS heightmap export",
+    "Terrain center matches RTS island shape"
+  ],
+  "nextMission": "MISSION-02-nature-scatter-export"
+}

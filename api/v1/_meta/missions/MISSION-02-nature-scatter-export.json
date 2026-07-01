@@ -1,0 +1,40 @@
+{
+  "id": "MISSION-02",
+  "title": "RTS NatureScatter → Warlords 3D foliage",
+  "status": "complete",
+  "completedAt": "2026-07-01",
+  "repos": ["GrudgeBuilder", "ObjectStore"],
+  "summary": "Deterministic RTS foliage placements stored on Railway and rendered as CDN nature GLBs on the 1024m home island.",
+  "trigger": "POST /api/island/export-from-rts (server generates scatter when heightmap present)",
+  "authority": {
+    "shared": "GrudgeBuilder/shared/definitions/rtsNatureScatter.ts",
+    "merge": "GrudgeBuilder/server/utilities/islandGeneration.ts mergeRtsExportIntoIslandState",
+    "renderer": "GrudgeBuilder/client/src/island3d/objects/RtsNatureScatter.ts"
+  },
+  "dataFlow": [
+    "RTS export sends heightmap + seed + biome",
+    "mergeRtsExportIntoIslandState calls generateRtsNatureScatter(seed, biome, heightmap)",
+    "Railway stores rtsNatureScatter.instances[] on home_islands.state",
+    "Island3DEngine scatterRtsNatureInScene() loads /models/nature/*.glb from CDN",
+    "Y re-snapped to upsampled terrain mesh via raycast"
+  ],
+  "payload": {
+    "stateField": "rtsNatureScatter",
+    "instanceFields": ["category", "modelPath", "x", "y", "z", "rotation", "scale"],
+    "maxRendered": 180,
+    "modelCdn": "https://assets.grudge-studio.com/models/nature/"
+  },
+  "categories": ["tree", "pine", "deadTree", "twisted", "rock", "bush", "grass", "mushroom", "flower", "fern", "plant"],
+  "verify": [
+    "Export from RTS-Grudge after heightmap export",
+    "GET /api/island — state.rtsNatureScatter.instances.length > 0",
+    "Open /home-island — console shows [Island3D] RTS nature scatter: N/M instances",
+    "Trees/rocks visible in center 200m patch"
+  ],
+  "gaps": [
+    "InstancedMesh batching (currently clones per instance)",
+    "Wind sway shader not ported from RTS",
+    "Biome filter uses height-only; RTS biome-zone filter not replayed"
+  ],
+  "nextMission": "MISSION-03-economy-spider-chart"
+}
