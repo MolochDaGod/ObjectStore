@@ -1,6 +1,6 @@
 {
   "service": "objectstore",
-  "version": "5.1.0",
+  "version": "5.0.0",
   "canonicalUrl": "https://objectstore.grudge-studio.com",
   "docs": "https://info.grudge-studio.com/docs",
   "staticJsonBase": "https://objectstore.grudge-studio.com/api/v1",
@@ -10,7 +10,7 @@
     "login": "https://id.grudge-studio.com/api/auth/page",
     "verify": "https://id.grudge-studio.com/api/auth/verify"
   },
-  "generated": "2026-06-25T00:29:05.871Z",
+  "generated": "2026-07-01T01:18:34.383Z",
   "totals": {
     "weapons": 868,
     "armor": 1344,
@@ -18,7 +18,7 @@
     "consumables": 132,
     "enemies": 38,
     "bosses": 12,
-    "weaponSkills": 219,
+    "weaponSkills": 268,
     "vfxEffects": 143,
     "battleAbilities": 209,
     "sprites2d": 3038,
@@ -31,10 +31,8 @@
     "spriteCharacters": 313,
     "armadaPacks": 46,
     "armadaModels": 23,
-    "apiEndpoints": 104,
-    "masterDatasets": 20,
-    "iconRegistry": 9724,
-    "iconCategories": 16
+    "apiEndpoints": 117,
+    "masterDatasets": 23
   },
   "endpoints": [
     {
@@ -82,6 +80,10 @@
       "path": "/api/v1/asset-registry.json"
     },
     {
+      "name": "assets-api.json",
+      "path": "/api/v1/assets-api.json"
+    },
+    {
       "name": "attributes.json",
       "path": "/api/v1/attributes.json"
     },
@@ -96,6 +98,10 @@
     {
       "name": "battleFormations.json",
       "path": "/api/v1/battleFormations.json"
+    },
+    {
+      "name": "bench-mesh-catalog.json",
+      "path": "/api/v1/bench-mesh-catalog.json"
     },
     {
       "name": "bosses.json",
@@ -198,8 +204,24 @@
       "path": "/api/v1/heroes.json"
     },
     {
+      "name": "icon-category-index.json",
+      "path": "/api/v1/icon-category-index.json"
+    },
+    {
+      "name": "icon-path-index.json",
+      "path": "/api/v1/icon-path-index.json"
+    },
+    {
       "name": "icon-registry.json",
       "path": "/api/v1/icon-registry.json"
+    },
+    {
+      "name": "icon-search-index.json",
+      "path": "/api/v1/icon-search-index.json"
+    },
+    {
+      "name": "icon-upload-status.json",
+      "path": "/api/v1/icon-upload-status.json"
     },
     {
       "name": "items-database.json",
@@ -222,8 +244,16 @@
       "path": "/api/v1/master-artifacts.json"
     },
     {
+      "name": "master-attributes.json",
+      "path": "/api/v1/master-attributes.json"
+    },
+    {
       "name": "master-buildings.json",
       "path": "/api/v1/master-buildings.json"
+    },
+    {
+      "name": "master-classRelics.json",
+      "path": "/api/v1/master-classRelics.json"
     },
     {
       "name": "master-consumables.json",
@@ -286,6 +316,10 @@
       "path": "/api/v1/master-t0-items.json"
     },
     {
+      "name": "master-weapon-prefabs.json",
+      "path": "/api/v1/master-weapon-prefabs.json"
+    },
+    {
       "name": "master-weaponSkills.json",
       "path": "/api/v1/master-weaponSkills.json"
     },
@@ -342,6 +376,10 @@
       "path": "/api/v1/rendering.json"
     },
     {
+      "name": "resource-mesh-catalog.json",
+      "path": "/api/v1/resource-mesh-catalog.json"
+    },
+    {
       "name": "rtsModels.json",
       "path": "/api/v1/rtsModels.json"
     },
@@ -394,6 +432,10 @@
       "path": "/api/v1/studio.json"
     },
     {
+      "name": "t0-weapons.json",
+      "path": "/api/v1/t0-weapons.json"
+    },
+    {
       "name": "terrain.json",
       "path": "/api/v1/terrain.json"
     },
@@ -402,12 +444,20 @@
       "path": "/api/v1/tileMaps.json"
     },
     {
+      "name": "ui-art.json",
+      "path": "/api/v1/ui-art.json"
+    },
+    {
       "name": "ui-components.json",
       "path": "/api/v1/ui-components.json"
     },
     {
       "name": "ui-packs.json",
       "path": "/api/v1/ui-packs.json"
+    },
+    {
+      "name": "ummorpg-systems-bridge.json",
+      "path": "/api/v1/ummorpg-systems-bridge.json"
     },
     {
       "name": "unified-registry.json",
@@ -452,32 +502,14 @@
     {
       "name": "worlds.json",
       "path": "/api/v1/worlds.json"
-    },
-    {
-      "name": "assets-api.json",
-      "path": "/api/v1/assets-api.json"
-    },
-    {
-      "name": "icon-path-index.json",
-      "path": "/api/v1/icon-path-index.json"
-    },
-    {
-      "name": "icon-upload-status.json",
-      "path": "/api/v1/icon-upload-status.json"
-    },
-    {
-      "name": "icon-category-index.json",
-      "path": "/api/v1/icon-category-index.json"
-    },
-    {
-      "name": "icon-search-index.json",
-      "path": "/api/v1/icon-search-index.json"
     }
   ],
   "masterDatasets": [
     "master-armor.json",
     "master-artifacts.json",
+    "master-attributes.json",
     "master-buildings.json",
+    "master-classRelics.json",
     "master-consumables.json",
     "master-enchants.json",
     "master-harvest-nodes.json",
@@ -493,40 +525,8 @@
     "master-skillTrees.json",
     "master-spellRecipes.json",
     "master-t0-items.json",
+    "master-weapon-prefabs.json",
     "master-weaponSkills.json",
     "master-weapons.json"
-  ],
-  "iconLibrary": {
-    "registry": "/api/v1/icon-registry.json",
-    "pathIndex": "/api/v1/icon-path-index.json",
-    "categoryIndex": "/api/v1/icon-category-index.json",
-    "searchIndex": "/api/v1/icon-search-index.json",
-    "shards": "/api/v1/icon-shards/{category}.json",
-    "browser": "/ICON_BROWSER.html",
-    "assetsApi": "/api/v1/assets-api.json",
-    "uploadStatus": "/api/v1/icon-upload-status.json",
-    "documentation": "/docs/ICON-ASSET-LIBRARY.md",
-    "cdnBase": "https://assets.grudge-studio.com",
-    "keyPrefix": "game-assets",
-    "uuidPrefix": "ICON",
-    "totalEntries": 9724,
-    "categories": {
-      "misc": 3796,
-      "race": 166,
-      "ability": 86,
-      "armor": 1036,
-      "consumable": 128,
-      "faction": 6,
-      "item": 1301,
-      "material": 86,
-      "entity": 65,
-      "class": 18,
-      "weapon": 1588,
-      "profession": 13,
-      "sigil": 8,
-      "skill": 1043,
-      "spell": 358,
-      "ui": 26
-    }
-  }
+  ]
 }
