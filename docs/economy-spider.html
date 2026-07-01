@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grudge Warlords — Economy Achievability</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root { --bg: #0a0a12; --panel: #12121f; --gold: #d4a843; --text: #c8c8d0; --dim: #666; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px; }
+    h1 { font-family: Georgia, serif; color: var(--gold); font-size: 1.5rem; margin-bottom: 4px; }
+    .sub { color: var(--dim); font-size: 0.85rem; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1100px; }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+    .panel { background: var(--panel); border: 1px solid rgba(212,168,67,0.2); border-radius: 12px; padding: 16px; }
+    .panel h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 12px; }
+    canvas { max-height: 360px; }
+    table { width: 100%; font-size: 0.8rem; border-collapse: collapse; }
+    td, th { padding: 6px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    th { color: var(--dim); font-weight: 500; }
+    .pct { color: var(--gold); font-variant-numeric: tabular-nums; }
+    a { color: var(--gold); }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; background: rgba(212,168,67,0.15); color: var(--gold); margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Economy Achievability <span class="pill" id="product-pill">Grudge Warlords</span></h1>
+  <p class="sub">Can players gather → craft → equip? Live data from ObjectStore harvest nodes, materials, and recipes.</p>
+  <div class="grid">
+    <div class="panel">
+      <h2>Spider — coverage axes</h2>
+      <canvas id="spider"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Counts</h2>
+      <table id="counts"></table>
+      <h2 style="margin-top:16px">Sample gaps</h2>
+      <ul id="gaps" style="font-size:0.78rem;color:var(--dim);padding-left:18px;line-height:1.6"></ul>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:20px">JSON: <a href="../api/v1/economy-coverage.json">economy-coverage.json</a> · Regenerate: <code>npm run build:economy-coverage</code></p>
+<script>
+(async function() {
+  const res = await fetch('../api/v1/economy-coverage.json');
+  const data = await res.json();
+  const s = data.spider;
+  const labels = [
+    'Harvest materials',
+    'Obtainable mats',
+    'Recipe chains',
+    'Craftable weapons',
+    'Harvest tools',
+    'Craftable food',
+    'Live harvest nodes',
+  ];
+  const values = [
+    s.harvestMaterials,
+    s.obtainableMaterials,
+    s.recipeChain,
+    s.craftableWeapons,
+    s.harvestTools,
+    s.craftableFood,
+    s.harvestNodesLive,
+  ];
+  new Chart(document.getElementById('spider'), {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Achievability %',
+        data: values,
+        backgroundColor: 'rgba(212,168,67,0.25)',
+        borderColor: '#d4a843',
+        pointBackgroundColor: '#f0c040',
+      }],
+    },
+    options: {
+      scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, color: '#666' }, grid: { color: 'rgba(255,255,255,0.08)' }, pointLabels: { color: '#aaa', font: { size: 11 } } } },
+      plugins: { legend: { display: false } },
+    },
+  });
+  const c = data.counts;
+  document.getElementById('counts').innerHTML = Object.entries(c).map(([k,v]) =>
+    `<tr><th>${k.replace(/([A-Z])/g,' $1')}</th><td class="pct">${typeof v === 'number' ? v.toLocaleString() : v}</td></tr>`
+  ).join('');
+  const gaps = [...(data.gaps.sampleUnachievableRecipes || []).slice(0,8).map(r => `Recipe: ${r}`),
+    ...(data.gaps.harvestNodesMissingRecipeChain || []).map(n => `Node: ${n}`)];
+  document.getElementById('gaps').innerHTML = gaps.length ? gaps.map(g => `<li>${g}</li>`).join('') : '<li>No critical gaps in sample</li>';
+})();
+</script>
+</body>
+</html>

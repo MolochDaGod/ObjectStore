@@ -1,0 +1,28 @@
+{
+  "id": "MISSION-04",
+  "title": "Account → Play Warlords hub",
+  "pillar": "accounts",
+  "product": "grudge-studio",
+  "status": "complete",
+  "completedAt": "2026-07-01",
+  "delivery": "One button routes signed-in players through character → island → 3D home island gameplay; unsigned users go to sign-in.",
+  "playerImpact": "Account page and /home hub point at the real 3D home island (/home-island) instead of legacy 2D-only paths.",
+  "studioImpact": "Same Grudge ID flows from id.grudge-studio.com → grudgewarlords.com → WCS → Puter without losing active character context.",
+  "flow": [
+    "Signed out → /",
+    "No character → /create-character",
+    "No home island → /island-reveal",
+    "Ready → /home-island (1024m seed world, Colyseus, harvest HUD)"
+  ],
+  "artifacts": {
+    "playHub": "GrudgeBuilder/client/src/lib/playHub.ts",
+    "accountCta": "GrudgeBuilder/client/src/pages/AccountPage.tsx",
+    "homeHub": "GrudgeBuilder/client/src/pages/home.tsx"
+  },
+  "verify": [
+    "Sign in on grudgewarlords.com/account",
+    "Click Play — lands on correct step for account state",
+    "Readiness badges show Signed in / Hero ready / Home island"
+  ],
+  "nextMission": "MISSION-05-economy-recipe-harvest-gap-fill"
+}

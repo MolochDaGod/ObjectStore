@@ -1,0 +1,31 @@
+{
+  "id": "MISSION-03",
+  "title": "Economy achievability spider chart",
+  "pillar": "gameplay",
+  "product": "grudge-warlords",
+  "status": "complete",
+  "completedAt": "2026-07-01",
+  "delivery": "Designers and leads can see gather→craft→equip coverage in one radar view — exposes economy gaps blocking player progression.",
+  "playerImpact": "Informs which materials, recipes, and harvest nodes must ship before T1–T8 crafting feels achievable in live play.",
+  "studioImpact": "ObjectStore publishes live achievability JSON for Warlords, WCS, and Puter crafting to align on the same economy truth.",
+  "artifacts": {
+    "json": "api/v1/economy-coverage.json",
+    "ui": "docs/economy-spider.html",
+    "script": "npm run build:economy-coverage"
+  },
+  "spiderAxes": [
+    "harvestMaterials",
+    "obtainableMaterials",
+    "recipeChain",
+    "craftableWeapons",
+    "harvestTools",
+    "craftableFood",
+    "harvestNodesLive"
+  ],
+  "knownProductGaps": [
+    "Recipe chain coverage ~2% — most RECP inputs lack harvest-node sources",
+    "Craftable weapons/tools near 0% full-chain until material graph is expanded",
+    "Only 16% of materials directly drop from harvest nodes"
+  ],
+  "nextMission": "MISSION-04-account-to-play"
+}

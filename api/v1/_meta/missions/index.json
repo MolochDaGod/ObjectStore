@@ -1,23 +1,46 @@
 {
-  "version": "1.0.0",
-  "description": "Grudge Warlords integration missions — one deliverable per file",
+  "version": "2.0.0",
+  "description": "Grudge product delivery missions — Warlords gameplay, Studio platform, accounts, economy",
+  "pillars": {
+    "gameplay": "Island, harvest, combat, 3D world, Colyseus",
+    "accounts": "Grudge ID, WCS, Puter, character roster, play entry",
+    "studio": "ObjectStore, fleet apps, CDN, integration contracts",
+    "economy": "Materials, recipes, harvest nodes, crafting achievability"
+  },
   "missions": [
     {
       "id": "MISSION-01",
+      "pillar": "gameplay",
       "file": "MISSION-01-rts-heightmap-3d.json",
       "title": "RTS heightmap → Warlords 3D terrain",
       "status": "complete"
     },
     {
       "id": "MISSION-02",
+      "pillar": "gameplay",
       "file": "MISSION-02-nature-scatter-export.json",
       "title": "RTS NatureScatter → Warlords 3D foliage",
       "status": "complete"
     },
     {
       "id": "MISSION-03",
-      "file": null,
+      "pillar": "economy",
+      "file": "MISSION-03-economy-spider-chart.json",
       "title": "Economy achievability spider chart",
+      "status": "complete"
+    },
+    {
+      "id": "MISSION-04",
+      "pillar": "accounts",
+      "file": "MISSION-04-account-to-play.json",
+      "title": "Account → Play Warlords hub",
+      "status": "complete"
+    },
+    {
+      "id": "MISSION-05",
+      "pillar": "economy",
+      "file": null,
+      "title": "Close recipe↔harvest material gaps (raise spider scores)",
       "status": "pending"
     }
   ]
