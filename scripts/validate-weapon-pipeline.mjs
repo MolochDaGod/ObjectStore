@@ -55,8 +55,15 @@ if (sampleMain && sampleMain.loadout?.offhandModifier?.toggleKey !== loadoutPatt
   issues.push('Mainhand prefab missing loadout.offhandModifier.toggleKey=F (rebuild prefabs)');
 }
 for (const sample of [sampleShield, sampleTome]) {
-  if (!sample?.loadout?.whenToggleActive) {
-    issues.push(`${sample?.weaponType || 'offhand'} prefab missing loadout.whenToggleActive (rebuild prefabs)`);
+  if (!sample) continue;
+  if (sample.tier === 0) {
+    if (sample.loadout?.pattern !== 'three-slot-starter' && sample.weaponType === 'TOME') {
+      issues.push('T0 TOME prefab must use three-slot-starter loadout');
+    }
+    continue;
+  }
+  if (!sample.loadout?.whenToggleActive) {
+    issues.push(`${sample.weaponType} T1+ prefab missing loadout.whenToggleActive (rebuild prefabs)`);
   }
 }
 
@@ -73,6 +80,25 @@ if (dupes.length) issues.push(`Duplicate prefab UUIDs: ${[...new Set(dupes)].joi
 function prefabHasSkills(p) {
   if (p.skills.skillUuids?.length) return true;
   return (p.skills.slots || []).some((s) => s.skillIds?.length > 0);
+}
+
+const badT0Starter = prefabs.prefabs.filter((p) => {
+  if (p.tier !== 0 || p.weaponType === 'TOOL') return false;
+  if (p.skills.slotPattern !== 'three-slot-starter') return true;
+  const slots = p.skills.slots || [];
+  if (slots.length !== 3) return true;
+  const prim = slots.find((s) => s.type === 'primary');
+  const sec = slots.find((s) => s.type === 'secondary');
+  const abil = slots.find((s) => s.type === 'ability');
+  if (!prim || prim.skillIds?.length !== 1) return true;
+  if (!sec || sec.skillIds?.length !== 1) return true;
+  if (!abil || (abil.skillIds?.length || 0) < 2) return true;
+  return false;
+});
+if (badT0Starter.length) {
+  issues.push(
+    `T0 starters need three-slot-starter (1+1+2+ skills): ${badT0Starter.length} wrong (e.g. ${badT0Starter.slice(0, 3).map((p) => p.name).join(', ')})`,
+  );
 }
 
 const badSlot1 = prefabs.prefabs.filter((p) => {

@@ -621,6 +621,28 @@
       gap: 8px;
       cursor: pointer;
     }
+    .wst-t0-craft-banner {
+      flex: 1 1 100%;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9em;
+      padding: 14px 20px;
+      border: 1px solid hsl(220 15% 30%);
+      border-radius: 6px;
+      background: hsl(225 25% 10%);
+      line-height: 1.5;
+    }
+    .wst-t0-craft-banner strong { color: var(--text-gold); }
+    .wst-t0-craft-banner .wst-t0-note {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.85em;
+      color: hsl(210 15% 55%);
+    }
+    .meta-tag.starter-fixed {
+      border-color: hsl(220 15% 40%);
+      color: hsl(210 15% 70%);
+    }
     .wst-preview-bar kbd {
       display: inline-block;
       padding: 2px 8px;
@@ -813,6 +835,21 @@ function isOffhandModifierTab() {
   return WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(activeWeapon);
 }
 
+function isViewingT0() {
+  const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
+  return variant?.isT0 === true;
+}
+
+function ensureT0Selections() {
+  if (!isViewingT0()) return;
+  const def = getEffectiveTypeDef();
+  if (!def || !WeaponSkillTree.isStarterPattern(def)) return;
+  const defaults = WeaponSkillTree.defaultSelections(def, 0);
+  selectedSkills.primary = defaults.primary;
+  selectedSkills.secondary = defaults.secondary;
+  if (!selectedSkills.ability) selectedSkills.ability = defaults.ability;
+}
+
 function getActiveTypeDef() {
   if (isOffhandModifierTab()) return null;
   return WeaponSkillTree.getTypeDef(activeWeapon);
@@ -826,6 +863,7 @@ function getEffectiveTypeDef() {
 }
 
 function render() {
+  ensureT0Selections();
   renderWeaponTabs();
   renderTierBar();
   renderPreviewBar();
@@ -853,8 +891,11 @@ function renderWeaponTabs() {
     tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
-      activeVariantId = WeaponSkillTree.getDefaultVariantId(key, playerTier === 0);
+      const preferT0 = playerTier === 0 && !WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(key);
+      activeVariantId = WeaponSkillTree.getDefaultVariantId(key, preferT0);
       variantKey = key === 'SHIELD' ? 'kite' : key === 'TOME' ? 'elemental' : variantKey;
+      if (isViewingT0()) playerTier = 0;
+      else if (playerTier === 0) playerTier = 1;
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
       closeDetail();
       render();
@@ -898,6 +939,7 @@ function renderPreviewBar() {
       activeVariantId = btn.dataset.wstWeaponVariant;
       const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
       if (variant?.isT0) playerTier = 0;
+      else if (playerTier === 0) playerTier = 1;
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
       closeDetail();
       render();
@@ -914,7 +956,9 @@ function renderWeaponInfo() {
   }
   const base = getActiveTypeDef();
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
-  el.innerHTML = WeaponSkillTree.renderWeaponInfoHeader(base, variant, { asset });
+  let html = WeaponSkillTree.renderWeaponInfoHeader(base, variant, { asset });
+  if (variant?.isT0) html += WeaponSkillTree.renderT0CraftBanner(variant);
+  el.innerHTML = html;
 }
 
 function renderPassiveColumn() {
@@ -924,26 +968,30 @@ function renderPassiveColumn() {
     el.innerHTML = '';
     return;
   }
+  if (isViewingT0()) {
+    el.innerHTML = '';
+    return;
+  }
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
   el.innerHTML = WeaponSkillTree.renderPassiveColumn(variant, { asset });
 }
 
 function renderTierBar() {
   const container = document.getElementById('tierBar');
-  container.innerHTML = '<span class="tier-label">Weapon Tier:</span>';
+  if (isOffhandModifierTab()) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = '';
 
-  const t0Btn = document.createElement('button');
-  t0Btn.className = 'tier-btn t0' + (playerTier === 0 ? ' active' : ' unlocked');
-  t0Btn.textContent = 'T0';
-  t0Btn.title = 'Starter weapons — Training Sword, Hand Axe, Short Bow, etc.';
-  t0Btn.onclick = () => {
-    playerTier = 0;
-    activeVariantId = WeaponSkillTree.getDefaultVariantId(activeWeapon, true);
-    selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
-    closeDetail();
-    render();
-  };
-  container.appendChild(t0Btn);
+  if (isViewingT0()) {
+    const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
+    container.innerHTML = WeaponSkillTree.renderT0CraftBanner(variant);
+    return;
+  }
+
+  container.innerHTML = '<span class="tier-label">Named weapon tier:</span>';
 
   for (let t = 1; t <= 8; t++) {
     const btn = document.createElement('button');
@@ -951,12 +999,6 @@ function renderTierBar() {
     btn.textContent = 'T' + t;
     btn.onclick = () => {
       playerTier = t;
-      if (activeVariantId) {
-        const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
-        if (variant?.isT0) {
-          activeVariantId = WeaponSkillTree.getDefaultVariantId(activeWeapon, false);
-        }
-      }
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
       closeDetail();
       render();
@@ -975,7 +1017,7 @@ function renderActionBar() {
   bar.style.display = '';
   const typeDef = getEffectiveTypeDef();
   bar.innerHTML = WeaponSkillTree.renderActionBarHTML(typeDef, {
-    asset, playerTier, selectedSkills,
+    asset, playerTier: isViewingT0() ? 0 : playerTier, selectedSkills,
   });
 }
 
@@ -988,16 +1030,24 @@ function renderSlotColumns() {
     return;
   }
   const typeDef = getEffectiveTypeDef();
+  const effectiveTier = isViewingT0() ? 0 : playerTier;
   container.innerHTML = WeaponSkillTree.renderSlotColumnsHTML(typeDef, {
-    asset, playerTier, selectedSkills,
+    asset, playerTier: effectiveTier, selectedSkills,
   });
   container.querySelectorAll('[data-wst-select]').forEach((card) => {
     card.addEventListener('click', () => {
       const slotType = card.dataset.wstSelect;
       const skillId = card.dataset.wstSkill;
+      const isFixed = card.dataset.wstFixed === '1';
       const def = getEffectiveTypeDef();
       const skill = WeaponSkillTree.findSkill(def, slotType, skillId);
       if (!skill) return;
+      if (isFixed) {
+        selectedSkills[slotType] = skillId;
+        showDetail(skill, slotType);
+        render();
+        return;
+      }
       if (selectedSkills[slotType] === skillId) {
         selectedSkills[slotType] = null;
         closeDetail();

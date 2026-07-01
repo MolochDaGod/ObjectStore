@@ -80,6 +80,12 @@ export const SLOT_LABELS = {
   passive: 'Slot 5 · Passives',
 };
 
+export const T0_SLOT_LABELS = {
+  primary: 'Slot 1 · Starter Attack',
+  secondary: 'Slot 2 · Starter Style',
+  ability: 'Slot 3 · Choose One',
+};
+
 export const OFFHAND_ACTIVE_LABELS = {
   primary: `Slot 1 · ${OFFHAND_TOGGLE_KEY} Active`,
   secondary: `Slot 2 · ${OFFHAND_TOGGLE_KEY} Active`,
@@ -102,26 +108,68 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
   const isT0 = opts.tier === 0;
 
   if (isT0) {
+    if (weaponType === 'TOOL') {
+      return {
+        slots: [],
+        passives: [],
+        skillUuids: [],
+        slotPattern: 'gather',
+        bindingMode: 'gather',
+        note: 'T0 tool — profession gather actions, not combat SKIL-*',
+      };
+    }
+
+    const starter = opts.starterSlots;
+    if (starter?.length) {
+      const outSlots = [];
+      const skillUuids = [];
+      for (const slot of starter) {
+        const ids = (slot.skills || []).map((s) => s.id);
+        const uuids = (slot.skills || []).map((s) => s.uuid).filter(Boolean);
+        outSlots.push({
+          type: slot.type,
+          label: slot.label || T0_SLOT_LABELS[slot.type] || slot.type,
+          unlockTier: 0,
+          skillIds: ids,
+          skillUuids: uuids,
+          fixed: !!slot.fixed,
+          choice: !!slot.choice,
+          shared: !slot.choice,
+        });
+        skillUuids.push(...uuids);
+      }
+      return {
+        slots: outSlots,
+        passives: [],
+        skillUuids: [...new Set(skillUuids)],
+        slotPattern: 'three-slot-starter',
+        bindingMode: opts.bindingMode || 'starter',
+        craftsInto: 'T1',
+      };
+    }
+
     const standard = pickStandardAttack(map.primary?.skills, variantMeta, weaponType, aliases);
     const outSlots = [];
     const skillUuids = [];
     if (standard) {
       outSlots.push({
         type: 'primary',
-        label: SLOT_LABELS.primary,
-        unlockTier: 1,
+        label: T0_SLOT_LABELS.primary,
+        unlockTier: 0,
         skillIds: [standard.id],
         skillUuids: standard.uuid ? [standard.uuid] : [],
         shared: true,
+        fixed: true,
       });
       if (standard.uuid) skillUuids.push(standard.uuid);
     }
     return {
       slots: outSlots,
-      passives: variantMeta?.passives || [],
+      passives: [],
       skillUuids,
-      slotPattern: 'five-slot-starter',
+      slotPattern: 'three-slot-starter',
       bindingMode: opts.bindingMode || 'starter',
+      craftsInto: 'T1',
     };
   }
 
@@ -199,7 +247,25 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
 }
 
 /** Build loadout metadata attached to every weapon prefab */
-export function buildLoadoutMeta(weaponType, skillBinding) {
+export function buildLoadoutMeta(weaponType, skillBinding, opts = {}) {
+  const tier = opts.tier ?? 1;
+  if (tier === 0 && weaponType !== 'TOOL') {
+    return {
+      pattern: 'three-slot-starter',
+      role: weaponType === 'TOME' ? 'starterOffhand' : 'starter',
+      noTierUpgrades: true,
+      craftsInto: skillBinding?.craftsInto || 'T1',
+      slotRoles: { 1: 'starterAttack', 2: 'starterStyle', 3: 'starterChoice' },
+      ...(weaponType === 'TOME'
+        ? { note: 'T1+ tomes couple via F toggle into mainhand slots 1–3' }
+        : {}),
+      bindings: skillBinding,
+    };
+  }
+  if (tier === 0 && weaponType === 'TOOL') {
+    return { pattern: 'gather', role: 'tool', noTierUpgrades: true, craftsInto: 'T1', bindings: skillBinding };
+  }
+
   const isOffhand = weaponType === 'SHIELD' || weaponType === 'TOME';
   return {
     pattern: LOADOUT_PATTERN.pattern,
@@ -222,6 +288,6 @@ export function buildLoadoutMeta(weaponType, skillBinding) {
             preservedSlots: LOADOUT_PATTERN.preserveSlots,
           },
         }),
-    ...skillBinding,
+    bindings: skillBinding,
   };
 }

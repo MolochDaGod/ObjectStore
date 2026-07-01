@@ -59,7 +59,17 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 **Live browser:** [WEAPON_SKILLS.html](https://molochdagod.github.io/ObjectStore/WEAPON_SKILLS.html) — pick weapon class → named variant → filtered skills/passives.
 
-**Five-slot hotbar pattern** (all combat weapons):
+**T0 starter pattern** (15 crafting starters — no tier upgrades):
+
+| Slot | Role | Notes |
+|------|------|--------|
+| 1 | Starter attack | Fixed · tier-0 skill only |
+| 2 | Starter style | Fixed · tier-0 skill only |
+| 3 | Starter option | **Choose 1** of 2–3 tier-0 skills |
+
+Craft **T1** named weapons from the matching T0 starter + materials (`usedInT1Crafting`). Reference: `/api/v1/_meta/t0-starter-slot-pattern.json`
+
+**Five-slot hotbar pattern** (T1+ named combat weapons):
 
 | Slot | Role | Scope |
 |------|------|--------|

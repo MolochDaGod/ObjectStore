@@ -153,7 +153,7 @@ function resolveSkillTypeSlots(skillTypeDef, weaponType, item) {
   return skillTypeDef.slots || [];
 }
 
-function bindFiveSlot(slots, variantMeta, weaponType, item) {
+function bindFiveSlot(slots, variantMeta, weaponType, item, skillTypeDef) {
   const meta = loadAbilityMeta();
   const bindingMode =
     weaponType === 'SHIELD' ? 'offhandModifier' : weaponType === 'TOME' ? 'offhandCoupling' : 'standard';
@@ -161,14 +161,17 @@ function bindFiveSlot(slots, variantMeta, weaponType, item) {
   const raw = applyFiveSlotPattern(slots, variantMeta, weaponType, meta, {
     tier: item?.tier ?? 0,
     bindingMode,
+    starterSlots: skillTypeDef?.starterSlots,
   });
 
-  // Re-hydrate UUIDs for skills missing from master JSON (SHIELD/TOME nested)
+  const skillPool = [
+    ...(slots || []).flatMap((s) => s.skills || []),
+    ...(skillTypeDef?.starterSlots || []).flatMap((s) => s.skills || []),
+  ];
+
   for (const slot of raw.slots) {
     slot.skillUuids = (slot.skillIds || []).map((id) => {
-      const found = (slots || [])
-        .flatMap((s) => s.skills || [])
-        .find((sk) => sk.id === id);
+      const found = skillPool.find((sk) => sk.id === id);
       return ensureSkillUuid(found || { id }, weaponType);
     });
   }
@@ -261,7 +264,7 @@ function resolveSkillBindings(weaponType, variantMeta, skillTypeDef, item) {
   if (!skillTypeDef) return { slots: [], skillUuids: [], passives: [], slotPattern: 'none', bindingMode: 'none' };
 
   const slots = resolveSkillTypeSlots(skillTypeDef, weaponType, item);
-  return bindFiveSlot(slots, variantMeta, weaponType, item);
+  return bindFiveSlot(slots, variantMeta, weaponType, item, skillTypeDef);
 }
 
 function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
@@ -313,7 +316,7 @@ function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
     },
 
     skills: skillBindings,
-    loadout: buildLoadoutMeta(weaponType),
+    loadout: buildLoadoutMeta(weaponType, skillBindings, { tier: item.tier ?? 0 }),
     ummorpg: {
       scriptableItemClass: weaponType === 'SHIELD' || weaponType === 'TOME' ? 'EquipmentItem' : 'WeaponItem',
       equipmentSlot: weaponType === 'SHIELD' ? 'Offhand' : weaponType === 'TOME' ? 'Offhand' : 'MainHand',

@@ -71,6 +71,12 @@
     passive: 'Slot 5 · Passives',
   };
 
+  const T0_SLOT_UI_LABELS = {
+    primary: 'Slot 1 · Starter Attack',
+    secondary: 'Slot 2 · Starter Style',
+    ability: 'Slot 3 · Choose One',
+  };
+
   let catalog = null;
   let catalogById = {};
   let weaponsCatalog = null;
@@ -345,8 +351,14 @@
       abilities: item.abilities || [],
       signatureAbility: item.signatureAbility || null,
       passives: item.passives || [],
+      craftingRecipe: item.craftingRecipe || null,
+      usedInT1Crafting: item.usedInT1Crafting !== false,
       isT0: !!isT0,
     };
+  }
+
+  function isStarterPattern(typeDef) {
+    return typeDef?.slotPattern === 'three-slot-starter';
   }
 
   function buildVariantsIndex(t0Payload) {
@@ -462,20 +474,31 @@
 
     cloned._variant = variant;
     cloned._passives = variant.passives || [];
-    cloned.slotPattern = variant.isT0 ? 'five-slot-starter' : 'five-slot';
-
     const byType = Object.fromEntries((cloned.slots || []).map((s) => [s.type, s]));
 
     if (variant.isT0) {
+      const starter = cloned.starterSlots || [];
+      if (starter.length) {
+        cloned.slots = JSON.parse(JSON.stringify(starter));
+        cloned.slotPattern = 'three-slot-starter';
+        cloned._passives = [];
+        return cloned;
+      }
+      cloned.slotPattern = 'three-slot-starter';
       cloned.slots = [
         {
           ...(byType.primary || { type: 'primary' }),
-          label: SLOT_UI_LABELS.primary,
+          label: T0_SLOT_UI_LABELS.primary,
+          unlockTier: 0,
+          fixed: true,
           skills: pickStandardAttack(byType.primary?.skills, variant),
         },
       ];
+      cloned._passives = [];
       return cloned;
     }
+
+    cloned.slotPattern = 'five-slot';
 
     const nextSlots = [];
     if (byType.primary) {
@@ -611,9 +634,10 @@
   function defaultSelections(typeDef, playerTier) {
     const sel = { primary: null, secondary: null, ability: null, ultimate: null };
     if (!typeDef) return sel;
-    SLOT_TYPES.forEach((slotType) => {
+    const slotTypes = isStarterPattern(typeDef) ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
+    slotTypes.forEach((slotType) => {
       const slot = typeDef.slots?.find((s) => s.type === slotType);
-      if (!slot || playerTier < slot.unlockTier) return;
+      if (!slot || playerTier < (slot.unlockTier ?? 1)) return;
       const unlocked = slot.skills.filter((sk) => playerTier >= sk.tier);
       if (unlocked.length) sel[slotType] = unlocked[0].id;
     });
@@ -660,9 +684,17 @@
           ? '<span class="meta-tag tome-mod">Tome Coupled</span>'
           : '';
 
-    const clickAttr = locked
-      ? ''
-      : ` data-wst-select="${esc(slotType)}" data-wst-skill="${esc(skill.id)}"`;
+    const isFixedSlot = opts.slotFixed && !opts.slotChoice;
+    const clickAttr =
+      locked || (isFixedSlot && opts.selectedSkills?.[slotType] === skill.id)
+        ? isFixedSlot && !locked
+          ? ` data-wst-select="${esc(slotType)}" data-wst-skill="${esc(skill.id)}" data-wst-fixed="1"`
+          : locked
+            ? ''
+            : ` data-wst-select="${esc(slotType)}" data-wst-skill="${esc(skill.id)}"`
+        : ` data-wst-select="${esc(slotType)}" data-wst-skill="${esc(skill.id)}"`;
+
+    const fixedTag = isFixedSlot ? '<span class="meta-tag starter-fixed">Fixed</span>' : '';
 
     return `<div class="skill-card${isSelected ? ' selected' : ''}${locked ? ' locked' : ''}" data-slot="${esc(slotType)}"${clickAttr}>
       ${isSelected ? '<div class="selected-check">✓</div>' : ''}
@@ -679,6 +711,7 @@
         <div class="skill-stat"><span class="label">Range</span> <span class="value range">${rangeText}</span></div>
       </div>
       <div class="skill-meta">
+        ${fixedTag}
         ${modTag}
         ${skill.damageType ? `<span class="meta-tag ${esc(dmgTypeClass)}">${esc(skill.damageType)}</span>` : ''}
         ${skill.projectile ? `<span class="meta-tag proj">${esc(skill.projectile)}</span>` : ''}
@@ -688,14 +721,31 @@
     </div>`;
   }
 
+  function renderT0CraftBanner(variant) {
+    if (!variant?.isT0) return '';
+    const recipe = variant.craftingRecipe;
+    const mats = (recipe?.materials || [])
+      .map((m) => `${m.quantity}× ${m.id}`)
+      .join(' · ');
+    const station = recipe?.station || 'Anywhere';
+    return `<div class="wst-t0-craft-banner">
+      <strong>T0 Starter — no tier upgrades</strong>
+      <span>Craft a <strong>T1</strong> weapon of this style using this starter${mats ? ` + <em>${esc(mats)}</em>` : ''} at <em>${esc(station)}</em>.</span>
+      <span class="wst-t0-note">Slots 1–2 are fixed · pick one option in slot 3 · all skills are T0 only</span>
+    </div>`;
+  }
+
   function renderActionBarHTML(typeDef, opts) {
     const asset = opts.asset || defaultAsset;
     const playerTier = opts.playerTier ?? 1;
     const selected = opts.selectedSkills || defaultSelections(typeDef, playerTier);
     if (!typeDef) return '';
 
+    const starter = isStarterPattern(typeDef);
+    const barSlots = starter ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
+
     let html = '';
-    SLOT_TYPES.forEach((slotType, i) => {
+    barSlots.forEach((slotType, i) => {
       const slot = typeDef.slots.find((s) => s.type === slotType);
       const isUnlocked = slot && playerTier >= slot.unlockTier;
       const selectedId = selected[slotType];
@@ -707,9 +757,11 @@
         ${skill
           ? `<img src="${esc(icon)}" alt="${esc(skill.name)}" onerror="this.style.display='none'">`
           : `<span style="color:var(--text-muted);font-size:1.5em;">${isUnlocked ? '—' : '🔒'}</span>`}
-        <div class="slot-label">${esc(SLOT_UI_LABELS[slotType] || slotType)}</div>
+        <div class="slot-label">${esc((starter ? T0_SLOT_UI_LABELS : SLOT_UI_LABELS)[slotType] || slotType)}</div>
       </div>`;
     });
+
+    if (starter) return html;
 
     const passives = typeDef._passives || typeDef._variant?.passives || [];
     const passiveLabel = passives.length
@@ -734,10 +786,16 @@
     let html = '';
     typeDef.slots.forEach((slot) => {
       const isSlotUnlocked = playerTier >= slot.unlockTier;
+      const choiceTag = slot.choice ? '<span class="unlock-tag">Choose 1</span>' : '';
+      const fixedTag = slot.fixed ? '<span class="unlock-tag">Fixed</span>' : '';
+      const unlockTag = isStarterPattern(typeDef)
+        ? fixedTag || choiceTag || '<span class="unlock-tag">T0</span>'
+        : `<span class="unlock-tag">${isSlotUnlocked ? '✓ Unlocked' : `Requires Tier ${slot.unlockTier}`}</span>`;
+
       html += `<div class="slot-column">
         <div class="slot-header" data-type="${esc(slot.type)}">
           ${esc(slot.label || slot.type)}
-          <span class="unlock-tag">${isSlotUnlocked ? '✓ Unlocked' : `Requires Tier ${slot.unlockTier}`}</span>
+          ${unlockTag}
         </div>`;
 
       slot.skills.forEach((skill) => {
@@ -745,11 +803,15 @@
           asset: opts.asset,
           playerTier,
           selectedSkills: selected,
-          slotUnlockTier: slot.unlockTier,
+          slotUnlockTier: slot.unlockTier ?? 0,
+          slotFixed: slot.fixed,
+          slotChoice: slot.choice,
         });
       });
 
-      html += `<div class="wst-slot-placeholder">Higher tier options unlock as your weapon tier increases…</div>`;
+      if (!isStarterPattern(typeDef)) {
+        html += `<div class="wst-slot-placeholder">Higher tier options unlock as your weapon tier increases…</div>`;
+      }
       html += `</div>`;
     });
     return html;
@@ -767,6 +829,12 @@
 
     if (!toggleOn) {
       return `<div class="wst-modifier-intro">Press <strong>${OFFHAND_TOGGLE_KEY}</strong> (or use the toggle above) to preview off-hand skills. When inactive, your <strong>main weapon</strong> slots 1–3 are used.</div>`;
+    }
+
+    if (playerTier === 0 && def.starterSlots?.length) {
+      const pseudo = { slots: JSON.parse(JSON.stringify(def.starterSlots)), slotPattern: 'three-slot-starter', _passives: [] };
+      const intro = `<div class="wst-modifier-intro"><strong>T0 ${esc(def.name)}</strong> — starter cantrips (slots 1–3). Craft T1 tomes from Novice Tome + materials.</div>`;
+      return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier: 0, selectedSkills: defaultSelections(pseudo, 0) })}`;
     }
 
     let rawSlots = null;
@@ -884,6 +952,8 @@
     OFFHAND_TOGGLE_KEY,
     OFFHAND_INJECT_SLOTS,
     SLOT_TYPES,
+    T0_SLOT_UI_LABELS,
+    isStarterPattern,
     buildFiveSlotFromRawSlots,
     getOffhandModifierSlots,
     loadCatalog,
@@ -910,6 +980,7 @@
     renderSlotColumnsHTML,
     renderWeaponVariantBar,
     renderWeaponInfoHeader,
+    renderT0CraftBanner,
     renderPassiveColumn,
     renderOffhandModifierColumns,
     renderOffhandVariantBar,
