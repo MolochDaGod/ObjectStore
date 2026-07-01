@@ -19,6 +19,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { applyFiveSlotPattern, pickStandardAttack, slotMap, SLOT_LABELS } from './lib/weapon-five-slot.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -145,60 +146,27 @@ function resolveSkillTypeSlots(skillTypeDef, weaponType, item) {
   return skillTypeDef.slots || [];
 }
 
-function bindSlotSkills(slots, variantMeta, weaponType, item, filterByVariant = true) {
-  const allowed = new Set();
-  const add = (raw) => {
-    const n = parseAbilityName(raw);
-    if (n) allowed.add(normalizeKey(n));
-  };
-  if (filterByVariant) {
-    if (variantMeta?.basicAbility) add(variantMeta.basicAbility);
-    (variantMeta?.abilities || []).forEach(add);
-    if (variantMeta?.signatureAbility) add(variantMeta.signatureAbility);
-    if (variantMeta?.signature) add(variantMeta.signature);
-  }
+function bindFiveSlot(slots, variantMeta, weaponType, item) {
+  const meta = loadAbilityMeta();
+  const bindingMode =
+    weaponType === 'SHIELD' ? 'offhandModifier' : weaponType === 'TOME' ? 'offhandCoupling' : 'standard';
 
-  const outSlots = [];
-  const skillUuids = [];
+  const raw = applyFiveSlotPattern(slots, variantMeta, weaponType, meta, {
+    tier: item?.tier ?? 0,
+    bindingMode,
+  });
 
-  for (const slot of slots || []) {
-    const allSkills = slot.skills || [];
-    let skills = allSkills;
-    if (allowed.size) {
-      skills = allSkills.filter((sk) => skillNameMatches(allowed, sk.name, weaponType));
-      if (!skills.length) skills = allSkills;
-    }
-
-    if (slot.type === 'ultimate' && variantMeta?.signature) {
-      const sigKey = normalizeKey(parseAbilityName(variantMeta.signature));
-      const sig = allSkills.find((sk) => skillNameMatches(new Set([sigKey]), sk.name, weaponType));
-      if (sig) {
-        const sigUuid = ensureSkillUuid(sig, weaponType);
-        outSlots.push({
-          type: slot.type,
-          label: slot.label,
-          unlockTier: slot.unlockTier,
-          skillIds: [sig.id],
-          skillUuids: [sigUuid],
-        });
-        skillUuids.push(sigUuid);
-        continue;
-      }
-    }
-
-    const ids = skills.map((s) => s.id);
-    const uuids = skills.map((s) => ensureSkillUuid(s, weaponType));
-    skillUuids.push(...uuids);
-    outSlots.push({
-      type: slot.type,
-      label: slot.label,
-      unlockTier: slot.unlockTier,
-      skillIds: ids,
-      skillUuids: uuids,
+  // Re-hydrate UUIDs for skills missing from master JSON (SHIELD/TOME nested)
+  for (const slot of raw.slots) {
+    slot.skillUuids = (slot.skillIds || []).map((id) => {
+      const found = (slots || [])
+        .flatMap((s) => s.skills || [])
+        .find((sk) => sk.id === id);
+      return ensureSkillUuid(found || { id }, weaponType);
     });
   }
-
-  return { slots: outSlots, skillUuids: [...new Set(skillUuids)] };
+  raw.skillUuids = [...new Set(raw.slots.flatMap((s) => s.skillUuids))];
+  return raw;
 }
 
 function attributeAffinity(primaryStat, secondaryStat) {
@@ -273,35 +241,20 @@ function buildSkillIndex(skillsJson) {
 
 function resolveSkillBindings(weaponType, variantMeta, skillTypeDef, item) {
   if (weaponType === 'TOOL') {
-    return { slots: [], skillUuids: [], bindingMode: 'gather', note: 'Tools use profession gather actions, not combat SKIL-*' };
-  }
-
-  if (!skillTypeDef) return { slots: [], skillUuids: [], bindingMode: 'none' };
-
-  const slots = resolveSkillTypeSlots(skillTypeDef, weaponType, item);
-
-  if ((item?.tier ?? 0) === 0) {
-    const primary = slots.find((s) => s.type === 'primary') || slots[0];
-    const first = primary?.skills?.find((sk) => sk.tier <= 1) || primary?.skills?.[0];
-    if (!first) return { slots: [], skillUuids: [], bindingMode: 'starter' };
-    const starterUuid = ensureSkillUuid(first, weaponType);
     return {
-      bindingMode: 'starter',
-      slots: [
-        {
-          type: 'primary',
-          label: primary?.label || 'PRIMARY',
-          unlockTier: 1,
-          skillIds: [first.id],
-          skillUuids: [starterUuid],
-        },
-      ],
-      skillUuids: [starterUuid],
+      slots: [],
+      skillUuids: [],
+      passives: [],
+      slotPattern: 'gather',
+      bindingMode: 'gather',
+      note: 'Tools use profession gather actions, not combat SKIL-*',
     };
   }
 
-  const bound = bindSlotSkills(slots, variantMeta, weaponType, item, true);
-  return { ...bound, bindingMode: weaponType === 'SHIELD' ? 'offhandModifier' : weaponType === 'TOME' ? 'offhandCoupling' : 'standard' };
+  if (!skillTypeDef) return { slots: [], skillUuids: [], passives: [], slotPattern: 'none', bindingMode: 'none' };
+
+  const slots = resolveSkillTypeSlots(skillTypeDef, weaponType, item);
+  return bindFiveSlot(slots, variantMeta, weaponType, item);
 }
 
 function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
@@ -561,7 +514,9 @@ const prefabs = allItems.map((item) => {
 const output = {
   version: '1.0.0',
   generated: new Date().toISOString(),
-  description: 'Canonical weapon prefabs — joins ITEM-* UUIDs, R2 assets, SKIL-* bindings for all game runtimes',
+  description:
+    'Canonical weapon prefabs — five-slot pattern (1=standard attack, 2–3=shared, 4=signature, 5=passives)',
+  slotPattern: 'five-slot',
   assetCdn: CDN,
   total: prefabs.length,
   totals: {
@@ -587,6 +542,32 @@ const output = {
 const bridge = buildUmmorpgBridge(prefabs, enchants, recipes);
 const d1Seed = buildD1Seed(prefabs);
 
+const slotPatternDoc = {
+  version: '1.0.0',
+  generated: new Date().toISOString(),
+  description:
+    'Five-slot hotbar: 1=standard attack (type-wide), 2–3=shared style pools, 4=variant signature, 5=variant passives',
+  labels: SLOT_LABELS,
+  types: {},
+};
+const aliasMeta = loadAbilityMeta();
+for (const [typeId, wt] of Object.entries(skillIndex)) {
+  if (!wt?.slots?.length) continue;
+  const map = slotMap(wt.slots);
+  const std = pickStandardAttack(map.primary?.skills, null, typeId, aliasMeta);
+  slotPatternDoc.types[typeId] = {
+    standardAttack: std?.name || null,
+    standardAttackSkillId: std?.id || null,
+    slot2SharedSkills: (map.secondary?.skills || []).map((s) => s.name),
+    slot3SharedSkills: (map.ability?.skills || []).map((s) => s.name),
+    slot4SignaturePool: (map.ultimate?.skills || []).map((s) => s.name),
+    slot5: 'variant passives (weapons.json passives[])',
+  };
+}
+
+mkdirSync(join(API, '_meta'), { recursive: true });
+writeFileSync(join(API, '_meta', 'weapon-slot-pattern.json'), JSON.stringify(slotPatternDoc, null, 2));
+
 writeFileSync(join(API, 'master-weapon-prefabs.json'), JSON.stringify(output, null, 2));
 writeFileSync(join(API, 'ummorpg-systems-bridge.json'), JSON.stringify(bridge, null, 2));
 
@@ -599,4 +580,5 @@ console.log(`  T0: ${output.totals.t0}, T1-8: ${output.totals.t1to8}`);
 console.log(`  With models: ${output.totals.withModels}, skills: ${output.totals.withSkills}`);
 console.log(`  → api/v1/master-weapon-prefabs.json`);
 console.log(`  → api/v1/ummorpg-systems-bridge.json`);
+console.log(`  → api/v1/_meta/weapon-slot-pattern.json`);
 console.log(`  → workers/seed/weapon-prefabs.sql`);

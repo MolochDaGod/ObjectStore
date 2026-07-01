@@ -61,10 +61,11 @@
   const SLOT_TYPES = ['primary', 'secondary', 'ability', 'ultimate'];
   const SLOT_HOTKEYS = ['1', '2', '3', '4', '5'];
   const SLOT_UI_LABELS = {
-    primary: 'Slot 1 · LMB',
-    secondary: 'Slot 2',
-    ability: 'Slot 3',
-    ultimate: 'Slot 4',
+    primary: 'Slot 1 · Standard Attack',
+    secondary: 'Slot 2 · Shared',
+    ability: 'Slot 3 · Shared',
+    ultimate: 'Slot 4 · Signature',
+    passive: 'Slot 5 · Passives',
   };
 
   let catalog = null;
@@ -406,42 +407,85 @@
     return list[0].id;
   }
 
+  function pickStandardAttack(primarySkills, variant) {
+    const pool = primarySkills || [];
+    if (!pool.length) return [];
+    if (variant?.basicAbility) {
+      const key = normalizeSkillKey(parseAbilityName(variant.basicAbility));
+      const matched = pool.find((sk) => skillNameMatches(sk.name, [key]));
+      if (matched) return [matched];
+    }
+    const tier1 = pool.find((sk) => sk.tier <= 1) || pool[0];
+    return tier1 ? [tier1] : [];
+  }
+
+  function pickSignature(ultimateSkills, variant) {
+    const pool = ultimateSkills || [];
+    if (!pool.length) return [];
+    const sigRaw = variant?.signatureAbility;
+    if (sigRaw) {
+      const sigKey = normalizeSkillKey(parseAbilityName(sigRaw));
+      const matched = pool.find((sk) => skillNameMatches(sk.name, [sigKey]));
+      if (matched) return [matched];
+    }
+    const first = pool.find((sk) => sk.tier <= 1) || pool[0];
+    return first ? [first] : [];
+  }
+
+  /** 5-slot pattern: 1=standard attack, 2–3=shared type pools, 4=signature, 5=passives */
   function applyVariantToTypeDef(typeDef, variant) {
     if (!typeDef) return null;
     const cloned = cloneTypeDef(typeDef);
     if (!variant) return cloned;
 
     cloned._variant = variant;
+    cloned._passives = variant.passives || [];
+    cloned.slotPattern = variant.isT0 ? 'five-slot-starter' : 'five-slot';
+
+    const byType = Object.fromEntries((cloned.slots || []).map((s) => [s.type, s]));
 
     if (variant.isT0) {
-      cloned.slots = (cloned.slots || []).map((slot) => {
-        if (slot.type === 'primary') {
-          return {
-            ...slot,
-            skills: (slot.skills || []).filter((sk) => sk.tier <= 1).slice(0, 1),
-          };
-        }
-        return { ...slot, skills: [] };
-      });
+      cloned.slots = [
+        {
+          ...(byType.primary || { type: 'primary' }),
+          label: SLOT_UI_LABELS.primary,
+          skills: pickStandardAttack(byType.primary?.skills, variant),
+        },
+      ];
       return cloned;
     }
 
-    const allowed = collectVariantSkillKeys(variant);
-    const sigKey = variant.signatureAbility
-      ? normalizeSkillKey(parseAbilityName(variant.signatureAbility))
-      : null;
+    const nextSlots = [];
+    if (byType.primary) {
+      nextSlots.push({
+        ...byType.primary,
+        label: SLOT_UI_LABELS.primary,
+        skills: pickStandardAttack(byType.primary.skills, variant),
+      });
+    }
+    if (byType.secondary) {
+      nextSlots.push({
+        ...byType.secondary,
+        label: SLOT_UI_LABELS.secondary,
+        skills: [...(byType.secondary.skills || [])],
+      });
+    }
+    if (byType.ability) {
+      nextSlots.push({
+        ...byType.ability,
+        label: SLOT_UI_LABELS.ability,
+        skills: [...(byType.ability.skills || [])],
+      });
+    }
+    if (byType.ultimate) {
+      nextSlots.push({
+        ...byType.ultimate,
+        label: SLOT_UI_LABELS.ultimate,
+        skills: pickSignature(byType.ultimate.skills, variant),
+      });
+    }
 
-    cloned.slots = (cloned.slots || []).map((slot) => {
-      let skills = (slot.skills || []).filter((sk) => skillNameMatches(sk.name, allowed));
-
-      if (slot.type === 'ultimate' && sigKey) {
-        const sig = (slot.skills || []).find((sk) => skillNameMatches(sk.name, [sigKey]));
-        if (sig) skills = [sig];
-      }
-
-      return { ...slot, skills };
-    });
-
+    cloned.slots = nextSlots;
     return cloned;
   }
 
@@ -645,10 +689,14 @@
       </div>`;
     });
 
-    html += `<div class="action-slot" data-type="reserved" style="opacity:0.35;border-color:var(--stone)">
+    const passives = typeDef._passives || typeDef._variant?.passives || [];
+    const passiveLabel = passives.length
+      ? parseAbilityName(passives[0]) || 'Passive'
+      : '—';
+    html += `<div class="action-slot" data-type="passive" style="${passives.length ? '' : 'opacity:0.35;border-color:var(--stone)'}">
       <div class="slot-num">5</div>
-      <span style="color:var(--text-muted);font-size:1.2em;">—</span>
-      <div class="slot-label">Slot 5</div>
+      <span style="color:var(--text-muted);font-size:0.75em;text-align:center;padding:4px;line-height:1.2;">${esc(passiveLabel)}</span>
+      <div class="slot-label">${esc(SLOT_UI_LABELS.passive)}</div>
     </div>`;
 
     return html;

@@ -36,6 +36,24 @@ function prefabHasSkills(p) {
   return (p.skills.slots || []).some((s) => s.skillIds?.length > 0);
 }
 
+const badSlot1 = prefabs.prefabs.filter((p) => {
+  if (p.tier < 1 || p.weaponType === 'TOOL') return false;
+  const prim = p.skills.slots?.find((s) => s.type === 'primary');
+  return !prim || prim.skillIds?.length !== 1;
+});
+if (badSlot1.length) {
+  issues.push(
+    `Slot 1 must be exactly 1 standard attack: ${badSlot1.length} prefabs wrong (e.g. ${badSlot1.slice(0, 3).map((p) => p.name).join(', ')})`,
+  );
+}
+
+const noFiveSlot = prefabs.prefabs.filter(
+  (p) => p.tier >= 1 && p.weaponType !== 'TOOL' && p.skills.slotPattern !== 'five-slot',
+);
+if (noFiveSlot.length) {
+  warnings.push(`${noFiveSlot.length} T1+ prefabs missing slotPattern=five-slot (rebuild prefabs)`);
+}
+
 const noSkills = prefabs.prefabs.filter(
   (p) => !prefabHasSkills(p) && p.weaponType !== 'TOOL' && p.tier > 0,
 );
@@ -89,6 +107,7 @@ console.log('==========================');
 console.log(`Prefabs: ${prefabs.total}`);
 console.log(`T0: ${t0Actual} (expected ${t0Expected})`);
 console.log(`With skills: ${prefabs.totals?.withSkills ?? 'n/a'}`);
+console.log(`Slot 1 wrong (not exactly 1 attack): ${badSlot1.length}`);
 console.log(`T1+ missing skills: ${noSkills.length}`);
 console.log(`TOOLS (gather, no combat skills): ${prefabs.prefabs.filter((p) => p.weaponType === 'TOOL').length}`);
 console.log(`Cast times: ${castSet}/${skillRows} (${castPct}%)`);

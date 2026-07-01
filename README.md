@@ -59,6 +59,18 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 **Live browser:** [WEAPON_SKILLS.html](https://molochdagod.github.io/ObjectStore/WEAPON_SKILLS.html) — pick weapon class → named variant → filtered skills/passives.
 
+**Five-slot hotbar pattern** (all combat weapons):
+
+| Slot | Role | Scope |
+|------|------|--------|
+| 1 | Standard attack (LMB) | One skill per weapon **type** (e.g. all swords → Vengeful Slash) |
+| 2 | Style option | Shared pool across all variants of that type |
+| 3 | Style option | Shared pool across all variants of that type |
+| 4 | Signature | Variant ultimate (one skill per named weapon) |
+| 5 | Passives | Variant-specific passives from `weapons.json` |
+
+Reference: `/api/v1/_meta/weapon-slot-pattern.json`
+
 ### Build & validate
 
 ```bash
