@@ -102,7 +102,7 @@ export const SLOT_LABELS = {
 export const T0_SLOT_LABELS = {
   primary: 'Slot 1 · Starter Attack',
   secondary: 'Slot 2 · Starter Style',
-  ability: 'Slot 3 · Starter Ability',
+  ability: 'Slot 3 · Choose One',
 };
 
 export const OFFHAND_ACTIVE_LABELS = {

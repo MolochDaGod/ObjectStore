@@ -75,7 +75,7 @@
   const T0_SLOT_UI_LABELS = {
     primary: 'Slot 1 · Starter Attack',
     secondary: 'Slot 2 · Starter Style',
-    ability: 'Slot 3 · Starter Ability',
+    ability: 'Slot 3 · Choose One',
   };
 
   let catalog = null;
@@ -663,9 +663,16 @@
     return listTypeIds().filter((id) => !OFFHAND_MODIFIER_TYPES.has(id));
   }
 
-  function defaultSelections(typeDef, playerTier) {
+  function defaultSelections(typeDef, playerTier, variant) {
     const sel = { primary: null, secondary: null, ability: null, ultimate: null };
     if (!typeDef) return sel;
+    if (variant?.skills?.defaultSelections && isStarterPattern(typeDef)) {
+      const ds = variant.skills.defaultSelections;
+      sel.primary = ds.primary || null;
+      sel.secondary = ds.secondary || null;
+      sel.ability = ds.ability || null;
+      return sel;
+    }
     const slotTypes = isStarterPattern(typeDef) ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
     slotTypes.forEach((slotType) => {
       const slot = typeDef.slots?.find((s) => s.type === slotType);
@@ -775,7 +782,7 @@
     return `<div class="wst-t0-craft-banner">
       <strong>T0 Starter — no tier upgrades</strong>
       <span>Craft a <strong>T1</strong> weapon of this style using this starter${mats ? ` + <em>${esc(mats)}</em>` : ''} at <em>${esc(station)}</em>.</span>
-      <span class="wst-t0-note">3 abilities auto-assigned (slots 1–3) · all skills are T0 only · craft T1 to unlock the five-slot loadout</span>
+      <span class="wst-t0-note">Slots 1–2 auto-assigned · slot 3 choose one · all skills are T0 only · craft T1 to unlock the five-slot loadout</span>
     </div>`;
   }
 
@@ -830,11 +837,13 @@
     let html = '';
     typeDef.slots.forEach((slot) => {
       const isSlotUnlocked = playerTier >= slot.unlockTier;
-      const autoTag = slot.autoAssigned || (isStarterPattern(typeDef) && slot.fixed)
-        ? '<span class="unlock-tag">Auto</span>'
-        : '';
+      const autoTag =
+        slot.autoAssigned || (isStarterPattern(typeDef) && slot.fixed && !slot.choice)
+          ? '<span class="unlock-tag">Auto</span>'
+          : '';
+      const choiceTag = slot.choice ? '<span class="unlock-tag">Choose 1</span>' : '';
       const unlockTag = isStarterPattern(typeDef)
-        ? autoTag || '<span class="unlock-tag">T0</span>'
+        ? autoTag || choiceTag || '<span class="unlock-tag">T0</span>'
         : `<span class="unlock-tag">${isSlotUnlocked ? '✓ Unlocked' : `Requires Tier ${slot.unlockTier}`}</span>`;
 
       html += `<div class="slot-column">
@@ -849,8 +858,8 @@
           playerTier,
           selectedSkills: selected,
           slotUnlockTier: slot.unlockTier ?? 0,
-          slotFixed: slot.fixed || slot.autoAssigned || isStarterPattern(typeDef),
-          slotChoice: false,
+          slotFixed: !!(slot.fixed || slot.autoAssigned) && !slot.choice,
+          slotChoice: !!slot.choice,
         });
       });
 

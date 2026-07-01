@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "description": "T0 starter loadout — always 3 auto-assigned abilities (one fixed skill per slot). Craft T1 from T0 + materials.",
+  "description": "T0 starter loadout — always 3 ability slots. Slots 1–2 auto-assigned; slot 3 player chooses one. Craft T1 from T0 + materials.",
   "slotPattern": "three-slot-starter",
   "labels": {
     "primary": "Slot 1 · Starter Attack",
     "secondary": "Slot 2 · Starter Style",
-    "ability": "Slot 3 · Starter Ability"
+    "ability": "Slot 3 · Choose One"
   },
   "types": {
     "SWORD": {
@@ -670,5 +670,9 @@
       ]
     }
   },
-  "autoAssign": true
+  "autoAssign": {
+    "slot1": true,
+    "slot2": true,
+    "slot3": "playerChoice"
+  }
 }

@@ -65,7 +65,7 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 |------|------|--------|
 | 1 | Starter attack | Fixed · tier-0 skill only |
 | 2 | Starter style | Fixed · tier-0 skill only |
-| 3 | Starter ability | Auto-assigned · one fixed tier-0 skill |
+| 3 | Starter ability | **Player choice** · pick one from 2–3 tier-0 options |
 
 Craft **T1** named weapons from the matching T0 starter + materials (`usedInT1Crafting`). Reference: `/api/v1/_meta/t0-starter-slot-pattern.json`
 
