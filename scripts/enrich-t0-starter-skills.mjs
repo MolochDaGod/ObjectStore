@@ -2,6 +2,8 @@
 /**
  * Merge T0 starter slot pattern into master-weaponSkills.json (starterSlots per type)
  * and embed slots 1–3 weapon skills on each row in t0-weapons.json.
+ *
+ * T0 rule: always exactly 3 abilities — auto-assigned, one fixed skill per slot (no manual pick).
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -69,13 +71,19 @@ function typeDefaults(weaponType) {
   };
 }
 
-function buildStarterSlots(typeDef, pattern, weaponType) {
-  if (!pattern) return null;
-  const defaults = typeDefaults(weaponType);
+function resolveSlot3(pattern) {
+  return pattern.slot3 || pattern.slot3Options?.[0] || null;
+}
 
+function buildStarterSlots(typeDef, pattern, weaponType) {
+  if (!pattern?.slot1 || !pattern?.slot2) return null;
+  const slot3Raw = resolveSlot3(pattern);
+  if (!slot3Raw) return null;
+
+  const defaults = typeDefaults(weaponType);
   const slot1 = enrichStarterSkill(pattern.slot1, weaponType, typeDef, defaults);
   const slot2 = enrichStarterSkill(pattern.slot2, weaponType, typeDef, defaults);
-  const slot3 = (pattern.slot3Options || []).map((sk) => enrichStarterSkill(sk, weaponType, typeDef, defaults));
+  const slot3 = enrichStarterSkill(slot3Raw, weaponType, typeDef, defaults);
 
   return [
     {
@@ -83,6 +91,7 @@ function buildStarterSlots(typeDef, pattern, weaponType) {
       label: 'Slot 1 · Starter Attack',
       unlockTier: 0,
       fixed: true,
+      autoAssigned: true,
       skills: [slot1],
     },
     {
@@ -90,14 +99,16 @@ function buildStarterSlots(typeDef, pattern, weaponType) {
       label: 'Slot 2 · Starter Style',
       unlockTier: 0,
       fixed: true,
+      autoAssigned: true,
       skills: [slot2],
     },
     {
       type: 'ability',
-      label: 'Slot 3 · Choose One',
+      label: 'Slot 3 · Starter Ability',
       unlockTier: 0,
-      choice: true,
-      skills: slot3,
+      fixed: true,
+      autoAssigned: true,
+      skills: [slot3],
     },
   ];
 }
@@ -108,8 +119,8 @@ function toPrefabSlots(starterSlots) {
     label: slot.label,
     unlockTier: slot.unlockTier,
     fixed: slot.fixed,
-    choice: slot.choice,
-    shared: !slot.choice,
+    autoAssigned: slot.autoAssigned,
+    shared: true,
     skillIds: slot.skills.map((s) => s.id),
     skillUuids: slot.skills.map((s) => s.uuid),
     skills: slot.skills,
@@ -117,6 +128,16 @@ function toPrefabSlots(starterSlots) {
 }
 
 const pattern = JSON.parse(readFileSync(PATTERN_PATH, 'utf8'));
+pattern.description =
+  'T0 starter loadout — always 3 auto-assigned abilities (one fixed skill per slot). Craft T1 from T0 + materials.';
+pattern.labels = {
+  primary: 'Slot 1 · Starter Attack',
+  secondary: 'Slot 2 · Starter Style',
+  ability: 'Slot 3 · Starter Ability',
+};
+pattern.autoAssign = true;
+writeFileSync(PATTERN_PATH, JSON.stringify(pattern, null, 2));
+
 const data = JSON.parse(readFileSync(SKILLS_PATH, 'utf8'));
 const t0Data = JSON.parse(readFileSync(T0_PATH, 'utf8'));
 const byType = Object.fromEntries((data.weaponTypes || []).map((wt) => [wt.id, wt]));
@@ -138,16 +159,19 @@ for (const weapon of t0Data.weapons || []) {
 
   const typeDef = byType[weaponType] || { id: weaponType, icon: weapon.iconUrl };
   const starterSlots = buildStarterSlots(typeDef, typePattern, weaponType);
+  if (!starterSlots) continue;
+
   const prefabSlots = toPrefabSlots(starterSlots);
-  const skillUuids = [...new Set(starterSlots.flatMap((s) => s.skills.map((sk) => sk.uuid)))];
+  const skillUuids = starterSlots.flatMap((s) => s.skills.map((sk) => sk.uuid));
 
   const slotPattern = weaponType === 'TOOL' ? 'gather-starter' : 'three-slot-starter';
 
   weapon.slotPattern = slotPattern;
+  weapon.autoAssignSkills = true;
   weapon.weaponSkills = {
     slot1: starterSlots[0].skills[0],
     slot2: starterSlots[1].skills[0],
-    slot3Options: starterSlots[2].skills,
+    slot3: starterSlots[2].skills[0],
   };
   weapon.skills = {
     slots: prefabSlots,
@@ -155,20 +179,22 @@ for (const weapon of t0Data.weapons || []) {
     skillUuids,
     slotPattern,
     bindingMode: weaponType === 'TOOL' ? 'gather' : 'starter',
+    autoAssigned: true,
     craftsInto: 'T1',
   };
   mergedWeapons++;
 }
 
 data.t0StarterPattern = pattern.slotPattern;
+data.t0StarterAutoAssign = true;
 data.t0StarterEnriched = new Date().toISOString();
 t0Data.t0StarterEnriched = new Date().toISOString();
 t0Data.note =
-  'Canonical T0 starter weapons — each row includes weaponSkills (slot1, slot2, slot3Options) and full skills.slots 1–3 bindings.';
+  'Canonical T0 starters — always 3 auto-assigned abilities (slot1, slot2, slot3). No tier upgrades; craft T1 from T0 + materials.';
 
 writeFileSync(SKILLS_PATH, JSON.stringify(data, null, 2));
 writeFileSync(T0_PATH, JSON.stringify(t0Data, null, 2));
 
 console.log(`Merged T0 starterSlots into ${mergedTypes} weapon types → ${SKILLS_PATH}`);
-console.log(`Embedded slots 1–3 on ${mergedWeapons} T0 weapons → ${T0_PATH}`);
+console.log(`Embedded 3 auto-assigned abilities on ${mergedWeapons} T0 weapons → ${T0_PATH}`);
 console.log('  Next: npm run build:weapon-pipeline');

@@ -93,12 +93,13 @@ const badT0Starter = prefabs.prefabs.filter((p) => {
   const abil = slots.find((s) => s.type === 'ability');
   if (!prim || prim.skillIds?.length !== 1) return true;
   if (!sec || sec.skillIds?.length !== 1) return true;
-  if (!abil || (abil.skillIds?.length || 0) < 2) return true;
+  if (!abil || abil.skillIds?.length !== 1) return true;
+  if (abil.choice) return true;
   return false;
 });
 if (badT0Starter.length) {
   issues.push(
-    `T0 starters need three-slot-starter (1+1+2+ skills): ${badT0Starter.length} wrong (e.g. ${badT0Starter.slice(0, 3).map((p) => p.name).join(', ')})`,
+    `T0 starters need 3 auto-assigned abilities (1+1+1): ${badT0Starter.length} wrong (e.g. ${badT0Starter.slice(0, 3).map((p) => p.name).join(', ')})`,
   );
 }
 

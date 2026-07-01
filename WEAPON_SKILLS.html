@@ -877,7 +877,7 @@ function ensureT0Selections() {
   const defaults = WeaponSkillTree.defaultSelections(def, 0);
   selectedSkills.primary = defaults.primary;
   selectedSkills.secondary = defaults.secondary;
-  if (!selectedSkills.ability) selectedSkills.ability = defaults.ability;
+  selectedSkills.ability = defaults.ability;
 }
 
 function getActiveTypeDef() {
@@ -1128,7 +1128,7 @@ function renderSlotColumns() {
     card.addEventListener('click', () => {
       const slotType = card.dataset.wstSelect;
       const skillId = card.dataset.wstSkill;
-      const isFixed = card.dataset.wstFixed === '1';
+      const isFixed = card.dataset.wstFixed === '1' || isViewingT0();
       const def = getEffectiveTypeDef();
       const skill = WeaponSkillTree.findSkill(def, slotType, skillId);
       if (!skill) return;

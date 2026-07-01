@@ -1,125 +1,674 @@
 {
   "version": "1.0.0",
-  "description": "T0 starter loadout — slot 1 and 2 are fixed abilities; slot 3 is a pick-one option. T0 weapons do not tier-upgrade; craft T1 from the T0 starter plus materials.",
+  "description": "T0 starter loadout — always 3 auto-assigned abilities (one fixed skill per slot). Craft T1 from T0 + materials.",
   "slotPattern": "three-slot-starter",
   "labels": {
     "primary": "Slot 1 · Starter Attack",
     "secondary": "Slot 2 · Starter Style",
-    "ability": "Slot 3 · Choose One"
+    "ability": "Slot 3 · Starter Ability"
   },
   "types": {
     "SWORD": {
-      "slot1": { "id": "t0_sword_practice_slash", "name": "Practice Slash", "description": "Basic training slash — builds combat fundamentals", "damage": 18, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_sword_guard_stance", "name": "Guard Stance", "description": "Brief guard — small damage reduction", "damage": 0, "cooldown": 6, "effects": ["-15% damage 2s"] },
+      "slot1": {
+        "id": "t0_sword_practice_slash",
+        "name": "Practice Slash",
+        "description": "Basic training slash — builds combat fundamentals",
+        "damage": 18,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_sword_guard_stance",
+        "name": "Guard Stance",
+        "description": "Brief guard — small damage reduction",
+        "damage": 0,
+        "cooldown": 6,
+        "effects": [
+          "-15% damage 2s"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_sword_quick_thrust", "name": "Quick Thrust", "description": "Short-range thrust", "damage": 16, "cooldown": 3, "effects": ["Extended reach"] },
-        { "id": "t0_sword_wide_sweep", "name": "Wide Sweep", "description": "Slow arc that hits multiple targets", "damage": 14, "cooldown": 4, "effects": ["Small AoE"] }
+        {
+          "id": "t0_sword_quick_thrust",
+          "name": "Quick Thrust",
+          "description": "Short-range thrust",
+          "damage": 16,
+          "cooldown": 3,
+          "effects": [
+            "Extended reach"
+          ]
+        },
+        {
+          "id": "t0_sword_wide_sweep",
+          "name": "Wide Sweep",
+          "description": "Slow arc that hits multiple targets",
+          "damage": 14,
+          "cooldown": 4,
+          "effects": [
+            "Small AoE"
+          ]
+        }
       ]
     },
     "AXE": {
-      "slot1": { "id": "t0_axe_practice_chop", "name": "Practice Chop", "description": "Basic overhead chop", "damage": 20, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_axe_wind_up", "name": "Wind-Up", "description": "Power your next strike", "damage": 0, "cooldown": 5, "effects": ["+10% dmg next hit"] },
+      "slot1": {
+        "id": "t0_axe_practice_chop",
+        "name": "Practice Chop",
+        "description": "Basic overhead chop",
+        "damage": 20,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_axe_wind_up",
+        "name": "Wind-Up",
+        "description": "Power your next strike",
+        "damage": 0,
+        "cooldown": 5,
+        "effects": [
+          "+10% dmg next hit"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_axe_cleaving_swing", "name": "Cleaving Swing", "description": "Wide horizontal cleave", "damage": 17, "cooldown": 4, "effects": ["AoE"] },
-        { "id": "t0_axe_heavy_blow", "name": "Heavy Blow", "description": "Slow single-target smash", "damage": 24, "cooldown": 5, "effects": ["High single dmg"] }
+        {
+          "id": "t0_axe_cleaving_swing",
+          "name": "Cleaving Swing",
+          "description": "Wide horizontal cleave",
+          "damage": 17,
+          "cooldown": 4,
+          "effects": [
+            "AoE"
+          ]
+        },
+        {
+          "id": "t0_axe_heavy_blow",
+          "name": "Heavy Blow",
+          "description": "Slow single-target smash",
+          "damage": 24,
+          "cooldown": 5,
+          "effects": [
+            "High single dmg"
+          ]
+        }
       ]
     },
     "DAGGER": {
-      "slot1": { "id": "t0_dagger_practice_stab", "name": "Practice Stab", "description": "Quick stab from sparring drills", "damage": 14, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_dagger_evade_step", "name": "Evade Step", "description": "Short sidestep", "damage": 0, "cooldown": 4, "effects": ["Mobility"] },
+      "slot1": {
+        "id": "t0_dagger_practice_stab",
+        "name": "Practice Stab",
+        "description": "Quick stab from sparring drills",
+        "damage": 14,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_dagger_evade_step",
+        "name": "Evade Step",
+        "description": "Short sidestep",
+        "damage": 0,
+        "cooldown": 4,
+        "effects": [
+          "Mobility"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_dagger_backstab", "name": "Backstab", "description": "Bonus damage from behind", "damage": 20, "cooldown": 5, "effects": ["Positional"] },
-        { "id": "t0_dagger_poison_scratch", "name": "Poison Scratch", "description": "Light poison DoT", "damage": 10, "cooldown": 6, "effects": ["Poison 3s"] }
+        {
+          "id": "t0_dagger_backstab",
+          "name": "Backstab",
+          "description": "Bonus damage from behind",
+          "damage": 20,
+          "cooldown": 5,
+          "effects": [
+            "Positional"
+          ]
+        },
+        {
+          "id": "t0_dagger_poison_scratch",
+          "name": "Poison Scratch",
+          "description": "Light poison DoT",
+          "damage": 10,
+          "cooldown": 6,
+          "effects": [
+            "Poison 3s"
+          ]
+        }
       ]
     },
     "HAMMER": {
-      "slot1": { "id": "t0_hammer_practice_smash", "name": "Practice Smash", "description": "Heavy training swing", "damage": 22, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_hammer_brace", "name": "Brace", "description": "Plant feet — brief stun resist", "damage": 0, "cooldown": 6, "effects": ["Stun resist 2s"] },
+      "slot1": {
+        "id": "t0_hammer_practice_smash",
+        "name": "Practice Smash",
+        "description": "Heavy training swing",
+        "damage": 22,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_hammer_brace",
+        "name": "Brace",
+        "description": "Plant feet — brief stun resist",
+        "damage": 0,
+        "cooldown": 6,
+        "effects": [
+          "Stun resist 2s"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_hammer_shockwave", "name": "Shockwave", "description": "Ground pound AoE", "damage": 16, "cooldown": 5, "effects": ["AoE slow"] },
-        { "id": "t0_hammer_stagger_blow", "name": "Stagger Blow", "description": "Single-target stagger", "damage": 20, "cooldown": 4, "effects": ["Brief stagger"] }
+        {
+          "id": "t0_hammer_shockwave",
+          "name": "Shockwave",
+          "description": "Ground pound AoE",
+          "damage": 16,
+          "cooldown": 5,
+          "effects": [
+            "AoE slow"
+          ]
+        },
+        {
+          "id": "t0_hammer_stagger_blow",
+          "name": "Stagger Blow",
+          "description": "Single-target stagger",
+          "damage": 20,
+          "cooldown": 4,
+          "effects": [
+            "Brief stagger"
+          ]
+        }
       ]
     },
     "SPEAR": {
-      "slot1": { "id": "t0_spear_practice_thrust", "name": "Practice Thrust", "description": "Basic pole thrust", "damage": 24, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_spear_pole_guard", "name": "Pole Guard", "description": "Extend spear to block", "damage": 0, "cooldown": 5, "effects": ["+block 2s"] },
+      "slot1": {
+        "id": "t0_spear_practice_thrust",
+        "name": "Practice Thrust",
+        "description": "Basic pole thrust",
+        "damage": 24,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_spear_pole_guard",
+        "name": "Pole Guard",
+        "description": "Extend spear to block",
+        "damage": 0,
+        "cooldown": 5,
+        "effects": [
+          "+block 2s"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_spear_reach_strike", "name": "Reach Strike", "description": "Long-range poke", "damage": 20, "cooldown": 3, "effects": ["Extended range"] },
-        { "id": "t0_spear_sweeping_jab", "name": "Sweeping Jab", "description": "Arc sweep at mid range", "damage": 18, "cooldown": 4, "effects": ["Cone"] }
+        {
+          "id": "t0_spear_reach_strike",
+          "name": "Reach Strike",
+          "description": "Long-range poke",
+          "damage": 20,
+          "cooldown": 3,
+          "effects": [
+            "Extended range"
+          ]
+        },
+        {
+          "id": "t0_spear_sweeping_jab",
+          "name": "Sweeping Jab",
+          "description": "Arc sweep at mid range",
+          "damage": 18,
+          "cooldown": 4,
+          "effects": [
+            "Cone"
+          ]
+        }
       ]
     },
     "GREATSWORD": {
-      "slot1": { "id": "t0_greatsword_practice_cleave", "name": "Practice Cleave", "description": "Slow two-handed cleave", "damage": 28, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_greatsword_power_stance", "name": "Power Stance", "description": "Commit to next heavy swing", "damage": 0, "cooldown": 6, "effects": ["+12% dmg next hit"] },
+      "slot1": {
+        "id": "t0_greatsword_practice_cleave",
+        "name": "Practice Cleave",
+        "description": "Slow two-handed cleave",
+        "damage": 28,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_greatsword_power_stance",
+        "name": "Power Stance",
+        "description": "Commit to next heavy swing",
+        "damage": 0,
+        "cooldown": 6,
+        "effects": [
+          "+12% dmg next hit"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_greatsword_overhead", "name": "Overhead Swing", "description": "Vertical smash", "damage": 26, "cooldown": 5, "effects": ["High single dmg"] },
-        { "id": "t0_greatsword_spinning_cut", "name": "Spinning Cut", "description": "360° training spin", "damage": 22, "cooldown": 6, "effects": ["AoE"] }
+        {
+          "id": "t0_greatsword_overhead",
+          "name": "Overhead Swing",
+          "description": "Vertical smash",
+          "damage": 26,
+          "cooldown": 5,
+          "effects": [
+            "High single dmg"
+          ]
+        },
+        {
+          "id": "t0_greatsword_spinning_cut",
+          "name": "Spinning Cut",
+          "description": "360° training spin",
+          "damage": 22,
+          "cooldown": 6,
+          "effects": [
+            "AoE"
+          ]
+        }
       ]
     },
     "GREATAXE": {
-      "slot1": { "id": "t0_greataxe_practice_hew", "name": "Practice Hew", "description": "Basic greataxe chop", "damage": 30, "cooldown": 0, "effects": ["Starter"] },
-      "slot2": { "id": "t0_greataxe_lumber_stance", "name": "Lumber Stance", "description": "Brace for impact", "damage": 0, "cooldown": 6, "effects": ["+defense 2s"] },
+      "slot1": {
+        "id": "t0_greataxe_practice_hew",
+        "name": "Practice Hew",
+        "description": "Basic greataxe chop",
+        "damage": 30,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ]
+      },
+      "slot2": {
+        "id": "t0_greataxe_lumber_stance",
+        "name": "Lumber Stance",
+        "description": "Brace for impact",
+        "damage": 0,
+        "cooldown": 6,
+        "effects": [
+          "+defense 2s"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_greataxe_wide_arc", "name": "Wide Arc", "description": "Sweeping greataxe arc", "damage": 24, "cooldown": 5, "effects": ["AoE"] },
-        { "id": "t0_greataxe_crushing_blow", "name": "Crushing Blow", "description": "Single-target crusher", "damage": 32, "cooldown": 6, "effects": ["Armor break"] }
+        {
+          "id": "t0_greataxe_wide_arc",
+          "name": "Wide Arc",
+          "description": "Sweeping greataxe arc",
+          "damage": 24,
+          "cooldown": 5,
+          "effects": [
+            "AoE"
+          ]
+        },
+        {
+          "id": "t0_greataxe_crushing_blow",
+          "name": "Crushing Blow",
+          "description": "Single-target crusher",
+          "damage": 32,
+          "cooldown": 6,
+          "effects": [
+            "Armor break"
+          ]
+        }
       ]
     },
     "BOW": {
-      "slot1": { "id": "t0_bow_practice_shot", "name": "Practice Shot", "description": "Basic arrow shot", "damage": 20, "cooldown": 0, "effects": ["Starter"], "projectile": "arrow" },
-      "slot2": { "id": "t0_bow_take_aim", "name": "Take Aim", "description": "Steady aim — next shot bonus", "damage": 0, "cooldown": 4, "effects": ["+dmg next shot"] },
+      "slot1": {
+        "id": "t0_bow_practice_shot",
+        "name": "Practice Shot",
+        "description": "Basic arrow shot",
+        "damage": 20,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ],
+        "projectile": "arrow"
+      },
+      "slot2": {
+        "id": "t0_bow_take_aim",
+        "name": "Take Aim",
+        "description": "Steady aim — next shot bonus",
+        "damage": 0,
+        "cooldown": 4,
+        "effects": [
+          "+dmg next shot"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_bow_pinning_arrow", "name": "Pinning Arrow", "description": "Arrow that slows target", "damage": 16, "cooldown": 5, "effects": ["Slow 2s"], "projectile": "arrow" },
-        { "id": "t0_bow_rapid_fire", "name": "Rapid Fire", "description": "Two quick shots", "damage": 12, "cooldown": 4, "effects": ["Double tap"], "projectile": "arrow" }
+        {
+          "id": "t0_bow_pinning_arrow",
+          "name": "Pinning Arrow",
+          "description": "Arrow that slows target",
+          "damage": 16,
+          "cooldown": 5,
+          "effects": [
+            "Slow 2s"
+          ],
+          "projectile": "arrow"
+        },
+        {
+          "id": "t0_bow_rapid_fire",
+          "name": "Rapid Fire",
+          "description": "Two quick shots",
+          "damage": 12,
+          "cooldown": 4,
+          "effects": [
+            "Double tap"
+          ],
+          "projectile": "arrow"
+        }
       ]
     },
     "CROSSBOW": {
-      "slot1": { "id": "t0_xbow_practice_bolt", "name": "Practice Bolt", "description": "Basic crossbow bolt", "damage": 24, "cooldown": 0, "effects": ["Starter"], "projectile": "bolt" },
-      "slot2": { "id": "t0_xbow_reload", "name": "Reload", "description": "Fast reload stance", "damage": 0, "cooldown": 3, "effects": ["-CD next shot"] },
+      "slot1": {
+        "id": "t0_xbow_practice_bolt",
+        "name": "Practice Bolt",
+        "description": "Basic crossbow bolt",
+        "damage": 24,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ],
+        "projectile": "bolt"
+      },
+      "slot2": {
+        "id": "t0_xbow_reload",
+        "name": "Reload",
+        "description": "Fast reload stance",
+        "damage": 0,
+        "cooldown": 3,
+        "effects": [
+          "-CD next shot"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_xbow_piercing_bolt", "name": "Piercing Bolt", "description": "Armor-piercing shot", "damage": 22, "cooldown": 5, "effects": ["Pierce"], "projectile": "bolt" },
-        { "id": "t0_xbow_knockback_shot", "name": "Knockback Shot", "description": "Bolt with pushback", "damage": 18, "cooldown": 4, "effects": ["Knockback"], "projectile": "bolt" }
+        {
+          "id": "t0_xbow_piercing_bolt",
+          "name": "Piercing Bolt",
+          "description": "Armor-piercing shot",
+          "damage": 22,
+          "cooldown": 5,
+          "effects": [
+            "Pierce"
+          ],
+          "projectile": "bolt"
+        },
+        {
+          "id": "t0_xbow_knockback_shot",
+          "name": "Knockback Shot",
+          "description": "Bolt with pushback",
+          "damage": 18,
+          "cooldown": 4,
+          "effects": [
+            "Knockback"
+          ],
+          "projectile": "bolt"
+        }
       ]
     },
     "GUN": {
-      "slot1": { "id": "t0_gun_practice_shot", "name": "Practice Shot", "description": "Unsteady flintlock shot", "damage": 28, "cooldown": 0, "effects": ["Starter"], "projectile": "bullet" },
-      "slot2": { "id": "t0_gun_take_cover", "name": "Take Cover", "description": "Duck behind cover", "damage": 0, "cooldown": 5, "effects": ["-dmg taken 2s"] },
+      "slot1": {
+        "id": "t0_gun_practice_shot",
+        "name": "Practice Shot",
+        "description": "Unsteady flintlock shot",
+        "damage": 28,
+        "cooldown": 0,
+        "effects": [
+          "Starter"
+        ],
+        "projectile": "bullet"
+      },
+      "slot2": {
+        "id": "t0_gun_take_cover",
+        "name": "Take Cover",
+        "description": "Duck behind cover",
+        "damage": 0,
+        "cooldown": 5,
+        "effects": [
+          "-dmg taken 2s"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_gun_burst_fire", "name": "Burst Fire", "description": "Three-round burst", "damage": 20, "cooldown": 6, "effects": ["Multi-hit"], "projectile": "bullet" },
-        { "id": "t0_gun_suppressing_shot", "name": "Suppressing Shot", "description": "Suppressing fire", "damage": 16, "cooldown": 4, "effects": ["Slow fire rate enemy"], "projectile": "bullet" }
+        {
+          "id": "t0_gun_burst_fire",
+          "name": "Burst Fire",
+          "description": "Three-round burst",
+          "damage": 20,
+          "cooldown": 6,
+          "effects": [
+            "Multi-hit"
+          ],
+          "projectile": "bullet"
+        },
+        {
+          "id": "t0_gun_suppressing_shot",
+          "name": "Suppressing Shot",
+          "description": "Suppressing fire",
+          "damage": 16,
+          "cooldown": 4,
+          "effects": [
+            "Slow fire rate enemy"
+          ],
+          "projectile": "bullet"
+        }
       ]
     },
     "WAND": {
-      "slot1": { "id": "t0_wand_practice_bolt", "name": "Practice Bolt", "description": "Flickering arcane bolt", "damage": 14, "cooldown": 0, "castTime": 0.5, "effects": ["Starter"], "damageType": "arcane" },
-      "slot2": { "id": "t0_wand_focus", "name": "Focus", "description": "Channel focus — next spell bonus", "damage": 0, "cooldown": 5, "castTime": 0.3, "effects": ["+spell dmg 3s"], "damageType": "arcane" },
+      "slot1": {
+        "id": "t0_wand_practice_bolt",
+        "name": "Practice Bolt",
+        "description": "Flickering arcane bolt",
+        "damage": 14,
+        "cooldown": 0,
+        "castTime": 0.5,
+        "effects": [
+          "Starter"
+        ],
+        "damageType": "arcane"
+      },
+      "slot2": {
+        "id": "t0_wand_focus",
+        "name": "Focus",
+        "description": "Channel focus — next spell bonus",
+        "damage": 0,
+        "cooldown": 5,
+        "castTime": 0.3,
+        "effects": [
+          "+spell dmg 3s"
+        ],
+        "damageType": "arcane"
+      },
       "slot3Options": [
-        { "id": "t0_wand_frost_spark", "name": "Frost Spark", "description": "Tiny frost projectile", "damage": 12, "cooldown": 4, "castTime": 0.6, "effects": ["Slow 1s"], "damageType": "frost" },
-        { "id": "t0_wand_arcane_ping", "name": "Arcane Ping", "description": "Quick arcane pulse", "damage": 10, "cooldown": 3, "castTime": 0.4, "effects": ["Low mana"], "damageType": "arcane" }
+        {
+          "id": "t0_wand_frost_spark",
+          "name": "Frost Spark",
+          "description": "Tiny frost projectile",
+          "damage": 12,
+          "cooldown": 4,
+          "castTime": 0.6,
+          "effects": [
+            "Slow 1s"
+          ],
+          "damageType": "frost"
+        },
+        {
+          "id": "t0_wand_arcane_ping",
+          "name": "Arcane Ping",
+          "description": "Quick arcane pulse",
+          "damage": 10,
+          "cooldown": 3,
+          "castTime": 0.4,
+          "effects": [
+            "Low mana"
+          ],
+          "damageType": "arcane"
+        }
       ]
     },
     "STAFF": {
-      "slot1": { "id": "t0_staff_practice_root", "name": "Practice Root", "description": "Nature-touched strike from living branch", "damage": 16, "cooldown": 0, "castTime": 0.5, "effects": ["Starter"], "damageType": "nature" },
-      "slot2": { "id": "t0_staff_nature_ward", "name": "Nature Ward", "description": "Brief nature shield", "damage": 0, "cooldown": 6, "castTime": 0.4, "effects": ["+defense 2s"], "damageType": "nature" },
+      "slot1": {
+        "id": "t0_staff_practice_root",
+        "name": "Practice Root",
+        "description": "Nature-touched strike from living branch",
+        "damage": 16,
+        "cooldown": 0,
+        "castTime": 0.5,
+        "effects": [
+          "Starter"
+        ],
+        "damageType": "nature"
+      },
+      "slot2": {
+        "id": "t0_staff_nature_ward",
+        "name": "Nature Ward",
+        "description": "Brief nature shield",
+        "damage": 0,
+        "cooldown": 6,
+        "castTime": 0.4,
+        "effects": [
+          "+defense 2s"
+        ],
+        "damageType": "nature"
+      },
       "slot3Options": [
-        { "id": "t0_staff_vine_lash", "name": "Vine Lash", "description": "Whip vines at target", "damage": 14, "cooldown": 4, "castTime": 0.6, "effects": ["Root chance"], "damageType": "nature" },
-        { "id": "t0_staff_healing_sprout", "name": "Healing Sprout", "description": "Small self-heal", "damage": -12, "cooldown": 8, "castTime": 1.0, "effects": ["Self heal"], "damageType": "nature" }
+        {
+          "id": "t0_staff_vine_lash",
+          "name": "Vine Lash",
+          "description": "Whip vines at target",
+          "damage": 14,
+          "cooldown": 4,
+          "castTime": 0.6,
+          "effects": [
+            "Root chance"
+          ],
+          "damageType": "nature"
+        },
+        {
+          "id": "t0_staff_healing_sprout",
+          "name": "Healing Sprout",
+          "description": "Small self-heal",
+          "damage": -12,
+          "cooldown": 8,
+          "castTime": 1,
+          "effects": [
+            "Self heal"
+          ],
+          "damageType": "nature"
+        }
       ]
     },
     "TOME": {
-      "slot1": { "id": "t0_tome_practice_cantrip", "name": "Practice Cantrip", "description": "Read a basic cantrip from the novice tome", "damage": 12, "cooldown": 0, "castTime": 0.5, "effects": ["Starter"], "damageType": "arcane" },
-      "slot2": { "id": "t0_tome_read_page", "name": "Read Page", "description": "Study — empower next spell", "damage": 0, "cooldown": 5, "castTime": 0.3, "effects": ["+spell dmg 3s"], "damageType": "arcane" },
+      "slot1": {
+        "id": "t0_tome_practice_cantrip",
+        "name": "Practice Cantrip",
+        "description": "Read a basic cantrip from the novice tome",
+        "damage": 12,
+        "cooldown": 0,
+        "castTime": 0.5,
+        "effects": [
+          "Starter"
+        ],
+        "damageType": "arcane"
+      },
+      "slot2": {
+        "id": "t0_tome_read_page",
+        "name": "Read Page",
+        "description": "Study — empower next spell",
+        "damage": 0,
+        "cooldown": 5,
+        "castTime": 0.3,
+        "effects": [
+          "+spell dmg 3s"
+        ],
+        "damageType": "arcane"
+      },
       "slot3Options": [
-        { "id": "t0_tome_minor_heal", "name": "Minor Heal", "description": "Small heal cantrip", "damage": -10, "cooldown": 8, "castTime": 1.0, "effects": ["Heal"], "damageType": "holy" },
-        { "id": "t0_tome_ember_spark", "name": "Ember Spark", "description": "Tiny fire spark", "damage": 10, "cooldown": 4, "castTime": 0.6, "effects": ["Burn chance"], "damageType": "fire" },
-        { "id": "t0_tome_frost_wisp", "name": "Frost Wisp", "description": "Drifting frost wisp", "damage": 10, "cooldown": 4, "castTime": 0.6, "effects": ["Slow 1s"], "damageType": "frost" }
+        {
+          "id": "t0_tome_minor_heal",
+          "name": "Minor Heal",
+          "description": "Small heal cantrip",
+          "damage": -10,
+          "cooldown": 8,
+          "castTime": 1,
+          "effects": [
+            "Heal"
+          ],
+          "damageType": "holy"
+        },
+        {
+          "id": "t0_tome_ember_spark",
+          "name": "Ember Spark",
+          "description": "Tiny fire spark",
+          "damage": 10,
+          "cooldown": 4,
+          "castTime": 0.6,
+          "effects": [
+            "Burn chance"
+          ],
+          "damageType": "fire"
+        },
+        {
+          "id": "t0_tome_frost_wisp",
+          "name": "Frost Wisp",
+          "description": "Drifting frost wisp",
+          "damage": 10,
+          "cooldown": 4,
+          "castTime": 0.6,
+          "effects": [
+            "Slow 1s"
+          ],
+          "damageType": "frost"
+        }
       ]
     },
     "TOOL": {
-      "slot1": { "id": "t0_tool_chop", "name": "Chop", "description": "Chop wood, fiber, and soft nodes", "damage": 8, "cooldown": 0, "effects": ["Gather wood"] },
-      "slot2": { "id": "t0_tool_mine", "name": "Mine", "description": "Chip stone and scrap ore", "damage": 8, "cooldown": 0, "effects": ["Gather ore"] },
+      "slot1": {
+        "id": "t0_tool_chop",
+        "name": "Chop",
+        "description": "Chop wood, fiber, and soft nodes",
+        "damage": 8,
+        "cooldown": 0,
+        "effects": [
+          "Gather wood"
+        ]
+      },
+      "slot2": {
+        "id": "t0_tool_mine",
+        "name": "Mine",
+        "description": "Chip stone and scrap ore",
+        "damage": 8,
+        "cooldown": 0,
+        "effects": [
+          "Gather ore"
+        ]
+      },
       "slot3Options": [
-        { "id": "t0_tool_skin", "name": "Skin", "description": "Skin game and salvage leather", "damage": 6, "cooldown": 2, "effects": ["Gather hide"] },
-        { "id": "t0_tool_pry", "name": "Pry", "description": "Pry loose components and crates", "damage": 6, "cooldown": 3, "effects": ["Gather misc"] }
+        {
+          "id": "t0_tool_skin",
+          "name": "Skin",
+          "description": "Skin game and salvage leather",
+          "damage": 6,
+          "cooldown": 2,
+          "effects": [
+            "Gather hide"
+          ]
+        },
+        {
+          "id": "t0_tool_pry",
+          "name": "Pry",
+          "description": "Pry loose components and crates",
+          "damage": 6,
+          "cooldown": 3,
+          "effects": [
+            "Gather misc"
+          ]
+        }
       ]
     }
-  }
+  },
+  "autoAssign": true
 }
