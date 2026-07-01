@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-06-30
+## 2026-07-01
 ### Changed
-- Unify off-hand loadout: F toggle injects slots 1-3 for shield and tome (07fda2a)
+- Document RTS heightmap 3D upsample in integration wiring (174e501)
 
