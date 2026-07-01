@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "description": "Universal combat loadout — mainhand + off-hand modifier share the same five-slot fundamentals",
+  "toggleKey": "F",
+  "toggleLabel": "Off-Hand Mode (Block / Tome Coupling)",
+  "slots": {
+    "1": {
+      "role": "standardAttack",
+      "hotkey": "LMB",
+      "scope": "weaponType",
+      "count": 1,
+      "label": "Slot 1 · Standard Attack"
+    },
+    "2": {
+      "role": "sharedStyle",
+      "hotkey": "2",
+      "scope": "weaponType",
+      "label": "Slot 2 · Shared Style"
+    },
+    "3": {
+      "role": "sharedStyle",
+      "hotkey": "3",
+      "scope": "weaponType",
+      "label": "Slot 3 · Shared Style"
+    },
+    "4": {
+      "role": "signature",
+      "hotkey": "4",
+      "scope": "namedVariant",
+      "count": 1,
+      "label": "Slot 4 · Signature"
+    },
+    "5": {
+      "role": "passives",
+      "hotkey": "5",
+      "scope": "namedVariant",
+      "label": "Slot 5 · Passives"
+    }
+  },
+  "mainhand": {
+    "pattern": "five-slot",
+    "alwaysActive": [1, 2, 3, 4, 5]
+  },
+  "offhandModifier": {
+    "types": ["SHIELD", "TOME"],
+    "toggleKey": "F",
+    "whenToggleActive": {
+      "replacesMainhandSlots": [1, 2, 3],
+      "preservesMainhandSlots": [4, 5],
+      "description": "Hold/toggle F — off-hand skills replace mainhand slots 1–3. Signature (4) and passives (5) remain from the main weapon."
+    },
+    "shield": {
+      "requiresOneHandMainhand": false,
+      "usesShieldTypePool": true
+    },
+    "tome": {
+      "requiresOneHandMainhand": true,
+      "usesCouplingModePool": true
+    },
+    "offhandOwnPattern": "five-slot on shield/tome pools — slots 1–3 inject into mainhand when F active"
+  }
+}

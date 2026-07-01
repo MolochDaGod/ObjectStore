@@ -3,8 +3,8 @@
  * slots 2–4 secondary / ability / ultimate with tier unlocks).
  *
  * Off-hand rules:
- *   SHIELD — while blocking, replaces mainhand slots 1–3 with per-shield-type tank skills
- *   TOME   — canonical off-hand relic; with 1H mainhand, transforms slots 1–4 by coupling mode
+ *   SHIELD + TOME — toggle F replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
+ *   All weapons share: 1=standard attack, 2–3=shared type pools, 4=signature, 5=passives
  */
 (function (global) {
   const CDN = 'https://assets.grudge-studio.com';
@@ -57,6 +57,9 @@
     holy: 'heal',
     arcane: 'ranged',
   };
+
+  const OFFHAND_TOGGLE_KEY = 'F';
+  const OFFHAND_INJECT_SLOTS = ['primary', 'secondary', 'ability'];
 
   const SLOT_TYPES = ['primary', 'secondary', 'ability', 'ultimate'];
   const SLOT_HOTKEYS = ['1', '2', '3', '4', '5'];
@@ -182,75 +185,94 @@
     return def?.couplingModes?.[couplingMode] || def?.couplingModes?.elemental || null;
   }
 
-  /** Merge mainhand + offhand into effective 4-slot type def for UI/hotbar */
+  function getOffhandModifierSlots(offhand, mainhand) {
+    if (!offhand) return null;
+    const offType = resolveTypeFromWeapon(offhand);
+    if (offType === 'SHIELD') {
+      const shieldType = resolveShieldType(offhand);
+      const variant = getShieldVariant(shieldType);
+      if (!variant) return null;
+      return { kind: 'shield', title: variant.name || shieldType, slots: variant.slots, meta: { shieldType } };
+    }
+    if (offType === 'TOME') {
+      if (!isOneHandMainhand(mainhand)) return null;
+      const mode = resolveTomeCouplingMode(offhand);
+      const coupling = getTomeCoupling(mode);
+      if (!coupling) return null;
+      return { kind: 'tome', title: coupling.name, slots: coupling.slots, meta: { mode } };
+    }
+    return null;
+  }
+
+  function buildFiveSlotFromRawSlots(rawSlots, variant) {
+    const byType = Object.fromEntries((rawSlots || []).map((s) => [s.type, s]));
+    const next = [];
+    if (byType.primary) {
+      next.push({
+        ...byType.primary,
+        label: SLOT_UI_LABELS.primary,
+        skills: pickStandardAttack(byType.primary.skills, variant),
+      });
+    }
+    if (byType.secondary) {
+      next.push({ ...byType.secondary, label: SLOT_UI_LABELS.secondary, skills: [...(byType.secondary.skills || [])] });
+    }
+    if (byType.ability) {
+      next.push({ ...byType.ability, label: SLOT_UI_LABELS.ability, skills: [...(byType.ability.skills || [])] });
+    }
+    if (byType.ultimate) {
+      next.push({
+        ...byType.ultimate,
+        label: SLOT_UI_LABELS.ultimate,
+        skills: pickSignature(byType.ultimate.skills, variant),
+      });
+    }
+    return next;
+  }
+
+  /** Merge mainhand five-slot + optional F-toggle off-hand override (slots 1–3 only) */
   function resolveEffectiveLoadout(mainhand, offhand, opts = {}) {
     const playerTier = opts.playerTier ?? mainhand?.tier ?? 1;
-    const blockActive = opts.blockActive !== false;
+    const offhandToggleActive = opts.offhandToggleActive ?? opts.blockActive ?? false;
     const mainTypeId = resolveTypeFromWeapon(mainhand);
-    const mainDef = cloneTypeDef(getTypeDef(mainTypeId));
+    const baseDef = getTypeDef(mainTypeId);
+    const mainVariant = opts.mainVariant || null;
+    let mainDef = applyVariantToTypeDef(cloneTypeDef(baseDef), mainVariant);
 
     if (!mainDef) {
-      return { typeDef: null, mainTypeId, modifiers: [], banner: null };
+      return { typeDef: null, mainTypeId, modifiers: [], banner: null, offhandToggleActive };
     }
 
     const modifiers = [];
     let banner = null;
 
-    if (offhand && isOffhandItem(offhand)) {
-      const offType = resolveTypeFromWeapon(offhand);
-
-      if (offType === 'SHIELD' && blockActive) {
-        const shieldType = resolveShieldType(offhand);
-        const variant = getShieldVariant(shieldType);
-        if (variant) {
-          modifiers.push({ kind: 'shield', shieldType, variant });
-          banner = {
-            kind: 'shield',
-            title: `Blocking · ${variant.name || shieldType}`,
-            detail: 'Slots 1–3 show tank abilities while block is active. Slot 4 unchanged.',
-          };
-          for (const slotType of ['primary', 'secondary', 'ability']) {
-            const modSlot = variant.slots?.find((s) => s.type === slotType);
-            const baseSlot = mainDef.slots?.find((s) => s.type === slotType);
-            if (modSlot && baseSlot) {
-              baseSlot.skills = modSlot.skills.map((sk) => ({
-                ...sk,
-                _modifier: 'shield',
-                _shieldType: shieldType,
-              }));
-              baseSlot.label = modSlot.label || baseSlot.label;
-            }
-          }
-        }
-      }
-
-      if (offType === 'TOME' && isOneHandMainhand(mainhand)) {
-        const mode = resolveTomeCouplingMode(offhand);
-        const coupling = getTomeCoupling(mode);
-        if (coupling) {
-          modifiers.push({ kind: 'tome', mode, coupling });
-          banner = {
-            kind: 'tome',
-            title: `Tome Coupling · ${coupling.name}`,
-            detail: `1H ${mainDef.name} + tome transforms slots 1–4 into ${coupling.name.toLowerCase()} variants.`,
-          };
-          for (const slotType of SLOT_TYPES) {
-            const modSlot = coupling.slots?.find((s) => s.type === slotType);
-            const baseSlot = mainDef.slots?.find((s) => s.type === slotType);
-            if (modSlot && baseSlot) {
-              baseSlot.skills = modSlot.skills.map((sk) => ({
-                ...sk,
-                _modifier: 'tome',
-                _couplingMode: mode,
-              }));
-              baseSlot.label = modSlot.label || baseSlot.label;
-            }
+    if (offhand && isOffhandItem(offhand) && offhandToggleActive) {
+      const source = getOffhandModifierSlots(offhand, mainhand);
+      if (source) {
+        const offSlots = buildFiveSlotFromRawSlots(source.slots, offhand);
+        modifiers.push({ kind: source.kind, ...source.meta, source });
+        banner = {
+          kind: source.kind,
+          title: `${OFFHAND_TOGGLE_KEY} · ${source.title}`,
+          detail:
+            'Off-hand replaces slots 1–3. Slot 4 (signature) and slot 5 (passives) stay on your main weapon.',
+        };
+        for (const slotType of OFFHAND_INJECT_SLOTS) {
+          const modSlot = offSlots.find((s) => s.type === slotType);
+          const baseSlot = mainDef.slots?.find((s) => s.type === slotType);
+          if (modSlot && baseSlot) {
+            baseSlot.skills = modSlot.skills.map((sk) => ({
+              ...sk,
+              _modifier: source.kind,
+              _offhandToggle: OFFHAND_TOGGLE_KEY,
+            }));
+            baseSlot.label = `${SLOT_UI_LABELS[slotType]} · ${OFFHAND_TOGGLE_KEY}`;
           }
         }
       }
     }
 
-    return { typeDef: mainDef, mainTypeId, modifiers, banner, playerTier };
+    return { typeDef: mainDef, mainTypeId, modifiers, banner, playerTier, offhandToggleActive };
   }
 
   async function loadCatalog(apiBases) {
@@ -733,7 +755,7 @@
     return html;
   }
 
-  /** Render offhand modifier browser (SHIELD types or TOME coupling modes) */
+  /** Render offhand modifier browser (SHIELD types or TOME coupling modes) — five-slot subset for F toggle */
   function renderOffhandModifierColumns(typeId, opts = {}) {
     const def = getTypeDef(typeId);
     if (!def) return '<div class="wst-empty">Off-hand data not loaded.</div>';
@@ -741,22 +763,32 @@
     const asset = opts.asset || defaultAsset;
     const playerTier = opts.playerTier ?? 3;
     const selectedKey = opts.variantKey || (typeId === 'SHIELD' ? 'kite' : 'elemental');
+    const toggleOn = opts.offhandToggleActive === true;
 
+    if (!toggleOn) {
+      return `<div class="wst-modifier-intro">Press <strong>${OFFHAND_TOGGLE_KEY}</strong> (or use the toggle above) to preview off-hand skills. When inactive, your <strong>main weapon</strong> slots 1–3 are used.</div>`;
+    }
+
+    let rawSlots = null;
+    let title = '';
     if (typeId === 'SHIELD') {
       const variant = def.shieldTypes?.[selectedKey];
       if (!variant) return '<div class="wst-empty">Unknown shield type.</div>';
-      const pseudo = { slots: variant.slots };
-      return `<div class="wst-modifier-intro">Shield skills apply to <strong>mainhand slots 1–3</strong> only while <strong>block is active</strong>. Slot 4 stays your weapon ultimate.</div>${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
-    }
-
-    if (typeId === 'TOME') {
+      rawSlots = variant.slots;
+      title = variant.name;
+    } else if (typeId === 'TOME') {
       const coupling = def.couplingModes?.[selectedKey];
       if (!coupling) return '<div class="wst-empty">Unknown tome coupling mode.</div>';
-      const pseudo = { slots: coupling.slots };
-      return `<div class="wst-modifier-intro">Tomes are the <strong>canonical off-hand relic</strong>. Paired with a <strong>1H mainhand</strong>, slots 1–4 become <strong>${esc(coupling.name)}</strong> variants.</div>${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
+      rawSlots = coupling.slots;
+      title = coupling.name;
     }
 
-    return '';
+    const injectSlots = buildFiveSlotFromRawSlots(rawSlots, null).filter((s) =>
+      OFFHAND_INJECT_SLOTS.includes(s.type),
+    );
+    const pseudo = { slots: injectSlots, _passives: [] };
+    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} active · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives when paired.</div>`;
+    return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
   function renderOffhandVariantBar(typeId, opts = {}) {
@@ -787,7 +819,7 @@
     const playerTier = opts.playerTier ?? mainhand?.tier ?? 1;
     const loadout = resolveEffectiveLoadout(mainhand, offhand, {
       playerTier,
-      blockActive: opts.blockActive !== false,
+      offhandToggleActive: opts.offhandToggleActive ?? opts.blockActive ?? false,
     });
     const { typeDef, mainTypeId, banner } = loadout;
 
@@ -815,7 +847,7 @@
     html += `<div class="wst-action-bar-compact">${renderActionBarHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div class="slot-columns wst-compact-cols">${renderSlotColumnsHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div style="margin-top:10px;font-size:9px;color:var(--dim);text-align:center">
-      Slot 1 = LMB combo · Shield mods slots 1–3 while blocking · Tome couples 1–4 with 1H ·
+      1=standard · 2–3=shared · 4=signature · 5=passives · ${OFFHAND_TOGGLE_KEY}=off-hand slots 1–3 (shield/tome) ·
       <a href="./WEAPON_SKILLS.html" style="color:var(--gold)">Full browser</a></div>`;
     return html;
   }
@@ -824,7 +856,7 @@
     const offhand = opts.offhand || null;
     const loadout = resolveEffectiveLoadout(mainhand, offhand, {
       playerTier,
-      blockActive: opts.blockActive !== false,
+      offhandToggleActive: opts.offhandToggleActive ?? opts.blockActive ?? false,
     });
     const typeDef = loadout.typeDef;
     if (!typeDef) return [];
@@ -849,7 +881,11 @@
     TYPE_TO_CATEGORIES,
     ONE_HAND_TYPES,
     OFFHAND_MODIFIER_TYPES,
+    OFFHAND_TOGGLE_KEY,
+    OFFHAND_INJECT_SLOTS,
     SLOT_TYPES,
+    buildFiveSlotFromRawSlots,
+    getOffhandModifierSlots,
     loadCatalog,
     loadWeaponsCatalog,
     setCatalog,

@@ -71,6 +71,18 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 Reference: `/api/v1/_meta/weapon-slot-pattern.json`
 
+**Off-hand modifier (SHIELD + TOME)** — same F-toggle pattern for slots 1–3:
+
+| When | Slots 1–3 | Slots 4–5 |
+|------|-----------|-----------|
+| F inactive | Main weapon standard + shared styles | Main weapon signature + passives |
+| F active (block / tome coupling) | Off-hand pool injects into mainhand | Unchanged — stay on main weapon |
+
+- **Shield:** any mainhand; shield type (buckler, kite, tower, …) supplies tank abilities for slots 1–3.
+- **Tome:** requires 1H mainhand; coupling mode (elemental, heal, buff, ranged) supplies spell variants for slots 1–3.
+
+Reference: `/api/v1/_meta/weapon-loadout-pattern.json` · prefab field `loadout`
+
 ### Build & validate
 
 ```bash

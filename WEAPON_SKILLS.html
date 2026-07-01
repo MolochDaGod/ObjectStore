@@ -621,6 +621,17 @@
       gap: 8px;
       cursor: pointer;
     }
+    .wst-preview-bar kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      background: hsl(225 25% 16%);
+      font-family: var(--font-heading);
+      font-size: 0.95em;
+      color: var(--gold-light);
+      line-height: 1.2;
+    }
     .meta-tag.shield-mod { background: hsl(210 50% 20%); color: hsl(210 70% 70%); }
     .meta-tag.tome-mod { background: hsl(270 40% 20%); color: hsl(270 60% 75%); }
 
@@ -795,7 +806,7 @@ let activeWeapon = 'SWORD';
 let activeVariantId = null;
 let playerTier = 3;
 let variantKey = 'kite';
-let blockPreview = true;
+let offhandToggleActive = false;
 let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
 
 function isOffhandModifierTab() {
@@ -838,7 +849,7 @@ function renderWeaponTabs() {
     const weapon = WeaponSkillTree.getTypeDef(key);
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
-    const suffix = key === 'TOME' ? ' (Off-Hand)' : key === 'SHIELD' ? ' (Block)' : '';
+    const suffix = key === 'TOME' || key === 'SHIELD' ? ' (Off-Hand)' : '';
     tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
@@ -858,10 +869,10 @@ function renderPreviewBar() {
 
   if (isOffhandModifierTab()) {
     bar.style.display = 'flex';
+    const toggleKey = WeaponSkillTree.OFFHAND_TOGGLE_KEY;
     let html = WeaponSkillTree.renderOffhandVariantBar(activeWeapon, { variantKey });
-    if (activeWeapon === 'SHIELD') {
-      html += `<label><input type="checkbox" id="blockPreviewToggle" ${blockPreview ? 'checked' : ''}> Preview while blocking (slots 1–3 active)</label>`;
-    }
+    html += `<label><input type="checkbox" id="offhandTogglePreview" ${offhandToggleActive ? 'checked' : ''}>
+      <kbd>${toggleKey}</kbd> Off-Hand Mode — preview slots 1–3 (block / tome coupling)</label>`;
     bar.innerHTML = html;
     bar.querySelectorAll('[data-wst-variant]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -870,9 +881,9 @@ function renderPreviewBar() {
         render();
       });
     });
-    const toggle = document.getElementById('blockPreviewToggle');
+    const toggle = document.getElementById('offhandTogglePreview');
     if (toggle) {
-      toggle.onchange = () => { blockPreview = toggle.checked; render(); };
+      toggle.onchange = () => { offhandToggleActive = toggle.checked; render(); };
     }
     return;
   }
@@ -971,12 +982,8 @@ function renderActionBar() {
 function renderSlotColumns() {
   const container = document.getElementById('slotColumns');
   if (isOffhandModifierTab()) {
-    if (activeWeapon === 'SHIELD' && !blockPreview) {
-      container.innerHTML = '<div class="wst-modifier-intro">Shield skills are <strong>inactive</strong> until block is held. Toggle preview above to see tank abilities for slots 1–3.</div>';
-      return;
-    }
     container.innerHTML = WeaponSkillTree.renderOffhandModifierColumns(activeWeapon, {
-      asset, playerTier, variantKey,
+      asset, playerTier, variantKey, offhandToggleActive,
     });
     return;
   }
@@ -1037,6 +1044,17 @@ function resetSelections() {
   closeDetail();
   render();
 }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'f' && e.key !== 'F') return;
+  if (!isOffhandModifierTab()) return;
+  if (e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+  e.preventDefault();
+  offhandToggleActive = !offhandToggleActive;
+  const toggle = document.getElementById('offhandTogglePreview');
+  if (toggle) toggle.checked = offhandToggleActive;
+  render();
+});
 
 (async function init() {
   document.querySelector('.header p').textContent = 'Loading canonical weapon skills…';

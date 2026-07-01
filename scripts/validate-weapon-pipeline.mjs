@@ -17,9 +17,48 @@ const prefabs = load('master-weapon-prefabs.json');
 const t0 = load('t0-weapons.json');
 const skills = load('master-weaponSkills.json');
 const aliases = load('_meta/ability-aliases.json');
+const loadoutPattern = load('_meta/weapon-loadout-pattern.json');
 
 const issues = [];
 const warnings = [];
+
+const OFFHAND_TYPES = ['SHIELD', 'TOME'];
+const EXPECTED_INJECT = ['primary', 'secondary', 'ability'];
+
+for (const typeId of OFFHAND_TYPES) {
+  const wt = skills.weaponTypes?.find((w) => w.id === typeId);
+  if (!wt) {
+    issues.push(`Off-hand type missing from master-weaponSkills.json: ${typeId}`);
+    continue;
+  }
+  const mech = wt.mechanic || {};
+  if (mech.toggleKey !== loadoutPattern.toggleKey) {
+    issues.push(`${typeId} toggleKey must be "${loadoutPattern.toggleKey}", got "${mech.toggleKey || 'none'}"`);
+  }
+  const affected = mech.affectedSlots || [];
+  const affectedOk =
+    affected.length === EXPECTED_INJECT.length &&
+    EXPECTED_INJECT.every((s) => affected.includes(s)) &&
+    !affected.includes('ultimate');
+  if (!affectedOk) {
+    issues.push(`${typeId} affectedSlots must be [primary, secondary, ability] only — got ${JSON.stringify(affected)}`);
+  }
+  if (!mech.doesNotAffectSlot4 || !mech.doesNotAffectSlot5) {
+    issues.push(`${typeId} must set doesNotAffectSlot4 and doesNotAffectSlot5`);
+  }
+}
+
+const sampleMain = prefabs.prefabs.find((p) => p.weaponType === 'SWORD' && p.tier >= 1);
+const sampleShield = prefabs.prefabs.find((p) => p.weaponType === 'SHIELD');
+const sampleTome = prefabs.prefabs.find((p) => p.weaponType === 'TOME');
+if (sampleMain && sampleMain.loadout?.offhandModifier?.toggleKey !== loadoutPattern.toggleKey) {
+  issues.push('Mainhand prefab missing loadout.offhandModifier.toggleKey=F (rebuild prefabs)');
+}
+for (const sample of [sampleShield, sampleTome]) {
+  if (!sample?.loadout?.whenToggleActive) {
+    issues.push(`${sample?.weaponType || 'offhand'} prefab missing loadout.whenToggleActive (rebuild prefabs)`);
+  }
+}
 
 const t0Expected = t0.total ?? t0.weapons?.length ?? 15;
 const t0Actual = prefabs.prefabs.filter((p) => p.tier === 0).length;

@@ -3439,14 +3439,17 @@
       "classification": "offhandModifier",
       "role": "offhandModifier",
       "mechanic": {
-        "description": "While blocking, shield type replaces mainhand slots 1–3 with tank abilities. Slot 4 is unchanged.",
+        "description": "Toggle F (block) — shield type replaces mainhand slots 1–3 with tank abilities. Slots 4–5 unchanged.",
+        "toggleKey": "F",
         "requiresBlock": true,
+        "requiresOffhandToggle": true,
         "affectedSlots": [
           "primary",
           "secondary",
           "ability"
         ],
         "doesNotAffectSlot4": true,
+        "doesNotAffectSlot5": true,
         "shieldTypes": [
           "buckler",
           "kite",
@@ -6234,14 +6237,17 @@
       "classification": "offhandCoupling",
       "role": "offhandCoupling",
       "mechanic": {
-        "description": "Canonical off-hand relic. When paired with a one-hand mainhand, tomes transform slots 1–4 into elemental, ranged, heal, or buff variants based on tome school.",
+        "description": "Toggle F (same as shield) — with a 1H mainhand, tome replaces mainhand slots 1–3 with coupled spell variants. Slots 4–5 unchanged.",
+        "toggleKey": "F",
+        "requiresOffhandToggle": true,
         "requiresOneHandMainhand": true,
         "affectedSlots": [
           "primary",
           "secondary",
-          "ability",
-          "ultimate"
+          "ability"
         ],
+        "doesNotAffectSlot4": true,
+        "doesNotAffectSlot5": true,
         "couplingModes": [
           "elemental",
           "ranged",

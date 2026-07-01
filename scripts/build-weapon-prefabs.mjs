@@ -19,7 +19,14 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applyFiveSlotPattern, pickStandardAttack, slotMap, SLOT_LABELS } from './lib/weapon-five-slot.mjs';
+import {
+  applyFiveSlotPattern,
+  buildLoadoutMeta,
+  pickStandardAttack,
+  slotMap,
+  SLOT_LABELS,
+  LOADOUT_PATTERN,
+} from './lib/weapon-five-slot.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -306,6 +313,7 @@ function buildPrefab(item, registryEntry, variantMeta, skillTypeDef, recipe) {
     },
 
     skills: skillBindings,
+    loadout: buildLoadoutMeta(weaponType),
     ummorpg: {
       scriptableItemClass: weaponType === 'SHIELD' || weaponType === 'TOME' ? 'EquipmentItem' : 'WeaponItem',
       equipmentSlot: weaponType === 'SHIELD' ? 'Offhand' : weaponType === 'TOME' ? 'Offhand' : 'MainHand',
@@ -517,6 +525,7 @@ const output = {
   description:
     'Canonical weapon prefabs — five-slot pattern (1=standard attack, 2–3=shared, 4=signature, 5=passives)',
   slotPattern: 'five-slot',
+  loadoutPattern: LOADOUT_PATTERN,
   assetCdn: CDN,
   total: prefabs.length,
   totals: {

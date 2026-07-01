@@ -68,12 +68,30 @@ export function slotMap(slots) {
   return Object.fromEntries((slots || []).map((s) => [s.type, s]));
 }
 
+export const OFFHAND_TOGGLE_KEY = 'F';
+export const OFFHAND_INJECT_SLOT_TYPES = ['primary', 'secondary', 'ability'];
+export const PRESERVED_MAINHAND_SLOT_TYPES = ['ultimate', 'passive'];
+
 export const SLOT_LABELS = {
   primary: 'Slot 1 · Standard Attack',
   secondary: 'Slot 2 · Shared Style',
   ability: 'Slot 3 · Shared Style',
   ultimate: 'Slot 4 · Signature',
   passive: 'Slot 5 · Passives',
+};
+
+export const OFFHAND_ACTIVE_LABELS = {
+  primary: `Slot 1 · ${OFFHAND_TOGGLE_KEY} Active`,
+  secondary: `Slot 2 · ${OFFHAND_TOGGLE_KEY} Active`,
+  ability: `Slot 3 · ${OFFHAND_TOGGLE_KEY} Active`,
+};
+
+export const LOADOUT_PATTERN = {
+  toggleKey: OFFHAND_TOGGLE_KEY,
+  pattern: 'five-slot',
+  offhandTypes: ['SHIELD', 'TOME'],
+  injectSlots: [1, 2, 3],
+  preserveSlots: [4, 5],
 };
 
 /**
@@ -177,5 +195,33 @@ export function applyFiveSlotPattern(slots, variantMeta, weaponType, aliases, op
     bindingMode: opts.bindingMode || 'standard',
     standardAttack: standard?.name || null,
     signatureAbility: signature?.name || null,
+  };
+}
+
+/** Build loadout metadata attached to every weapon prefab */
+export function buildLoadoutMeta(weaponType, skillBinding) {
+  const isOffhand = weaponType === 'SHIELD' || weaponType === 'TOME';
+  return {
+    pattern: LOADOUT_PATTERN.pattern,
+    toggleKey: OFFHAND_TOGGLE_KEY,
+    ...(isOffhand
+      ? {
+          role: 'offhandModifier',
+          whenToggleActive: {
+            injectsIntoMainhandSlots: LOADOUT_PATTERN.injectSlots,
+            preservesOnMainhand: LOADOUT_PATTERN.preserveSlots,
+          },
+          requiresOneHandMainhand: weaponType === 'TOME',
+        }
+      : {
+          role: 'mainhand',
+          slots: { 1: 'standardAttack', 2: 'sharedStyle', 3: 'sharedStyle', 4: 'signature', 5: 'passives' },
+          offhandModifier: {
+            toggleKey: OFFHAND_TOGGLE_KEY,
+            affectedSlotsWhenEquipped: LOADOUT_PATTERN.injectSlots,
+            preservedSlots: LOADOUT_PATTERN.preserveSlots,
+          },
+        }),
+    ...skillBinding,
   };
 }
