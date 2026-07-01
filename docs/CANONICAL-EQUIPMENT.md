@@ -77,12 +77,21 @@ T1+ tools use `gather` binding — profession nodes from `master-harvest-nodes.j
 
 ---
 
+## Games library (start here)
+
+```
+GET /api/v1/games-library.json
+```
+
+Single index for runtime URLs, counts, load order, and SDK method names.
+
 ## Quick integration
 
 ```javascript
 const BASE = 'https://molochdagod.github.io/ObjectStore/api/v1';
 
-const { prefabs } = await fetch(`${BASE}/master-weapon-prefabs.json`).then((r) => r.json());
+const library = await fetch(`${BASE}/games-library.json`).then((r) => r.json());
+const { prefabs } = await fetch(library.runtime.weaponPrefabs).then((r) => r.json());
 
 const combatWeapons = prefabs.filter((p) => p.weaponType !== 'TOOL');
 const harvestTools  = prefabs.filter((p) => p.weaponType === 'TOOL');

@@ -292,6 +292,12 @@ const manifest = {
     benchMeshes: `${CDN_JSON}/bench-mesh-catalog.json`,
     resourceMeshes: `${CDN_JSON}/resource-mesh-catalog.json`,
     weaponsMaster: `${CDN_JSON}/master-weapons.json`,
+    weaponPrefabs: `${CDN_JSON}/master-weapon-prefabs.json`,
+    t0Weapons: `${CDN_JSON}/t0-weapons.json`,
+    ummorpgBridge: `${CDN_JSON}/ummorpg-systems-bridge.json`,
+    gamesLibrary: `${CDN_JSON}/games-library.json`,
+    enchants: `${CDN_JSON}/master-enchants.json`,
+    canonicalEquipment: `${CDN_JSON}/_meta/canonical-equipment-pattern.json`,
     registry: `${CDN_JSON}/master-registry.json`,
     iconResolver: 'https://molochdagod.github.io/ObjectStore/utils/icon-resolver.js',
   },
@@ -305,6 +311,9 @@ const manifest = {
     itemsWithRecipes: (masterItems.items || []).filter((i) => i.recipeUuid).length,
     harvestDropsLinked: enrichedNodes.flatMap((n) => n.drops).filter((d) => d.materialUuid).length,
     staffWithRecipes: Object.values(staffLooks.categories).flatMap((c) => c.items).filter((i) => i.recipeUuid).length,
+    weaponPrefabs: null,
+    prefabsWithRecipes: null,
+    prefabsWithSkills: null,
   },
   graph: {
     harvestToMaterial: 'master-harvest-nodes.json → drops[].materialUuid',
@@ -312,13 +321,27 @@ const manifest = {
     recipeToItem: 'master-recipes.json → resultItemId → master-items.json',
     itemToIcon: 'master-items.json → iconUrl | staff-looks.json → iconUrl',
     staffToRecipe: 'staff-looks.json → recipeUuid → master-recipes.json',
+    weaponToPrefab: 'master-weapon-prefabs.json → prefabs[].uuid (ITEM-*) + skills.skillUuids (SKIL-*)',
+    weaponToEnchant: 'master-enchants.json → ummorpg-systems-bridge.json',
+    weaponToDrop: 'ummorpg-systems-bridge.json → systems.drops.tables',
   },
   recipeSources: masterRecipes.sources || null,
   deprecated: {
-    'items-database.json': 'Use master-items.json',
+    'items-database.json': 'Use master-items.json or master-weapon-prefabs.json',
+    'master-t0-items.json': 'Use t0-weapons.json + master-weapon-prefabs.json',
+    'weapons.json': 'Design templates only — runtime uses master-weapon-prefabs.json',
     'grudge-game-data-hub': 'Archived — do not use',
   },
 };
+
+try {
+  const prefabs = readJson(join(API, 'master-weapon-prefabs.json'));
+  manifest.counts.weaponPrefabs = prefabs.total;
+  manifest.counts.prefabsWithRecipes = prefabs.prefabs?.filter((p) => p.recipeUuid).length;
+  manifest.counts.prefabsWithSkills = prefabs.totals?.withSkills ?? prefabs.prefabs?.filter((p) => p.skills?.skillUuids?.length).length;
+} catch {
+  /* build:weapon-pipeline not run yet */
+}
 writeJson(join(API, 'game-data-manifest.json'), manifest);
 console.log('  game-data-manifest.json — canonical index written');
 console.log('\nConsolidation complete.');

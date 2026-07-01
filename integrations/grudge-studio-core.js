@@ -60,10 +60,11 @@ export class GrudgeStudioAPI {
         this.objectStore.loadMasterRecipes(),
         this.objectStore.loadHarvestNodes(),
         this.objectStore.loadStaffLooks(),
-        this.objectStore.loadWeapons(),
+        this.objectStore.loadWeaponPrefabs(),
+        this.objectStore.loadGamesLibrary(),
         this.objectStore.loadMaterials(),
         this.objectStore.loadArmor(),
-        this.objectStore.loadConsumables()
+        this.objectStore.loadConsumables(),
       ]);
 
       // Initialize Puter if enabled
@@ -209,6 +210,18 @@ class ObjectStoreClient {
     return await this._fetch('weapons.json', 'weapons');
   }
 
+  async loadWeaponPrefabs() {
+    return await this._fetch('master-weapon-prefabs.json', 'weaponPrefabs');
+  }
+
+  async loadGamesLibrary() {
+    return await this._fetch('games-library.json', 'gamesLibrary');
+  }
+
+  async loadT0Weapons() {
+    return await this._fetch('t0-weapons.json', 't0Weapons');
+  }
+
   async loadMaterials() {
     return await this._fetch('master-materials.json', 'materials');
   }
@@ -230,12 +243,25 @@ class ObjectStoreClient {
   }
 
   async findItem(id) {
+    const prefabs = await this.loadWeaponPrefabs();
+    const key = String(id || '').toLowerCase();
+    const fromPrefab = prefabs?.prefabs?.find((p) =>
+      p.uuid === id || p.id === id
+      || (p.name && p.name.toLowerCase() === key),
+    );
+    if (fromPrefab) return { ...fromPrefab, type: 'weapon', source: 'prefab' };
+
+    const items = await this.loadMasterItems();
+    const fromMaster = items?.items?.find((i) =>
+      i.uuid === id || (i.name && i.name.toLowerCase() === key),
+    );
+    if (fromMaster) return { ...fromMaster, type: fromMaster.type || 'weapon', source: 'master-items' };
+
     const weapons = await this.loadWeapons();
-    
-    for (const [category, data] of Object.entries(weapons.categories)) {
+    for (const [category, data] of Object.entries(weapons.categories || {})) {
       if (data.items) {
-        const item = data.items.find(i => i.id === id);
-        if (item) return { ...item, category, type: 'weapon' };
+        const item = data.items.find((i) => i.id === id);
+        if (item) return { ...item, category, type: 'weapon', source: 'design-template' };
       }
     }
 

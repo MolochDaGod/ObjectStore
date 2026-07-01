@@ -55,6 +55,9 @@ const WEAPON_CONFIGS = [
   { setKey: 'holyStaves', profession: 'Mystic', primaryMaterial: 'plank', secondaryMaterial: 'fabric' },
   { setKey: 'lightningStaves', profession: 'Mystic', primaryMaterial: 'plank', secondaryMaterial: 'fabric' },
   { setKey: 'arcaneStaves', profession: 'Mystic', primaryMaterial: 'plank', secondaryMaterial: 'fabric' },
+  { setKey: 'spears', profession: 'Forester', primaryMaterial: 'ingot', secondaryMaterial: 'plank' },
+  { setKey: 'shields', profession: 'Miner', primaryMaterial: 'ingot', secondaryMaterial: 'leather' },
+  { setKey: 'tools', profession: 'Miner', primaryMaterial: 'ingot', secondaryMaterial: 'plank' },
 ];
 
 const STATIONS = {
@@ -118,6 +121,21 @@ for (const item of masterItems.items || []) {
   itemByUuid.set(item.uuid, item);
   const bt = `${normalizeName(item.baseName || item.name)}|${item.tier || 1}`;
   itemByBaseTier.set(bt, item);
+}
+
+// master-weapons.json is authoritative for tier-expanded rows (tools, spears, shields)
+try {
+  const masterWeapons = readJson(join(API, 'master-weapons.json'));
+  for (const item of masterWeapons.items || []) {
+    itemByUuid.set(item.uuid, item);
+    const bt = `${normalizeName(item.baseName || item.name)}|${item.tier ?? 1}`;
+    itemByBaseTier.set(bt, item);
+    if (item.category && item.id) {
+      itemByKey.set(`${item.category}:${item.id}:${item.tier ?? 1}`, item);
+    }
+  }
+} catch {
+  /* optional */
 }
 
 for (const [cat, block] of Object.entries(weapons.categories || {})) {
@@ -231,7 +249,9 @@ for (const config of WEAPON_CONFIGS) {
       if (tier >= 4) materials.push(matEntry(TIER_MATERIALS.essence[tier - 1], Math.floor((tier - 3) * 1.5)));
       if (tier >= 5) materials.push(matEntry(TIER_MATERIALS.gem[tier - 1], Math.floor((tier - 4) / 2) + 1));
 
-      const item = itemByKey.get(`${config.setKey}:${weapon.id}:${tier}`);
+      const item =
+        itemByKey.get(`${config.setKey}:${weapon.id}:${tier}`)
+        || itemByBaseTier.get(`${normalizeName(weapon.name)}|${tier}`);
       const recipeId = `tiered-${weapon.id}-t${tier}`;
       const recipeName = tier === 1 ? `Craft ${weapon.name}` : `Craft ${weapon.name} T${tier}`;
 

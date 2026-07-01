@@ -45,7 +45,7 @@ const relics = load('master-relics.json');
 const enchants = load('master-enchants.json');
 const infusions = load('master-infusions.json');
 const artifacts = load('master-artifacts.json');
-const t0Items = load('master-t0-items.json');
+const t0Weapons = load('t0-weapons.json');
 const buildings = load('master-buildings.json');
 const mounts = load('master-mounts.json');
 
@@ -87,7 +87,7 @@ if (enchants?.items) addItems({ items: enchants.items }, 'items', 'ENCH', 'encha
 addItems(infusions, 'infusions', 'INFU', 'infusion');
 if (infusions?.items) addItems({ items: infusions.items }, 'items', 'INFU', 'infusion');
 addItems(artifacts, 'artifacts', 'ARTF', 'artifact');
-addItems(t0Items, 'items', 'ITEM', 'weapon');
+addItems({ items: t0Weapons?.weapons || [] }, 'items', 'ITEM', 'weapon');
 addItems(buildings, 'buildings', 'BLDG', 'building');
 addItems(mounts, 'mounts', 'MNT', 'mount');
 

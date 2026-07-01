@@ -1055,10 +1055,26 @@ class GrudgeSDK {
   async getMasterItems()      { return this.fetch('/api/v1/master-items.json'); }
   async getMasterRecipes()    { return this.fetch('/api/v1/master-recipes.json'); }
   async getMasterMaterials()  { return this.fetch('/api/v1/master-materials.json'); }
+  /** Runtime weapon + harvest tool prefabs (ITEM-* + SKIL-*) — use for games */
+  async getWeaponPrefabs()    { return this.fetch('/api/v1/master-weapon-prefabs.json'); }
+  async getT0Weapons()          { return this.fetch('/api/v1/t0-weapons.json'); }
+  async getGamesLibrary()       { return this.fetch('/api/v1/games-library.json'); }
+  async getUmmorpgBridge()      { return this.fetch('/api/v1/ummorpg-systems-bridge.json'); }
+  async getCanonicalEquipment() { return this.fetch('/api/v1/_meta/canonical-equipment-pattern.json'); }
+  async getHarvestNodes()       { return this.fetch('/api/v1/master-harvest-nodes.json'); }
   async getMasterArtifacts()  { return this.fetch('/api/v1/master-artifacts.json'); }
   /** Resolve a single item/artifact by uuid, slug, or base name. */
   async getItemByIdOrUuid(idOrUuid) {
-    const [items, artifacts] = await Promise.all([this.getMasterItems(), this.getMasterArtifacts().catch(() => ({}))]);
+    const [prefabs, items, artifacts] = await Promise.all([
+      this.getWeaponPrefabs().catch(() => ({ prefabs: [] })),
+      this.getMasterItems(),
+      this.getMasterArtifacts().catch(() => ({})),
+    ]);
+    const fromPrefab = (prefabs?.prefabs || []).find((p) =>
+      p.uuid === idOrUuid || p.id === idOrUuid
+      || (p.name && p.name.toLowerCase() === String(idOrUuid).toLowerCase()),
+    );
+    if (fromPrefab) return { ...fromPrefab, type: 'weapon', source: 'prefab' };
     const haystacks = [...(items?.items || []), ...(artifacts?.artifacts || [])];
     const key = (idOrUuid || '').toLowerCase();
     return haystacks.find(i =>

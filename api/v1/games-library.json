@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T04:37:40.168Z",
+  "description": "Grudge Studio games library — runtime equipment prefabs and economy wiring",
+  "canonical": true,
+  "assetCdn": "https://assets.grudge-studio.com",
+  "staticApi": "https://molochdagod.github.io/ObjectStore/api/v1",
+  "workerApi": "https://objectstore.grudge-studio.com/api/v1",
+  "d1": {
+    "database": "objectstore-meta",
+    "table": "weapon_prefabs",
+    "seed": "workers/seed/weapon-prefabs.sql"
+  },
+  "runtime": {
+    "weaponPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json",
+    "t0Weapons": "https://molochdagod.github.io/ObjectStore/api/v1/t0-weapons.json",
+    "weaponSkills": "https://molochdagod.github.io/ObjectStore/api/v1/master-weaponSkills.json",
+    "ummorpgBridge": "https://molochdagod.github.io/ObjectStore/api/v1/ummorpg-systems-bridge.json",
+    "registry": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
+    "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
+    "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
+    "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
+    "enchants": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json",
+    "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
+    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json"
+  },
+  "design": {
+    "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
+    "note": "Design templates only — abilities/passives for editors, not runtime ITEM-*"
+  },
+  "counts": {
+    "prefabs": 871,
+    "combatWeapons": 822,
+    "harvestTools": 49,
+    "t0Starters": 15,
+    "withSkills": 823,
+    "withRecipes": 856,
+    "toolsWithHarvestProfile": 48,
+    "recipes": 2183,
+    "harvestNodes": 9,
+    "enchants": 72,
+    "byWeaponType": {
+      "SWORD": 49,
+      "AXE": 49,
+      "DAGGER": 49,
+      "HAMMER": 98,
+      "SPEAR": 49,
+      "GREATSWORD": 49,
+      "GREATAXE": 49,
+      "BOW": 49,
+      "CROSSBOW": 49,
+      "GUN": 49,
+      "WAND": 1,
+      "STAFF": 233,
+      "TOOL": 49,
+      "TOME": 1,
+      "SHIELD": 48
+    }
+  },
+  "loadOrder": [
+    "games-library.json",
+    "master-weapon-prefabs.json",
+    "master-weaponSkills.json",
+    "master-harvest-nodes.json",
+    "master-recipes.json",
+    "ummorpg-systems-bridge.json"
+  ],
+  "sdk": {
+    "primary": "getWeaponPrefabs()",
+    "designOnly": "getWeapons()",
+    "harvest": "getHarvestNodes()",
+    "init": "GameDataClient.init() + loadGamesLibrary()"
+  },
+  "status": {
+    "weapons": "live",
+    "harvestTools": "live",
+    "armor": "planned",
+    "consumables": "partial",
+    "materials": "live",
+    "drops": "partial"
+  },
+  "deprecated": {
+    "items-database.json": "Use master-items.json or master-weapon-prefabs.json",
+    "master-t0-items.json": "Use t0-weapons.json + master-weapon-prefabs.json",
+    "weapons.json alone": "Design templates only — runtime uses master-weapon-prefabs.json",
+    "grudge-game-data-hub": "Archived",
+    "molochdagod.github.io icons in item JSON": "Use /icons/... paths resolved to assets.grudge-studio.com",
+    "objectstore.grudge-studio.com for binary files": "Use assets.grudge-studio.com"
+  }
+}

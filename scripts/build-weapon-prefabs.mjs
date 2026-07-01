@@ -258,6 +258,47 @@ function buildSkillIndex(skillsJson) {
   return byType;
 }
 
+const TOOL_PROFESSION_HINTS = [
+  { re: /pick|mine|ore|drill/i, profession: 'Mining', gatherAction: 'mine' },
+  { re: /axe|saw|log|wood|chop/i, profession: 'Logging', gatherAction: 'chop' },
+  { re: /sickle|herb|skin|gather/i, profession: 'Herbalism', gatherAction: 'skin' },
+];
+
+function inferToolProfession(item) {
+  const text = `${item.baseName || ''} ${item.name || ''} ${item.primaryStat || ''}`;
+  for (const hint of TOOL_PROFESSION_HINTS) {
+    if (hint.re.test(text)) return hint;
+  }
+  return { profession: 'Mining', gatherAction: 'mine' };
+}
+
+function buildToolHarvestProfile(item, nodesPayload) {
+  const tier = item.tier ?? 0;
+  if (tier < 1) return null;
+  const hint = inferToolProfession(item);
+  const nodes = (nodesPayload?.nodes || []).filter((n) => n.profession === hint.profession);
+  return {
+    canonicalSource: 'master-harvest-nodes.json',
+    materialSource: 'master-materials.json',
+    profession: hint.profession,
+    gatherAction: hint.gatherAction,
+    tierGate: tier,
+    requiredLevel: Math.max(1, (tier - 1) * 10 + 1),
+    yieldMultiplier: 1 + (tier - 1) * 0.08,
+    nodes: nodes.map((n) => ({
+      nodeId: n.id,
+      nodeUuid: n.nodeUuid,
+      type: n.type,
+      nodeTier: n.tier,
+      drops: (n.drops || []).slice(0, 3).map((d) => ({
+        materialUuid: d.materialUuid,
+        materialName: d.materialName,
+        chance: d.chance,
+      })),
+    })),
+  };
+}
+
 function slotsFromEmbeddedT0(item) {
   const raw = item?.skills?.slots;
   if (!raw?.length) return null;
@@ -293,14 +334,14 @@ function resolveSkillBindings(weaponType, variantMeta, skillTypeDef, item) {
         note: 'T0 tool — run enrich:t0-starter-skills to populate gather slots 1–3',
       };
     }
+    const harvestProfile = buildToolHarvestProfile(item, harvestNodes);
     return {
       slots: [],
       skillUuids: [],
       passives: [],
       slotPattern: 'gather',
       bindingMode: 'gather',
-      note: 'T1+ tools use profession harvest nodes — see master-harvest-nodes.json',
-      harvestProfile: {
+      harvestProfile: harvestProfile || {
         canonicalSource: 'master-harvest-nodes.json',
         materialSource: 'master-materials.json',
       },
@@ -545,6 +586,7 @@ function buildD1Seed(prefabs) {
 // ── Main ──────────────────────────────────────────────────────────
 const weaponsMaster = load('master-weapons.json');
 const t0Weapons = load('t0-weapons.json');
+const harvestNodes = load('master-harvest-nodes.json');
 const registry = load('master-registry.json');
 const weaponSkills = load('master-weaponSkills.json');
 const weaponsTemplates = load('weapons.json');

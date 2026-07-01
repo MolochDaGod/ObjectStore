@@ -123,6 +123,26 @@ if (badT0Tool.length) {
   );
 }
 
+const MISSING_RECIPE_CATS = ['spears', 'shields', 'tools'];
+const missingRecipeCats = MISSING_RECIPE_CATS.map((cat) => {
+  const type = cat === 'spears' ? 'SPEAR' : cat === 'shields' ? 'SHIELD' : 'TOOL';
+  const t1plus = prefabs.prefabs.filter((p) => p.category === cat && p.tier >= 1);
+  const withRecipe = t1plus.filter((p) => p.recipeUuid).length;
+  return { cat, type, total: t1plus.length, withRecipe };
+}).filter((r) => r.total > 0 && r.withRecipe < r.total);
+if (missingRecipeCats.length) {
+  issues.push(
+    `Missing recipeUuid on T1+ prefabs: ${missingRecipeCats.map((r) => `${r.cat} ${r.withRecipe}/${r.total}`).join(', ')} — run npm run import:recipes && build:weapon-pipeline`,
+  );
+}
+
+const toolsNoHarvest = prefabs.prefabs.filter(
+  (p) => p.weaponType === 'TOOL' && p.tier >= 1 && !(p.skills?.harvestProfile?.nodes?.length > 0),
+);
+if (toolsNoHarvest.length) {
+  issues.push(`T1+ tools missing harvestProfile.nodes: ${toolsNoHarvest.length}`);
+}
+
 const badSlot1 = prefabs.prefabs.filter((p) => {
   if (p.tier < 1 || p.weaponType === 'TOOL') return false;
   const prim = p.skills.slots?.find((s) => s.type === 'primary');

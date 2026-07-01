@@ -8,7 +8,10 @@
  *   const swords = client.search('sword', { tier: 5, type: 'weapon' });
  */
 
-import { loadMasterItems, loadMasterRecipes, loadMasterMaterials, loadMasterAttributes } from '../lib/data-loader.js';
+import {
+  loadMasterItems, loadMasterRecipes, loadMasterMaterials, loadMasterAttributes,
+  loadWeaponPrefabs, loadT0Weapons, loadGamesLibrary, loadHarvestNodes, loadUmmorpgBridge,
+} from '../lib/data-loader.js';
 import { RecipeLinker } from '../lib/recipe-linker.js';
 import { AccountConnector } from '../lib/account-connector.js';
 import { generateUuid, parseUuid, isValid } from '../lib/uuid-registry.js';
@@ -26,18 +29,44 @@ export class GameDataClient {
     this.linker = null;
     this.attributes = null;
     this.account = new AccountConnector();
+    this.gamesLibrary = null;
+    this.weaponPrefabs = null;
+    this.t0Weapons = null;
+    this.harvestNodes = null;
+    this.ummorpgBridge = null;
     this.ready = false;
   }
 
   async init() {
-    const [items, recipes, materials, attrs] = await Promise.all([
+    const [items, recipes, materials, attrs, library, prefabs, t0, harvest, bridge] = await Promise.all([
       loadMasterItems(), loadMasterRecipes(), loadMasterMaterials(), loadMasterAttributes(),
+      loadGamesLibrary(), loadWeaponPrefabs(), loadT0Weapons(), loadHarvestNodes(), loadUmmorpgBridge(),
     ]);
     this.linker = new RecipeLinker(items, recipes, materials);
     this.attributes = attrs?.attributes || [];
+    this.gamesLibrary = library;
+    this.weaponPrefabs = prefabs;
+    this.t0Weapons = t0;
+    this.harvestNodes = harvest;
+    this.ummorpgBridge = bridge;
     await this.account.init();
     this.ready = true;
     return this;
+  }
+
+  getGamesLibrary() { return this.gamesLibrary; }
+  getWeaponPrefabs() { return this.weaponPrefabs; }
+  getPrefabByUuid(uuid) {
+    return this.weaponPrefabs?.prefabs?.find((p) => p.uuid === uuid) || null;
+  }
+  getPrefabById(id) {
+    return this.weaponPrefabs?.prefabs?.find((p) => p.id === id) || null;
+  }
+  getCombatWeaponPrefabs() {
+    return (this.weaponPrefabs?.prefabs || []).filter((p) => p.weaponType !== 'TOOL');
+  }
+  getHarvestToolPrefabs() {
+    return (this.weaponPrefabs?.prefabs || []).filter((p) => p.weaponType === 'TOOL');
   }
 
   // --- Item Queries ---
