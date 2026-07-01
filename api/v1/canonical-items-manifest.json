@@ -1,85 +1,29 @@
 {
   "version": "1.0.0",
-  "generated": "2026-07-01T05:53:38.747Z",
-  "description": "Grudge Warlords runtime index — weapons, tools, economy, and canonical item manifest",
-  "canonical": true,
-  "assetCdn": "https://assets.grudge-studio.com",
-  "staticApi": "https://molochdagod.github.io/ObjectStore/api/v1",
-  "workerApi": "https://objectstore.grudge-studio.com/api/v1",
-  "d1": {
-    "database": "objectstore-meta",
-    "table": "weapon_prefabs",
-    "seed": "workers/seed/weapon-prefabs.sql"
+  "generated": "2026-07-01T05:53:37.732Z",
+  "game": "grudge-warlords",
+  "description": "Canonical item authority map — every Warlords-era item category, UUID prefix, and runtime status",
+  "startHere": "https://molochdagod.github.io/ObjectStore/api/v1/games-library.json",
+  "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
+  "resolutionOrder": [
+    "master-weapon-prefabs.json (equipped weapons + tools — runtime prefab)",
+    "master-items.json (weapons + armor + consumables catalog)",
+    "master-materials.json / master-relics.json / master-enchants.json (stackables & mods)",
+    "master-registry.json (UUID index fallback)"
+  ],
+  "uuidPrefixes": {
+    "ITEM": "Weapons + Armor + T0 items",
+    "FOOD": "Food consumables",
+    "POTN": "Potions",
+    "MATL": "Crafting materials",
+    "RELC": "Relics",
+    "ENCH": "Enchantments",
+    "INFU": "Infusions",
+    "ARTF": "Artifacts",
+    "BLDG": "Buildings + crafting stations",
+    "MNT": "Mounts"
   },
-  "runtime": {
-    "weaponPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json",
-    "t0Weapons": "https://molochdagod.github.io/ObjectStore/api/v1/t0-weapons.json",
-    "weaponSkills": "https://molochdagod.github.io/ObjectStore/api/v1/master-weaponSkills.json",
-    "ummorpgBridge": "https://molochdagod.github.io/ObjectStore/api/v1/ummorpg-systems-bridge.json",
-    "registry": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
-    "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
-    "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
-    "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
-    "enchants": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json",
-    "attributes": "https://molochdagod.github.io/ObjectStore/api/v1/master-attributes.json",
-    "weaponStatBridge": "https://molochdagod.github.io/ObjectStore/api/v1/weapon-stat-bridge.json",
-    "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json",
-    "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
-    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json",
-    "itemsManifest": "https://molochdagod.github.io/ObjectStore/api/v1/canonical-items-manifest.json",
-    "masterItems": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
-    "archive": "https://molochdagod.github.io/ObjectStore/api/v1/archive/manifest.json"
-  },
-  "design": {
-    "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
-    "note": "Design templates only — abilities/passives for editors, not runtime ITEM-*"
-  },
-  "counts": {
-    "prefabs": 871,
-    "combatWeapons": 822,
-    "harvestTools": 49,
-    "t0Starters": 15,
-    "withSkills": 823,
-    "withRecipes": 856,
-    "toolsWithHarvestProfile": 48,
-    "recipes": 2183,
-    "harvestNodes": 9,
-    "enchants": 72,
-    "byWeaponType": {
-      "SWORD": 49,
-      "AXE": 49,
-      "DAGGER": 49,
-      "HAMMER": 98,
-      "SPEAR": 49,
-      "GREATSWORD": 49,
-      "GREATAXE": 49,
-      "BOW": 49,
-      "CROSSBOW": 49,
-      "GUN": 49,
-      "WAND": 1,
-      "STAFF": 233,
-      "TOOL": 49,
-      "TOME": 1,
-      "SHIELD": 48
-    },
-    "masterItems": 2347,
-    "itemCategories": {
-      "combatWeapons": 822,
-      "harvestTools": 49,
-      "armor": 1344,
-      "consumables": 132,
-      "materials": 104,
-      "recipes": 2183,
-      "relics": 136,
-      "enchants": 72,
-      "infusions": 20,
-      "artifacts": 20,
-      "buildings": 15,
-      "mounts": 8,
-      "harvestNodes": 9
-    }
-  },
-  "itemCategories": {
+  "categories": {
     "combatWeapons": {
       "status": "live",
       "authority": "master-weapon-prefabs.json",
@@ -193,28 +137,33 @@
       "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json"
     }
   },
-  "loadOrder": [
-    "games-library.json",
-    "canonical-items-manifest.json",
-    "master-attributes.json",
-    "master-weapon-prefabs.json",
-    "master-items.json",
-    "master-weaponSkills.json",
-    "weapon-stat-bridge.json",
-    "master-harvest-nodes.json",
-    "master-recipes.json",
-    "master-materials.json",
-    "master-armor.json",
-    "master-consumables.json",
-    "ummorpg-systems-bridge.json"
-  ],
-  "sdk": {
-    "primary": "getWeaponPrefabs()",
-    "resolveItem": "getItemByIdOrUuid()",
-    "itemsManifest": "getCanonicalItemsManifest()",
-    "designOnly": "getWeapons()",
-    "harvest": "getHarvestNodes()",
-    "init": "GameDataClient.init() + loadGamesLibrary()"
+  "aggregates": {
+    "masterItems": {
+      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
+      "total": 2347,
+      "byType": {
+        "weapon": 822,
+        "tool": 49,
+        "armor": 1344,
+        "food": 90,
+        "potion": 30,
+        "consumable": 12
+      }
+    },
+    "masterRegistry": {
+      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
+      "total": 2765
+    },
+    "weaponPrefabs": {
+      "total": 871,
+      "withSkills": 823,
+      "withRecipes": 856
+    }
+  },
+  "pipelines": {
+    "weaponsAndTools": "npm run build:weapon-pipeline",
+    "allItems": "npm run consolidate:items && npm run build:canonical-items",
+    "validate": "npm run audit:canonical-items"
   },
   "status": {
     "weapons": "live",

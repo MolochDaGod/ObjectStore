@@ -20,6 +20,9 @@ const prefabs = load('master-weapon-prefabs.json');
 const harvest = load('master-harvest-nodes.json');
 const recipes = load('master-recipes.json');
 const enchants = load('master-enchants.json');
+const items = load('master-items.json');
+let itemsManifest = null;
+try { itemsManifest = load('canonical-items-manifest.json'); } catch { /* built by build:canonical-items */ }
 const pattern = load('_meta/canonical-equipment-pattern.json');
 
 const combatPrefabs = prefabs.prefabs.filter((p) => p.weaponType !== 'TOOL');
@@ -38,7 +41,7 @@ const withHarvestProfile = toolPrefabs.filter((p) => p.skills?.harvestProfile?.n
 const out = {
   version: '1.0.0',
   generated: new Date().toISOString(),
-  description: 'Grudge Studio games library — runtime equipment prefabs and economy wiring',
+  description: 'Grudge Warlords runtime index — weapons, tools, economy, and canonical item manifest',
   canonical: true,
   assetCdn: CDN_ASSETS,
   staticApi: CDN_JSON,
@@ -63,6 +66,8 @@ const out = {
     statPattern: `${CDN_JSON}/_meta/weapon-stats-attributes.json`,
     equipmentPattern: `${CDN_JSON}/_meta/canonical-equipment-pattern.json`,
     manifest: `${CDN_JSON}/game-data-manifest.json`,
+    itemsManifest: `${CDN_JSON}/canonical-items-manifest.json`,
+    masterItems: `${CDN_JSON}/master-items.json`,
     archive: `${CDN_JSON}/archive/manifest.json`,
   },
   design: {
@@ -81,19 +86,31 @@ const out = {
     harvestNodes: harvest.totalNodes || harvest.nodes?.length || 0,
     enchants: enchants.enchants?.length || enchants.total || 0,
     byWeaponType: byType,
+    masterItems: items?.totalItems || items?.items?.length || 0,
+    itemCategories: itemsManifest?.categories
+      ? Object.fromEntries(Object.entries(itemsManifest.categories).map(([k, v]) => [k, v.count]))
+      : {},
   },
+  itemCategories: itemsManifest?.categories || {},
   loadOrder: [
     'games-library.json',
+    'canonical-items-manifest.json',
     'master-attributes.json',
     'master-weapon-prefabs.json',
+    'master-items.json',
     'master-weaponSkills.json',
     'weapon-stat-bridge.json',
     'master-harvest-nodes.json',
     'master-recipes.json',
+    'master-materials.json',
+    'master-armor.json',
+    'master-consumables.json',
     'ummorpg-systems-bridge.json',
   ],
   sdk: {
     primary: 'getWeaponPrefabs()',
+    resolveItem: 'getItemByIdOrUuid()',
+    itemsManifest: 'getCanonicalItemsManifest()',
     designOnly: 'getWeapons()',
     harvest: 'getHarvestNodes()',
     init: 'GameDataClient.init() + loadGamesLibrary()',

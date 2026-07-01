@@ -1068,6 +1068,7 @@ class GrudgeSDK {
   async getMasterAttributes()   { return this.fetch('/api/v1/master-attributes.json'); }
   async getWeaponStatBridge()   { return this.fetch('/api/v1/weapon-stat-bridge.json'); }
   async getArchiveManifest()    { return this.fetch('/api/v1/archive/manifest.json'); }
+  async getCanonicalItemsManifest() { return this.fetch('/api/v1/canonical-items-manifest.json'); }
   async getMasterArtifacts()  { return this.fetch('/api/v1/master-artifacts.json'); }
   /** Resolve a single item/artifact by uuid, slug, or base name. */
   async getItemByIdOrUuid(idOrUuid) {
@@ -1081,7 +1082,12 @@ class GrudgeSDK {
       || (p.name && p.name.toLowerCase() === String(idOrUuid).toLowerCase()),
     );
     if (fromPrefab) return { ...fromPrefab, type: 'weapon', source: 'prefab' };
-    const haystacks = [...(items?.items || []), ...(artifacts?.artifacts || [])];
+    const mats = await this.getMasterMaterials().catch(() => ({ materials: [] }));
+    const haystacks = [
+      ...(items?.items || []),
+      ...(artifacts?.artifacts || []),
+      ...(mats?.materials || []),
+    ];
     const key = (idOrUuid || '').toLowerCase();
     return haystacks.find(i =>
       i.uuid === idOrUuid ||

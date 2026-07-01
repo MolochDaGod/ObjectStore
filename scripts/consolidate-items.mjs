@@ -2,14 +2,13 @@
 /**
  * consolidate-items.mjs — Single Source of Truth for ALL items.
  *
- * Reads: master-weapons, master-armor, master-consumables, master-materials,
- *        master-relics, master-enchants, master-infusions, master-artifacts,
- *        master-t0-items, master-buildings, master-mounts
+ * Reads: master-weapon-prefabs (runtime weapon authority), master-armor,
+ *        master-consumables, master-materials, master-relics, master-enchants,
+ *        master-infusions, master-artifacts, master-buildings, master-mounts
  *
  * Writes:
- *   1. master-items.json      — canonical combined (weapons + armor + consumables)
+ *   1. master-items.json      — canonical combined (weapons/tools + armor + consumables)
  *   2. master-registry.json   — UUID index across ALL item types
- *   3. items-database.json    — legacy format mirror (for backward compat, read-only)
  *
  * Ensures: every item has a UUID. Items with FOOD/POTN/MATL/RECP prefixes
  * are valid - we don't force ITEM prefix on everything.
@@ -37,7 +36,7 @@ function genUUID(prefix, name) {
 }
 
 // ── Load all sources ──
-const weapons = load('master-weapons.json');
+const prefabs = load('master-weapon-prefabs.json');
 const armor = load('master-armor.json');
 const consumables = load('master-consumables.json');
 const materials = load('master-materials.json');
@@ -45,9 +44,34 @@ const relics = load('master-relics.json');
 const enchants = load('master-enchants.json');
 const infusions = load('master-infusions.json');
 const artifacts = load('master-artifacts.json');
-const t0Weapons = load('t0-weapons.json');
 const buildings = load('master-buildings.json');
 const mounts = load('master-mounts.json');
+const recipes = load('master-recipes.json');
+
+const CONSUMABLE_TYPES = new Set(['consumable', 'food', 'potion']);
+
+function prefabToCatalogItem(p) {
+  const isTool = p.weaponType === 'TOOL';
+  return {
+    uuid: p.uuid,
+    name: p.name,
+    baseName: p.baseName || p.name,
+    id: p.id,
+    type: isTool ? 'tool' : 'weapon',
+    category: p.category || p.weaponType?.toLowerCase(),
+    weaponType: p.weaponType,
+    tier: p.tier,
+    tierLabel: p.tierLabel,
+    stats: p.stats,
+    primaryStat: p.primaryStat,
+    iconUrl: p.assets?.iconUrl,
+    modelR2Key: p.assets?.modelR2Key,
+    recipeUuid: p.recipeUuid,
+    craftedBy: p.craftedBy,
+    runtimePrefab: true,
+    prefabSource: 'master-weapon-prefabs.json',
+  };
+}
 
 // ── Ensure UUIDs ──
 function ensureUUID(item, prefix) {
@@ -76,9 +100,35 @@ function addItems(source, key, prefix, type) {
   }
 }
 
-addItems(weapons, 'items', 'ITEM', 'weapon');
+if (prefabs?.prefabs) {
+  for (const p of prefabs.prefabs) {
+    const item = prefabToCatalogItem(p);
+    ensureUUID(item, 'ITEM');
+    allItems.push(item);
+    uuidIndex[item.uuid] = {
+      name: item.name,
+      type: item.type,
+      category: item.category,
+      tier: item.tier,
+      iconUrl: item.iconUrl || null,
+      runtimePrefab: true,
+    };
+  }
+}
 addItems(armor, 'items', 'ITEM', 'armor');
-addItems(consumables, 'items', 'FOOD', 'consumable');
+for (const c of consumables?.items || []) {
+  const item = { ...c };
+  if (!item.type) item.type = 'consumable';
+  ensureUUID(item, item.uuid?.startsWith('POTN') ? 'POTN' : 'FOOD');
+  allItems.push(item);
+  uuidIndex[item.uuid] = {
+    name: item.name,
+    type: item.type,
+    category: item.category || item.type,
+    tier: item.tier,
+    iconUrl: item.iconUrl || null,
+  };
+}
 addItems(materials, 'materials', 'MATL', 'material');
 addItems(relics, 'relics', 'RELC', 'relic');
 if (relics?.items) addItems({ items: relics.items }, 'items', 'RELC', 'relic');
@@ -87,7 +137,6 @@ if (enchants?.items) addItems({ items: enchants.items }, 'items', 'ENCH', 'encha
 addItems(infusions, 'infusions', 'INFU', 'infusion');
 if (infusions?.items) addItems({ items: infusions.items }, 'items', 'INFU', 'infusion');
 addItems(artifacts, 'artifacts', 'ARTF', 'artifact');
-addItems({ items: t0Weapons?.weapons || [] }, 'items', 'ITEM', 'weapon');
 addItems(buildings, 'buildings', 'BLDG', 'building');
 addItems(mounts, 'mounts', 'MNT', 'mount');
 
@@ -115,17 +164,22 @@ const withUuid = deduped.filter(i => i.uuid).length;
 const withoutUuid = deduped.filter(i => !i.uuid).length;
 console.log(`[consolidate] UUID coverage: ${withUuid}/${deduped.length} (${withoutUuid} missing)`);
 
-// ── Write master-items.json (weapons + armor + consumables only — original scope) ──
-const masterItems = deduped.filter(i => ['weapon', 'armor', 'consumable'].includes(i.type));
+// ── Write master-items.json (prefab weapons/tools + armor + all consumables) ──
+const masterItems = deduped.filter((i) =>
+  ['weapon', 'tool', 'armor'].includes(i.type) || CONSUMABLE_TYPES.has(i.type),
+);
 const masterOut = {
-  version: '2.0.0',
+  version: '2.1.0',
   generated: new Date().toISOString(),
-  description: 'Canonical combined item database — weapons + armor + consumables. Single source of truth.',
+  description: 'Canonical Warlords item catalog — runtime prefabs + armor + consumables. Weapons/tools authority: master-weapon-prefabs.json.',
+  canonicalManifest: 'canonical-items-manifest.json',
+  weaponAuthority: 'master-weapon-prefabs.json',
   totalItems: masterItems.length,
-  totalWeapons: masterItems.filter(i => i.type === 'weapon').length,
-  totalArmor: masterItems.filter(i => i.type === 'armor').length,
-  totalConsumables: masterItems.filter(i => i.type === 'consumable').length,
-  totalRecipes: 0, // filled by recipe linker
+  totalWeapons: masterItems.filter((i) => i.type === 'weapon').length,
+  totalTools: masterItems.filter((i) => i.type === 'tool').length,
+  totalArmor: masterItems.filter((i) => i.type === 'armor').length,
+  totalConsumables: masterItems.filter((i) => CONSUMABLE_TYPES.has(i.type)).length,
+  totalRecipes: recipes?.totalRecipes || 0,
   totalMaterials: materials?.materials?.length || 0,
   items: masterItems,
 };

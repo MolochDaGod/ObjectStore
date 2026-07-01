@@ -61,6 +61,8 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 
 **Equipment standard:** [docs/CANONICAL-EQUIPMENT.md](docs/CANONICAL-EQUIPMENT.md) — weapons + harvest tool (live), armor next. Meta: `/api/v1/_meta/canonical-equipment-pattern.json`
 
+**All Warlords items:** [docs/CANONICAL-ITEMS-WARLORDS.md](docs/CANONICAL-ITEMS-WARLORDS.md) — full category map · `/api/v1/canonical-items-manifest.json`
+
 **Stats & attributes:** [docs/WEAPON-STATS-ATTRIBUTES.md](docs/WEAPON-STATS-ATTRIBUTES.md) — canonical links between weapon base stats, SKIL-*, 8 attributes, and 37 derived stats.
 
 | Endpoint | Description |

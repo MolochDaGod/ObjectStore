@@ -81,9 +81,11 @@ T1+ tools use `gather` binding — profession nodes from `master-harvest-nodes.j
 
 ```
 GET /api/v1/games-library.json
+GET /api/v1/canonical-items-manifest.json   ← all Warlords item categories
 ```
 
-Single index for runtime URLs, counts, load order, and SDK method names.
+Single index for runtime URLs, counts, load order, and SDK method names.  
+Full item taxonomy: [CANONICAL-ITEMS-WARLORDS.md](./CANONICAL-ITEMS-WARLORDS.md)
 
 ## Quick integration
 
