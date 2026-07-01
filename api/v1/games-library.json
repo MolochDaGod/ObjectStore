@@ -230,6 +230,18 @@
     "mounts": "live",
     "drops": "partial"
   },
+  "integration": {
+    "wiring": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/warlords-integration-wiring.json",
+    "homeIslandContract": "https://molochdagod.github.io/ObjectStore/api/v1/home-island-contract.json",
+    "authGateway": "https://id.grudge-studio.com",
+    "gameDataApi": "https://grudge-api-production-0d46.up.railway.app",
+    "wcs": "https://wcs.grudge-studio.com",
+    "puterGsApp": "https://grudge-crafting.puter.site",
+    "fleetBridge": "https://assets.grudge-studio.com/js/grudge-fleet.js",
+    "saveOrder": ["PATCH /api/island/state", "puter.kv grudge:island:{id}:state", "localStorage"],
+    "scale3dM": 1024,
+    "scaleRtsM": 200
+  },
   "deprecated": {
     "attributes.json": "Archived — use master-attributes.json (see api/v1/archive/manifest.json)",
     "weaponSkills.json": "Archived — use master-weaponSkills.json",

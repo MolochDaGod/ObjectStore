@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T00:00:00.000Z",
+  "description": "Grudge Warlords integration map — WCS, accounts, Puter GS app, home islands, ObjectStore",
+  "startHere": "https://molochdagod.github.io/ObjectStore/api/v1/games-library.json",
+  "auth": {
+    "grudgeId": "https://id.grudge-studio.com",
+    "identityApi": "https://api.grudge-studio.com",
+    "gameDataApi": "https://grudge-api-production-0d46.up.railway.app",
+    "flows": {
+      "wcsReturn": "?return=…&grudge_token=… via POST /api/auth/popup-token",
+      "puterSignIn": "POST /api/auth/puter → Railway JWT",
+      "grudgeBridge": "POST /api/auth/grudge-bridge",
+      "ssoPickup": "?sso_token= or ?grudge_token= on landing"
+    },
+    "puterKvNamespaces": [
+      "grudge:island:{id}:state",
+      "grudge:island:{id}:grid",
+      "grudge:account",
+      "grudge:world:player-block"
+    ]
+  },
+  "apps": {
+    "wcs": {
+      "url": "https://wcs.grudge-studio.com",
+      "role": "Character creation, arsenal, profession UI shell",
+      "returnParam": "return",
+      "handoff": "grudge_token on return URL"
+    },
+    "grudgewarlords": {
+      "url": "https://grudgewarlords.com",
+      "role": "2D island + 3D home-island + Railway SSOT"
+    },
+    "puterGsApp": {
+      "url": "https://grudge-crafting.puter.site",
+      "bridge": "dist-puter/grudge-fleet.js",
+      "objectStore": "games-library.json + canonical-items-manifest.json"
+    },
+    "rtsGrudge": {
+      "url": "forge.grudge-studio.com",
+      "role": "200m procedural island + NatureScatter; export via POST /api/island/export-from-rts"
+    }
+  },
+  "homeIsland": {
+    "contract": "https://molochdagod.github.io/ObjectStore/api/v1/home-island-contract.json",
+    "saveOrder": [
+      "1. PATCH /api/island/state (Railway Postgres)",
+      "2. puter.kv grudge:island:{id}:state (user cache)",
+      "3. localStorage grudge_island_{id} (offline)"
+    ],
+    "loadOrder": [
+      "1. GET /api/island (Railway)",
+      "2. puter.kv (newest lastUpdate wins)",
+      "3. localStorage"
+    ],
+    "scale3dM": 1024,
+    "scaleRtsM": 200
+  },
+  "objectStore": {
+    "runtimeIndex": "games-library.json",
+    "itemsMap": "canonical-items-manifest.json",
+    "weaponPrefabs": "master-weapon-prefabs.json",
+    "harvestNodes": "master-harvest-nodes.json",
+    "recipes": "master-recipes.json"
+  },
+  "gaps": {
+    "natureScatterExport": "RTS tree scatter not yet merged into Warlords 3D GLB export",
+    "scaleUnification": "Colyseus room 400m vs 3D 1024m — use home-island-contract.json when placing entities",
+    "armorPrefabs": "planned — armor catalog live in master-armor.json only",
+    "economySpiderChart": "not built — achievability radar for materials/recipes/chests pending"
+  }
+}
