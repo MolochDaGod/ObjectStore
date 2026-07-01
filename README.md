@@ -1,5 +1,5 @@
 # Grudge Studio ObjectStore
-**Version 5.1.0** | Unified Game Data API, Backend SDK & Integration Hub
+**Version 5.2.0** | Unified Game Data API, Backend SDK & Integration Hub
 
 The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
@@ -42,6 +42,36 @@ const balanced = await api.ai.balanceItem(item);
 ```
 
 **[📖 Full Integration Guide](INTEGRATION-GUIDE.md)** | **[🔧 Unity C# Example](integrations/GrudgeWarlords-Unity-Integration.cs)** | **[⚛️ React/TS Example](integrations/warlord-crafting-suite-integration.tsx)**
+
+---
+
+## ✨ What's New — Canonical Weapon Prefabs (5.2.0)
+
+End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R2 assets, and uMMORPG loot/craft/enchant bridges.
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/v1/master-weapon-prefabs.json` | **871 runtime prefabs** (15 T0 starters + 856 T1–8) with skills, assets, recipes, `attributeAffinity` |
+| `/api/v1/t0-weapons.json` | 15 canonical starter weapons (Training Sword, Hand Axe, Novice Tome, etc.) |
+| `/api/v1/master-weaponSkills.json` | 268 skills across 16 weapon types (+ SHIELD/TOME nested off-hand skills) |
+| `/api/v1/ummorpg-systems-bridge.json` | uMMORPG drop/chest/craft/enchant mappings from canonical prefabs |
+| `/api/v1/_meta/ability-aliases.json` | Design-layer ability names → canonical SKIL-* names |
+
+**Live browser:** [WEAPON_SKILLS.html](https://molochdagod.github.io/ObjectStore/WEAPON_SKILLS.html) — pick weapon class → named variant → filtered skills/passives.
+
+### Build & validate
+
+```bash
+npm run enrich:weapon-skills    # UUIDs + resourceCost for SHIELD/TOME nested skills
+npm run build:weapon-pipeline   # build prefabs + run audit (must pass before deploy)
+```
+
+Outputs:
+- `api/v1/master-weapon-prefabs.json`
+- `api/v1/ummorpg-systems-bridge.json`
+- `workers/seed/weapon-prefabs.sql` (D1 `weapon_prefabs` table)
+
+**Unity import:** `Grudge Studio → Import Canonical Weapon Prefabs` (reads `master-weapon-prefabs.json`).
 
 ---
 
@@ -93,7 +123,11 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 
 | Endpoint | Description |
 |----------|-------------|
-| `/api/v1/weapons.json` | All weapons (17 categories × 6 weapons × 8 tiers = 816 items) |
+| `/api/v1/weapons.json` | Named weapon templates (119 variants — design-layer abilities/passives) |
+| `/api/v1/master-weapon-prefabs.json` | **871 canonical prefabs** — ITEM-* + SKIL-* + R2 + recipes (runtime bundle) |
+| `/api/v1/t0-weapons.json` | 15 T0 starter weapons |
+| `/api/v1/master-weaponSkills.json` | Weapon skill trees with SKIL-* UUIDs, cast times, resource costs |
+| `/api/v1/ummorpg-systems-bridge.json` | uMMORPG ItemDrop / Lootcrate / Crafting / Enchant wiring |
 | `/api/v1/materials.json` | Crafting materials (ore, wood, cloth, leather, gems, essence) |
 | `/api/v1/armor.json` | Armor slots (helm, chest, boots, etc.) |
 | `/api/v1/consumables.json` | Potions, bandages, grenades |
@@ -505,8 +539,13 @@ The scanner reads PNG headers directly (no external deps), auto-detects frame la
 
 ```
 ObjectStore/
-├── api/v1/                   # 49+ Static JSON API endpoints
-│   ├── weapons.json         # 17 categories, 816+ items
+├── api/v1/                   # 50+ Static JSON API endpoints
+│   ├── weapons.json         # 119 named weapon templates
+│   ├── master-weapon-prefabs.json  # 871 runtime prefabs (ITEM-* + SKIL-*)
+│   ├── t0-weapons.json      # 15 starter weapons
+│   ├── master-weaponSkills.json    # 16 weapon types, 268 skills
+│   ├── ummorpg-systems-bridge.json # uMMORPG addon mappings
+│   ├── _meta/ability-aliases.json  # Design → canonical skill name map
 │   ├── armor.json           # Helm, chest, boots, etc.
 │   ├── materials.json       # Ore, wood, cloth, leather, gems
 │   ├── sprite-characters.json # 275 animated characters (3 sources)
@@ -543,6 +582,9 @@ ObjectStore/
 ├── sdk/grudge-sdk.js         # SDK v5.0 — unified client for all services
 ├── mcp/                      # MCP server for AI agents
 ├── scripts/                  # Build + extraction tools
+│   ├── build-weapon-prefabs.mjs    # Join master-weapons + skills → prefabs
+│   ├── validate-weapon-pipeline.mjs # Audit T0 count, skill bindings, duplicates
+│   ├── enrich-weapon-skills.mjs    # UUIDs + resourceCost for off-hand skills
 │   └── build-items-json.js  # Parse GRUDGE_Item_Database.html → items-database.json
 ├── tools/                    # Sprite tools
 │   └── scan-sprites.js      # Walk sprites/, auto-detect layouts, regenerate JSON

@@ -57,3 +57,25 @@ CREATE TABLE IF NOT EXISTS cdn_stats (
 
 CREATE INDEX IF NOT EXISTS idx_cdn_stats_ts ON cdn_stats(ts);
 CREATE INDEX IF NOT EXISTS idx_cdn_stats_source ON cdn_stats(source);
+
+-- ── Weapon Prefabs (canonical ITEM-* + R2 + SKIL-* join) ───────────
+-- Populated by: node scripts/build-weapon-prefabs.mjs
+-- Seed file:    workers/seed/weapon-prefabs.sql
+
+CREATE TABLE IF NOT EXISTS weapon_prefabs (
+  uuid          TEXT PRIMARY KEY,
+  base_uuid     TEXT NOT NULL,
+  name          TEXT NOT NULL,
+  weapon_type   TEXT NOT NULL,
+  category      TEXT NOT NULL,
+  tier          INTEGER NOT NULL DEFAULT 0,
+  icon_r2_key   TEXT,
+  model_r2_key  TEXT,
+  recipe_uuid   TEXT,
+  prefab_json   TEXT NOT NULL,
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_weapon_prefabs_type ON weapon_prefabs(weapon_type);
+CREATE INDEX IF NOT EXISTS idx_weapon_prefabs_tier ON weapon_prefabs(tier);
+CREATE INDEX IF NOT EXISTS idx_weapon_prefabs_base ON weapon_prefabs(base_uuid);

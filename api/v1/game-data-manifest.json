@@ -22,6 +22,9 @@
     "benchMeshes": "https://molochdagod.github.io/ObjectStore/api/v1/bench-mesh-catalog.json",
     "resourceMeshes": "https://molochdagod.github.io/ObjectStore/api/v1/resource-mesh-catalog.json",
     "weaponsMaster": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapons.json",
+    "weaponPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json",
+    "ummorpgBridge": "https://molochdagod.github.io/ObjectStore/api/v1/ummorpg-systems-bridge.json",
+    "t0Weapons": "https://molochdagod.github.io/ObjectStore/api/v1/t0-weapons.json",
     "registry": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
     "iconResolver": "https://molochdagod.github.io/ObjectStore/utils/icon-resolver.js"
   },
@@ -41,7 +44,10 @@
     "materialToRecipe": "master-recipes.json → materials[].uuid",
     "recipeToItem": "master-recipes.json → resultItemId → master-items.json",
     "itemToIcon": "master-items.json → iconUrl | staff-looks.json → iconUrl",
-    "staffToRecipe": "staff-looks.json → recipeUuid → master-recipes.json"
+    "staffToRecipe": "staff-looks.json → recipeUuid → master-recipes.json",
+    "weaponToPrefab": "master-weapon-prefabs.json → prefabs[].uuid (ITEM-*) + assets.modelR2Key + skills.skillUuids (SKIL-*)",
+    "weaponToEnchant": "master-enchants.json → ENCH-* → ummorpg-systems-bridge.json → enchantApply[]",
+    "weaponToDrop": "ummorpg-systems-bridge.json → systems.drops.tables → uMMORPG ItemDropChance[]"
   },
   "recipeSources": {
     "existing": 132,

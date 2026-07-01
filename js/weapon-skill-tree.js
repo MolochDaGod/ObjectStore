@@ -69,6 +69,29 @@
 
   let catalog = null;
   let catalogById = {};
+  let weaponsCatalog = null;
+  let t0WeaponsData = null;
+  /** @type {Record<string, object[]>} */
+  let variantsByType = {};
+
+  /** weapon type id → weapons.json category keys (for named variant lookup) */
+  const TYPE_TO_CATEGORIES = {
+    SWORD: ['swords'],
+    AXE: ['axes1h'],
+    GREATSWORD: ['greatswords'],
+    GREATAXE: ['greataxes'],
+    DAGGER: ['daggers'],
+    BOW: ['bows'],
+    CROSSBOW: ['crossbows'],
+    GUN: ['guns'],
+    HAMMER: ['hammers1h', 'hammers2h'],
+    SPEAR: ['spears'],
+    STAFF: ['fireStaves', 'frostStaves', 'holyStaves', 'lightningStaves', 'natureStaves', 'arcaneStaves'],
+    WAND: ['wands'],
+    MACE: ['maces'],
+    SHIELD: ['shields'],
+    TOME: ['fireTomes', 'frostTomes', 'natureTomes', 'holyTomes', 'arcaneTomes', 'lightningTomes'],
+  };
 
   function esc(s) {
     return s
@@ -248,6 +271,255 @@
     catalog = null;
     catalogById = {};
     return null;
+  }
+
+  function parseAbilityName(str) {
+    if (!str) return null;
+    return String(str).replace(/\s*\([^)]*\)\s*/g, ' ').trim().split(/\s{2,}/)[0].trim() || null;
+  }
+
+  function normalizeSkillKey(name) {
+    return String(name || '')
+      .toLowerCase()
+      .replace(/['']/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  function skillNameMatches(skillName, allowedKeys) {
+    const key = normalizeSkillKey(skillName);
+    if (!key) return false;
+    for (const allowed of allowedKeys) {
+      if (key === allowed) return true;
+      if (key.includes(allowed) || allowed.includes(key)) return true;
+    }
+    return false;
+  }
+
+  function collectVariantSkillKeys(variant) {
+    const keys = new Set();
+    const add = (raw) => {
+      const name = parseAbilityName(raw);
+      if (name) keys.add(normalizeSkillKey(name));
+    };
+    if (variant.basicAbility) add(variant.basicAbility);
+    (variant.abilities || []).forEach(add);
+    if (variant.signatureAbility) add(variant.signatureAbility);
+    return keys;
+  }
+
+  function normalizeWeaponVariant(item, isT0) {
+    return {
+      id: item.id,
+      name: item.name,
+      lore: item.lore || item.description || '',
+      tier: isT0 ? 0 : 1,
+      tierLabel: isT0 ? 'T0 Starter' : 'Named',
+      icon: item.spritePath || item.iconUrl || null,
+      category: item.category,
+      stats: item.stats || null,
+      basicAbility: item.basicAbility || null,
+      abilities: item.abilities || [],
+      signatureAbility: item.signatureAbility || null,
+      passives: item.passives || [],
+      isT0: !!isT0,
+    };
+  }
+
+  function buildVariantsIndex(t0Payload) {
+    variantsByType = {};
+
+    for (const w of t0Payload?.weapons || []) {
+      const typeId = categoryToTypeId(w.category);
+      if (!typeId) continue;
+      if (!variantsByType[typeId]) variantsByType[typeId] = [];
+      variantsByType[typeId].push(normalizeWeaponVariant(w, true));
+    }
+
+    if (weaponsCatalog?.categories) {
+      for (const [catKey, cat] of Object.entries(weaponsCatalog.categories)) {
+        const typeId = categoryToTypeId(catKey);
+        if (!typeId || OFFHAND_MODIFIER_TYPES.has(typeId)) continue;
+        for (const item of cat.items || []) {
+          if (!variantsByType[typeId]) variantsByType[typeId] = [];
+          variantsByType[typeId].push(normalizeWeaponVariant({ ...item, category: catKey }, false));
+        }
+      }
+    }
+
+    // Apprentice Wand (WAND T0) is the generic mage starter before T1 staff specialization
+    const wandT0 = (variantsByType.WAND || []).find((v) => v.isT0);
+    if (wandT0 && variantsByType.STAFF && !variantsByType.STAFF.some((v) => v.id === wandT0.id)) {
+      variantsByType.STAFF.unshift({ ...wandT0, lore: wandT0.lore + ' (generic mage starter — branches into elemental staves at T1)' });
+    }
+
+    for (const typeId of Object.keys(variantsByType)) {
+      variantsByType[typeId].sort((a, b) => {
+        if (a.isT0 !== b.isT0) return a.isT0 ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+    }
+  }
+
+  async function loadWeaponsCatalog(apiBases) {
+    const bases = Array.isArray(apiBases) ? apiBases : ['./api/v1'];
+    weaponsCatalog = null;
+    t0WeaponsData = null;
+
+    for (const base of bases) {
+      const b = base.replace(/\/$/, '');
+      try {
+        if (!weaponsCatalog) {
+          const res = await fetch(`${b}/weapons.json`);
+          if (res.ok) weaponsCatalog = await res.json();
+        }
+        if (!t0WeaponsData) {
+          const res = await fetch(`${b}/t0-weapons.json`);
+          if (res.ok) t0WeaponsData = await res.json();
+        }
+        if (weaponsCatalog && t0WeaponsData) break;
+      } catch {
+        /* try next source */
+      }
+    }
+
+    buildVariantsIndex(t0WeaponsData);
+    return { weapons: weaponsCatalog, t0: t0WeaponsData, variantsByType };
+  }
+
+  function listVariantsForType(typeId) {
+    return variantsByType[typeId] || [];
+  }
+
+  function getVariant(typeId, variantId) {
+    if (!variantId) return null;
+    return (variantsByType[typeId] || []).find((v) => v.id === variantId) || null;
+  }
+
+  function getDefaultVariantId(typeId, preferT0 = false) {
+    const list = listVariantsForType(typeId);
+    if (!list.length) return null;
+    if (preferT0) {
+      const t0 = list.find((v) => v.isT0);
+      if (t0) return t0.id;
+    }
+    return list[0].id;
+  }
+
+  function applyVariantToTypeDef(typeDef, variant) {
+    if (!typeDef) return null;
+    const cloned = cloneTypeDef(typeDef);
+    if (!variant) return cloned;
+
+    cloned._variant = variant;
+
+    if (variant.isT0) {
+      cloned.slots = (cloned.slots || []).map((slot) => {
+        if (slot.type === 'primary') {
+          return {
+            ...slot,
+            skills: (slot.skills || []).filter((sk) => sk.tier <= 1).slice(0, 1),
+          };
+        }
+        return { ...slot, skills: [] };
+      });
+      return cloned;
+    }
+
+    const allowed = collectVariantSkillKeys(variant);
+    const sigKey = variant.signatureAbility
+      ? normalizeSkillKey(parseAbilityName(variant.signatureAbility))
+      : null;
+
+    cloned.slots = (cloned.slots || []).map((slot) => {
+      let skills = (slot.skills || []).filter((sk) => skillNameMatches(sk.name, allowed));
+
+      if (slot.type === 'ultimate' && sigKey) {
+        const sig = (slot.skills || []).find((sk) => skillNameMatches(sk.name, [sigKey]));
+        if (sig) skills = [sig];
+      }
+
+      return { ...slot, skills };
+    });
+
+    return cloned;
+  }
+
+  function renderWeaponVariantBar(typeId, opts = {}) {
+    const variants = listVariantsForType(typeId);
+    if (!variants.length) {
+      return '<div class="wst-variant-empty">No named variants loaded for this weapon type.</div>';
+    }
+
+    const selected = opts.variantId || variants[0].id;
+    const asset = opts.asset || defaultAsset;
+
+    let html = '<div class="wst-variant-section">';
+    html += '<span class="wst-variant-label">Weapon:</span>';
+    html += '<div class="wst-variant-bar">';
+
+    for (const v of variants) {
+      const active = v.id === selected ? ' active' : '';
+      const tierTag = v.isT0 ? ' <span class="wst-tier-tag">T0</span>' : '';
+      html += `<button type="button" class="wst-variant-btn${active}" data-wst-weapon-variant="${esc(v.id)}" title="${esc(v.lore)}">${esc(v.name)}${tierTag}</button>`;
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderWeaponInfoHeader(typeDef, variant, opts = {}) {
+    if (!variant) return '';
+    const asset = opts.asset || defaultAsset;
+    const icon = variant.icon ? asset(variant.icon) : asset(typeDef?.icon);
+    const tierBadge = variant.isT0
+      ? '<span class="wst-weapon-tier t0">T0 Starter</span>'
+      : '<span class="wst-weapon-tier">Named Weapon</span>';
+
+    let statsHtml = '';
+    const stats = variant.stats;
+    if (stats) {
+      const entries = [];
+      if (stats.damageBase != null) entries.push(['DMG', stats.damageBase]);
+      else if (stats.damage != null) entries.push(['DMG', stats.damage]);
+      if (stats.critBase != null) entries.push(['CRIT', stats.critBase + '%']);
+      else if (stats.crit != null) entries.push(['CRIT', stats.crit + '%']);
+      if (stats.defenseBase != null) entries.push(['DEF', stats.defenseBase]);
+      else if (stats.defense != null) entries.push(['DEF', stats.defense]);
+      statsHtml = `<div class="wst-weapon-stats">${entries
+        .map(([k, v]) => `<span class="wst-stat"><b>${esc(k)}</b> ${esc(String(v))}</span>`)
+        .join('')}</div>`;
+    }
+
+    return `<div class="wst-weapon-header">
+      ${icon ? `<img class="wst-weapon-icon" src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+      <div class="wst-weapon-meta">
+        <div class="wst-weapon-title">${esc(variant.name)} ${tierBadge}</div>
+        <div class="wst-weapon-lore">${esc(variant.lore)}</div>
+        ${statsHtml}
+      </div>
+    </div>`;
+  }
+
+  function renderPassiveColumn(variant, opts = {}) {
+    const passives = variant?.passives || [];
+    if (!passives.length) return '';
+
+    const parsed = passives.map((p) => {
+      const name = parseAbilityName(p);
+      const desc = p.includes('(') ? p.slice(p.indexOf('(') + 1).replace(/\)$/, '') : '';
+      return { name: name || p, desc };
+    });
+
+    let html = '<div class="wst-passive-column"><div class="slot-header" data-type="passive">PASSIVES<span class="unlock-tag">Choose 1 of ' + parsed.length + '</span></div>';
+    for (const p of parsed) {
+      html += `<div class="skill-card" data-slot="passive">
+        <div class="skill-icon-row"><span class="skill-name">${esc(p.name)}</span></div>
+        ${p.desc ? `<div class="skill-desc">${esc(p.desc)}</div>` : ''}
+      </div>`;
+    }
+    html += '</div>';
+    return html;
   }
 
   function setCatalog(data) {
@@ -526,14 +798,20 @@
   global.WeaponSkillTree = {
     CDN,
     CATEGORY_TO_TYPE,
+    TYPE_TO_CATEGORIES,
     ONE_HAND_TYPES,
     OFFHAND_MODIFIER_TYPES,
     SLOT_TYPES,
     loadCatalog,
+    loadWeaponsCatalog,
     setCatalog,
     getTypeDef,
     listTypeIds,
     listPlayableTypeIds,
+    listVariantsForType,
+    getVariant,
+    getDefaultVariantId,
+    applyVariantToTypeDef,
     categoryToTypeId,
     resolveTypeFromWeapon,
     isOffhandItem,
@@ -543,8 +821,12 @@
     resolveEffectiveLoadout,
     defaultSelections,
     findSkill,
+    parseAbilityName,
     renderActionBarHTML,
     renderSlotColumnsHTML,
+    renderWeaponVariantBar,
+    renderWeaponInfoHeader,
+    renderPassiveColumn,
     renderOffhandModifierColumns,
     renderOffhandVariantBar,
     renderModifierBanner,

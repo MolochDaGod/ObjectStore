@@ -1,0 +1,753 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T00:33:17.149Z",
+  "description": "Maps canonical ObjectStore weapons to uMMORPG addon systems",
+  "systems": {
+    "drops": {
+      "addon": "ItemDrop + MonsterInventory",
+      "model": "ItemDropChance { item, probability, minStack, maxStack }",
+      "canonicalSource": "master-weapon-prefabs.json → prefabs[].uuid",
+      "tables": {
+        "starterIslandChest": [
+          {
+            "itemUuid": "ITEM-20260423030000-000001-4D4C1056",
+            "name": "Training Sword",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000002-68F0EE98",
+            "name": "Hand Axe",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000003-427E8F16",
+            "name": "Training Dagger",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000004-A074566A",
+            "name": "Training Hammer",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000005-CAA9CE57",
+            "name": "Hunting Spear",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000006-6B71956B",
+            "name": "Training Greatsword",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000007-53358EF2",
+            "name": "Training Greataxe",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000008-AA2B4CC9",
+            "name": "Training Warhammer",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-000009-0D451C01",
+            "name": "Short Bow",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000A-46C949AA",
+            "name": "Light Crossbow",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000B-58235CED",
+            "name": "Flintlock Pistol",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000C-FAE29372",
+            "name": "Apprentice Wand",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000D-5736889E",
+            "name": "Sapling Staff",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000E-96DA4900",
+            "name": "Crude Tool",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          },
+          {
+            "itemUuid": "ITEM-20260423030000-00000F-0CFAC9C8",
+            "name": "Novice Tome",
+            "probability": 0.15,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "starter-chest"
+          }
+        ],
+        "banditCampChest": [
+          {
+            "itemUuid": "ITEM-20260621232130-000001-6C994FED",
+            "name": "Bloodfeud Blade",
+            "probability": 0.08,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "lootcrate"
+          },
+          {
+            "itemUuid": "ITEM-20260621232130-00000A-F0205438",
+            "name": "Wraithfang",
+            "probability": 0.07,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "lootcrate"
+          },
+          {
+            "itemUuid": "ITEM-20260621232130-000013-8D32FBEA",
+            "name": "Oathbreaker",
+            "probability": 0.06,
+            "minStack": 1,
+            "maxStack": 1,
+            "source": "lootcrate"
+          }
+        ]
+      }
+    },
+    "chests": {
+      "addon": "Lootcrate (_iMMOCHEST)",
+      "model": "OnRefill() rolls ItemDropChance[] + gold",
+      "wiring": "Import prefab uuid → WeaponItem.asset.name → Lootcrate.loot array",
+      "respawnSeconds": 300
+    },
+    "crafting": {
+      "addon": "CraftingExtended (_iMMOCRAFTING)",
+      "model": "Tmpl_Recipe { profession, skillLevel, ingredients[], result }",
+      "canonicalSource": "master-recipes.json",
+      "tier1WeaponRecipes": [
+        {
+          "itemUuid": "ITEM-20260621232130-000001-6C994FED",
+          "recipeUuid": "RECP-20260617000000-5FF4EF-856C5707",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00000A-F0205438",
+          "recipeUuid": "RECP-20260617000000-85BAB5-ECBCCF99",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000013-8D32FBEA",
+          "recipeUuid": "RECP-20260617000000-FF82ED-E1983AB2",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00001C-E43EDD87",
+          "recipeUuid": "RECP-20260617000000-FAE91A-4E698180",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000025-E70CF89A",
+          "recipeUuid": "RECP-20260617000000-A1E1A0-52291984",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00002E-F8726E2C",
+          "recipeUuid": "RECP-20260617000000-0F5C8C-44C23583",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000037-997FFF3E",
+          "recipeUuid": "RECP-20260617000000-B6C813-C53D4A08",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000040-90E098A3",
+          "recipeUuid": "RECP-20260617000000-D127D9-40B434AC",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000049-C07ECB7D",
+          "recipeUuid": "RECP-20260617000000-B74870-8F76C039",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000052-EC08266A",
+          "recipeUuid": "RECP-20260617000000-9794FA-E7941E4D",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00005B-EEB1483D",
+          "recipeUuid": "RECP-20260617000000-36F43D-AD3670E2",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000064-9902F79B",
+          "recipeUuid": "RECP-20260617000000-160A97-A4EFED93",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00006D-FF59443E",
+          "recipeUuid": "RECP-20260617000000-50E6C5-F2387906",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000076-9ECB4E64",
+          "recipeUuid": "RECP-20260617000000-9CCCA0-A47EC2D0",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00007F-B9C12707",
+          "recipeUuid": "RECP-20260617000000-F4A0EA-9AA88961",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000088-67CFC841",
+          "recipeUuid": "RECP-20260617000000-35BFE6-8E1A966C",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000091-FCDA3F95",
+          "recipeUuid": "RECP-20260617000000-E41BF0-AEB350CD",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00009A-ED9CACA4",
+          "recipeUuid": "RECP-20260617000000-D6C294-BEA6C07B",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000A3-B431092C",
+          "recipeUuid": "RECP-20260617000000-D9B618-EFEE8354",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000AC-0284776F",
+          "recipeUuid": "RECP-20260617000000-2C2E0C-C5374204",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000B5-4897F430",
+          "recipeUuid": "RECP-20260617000000-393F3B-EA8478C7",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000BE-5355FF1E",
+          "recipeUuid": "RECP-20260617000000-87BAA3-59618C3F",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000C7-3F0ED127",
+          "recipeUuid": "RECP-20260617000000-C2B4E5-654A11F1",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000D0-527660BF",
+          "recipeUuid": "RECP-20260617000000-30585D-8100F0B2",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000D9-E38D8C17",
+          "recipeUuid": "RECP-20260617000000-8AF0AC-C8A46AF2",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000E2-E8B9993A",
+          "recipeUuid": "RECP-20260617000000-382BC2-263BE3F2",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000EB-3BC7A268",
+          "recipeUuid": "RECP-20260617000000-3F94A3-BCDB54FA",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000F4-EDE3D267",
+          "recipeUuid": "RECP-20260617000000-14EBC1-44CC497E",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0000FD-CCAAD6EA",
+          "recipeUuid": "RECP-20260617000000-63989B-C94F6EAA",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000106-94C010A8",
+          "recipeUuid": "RECP-20260617000000-A7623F-BB3E85DA",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00010F-BB2E6FC3",
+          "recipeUuid": "RECP-20260617000000-4EF2BA-849096EC",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000118-8D66695B",
+          "recipeUuid": "RECP-20260617000000-EA8B38-2F5E534C",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000121-BB66F746",
+          "recipeUuid": "RECP-20260617000000-B4B3C5-671206DD",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00012A-7E784B35",
+          "recipeUuid": "RECP-20260617000000-2A1E0D-5DB0DF81",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000133-74E9F750",
+          "recipeUuid": "RECP-20260617000000-134689-EBC1C1BD",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00013C-25770F74",
+          "recipeUuid": "RECP-20260617000000-DB0877-A35AF639",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000145-36847B12",
+          "recipeUuid": "RECP-20260617000000-60AB4A-E7140681",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-00014E-B2F51445",
+          "recipeUuid": "RECP-20260617000000-43676D-3450E9E7",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000157-97FB69EA",
+          "recipeUuid": "RECP-20260617000000-A60BD8-AE7339C6",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000160-69C16D23",
+          "recipeUuid": "RECP-20260617000000-CAD7D7-6367853F",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000169-51A41305",
+          "recipeUuid": "RECP-20260617000000-53E535-2A2D35CC",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-000172-67C3D515",
+          "recipeUuid": "RECP-20260617000000-5E2583-12F4DA0A",
+          "profession": "Miner",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001B1-960BD877",
+          "recipeUuid": "RECP-20260617000000-7DAC94-61B8061D",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001BA-5BA95F7A",
+          "recipeUuid": "RECP-20260617000000-BB5B5F-D7A42205",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001C3-4BD2C195",
+          "recipeUuid": "RECP-20260617000000-6265A2-7D4F8ABF",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001CC-1F274552",
+          "recipeUuid": "RECP-20260617000000-29C1D3-F14F6C95",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001D5-E68CFAAD",
+          "recipeUuid": "RECP-20260617000000-F0D6C1-C781D1E5",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001DE-762227DE",
+          "recipeUuid": "RECP-20260617000000-0BA979-8936FC5C",
+          "profession": "Forester",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001E7-B4BC60BE",
+          "recipeUuid": "RECP-20260617000000-490263-FA9CD988",
+          "profession": "Engineer",
+          "station": "Workbench"
+        },
+        {
+          "itemUuid": "ITEM-20260621232130-0001F0-6E3C79EC",
+          "recipeUuid": "RECP-20260617000000-4AC09E-5FB8D605",
+          "profession": "Engineer",
+          "station": "Workbench"
+        }
+      ],
+      "note": "Replace StreamingAssets/GameData/recipes.json with master-recipes.json sync"
+    },
+    "enchantments": {
+      "addon": "EquipmentLevelUp (_iMMOITEMLEVELUP) + Mystic enchants",
+      "objectStoreSource": "master-enchants.json",
+      "ummorpgGap": "No ENCH-* importer — use consumable UsableItem + custom apply script",
+      "enchantApply": [
+        {
+          "enchantUuid": "ENCH-20260423030000-000001-AF9DC0FC",
+          "name": "Strength Enchant",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 5,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000002-494A0F26",
+          "name": "Strength Enchant T2",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 7,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000003-32C3ADC6",
+          "name": "Strength Enchant T3",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 9,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000004-3E286123",
+          "name": "Strength Enchant T4",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 11,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000005-4BC7D4E2",
+          "name": "Strength Enchant T5",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 13,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000006-651927B2",
+          "name": "Strength Enchant T6",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 15,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000007-9B810F2B",
+          "name": "Strength Enchant T7",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 17,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000008-016DAF3A",
+          "name": "Strength Enchant T8",
+          "target": "weapon",
+          "stat": "damage",
+          "value": 19,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000009-6FA33E16",
+          "name": "Intellect Enchant",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 20,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000A-1C7AE47B",
+          "name": "Intellect Enchant T2",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 28,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000B-72EAB63E",
+          "name": "Intellect Enchant T3",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 36,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000C-6EFB44D6",
+          "name": "Intellect Enchant T4",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 44,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000D-73BC0149",
+          "name": "Intellect Enchant T5",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 52,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000E-42D46214",
+          "name": "Intellect Enchant T6",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 60,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-00000F-23B56895",
+          "name": "Intellect Enchant T7",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 68,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000010-AD22C503",
+          "name": "Intellect Enchant T8",
+          "target": "weapon",
+          "stat": "mana",
+          "value": 76,
+          "valueType": "flat",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000011-F51E16EE",
+          "name": "Speed Enchant",
+          "target": "weapon",
+          "stat": "attackSpeed",
+          "value": 2,
+          "valueType": "percentage",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000012-E2AF5A90",
+          "name": "Speed Enchant T2",
+          "target": "weapon",
+          "stat": "attackSpeed",
+          "value": 3,
+          "valueType": "percentage",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000013-7CAF0E36",
+          "name": "Speed Enchant T3",
+          "target": "weapon",
+          "stat": "attackSpeed",
+          "value": 4,
+          "valueType": "percentage",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        },
+        {
+          "enchantUuid": "ENCH-20260423030000-000014-B7739771",
+          "name": "Speed Enchant T4",
+          "target": "weapon",
+          "stat": "attackSpeed",
+          "value": 5,
+          "valueType": "percentage",
+          "ummorpgFlow": "consumable_apply",
+          "consumedOnApply": true,
+          "craftingRecipeUuid": null,
+          "mysticStation": "Enchanting Bench"
+        }
+      ],
+      "equipmentLevelUp": {
+        "enabled": true,
+        "field": "Item.equipmentLevel",
+        "maxLevel": 8,
+        "alignsWith": "weapon tier upgrades via Miner/Engineer stations"
+      }
+    },
+    "weaponSkills": {
+      "addon": "WeaponSkills + ScriptableWeaponSkillList",
+      "canonicalSource": "master-weaponSkills.json",
+      "wiring": "prefabs[].skills.slots → ScriptableWeaponSkillList GUID per weaponType+tier band",
+      "hotbarSlots": [
+        "primary",
+        "secondary",
+        "ability",
+        "ultimate"
+      ]
+    }
+  },
+  "importPipeline": {
+    "canonical": [
+      "master-weapon-prefabs.json",
+      "master-weaponSkills.json",
+      "master-registry.json"
+    ],
+    "deprecated": [
+      "weapons.json (119 templates only)",
+      "StreamingAssets/GameData/recipes.json",
+      "GrudgeDataImporter weaponRecipes"
+    ],
+    "unityMenu": "Grudge Studio → Import Canonical Weapon Prefabs"
+  }
+}
