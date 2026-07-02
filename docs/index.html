@@ -1218,6 +1218,29 @@ npx tsx scripts/seed-d1.ts</code></pre>
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">3D shader and FX registry — GLSL shaders (fire, lightning, magic, shockwave) with metadata for the 3DFX viewer.</p>
+          <p class="endpoint-desc"><a href="../3dfx-viewer.html">3DFX Viewer</a> · <a href="https://grudge-vfx.puter.site/" target="_blank" rel="noopener">Live VFX Sandbox</a></p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/spell-arsenal.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Spell-type arsenal — 10 families (projectile, slash, aura, hand, aoe, wall, cloud, summon, portal, impact) with 50+ visual variants. Each variant has <code class="inline-code">skillSlot</code> and <code class="inline-code">skillUses</code> for wiring SKIL-* abilities and status effects.</p>
+          <p class="endpoint-desc">Sandbox: <a href="https://grudge-vfx.puter.site/" target="_blank" rel="noopener">grudge-vfx.puter.site</a></p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/vfx-spells.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">26 game-ready spell VFX definitions — shaders, particles, splines, geometry, and timing. Pairs with <code class="inline-code">spell-arsenal.json</code> variant ids.</p>
+          <p class="endpoint-desc"><a href="../spell-vfx-library.html">Spell VFX Library</a></p>
         </div>
       </div>
 

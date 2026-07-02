@@ -1,5 +1,5 @@
 # Grudge Studio ObjectStore
-**Version 5.2.0** | Unified Game Data API, Backend SDK & Integration Hub
+**Version 5.3.0** | Unified Game Data API, Backend SDK & Integration Hub
 
 The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
@@ -42,6 +42,28 @@ const balanced = await api.ai.balanceItem(item);
 ```
 
 **[📖 Full Integration Guide](INTEGRATION-GUIDE.md)** | **[🔧 Unity C# Example](integrations/GrudgeWarlords-Unity-Integration.cs)** | **[⚛️ React/TS Example](integrations/warlord-crafting-suite-integration.tsx)**
+
+---
+
+## ✨ What's New — Spell Arsenal & VFX Sandbox (5.3.0)
+
+Live spell-type arsenal with multiple visual variants per family — wire skills, combos, and status effects without one-off VFX.
+
+| Surface | URL |
+|---------|-----|
+| **VFX Sandbox** | [grudge-vfx.puter.site](https://grudge-vfx.puter.site/) — caster, dummy, hotkeys, ⚔ Spell Arsenal |
+| **3DFX Viewer** | [info.grudge-studio.com/3dfx-viewer.html](https://info.grudge-studio.com/3dfx-viewer.html) — Arsenal tab + sandbox embed |
+| **Spell library** | [spell-vfx-library.html](https://info.grudge-studio.com/spell-vfx-library.html) |
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/v1/spell-arsenal.json` | **10 spell types**, 50+ variants — `skillSlot`, `skillUses`, links to sandbox |
+| `/api/v1/vfx-spells.json` | **26 spells** — shaders, particles, splines, geometry (v2.0) |
+| `/api/v1/vfx-skill-types.json` | Effects classified by skill type (projectile/slash/aoe/…) |
+
+**Source repo:** `Fantasy-Scene-Creator/artifacts/vfx-sandbox` — build with `pnpm --filter @workspace/vfx-sandbox run build`, deploy with `deploy:puter` → Puter.
+
+**Skill wiring:** pick a variant id from `spell-arsenal.json` (e.g. `flame_bolt`, `frost_slash`) → resolve descriptor in `vfx-spells.json` or effects-lib seed → attach to `SKIL-*` `vfxRef` on weapon prefab or ability.
 
 ---
 

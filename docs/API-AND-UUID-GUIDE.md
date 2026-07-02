@@ -16,6 +16,31 @@ Single reference for **which API serves what**, **which UUID scheme to use**, an
 | Production game | https://grudgewarlords.com/ |
 | Integration manifest | [`api/v1/assets-api.json`](../api/v1/assets-api.json) |
 | OpenAPI spec | [`openapi.yaml`](../openapi.yaml) |
+| 3DFX Viewer | https://info.grudge-studio.com/3dfx-viewer.html |
+| VFX Sandbox (live) | https://grudge-vfx.puter.site/ |
+
+---
+
+## Spell VFX arsenal (July 2026)
+
+Multiple visual variants per spell **type** so one effect family can serve many `SKIL-*` slots and status procs.
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/v1/spell-arsenal.json` | 10 types → 50+ variants with `skillSlot`, `skillUses` |
+| `GET /api/v1/vfx-spells.json` | Full descriptors (shaders, particles, timing) — 26 spells |
+| `GET /api/v1/vfx-skill-types.json` | Classify effects by combat role |
+
+**Browse:** [3dfx-viewer.html](../3dfx-viewer.html) (Arsenal + Sandbox tabs) · [spell-vfx-library.html](../spell-vfx-library.html)
+
+**Build & deploy sandbox** (Fantasy-Scene-Creator monorepo):
+
+```bash
+pnpm --filter @workspace/vfx-sandbox run build
+pnpm --filter @workspace/vfx-sandbox run deploy:puter   # → grudge-vfx.puter.site
+```
+
+**Wire to a skill:** `spell-arsenal.json` variant `id` → `vfx-spells.json` or effects-lib seed → `prefab.vfxRef` / ability `vfxRef`.
 
 ---
 
@@ -287,6 +312,8 @@ Expected: `totalEntries` / `totalIcons` = **9724**.
 ---
 
 ## Related docs
+
+- [VFX Sandbox README](https://github.com/MolochDaGod/Fantasy-Scene-Creator/blob/main/artifacts/vfx-sandbox/README.md) — build, deploy, Spell Arsenal (source: Fantasy-Scene-Creator)
 
 | Doc | Location |
 |-----|----------|
