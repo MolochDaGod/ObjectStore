@@ -313,7 +313,7 @@ Expected: `totalEntries` / `totalIcons` = **9724**.
 
 ## Related docs
 
-- [VFX Sandbox README](https://github.com/MolochDaGod/Fantasy-Scene-Creator/blob/main/artifacts/vfx-sandbox/README.md) — build, deploy, Spell Arsenal (source: Fantasy-Scene-Creator)
+- VFX Sandbox — `Fantasy-Scene-Creator/artifacts/vfx-sandbox/README.md` (build, deploy, Spell Arsenal)
 
 | Doc | Location |
 |-----|----------|
