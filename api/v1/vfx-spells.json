@@ -3,16 +3,20 @@
   "generated": "2026-04-21T00:00:00.000Z",
   "description": "Grudge Warlords — Caster Spell VFX Library. Game-ready 3D spell effects with full shader, particle, spline, ray and geometry definitions.",
   "sourceBase": "https://molochdagod.github.io/ObjectStore",
-  "totalSpells": 18,
+  "totalSpells": 26,
+  "spellTypes": ["projectile", "slash", "aura", "hand", "aoe", "wall", "cloud", "summon", "portal", "impact"],
   "categories": {
-    "fire": { "name": "Fire", "color": "#ff4400", "count": 3 },
-    "ice": { "name": "Ice", "color": "#00ccff", "count": 3 },
+    "fire": { "name": "Fire", "color": "#ff4400", "count": 4 },
+    "ice": { "name": "Ice", "color": "#00ccff", "count": 4 },
     "lightning": { "name": "Lightning", "color": "#ffff00", "count": 2 },
-    "arcane": { "name": "Arcane", "color": "#aa44ff", "count": 3 },
+    "arcane": { "name": "Arcane", "color": "#aa44ff", "count": 4 },
     "earth": { "name": "Earth", "color": "#88aa44", "count": 2 },
     "nature": { "name": "Nature", "color": "#44cc66", "count": 2 },
     "impact": { "name": "Impact", "color": "#ff6600", "count": 1 },
-    "portal": { "name": "Portal", "color": "#4488ff", "count": 2 }
+    "portal": { "name": "Portal", "color": "#4488ff", "count": 2 },
+    "holy": { "name": "Holy", "color": "#ffe9a8", "count": 1 },
+    "poison": { "name": "Poison", "color": "#44cc66", "count": 1 },
+    "wind": { "name": "Wind", "color": "#aaddff", "count": 1 }
   },
   "spells": {
     "fire_slash": {
@@ -638,6 +642,238 @@
       },
       "lights": { "color": "#4488ff", "intensity": 3.5, "distance": 9 },
       "bloom": { "strength": 2.5, "radius": 0.6, "threshold": 0.1 }
+    },
+
+    "frost_slash": {
+      "id": "frost_slash",
+      "name": "Frost Slash",
+      "category": "ice",
+      "spellType": "slash",
+      "skillUses": ["melee_combo", "ice_weapon_art", "dash_attack"],
+      "description": "Icy crescent slash trail with crystalline shards along the arc.",
+      "tags": ["ice", "melee", "slash", "trail", "spline"],
+      "colors": { "primary": "#88ddff", "secondary": "#ffffff" },
+      "timing": { "duration": 1.0, "loop": true, "speed": 1.0 },
+      "shader": "ice_crystal",
+      "geometry": {
+        "type": "spline_trail",
+        "trail": { "length": 28, "width": 0.3, "fadeTime": 0.5 },
+        "arc": { "radius": 1.6, "startAngle": -1.0, "endAngle": 1.0, "axis": "z" }
+      },
+      "particles": {
+        "count": 180,
+        "size": 0.05,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "spline",
+        "velocityY": [0.2, 1.0],
+        "lifespan": [0.3, 0.7]
+      },
+      "lights": { "color": "#88ddff", "intensity": 2.5, "distance": 5 },
+      "bloom": { "strength": 1.8, "radius": 0.4, "threshold": 0.15 }
+    },
+
+    "holy_beam": {
+      "id": "holy_beam",
+      "name": "Holy Beam",
+      "category": "holy",
+      "spellType": "slash",
+      "skillUses": ["sky_beam", "healer_attack", "ultimate"],
+      "description": "Radiant pillar of divine light crashing from above.",
+      "tags": ["holy", "beam", "light", "aoe", "spell"],
+      "colors": { "primary": "#ffe9a8", "secondary": "#fffdf0" },
+      "timing": { "duration": 1.4, "loop": false, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": { "type": "cylinder", "width": 0.9, "height": 7, "segments": 24 },
+      "particles": {
+        "count": 120,
+        "size": 0.08,
+        "opacity": 0.8,
+        "blending": "additive",
+        "distribution": "column",
+        "velocityY": [1, 3]
+      },
+      "lights": { "color": "#ffe9a8", "intensity": 5.0, "distance": 10 },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.1 }
+    },
+
+    "poison_bolt": {
+      "id": "poison_bolt",
+      "name": "Poison Bolt",
+      "category": "poison",
+      "spellType": "projectile",
+      "skillUses": ["ranged_attack", "dot_proc", "debuff"],
+      "description": "Toxic green orb trailing venom wisps.",
+      "tags": ["poison", "projectile", "dot", "spell"],
+      "colors": { "primary": "#44cc66", "secondary": "#aaff88" },
+      "timing": { "duration": 2.0, "loop": false, "speed": 1.0 },
+      "shader": "nature",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "sphere", "radius": 0.28, "segments": 16 },
+        "trail": { "length": 32, "width": 0.25, "fadeTime": 0.6 }
+      },
+      "particles": {
+        "count": 200,
+        "size": 0.07,
+        "opacity": 0.75,
+        "blending": "normal",
+        "distribution": "spline",
+        "velocityY": [0.1, 0.6],
+        "lifespan": [0.4, 1.0]
+      },
+      "lights": { "color": "#44cc66", "intensity": 2.0, "distance": 5 },
+      "bloom": { "strength": 1.0, "radius": 0.35, "threshold": 0.3 }
+    },
+
+    "shadow_orb": {
+      "id": "shadow_orb",
+      "name": "Shadow Orb",
+      "category": "arcane",
+      "spellType": "projectile",
+      "skillUses": ["dark_bolt", "life_drain", "debuff"],
+      "description": "Slow void orb that pulls motes inward as it travels.",
+      "tags": ["arcane", "void", "projectile", "dark", "spell"],
+      "colors": { "primary": "#440066", "secondary": "#aa44ff" },
+      "timing": { "duration": 2.5, "loop": false, "speed": 0.8 },
+      "shader": "magic",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "icosahedron", "radius": 0.35, "detail": 2 },
+        "trail": { "length": 40, "width": 0.35, "fadeTime": 0.9 }
+      },
+      "particles": {
+        "count": 250,
+        "size": 0.06,
+        "opacity": 0.7,
+        "blending": "additive",
+        "distribution": "spiral",
+        "radius": 0.6,
+        "drag": 0.92,
+        "lifespan": [0.5, 1.5]
+      },
+      "lights": { "color": "#8800ff", "intensity": 3.0, "distance": 7 },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.15 }
+    },
+
+    "magma_burst": {
+      "id": "magma_burst",
+      "name": "Magma Burst",
+      "category": "fire",
+      "spellType": "aoe",
+      "skillUses": ["aoe_nuke", "ground_slam", "crit_proc"],
+      "description": "Violent ground eruption of molten rock and embers.",
+      "tags": ["fire", "earth", "aoe", "ground", "spell"],
+      "colors": { "primary": "#ff2200", "secondary": "#ffaa00" },
+      "timing": { "duration": 2.0, "loop": true, "speed": 1.0 },
+      "shader": "fire",
+      "geometry": {
+        "type": "compound",
+        "elements": ["shockwave_ring", "fire_planes"],
+        "ring": { "innerRadius": 0.0, "outerRadius": 3.5, "segments": 48 }
+      },
+      "particles": {
+        "count": 650,
+        "size": 0.1,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "explosion",
+        "velocityY": [1, 4],
+        "velocitySpread": 2.5,
+        "lifespan": [0.4, 1.2]
+      },
+      "lights": { "color": "#ff4400", "intensity": 4.5, "distance": 9, "flicker": true },
+      "bloom": { "strength": 2.5, "radius": 0.55, "threshold": 0.1 }
+    },
+
+    "wind_gust": {
+      "id": "wind_gust",
+      "name": "Wind Gust",
+      "category": "wind",
+      "spellType": "aoe",
+      "skillUses": ["knockback", "zone_control", "deflect"],
+      "description": "Expanding gust ring that pushes debris outward.",
+      "tags": ["wind", "aoe", "knockback", "shockwave", "spell"],
+      "colors": { "primary": "#cceeff", "secondary": "#ffffff" },
+      "timing": { "duration": 1.2, "loop": false, "speed": 1.2 },
+      "shader": "shockwave",
+      "geometry": {
+        "type": "ring",
+        "innerRadius": 0.3,
+        "outerRadius": 4.0,
+        "segments": 48
+      },
+      "particles": {
+        "count": 300,
+        "size": 0.06,
+        "opacity": 0.6,
+        "blending": "additive",
+        "distribution": "circular",
+        "radius": 3.0,
+        "velocityY": [0.5, 2.0],
+        "velocitySpread": 2.0,
+        "lifespan": [0.3, 0.8]
+      },
+      "lights": { "color": "#aaddff", "intensity": 2.0, "distance": 7 },
+      "bloom": { "strength": 1.2, "radius": 0.35, "threshold": 0.25 }
+    },
+
+    "flame_bolt": {
+      "id": "flame_bolt",
+      "name": "Flame Bolt",
+      "category": "fire",
+      "spellType": "projectile",
+      "skillUses": ["rapid_fire", "multishot", "weapon_skill"],
+      "description": "Fast narrow fire bolt for rapid multishot skills.",
+      "tags": ["fire", "projectile", "fast", "multishot", "spell"],
+      "colors": { "primary": "#ff5500", "secondary": "#ffcc44" },
+      "timing": { "duration": 1.5, "loop": false, "speed": 1.4 },
+      "shader": "fireball",
+      "geometry": {
+        "type": "projectile",
+        "core": { "type": "sphere", "radius": 0.18, "segments": 12 },
+        "trail": { "length": 24, "width": 0.2, "fadeTime": 0.4 }
+      },
+      "particles": {
+        "count": 120,
+        "size": 0.05,
+        "opacity": 0.9,
+        "blending": "additive",
+        "distribution": "spline",
+        "velocityY": [0.3, 1.0],
+        "lifespan": [0.2, 0.6]
+      },
+      "lights": { "color": "#ff6600", "intensity": 3.0, "distance": 5, "flicker": true },
+      "bloom": { "strength": 1.8, "radius": 0.4, "threshold": 0.15 }
+    },
+
+    "arcane_slash": {
+      "id": "arcane_slash",
+      "name": "Arcane Slash",
+      "category": "arcane",
+      "spellType": "slash",
+      "skillUses": ["melee_combo", "magic_weapon", "dash_attack"],
+      "description": "Purple arcane crescent with rune sparks along the trail.",
+      "tags": ["arcane", "melee", "slash", "trail", "spell"],
+      "colors": { "primary": "#cc44ff", "secondary": "#ff88ff" },
+      "timing": { "duration": 1.1, "loop": true, "speed": 1.0 },
+      "shader": "magic",
+      "geometry": {
+        "type": "spline_trail",
+        "trail": { "length": 30, "width": 0.32, "fadeTime": 0.55 },
+        "arc": { "radius": 1.7, "startAngle": -1.1, "endAngle": 1.1, "axis": "z" }
+      },
+      "particles": {
+        "count": 200,
+        "size": 0.06,
+        "opacity": 0.85,
+        "blending": "additive",
+        "distribution": "spline",
+        "velocityY": [0.2, 0.8],
+        "lifespan": [0.3, 0.7]
+      },
+      "lights": { "color": "#cc44ff", "intensity": 3.0, "distance": 5 },
+      "bloom": { "strength": 2.0, "radius": 0.5, "threshold": 0.12 }
     },
 
     "void_rift": {

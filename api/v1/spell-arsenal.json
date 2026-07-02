@@ -1,0 +1,151 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-01T00:00:00.000Z",
+  "description": "Grudge spell-type arsenal — multiple visual variants per spell family for skills, combos, and status effects.",
+  "sandboxUrl": "https://vfxgrudge.puter.site/",
+  "viewerUrl": "https://info.grudge-studio.com/3dfx-viewer.html",
+  "spellTypes": {
+    "projectile": {
+      "name": "Projectile",
+      "icon": "bolt",
+      "color": "#ff6600",
+      "description": "Flying bolts, orbs, and lances that travel to a target.",
+      "skillUses": ["ranged_attack", "magic_missile", "channeled_bolt", "weapon_skill"],
+      "variants": [
+        { "id": "fireball", "name": "Fireball", "source": "spells", "skillSlot": "primary_ranged", "tags": ["fire", "aoe_impact"] },
+        { "id": "frost_lance", "name": "Frost Lance", "source": "spells", "skillSlot": "ice_bolt", "tags": ["ice", "pierce"] },
+        { "id": "arcane_orb", "name": "Arcane Orb", "source": "spells", "skillSlot": "arcane_bolt", "tags": ["arcane", "slow"] },
+        { "id": "chain_lightning", "name": "Chain Lightning", "source": "registry", "skillSlot": "lightning_bolt", "tags": ["lightning", "chain"] },
+        { "id": "fire_wisps", "name": "Fire Wisps", "source": "seed", "skillSlot": "seeker_bolts", "tags": ["fire", "homing", "multishot"] },
+        { "id": "meteor", "name": "Meteor", "source": "seed", "skillSlot": "ultimate_ranged", "tags": ["fire", "skyfall"] },
+        { "id": "ice_serpent", "name": "Ice Serpent", "source": "builtin", "skillSlot": "serpent_bolt", "tags": ["ice", "homing", "weave"] },
+        { "id": "flame_bolt", "name": "Flame Bolt", "source": "seed", "skillSlot": "rapid_fire", "tags": ["fire", "fast"] }
+      ]
+    },
+    "slash": {
+      "name": "Slash / Wave",
+      "icon": "sword",
+      "color": "#7dd3fc",
+      "description": "Melee trails and traveling crescent waves.",
+      "skillUses": ["melee_combo", "getsuga", "weapon_art", "dash_attack"],
+      "variants": [
+        { "id": "fire_slash", "name": "Fire Slash", "source": "spells", "skillSlot": "melee_trail", "tags": ["fire", "trail"] },
+        { "id": "getsuga_slash", "name": "Getsuga Slash", "source": "seed", "skillSlot": "wave_beam", "tags": ["arcane", "traveling"] },
+        { "id": "frost_wave", "name": "Frost Wave", "source": "seed", "skillSlot": "ground_wave", "tags": ["ice", "ground"] },
+        { "id": "earth_wave", "name": "Earth Surge", "source": "builtin", "skillSlot": "lane_wave", "tags": ["earth", "ground"] },
+        { "id": "moon_beam", "name": "Moon Beam", "source": "seed", "skillSlot": "sky_beam", "tags": ["light", "pillar"] }
+      ]
+    },
+    "aura": {
+      "name": "Aura / Buff",
+      "icon": "star",
+      "color": "#ffd890",
+      "description": "Self-buffs and looping body effects that follow the caster.",
+      "skillUses": ["self_buff", "stance", "passive_proc", "channeled_aura"],
+      "variants": [
+        { "id": "fire_aura", "name": "Fire Aura", "source": "seed", "skillSlot": "fire_stance", "tags": ["fire", "self"] },
+        { "id": "arcane_swirl", "name": "Arcane Swirl", "source": "seed", "skillSlot": "arcane_stance", "tags": ["arcane", "turret_charge"] },
+        { "id": "ice_lightning_burst", "name": "Ice Burst", "source": "seed", "skillSlot": "ice_stance", "tags": ["ice", "self"] },
+        { "id": "flame_body", "name": "Flame Body", "source": "builtin", "skillSlot": "elemental_form", "tags": ["fire", "clone"] },
+        { "id": "arcane_aura_ring", "name": "Aura Ring", "source": "builtin", "skillSlot": "defensive_ring", "tags": ["arcane", "ring"] }
+      ]
+    },
+    "hand": {
+      "name": "Hand / Cast",
+      "icon": "hand",
+      "color": "#ff8844",
+      "description": "Effects wreathed on the caster's hands during casting.",
+      "skillUses": ["cast_anim", "charge_up", "gesture_spell", "combo_opener"],
+      "variants": [
+        { "id": "fire_hand", "name": "Fire Hand", "source": "seed", "skillSlot": "cast_hands_fire", "tags": ["fire", "hand"] },
+        { "id": "holy_hands", "name": "Holy Hands", "source": "seed", "skillSlot": "cast_hands_holy", "tags": ["holy", "hand"] },
+        { "id": "arcane_hands", "name": "Arcane Hands", "source": "seed", "skillSlot": "cast_hands_arcane", "tags": ["arcane", "hand"] },
+        { "id": "hot_hands_fire", "name": "Hot Hands (Fire)", "source": "builtin", "skillSlot": "hot_hands", "tags": ["fire", "toggle"] },
+        { "id": "hot_hands_poison", "name": "Hot Hands (Poison)", "source": "builtin", "skillSlot": "poison_hands", "tags": ["poison", "toggle"] }
+      ]
+    },
+    "aoe": {
+      "name": "AOE / Ground",
+      "icon": "explosion",
+      "color": "#ff4400",
+      "description": "Area eruptions, storms, and ground-targeted spells.",
+      "skillUses": ["aoe_nuke", "zone_control", "ground_slam", "channeled_storm"],
+      "variants": [
+        { "id": "inferno_aoe", "name": "Inferno AOE", "source": "spells", "skillSlot": "fire_nova", "tags": ["fire", "ground"] },
+        { "id": "inferno", "name": "Inferno Blast", "source": "registry", "skillSlot": "fire_explosion", "tags": ["fire", "burst"] },
+        { "id": "blizzard_aoe", "name": "Blizzard AOE", "source": "spells", "skillSlot": "ice_storm", "tags": ["ice", "storm"] },
+        { "id": "blizzard", "name": "Blizzard", "source": "builtin", "skillSlot": "ice_channel", "tags": ["ice", "channeled"] },
+        { "id": "lightning_storm", "name": "Lightning Storm", "source": "spells", "skillSlot": "lightning_nova", "tags": ["lightning", "storm"] },
+        { "id": "earth_quake", "name": "Earthquake", "source": "spells", "skillSlot": "earth_nova", "tags": ["earth", "ground"] },
+        { "id": "arcane_nova", "name": "Arcane Nova", "source": "spells", "skillSlot": "arcane_burst", "tags": ["arcane", "explosion"] },
+        { "id": "shockwave", "name": "Shockwave", "source": "builtin", "skillSlot": "slam_aoe", "tags": ["impact", "knockback"] },
+        { "id": "meteor_shower", "name": "Meteor Shower", "source": "builtin", "skillSlot": "sky_aoe", "tags": ["fire", "rain"] }
+      ]
+    },
+    "wall": {
+      "name": "Wall / Barrier",
+      "icon": "shield",
+      "color": "#88aa44",
+      "description": "Defensive walls, spires, and lane blockers.",
+      "skillUses": ["wall_defense", "zone_block", "terrain_control", "root_snare"],
+      "variants": [
+        { "id": "earth_wall", "name": "Earth Wall", "source": "spells", "skillSlot": "stone_wall", "tags": ["earth", "lane"] },
+        { "id": "ice_wall", "name": "Ice Wall Rise", "source": "spells", "skillSlot": "ice_barrier", "tags": ["ice", "lane"] },
+        { "id": "earth_wall_builtin", "name": "Stone Wall", "source": "builtin", "skillSlot": "stone_wall_live", "tags": ["earth", "defense"] },
+        { "id": "nature_thorns", "name": "Thorn Burst", "source": "spells", "skillSlot": "root_snare", "tags": ["nature", "snare"] },
+        { "id": "roots", "name": "Roots / Snare", "source": "builtin", "skillSlot": "root_live", "tags": ["nature", "cc"] }
+      ]
+    },
+    "cloud": {
+      "name": "Cloud / Status",
+      "icon": "cloud",
+      "color": "#7fff4a",
+      "description": "Lingering clouds, poisons, and smoke cover.",
+      "skillUses": ["dot_zone", "debuff_cloud", "smoke_cover", "stealth"],
+      "variants": [
+        { "id": "poison_cloud", "name": "Poison Cloud", "source": "seed", "skillSlot": "poison_aoe", "tags": ["poison", "dot"] },
+        { "id": "smoke_screen", "name": "Smoke Screen", "source": "seed", "skillSlot": "smoke_cover", "tags": ["smoke", "cover"] },
+        { "id": "smoke_bomb", "name": "Smoke Bomb", "source": "seed", "skillSlot": "thrown_cover", "tags": ["smoke", "thrown"] },
+        { "id": "nature_heal", "name": "Nature Heal", "source": "spells", "skillSlot": "heal_zone", "tags": ["nature", "hot"] }
+      ]
+    },
+    "summon": {
+      "name": "Summon / Deploy",
+      "icon": "dragon",
+      "color": "#ff3300",
+      "description": "Summoned creatures, turrets, and persistent deployables.",
+      "skillUses": ["summon_pet", "deploy_turret", "ultimate", "zone_denial"],
+      "variants": [
+        { "id": "fire_dragon", "name": "Fire Dragon", "source": "builtin", "skillSlot": "dragon_summon", "tags": ["fire", "summon"] },
+        { "id": "flame_turret", "name": "Flame Turret", "source": "builtin", "skillSlot": "turret_deploy", "tags": ["fire", "deploy"] },
+        { "id": "rapid_fire", "name": "Rapid Fire", "source": "builtin", "skillSlot": "combo_bolts", "tags": ["fire", "multihit"] }
+      ]
+    },
+    "portal": {
+      "name": "Portal / Teleport",
+      "icon": "portal",
+      "color": "#4488ff",
+      "description": "Dimensional rifts, teleports, and substitution poofs.",
+      "skillUses": ["teleport", "blink", "substitution", "zone_transition"],
+      "variants": [
+        { "id": "portal_open", "name": "Portal Open", "source": "spells", "skillSlot": "portal_cast", "tags": ["portal", "vortex"] },
+        { "id": "void_rift", "name": "Void Rift", "source": "spells", "skillSlot": "void_zone", "tags": ["void", "pull"] },
+        { "id": "smoke_clone", "name": "Smoke Clone", "source": "seed", "skillSlot": "substitution", "tags": ["smoke", "poof"] },
+        { "id": "flame_clone", "name": "Flame Clone", "source": "seed", "skillSlot": "fire_substitution", "tags": ["fire", "poof"] },
+        { "id": "teleport_puff", "name": "Teleport Puff", "source": "seed", "skillSlot": "blink_puff", "tags": ["smoke", "blink"] }
+      ]
+    },
+    "impact": {
+      "name": "Impact / Hit",
+      "icon": "burst",
+      "color": "#ffaa00",
+      "description": "On-hit bursts, craters, and collision flares.",
+      "skillUses": ["on_hit", "crit_proc", "slam_landing", "projectile_impact"],
+      "variants": [
+        { "id": "impact_crater", "name": "Impact Crater", "source": "spells", "skillSlot": "heavy_impact", "tags": ["impact", "ground"] },
+        { "id": "hellfire", "name": "Hellfire Vortex", "source": "registry", "skillSlot": "fire_impact", "tags": ["fire", "vortex"] },
+        { "id": "frost_nova", "name": "Frost Nova", "source": "registry", "skillSlot": "ice_impact", "tags": ["ice", "nova"] }
+      ]
+    }
+  }
+}
