@@ -271,7 +271,7 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
       <button onclick="addSceneLayer()" title="Add current effect as a scene layer">＋ Layer</button>
       <button onclick="clearSceneLayers()" title="Clear all layers">✕ Layers</button>
       <button onclick="exportEffect()" title="Export current effect JSON">↓ Export</button>
-      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener" class="characters" title="Fantasy VFX Sandbox — full spell testing">✦ vfxgrudge</a>
+      <a href="https://grudge-vfx.puter.site/" target="_blank" rel="noopener" class="characters" title="Fantasy VFX Sandbox — Spell Arsenal + live testing">✦ VFX Sandbox</a>
       <button onclick="saveToR2()" class="primary" title="Upload current effect to R2">☁ Save to R2</button>
     </div>
   </header>
@@ -323,11 +323,12 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
       <div class="sandbox-panel">
         <div class="sandbox-banner">
           <strong>Fantasy VFX Sandbox</strong> — live caster, dummy target, hotkey spells, and the full effect library.
-          <br><a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">Open vfxgrudge.puter.site ↗</a>
+          <br><a href="https://grudge-vfx.puter.site/" target="_blank" rel="noopener">Open grudge-vfx.puter.site ↗</a>
+          (legacy: <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">vfxgrudge</a>)
           · Pick variants from <strong>Arsenal</strong> and deploy them in the sandbox Resources tab.
         </div>
         <div class="sandbox-frame-wrap">
-          <iframe src="https://vfxgrudge.puter.site/" title="Fantasy VFX Sandbox" loading="lazy" allow="fullscreen"></iframe>
+          <iframe src="https://grudge-vfx.puter.site/" title="Fantasy VFX Sandbox" loading="lazy" allow="fullscreen"></iframe>
         </div>
       </div>
     </div>
@@ -348,7 +349,7 @@ body{font-family:"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg-dar
   <!-- Viewport -->
   <div class="viewport" id="viewport">
     <div class="sandbox-embed" id="sandboxEmbed" style="display:none">
-      <iframe src="https://vfxgrudge.puter.site/" title="Fantasy VFX Sandbox" loading="lazy" allow="fullscreen"></iframe>
+      <iframe src="https://grudge-vfx.puter.site/" title="Fantasy VFX Sandbox" loading="lazy" allow="fullscreen"></iframe>
     </div>
     <div class="vp-overlay">
       <button onclick="toggleGrid()" id="btn-grid" class="active" title="Toggle grid">⊞</button>
@@ -469,7 +470,7 @@ const ARSENAL_URL      = './api/v1/spell-arsenal.json';
 const EXAMPLES_URL     = './api/v1/3dfx-examples.json';
 const UUIDS_URL        = './api/v1/3dfx-uuids.json';
 const R2_URL           = 'https://assets.grudge-studio.com';
-const SANDBOX_URL      = 'https://vfxgrudge.puter.site/';
+const SANDBOX_URL      = 'https://grudge-vfx.puter.site/';
 
 // ── State ──
 let registry = null;
