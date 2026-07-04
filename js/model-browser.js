@@ -32,6 +32,10 @@ const REGISTRY_URLS = [
   './api/v1/models3d.json',
   `${GHPAGES_BASE}/api/v1/models3d.json`,
 ];
+const GAME_MANIFEST_URLS = [
+  './api/v1/models3d-game.json',
+  `${GHPAGES_BASE}/api/v1/models3d-game.json`,
+];
 const UUID_URLS = [
   './api/v1/models3d-uuids.json',
   `${GHPAGES_BASE}/api/v1/models3d-uuids.json`,
@@ -186,12 +190,14 @@ function setupEnvironment() {
 // ── URL resolution ─────────────────────────────────────
 function modelUrlCandidates(m) {
   const urls = [];
+  if (m.url) urls.push(m.url);
+  if (m._gameReadyUrl) urls.push(m._gameReadyUrl);
   if (m._cdnUrl) urls.push(m._cdnUrl);
-  urls.push(`${R2_CDN_URL}/${encPath(m.path)}`);
+  if (m.gameReadyPath) urls.push(`${GHPAGES_BASE}/${encPath(m.gameReadyPath)}`);
+  urls.push(`${R2_CDN_URL}/${encPath(m.gameReadyPath || m.path)}`);
   const cleanPath = m.path.replace('models/_optimized/', 'models/');
   urls.push(`${GHPAGES_BASE}/${encPath(cleanPath)}`);
   urls.push(`${GHPAGES_BASE}/${encPath(m.path)}`);
-  if (m.url) urls.unshift(m.url);
   return [...new Set(urls)];
 }
 
@@ -199,6 +205,7 @@ function encPath(p) { return p.split('/').map(s => encodeURIComponent(s)).join('
 
 async function resolveModelUrl(m) {
   if (m.url) return m.url;
+  if (m._gameReadyUrl) return m._gameReadyUrl;
   if (m._cdnUrl) return m._cdnUrl;
   for (const url of modelUrlCandidates(m)) {
     try {
@@ -249,14 +256,49 @@ function attachUuids(models) {
   });
 }
 
+async function loadGameManifest() {
+  for (const url of GAME_MANIFEST_URLS) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const data = await r.json();
+      const byPath = new Map((data.models || []).map((m) => [m.sourcePath || m.path, m]));
+      console.log(`Loaded game manifest (${byPath.size} entries) from ${url}`);
+      return byPath;
+    } catch {}
+  }
+  return null;
+}
+
+function mergeGameManifest(models, gameByPath) {
+  if (!gameByPath?.size) return models;
+  return models.map((m) => {
+    const p = (m.path || '').replace(/\\/g, '/');
+    const game = gameByPath.get(p);
+    if (!game) return m;
+    return {
+      ...m,
+      kind: game.kind || m.kind,
+      gameReadiness: game.gameReadiness,
+      textureStatus: game.textureStatus,
+      attachmentProfile: game.attachmentProfile,
+      previewUnitUrl: game.previewUnitUrl,
+      gameReadyPath: game.gameReadyPath,
+      _gameReadyUrl: game._gameReadyUrl,
+      _cdnUrl: game._cdnUrl || m._cdnUrl,
+    };
+  });
+}
+
 async function loadRegistry() {
   await loadUuidMap();
+  const gameByPath = await loadGameManifest();
   for (const url of REGISTRY_URLS) {
     try {
       const r = await fetch(url);
       if (r.ok) {
         registry = await r.json();
-        allModels = attachUuids(registry.models || []);
+        allModels = mergeGameManifest(attachUuids(registry.models || []), gameByPath);
         console.log(`Loaded ${allModels.length} models from ${url}`);
         return;
       }
