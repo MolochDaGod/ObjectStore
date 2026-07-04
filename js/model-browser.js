@@ -17,19 +17,42 @@ const REGISTRY_URLS = [
   './api/v1/models3d.json',
   `${GHPAGES_BASE}/api/v1/models3d.json`,
 ];
+const UUID_URLS = [
+  './api/v1/models3d-uuids.json',
+  `${GHPAGES_BASE}/api/v1/models3d-uuids.json`,
+];
 
 const PAGE_SIZE = 60;
 
+function fnv1aHash8(str) {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  hash = hash >>> 0;
+  const h2 = (hash ^ (hash >>> 16)) >>> 0;
+  return h2.toString(16).toUpperCase().padStart(8, '0').slice(0, 8);
+}
+
+function modelGrudgeUuid(modelPath) {
+  const p = String(modelPath || '').replace(/\\/g, '/');
+  return `GRDG-3D-${fnv1aHash8(p)}`;
+}
+
 // ── Featured models (animated characters) ─────────────
 const FEATURED = [
-  { name: 'Soldier', url: `${GHPAGES_BASE}/models/characters/soldier.glb`,   sizeKB: 2110, category: 'characters', animations: 4 },
-  { name: 'Male Base Rig', url: `${GHPAGES_BASE}/models/characters/male_base.glb`, sizeKB: 479, category: 'characters', animations: 1 },
-  { name: 'Female Base', url: `${GHPAGES_BASE}/models/characters/female_base.glb`, sizeKB: 15, category: 'characters', animations: 1 },
+  { name: 'Soldier', path: 'models/characters/soldier.glb', url: `${GHPAGES_BASE}/models/characters/soldier.glb`, sizeKB: 2110, category: 'characters', animations: 4, uuid: modelGrudgeUuid('models/characters/soldier.glb') },
+  { name: 'Male Base Rig', path: 'models/characters/male_base.glb', url: `${GHPAGES_BASE}/models/characters/male_base.glb`, sizeKB: 479, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/male_base.glb') },
+  { name: 'Female Base', path: 'models/characters/female_base.glb', url: `${GHPAGES_BASE}/models/characters/female_base.glb`, sizeKB: 15, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/female_base.glb') },
 ];
 
 // ── State ──────────────────────────────────────────────
 let registry = null;
+let uuidMap = {};
 let allModels = [];
+let currentViewerModel = null;
+let currentViewerUrl = null;
 let filteredModels = [];
 let activeCategory = null;
 let currentPage = 0;
@@ -45,20 +68,19 @@ _dracoLoader.setDecoderPath(DRACO_PATH);
 // ── URL resolution ─────────────────────────────────────
 function modelUrlCandidates(m) {
   const urls = [];
-  // 1. Explicit verified CDN URL (v2 manifest has this for all 337 models)
   if (m._cdnUrl) urls.push(m._cdnUrl);
-  // 2. R2 primary (if model has been uploaded)
   urls.push(`${R2_CDN_URL}/${encPath(m.path)}`);
-  // 3. GitHub Pages fallback with _optimized stripped
   const cleanPath = m.path.replace('models/_optimized/', 'models/');
   urls.push(`${GHPAGES_BASE}/${encPath(cleanPath)}`);
   urls.push(`${GHPAGES_BASE}/${encPath(m.path)}`);
+  if (m.url) urls.unshift(m.url);
   return [...new Set(urls)];
 }
 
 function encPath(p) { return p.split('/').map(s => encodeURIComponent(s)).join('/'); }
 
 async function resolveModelUrl(m) {
+  if (m.url) return m.url;
   for (const url of modelUrlCandidates(m)) {
     try {
       const r = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
@@ -81,13 +103,41 @@ async function checkR2() {
 }
 
 // ── Load Registry ──────────────────────────────────────
+async function loadUuidMap() {
+  for (const url of UUID_URLS) {
+    try {
+      const r = await fetch(url);
+      if (r.ok) {
+        const data = await r.json();
+        uuidMap = data.uuids || {};
+        console.log(`Loaded ${Object.keys(uuidMap).length} model UUIDs from ${url}`);
+        return;
+      }
+    } catch {}
+  }
+  uuidMap = {};
+}
+
+function resolveModelUuid(m) {
+  const p = (m?.path || '').replace(/\\/g, '/');
+  return m?.uuid || uuidMap[p] || (p ? modelGrudgeUuid(p) : '');
+}
+
+function attachUuids(models) {
+  return models.map(m => {
+    const path = (m.path || '').replace(/\\/g, '/');
+    return { ...m, path, uuid: resolveModelUuid({ ...m, path }) };
+  });
+}
+
 async function loadRegistry() {
+  await loadUuidMap();
   for (const url of REGISTRY_URLS) {
     try {
       const r = await fetch(url);
       if (r.ok) {
         registry = await r.json();
-        allModels = (registry.models || []).map(m => { m.path = (m.path || '').replace(/\\/g, '/'); return m; });
+        allModels = attachUuids(registry.models || []);
         console.log(`Loaded ${allModels.length} models from ${url}`);
         return;
       }
@@ -129,10 +179,13 @@ function renderFeatured() {
 }
 
 window._loadFeatured = async (f) => {
+  currentViewerModel = f;
+  currentViewerUrl = f.url;
   if (!renderer) initViewer();
   document.getElementById('viewerOverlay').classList.add('active');
   document.getElementById('viewerTitle').textContent = f.name;
   document.getElementById('viewerInfo').textContent = `${f.sizeKB} KB · ${f.category}`;
+  updateViewerUuid(f);
   document.body.style.overflow = 'hidden';
   const le = document.getElementById('viewerLoading');
   if (le) { le.innerHTML = '<div class="spinner"></div><p>Loading character…</p>'; le.style.display = 'block'; }
@@ -157,7 +210,10 @@ function applyFilters() {
   const q = (document.getElementById('searchBox')?.value || '').toLowerCase().trim();
   filteredModels = allModels.filter(m => {
     if (activeCategory && (m.category || 'uncategorized') !== activeCategory) return false;
-    if (q && !m.name.toLowerCase().includes(q) && !(m.category || '').toLowerCase().includes(q)) return false;
+    if (q) {
+      const hay = [m.name, m.category || '', m.uuid || '', m.path || ''].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
   currentPage = 0;
@@ -182,18 +238,34 @@ function renderPage() {
     const idx = s + i;
     const info = [m.meshes ? `${m.meshes} mesh` : '', m.animations ? `${m.animations} anim` : '', m.sizeKB ? (m.sizeKB < 1024 ? `${m.sizeKB} KB` : `${(m.sizeKB / 1024).toFixed(1)} MB`) : ''].filter(Boolean).join(' · ');
     const animBadge = m.animations ? `<span style="position:absolute;top:6px;left:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#22c55e;color:#000;font-weight:700">▶ ANIM</span>` : '';
+    const draco = m.compressionType === 'draco' ? '<span style="position:absolute;bottom:6px;right:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#6366f1;color:#fff;font-weight:700">DRACO</span>' : '';
+    const uuid = m.uuid || '';
+    const uuidLine = uuid
+      ? `<div class="model-uuid" data-uuid="${esc(uuid)}" title="Click to copy UUID">${esc(uuid)}</div>`
+      : '';
     return `<div class="model-card" data-idx="${idx}">
       <div class="model-icon">
         <span class="format-badge">${m.format || 'GLB'}</span>
         <span class="category-badge">${m.category || ''}</span>
         ${animBadge}
+        ${draco}
         <svg viewBox="0 0 80 80" style="width:55%;height:55%;opacity:.4"><polygon points="40,8 72,24 72,56 40,72 8,56 8,24" fill="none" stroke="#22c55e" stroke-width="1.5"/><polygon points="40,8 72,24 40,40 8,24" fill="#22c55e" opacity=".15"/><polygon points="40,40 72,24 72,56 40,72" fill="#22c55e" opacity=".25"/><polygon points="40,40 8,24 8,56 40,72" fill="#22c55e" opacity=".1"/></svg>
       </div>
       <div class="model-name" title="${esc(m.name)}">${esc(m.name)}</div>
       <div class="model-meta">${esc(info)}</div>
+      ${uuidLine}
     </div>`;
   }).join('');
-  grid.querySelectorAll('.model-card').forEach(c => c.addEventListener('click', () => { const m = filteredModels[+c.dataset.idx]; if (m) openAndLoad(m); }));
+  grid.querySelectorAll('.model-card').forEach(c => {
+    c.addEventListener('click', () => { const m = filteredModels[+c.dataset.idx]; if (m) openAndLoad(m); });
+    const uuidEl = c.querySelector('.model-uuid');
+    if (uuidEl) {
+      uuidEl.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        copyText(uuidEl.dataset.uuid || uuidEl.textContent);
+      });
+    }
+  });
   renderPagination();
 }
 
@@ -215,7 +287,6 @@ function initViewer() {
   const w = document.getElementById('viewerCanvasWrap'); if (!w || w.querySelector('canvas')) return;
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0d0d1a);
-  // Environment: subtle gradient fog
   scene.fog = new THREE.FogExp2(0x0d0d1a, 0.04);
 
   camera = new THREE.PerspectiveCamera(50, w.clientWidth / w.clientHeight, 0.01, 1000);
@@ -235,7 +306,6 @@ function initViewer() {
   controls.autoRotate = autoRotate;
   controls.autoRotateSpeed = 1.5;
 
-  // Lighting rig
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   const key = new THREE.DirectionalLight(0xfff5e0, 2.0);
   key.position.set(4, 6, 4); key.castShadow = true;
@@ -247,7 +317,6 @@ function initViewer() {
   rim.position.set(0, 3, -5); scene.add(rim);
   scene.add(new THREE.HemisphereLight(0x8899cc, 0x443322, 0.4));
 
-  // Ground
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(20, 20),
     new THREE.MeshStandardMaterial({ color: 0x111120, roughness: 0.9 })
@@ -298,7 +367,6 @@ async function loadByUrl(url, entry) {
     const sz = box.getSize(new THREE.Vector3());
     const mx = Math.max(sz.x, sz.y, sz.z) || 1;
 
-    // Center on ground
     currentModel.position.y -= box.min.y;
     camera.position.set(ctr.x, ctr.y + mx * 0.4, ctr.z + mx * 1.8);
     controls.target.set(ctr.x, ctr.y, ctr.z);
@@ -335,16 +403,28 @@ async function loadByUrl(url, entry) {
   }
 }
 
+function updateViewerUuid(m) {
+  const el = document.getElementById('viewerUuid');
+  const bar = document.getElementById('viewerUuidBar');
+  const uuid = m?.uuid || resolveModelUuid(m);
+  if (el) el.textContent = uuid || '—';
+  if (bar) bar.style.display = 'flex';
+}
+
 async function openAndLoad(m) {
   if (!renderer) initViewer();
+  currentViewerModel = m;
+  currentViewerUrl = null;
   document.getElementById('viewerOverlay').classList.add('active');
   document.getElementById('viewerTitle').textContent = m.name;
   document.getElementById('viewerInfo').textContent = `${m.format || 'GLB'} · ${m.category || ''}`;
+  updateViewerUuid(m);
   document.body.style.overflow = 'hidden';
   const le = document.getElementById('viewerLoading');
   if (le) { le.innerHTML = '<div class="spinner"></div><p>Resolving model…</p>'; le.style.display = 'block'; }
   setTimeout(() => { if (renderer) { const w = document.getElementById('viewerCanvasWrap'); renderer.setSize(w.clientWidth, w.clientHeight); } }, 50);
   const url = await resolveModelUrl(m);
+  currentViewerUrl = url;
   if (le) le.innerHTML = '<div class="spinner"></div><p>Loading model…</p>';
   await loadByUrl(url, m);
 }
@@ -363,19 +443,82 @@ function loadLocal(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext !== 'glb' && ext !== 'gltf') { alert('Only GLB/GLTF can be previewed. Run scripts/fbx2glb.mjs to convert ' + ext.toUpperCase() + ' files.'); return; }
   if (!renderer) initViewer();
+  const localModel = {
+    name: file.name,
+    format: ext.toUpperCase(),
+    category: 'local',
+    sizeKB: Math.round(file.size / 1024),
+    path: `local/${file.name}`,
+    uuid: modelGrudgeUuid(`local/${file.name}`),
+  };
+  currentViewerModel = localModel;
+  currentViewerUrl = null;
   document.getElementById('viewerOverlay').classList.add('active');
   document.getElementById('viewerTitle').textContent = file.name;
   document.getElementById('viewerInfo').textContent = `Local · ${(file.size / 1024).toFixed(0)} KB`;
+  updateViewerUuid(localModel);
   document.body.style.overflow = 'hidden';
   setTimeout(() => { if (renderer) { const w = document.getElementById('viewerCanvasWrap'); renderer.setSize(w.clientWidth, w.clientHeight); } }, 50);
-  loadByUrl(URL.createObjectURL(file), { sizeKB: Math.round(file.size / 1024) });
+  const blobUrl = URL.createObjectURL(file);
+  currentViewerUrl = blobUrl;
+  loadByUrl(blobUrl, localModel);
 }
+
+function showToast(msg) {
+  const t = document.getElementById('copyToast');
+  if (!t) return;
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => { t.style.display = 'none'; }, 1400);
+}
+
+window.copyText = function (text) {
+  if (!text) return;
+  navigator.clipboard?.writeText(text).then(
+    () => showToast(`Copied: ${text}`),
+    () => showToast('Copy failed')
+  );
+};
+
+window.copyCurrentModelUUID = function () {
+  const uuid = currentViewerModel?.uuid || document.getElementById('viewerUuid')?.textContent;
+  if (!uuid || uuid === '—') return;
+  copyText(uuid);
+};
+
+window.exportCurrentModel = function () {
+  if (!currentViewerModel) return;
+  const m = currentViewerModel;
+  const exportDef = {
+    name: m.name,
+    path: m.path,
+    category: m.category || '',
+    format: m.format || 'GLB',
+    sizeKB: m.sizeKB || 0,
+    grudgeUUID: m.uuid || resolveModelUuid(m),
+    url: currentViewerUrl || (m.path ? modelUrlCandidates(m)[0] : ''),
+    exportedAt: new Date().toISOString(),
+  };
+  const json = JSON.stringify(exportDef, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (m.name || 'model').replace(/\.[^.]+$/, '').replace(/[^\w.-]+/g, '_');
+  a.href = url;
+  a.download = `${safeName}.model.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${m.name}` + (exportDef.grudgeUUID ? ` (${exportDef.grudgeUUID.slice(-8)})` : ''));
+};
 
 // ── Global handlers ────────────────────────────────────
 window._filterCategory = c => { activeCategory = c; renderCategoryFilters(); applyFilters(); };
 window.closeViewer = () => {
   document.getElementById('viewerOverlay').classList.remove('active');
   document.body.style.overflow = '';
+  currentViewerModel = null;
+  currentViewerUrl = null;
   if (currentModel) { scene.remove(currentModel); currentModel = null; }
   if (mixer) { mixer.stopAllAction(); mixer = null; }
 };

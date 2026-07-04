@@ -104,7 +104,8 @@
       "label": "3D Models",
       "status": "active",
       "apis": {
-        "models3d.json": { "count": 1053, "desc": "Full 3D model registry (GLB/GLTF/FBX/OBJ)", "uuid": false },
+        "models3d.json": { "count": 1053, "desc": "Full 3D model registry (GLB/GLTF/FBX/OBJ)", "uuid": true },
+        "models3d-uuids.json": { "count": 1053, "desc": "GRDG-3D-* UUID mapping keyed by model path", "uuid": true },
         "gltf-manifest.json": { "count": null, "desc": "GLTF-specific manifest with LOD info", "uuid": false },
         "weapon-models.json": { "count": null, "desc": "Weapon model paths per category", "uuid": false },
         "rtsModels.json": { "count": null, "desc": "RTS unit models", "uuid": false }
@@ -316,6 +317,7 @@
     "FOOD": "Food items",
     "POTN": "Potions",
     "GRDG-3DFX": "3D VFX effects",
+    "GRDG-3D": "3D models (GLB/GLTF)",
     "BLDG": "Buildings and structures",
     "MNT":  "Mounts",
     "MODL": "3D Models (planned)",

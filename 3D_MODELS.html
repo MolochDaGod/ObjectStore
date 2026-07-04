@@ -45,7 +45,7 @@
     </div>
 
     <div class="controls">
-      <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search models by name, category...">
+      <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search models by name, category, or Grudge UUID...">
       <div class="filter-row" id="categoryFilters"></div>
     </div>
 
@@ -77,6 +77,12 @@
       <div class="viewer-canvas-wrap" id="viewerCanvasWrap">
         <div class="viewer-loading" id="viewerLoading"><div class="spinner"></div><p>Loading model…</p></div>
       </div>
+      <div class="viewer-uuid-bar" id="viewerUuidBar">
+        <span class="viewer-uuid-label">Grudge UUID</span>
+        <code class="viewer-uuid-display" id="viewerUuid">—</code>
+        <button class="viewer-uuid-copy" type="button" onclick="copyCurrentModelUUID()">Copy</button>
+        <button class="viewer-btn" type="button" onclick="exportCurrentModel()">Export JSON</button>
+      </div>
       <div class="viewer-controls">
         <button class="viewer-btn" onclick="toggleWireframe()">Wireframe</button>
         <button class="viewer-btn" onclick="toggleAutoRotate()">Auto Rotate</button>
@@ -85,6 +91,7 @@
         </select>
       </div>
     </div>
+    <div class="copy-toast" id="copyToast">Copied!</div>
   </div>
 
   <script src="./js/nav.js" defer></script>
