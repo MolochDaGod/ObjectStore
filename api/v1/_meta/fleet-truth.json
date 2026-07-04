@@ -1,73 +1,176 @@
 {
-  "version": "1.1.0",
-  "generated": "2026-07-01T23:30:00.000Z",
-  "description": "Grudge Studio fleet ONE TRUTH — canonical domains, API roles, contracts, and probe manifest",
+  "version": "1.2.0",
+  "generated": "2026-07-04T05:25:54.074Z",
+  "description": "Grudge Studio fleet ONE TRUTH — canonical domains, API roles, contracts, probe manifest, and Legion context",
   "ssot": {
     "code": "GrudgeBuilder/shared/fleet/manifest.ts",
     "storage": "GrudgeBuilder/shared/fleet/storage.ts",
     "probes": "GrudgeBuilder/shared/fleet/truthProbes.ts",
     "vercelSync": "GrudgeBuilder/scripts/sync-vercel-fleet.mjs",
+    "generate": "GrudgeBuilder/scripts/generate-fleet-truth.mjs",
     "verify": "GrudgeBuilder/scripts/verify-fleet-truth.mjs",
+    "probeCli": "GrudgeBuilder/scripts/probe-truth-fleet.ts",
     "grudge6FleetUrls": "grudge6/lib/fleet-urls/src/index.ts"
+  },
+  "communication": {
+    "legionHub": "https://ai.grudge-studio.com",
+    "legionAgent": "https://legion-ai.grudge-studio.com",
+    "fleetHarbor": "https://grudox.grudge-studio.com",
+    "gameDataManifest": "https://grudge-api-production-0d46.up.railway.app/api/fleet/manifest",
+    "truthAuditApi": "https://grudge-api-production-0d46.up.railway.app/api/fleet/truth-audit",
+    "publishedTruth": "https://objectstore.grudge-studio.com/api/v1/_meta/fleet-truth.json",
+    "devToolLegion": "grudge-dev-tool → ai.grudge-studio.com (fleet API key)"
   },
   "services": [
     {
       "id": "grudge-id",
       "role": "identity",
       "domain": "id.grudge-studio.com",
-      "proxy": "/api/auth/:path*",
-      "notes": "OAuth gateway — catch-all after Railway auth exceptions"
+      "proxy": "/api/auth",
+      "notes": "OAuth, popup auth, grudge_token SSO"
     },
     {
       "id": "identity-api",
       "role": "identity",
-      "domain": "api.grudge-studio.com",
-      "proxy": "/api/:path*",
-      "notes": "The-ENGINE identity catch-all — session exchange, scoped profile"
+      "domain": "grudge-studio.com",
+      "proxy": "/api",
+      "notes": "Portal shell — /api/:path* rewrites to The-ENGINE Railway. Do NOT use api.grudge-studio.com (deprecated).",
+      "implementation": "https://the-engine.up.railway.app"
     },
     {
       "id": "game-data",
       "role": "game-data",
       "domain": "grudge-api-production-0d46.up.railway.app",
-      "proxy": "/api/characters|wallet|island|account|…",
-      "database": "PostgreSQL (Railway)",
-      "notes": "Characters, islands, inventory, wallet — Postgres SSOT"
-    },
-    {
-      "id": "objectstore",
-      "role": "objectstore",
-      "domain": "objectstore.grudge-studio.com",
-      "proxy": "/api/objectstore/:path*",
-      "database": "D1 + R2",
-      "notes": "JSON catalogs — master-items, recipes, games-library"
+      "proxy": "/api/characters",
+      "notes": "Postgres SSOT — characters, wallet, islands, inventory",
+      "database": "PostgreSQL (Railway)"
     },
     {
       "id": "assets-cdn",
       "role": "assets",
       "domain": "assets.grudge-studio.com",
-      "proxy": "/api/assets/:path*",
-      "storage": "R2 grudge-assets",
-      "notes": "Models, textures, icons, animations"
+      "proxy": "/api/assets",
+      "notes": "Models, textures, animations, icons",
+      "storage": "R2 grudge-assets"
+    },
+    {
+      "id": "objectstore",
+      "role": "objectstore",
+      "domain": "objectstore.grudge-studio.com/api/v1",
+      "proxy": "/api/objectstore",
+      "notes": "master-items.json, recipes, weapons defs",
+      "database": "D1 grudge-objectstore + R2"
     },
     {
       "id": "ai-gateway",
       "role": "ai",
       "domain": "ai.grudge-studio.com",
-      "proxy": "/api/ai/:path*"
+      "proxy": "/api/ai"
     },
     {
-      "id": "warlords-client",
-      "role": "hub",
-      "domains": ["grudgewarlords.com", "client.grudge-studio.com", "warlord3d.grudge-studio.com"],
-      "deploy": "Vercel (GrudgeBuilder)",
-      "notes": "Same-origin /api/* rewrites to fleet backends"
+      "id": "anythingllm",
+      "role": "rag",
+      "domain": "localhost:3001/api",
+      "proxy": "/api/ai/rag",
+      "notes": "Developer API — fleet docs, ObjectStore canonical JSON, Supabase context"
     },
     {
-      "id": "grudge6-world",
+      "id": "colyseus",
+      "role": "realtime",
+      "domain": "wss://grudge-api-production-0d46.up.railway.app",
+      "notes": "Sectors, town, dungeon, home island rooms"
+    },
+    {
+      "id": "world-server",
+      "role": "realtime",
+      "domain": "wss://world.grudge-studio.com",
+      "notes": "Island PvE/PvP — DNS pending"
+    },
+    {
+      "id": "gcs",
       "role": "hub",
-      "domains": ["character.grudge-studio.com", "forge.grudge-studio.com"],
-      "deploy": "Vercel / character-viewer proxy",
-      "notes": "grudge-game /world — must use objectstore.grudge-studio.com for JSON catalogs"
+      "domain": "character.grudge-studio.com",
+      "notes": "HYDRA VRM + grudge6 forge — multi-era rosters (warlords, nexus, armada). Protected; not merged into Warlords /character."
+    },
+    {
+      "id": "characters-hub",
+      "role": "hub",
+      "domain": "character.grudge-studio.com",
+      "notes": "Canonical GCS URL — character.grudge-studio.com"
+    },
+    {
+      "id": "studio-editor",
+      "role": "hub",
+      "domain": "grudge-studio-editor.vercel.app",
+      "notes": "Home-island terrain sculpt, GLB assets, Publish to Warlords"
+    },
+    {
+      "id": "grudox-hub",
+      "role": "hub",
+      "domain": "grudox.grudge-studio.com",
+      "notes": "Arcade cabinets, editors, deploy kit — Vercel shell + CF Worker edge"
+    },
+    {
+      "id": "carrier-game",
+      "role": "hub",
+      "domain": "carrier.grudge-studio.com",
+      "notes": "Fleet command dogfight — wss same-origin /api/carrier via grudox worker"
+    },
+    {
+      "id": "grudox-game-server",
+      "role": "realtime",
+      "domain": "voxgrudge-grudox-room-production.up.railway.app",
+      "proxy": "/api/carrier",
+      "notes": "Single instance — /api/carrier, /api/space, /api/brawl; CF Worker required for WS"
+    },
+    {
+      "id": "supabase",
+      "role": "supabase",
+      "domain": "${SUPABASE_URL}",
+      "proxy": "/api/supabase",
+      "notes": "@supabase/server — RLS-scoped queries"
+    }
+  ],
+  "edgeWorkers": [
+    {
+      "id": "grudge-asset-cdn",
+      "domain": "assets.grudge-studio.com",
+      "role": "R2 binary CDN"
+    },
+    {
+      "id": "grudge-objectstore-api",
+      "domain": "objectstore.grudge-studio.com",
+      "role": "JSON catalog + search"
+    },
+    {
+      "id": "grudge-identity-api",
+      "domain": "id.grudge-studio.com",
+      "role": "Identity edge"
+    },
+    {
+      "id": "grudge-ai-hub",
+      "domain": "ai.grudge-studio.com",
+      "role": "AI gateway (D1 grudge-ai-hub)"
+    },
+    {
+      "id": "grudge-legion-ai",
+      "domain": "legion-ai.grudge-studio.com",
+      "role": "Legion agent personas"
+    },
+    {
+      "id": "grudge-fleet-harbor",
+      "domain": "grudox.grudge-studio.com",
+      "role": "Fleet harbor / deploy kit"
+    },
+    {
+      "id": "grudge-game-servers",
+      "domain": "world.grudge-studio.com",
+      "role": "Live game server routing"
+    },
+    {
+      "id": "grudge-asset-api-production",
+      "domain": null,
+      "role": "Legacy RTS asset registry API"
     }
   ],
   "contracts": [
@@ -75,7 +178,7 @@
       "id": "home-island-spec",
       "version": "2.0.0",
       "code": "GrudgeBuilder/shared/definitions/homeIslandSpec.ts",
-      "liveApi": "GET https://grudge-api-production-0d46.up.railway.app/api/island/spec",
+      "liveApi": "https://grudge-api-production-0d46.up.railway.app/api/island/spec",
       "browserProxy": "/api/island/spec",
       "objectStoreMirror": "api/v1/home-island-contract.json"
     },
@@ -90,6 +193,11 @@
     {
       "id": "master-items",
       "path": "api/v1/master-items.json"
+    },
+    {
+      "id": "character-equip",
+      "path": "https://grudge-api-production-0d46.up.railway.app/api/characters/:id/equip",
+      "method": "POST"
     }
   ],
   "probes": [
@@ -102,7 +210,14 @@
     "os-items",
     "os-recipes",
     "os-games-library",
-    "os-fleet-truth"
+    "os-fleet-truth",
+    "icon-pack",
+    "icon-named",
+    "assets-cdn",
+    "grudox-live-health",
+    "grudox-game-server-direct",
+    "grudox-hub",
+    "carrier-hub"
   ],
   "railwayAuthPaths": [
     "popup-token",
@@ -116,8 +231,60 @@
     "verify",
     "wallet"
   ],
+  "gameDataApiPrefixes": [
+    "health",
+    "characters",
+    "party",
+    "account",
+    "island",
+    "islands",
+    "inventory",
+    "wallet",
+    "nfts",
+    "island-nfts",
+    "professions",
+    "missions",
+    "player",
+    "resource-nodes",
+    "resources",
+    "sprites",
+    "generate-dungeon",
+    "fleet",
+    "supabase",
+    "lore",
+    "combat-challenges",
+    "story-arcs",
+    "skills",
+    "sheets",
+    "aseprite",
+    "sprite-specs",
+    "sprite-generation-jobs",
+    "admin",
+    "activity",
+    "analytics",
+    "crafting",
+    "harvest",
+    "combat",
+    "rts",
+    "discord",
+    "videos",
+    "races",
+    "classes",
+    "items",
+    "spells",
+    "monsters",
+    "maps",
+    "launcher",
+    "ai-units",
+    "rewards"
+  ],
   "deprecated": {
-    "hosts": ["molochdagod.github.io", "grudge-objectstore.pages.dev"],
+    "hosts": [
+      "molochdagod.github.io",
+      "grudge-objectstore.pages.dev",
+      "api.grudge-studio.com"
+    ],
+    "apiGrudgeStudio": "TLS dead / tunnel removed — use grudge-studio.com (portal) + Railway game-data SSOT",
     "mirrorOnly": "https://molochdagod.github.io/ObjectStore/api/v1",
     "replacement": "https://objectstore.grudge-studio.com/api/v1"
   },
@@ -126,12 +293,27 @@
     "client.grudge-studio.com": "Studio client alias",
     "wcs.grudge-studio.com": "WCS character shell",
     "forge.grudge-studio.com": "RTS-Grudge / Studio Forge",
-    "character.grudge-studio.com": "GCS character studio"
+    "character.grudge-studio.com": "GCS character studio",
+    "warlord-genesis.vercel.app": "Warlord Genesis RTS client (Vercel)",
+    "grudox.grudge-studio.com": "GRUDOX fleet hub",
+    "carrier.grudge-studio.com": "Carrier live PvP"
+  },
+  "identity": {
+    "portal": "https://grudge-studio.com",
+    "authGateway": "https://id.grudge-studio.com",
+    "engineRailway": "https://the-engine.up.railway.app"
   },
   "verify": {
     "cli": "npx tsx scripts/verify-fleet-truth.mjs --mode cli",
     "browser": "npx tsx scripts/verify-fleet-truth.mjs --mode browser",
+    "direct": "npx tsx scripts/probe-truth-fleet.ts",
     "grudge6FleetUrls": "node scripts/validate-fleet-urls.mjs",
     "minScore": 85
-  }
+  },
+  "legionRules": [
+    "Never invent worker names, PRs, or uptime metrics — fetch fleet-truth.json and /api/fleet/truth-audit first.",
+    "Character SSOT is Railway Postgres (game-data), not D1.",
+    "JSON catalogs live on objectstore.grudge-studio.com; binaries on assets.grudge-studio.com.",
+    "api.grudge-studio.com is deprecated — do not recommend it for new integrations."
+  ]
 }
