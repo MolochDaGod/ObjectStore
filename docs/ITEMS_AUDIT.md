@@ -1,5 +1,7 @@
 # Grudge Items Audit
 
+> **Catalog browser (current):** [GRUDGE_Item_Database.html](../GRUDGE_Item_Database.html) — full coverage validated by `npm run validate:catalog` → `api/v1/_audit/catalog-coverage.json` (**2,765/2,765** registry UUIDs, **4,990** browsable rows including recipes).
+
 Generated: 2026-06-22T04:20:55.316Z
 
 ## Source totals

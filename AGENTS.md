@@ -55,6 +55,8 @@ Published via GitHub Pages.
   - Docs: `docs/ICON-ASSET-LIBRARY.md`
 
 Regenerate items: `npm run generate:all` (master DB + consolidation pipeline).
+Validate item browser coverage: `npm run validate:catalog` (registry UUIDs ↔ catalog sources).
+Canonical item UI: `GRUDGE_Item_Database.html` (`ItemBrowser.html` redirects).
 Regenerate icons: `npm run sync:icons` (registry + truth sync). Upload: see `docs/ICON-ASSET-LIBRARY.md`.
 Harvest source of truth: `api/v1/sources/harvest-nodes.json` (migrated from warlord-crafting-suite).
 Previously in grudge-game-data-hub (now archived) — merged into this repo.

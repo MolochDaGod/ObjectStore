@@ -11,6 +11,13 @@ ObjectStore, `grudge-game-data-hub`, and every downstream Grudge deployment.
 - **D5** Tier labels: T5 Heroic, T8 Legendary.
 - **D6** `grudge-game-data-hub` moves to prefetch-at-build + revalidate-at-runtime.
 
+## Item browser (done — 2026-07-04)
+- **Canonical UI:** `GRUDGE_Item_Database.html` — single catalog for all `master-*` item types + recipes.
+- **Legacy redirect:** `ItemBrowser.html` → Item Database (removed duplicate resolver/UI).
+- **Coverage:** `npm run validate:catalog` — **2,765/2,765** registry UUIDs; audit at `api/v1/_audit/catalog-coverage.json`.
+- **Sources wired:** `t0-weapons.json`, `master-weapons.json`, armor, consumables (food/potion/engineer), materials, relics, enchants, infusions, artifacts, `master-recipes.json`, `master-spellRecipes.json`, buildings, mounts.
+- **SDK / studio.json:** `itemBrowser` and `itemDatabase` both point to `GRUDGE_Item_Database.html`.
+
 ## Foundation (done)
 - `scripts/audit-items.mjs` produces `api/v1/_audit/items-audit.json` and `docs/ITEMS_AUDIT.md`.
 - D5 tier labels applied in both generators; both `master-items.json` outputs regenerated.

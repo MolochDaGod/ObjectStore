@@ -138,6 +138,7 @@ npm run enrich:t0-starter-skills   # T0 three-slot starter skills into master-we
 npm run enrich:variant-signatures  # named variant signatures → slot 4 ultimate pools
 npm run enrich:skill-stat-connections  # SKIL-*.statConnections (attributes + derived stats)
 npm run build:weapon-pipeline      # all enrich steps + prefabs + stat bridge + audit
+npm run validate:catalog           # item DB ↔ master-registry coverage (2,765 UUIDs)
 ```
 
 Outputs:
@@ -532,6 +533,34 @@ See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend
   }
 }
 ```
+
+## 📦 GRUDGE Item Database (canonical browser)
+
+**Live:** [info.grudge-studio.com/GRUDGE_Item_Database.html](https://info.grudge-studio.com/GRUDGE_Item_Database.html) · legacy `ItemBrowser.html` redirects here.
+
+Single UI for every catalog type — wired to `master-*.json`, `utils/icon-resolver.js`, `master-registry.json` (icon enrichment), and `weapon-model-game-urls.json` (game-ready 3D on weapons).
+
+| Category | Count | Source |
+|----------|------:|--------|
+| Weapons + T0 starters | 883 | `t0-weapons.json` + `master-weapons.json` |
+| Tools | 48 | `master-weapons.json` (`type: tool`) |
+| Armor | 1,344 | `master-armor.json` |
+| Food | 90 | `master-consumables.json` |
+| Potions | 30 | `master-consumables.json` |
+| Engineer supplies | 12 | `master-consumables.json` |
+| Materials | 147 | `master-materials.json` |
+| Relics / Enchants / Infusions / Artifacts | 248 | `master-relics.json`, `master-enchants.json`, … |
+| Craft recipes | 2,183 | `master-recipes.json` |
+| Spell recipes | 30 | `master-spellRecipes.json` |
+| Buildings / Mounts | 23 | `master-buildings.json`, `master-mounts.json` |
+
+**Registry coverage:** all **2,765** `master-registry.json` UUIDs are browsable (validated by `npm run validate:catalog`). Audit output: `api/v1/_audit/catalog-coverage.json`.
+
+```bash
+npm run validate:catalog   # fail build if any registry UUID is missing from catalog sources
+```
+
+---
 
 ## 🎨 Icons
 
