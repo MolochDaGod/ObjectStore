@@ -36,6 +36,8 @@
       </div>
     </div>
 
+    <div id="featuredStrip" style="margin-bottom:20px;"></div>
+
     <!-- Drop zone -->
     <div class="drop-zone" id="dropZone">
       <div style="font-size:3rem;margin-bottom:8px;opacity:0.4;">📦</div>
@@ -84,6 +86,10 @@
         <button class="viewer-btn" type="button" onclick="exportCurrentModel()">Export JSON</button>
       </div>
       <div class="viewer-controls">
+        <label class="viewer-control-label" id="unitSelectWrap" style="display:none">
+          Preview unit
+          <select class="anim-select-3d" id="unitSelect" onchange="changePreviewUnit(this.value)"></select>
+        </label>
         <button class="viewer-btn" onclick="toggleWireframe()">Wireframe</button>
         <button class="viewer-btn" onclick="toggleAutoRotate()">Auto Rotate</button>
         <select class="anim-select-3d" id="animSelect" onchange="playAnimation(this.value)" style="display:none">

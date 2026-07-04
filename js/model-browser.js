@@ -7,11 +7,26 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { TGALoader } from 'three/addons/loaders/TGALoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // ── CDN priority order ─────────────────────────────────
 const R2_CDN_URL   = 'https://assets.grudge-studio.com';
 const GHPAGES_BASE = 'https://molochdagod.github.io/ObjectStore';
+const TOON_RTS_PACK = `${R2_CDN_URL}/asset-packs/toon-rts-characters/glb`;
 const DRACO_PATH   = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
+
+const RACE_PREFIXES = {
+  BRB_: 'barbarian', ELF_: 'elf', ORC_: 'orc', WK_: 'human', UD_: 'undead', DWF_: 'dwarf',
+};
+
+const KAYKIT_PREVIEW_UNITS = [
+  { id: 'knight', label: 'Knight', url: `${GHPAGES_BASE}/models/characters/kaykit/Knight.glb` },
+  { id: 'barbarian', label: 'Barbarian', url: `${GHPAGES_BASE}/models/characters/kaykit/Barbarian.glb` },
+  { id: 'mage', label: 'Mage', url: `${GHPAGES_BASE}/models/characters/kaykit/Mage.glb` },
+  { id: 'ranger', label: 'Ranger', url: `${GHPAGES_BASE}/models/characters/kaykit/Ranger.glb` },
+  { id: 'rogue', label: 'Rogue', url: `${GHPAGES_BASE}/models/characters/kaykit/Rogue.glb` },
+];
 
 const REGISTRY_URLS = [
   './api/v1/models3d.json',
@@ -61,9 +76,112 @@ let r2Available = false;
 let scene, camera, renderer, controls, mixer, clock, currentModel;
 let wireframeMode = false;
 let autoRotate = true;
+let envTexture = null;
+let pmremGenerator = null;
+let currentClipGltf = null;
+let previewUnitOptions = [];
+let activePreviewUnitUrl = null;
 
-const _dracoLoader = new DRACOLoader();
+const _loadingManager = new THREE.LoadingManager();
+_loadingManager.addHandler(/\.tga$/i, new TGALoader());
+
+const _dracoLoader = new DRACOLoader(_loadingManager);
 _dracoLoader.setDecoderPath(DRACO_PATH);
+
+function urlDir(url) {
+  if (!url || url.startsWith('blob:')) return '';
+  const i = url.lastIndexOf('/');
+  return i >= 0 ? url.slice(0, i + 1) : '';
+}
+
+function configureTexture(tex, { isColor = true } = {}) {
+  if (!tex) return tex;
+  if (isColor) tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 8;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function normalizeModelMaterials(root) {
+  if (!root) return;
+  root.traverse((o) => {
+    if (!o.isMesh && !o.isSkinnedMesh) return;
+    o.castShadow = true;
+    o.receiveShadow = true;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m) => {
+      if (!m) return;
+      if (m.map) configureTexture(m.map, { isColor: true });
+      if (m.emissiveMap) configureTexture(m.emissiveMap, { isColor: true });
+      if (m.normalMap) configureTexture(m.normalMap, { isColor: false });
+      if (m.roughnessMap) configureTexture(m.roughnessMap, { isColor: false });
+      if (m.metalnessMap) configureTexture(m.metalnessMap, { isColor: false });
+      if (m.aoMap) configureTexture(m.aoMap, { isColor: false });
+      if (m.alphaMap) configureTexture(m.alphaMap, { isColor: false });
+      m.side = THREE.DoubleSide;
+      m.transparent = !!m.alphaMap || m.transparent;
+      m.needsUpdate = true;
+    });
+  });
+}
+
+function hasVisibleMesh(root) {
+  if (!root) return false;
+  let found = false;
+  root.traverse((o) => {
+    if (o.isMesh && o.geometry?.attributes?.position?.count > 0) found = true;
+  });
+  return found;
+}
+
+function detectRaceFromName(name = '') {
+  for (const [prefix, race] of Object.entries(RACE_PREFIXES)) {
+    if (name.startsWith(prefix)) return race;
+  }
+  return null;
+}
+
+function resolvePreviewUnit(entry) {
+  const name = entry?.name || '';
+  const race = detectRaceFromName(name);
+  if (race) {
+    if (/cavalry/i.test(name)) return { id: `${race}-cavalry`, label: `${race} cavalry`, url: `${TOON_RTS_PACK}/cavalry/${race}.glb` };
+    if (/catapult|boltthrower/i.test(name)) return { id: `${race}-siege`, label: `${race} siege`, url: `${TOON_RTS_PACK}/siege/${race}.glb` };
+    return { id: race, label: race, url: `${TOON_RTS_PACK}/characters/${race}.glb` };
+  }
+  if (/^Rig_Medium_/i.test(name)) return { ...KAYKIT_PREVIEW_UNITS[0], kind: 'kaykit-rig' };
+  if ((entry?.animations || 0) > 0 && /mixamorig|soldier|male_base|female_base/i.test(name)) {
+    return { id: 'soldier', label: 'Soldier', url: `${GHPAGES_BASE}/models/characters/soldier.glb` };
+  }
+  return null;
+}
+
+function isKayKitRigEntry(entry) {
+  return /^Rig_Medium_/i.test(entry?.name || '');
+}
+
+function isAnimationClipEntry(entry, gltf) {
+  if (!gltf?.animations?.length) return false;
+  if (hasVisibleMesh(gltf.scene)) return false;
+  if (/\.FBX\.glb$/i.test(entry?.path || entry?.name || '')) return true;
+  return !gltf.scene?.children?.length;
+}
+
+function createGltfLoader(resourceUrl) {
+  const loader = new GLTFLoader(_loadingManager);
+  loader.setDRACOLoader(_dracoLoader);
+  const base = urlDir(resourceUrl);
+  if (base) loader.setResourcePath(base);
+  return loader;
+}
+
+function setupEnvironment() {
+  if (!renderer || !scene) return;
+  if (!pmremGenerator) pmremGenerator = new THREE.PMREMGenerator(renderer);
+  if (envTexture) envTexture.dispose();
+  envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = envTexture;
+}
 
 // ── URL resolution ─────────────────────────────────────
 function modelUrlCandidates(m) {
@@ -81,6 +199,7 @@ function encPath(p) { return p.split('/').map(s => encodeURIComponent(s)).join('
 
 async function resolveModelUrl(m) {
   if (m.url) return m.url;
+  if (m._cdnUrl) return m._cdnUrl;
   for (const url of modelUrlCandidates(m)) {
     try {
       const r = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
@@ -237,7 +356,10 @@ function renderPage() {
   grid.innerHTML = filteredModels.slice(s, e).map((m, i) => {
     const idx = s + i;
     const info = [m.meshes ? `${m.meshes} mesh` : '', m.animations ? `${m.animations} anim` : '', m.sizeKB ? (m.sizeKB < 1024 ? `${m.sizeKB} KB` : `${(m.sizeKB / 1024).toFixed(1)} MB`) : ''].filter(Boolean).join(' · ');
-    const animBadge = m.animations ? `<span style="position:absolute;top:6px;left:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#22c55e;color:#000;font-weight:700">▶ ANIM</span>` : '';
+    const isClip = /\.FBX\.glb$/i.test(m.path || m.name || '') && /attack|idle|death|charge|combat|walk|run|crouch/i.test(m.name || '');
+    const animBadge = (m.animations || isClip || /^Rig_Medium_/i.test(m.name || ''))
+      ? `<span style="position:absolute;top:6px;left:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#22c55e;color:#000;font-weight:700">▶ ANIM</span>`
+      : '';
     const draco = m.compressionType === 'draco' ? '<span style="position:absolute;bottom:6px;right:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#6366f1;color:#fff;font-weight:700">DRACO</span>' : '';
     const uuid = m.uuid || '';
     const uuidLine = uuid
@@ -297,6 +419,7 @@ function initViewer() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.4;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   w.appendChild(renderer.domElement);
@@ -332,6 +455,8 @@ function initViewer() {
     renderer.render(scene, camera);
   })();
 
+  setupEnvironment();
+
   new ResizeObserver(() => {
     if (!w.clientWidth) return;
     camera.aspect = w.clientWidth / w.clientHeight;
@@ -340,54 +465,140 @@ function initViewer() {
   }).observe(w);
 }
 
-async function loadByUrl(url, entry) {
-  if (currentModel) {
-    scene.remove(currentModel);
-    currentModel.traverse(o => {
-      if (o.isMesh) {
-        o.geometry?.dispose();
-        (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m?.dispose());
-      }
-    });
-    currentModel = null;
-  }
-  if (mixer) { mixer.stopAllAction(); mixer = null; }
+function disposeCurrentModel() {
+  if (!currentModel) return;
+  scene.remove(currentModel);
+  currentModel.traverse((o) => {
+    if (o.isMesh) {
+      o.geometry?.dispose();
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m?.dispose());
+    }
+  });
+  currentModel = null;
+}
 
-  const loader = new GLTFLoader(); loader.setDRACOLoader(_dracoLoader);
-  const le = document.getElementById('viewerLoading'); if (le) le.style.display = 'block';
+function fitModelToView(root) {
+  const box = new THREE.Box3().setFromObject(root);
+  const ctr = box.getCenter(new THREE.Vector3());
+  const sz = box.getSize(new THREE.Vector3());
+  const mx = Math.max(sz.x, sz.y, sz.z) || 1;
+  root.position.y -= box.min.y;
+  camera.position.set(ctr.x, ctr.y + mx * 0.4, ctr.z + mx * 1.8);
+  controls.target.set(ctr.x, ctr.y + mx * 0.15, ctr.z);
+  controls.update();
+}
+
+function populateAnimSelect(clips) {
+  const sel = document.getElementById('animSelect');
+  if (!sel) return;
+  if (!clips?.length) {
+    sel.style.display = 'none';
+    sel.innerHTML = '<option value="">— Animations —</option>';
+    return;
+  }
+  sel.style.display = 'inline-block';
+  sel.innerHTML = '<option value="">— Animations —</option>' +
+    clips.map((a, i) => `<option value="${i}">${a.name || 'Clip ' + i}</option>`).join('');
+}
+
+function populateUnitSelect(options, activeUrl) {
+  const wrap = document.getElementById('unitSelectWrap');
+  const sel = document.getElementById('unitSelect');
+  if (!wrap || !sel) return;
+  if (!options?.length) {
+    wrap.style.display = 'none';
+    sel.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'inline-flex';
+  sel.innerHTML = options.map((o) =>
+    `<option value="${esc(o.url)}" ${o.url === activeUrl ? 'selected' : ''}>${esc(o.label)}</option>`
+  ).join('');
+}
+
+function startAnimations(root, clips, autoPlay = true) {
+  if (mixer) { mixer.stopAllAction(); mixer = null; }
+  window._currentAnimations = clips || [];
+  populateAnimSelect(clips);
+  if (!clips?.length || !root) return;
+  mixer = new THREE.AnimationMixer(root);
+  if (autoPlay) {
+    mixer.clipAction(clips[0]).play();
+    const sel = document.getElementById('animSelect');
+    if (sel) sel.value = '0';
+  }
+}
+
+function allRaceUnitOptions(entry) {
+  const name = entry?.name || '';
+  const cavalry = /cavalry/i.test(name);
+  const siege = /catapult|boltthrower/i.test(name);
+  return ['human', 'barbarian', 'elf', 'dwarf', 'undead', 'orc'].map((race) => {
+    let url = `${TOON_RTS_PACK}/characters/${race}.glb`;
+    let label = race;
+    if (cavalry) { url = `${TOON_RTS_PACK}/cavalry/${race}.glb`; label = `${race} cavalry`; }
+    else if (siege && ['human', 'orc', 'elf'].includes(race)) { url = `${TOON_RTS_PACK}/siege/${race}.glb`; label = `${race} siege`; }
+    else if (siege) return null;
+    return { id: race, label, url };
+  }).filter(Boolean);
+}
+
+function updatePreviewUnitUI(entry, mode) {
+  previewUnitOptions = [];
+  activePreviewUnitUrl = null;
+  const unit = resolvePreviewUnit(entry);
+  if (mode === 'kaykit-rig') {
+    previewUnitOptions = [...KAYKIT_PREVIEW_UNITS];
+    activePreviewUnitUrl = unit?.url || previewUnitOptions[0].url;
+  } else if (mode === 'animation-clip') {
+    previewUnitOptions = allRaceUnitOptions(entry);
+    activePreviewUnitUrl = unit?.url || previewUnitOptions[0]?.url;
+  }
+  populateUnitSelect(previewUnitOptions, activePreviewUnitUrl);
+}
+
+async function loadByUrl(url, entry, opts = {}) {
+  disposeCurrentModel();
+  if (mixer) { mixer.stopAllAction(); mixer = null; }
+  currentClipGltf = null;
+
+  const le = document.getElementById('viewerLoading');
+  if (le) le.style.display = 'block';
 
   try {
+    const loader = createGltfLoader(url);
     const gltf = await loader.loadAsync(url);
-    currentModel = gltf.scene;
-    currentModel.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-    scene.add(currentModel);
+    const kaykitRig = !opts.unitUrl && isKayKitRigEntry(entry);
+    const clipOnly = !opts.unitUrl && isAnimationClipEntry(entry, gltf);
+    let displayGltf = gltf;
+    let animClips = gltf.animations || [];
 
-    const box = new THREE.Box3().setFromObject(currentModel);
-    const ctr = box.getCenter(new THREE.Vector3());
-    const sz = box.getSize(new THREE.Vector3());
-    const mx = Math.max(sz.x, sz.y, sz.z) || 1;
-
-    currentModel.position.y -= box.min.y;
-    camera.position.set(ctr.x, ctr.y + mx * 0.4, ctr.z + mx * 1.8);
-    controls.target.set(ctr.x, ctr.y, ctr.z);
-
-    const sel = document.getElementById('animSelect');
-    if (gltf.animations.length) {
-      mixer = new THREE.AnimationMixer(currentModel);
-      if (sel) {
-        sel.style.display = 'inline-block';
-        sel.innerHTML = '<option value="">— Animations —</option>' +
-          gltf.animations.map((a, i) => `<option value="${i}">${a.name || 'Clip ' + i}</option>`).join('');
-      }
-      mixer.clipAction(gltf.animations[0]).play();
-      if (sel) sel.value = '0';
+    if (clipOnly || kaykitRig) {
+      const unit = opts.unitUrl
+        ? { url: opts.unitUrl, label: 'unit' }
+        : (resolvePreviewUnit(entry) || { url: `${TOON_RTS_PACK}/characters/human.glb`, label: 'human' });
+      activePreviewUnitUrl = unit.url;
+      const unitLoader = createGltfLoader(unit.url);
+      const [unitGltf] = await Promise.all([unitLoader.loadAsync(unit.url)]);
+      displayGltf = unitGltf;
+      currentClipGltf = gltf;
+      animClips = gltf.animations?.length ? gltf.animations : unitGltf.animations;
+      updatePreviewUnitUI(entry, kaykitRig ? 'kaykit-rig' : 'animation-clip');
     } else {
-      if (sel) sel.style.display = 'none';
+      updatePreviewUnitUI(entry, null);
     }
-    window._currentAnimations = gltf.animations;
+
+    currentModel = displayGltf.scene;
+    normalizeModelMaterials(currentModel);
+    scene.add(currentModel);
+    fitModelToView(currentModel);
+    startAnimations(currentModel, animClips, true);
 
     const vi = document.getElementById('viewerInfo');
-    if (vi) vi.textContent = `${entry?.sizeKB || '?'} KB · ${gltf.scene.children.length} nodes · ${gltf.animations.length} anims`;
+    if (vi) {
+      const mode = clipOnly ? 'clip → unit' : kaykitRig ? 'rig → unit' : 'model';
+      vi.textContent = `${entry?.sizeKB || '?'} KB · ${mode} · ${animClips.length} anims`;
+    }
     if (le) le.style.display = 'none';
   } catch (e) {
     console.error('Load failed:', url, e);
@@ -519,7 +730,11 @@ window.closeViewer = () => {
   document.body.style.overflow = '';
   currentViewerModel = null;
   currentViewerUrl = null;
-  if (currentModel) { scene.remove(currentModel); currentModel = null; }
+  currentClipGltf = null;
+  previewUnitOptions = [];
+  activePreviewUnitUrl = null;
+  populateUnitSelect([], null);
+  disposeCurrentModel();
   if (mixer) { mixer.stopAllAction(); mixer = null; }
 };
 window.toggleWireframe = () => {
@@ -530,8 +745,17 @@ window.toggleAutoRotate = () => { autoRotate = !autoRotate; if (controls) contro
 window.playAnimation = v => {
   if (!mixer || !window._currentAnimations) return;
   mixer.stopAllAction();
-  const i = parseInt(v);
+  const i = parseInt(v, 10);
   if (!isNaN(i) && window._currentAnimations[i]) mixer.clipAction(window._currentAnimations[i]).play();
+};
+
+window.changePreviewUnit = async (unitUrl) => {
+  if (!currentViewerModel || !unitUrl) return;
+  activePreviewUnitUrl = unitUrl;
+  const url = currentViewerUrl || await resolveModelUrl(currentViewerModel);
+  const le = document.getElementById('viewerLoading');
+  if (le) { le.innerHTML = '<div class="spinner"></div><p>Switching preview unit…</p>'; le.style.display = 'block'; }
+  await loadByUrl(url, currentViewerModel, { unitUrl });
 };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeViewer(); });
 
