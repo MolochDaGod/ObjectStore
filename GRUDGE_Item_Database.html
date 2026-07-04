@@ -253,7 +253,13 @@
 
     <div class="sidebar-label">Consumables</div>
     <button class="nav-btn" data-type="consumable" onclick="setType('consumable')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> Consumables <span class="badge" id="count-consumable">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> All Consumables <span class="badge" id="count-consumable">—</span>
+    </button>
+    <button class="nav-btn" data-type="food" onclick="setType('food')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/food_steak_cooked.png" width="16" height="16" alt=""></span> Food <span class="badge" id="count-food">—</span>
+    </button>
+    <button class="nav-btn" data-type="potion" onclick="setType('potion')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/mana_potion.png" width="16" height="16" alt=""></span> Potions <span class="badge" id="count-potion">—</span>
     </button>
     <button class="nav-btn" data-type="material" onclick="setType('material')">
       <span class="ico"><img src="https://assets.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt=""></span> Materials <span class="badge" id="count-material">—</span>
@@ -270,11 +276,28 @@
       <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt=""></span> Infusions <span class="badge" id="count-infusion">—</span>
     </button>
 
+    <div class="sidebar-label">Crafting</div>
+    <button class="nav-btn" data-type="recipe" onclick="setType('recipe')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/forge.png" width="16" height="16" alt=""></span> Recipes <span class="badge" id="count-recipe">—</span>
+    </button>
+
+    <div class="sidebar-label">World</div>
+    <button class="nav-btn" data-type="building" onclick="setType('building')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/workbench.png" width="16" height="16" alt=""></span> Buildings <span class="badge" id="count-building">—</span>
+    </button>
+    <button class="nav-btn" data-type="mount" onclick="setType('mount')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/entities/horse.png" width="16" height="16" alt=""></span> Mounts <span class="badge" id="count-mount">—</span>
+    </button>
+    <button class="nav-btn" data-type="tool" onclick="setType('tool')">
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/pack/weapons/Hammer_01.png" width="16" height="16" alt=""></span> Tools <span class="badge" id="count-tool">—</span>
+    </button>
+
     <div class="sidebar-divider"></div>
     <div class="sidebar-label">Tier Filter</div>
     <div class="tier-filters">
       <div class="tier-row">
         <button class="tier-btn active" data-tier="all" onclick="setTier('all')" title="All tiers">All</button>
+        <button class="tier-btn" data-tier="0" onclick="setTier('0')" title="Starter">T0</button>
         <button class="tier-btn" data-tier="1" onclick="setTier('1')" title="Common">T1</button>
         <button class="tier-btn" data-tier="2" onclick="setTier('2')" title="Uncommon">T2</button>
         <button class="tier-btn" data-tier="3" onclick="setTier('3')" title="Rare">T3</button>
@@ -383,17 +406,41 @@ import { ICON_CDN } from './utils/asset-config.js';
 
 const CDN = ICON_CDN;
 
-// ─── Data sources ─────────────────────────────────────────────────────────
+// ─── Data sources (full registry coverage) ────────────────────────────────
 const SOURCES = [
+  { url: './api/v1/t0-weapons.json',         key: 'weapons',    type: 'weapon',     ico: '⚔️' },
   { url: './api/v1/master-weapons.json',     key: 'items',      type: 'weapon',     ico: '⚔️' },
   { url: './api/v1/master-armor.json',       key: 'items',      type: 'armor',      ico: '🛡️' },
   { url: './api/v1/master-consumables.json', key: 'items',      type: 'consumable', ico: '🧪' },
   { url: './api/v1/master-materials.json',   key: 'materials',  type: 'material',   ico: '🪨' },
   { url: './api/v1/master-relics.json',      key: 'relics',     type: 'relic',      ico: '💎' },
-  { url: './api/v1/master-enchants.json',    key: 'enchants',   type: 'enchant',    ico: '✨' },
+  { url: './api/v1/master-enchants.json',  key: 'enchants',   type: 'enchant',    ico: '✨' },
   { url: './api/v1/master-infusions.json',   key: 'infusions',  type: 'infusion',   ico: '🌀' },
   { url: './api/v1/master-artifacts.json',   key: 'artifacts',  type: 'artifact',   ico: '🏺' },
+  { url: './api/v1/master-recipes.json',     key: 'recipes',    type: 'recipe',     ico: '📜', kind: 'recipe' },
+  { url: './api/v1/master-spellRecipes.json', key: 'recipes',   type: 'spell-recipe', ico: '✦', kind: 'spell-recipe' },
+  { url: './api/v1/master-buildings.json',   key: 'buildings',  type: 'building',   ico: '🏛️' },
+  { url: './api/v1/master-mounts.json',      key: 'mounts',     type: 'mount',      ico: '🐴' },
 ];
+
+const TYPE_GROUPS = {
+  consumable: ['consumable', 'food', 'potion'],
+  recipe: ['recipe', 'spell-recipe'],
+};
+
+function matchesActiveType(item) {
+  if (activeType === 'all') return true;
+  const group = TYPE_GROUPS[activeType];
+  if (group) return group.includes(item._type);
+  return item._type === activeType;
+}
+
+function parseTierNum(item) {
+  const t = item.tier ?? item._tierNum;
+  if (t === 0 || t === '0') return 0;
+  const n = parseInt(t, 10);
+  return Number.isFinite(n) ? n : 1;
+}
 
 function resolveIcon(item) {
   return resolveCatalogIcon(item);
@@ -427,13 +474,14 @@ function enrichItem(item) {
   const uuid = item.uuid || item.id || '';
   const baseUuid = item.baseUuid || uuid;
   const reg = (uuid && registryByUuid[uuid]) || (baseUuid && registryByUuid[baseUuid]) || null;
+  const resultReg = item.resultItemId ? registryByUuid[item.resultItemId] : null;
   const model = (uuid && weaponModelByUuid.get(uuid))
     || (baseUuid && weaponModelByUuid.get(baseUuid))
     || null;
   return {
     ...item,
     uuid,
-    iconUrl: item.iconUrl || item.iconCdnUrl || reg?.iconUrl || '',
+    iconUrl: item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl || '',
     _gameModelUrl: model?.modelUrl || item.modelUrl || item._gameModelUrl || null,
     _gameModelUuid: model?.grudgeUUID || item._gameModelUuid || null,
     _attachmentProfile: model?.attachmentProfile || null,
@@ -514,35 +562,47 @@ function showCatalogError(message) {
 (async () => {
   await loadAuxManifests();
   const results = await Promise.allSettled(SOURCES.map(s => loadSource(s)));
-  const counts = {};
+  const loadErrors = [];
   results.forEach((r, i) => {
     if (r.status === 'fulfilled') {
-      const { type, items } = r.value;
-      counts[type] = (counts[type] || 0) + items.length;
-      allItems.push(...items);
+      allItems.push(...r.value.items);
     } else {
+      loadErrors.push(SOURCES[i].url);
       console.warn('Load failed:', SOURCES[i].url, r.reason?.message || r.reason);
     }
   });
 
-  let total = 0;
+  const counts = {};
+  allItems.forEach(item => {
+    counts[item._type] = (counts[item._type] || 0) + 1;
+  });
+  counts.consumable = (counts.food || 0) + (counts.potion || 0) + (counts.consumable || 0);
+  counts.recipe = (counts.recipe || 0) + (counts['spell-recipe'] || 0);
+
+  let total = allItems.length;
   Object.entries(counts).forEach(([t, n]) => {
     const el = document.getElementById('count-' + t);
     if (el) el.textContent = n.toLocaleString();
-    total += n;
   });
   const allBadge = document.getElementById('count-all');
   if (allBadge) allBadge.textContent = total.toLocaleString();
 
   const hc = document.getElementById('headerCounts');
   if (hc) {
-    [['Weapons', counts.weapon||0], ['Armor', counts.armor||0], ['Relics', counts.relic||0], ['Enchants', counts.enchant||0]]
-      .forEach(([label, n]) => {
-        const d = document.createElement('div');
-        d.className = 'hcount';
-        d.innerHTML = `<strong>${n.toLocaleString()}</strong>${label}`;
-        hc.appendChild(d);
-      });
+    [
+      ['Items', total],
+      ['Food', counts.food || 0],
+      ['Recipes', counts.recipe || 0],
+      ['Weapons', counts.weapon || 0],
+    ].forEach(([label, n]) => {
+      const d = document.createElement('div');
+      d.className = 'hcount';
+      d.innerHTML = `<strong>${n.toLocaleString()}</strong>${label}`;
+      hc.appendChild(d);
+    });
+  }
+  if (loadErrors.length) {
+    console.warn('Catalog partial load:', loadErrors.join(', '));
   }
 
   if (!allItems.length) {
@@ -552,35 +612,87 @@ function showCatalogError(message) {
   applyFilters();
 })();
 
-async function loadSource({ url, key, type, ico }) {
+function normalizeCatalogEntry(raw, { type, ico, kind }) {
+  if (kind === 'recipe') {
+    const enriched = enrichItem({
+      uuid: raw.uuid,
+      name: raw.name,
+      type: 'recipe',
+      category: raw.category,
+      profession: raw.profession,
+      tier: raw.tier,
+      resultItemId: raw.resultItemId,
+      resultName: raw.resultName,
+      description: raw.resultName ? `Crafts ${raw.resultName}` : raw.name,
+      craftingRecipe: { materials: raw.materials, profession: raw.profession, station: raw.station },
+    });
+    return {
+      ...enriched,
+      _type: 'recipe',
+      _ico: ico,
+      _tierNum: parseTierNum(enriched),
+      _subType: String(raw.category || '').toLowerCase(),
+      _weaponKey: '',
+      _slotType: '',
+    };
+  }
+  if (kind === 'spell-recipe') {
+    const enriched = enrichItem({
+      uuid: raw.uuid,
+      id: raw.id,
+      name: raw.name,
+      type: 'spell-recipe',
+      category: raw.school,
+      profession: 'Mystic',
+      tier: raw.spellwrightLevel ? Math.ceil(raw.spellwrightLevel / 15) : 1,
+      icon: raw.icon,
+      description: raw.description,
+      craftingRecipe: { materials: raw.materials, profession: 'Mystic' },
+      school: raw.school,
+      damage: raw.damage,
+      cooldown: raw.cooldown,
+    });
+    return {
+      ...enriched,
+      _type: 'spell-recipe',
+      _ico: ico,
+      _tierNum: parseTierNum(enriched),
+      _subType: String(raw.school || '').toLowerCase(),
+      _weaponKey: '',
+      _slotType: '',
+    };
+  }
+
+  const rawCat = raw.subType || raw.weaponType || raw.category || '';
+  const enriched = enrichItem(raw);
+  const resolvedType = enriched.type || type;
+  return {
+    ...enriched,
+    _type: resolvedType,
+    _ico: ico,
+    _tierNum: parseTierNum(enriched),
+    _subType: String(rawCat).toLowerCase(),
+    _weaponKey: (resolvedType === 'weapon' || resolvedType === 'tool') ? normalizeWeaponKey(rawCat) : '',
+    _slotType: enriched.slotType || '',
+  };
+}
+
+async function loadSource(source) {
+  const { url, key } = source;
   const res = await fetch(url);
   if (!res.ok) throw new Error(res.status);
   const data = await res.json();
+  if (data.deprecated || data.archived) return { items: [] };
   const raw = data[key] || [];
-  return {
-    type,
-    items: raw.map(item => {
-      const rawCat = item.subType || item.weaponType || item.category || '';
-      const enriched = enrichItem(item);
-      return {
-        ...enriched,
-        _type:      enriched.type || type,
-        _ico:       ico,
-        _tierNum:   parseInt(enriched.tier) || 1,
-        _subType:   String(rawCat).toLowerCase(),
-        _weaponKey: type === 'weapon' ? normalizeWeaponKey(rawCat) : '',
-        _slotType:  enriched.slotType || '',
-      };
-    })
-  };
+  return { items: raw.map(item => normalizeCatalogEntry(item, source)) };
 }
 
 // ─── Filters ──────────────────────────────────────────────────────────────
 function applyFilters() {
   const q = searchQ.toLowerCase();
   filtered = allItems.filter(item => {
-    if (activeType !== 'all' && item._type !== activeType) return false;
-    if (activeTier !== 'all' && item._tierNum !== parseInt(activeTier)) return false;
+    if (!matchesActiveType(item)) return false;
+    if (activeTier !== 'all' && item._tierNum !== parseInt(activeTier, 10)) return false;
     if (activeSub !== 'all' && activeType === 'weapon') {
       if (item._weaponKey !== activeSub) return false;
     }
@@ -591,7 +703,9 @@ function applyFilters() {
       const hay = [item.name, item.category, item.subCategory, item.subType,
         item.weaponType, item.description, item._type, item.element,
         item.effect?.stat, item.scope, item.profession,
-        item.slotType, item.material, item.setName]
+        item.slotType, item.material, item.setName,
+        item.resultName, item.resultItemId, item.school, item.race,
+        item.obtainedFrom, item.baseName]
         .filter(Boolean).join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
@@ -643,9 +757,17 @@ function makeCard(item) {
   div.className = 'item-card';
   div.dataset.tier = item._tierNum || 1;
   const tc  = item.tierColor || '#8b7355';
-  const cat = item._type === 'armor' && item.slotType
-    ? item.slotType + (item.material ? ' · ' + item.material : '')
-    : (item.category || item.subCategory || item.weaponType || item._subType || '');
+  const cat = item._type === 'recipe'
+    ? (item.profession || 'Recipe')
+    : item._type === 'spell-recipe'
+      ? `Spell · ${item.school || 'arcane'}`
+      : item._type === 'building'
+        ? (item.category || 'building').replace(/_/g, ' ')
+        : item._type === 'mount'
+          ? (item.race || 'mount')
+          : item._type === 'armor' && item.slotType
+            ? item.slotType + (item.material ? ' · ' + item.material : '')
+            : (item.category || item.subCategory || item.weaponType || item._subType || '');
   const icon = resolveIcon(item);
 
   // Rich tooltip
@@ -767,7 +889,38 @@ function openDrawer(item, cardEl) {
   if (abs.length) body += `<div class="section-title">Abilities</div><div class="ability-list">${abs.map(a=>`<div class="ability-item">• ${e(String(a))}</div>`).join('')}</div>`;
   if (pas.length) body += `<div class="section-title">Passives</div><div class="ability-list">${pas.map(p=>`<div class="ability-item">◈ ${e(typeof p==='object'?(p.name||JSON.stringify(p)):String(p))}</div>`).join('')}</div>`;
 
-  // ── Crafting recipe ──
+  // ── Craft / spell recipe ──
+  if (item._type === 'recipe' || item._type === 'spell-recipe') {
+    if (item.resultName) {
+      body += `<div class="section-title">Produces</div><div class="ability-list"><div class="ability-item">📦 <strong>${e(item.resultName)}</strong></div></div>`;
+    }
+    if (item.school) body += `<div class="ability-list"><div class="ability-item">✦ School: <strong>${e(item.school)}</strong></div></div>`;
+    if (item.damage) body += `<div class="ability-list"><div class="ability-item">⚡ ${item.damage} dmg · CD ${item.cooldown || '?'}s</div></div>`;
+    if (item.profession) body += `<div class="ability-list"><div class="ability-item">🧙 ${e(item.profession)}</div></div>`;
+  }
+
+  // ── Building ──
+  if (item._type === 'building') {
+    if (item.profession) body += `<div class="section-title">Station</div><div class="ability-list"><div class="ability-item">🧙 ${e(item.profession)}</div></div>`;
+    const bm = item.buildMaterials || [];
+    if (bm.length) {
+      body += `<div class="section-title">Build Cost</div><div class="recipe-list">`;
+      bm.forEach(m => { body += `<div class="recipe-row"><span class="r-qty">×${m.quantity||1}</span><span class="r-name">${e(m.name||m.id||'')}</span></div>`; });
+      body += `</div>`;
+    }
+  }
+
+  // ── Mount ──
+  if (item._type === 'mount') {
+    body += `<div class="section-title">Mount Stats</div><div class="infusion-grid">`;
+    if (item.speed) body += `<div class="inf-cell"><div class="inf-val">${item.speed}×</div><div class="inf-label">Speed</div></div>`;
+    if (item.levelReq) body += `<div class="inf-cell"><div class="inf-val">Lv ${item.levelReq}</div><div class="inf-label">Required</div></div>`;
+    body += `</div>`;
+    if (item.race) body += `<div class="ability-list"><div class="ability-item">🏴 Race: <strong>${e(item.race)}</strong></div></div>`;
+    if (item.obtainedFrom) body += `<div class="ability-list"><div class="ability-item">📍 ${e(item.obtainedFrom)}</div></div>`;
+  }
+
+  // ── Crafting recipe (items with inline recipe) ──
   const r = item.craftingRecipe;
   if (r?.materials?.length) {
     body += `<div class="section-title">Crafting Recipe</div><div class="recipe-list">`;

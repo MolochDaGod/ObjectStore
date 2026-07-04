@@ -511,6 +511,19 @@ export function resolveCatalogIcon(item, base) {
   if (t === 'potion') return catalogPotionIcon(item, base);
   if (t === 'consumable') return catalogEngineerIcon(item, base);
   if (t === 'material') return catalogMaterialIcon(item, base);
+  if (t === 'building') {
+    if (raw) return absAssetUrl(raw, base);
+    return base + '/icons/professions/forge.png';
+  }
+  if (t === 'mount') {
+    if (raw) return absAssetUrl(raw, base);
+    return base + '/icons/entities/horse.png';
+  }
+  if (t === 'recipe' || t === 'spell-recipe') {
+    if (item.icon) return absAssetUrl(item.icon, base);
+    if (raw) return absAssetUrl(raw, base);
+    return base + '/icons/items/alchemy/alchemy_01_framed.png';
+  }
 
   if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {
     return absAssetUrl(raw.replace(/\.png$/, '_framed.png'), base);
