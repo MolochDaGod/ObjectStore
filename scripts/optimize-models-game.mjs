@@ -24,10 +24,18 @@ import {
   loadRegistry,
   parseGlbJson,
 } from './lib/model-game-utils.mjs';
+import {
+  getAtlasTexture,
+  isPlaceholderDataUri,
+  isPlaceholderImageBuffer,
+  preloadWeaponAtlases,
+  resolveWeaponAtlasKey,
+} from './lib/texture-atlas-cache.mjs';
 
 const MAX_TEXTURE_SIZE = 1024;
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
+const force = args.includes('--force');
 const categoryFilter = args.find((a) => a.startsWith('--category='))?.split('=')[1]
   || (args.indexOf('--category') >= 0 ? args[args.indexOf('--category') + 1] : null);
 const verbose = args.includes('--verbose') || args.includes('-v');
@@ -71,6 +79,40 @@ async function embedExternalTextures(doc, glbPath, glbJson) {
   }
 }
 
+async function replacePlaceholderTextures(doc, entry, glbJson) {
+  const root = doc.getRoot();
+  const textures = root.listTextures();
+  if (!textures.length) return false;
+
+  let replaced = false;
+  const atlasKey = entry.path?.includes('/weapons/')
+    ? resolveWeaponAtlasKey(entry.name, entry.path)
+    : null;
+
+  for (const tex of textures) {
+    const uri = tex.getURI();
+    const img = tex.getImage();
+    const isPlaceholder = isPlaceholderDataUri(uri) || isPlaceholderImageBuffer(img);
+    if (!isPlaceholder) continue;
+    if (!atlasKey) continue;
+
+    const atlas = await getAtlasTexture(atlasKey);
+    tex.setImage(atlas.buffer);
+    tex.setMimeType(atlas.mimeType);
+    tex.setURI('');
+    replaced = true;
+  }
+
+  if (replaced) {
+    for (const mat of root.listMaterials()) {
+      if (!mat.getBaseColorFactor() || mat.getBaseColorFactor().every((v, i) => (i < 3 ? v === 1 : v === 1))) {
+        mat.setBaseColorFactor([1, 1, 1, 1]);
+      }
+    }
+  }
+  return replaced;
+}
+
 async function resizeEmbeddedTextures(doc) {
   for (const tex of doc.getRoot().listTextures()) {
     const img = tex.getImage();
@@ -109,7 +151,7 @@ async function optimizeModel(io, entry) {
 
   const outRel = gameReadyRelPath(relPath);
   const outPath = path.join(ROOT, outRel);
-  if (!isNewer(srcPath, outPath)) { stats.skipped += 1; return { outRel, skipped: true }; }
+  if (!force && !isNewer(srcPath, outPath)) { stats.skipped += 1; return { outRel, skipped: true }; }
   if (dryRun) { stats.optimized += 1; return { outRel, dryRun: true }; }
 
   try {
@@ -120,6 +162,7 @@ async function optimizeModel(io, entry) {
     const doc = await io.read(srcPath);
 
     await embedExternalTextures(doc, srcPath, glbJson);
+    await replacePlaceholderTextures(doc, entry, glbJson);
     await resizeEmbeddedTextures(doc);
 
     if (classification.kind === 'animation-clip') {
@@ -153,6 +196,8 @@ async function main() {
   const registry = loadRegistry();
   const glbModels = (registry.models || []).filter((m) => String(m.path || '').toLowerCase().endsWith('.glb'));
   log(`Processing ${glbModels.length} GLB models`);
+  const atlases = await preloadWeaponAtlases();
+  log(`Texture atlases: ${Object.entries(atlases).filter(([, v]) => v === true).map(([k]) => k).join(', ')}`);
   const io = await createIO();
   const results = [];
   for (const entry of glbModels) {

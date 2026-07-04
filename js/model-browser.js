@@ -106,6 +106,12 @@ function configureTexture(tex, { isColor = true } = {}) {
   return tex;
 }
 
+function isPlaceholderTexture(tex) {
+  if (!tex?.image) return false;
+  const img = tex.image;
+  return (img.width <= 1 && img.height <= 1) || (img.data?.length > 0 && img.data.length <= 16);
+}
+
 function normalizeModelMaterials(root) {
   if (!root) return;
   root.traverse((o) => {
@@ -115,15 +121,29 @@ function normalizeModelMaterials(root) {
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach((m) => {
       if (!m) return;
-      if (m.map) configureTexture(m.map, { isColor: true });
+      if (m.map) {
+        if (isPlaceholderTexture(m.map)) {
+          m.map = null;
+          m.transparent = false;
+          m.opacity = 1;
+        } else {
+          configureTexture(m.map, { isColor: true });
+        }
+      }
       if (m.emissiveMap) configureTexture(m.emissiveMap, { isColor: true });
       if (m.normalMap) configureTexture(m.normalMap, { isColor: false });
       if (m.roughnessMap) configureTexture(m.roughnessMap, { isColor: false });
       if (m.metalnessMap) configureTexture(m.metalnessMap, { isColor: false });
       if (m.aoMap) configureTexture(m.aoMap, { isColor: false });
       if (m.alphaMap) configureTexture(m.alphaMap, { isColor: false });
+      if (m.isMeshStandardMaterial || m.isMeshPhysicalMaterial) {
+        if (!m.map && !m.vertexColors) {
+          m.metalness = Math.min(m.metalness ?? 0.4, 0.35);
+          m.roughness = Math.max(m.roughness ?? 0.5, 0.45);
+        }
+      }
       m.side = THREE.DoubleSide;
-      m.transparent = !!m.alphaMap || m.transparent;
+      m.transparent = !!m.alphaMap || (m.transparent && !!m.map);
       m.needsUpdate = true;
     });
   });
@@ -286,6 +306,8 @@ function mergeGameManifest(models, gameByPath) {
       gameReadyPath: game.gameReadyPath,
       _gameReadyUrl: game._gameReadyUrl,
       _cdnUrl: game._cdnUrl || m._cdnUrl,
+      gameReady: game.gameReady,
+      compressionType: game.compressionType || m.compressionType,
     };
   });
 }
@@ -402,7 +424,12 @@ function renderPage() {
     const animBadge = (m.animations || isClip || /^Rig_Medium_/i.test(m.name || ''))
       ? `<span style="position:absolute;top:6px;left:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#22c55e;color:#000;font-weight:700">▶ ANIM</span>`
       : '';
-    const draco = m.compressionType === 'draco' ? '<span style="position:absolute;bottom:6px;right:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#6366f1;color:#fff;font-weight:700">DRACO</span>' : '';
+    const gameBadge = m.gameReady || m._gameReadyUrl
+      ? '<span style="position:absolute;bottom:6px;left:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#22c55e;color:#000;font-weight:700">GAME</span>'
+      : '';
+    const draco = (m.compressionType === 'draco' || m._gameReadyUrl)
+      ? '<span style="position:absolute;bottom:6px;right:6px;padding:1px 5px;border-radius:3px;font-size:.55rem;background:#6366f1;color:#fff;font-weight:700">DRACO</span>'
+      : '';
     const uuid = m.uuid || '';
     const uuidLine = uuid
       ? `<div class="model-uuid" data-uuid="${esc(uuid)}" title="Click to copy UUID">${esc(uuid)}</div>`
@@ -412,6 +439,7 @@ function renderPage() {
         <span class="format-badge">${m.format || 'GLB'}</span>
         <span class="category-badge">${m.category || ''}</span>
         ${animBadge}
+        ${gameBadge}
         ${draco}
         <svg viewBox="0 0 80 80" style="width:55%;height:55%;opacity:.4"><polygon points="40,8 72,24 72,56 40,72 8,56 8,24" fill="none" stroke="#22c55e" stroke-width="1.5"/><polygon points="40,8 72,24 40,40 8,24" fill="#22c55e" opacity=".15"/><polygon points="40,40 72,24 72,56 40,72" fill="#22c55e" opacity=".25"/><polygon points="40,40 8,24 8,56 40,72" fill="#22c55e" opacity=".1"/></svg>
       </div>

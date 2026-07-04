@@ -203,6 +203,7 @@ export function scoreGameReadiness(meta) {
   if (meta.textureStatus === 'embedded') score += 25;
   else if (meta.textureStatus === 'external-resolved') score += 15;
   else if (meta.textureStatus === 'vertex-color') score += 15;
+  else if (meta.textureStatus === 'placeholder-yellow') score += 0;
   if (!meta.missingTextures?.length) score += 15;
   if (meta.maxTextureSize <= 1024) score += 10;
   if (meta.kind === 'animation-clip' && meta.previewUnit) score += 5;
@@ -231,10 +232,16 @@ export function extractGltfCounts(glbJson) {
   };
 }
 
+export function isPlaceholderTextureUri(uri = '') {
+  if (!uri || !/^data:/i.test(uri)) return false;
+  return uri.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==');
+}
+
 export function analyzeTextureStatus(glbPath, glbJson) {
   const uris = findExternalTextureUris(glbJson);
   const images = glbJson.images || [];
-  const embedded = images.filter((img) => img.bufferView != null || /^data:/i.test(img.uri || '')).length;
+  const placeholder = images.some((img) => isPlaceholderTextureUri(img.uri || ''));
+  const embedded = images.filter((img) => img.bufferView != null || (/^data:/i.test(img.uri || '') && !isPlaceholderTextureUri(img.uri))).length;
   const materials = glbJson.materials || [];
 
   const hasVertexColor = materials.some((m) => {
@@ -243,6 +250,9 @@ export function analyzeTextureStatus(glbPath, glbJson) {
     return base && (base[0] !== 1 || base[1] !== 1 || base[2] !== 1 || base[3] !== 1);
   });
 
+  if (placeholder) {
+    return { textureStatus: 'placeholder-yellow', missingTextures: ['1x1-yellow-placeholder'], externalUris: [] };
+  }
   if (embedded > 0 && uris.length === 0) {
     return { textureStatus: 'embedded', missingTextures: [], externalUris: [] };
   }

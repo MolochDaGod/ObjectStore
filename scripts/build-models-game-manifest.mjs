@@ -95,8 +95,10 @@ function buildGameEntry(registryEntry, auditEntry) {
     textures: auditEntry?.textures ?? registryEntry.textures ?? 0,
     materials: auditEntry?.materials ?? registryEntry.materials ?? 0,
     textureStatus: auditEntry?.textureStatus || 'unknown',
-    compressionType: hasGameReady ? 'draco' : (auditEntry?.compressionType || 'none'),
+    sourceTextureStatus: auditEntry?.sourceTextureStatus || null,
+    compressionType: hasGameReady ? (auditEntry?.compressionType || 'draco') : (auditEntry?.compressionType || 'none'),
     gameReadiness: auditEntry?.gameReadiness || 0,
+    gameReady: auditEntry?.gameReady ?? hasGameReady,
     valid: auditEntry?.valid ?? true,
     extensions: auditEntry?.extensions || registryEntry.extensions || [],
   };
