@@ -121,6 +121,10 @@ function normalizeModelMaterials(root) {
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach((m) => {
       if (!m) return;
+      const hasVertexColors = !!o.geometry?.attributes?.color;
+      if (hasVertexColors && (m.isMeshStandardMaterial || m.isMeshPhysicalMaterial || m.isMeshLambertMaterial)) {
+        m.vertexColors = true;
+      }
       if (m.map) {
         if (isPlaceholderTexture(m.map)) {
           m.map = null;
@@ -225,15 +229,14 @@ function encPath(p) { return p.split('/').map(s => encodeURIComponent(s)).join('
 
 async function resolveModelUrl(m) {
   if (m.url) return m.url;
-  if (m._gameReadyUrl) return m._gameReadyUrl;
-  if (m._cdnUrl) return m._cdnUrl;
-  for (const url of modelUrlCandidates(m)) {
+  const candidates = modelUrlCandidates(m);
+  for (const url of candidates) {
     try {
       const r = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
       if (r.ok) return url;
     } catch { /* next */ }
   }
-  return modelUrlCandidates(m)[0];
+  return candidates[0];
 }
 
 // ── R2 Health ──────────────────────────────────────────

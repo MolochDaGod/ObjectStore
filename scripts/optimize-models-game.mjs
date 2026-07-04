@@ -167,7 +167,9 @@ async function optimizeModel(io, entry) {
 
     if (classification.kind === 'animation-clip') {
       await stripMeshesForClip(doc);
-      await doc.transform(resample(), prune(), dedup());
+      // Keep skeleton nodes — prune() would delete bone hierarchy on mesh-less clips.
+      const transforms = doc.getRoot().listAnimations().length ? [resample(), dedup()] : [dedup()];
+      await doc.transform(...transforms);
     } else {
       await doc.transform(weld(), dedup(), flatten(), prune(), resample());
       await doc.transform(quantize(), draco({
