@@ -78,9 +78,9 @@
         This page is a per-game view; it does not store item data. When ObjectStore updates, this page picks the changes up automatically.
       </p>
       <div class="callout">
-        <span class="tag">Canonical</span> The <a href="https://assets.grudge-studio.com/ItemBrowser.html" style="color:var(--gold)">ItemBrowser</a>
-        on ObjectStore is the source of truth for item names, categories, and icons. The master-* JSONs served here are
-        derived from <code>api/v1/weapons.json</code>, <code>armor.json</code>, <code>materials.json</code>, and <code>consumables.json</code> - the same files ItemBrowser reads.
+        <span class="tag">Canonical</span> The <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" style="color:var(--gold)">GRUDGE Item Database</a>
+        on ObjectStore is the source of truth for item names, categories, icons, and game-ready 3D models. The master-* JSONs served here are
+        derived from <code>api/v1/master-*.json</code> — the same files the Item Database reads.
         Missing or placeholder icons are filled through the <a href="https://assets.grudge-studio.com/tools/icon-generator.html" style="color:var(--gold)">Icon Generator</a>
         (Puter AI) and land back in the same canonical set.
       </div>

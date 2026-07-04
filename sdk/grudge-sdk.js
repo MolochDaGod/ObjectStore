@@ -1164,7 +1164,9 @@ class GrudgeSDK {
         health: `${this._workerApi}/health`,
       },
       browsers: {
-        itemDatabase: `${this.baseUrl}/GRUDGE_Item_Database.html`, spriteDatabase: `${this.baseUrl}/SPRITE_DATABASE.html`,
+        itemDatabase: `${this.baseUrl}/GRUDGE_Item_Database.html`,
+        itemBrowser: `${this.baseUrl}/GRUDGE_Item_Database.html`,
+        spriteDatabase: `${this.baseUrl}/SPRITE_DATABASE.html`,
         vfxBrowser: `${this.baseUrl}/VFX_BROWSER.html`, weaponSkills: `${this.baseUrl}/WEAPON_SKILLS.html`,
         brand: `${this.baseUrl}/brand.html`, admin: `${this.baseUrl}/admin.html`,
       },

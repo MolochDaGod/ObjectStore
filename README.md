@@ -535,7 +535,7 @@ See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend
 
 ## 🎨 Icons
 
-All items display real icon assets — no emoji or placeholder images. Icon resolution is centralized in **`utils/icon-resolver.js`** which both `ItemBrowser.html` and `GRUDGE_Item_Database.html` share.
+All items display real icon assets — no emoji or placeholder images. Icon resolution is centralized in **`utils/icon-resolver.js`**, used by **`GRUDGE_Item_Database.html`** (canonical item browser; `ItemBrowser.html` redirects there).
 
 ### Icon Resolution — `utils/icon-resolver.js`
 

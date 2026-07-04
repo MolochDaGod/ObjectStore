@@ -12,7 +12,6 @@
     { label: 'API Docs',     href: './docs/',                     icon: ICN + '/496_rpg_icons/I_Scroll.png' },
     { label: 'Browse Hub',   href: './hub.html',                  icon: ICN + '/Icons_Essential/v1.2/Icons/Home.png' },
     { label: 'Items',        href: './GRUDGE_Item_Database.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/ChestTreasure.png' },
-    { label: 'Item Browser', href: './ItemBrowser.html',           icon: ICN + '/Icons_Essential/v1.2/Icons/MagnifyingGlass.png' },
     { label: 'Sprites',      href: './SPRITE_DATABASE.html',       icon: ICN + '/ui/buttons/people.png' },
     { label: 'Weapon Skills', href: './WEAPON_SKILLS.html',        icon: ICN + '/496_rpg_icons/S_Sword07.png' },
     { label: '2D Models',    href: './2D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/PaintBrush.png' },

@@ -74,8 +74,7 @@ export default function handler(req, res) {
       { name: 'Item Database', path: '/GRUDGE_Item_Database.html' },
       { name: 'Sprite Database', path: '/SPRITE_DATABASE.html' },
       { name: 'VFX Browser', path: '/VFX_BROWSER.html' },
-      { name: '2D Models Browser', path: '/2D_MODELS.html' },
-      { name: 'Item Browser', path: '/ItemBrowser.html' }
+      { name: '2D Models Browser', path: '/2D_MODELS.html' }
     ]
   };
 

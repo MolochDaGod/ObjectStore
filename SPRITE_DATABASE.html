@@ -742,7 +742,7 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
     let allData = { weapons: null, materials: null, armor: null, consumables: null, enemies: null, bosses: null, skills: null };
     let iconIndex = null;
     let currentTab = 'weapons';
-    // Deterministic hash for icon selection (matches ItemBrowser)
+    // Deterministic hash for icon selection (matches Item Database)
     function hashStr(s) {
       var h = 0;
       for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
