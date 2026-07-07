@@ -66,7 +66,7 @@ Every Grudge app reads from ObjectStore:
 - `grudge-builder` → `objectStoreApi.ts` (cached fetch), `objectStoreModels.ts` (3D)
 - `grudge-engine-web` → `asset-catalog.ts` (model paths)
 - `GDevelopAssistant` → direct fetch via VITE_OBJECTSTORE_URL
-- `grudge-studio-backend` → R2 via OBJECT_STORAGE_* env vars
+- `grudge-backend` + GrudgeBuilder workers → R2 via fleet bindings (grudge-studio-backend archived)
 
 ## Icon assets (ICON-*)
 - **Source of truth:** `api/v1/icon-registry.json` + `assets.grudge-studio.com/game-assets/icons/...`

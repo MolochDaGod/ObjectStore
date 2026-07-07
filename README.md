@@ -482,15 +482,16 @@ For player-specific data, economy, PvP, and accounts — self-hosted Docker + Co
 |---------|-----|-------------|
 | Identity / Auth | `id.grudge-studio.com` | JWT auth (Discord, Web3Auth, Puter, guest, wallet) |
 | Game API | `api.grudge-studio.com` | Characters, economy, crafting, combat, PvP, islands, missions, crews |
-| Account API | `account.grudge-studio.com` | Profiles, friends, notifications, achievements |
+| Unified API | `api.grudge-studio.com` | grudge-backend — auth, profiles, economy |
+| Game state SSOT | `grudge-api-production-0d46.up.railway.app` | GrudgeBuilder Railway — characters, islands, wallet |
+| ObjectStore | `objectstore.grudge-studio.com` | Catalog JSON, upload, metadata |
 | Launcher API | `launcher.grudge-studio.com` | Version manifest, entitlements, launch tokens |
-| WebSocket | `ws.grudge-studio.com` | Real-time events (Socket.IO: /game, /crew, /global, /pvp) |
-| Asset Service | `assets-api.grudge-studio.com` | Upload/manage assets (metadata + conversions) |
+| WebSocket | `ws.grudge-studio.com` | Real-time events (legacy — prefer Colyseus on Railway) |
 | R2 CDN | `assets.grudge-studio.com` | Public asset delivery (Cloudflare R2 Worker) |
 | Dashboard | `dash.grudge-studio.com` | Admin dashboard (Cloudflare Worker) |
 | Status | `status.grudge-studio.com` | Uptime monitoring (Uptime Kuma) |
 
-See [grudge-studio-backend](https://github.com/MolochDaGod/grudge-studio-backend) `GRUDGE-STUDIO-CONTEXT.md` for full reference.
+Fleet SSOT: [GrudgeBuilder/shared/fleet/manifest.ts](https://github.com/Grudge-Warlords/GrudgeBuilder/blob/main/shared/fleet/manifest.ts). Auth/API: [grudge-backend](https://github.com/MolochDaGod/grudge-backend). Legacy VPS repo archived.
 
 ## 📊 Data Structure
 
