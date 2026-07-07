@@ -7,9 +7,9 @@
  *   - R2 asset storage (Cloudflare Worker)
  *   - Grudge Identity / Auth (id.grudge-studio.com)
  *   - Game API (api.grudge-studio.com)
- *   - Account API (account.grudge-studio.com)
+ *   - Account API (api.grudge-studio.com — grudge-backend)
  *   - Launcher API (launcher.grudge-studio.com)
- *   - Asset Service (assets-api.grudge-studio.com)
+ *   - ObjectStore API (objectstore.grudge-studio.com)
  *   - WebSocket / Socket.IO (ws.grudge-studio.com)
  *   - Grudge UUID system
  *
@@ -32,10 +32,10 @@ const DEFAULT_BASE_URL      = 'https://objectstore.grudge-studio.com';
 const DEFAULT_WORKER_API    = 'https://objectstore.grudge-studio.com';
 const DEFAULT_ID_URL        = 'https://id.grudge-studio.com';
 const DEFAULT_GAME_URL      = 'https://api.grudge-studio.com';
-const DEFAULT_ACCOUNT_URL   = 'https://account.grudge-studio.com';
+const DEFAULT_ACCOUNT_URL   = 'https://api.grudge-studio.com';
 const DEFAULT_LAUNCHER_URL  = 'https://launcher.grudge-studio.com';
 const DEFAULT_WS_URL        = 'https://ws.grudge-studio.com';
-const DEFAULT_ASSETS_API_URL = 'https://assets-api.grudge-studio.com';
+const DEFAULT_ASSETS_API_URL = 'https://objectstore.grudge-studio.com';
 const DEFAULT_ASSETS_CDN_URL = 'https://assets.grudge-studio.com';
 const DEFAULT_AI_URL        = 'https://ai.grudge-studio.com';
 const DEFAULT_STATUS_URL    = 'https://status.grudge-studio.com';
@@ -403,7 +403,7 @@ class GrudgeGameClient {
 }
 
 // ==========================================
-// ACCOUNT API CLIENT — account.grudge-studio.com
+// ACCOUNT API CLIENT — api.grudge-studio.com (grudge-backend)
 // ==========================================
 
 class GrudgeAccountClient {
@@ -444,7 +444,7 @@ class GrudgeLauncherClient {
 }
 
 // ==========================================
-// ASSET SERVICE CLIENT — assets-api.grudge-studio.com
+// OBJECTSTORE API CLIENT — objectstore.grudge-studio.com (/v1/assets)
 // ==========================================
 
 class GrudgeAssetServiceClient {
@@ -460,7 +460,7 @@ class GrudgeAssetServiceClient {
     if (meta.tags) fd.append('tags', JSON.stringify(meta.tags));
     if (meta.description) fd.append('description', meta.description);
     const { headers: authHeaders } = _resolveAuth(this._gt());
-    const res = await fetch(`${this._url}/assets`, { method: 'POST', headers: authHeaders, body: fd });
+    const res = await fetch(`${this._url}/v1/assets`, { method: 'POST', headers: authHeaders, body: fd });
     if (!res.ok) return null;
     return res.json();
   }
@@ -471,12 +471,12 @@ class GrudgeAssetServiceClient {
     if (query.limit) p.set('limit', String(query.limit));
     if (query.cursor) p.set('cursor', query.cursor);
     if (query.category) p.set('category', query.category);
-    return _authFetchList(this._url, `/assets${p.toString() ? '?' + p : ''}`, this._gt());
+    return _authFetchList(this._url, `/v1/assets${p.toString() ? '?' + p : ''}`, this._gt());
   }
 
-  async getAsset(key) { return _authFetch(this._url, `/assets/${encodeURIComponent(key)}`, this._gt()); }
-  async deleteAsset(key) { return _authFetch(this._url, `/assets/${encodeURIComponent(key)}`, this._gt(), { method: 'DELETE' }); }
-  getAssetUrl(key) { return `${this._url}/assets/${encodeURIComponent(key)}/file`; }
+  async getAsset(key) { return _authFetch(this._url, `/v1/assets/${encodeURIComponent(key)}`, this._gt()); }
+  async deleteAsset(key) { return _authFetch(this._url, `/v1/assets/${encodeURIComponent(key)}`, this._gt(), { method: 'DELETE' }); }
+  getAssetUrl(key) { return `${this._url}/v1/assets/${encodeURIComponent(key)}/file`; }
 }
 
 // ==========================================
@@ -1125,10 +1125,10 @@ class GrudgeSDK {
   // ── Database / Infrastructure Info ──
   getDatabaseInfo() {
     return {
-      provider: 'Self-hosted VPS (Docker + Coolify)',
-      database: 'MySQL 8.0',
-      cache: 'Redis 7',
-      vps: '74.208.155.229',
+      provider: 'grudge-backend + GrudgeBuilder Railway + Cloudflare Workers',
+      database: 'PostgreSQL (Railway SSOT) + D1 (auth)',
+      cache: 'Redis (Railway) / KV (edge)',
+      fleetSsot: 'GrudgeBuilder/shared/fleet/manifest.ts',
       schemas: {
         users: ['users', 'sessions', 'character_wallets'],
         game: ['characters', 'gold_transactions', 'crafting_recipes', 'crafting_queue', 'combat_log', 'island_state', 'missions', 'crews', 'crew_members'],
