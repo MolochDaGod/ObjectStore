@@ -6,6 +6,8 @@
  */
 const API_WORKER = 'https://grudgeassets.grudge.workers.dev';
 const STATIC_ORIGIN = 'https://info.grudge-studio.com';
+/** Canonical SDK + shared static libs live on R2 CDN (fleet SSOT). */
+const ASSETS_CDN = 'https://assets.grudge-studio.com';
 
 function isApiPath(pathname) {
   return (
@@ -35,6 +37,19 @@ export default {
 
     if (url.pathname === '/docs' || url.pathname.startsWith('/docs/')) {
       return Response.redirect(STATIC_ORIGIN + url.pathname + url.search, 301);
+    }
+
+    if (url.pathname.startsWith('/sdk/')) {
+      const cdnUrl = ASSETS_CDN + url.pathname + url.search;
+      const cdnRes = await fetch(cdnUrl, {
+        method: request.method,
+        headers: request.headers,
+        redirect: 'manual',
+      });
+      const headers = new Headers(cdnRes.headers);
+      headers.set('X-Edge-Proxy', 'grudge-edge-proxy');
+      headers.set('X-SDK-Source', 'assets-cdn');
+      return new Response(cdnRes.body, { status: cdnRes.status, headers });
     }
 
     const staticUrl = STATIC_ORIGIN + url.pathname + url.search;
