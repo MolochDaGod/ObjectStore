@@ -9,8 +9,10 @@
 # api/v1/race-models.json (the ~6 KB manifest) is NOT ignored — the SDK
 # still fetches it from the same origin as the app.
 
-api/threejs-player-and-grass/**/dist/assets/race-characters/**
-api/threejs-player-and-grass/**/dist/assets/race-characters
+# Entire demo app lives under /api/ so Vercel would bundle each .js as a
+# serverless function (vite.config alone was 313 MB). Models are on CDN;
+# only api/v1/race-models.json is served from this deploy.
+api/threejs-player-and-grass/**
 
 # Node + Vite build artefacts — never needed in the Vercel deploy.
 **/node_modules/**
@@ -19,7 +21,3 @@ api/threejs-player-and-grass/**/dist/assets/race-characters
 **/dist-build
 **/.vite/**
 **/.vite
-
-# Package manager lockfiles for nested workspaces (Vercel only needs the
-# root lockfile; the nested threejs-player-and-grass has its own).
-api/threejs-player-and-grass/**/package-lock.json
