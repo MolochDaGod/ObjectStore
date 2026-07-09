@@ -57,6 +57,9 @@
         "warlordsZones": "/api/v1/warlords-zones.json",
         "warlordsCatalog": "/api/v1/warlords-catalog.json",
         "mapRegistry": "/api/v1/map-registry.json",
+        "homeIslandContract": "/api/v1/home-island-contract.json",
+        "biomeEcosystems": "/api/v1/biome-ecosystems.json",
+        "organizedNature": "/api/v1/organized-nature-manifest.json",
         "enemies": "/api/v1/enemies.json",
         "bosses": "/api/v1/bosses.json"
       },
@@ -76,6 +79,21 @@
         "description": "All playable map spaces — two different 9-cell systems + lobby/home/arena/genesis",
         "registry": "/api/v1/map-registry.json",
         "sourceRepo": "GrudgeBuilder/shared/definitions/mapRegistry.ts"
+      },
+      "homeIslandCanonical": {
+        "description": "Player home islands — Driftwood Bay + Ironfang Spire size foundations, 1024m, 2m character, organized nature (no megakit)",
+        "contract": "/api/v1/home-island-contract.json",
+        "biomes": "/api/v1/biome-ecosystems.json",
+        "natureManifest": "/api/v1/organized-nature-manifest.json",
+        "cdnCatalogs": "https://assets.grudge-studio.com/catalogs/home-island/",
+        "cdnNature": "https://assets.grudge-studio.com/models/nature/realistic/",
+        "studioEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
+        "database": "Railway Postgres home_islands (NOT D1)",
+        "worldSizeM": 1024,
+        "characterHeightM": 2,
+        "mountainPeakHeightM": 20,
+        "foundations": ["driftwood_bay", "ironfang_spire"],
+        "version": "1.3.0"
       }
     },
     "storage": {

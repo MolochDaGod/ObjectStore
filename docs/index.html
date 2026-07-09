@@ -7,7 +7,7 @@
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
   <!-- CANONICAL_META:START -->
     <link rel="canonical" href="https://info.grudge-studio.com/docs">
-    <meta name="grudge-canonical-generated" content="2026-07-09T07:56:03.996Z">
+    <meta name="grudge-canonical-generated" content="2026-07-09T09:15:26.964Z">
     <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -258,6 +258,11 @@
     <div class="section-title">Game Engine</div>
     <a href="#faction-units">Faction Units</a>
     <a href="#maps-terrain">Maps & Terrain</a>
+    <a href="#map-families">Map Families</a>
+    <a href="#home-islands">Home Islands</a>
+    <a href="#nature-assets">Nature Assets</a>
+    <a href="#biome-ecosystems">Biome Ecosystems</a>
+    <a href="#freeform-arpg">Freeform ARPG</a>
     <a href="#animations">Animations</a>
     <a href="#ai">AI Systems</a>
     
@@ -286,6 +291,7 @@
     <a href="#3d-storage">3D Storage &amp; CDN</a>
     <a href="#rts-models">RTS Models</a>
     <a href="#worlds">Worlds</a>
+    <a href="#warlords-catalog">Warlords Catalog</a>
 
     <div class="section-title">Serverless API</div>
     <a href="#search-api">Search API</a>
@@ -305,7 +311,7 @@
     <a href="../hub.html" class="back-link">← Browse Hub (tools &amp; browsers)</a>
     
     <h1>📖 API Documentation</h1>
-    <p class="intro">Canonical API reference for Grudge Studio ObjectStore — synced from <code class="inline-code">api/v1/master-*.json</code> on <strong>Mon, 22 Jun 2026 14:21:54 GMT</strong>.</p>
+    <p class="intro">Canonical API reference for Grudge Studio ObjectStore — game data, map families, home-island foundations, and R2 nature assets. JSON under <code class="inline-code">api/v1/</code>; binaries on <code class="inline-code">assets.grudge-studio.com</code>.</p>
 
     <section id="overview">
       <h2>Overview</h2>
@@ -333,14 +339,20 @@
         <div class="tip-title">💡 Perfect for AI Agents</div>
         <p>This API requires no authentication and returns JSON data. Ideal for building game companions, crafting calculators, or AI-powered assistants.</p>
       </div>
+      <div class="tip">
+        <div class="tip-title">🏝️ Home islands (2026-07)</div>
+        <p>Player islands use <a href="#home-islands">Driftwood Bay / Ironfang Spire</a> foundations. Nature scatter bans Quaternius megakit — see <a href="#nature-assets">Nature Assets</a>. Live play scale is always <strong>1024 m</strong> world diameter, <strong>2.0 m</strong> character.</p>
+      </div>
     </section>
 
     <section id="base-url">
       <h2>Base URL</h2>
-      <pre><code>https://info.grudge-studio.com/docs</code></pre>
-      <p>All endpoints are relative to this base URL. For example:</p>
-      <pre><code>GET https://info.grudge-studio.com/api/v1/weapons.json</code></pre>
-      <p>Mirror: <code class="inline-code">https://molochdagod.github.io/ObjectStore/api/v1/</code></p>
+      <pre><code>https://info.grudge-studio.com/api/v1/</code></pre>
+      <p>Docs UI: <code class="inline-code">https://info.grudge-studio.com/docs</code>. JSON endpoints are relative to <code class="inline-code">/api/v1/</code>. For example:</p>
+      <pre><code>GET https://info.grudge-studio.com/api/v1/weapons.json
+GET https://info.grudge-studio.com/api/v1/home-island-contract.json
+GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
+      <p>Mirror: <code class="inline-code">https://molochdagod.github.io/ObjectStore/api/v1/</code> · CDN binaries: <code class="inline-code">https://assets.grudge-studio.com/</code></p>
     </section>
 
     <section id="architecture">
@@ -350,10 +362,11 @@
         <ul>
           <li><strong>ObjectStore JSON</strong> (<code class="inline-code">api/v1/master-*.json</code>) — canonical item definitions, skills, weapon skills, recipes, materials, tiers. Every entry has a GRUDGE UUID.</li>
           <li><strong>R2 CDN</strong> (<code class="inline-code">assets.grudge-studio.com</code>) — binary files only: GLB/GLTF models, PNG icons, textures, audio. Served by the <code class="inline-code">r2-cdn</code> Worker with CORS <code class="inline-code">*</code>. Never commit large GLBs to git — upload to R2.</li>
+          <li><strong>Railway Postgres <code class="inline-code">home_islands</code></strong> — player home-island seed SSOT (NOT Cloudflare D1). See <a href="#home-islands">Home Islands</a>.</li>
           <li><strong>D1 <code class="inline-code">asset_registry</code></strong> (<code class="inline-code">grudge-assets-db</code>) — searchable index for 3D models: category, R2 key, bone map, animation packs, deterministic <code class="inline-code">grudgeUuid</code>. API: <code class="inline-code">api.grudge-studio.com/assets</code>.</li>
           <li><strong>ObjectStore D1</strong> (<code class="inline-code">grudge-objectstore</code>) — icon search index + catalog metadata. API: <code class="inline-code">objectstore.grudge-studio.com/api/v1/icons/*</code>.</li>
           <li><strong>info.grudge-studio.com</strong> — public browsable UI for all game data (this site).</li>
-          <li><strong>api.grudge-studio.com</strong> — live game API consuming ObjectStore data + player state from PostgreSQL.</li>
+          <li><strong>api.grudge-studio.com / Railway game API</strong> — live game API; island state via <code class="inline-code">GET/PATCH /api/island/*</code>.</li>
         </ul>
         <p><strong>GRUDGE UUID links everything:</strong> <code class="inline-code">SKIL-...(skill)</code> → <code class="inline-code">prefab.vfxRef</code> → <code class="inline-code">R2 path</code>. Game client resolves UUIDs via the ObjectStore API at runtime.</p>
         <p><strong>3D GLB binaries</strong> are a separate stack from ObjectStore JSON — see <a href="#3d-storage">3D Storage &amp; CDN</a> for R2 URLs, D1 <code class="inline-code">asset_registry</code>, and Forge <code class="inline-code">builtin:</code> keys. Do not use <code class="inline-code">/api/v1/asset-registry.json</code> for live GLB lookup.</p>
@@ -926,12 +939,22 @@
       </table>
 
       <h3>R2 key layout (3D models)</h3>
-      <pre><code>models/characters/&lt;name&gt;.glb     — rigged humanoids (Mixamo / grudge6)
-models/environments/&lt;name&gt;.glb  — maps, arenas, terrain GLBs
-models/weapons/&lt;name&gt;.glb       — attachable weapon meshes
-models/animations/&lt;name&gt;.glb    — standalone animation clips
-models/buildings/&lt;name&gt;.glb      — structures
-builtin/&lt;name&gt;.glb              — Game Forge editor starters (some CDN-only)</code></pre>
+      <pre><code>models/characters/&lt;name&gt;.glb           — rigged humanoids (Mixamo / grudge6)
+models/environment/island_*.glb        — home-island harvest multi-mesh packs
+models/nature/organized/trees|rocks/   — extracted per-variant GLBs (no megakit)
+models/nature/realistic/trees|rocks/   — catalog layout for scatter (runtime-ready)
+models/biomes/review/&lt;biome&gt;.glb       — per-biome scale review scenes
+models/evil_rock_mountain_peak_*.glb   — 20 m mountain peaks (home dungeon)
+models/weapons/&lt;name&gt;.glb              — attachable weapon meshes
+models/animations/&lt;name&gt;.glb           — standalone animation clips
+models/buildings/&lt;name&gt;.glb            — structures
+models/ships/enemy/{healthy,damaged,sunk}.glb
+builtin/&lt;name&gt;.glb                     — Game Forge editor starters
+catalogs/home-island/*.json            — CDN copies of island SSOT catalogs</code></pre>
+      <div class="warning">
+        <div class="warning-title">🚫 Low-poly megakit banned on home islands</div>
+        <p><code class="inline-code">CommonTree_*</code>, <code class="inline-code">TwistedTree_*</code>, <code class="inline-code">DeadTree_*</code>, <code class="inline-code">Rock_Medium_*</code>, <code class="inline-code">Pine_1..5</code> megakit paths remain on CDN for legacy but <strong>must not</strong> be used for home-island scatter/harvest. Use organized/realistic paths — see <a href="#nature-assets">Nature Assets</a>.</p>
+      </div>
 
       <h3>Animation &amp; mesh wiring</h3>
       <p>Character GLBs in <code class="inline-code">models/characters/</code> get default animation packs in D1: <code class="inline-code">glocomotion</code>, <code class="inline-code">glocomotion_combat</code>, <code class="inline-code">gestures_basic</code>. Bone map is detected from filename/path (<code class="inline-code">mixamo</code>, <code class="inline-code">bip001</code> for grudge6, <code class="inline-code">kaykit</code>). Weapons declare <code class="inline-code">attachmentProfile</code> (<code class="inline-code">main_hand</code>, <code class="inline-code">off_hand</code>, <code class="inline-code">ranged_2h</code>) and universal skeleton compatibility.</p>
@@ -957,7 +980,28 @@ npx tsx scripts/seed-d1.ts</code></pre>
     <section id="maps-terrain">
       <h2>Maps & Terrain</h2>
       <p>2D tile maps and biome presets are JSON here. Full 3D arena/map GLBs (e.g. <code class="inline-code">map-underground-wars</code>) are on R2 under <code class="inline-code">builtin/</code> and referenced in Game Forge as <code class="inline-code">builtin:&lt;key&gt;</code> — see <a href="#3d-storage">3D Storage &amp; CDN</a>.</p>
+      <p><strong>Do not mix map families.</strong> Warlords era 9-sector IDs are not the home-block 3×3 IDs — see <a href="#map-families">Map Families</a>.</p>
       
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/map-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Canonical map family registry — Warlords era sectors, home-block 3×3, tactical ocean, pirate lobby, home/event islands, arenas, Genesis PvP. Use <code class="inline-code">assertMapIdForFamily</code> on the client before loading a map.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/warlords-zones.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Warlords era 9 macro sectors (haven_shore … convergence_nexus) with freeform ARPG notes. Not the player home-block cells.</p>
+        </div>
+      </div>
+
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="method">GET</span>
@@ -985,6 +1029,226 @@ npx tsx scripts/seed-d1.ts</code></pre>
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">Materials, 7 skybox presets, 10 particle effects, 5 spell effects.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="map-families">
+      <h2>Map Families</h2>
+      <p>Multiple 9-cell and open-world systems share the fleet. Mixing IDs causes wrong oceans, wrong zones, or broken home islands.</p>
+      <table>
+        <tr><th>Family</th><th>IDs / scale</th><th>Play surface</th></tr>
+        <tr>
+          <td><strong>Warlords era</strong></td>
+          <td>9 macro sectors (<code class="inline-code">haven_shore</code> … <code class="inline-code">convergence_nexus</code>)</td>
+          <td>Open-world / zone mode on client.grudge-studio.com</td>
+        </tr>
+        <tr>
+          <td><strong>Home-block 3×3</strong></td>
+          <td><code class="inline-code">TL…MC_HOME…BR</code> — personal grid around home island</td>
+          <td>Not Warlords sector IDs</td>
+        </tr>
+        <tr>
+          <td><strong>Home island</strong></td>
+          <td><strong>1024 m</strong> diameter · foundations Driftwood Bay / Ironfang Spire</td>
+          <td><code class="inline-code">/home-island</code> · Railway <code class="inline-code">home_islands</code></td>
+        </tr>
+        <tr>
+          <td><strong>Tactical ocean</strong></td>
+          <td>Ship combat map meters (fleet constant)</td>
+          <td>Ocean / sailing play</td>
+        </tr>
+        <tr>
+          <td><strong>Pirate lobby</strong></td>
+          <td>Chicken-gun lobby islands</td>
+          <td>Lobby GLB maps</td>
+        </tr>
+        <tr>
+          <td><strong>Arenas / Genesis PvP</strong></td>
+          <td>Battle arenas + warlords-genesis</td>
+          <td>Instanced PvP</td>
+        </tr>
+      </table>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/map-registry.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">SSOT for family notes, scale contracts, and which systems own which IDs.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-islands">
+      <h2>Home Islands</h2>
+      <p>Player-owned procedural islands. <strong>Size foundations:</strong> Driftwood Bay (coast) and Ironfang Spire (highland). Both use the same physical world diameter.</p>
+
+      <table>
+        <tr><th>Contract</th><th>Value</th></tr>
+        <tr><td>World diameter</td><td><strong>1024 m</strong></td></tr>
+        <tr><td>RTS core</td><td>200 m (upsampled into 1024 m center)</td></tr>
+        <tr><td>Character height</td><td><strong>2.0 m</strong> (all props scale relative to this)</td></tr>
+        <tr><td>Mountain peak</td><td><strong>20 m</strong> — seed picks one of three evil peaks</td></tr>
+        <tr><td>Harvest regen</td><td>4 hours</td></tr>
+        <tr><td>Seed database</td><td>Railway Postgres <code class="inline-code">home_islands</code> — <strong>not D1</strong></td></tr>
+        <tr><td>Studio editor</td><td><a href="https://grudge-studio-editor.vercel.app/editor?mode=home-island">editor?mode=home-island</a></td></tr>
+      </table>
+
+      <h3>Size foundations</h3>
+      <table>
+        <tr><th>Foundation</th><th>Role</th><th>Elevation</th><th>Beach</th><th>Preferred biomes</th></tr>
+        <tr>
+          <td><strong>Driftwood Bay</strong></td>
+          <td>Coastal baseline</td>
+          <td>max 48 m</td>
+          <td>28 m band</td>
+          <td>beach, tropical, plains, storm</td>
+        </tr>
+        <tr>
+          <td><strong>Ironfang Spire</strong></td>
+          <td>Highland / ridge baseline</td>
+          <td>max 80 m</td>
+          <td>14 m band</td>
+          <td>forest, winter, frozen, volcanic, abyssal, nexus</td>
+        </tr>
+      </table>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/home-island-contract.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Contract v1.3 — scale, foundations, mountain triad paths, nature policy, Railway authority, studio editor URLs.</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">https://client.grudge-studio.com/api/island/spec</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Live home-island spec from GrudgeBuilder (versioned harvest nodes, nature scatter, foundations export). Railway production may proxy the same path.</p>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-title">Pipeline</div>
+        <p>Studio editor → map to home island state → <code class="inline-code">PATCH /api/island/state</code> (Railway) → Island3DEngine play + mountain portal + CreatureBrain / navmesh AI.</p>
+      </div>
+    </section>
+
+    <section id="nature-assets">
+      <h2>Nature Assets (Home Island)</h2>
+      <p>Organized nature for home islands. Quaternius / nature-megakit scatter props are <strong>banned</strong> at runtime.</p>
+
+      <h3>Banned path fragments</h3>
+      <p><code class="inline-code">CommonTree</code>, <code class="inline-code">TwistedTree</code>, <code class="inline-code">DeadTree</code>, <code class="inline-code">Rock_Medium</code>, <code class="inline-code">Pine_1..5</code> megakit, <code class="inline-code">Bush_Common</code>, <code class="inline-code">nature-megakit</code>, <code class="inline-code">/models/lowpoly/</code></p>
+
+      <h3>CDN layout (runtime-ready)</h3>
+      <pre><code># Individual variants (preferred for scatter)
+https://assets.grudge-studio.com/models/nature/organized/trees/{pine2_14,birch2_4,...}.glb
+https://assets.grudge-studio.com/models/nature/organized/rocks/{rock_1..rock_8}.glb
+
+# Catalog layout (same meshes, realistic/* keys)
+https://assets.grudge-studio.com/models/nature/realistic/trees/pine/pine_a.glb
+https://assets.grudge-studio.com/models/nature/realistic/trees/deciduous/oak_a.glb
+https://assets.grudge-studio.com/models/nature/realistic/trees/palm/palm_a.glb
+https://assets.grudge-studio.com/models/nature/realistic/rocks/boulder_a.glb
+
+# Multi-mesh harvest packs (variant clone in IslandResourceLoader)
+https://assets.grudge-studio.com/models/environment/island_tree.glb
+https://assets.grudge-studio.com/models/environment/island_rock.glb
+https://assets.grudge-studio.com/models/environment/gem_cluster.glb</code></pre>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/organized-nature-manifest.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Manifest of extracted variants, realistic slots, source packs, and ban policy. Also mirrored on CDN: <code class="inline-code">/catalogs/home-island/organized-nature-manifest.json</code>.</p>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-title">GrudgeBuilder scripts</div>
+        <pre><code>npm run home-island:pipeline          # export → biome reviews → SSOT → R2 upload → CDN probe
+npm run home-island:export-nature     # pack → organized + realistic GLBs
+npm run home-island:upload            # R2 put (skip if size matches)</code></pre>
+      </div>
+    </section>
+
+    <section id="biome-ecosystems">
+      <h2>Biome Ecosystems</h2>
+      <p>One truth for what each biome offers: 5 land animals, 10 fish species pool, tree class policy, 20 m mountain peak, 4 h harvest regen, character reference 2.0 m.</p>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/biome-ecosystems.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">12 biomes with foundationId (driftwood_bay | ironfang_spire), animals, treePolicy, reviewGlb CDN URLs, bannedNature list.</p>
+        </div>
+      </div>
+
+      <table>
+        <tr><th>Biome</th><th>Foundation</th><th>Review GLB</th></tr>
+        <tr><td>beach, tropical, plains, storm, desert</td><td>Driftwood Bay</td><td><code class="inline-code">/models/biomes/review/{id}.glb</code></td></tr>
+        <tr><td>forest, winter, frozen, volcanic, ethereal, abyssal, nexus</td><td>Ironfang Spire</td><td><code class="inline-code">/models/biomes/review/{id}.glb</code></td></tr>
+      </table>
+      <p>Review scenes include 20 m peak scale markers and a 2 m character capsule for visual QA.</p>
+    </section>
+
+    <section id="freeform-arpg">
+      <h2>Freeform ARPG (Characters)</h2>
+      <p>Warlords is freeform: <strong>race = body mesh</strong>, <strong>equipment = weapons/armor/anims</strong>, class is flavor only (not a hard gear lock).</p>
+      <ul>
+        <li>Character mesh pipeline: loadCharacterModel + equipment slots + appearance tint (sRGB multiply from base, no stack).</li>
+        <li>Unlock tables no longer gate weapons by rigid class.</li>
+        <li>See <code class="inline-code">warlords-catalog.json</code> <code class="inline-code">characterTruth</code> and <code class="inline-code">warlords-zones.json</code> freeform notes.</li>
+      </ul>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/warlords-catalog.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Play matrix, characterTruth, mapFamilies, enemyDamageStates (ship healthy/damaged/sunk), freeform ARPG flags.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="warlords-catalog">
+      <h2>Warlords Catalog &amp; Zones</h2>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/warlords-catalog.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">High-level Warlords truth: freeform character rules, map family pointers, enemy ship damage states, play matrix.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/warlords-zones.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Nine era sectors with lore, biome links, and freeform ARPG notes (v1.1+).</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/studio.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Studio service endpoints including home-island contract and biome catalog URLs.</p>
         </div>
       </div>
     </section>
@@ -1561,7 +1825,8 @@ function getCraftingRequirements(weaponId, tier) {
     </section>
 
     <footer style="text-align: center; color: var(--text-dim); margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);">
-      <p>© 2026 Grudge Studio | ObjectStore v5.0.0 | <a href="https://grudgewarlords.com">grudgewarlords.com</a></p>
+      <p>© 2026 Grudge Studio | ObjectStore v5.1.0 | Home-island foundations · organized nature · freeform ARPG</p>
+      <p style="margin-top:8px;"><a href="https://grudgewarlords.com">grudgewarlords.com</a> · <a href="https://client.grudge-studio.com">client.grudge-studio.com</a> · <a href="https://assets.grudge-studio.com">assets CDN</a></p>
     </footer>
   </main>
   <script src="../js/nav.js"></script>
