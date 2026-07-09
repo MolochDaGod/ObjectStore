@@ -263,6 +263,7 @@
     <a href="#nature-assets">Nature Assets</a>
     <a href="#biome-ecosystems">Biome Ecosystems</a>
     <a href="#freeform-arpg">Freeform ARPG</a>
+    <a href="#production-wiring">Production Wiring</a>
     <a href="#animations">Animations</a>
     <a href="#ai">AI Systems</a>
     
@@ -1220,6 +1221,83 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
           <p class="endpoint-desc">Play matrix, characterTruth, mapFamilies, enemyDamageStates (ship healthy/damaged/sunk), freeform ARPG flags.</p>
         </div>
       </div>
+    </section>
+
+    <section id="production-wiring">
+      <h2>Production Wiring (Characters · Accounts · Crafting)</h2>
+      <p>Industry-standard multi-app identity: one Grudge ID account, many character UUIDs, shared account bag, per-character progression. Full agent skill: <code class="inline-code">grudge-production-wiring</code>.</p>
+
+      <table>
+        <tr><th>Layer</th><th>Production URL</th><th>Role</th></tr>
+        <tr>
+          <td><strong>Identity</strong></td>
+          <td><code class="inline-code">https://id.grudge-studio.com</code></td>
+          <td>Login UI, JWT mint, Puter link. Bootstrap: <code class="inline-code">/grudge-game-bootstrap.js</code></td>
+        </tr>
+        <tr>
+          <td><strong>Game API</strong></td>
+          <td><code class="inline-code">https://grudge-api-production-0d46.up.railway.app</code></td>
+          <td>Postgres SSOT — characters, account, inventory, professions, island, wallet</td>
+        </tr>
+        <tr>
+          <td><strong>Character Studio</strong></td>
+          <td><code class="inline-code">https://character.grudge-studio.com</code></td>
+          <td>Creation SSOT (GCS). Warlords redirects here for new characters.</td>
+        </tr>
+        <tr>
+          <td><strong>Warlords client</strong></td>
+          <td><code class="inline-code">https://grudgewarlords.com</code></td>
+          <td>Same-origin <code class="inline-code">/api/*</code> rewrites → Railway</td>
+        </tr>
+        <tr>
+          <td><strong>Crafting (Puter)</strong></td>
+          <td><code class="inline-code">https://grudge-crafting.puter.site</code></td>
+          <td>Shared account bag + per-character XP; SSO via ID; definitions from ObjectStore</td>
+        </tr>
+        <tr>
+          <td><strong>Fleet JS</strong></td>
+          <td><code class="inline-code">https://assets.grudge-studio.com/js/grudge-fleet.js</code></td>
+          <td>≥2.4 progress helpers + token keys</td>
+        </tr>
+      </table>
+
+      <h3>Scope matrix</h3>
+      <table>
+        <tr><th>Scope</th><th>Data</th><th>API</th></tr>
+        <tr><td><strong>Account</strong></td><td>inventory, resources, GBUX, wallet</td><td><code class="inline-code">/api/account/*</code>, <code class="inline-code">/api/inventory/*</code></td></tr>
+        <tr><td><strong>Character UUID</strong></td><td>professions, mastery, attributes, equipment</td><td><code class="inline-code">/api/characters/:id</code>, <code class="inline-code">…/progress</code></td></tr>
+        <tr><td><strong>Island</strong></td><td>seed, harvest state</td><td><code class="inline-code">/api/island/*</code> (Railway, not D1)</td></tr>
+      </table>
+
+      <div class="warning">
+        <div class="warning-title">Standards (do not regress)</div>
+        <ul>
+          <li>Railway Postgres is player-state SSOT — not D1, not localStorage, not Puter KV alone.</li>
+          <li>Never write account inventory on character PATCH.</li>
+          <li>SSO return allowlist includes <code class="inline-code">*.puter.site</code>.</li>
+          <li>Vercel apps: same-origin <code class="inline-code">/api</code> rewrites. Puter sites: call Railway + ID explicitly with CORS.</li>
+          <li>Do not use deprecated <code class="inline-code">api.grudge-studio.com</code> for auth.</li>
+        </ul>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/studio.json → services.gameData.productionWiring</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Machine-readable production wiring block (URLs, scope rules, agent skill name).</p>
+        </div>
+      </div>
+
+      <h3>Crafting site flow</h3>
+      <pre><code>grudge-crafting.puter.site
+  → id.grudge-studio.com/login?redirect_uri=…puter.site…
+  → Bearer JWT
+  → Railway GET /api/characters
+  → craft: account bag − materials · character progress + XP (revisioned)
+  → ObjectStore master-recipes.json / professions.json for definitions
+  → assets.grudge-studio.com icons + grudge-fleet.js</code></pre>
     </section>
 
     <section id="warlords-catalog">

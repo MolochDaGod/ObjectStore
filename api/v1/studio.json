@@ -94,6 +94,34 @@
         "mountainPeakHeightM": 20,
         "foundations": ["driftwood_bay", "ironfang_spire"],
         "version": "1.3.0"
+      },
+      "productionWiring": {
+        "description": "Live identity + character + account + crafting wiring (industry-standard multi-app pattern)",
+        "agentSkill": "grudge-production-wiring",
+        "auth": "https://id.grudge-studio.com",
+        "authBootstrap": "https://id.grudge-studio.com/grudge-game-bootstrap.js",
+        "gameApi": "https://grudge-api-production-0d46.up.railway.app",
+        "gameApiHealth": "https://grudge-api-production-0d46.up.railway.app/api/health",
+        "characters": "GET/POST /api/characters · POST /api/characters/:id/progress",
+        "account": "/api/account/* · /api/inventory/*",
+        "characterStudio": "https://character.grudge-studio.com",
+        "warlords": "https://grudgewarlords.com",
+        "client": "https://client.grudge-studio.com",
+        "craftingPuter": "https://grudge-crafting.puter.site",
+        "fleetJs": "https://assets.grudge-studio.com/js/grudge-fleet.js",
+        "definitions": "https://objectstore.grudge-studio.com/api/v1",
+        "cdn": "https://assets.grudge-studio.com",
+        "scope": {
+          "account": ["inventory", "resources", "GBUX", "wallet"],
+          "character": ["professions", "mastery", "attributes", "equipment", "skillTrees"]
+        },
+        "rules": [
+          "Railway Postgres is player-state SSOT — not D1, not localStorage, not Puter KV alone",
+          "Never put account inventory on character PATCH",
+          "SSO return allowlist includes *.puter.site",
+          "Vercel apps use same-origin /api rewrites; Puter sites call Railway+ID explicitly"
+        ],
+        "version": "1.0.0"
       }
     },
     "storage": {
