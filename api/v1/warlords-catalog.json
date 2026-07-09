@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "updated": "2026-07-09",
   "canonicalSources": {
     "zones": "GrudgeBuilder/shared/definitions/worldMapSectors.ts",
@@ -9,20 +9,45 @@
     "bossRuntime": "GrudgeBuilder/shared/definitions/orcWarriorBoss.ts",
     "towns": "GrudgeBuilder/shared/definitions/factionTowns.ts",
     "buildAssets": "GrudgeBuilder/client/src/island3d/building/BuildAssetManifest.ts",
+    "characterMeshes": "GrudgeBuilder/client/src/lib/grudge6Equipment.ts + shared/fleet/character.ts",
+    "characterAppearance": "GrudgeBuilder/client/src/lib/characterAppearance.ts",
+    "playWiring": "GrudgeBuilder/client/src/lib/warlordsWorldApi.ts + playHub.ts",
     "infoHubLegacy": {
       "enemies": "api/v1/enemies.json (38)",
       "bosses": "api/v1/bosses.json (12)",
       "factions": "api/v1/factions.json",
-      "worlds_swg": "api/v1/worlds.json (SWG snapshots — NOT Warlords sectors)"
+      "worlds_swg": "api/v1/worlds.json (SWG snapshots — NOT open-world sectors)"
     }
   },
   "world": {
     "id": "grudge-world-1",
-    "name": "Grudge Warlords Open World",
+    "name": "Grudge Freeform ARPG Open World",
     "seed": "grudge-world-1",
     "sectorCount": 9,
     "playClient": "https://client.grudge-studio.com",
-    "zonesEndpoint": "/api/v1/warlords-zones.json"
+    "zonesEndpoint": "/api/v1/warlords-zones.json",
+    "defaultPlayUrl": "https://client.grudge-studio.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1"
+  },
+  "characterTruth": {
+    "genre": "freeform-arpg",
+    "rules": {
+      "race": "body mesh only (human/elf/orc/dwarf/barbarian/undead)",
+      "equipment": "any weapon + any armor on any race — mesh swaps + anim set from gear",
+      "class": "optional flavor / tiny starter stat lean — NOT equip or skill gate",
+      "colors": "skinColor + armorColor multiply tints; albedo maps sRGB",
+      "animations": "weaponTypeFromModel3d(equipment) — not CLASS_WEAPON_MAP",
+      "starterGear": "shared freeform kit (sword + bow + staff in bag)"
+    },
+    "cdn": {
+      "raceModels": "https://assets.grudge-studio.com/models/characters/races/{race}.glb",
+      "weaponAnims": "https://assets.grudge-studio.com/models/animations/{category}/*.glb"
+    },
+    "pipeline": [
+      "loadCharacterModel(race.glb)",
+      "setupGrudge6Equipment(prefix, scene, model3d)",
+      "applyCharacterColorTints + ensureCharacterTextureColorSpace",
+      "reloadWeaponAnimations(weaponTypeFromModel3d)"
+    ]
   },
   "factions": {
     "playable": ["crusade", "legion", "fabled", "worge"],
@@ -243,8 +268,25 @@
     "binaryAssets": "assets.grudge-studio.com (R2)",
     "playerState": "api.grudge-studio.com (Railway Postgres)",
     "realtime": "Colyseus sector rooms",
-    "client": "client.grudge-studio.com (GrudgeBuilder)",
+    "client": "client.grudge-studio.com (GrudgeBuilder → Vercel grudge-builder)",
+    "aliases": [
+      "client.grudge-studio.com",
+      "grudgewarlords.com",
+      "warlord3d.grudge-studio.com"
+    ],
+    "objectstoreProxy": "client.grudge-studio.com/api/objectstore/v1/* → objectstore.grudge-studio.com/api/*",
     "doNotUseWorldsJsonForSectors": true,
-    "useWarlordsZonesJson": true
+    "useWarlordsZonesJson": true,
+    "terrainGenerationSsot": "GrudgeBuilder WORLD_SECTORS (bundled)",
+    "entryCatalogSsot": "ObjectStore warlords-zones.json (must match WORLD_SECTORS)",
+    "verifyAtRuntime": "client warlordsWorldApi.verifyMapDeploymentTruth()"
+  },
+  "playEntryMatrix": {
+    "openWorldDefault": "/play → zone + haven_shore + grudge-world-1",
+    "openWorldSector": "/play?sector=<id>&mode=zone&worldSeed=grudge-world-1",
+    "oceanHub": "/ocean?worldSeed=grudge-world-1",
+    "homeIsland": "/home-island",
+    "proceduralTest": "/test-play or mode=procedural",
+    "lobby": "/island-3d?mode=lobby&map=pirate-islands"
   }
 }

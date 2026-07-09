@@ -1,17 +1,25 @@
 {
-  "version": "1.0.1",
-  "updated": "2026-07-08",
+  "version": "1.1.0",
+  "updated": "2026-07-09",
   "canonicalSource": "GrudgeBuilder/shared/definitions/worldMapSectors.ts",
   "worldSeedDefault": "grudge-world-1",
   "playBaseUrl": "https://client.grudge-studio.com/play",
   "oceanBaseUrl": "https://client.grudge-studio.com/ocean",
   "homeIslandUrl": "https://client.grudge-studio.com/home-island",
   "infoHub": "https://info.grudge-studio.com",
+  "gameIdentity": {
+    "genre": "freeform-arpg",
+    "classSystem": "flavor-only",
+    "equipRule": "any-race-any-weapon-any-armor",
+    "notes": "Not a rigid Warlords class-role MMO. Class is starter vibe only; combat style follows equipment."
+  },
   "notes": [
     "Canonical zone IDs are snake_case (haven_shore). Legacy Colyseus grid keys NW/N/NE/W/CENTER/E/SW/S/SE still resolve via sectorBridge.",
-    "Play entry for full 10km sector: /play?sector=<zoneId>&mode=zone&worldSeed=grudge-world-1",
-    "Default /play without mode=zone loads procedural test terrain (not a sector map).",
-    "Ocean hub: /ocean?worldSeed=grudge-world-1 lands on Haven Shore (S) then deploys into zones."
+    "Open-world play: /play defaults to mode=zone + sector=haven_shore + worldSeed=grudge-world-1",
+    "Explicit sector: /play?sector=<zoneId>&mode=zone&worldSeed=grudge-world-1",
+    "Procedural test harness only: /test-play or mode=procedural",
+    "Ocean hub: /ocean?worldSeed=grudge-world-1 lands on Haven Shore (S) then deploys into zones.",
+    "Terrain generation SSOT is bundled WORLD_SECTORS; ObjectStore is entry/catalog SSOT (must stay aligned)."
   ],
   "grid": {
     "layout": "3x3",

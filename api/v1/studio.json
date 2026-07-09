@@ -60,12 +60,14 @@
         "bosses": "/api/v1/bosses.json"
       },
       "warlordsCanonical": {
-        "description": "Grudge Warlords open-world sectors (NOT worlds.json SWG snapshots)",
+        "description": "Freeform ARPG open-world sectors (NOT worlds.json SWG snapshots). Class is flavor-only.",
         "zones": "/api/v1/warlords-zones.json",
         "catalog": "/api/v1/warlords-catalog.json",
-        "clientPlay": "https://client.grudge-studio.com/play",
+        "clientPlay": "https://client.grudge-studio.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1",
         "worldSeed": "grudge-world-1",
-        "sourceRepo": "GrudgeBuilder/shared/definitions/worldMapSectors.ts"
+        "sourceRepo": "GrudgeBuilder/shared/definitions/worldMapSectors.ts",
+        "characterRule": "race=body mesh; equipment=weapons/armor/anims; class=flavor",
+        "version": "1.1.0"
       }
     },
     "storage": {
