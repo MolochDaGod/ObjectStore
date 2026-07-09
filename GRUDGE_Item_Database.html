@@ -294,6 +294,15 @@
     </button>
 
     <div class="sidebar-divider"></div>
+    <div class="sidebar-label">grudge6 3D</div>
+    <button class="nav-btn" id="btn-g6-ready" onclick="toggleGrudge6Ready()" title="Only weapons/tools with game-ready GLB + attachment socket">
+      <span class="ico">🧬</span> grudge6 Ready <span class="badge" id="count-g6">—</span>
+    </button>
+    <a class="nav-btn" href="./GRUDGE6_Characters" style="text-decoration:none" title="Working race prefabs">
+      <span class="ico">🧑</span> Race Prefabs
+    </a>
+
+    <div class="sidebar-divider"></div>
     <div class="sidebar-label">Tier Filter</div>
     <div class="tier-filters">
       <div class="tier-row">
@@ -471,6 +480,26 @@ async function loadAuxManifests() {
   }
 }
 
+/** Prefer assets CDN for GLBs; keep github.io fallback path for pre-R2 mirrors. */
+function resolveGameModelUrl(model) {
+  if (!model) return null;
+  const raw = model.modelUrl || model.cdnUrl || '';
+  const gameReady = model.gameReadyPath
+    ? `https://assets.grudge-studio.com/${String(model.gameReadyPath).replace(/^\//, '')}`
+    : null;
+  const fromGh = raw
+    ? raw.replace('https://molochdagod.github.io/ObjectStore/', 'https://assets.grudge-studio.com/')
+    : null;
+  // Prefer assets rewrite; store fallback for onerror
+  return {
+    primary: gameReady || fromGh || raw || null,
+    fallback: raw && raw.includes('github.io') ? raw : null,
+    attachmentProfile: model.attachmentProfile || null,
+    grudgeUUID: model.grudgeUUID || model.grudgeUuid || null,
+    sourcePath: model.sourcePath || model.gameReadyPath || null,
+  };
+}
+
 function enrichItem(item) {
   const uuid = item.uuid || item.id || '';
   const baseUuid = item.baseUuid || uuid;
@@ -482,21 +511,29 @@ function enrichItem(item) {
   const rawIcon =
     item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl ||
     item.icon || reg?.iconCdnUrl || '';
+  const resolved = resolveGameModelUrl(model);
+  const isEquip = ['weapon', 'tool', 'shield'].includes(String(item.type || '').toLowerCase())
+    || /weapon|tool|shield/i.test(String(item.category || ''));
+  const grudge6Ready = !!(resolved?.primary && resolved?.attachmentProfile && isEquip);
   return {
     ...item,
     uuid,
     iconUrl: rawIcon ? (absAssetUrl(rawIcon, CDN) || rawIcon) : '',
     iconCdnUrl: reg?.iconCdnUrl || item.iconCdnUrl || '',
     iconUuid: item.iconUuid || reg?.iconUuid || '',
-    _gameModelUrl: model?.modelUrl || item.modelUrl || item._gameModelUrl || null,
-    _gameModelUuid: model?.grudgeUUID || item._gameModelUuid || null,
-    _attachmentProfile: model?.attachmentProfile || null,
+    _gameModelUrl: resolved?.primary || null,
+    _gameModelFallback: resolved?.fallback || null,
+    _gameModelUuid: resolved?.grudgeUUID || null,
+    _attachmentProfile: resolved?.attachmentProfile || null,
+    _modelSourcePath: resolved?.sourcePath || null,
+    _grudge6Ready: grudge6Ready,
   };
 }
 
 // ─── State ────────────────────────────────────────────────────────────────
 let allItems = [], filtered = [];
 let activeType = 'all', activeTier = 'all', activeSub = 'all';
+let grudge6ReadyOnly = true; // default: only gear with game-ready prefabs for grudge6
 let searchQ = '', sortKey = 'name', pageOffset = 0;
 const PAGE = 80;
 let weaponViewMode = 'types'; // 'types' = show weapon type grid, 'list' = show items of one type
@@ -592,6 +629,11 @@ function showCatalogError(message) {
   });
   const allBadge = document.getElementById('count-all');
   if (allBadge) allBadge.textContent = total.toLocaleString();
+  const g6 = allItems.filter((i) => i._grudge6Ready).length;
+  const g6el = document.getElementById('count-g6');
+  if (g6el) g6el.textContent = g6.toLocaleString();
+  const btnG6 = document.getElementById('btn-g6-ready');
+  if (btnG6) btnG6.classList.toggle('active', grudge6ReadyOnly);
 
   const hc = document.getElementById('headerCounts');
   if (hc) {
@@ -703,10 +745,22 @@ async function loadSource(source) {
   return { items };
 }
 
+function toggleGrudge6Ready() {
+  grudge6ReadyOnly = !grudge6ReadyOnly;
+  const btn = document.getElementById('btn-g6-ready');
+  if (btn) btn.classList.toggle('active', grudge6ReadyOnly);
+  applyFilters();
+}
+
 // ─── Filters ──────────────────────────────────────────────────────────────
 function applyFilters() {
   const q = searchQ.toLowerCase();
   filtered = allItems.filter(item => {
+    if (grudge6ReadyOnly) {
+      // Catalog rows without 3D (materials/recipes) still visible unless type is equip
+      const equip = ['weapon', 'tool'].includes(item._type);
+      if (equip && !item._grudge6Ready) return false;
+    }
     if (!matchesActiveType(item)) return false;
     if (activeTier !== 'all' && item._tierNum !== parseInt(activeTier, 10)) return false;
     if (activeSub !== 'all' && activeType === 'weapon') {
@@ -721,7 +775,7 @@ function applyFilters() {
         item.effect?.stat, item.scope, item.profession,
         item.slotType, item.material, item.setName,
         item.resultName, item.resultItemId, item.school, item.race,
-        item.obtainedFrom, item.baseName]
+        item.obtainedFrom, item.baseName, item._attachmentProfile]
         .filter(Boolean).join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
@@ -953,13 +1007,21 @@ function openDrawer(item, cardEl) {
     body += `<div class="section-title">Lore</div><p style="font-size:0.77rem;color:var(--text-dim);font-style:italic;line-height:1.65">${e(item.lore)}</p>`;
   }
 
-  // ── 3D model (weapons) ──
-  if (item._gameModelUrl) {
-    body += `<div class="section-title">3D Model</div>
+  // ── 3D model (grudge6 sockets + Mixamo hand aliases) ──
+  if (item._gameModelUrl || item._grudge6Ready) {
+    const sock = {
+      main_hand: 'R_hand_container → mixamorig:RightHand',
+      two_hand: 'R_hand_container → mixamorig:RightHand',
+      ranged_2h: 'L_hand_container → mixamorig:LeftHand',
+      off_hand: 'L_shield_container → mixamorig:LeftHand',
+    }[item._attachmentProfile] || 'see grudge6-characters.json';
+    body += `<div class="section-title">grudge6 3D Prefab</div>
       <div class="ability-list">
-        <div class="ability-item"><a href="./3D_MODELS.html" style="color:var(--gold-light)">Open in 3D viewer</a></div>
-        <div class="ability-item" style="font-size:0.7rem;word-break:break-all">${e(item._gameModelUrl)}</div>
-        ${item._attachmentProfile ? `<div class="ability-item">Attach: <strong>${e(item._attachmentProfile)}</strong></div>` : ''}
+        <div class="ability-item"><a href="./GRUDGE6_Characters" style="color:var(--gold-light)">Race prefabs (Y-hip · Mixamo/Bip001)</a></div>
+        ${item._gameModelUrl ? `<div class="ability-item" style="font-size:0.7rem;word-break:break-all">${e(item._gameModelUrl)}</div>` : ''}
+        ${item._attachmentProfile ? `<div class="ability-item">Profile: <strong>${e(item._attachmentProfile)}</strong></div>` : ''}
+        <div class="ability-item" style="font-size:0.72rem;color:var(--text-dim)">Socket: ${e(sock)}</div>
+        <div class="ability-item" style="font-size:0.7rem;color:var(--text-dim)">Rigid body: capsule on hips Y — weapon is kinematic attach, not separate body</div>
         ${item._gameModelUuid ? `<div class="ability-item" style="font-size:0.65rem;color:var(--text-dim)">${e(item._gameModelUuid)}</div>` : ''}
       </div>`;
   }

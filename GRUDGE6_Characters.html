@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>grudge6 Characters — Working Prefabs · Mixamo / Bip001 · Y-Hip</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <style>
+    :root {
+      --bg:#0a0e14; --panel:#111821; --border:rgba(212,168,75,0.2);
+      --gold:#d4a84b; --text:#e8e6e3; --dim:#7a7877; --ok:#22c55e;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--panel)}
+    header h1{font-size:1.05rem;color:var(--gold);letter-spacing:0.04em}
+    header .sub{font-size:0.75rem;color:var(--dim)}
+    header a{color:var(--gold);font-size:0.78rem;margin-left:auto;text-decoration:none}
+    .layout{display:grid;grid-template-columns:280px 1fr 320px;height:calc(100vh - 56px)}
+    @media(max-width:960px){.layout{grid-template-columns:1fr;height:auto}}
+    .side{overflow:auto;border-right:1px solid var(--border);padding:12px;background:#0c1118}
+    .race{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;background:rgba(212,168,75,0.04)}
+    .race:hover,.race.active{border-color:var(--gold);background:rgba(212,168,75,0.12)}
+    .race .emoji{font-size:1.6rem}
+    .race .name{font-weight:700;font-size:0.95rem}
+    .race .meta{font-size:0.72rem;color:var(--dim)}
+    .badge{display:inline-block;font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(34,197,94,0.15);color:var(--ok);border:1px solid rgba(34,197,94,0.35)}
+    #viewport{position:relative;background:#06080c;min-height:360px}
+    #viewport canvas{display:block;width:100%;height:100%}
+    .vp-hud{position:absolute;left:10px;bottom:10px;font-size:0.7rem;color:var(--dim);background:rgba(0,0,0,0.55);padding:6px 10px;border-radius:6px;max-width:90%}
+    .panel{overflow:auto;border-left:1px solid var(--border);padding:14px;font-size:0.82rem}
+    .panel h2{font-size:0.85rem;color:var(--gold);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.06em}
+    .panel h2:first-child{margin-top:0}
+    .panel code{font-size:0.72rem;color:#f0d890;word-break:break-all}
+    .panel ul{margin:0 0 0 1.1rem;color:var(--dim);line-height:1.45}
+    .panel li{margin-bottom:4px}
+    .clips{display:flex;flex-wrap:wrap;gap:6px}
+    .clips button{background:#1a2435;border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem}
+    .clips button:hover,.clips button.on{border-color:var(--gold);color:var(--gold)}
+    .err{color:#ef4444;font-size:0.8rem;padding:12px}
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>grudge6 Characters</h1>
+    <div class="sub">Working race prefabs · Bip001 / Mixamo Hips · Y-hip ground · attachment sockets</div>
+  </div>
+  <a href="./GRUDGE_Item_Database">← Item Database (grudge6-ready gear)</a>
+</header>
+<div class="layout">
+  <aside class="side" id="raceList"><div class="sub" style="padding:8px">Loading grudge6 SSOT…</div></aside>
+  <main id="viewport">
+    <div class="vp-hud" id="hud">Select a race</div>
+  </main>
+  <aside class="panel" id="detail">
+    <h2>Rig practices</h2>
+    <ul id="practices"></ul>
+    <h2>Clips</h2>
+    <div class="clips" id="clips"></div>
+    <h2>Sockets</h2>
+    <ul id="sockets"></ul>
+    <h2>Model URLs</h2>
+    <div id="urls"></div>
+  </aside>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const API = 'https://objectstore.grudge-studio.com/api/v1';
+const LOCAL_SSOT = './api/v1/grudge6-characters.json';
+
+const BONE_ALIASES = {
+  hips: /^(mixamorig:)?Hips$|Pelvis|Bip001$|Bip001 Pelvis|Root$/i,
+  rightHand: /RightHand|R Hand|R_hand|weapon.?r|mixamorig:RightHand/i,
+  leftHand: /LeftHand|L Hand|L_hand|weapon.?l|mixamorig:LeftHand/i,
+  shield: /L_shield|shield|LeftHand|mixamorig:LeftHand/i,
+  head: /Head(?!Top)|mixamorig:Head|Bip001 Head/i,
+};
+
+let catalog = null;
+let activeRace = null;
+let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
+
+async function loadCatalog() {
+  for (const url of [LOCAL_SSOT, `${API}/grudge6-characters.json`]) {
+    try {
+      const r = await fetch(url, { cache: 'no-cache' });
+      if (r.ok) return r.json();
+    } catch { /* try next */ }
+  }
+  // Hard fallback — only CDN-proven working models
+  return {
+    rig: { primarySkeleton: 'Bip001', yHip: { rule: 'position.y = -box.min.y' } },
+    races: ['human','barbarian','orc','elf','undead','dwarf'].map(id => ({
+      id, name: id[0].toUpperCase()+id.slice(1), working: true, prefix: '',
+      models: {
+        metaverse: `https://assets.grudge-studio.com/models/grudge6/metaverse/${id}.glb`,
+        toonRts: `https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/${id}.glb`,
+      },
+      clips: ['idle','walk','run','hit','attack'],
+      emoji: '⚔',
+    })),
+  };
+}
+
+function initThree() {
+  const el = document.getElementById('viewport');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x06080c);
+  camera = new THREE.PerspectiveCamera(40, 1, 0.05, 100);
+  camera.position.set(1.4, 1.2, 2.2);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  el.appendChild(renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0.9, 0);
+  controls.update();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 1.2));
+  const d = new THREE.DirectionalLight(0xffe6b0, 1.1);
+  d.position.set(3, 6, 2);
+  scene.add(d);
+  const grid = new THREE.GridHelper(4, 12, 0x3a2a10, 0x1a1510);
+  scene.add(grid);
+  clock = new THREE.Clock();
+  function resize() {
+    const w = el.clientWidth, h = el.clientHeight || 400;
+    camera.aspect = w / Math.max(h, 1);
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  (function loop() {
+    requestAnimationFrame(loop);
+    const dt = clock.getDelta();
+    if (mixer) mixer.update(dt);
+    controls.update();
+    renderer.render(scene, camera);
+  })();
+}
+
+function discoverBones(root) {
+  const found = {};
+  const bones = [];
+  root.traverse((n) => { if (n.isBone) bones.push(n); });
+  for (const [slot, re] of Object.entries(BONE_ALIASES)) {
+    const b = bones.find((x) => re.test(x.name));
+    if (b) found[slot] = b.name;
+  }
+  return { found, total: bones.length, names: bones.slice(0, 24).map((b) => b.name) };
+}
+
+function groundYHip(root) {
+  // Y-hip / feet-on-ground practice
+  root.position.set(0, 0, 0);
+  root.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(root);
+  root.position.y = -box.min.y;
+  root.updateMatrixWorld(true);
+  return { minY: box.min.y, height: box.max.y - box.min.y };
+}
+
+async function loadRace(race, prefer = 'metaverse') {
+  activeRace = race;
+  document.querySelectorAll('.race').forEach((el) => {
+    el.classList.toggle('active', el.dataset.id === race.id);
+  });
+  if (currentRoot) {
+    scene.remove(currentRoot);
+    currentRoot = null;
+  }
+  mixer = null;
+  animActions = {};
+  const url = race.models?.[prefer] || race.models?.metaverse || race.models?.toonRts;
+  document.getElementById('hud').textContent = `Loading ${race.name}…`;
+  const loader = new GLTFLoader();
+  try {
+    const gltf = await loader.loadAsync(url);
+    currentRoot = gltf.scene;
+    currentRoot.traverse((n) => {
+      if (n.isMesh) {
+        n.castShadow = true;
+        n.receiveShadow = true;
+      }
+    });
+    scene.add(currentRoot);
+    const ground = groundYHip(currentRoot);
+    const bones = discoverBones(currentRoot);
+    if (gltf.animations?.length) {
+      mixer = new THREE.AnimationMixer(currentRoot);
+      for (const clip of gltf.animations) {
+        animActions[clip.name] = mixer.clipAction(clip);
+      }
+      // Prefer idle
+      const idle = gltf.animations.find((c) => /idle|stand|breath/i.test(c.name)) || gltf.animations[0];
+      if (idle) {
+        animActions[idle.name].reset().fadeIn(0.2).play();
+      }
+      renderClips(Object.keys(animActions), idle?.name);
+    } else {
+      document.getElementById('clips').innerHTML = '<span class="sub">No clips in this GLB</span>';
+    }
+    document.getElementById('hud').textContent =
+      `${race.name} · skeleton bones ${bones.total} · height ${ground.height.toFixed(2)} · Y-hip grounded`;
+    renderDetail(race, bones, url, prefer);
+  } catch (err) {
+    document.getElementById('hud').textContent = `Failed: ${err.message}`;
+    // try alternate
+    if (prefer === 'metaverse' && race.models?.toonRts) {
+      return loadRace(race, 'toonRts');
+    }
+  }
+}
+
+function renderClips(names, active) {
+  const el = document.getElementById('clips');
+  el.innerHTML = names.map((n) =>
+    `<button class="${n === active ? 'on' : ''}" data-clip="${n}">${n}</button>`
+  ).join('') || '<span class="sub">—</span>';
+  el.querySelectorAll('button').forEach((btn) => {
+    btn.onclick = () => {
+      const name = btn.dataset.clip;
+      Object.values(animActions).forEach((a) => a.fadeOut(0.15));
+      animActions[name]?.reset().fadeIn(0.15).play();
+      el.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === btn));
+    };
+  });
+}
+
+function renderDetail(race, bones, url, prefer) {
+  const rig = catalog.rig || {};
+  document.getElementById('practices').innerHTML = `
+    <li><strong>Skeleton:</strong> ${rig.primarySkeleton || 'Bip001'} (+ Mixamo <code>mixamorig:Hips</code>)</li>
+    <li><strong>Y-hip:</strong> ${(rig.yHip && rig.yHip.rule) || 'ground with -bbox.min.y'}</li>
+    <li><strong>Rigid body:</strong> ${(rig.rigidBody && rig.rigidBody.practice) || 'capsule on hips Y'}</li>
+    <li><strong>Prefix:</strong> <code>${race.prefix || '—'}</code> equipment child meshes</li>
+    <li><strong>Bones found:</strong> ${Object.entries(bones.found).map(([k,v]) => k+'='+v).join(', ') || 'none matched'}</li>
+  `;
+  const sock = rig.attachmentSockets || {};
+  document.getElementById('sockets').innerHTML = Object.entries(sock).map(([k, v]) =>
+    `<li><code>${k}</code> → ${v.bone} <span style="color:var(--dim)">(fallback ${v.fallback})</span></li>`
+  ).join('') || '<li>—</li>';
+  document.getElementById('urls').innerHTML = `
+    <div style="margin-bottom:8px"><span class="badge">${prefer}</span></div>
+    <div><strong>Active</strong><br/><code>${url}</code></div>
+    <div style="margin-top:8px"><strong>metaverse</strong><br/><code>${race.models?.metaverse || '—'}</code></div>
+    <div style="margin-top:8px"><strong>toon RTS</strong><br/><code>${race.models?.toonRts || '—'}</code></div>
+  `;
+}
+
+function renderRaceList() {
+  const races = (catalog.races || []).filter((r) => r.working !== false);
+  document.getElementById('raceList').innerHTML = races.map((r) => `
+    <div class="race" data-id="${r.id}">
+      <div class="emoji">${r.emoji || '⚔'}</div>
+      <div>
+        <div class="name">${r.name}</div>
+        <div class="meta">${r.prefix || ''} · ${r.faction || 'grudge6'} · <span class="badge">LIVE</span></div>
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.race').forEach((el) => {
+    el.onclick = () => {
+      const race = races.find((r) => r.id === el.dataset.id);
+      if (race) loadRace(race);
+    };
+  });
+}
+
+(async function main() {
+  initThree();
+  try {
+    catalog = await loadCatalog();
+  } catch (e) {
+    document.getElementById('raceList').innerHTML = `<div class="err">${e.message}</div>`;
+    return;
+  }
+  renderRaceList();
+  const first = (catalog.races || []).find((r) => r.working !== false);
+  if (first) loadRace(first);
+})();
+</script>
+</body>
+</html>

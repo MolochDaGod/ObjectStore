@@ -1,0 +1,169 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-09T22:20:00.000Z",
+  "description": "Working grudge6 hero races — Three.js runtime SSOT (skeleton, sockets, Mixamo aliases, rigid-body practices)",
+  "canonical": true,
+  "pipeline": "grudge6",
+  "cdn": {
+    "assets": "https://assets.grudge-studio.com",
+    "objectStoreApi": "https://objectstore.grudge-studio.com/api/v1",
+    "metaverseBase": "https://assets.grudge-studio.com/models/grudge6/metaverse",
+    "toonRtsBase": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters"
+  },
+  "rig": {
+    "primarySkeleton": "Bip001",
+    "rootBoneCandidates": ["Bip001", "Bip001 Pelvis", "mixamorig:Hips", "Hips", "Pelvis", "Root"],
+    "yHip": {
+      "rule": "Root / Hips bone defines world Y. After load, place feet on ground: position.y = -box.min.y (+ optional offset).",
+      "mixamo": "mixamorig:Hips is the animation root; do not parent-offset under a second root without baking.",
+      "bip001": "Bip001 or Bip001 Pelvis is root; containers hang off hand bones, not the mesh."
+    },
+    "mixamoNaming": {
+      "prefix": "mixamorig:",
+      "aliases": {
+        "hips": ["mixamorig:Hips", "Hips", "Pelvis", "Bip001 Pelvis", "Bip001"],
+        "spine": ["mixamorig:Spine", "mixamorig:Spine1", "mixamorig:Spine2", "Bip001 Spine", "Bip001 Spine1", "Bip001 Spine2"],
+        "head": ["mixamorig:Head", "Bip001 Head", "Head"],
+        "rightHand": ["mixamorig:RightHand", "Bip001 R Hand", "R_hand_container", "RightHand"],
+        "leftHand": ["mixamorig:LeftHand", "Bip001 L Hand", "L_hand_container", "LeftHand"],
+        "leftShield": ["L_shield_container", "mixamorig:LeftHand"]
+      },
+      "animationClipNames": "Normalize mixamo.com clip names; match idle/walk/run/attack/hit by substring."
+    },
+    "attachmentSockets": {
+      "main_hand": { "bone": "R_hand_container", "fallback": "mixamorig:RightHand", "profiles": ["main_hand"] },
+      "two_hand": { "bone": "R_hand_container", "fallback": "mixamorig:RightHand", "profiles": ["two_hand"] },
+      "ranged_2h": { "bone": "L_hand_container", "fallback": "mixamorig:LeftHand", "profiles": ["ranged_2h"] },
+      "off_hand": { "bone": "L_shield_container", "fallback": "mixamorig:LeftHand", "profiles": ["off_hand"] }
+    },
+    "rigidBody": {
+      "practice": "Capsule collider on character root (hips/Y); not per-mesh. Weapons are kinematic attachments unless projectile.",
+      "capsule": {
+        "align": "Y-up",
+        "radiusHint": "0.28–0.35 * model scale",
+        "heightHint": "from foot box.min.y to head approx",
+        "offset": "center at hips, not mesh geometric center"
+      },
+      "equipment": "Child meshes toggle visibility; do not spawn separate rigid bodies for worn armor on grudge6.",
+      "physicsEngine": "Cannon-ES or Rapier — body follows mixer-updated root bone each frame."
+    },
+    "equipmentChildMeshes": {
+      "note": "Toon RTS / customizable FBX uses prefix + slot mesh names; metaverse bake may embed base mesh only.",
+      "prefixes": {
+        "human": "WK_",
+        "barbarian": "BRB_",
+        "elf": "ELF_",
+        "dwarf": "DWF_",
+        "orc": "ORC_",
+        "undead": "UD_"
+      },
+      "slots": ["Body", "Arms", "Legs", "head", "shoulderpads", "sword", "axe", "hammer", "spear", "Bow", "staff", "shield"]
+    }
+  },
+  "races": [
+    {
+      "id": "human",
+      "name": "Human",
+      "prefix": "WK_",
+      "faction": "crusade",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/human.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "🧑"
+    },
+    {
+      "id": "barbarian",
+      "name": "Barbarian",
+      "prefix": "BRB_",
+      "faction": "crusade",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/barbarian.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "🪓"
+    },
+    {
+      "id": "orc",
+      "name": "Orc",
+      "prefix": "ORC_",
+      "faction": "legion",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/orc.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "👹"
+    },
+    {
+      "id": "elf",
+      "name": "Elf",
+      "prefix": "ELF_",
+      "faction": "fabled",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/elf.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "🧝"
+    },
+    {
+      "id": "undead",
+      "name": "Undead",
+      "prefix": "UD_",
+      "faction": "legion",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/undead.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "💀"
+    },
+    {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "prefix": "DWF_",
+      "faction": "fabled",
+      "status": "live",
+      "working": true,
+      "models": {
+        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/dwarf.glb",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb"
+      },
+      "clips": ["idle", "walk", "run", "hit", "attack"],
+      "emoji": "⛏️"
+    }
+  ],
+  "weaponPrefabs": {
+    "authority": "master-weapon-prefabs.json",
+    "modelMap": "weapon-model-game-urls.json",
+    "rule": "Only equip items with attachmentProfile + gameReadyPath/modelUrl on grudge6 sockets",
+    "cdnRewrite": {
+      "from": "https://molochdagod.github.io/ObjectStore/",
+      "toAssets": "https://assets.grudge-studio.com/",
+      "note": "Prefer assets CDN; fall back to GitHub Pages until R2 mirror complete"
+    },
+    "profiles": ["main_hand", "two_hand", "ranged_2h", "off_hand"]
+  },
+  "threejsLoadOrder": [
+    "GLTFLoader load metaverse GLB",
+    "find skeleton root (Bip001 / mixamorig:Hips)",
+    "ground feet: position.y = -bbox.min.y",
+    "discover sockets R_hand_container / L_hand_container / L_shield_container (or Mixamo hand bones)",
+    "attach weapon GLB to socket with attachmentProfile",
+    "AnimationMixer — idle/walk/run/hit/attack",
+    "Capsule rigid body on hips Y, sync each frame from root bone"
+  ]
+}
