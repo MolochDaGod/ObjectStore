@@ -56,18 +56,26 @@
         "models3d": "/api/v1/models3d.json",
         "warlordsZones": "/api/v1/warlords-zones.json",
         "warlordsCatalog": "/api/v1/warlords-catalog.json",
+        "mapRegistry": "/api/v1/map-registry.json",
         "enemies": "/api/v1/enemies.json",
         "bosses": "/api/v1/bosses.json"
       },
       "warlordsCanonical": {
-        "description": "Freeform ARPG open-world sectors (NOT worlds.json SWG snapshots). Class is flavor-only.",
+        "description": "Warlords ERA open-world only (9 macro sectors). Class flavor-only freeform ARPG. NOT player home-block 3x3.",
         "zones": "/api/v1/warlords-zones.json",
         "catalog": "/api/v1/warlords-catalog.json",
+        "mapRegistry": "/api/v1/map-registry.json",
         "clientPlay": "https://client.grudge-studio.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1",
         "worldSeed": "grudge-world-1",
         "sourceRepo": "GrudgeBuilder/shared/definitions/worldMapSectors.ts",
         "characterRule": "race=body mesh; equipment=weapons/armor/anims; class=flavor",
+        "mapFamily": "warlords_era_open_world",
         "version": "1.1.0"
+      },
+      "mapFamiliesCanonical": {
+        "description": "All playable map spaces — two different 9-cell systems + lobby/home/arena/genesis",
+        "registry": "/api/v1/map-registry.json",
+        "sourceRepo": "GrudgeBuilder/shared/definitions/mapRegistry.ts"
       }
     },
     "storage": {
