@@ -100,6 +100,8 @@
     STAFF: ['fireStaves', 'frostStaves', 'holyStaves', 'lightningStaves', 'natureStaves', 'arcaneStaves'],
     WAND: ['wands'],
     MACE: ['maces'],
+    SCYTHE: ['scythes'],
+    TOOL: ['tools'],
     SHIELD: ['shields'],
     TOME: ['fireTomes', 'frostTomes', 'natureTomes', 'holyTomes', 'arcaneTomes', 'lightningTomes'],
   };
@@ -569,20 +571,26 @@
   function renderWeaponVariantBar(typeId, opts = {}) {
     const variants = listVariantsForType(typeId);
     if (!variants.length) {
-      return '<div class="wst-variant-empty">No named variants loaded for this weapon type.</div>';
+      return '<div class="wst-variant-empty">No named variants loaded for this weapon type. (Need weapons.json + t0-weapons.json)</div>';
     }
 
     const selected = opts.variantId || variants[0].id;
     const asset = opts.asset || defaultAsset;
+    const typeDef = getTypeDef(typeId);
+    const fallbackIcon = typeDef?.icon ? asset(typeDef.icon) : '';
 
     let html = '<div class="wst-variant-section">';
-    html += '<span class="wst-variant-label">Weapon:</span>';
+    html += '<span class="wst-variant-label">Weapon sub-type:</span>';
     html += '<div class="wst-variant-bar">';
 
     for (const v of variants) {
       const active = v.id === selected ? ' active' : '';
       const tierTag = v.isT0 ? ' <span class="wst-tier-tag">T0</span>' : '';
-      html += `<button type="button" class="wst-variant-btn${active}" data-wst-weapon-variant="${esc(v.id)}" title="${esc(v.lore)}">${esc(v.name)}${tierTag}</button>`;
+      const iconSrc = v.icon ? asset(v.icon) : fallbackIcon;
+      const iconHtml = iconSrc
+        ? `<img class="wst-variant-icon" src="${esc(iconSrc)}" alt="" onerror="this.style.display='none'">`
+        : '';
+      html += `<button type="button" class="wst-variant-btn${active}" data-wst-weapon-variant="${esc(v.id)}" title="${esc(v.lore || v.name)}">${iconHtml}<span class="wst-variant-name">${esc(v.name)}</span>${tierTag}</button>`;
     }
 
     html += '</div></div>';

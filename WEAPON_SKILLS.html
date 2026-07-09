@@ -589,7 +589,10 @@
       margin-bottom: 18px;
     }
     .wst-variant-btn {
-      padding: 8px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
       font-family: var(--font-heading);
       font-size: 0.82em;
       border: 2px solid var(--border-gold);
@@ -599,10 +602,25 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+    .wst-variant-btn .wst-variant-icon {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 2px;
+      flex-shrink: 0;
+      image-rendering: auto;
+    }
+    .wst-variant-btn .wst-variant-name {
+      line-height: 1.2;
+    }
     .wst-variant-btn:hover, .wst-variant-btn.active {
       background: linear-gradient(180deg, hsl(43 70% 45%) 0%, hsl(38 65% 32%) 100%);
       border-color: hsl(43 50% 50%);
       color: hsl(225 30% 10%);
+    }
+    .wst-variant-btn.active .wst-variant-icon,
+    .wst-variant-btn:hover .wst-variant-icon {
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.35));
     }
     .wst-paired-bar {
       display: flex;
@@ -848,7 +866,13 @@ function asset(url) {
   return url;
 }
 
-const API_SOURCES = ['./api/v1', 'https://info.grudge-studio.com/api/v1', 'https://objectstore.grudge-studio.com/api/v1'];
+/** Prefer local api/v1 (browse Pages + Vercel), then live ObjectStore mirrors. */
+const API_SOURCES = [
+  './api/v1',
+  'https://objectstore.grudge-studio.com/api/v1',
+  'https://info.grudge-studio.com/api/v1',
+  'https://molochdagod.github.io/ObjectStore/api/v1',
+];
 
 let activeWeapon = 'SWORD';
 let activeVariantId = null;
