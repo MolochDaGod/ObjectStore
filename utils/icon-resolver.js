@@ -222,8 +222,14 @@ export function getFallbackUrl(item, base) {
 
 // ── Weapon: try named icon first, then pack/weapons/ ──
 function getWeaponIcon(item, baseId, base) {
-  // If the item already has a working iconUrl path, use it
-  var raw = item.iconUrl || '';
+  // Prefer R2 pack icons. Skip legacy github.io /icons/swords|axes/… (many 404 on CDN).
+  var raw = item.iconUrl || item.iconCdnUrl || '';
+  if (raw && /github\.io|\/icons\/(swords|axes|daggers|hammers|bows)\//i.test(raw)) {
+    raw = '';
+  }
+  if (raw && raw.includes('/icons/pack/weapons/')) {
+    return absAssetUrl(raw, base);
+  }
   if (raw && raw.includes('/icons/weapons/') && !raw.match(/\/(staff|Sword|Axe|Dagger|Hammer|Spear|Bow|Crossbow|Book|Scythe|shield)_/i)) {
     return absAssetUrl(raw, base);
   }
@@ -487,7 +493,8 @@ function catalogMaterialIcon(item, base) {
 export function resolveCatalogIcon(item, base) {
   base = base || ICON_CDN;
   var t = item.type || item._type || '';
-  var raw = item.iconUrl || '';
+  // Normalize legacy hosts (github.io → assets CDN) before branching
+  var raw = absAssetUrl(item.iconUrl || item.iconCdnUrl || item.icon || '', base) || '';
   var tier = parseInt(item.tier || item._tierNum, 10) || 1;
 
   if (t === 'enchant' || (!raw && t === 'enchant') || raw.includes('/icons/enchants/')) {

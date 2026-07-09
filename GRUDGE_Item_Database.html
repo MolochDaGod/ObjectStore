@@ -228,7 +228,7 @@
 <header class="site-header">
   <img src="favicon.svg" alt="Grudge Studio">
   <h1>GRUDGE ITEM DATABASE</h1>
-  <span class="header-sub">Canonical catalog · master APIs · icon resolver · game-ready 3D</span>
+  <span class="header-sub">SSOT · objectstore.grudge-studio.com · icons @ assets.grudge-studio.com</span>
   <div class="header-counts" id="headerCounts"></div>
 </header>
 
@@ -403,25 +403,24 @@
 
 <script type="module">
 import { resolveCatalogIcon } from './utils/icon-resolver.js';
-import { ICON_CDN } from './utils/asset-config.js';
+import { ICON_CDN, OBJECTSTORE_API, absAssetUrl } from './utils/asset-config.js';
 
 const CDN = ICON_CDN;
+/** Fleet ONE TRUTH — catalog JSON from ObjectStore Worker, never github.io */
+const API = OBJECTSTORE_API || 'https://objectstore.grudge-studio.com/api/v1';
 
-// ─── Data sources (full registry coverage) ────────────────────────────────
+// ─── Data sources: master-items SSOT + economy catalogs ───────────────────
 const SOURCES = [
-  { url: './api/v1/t0-weapons.json',         key: 'weapons',    type: 'weapon',     ico: '⚔️' },
-  { url: './api/v1/master-weapons.json',     key: 'items',      type: 'weapon',     ico: '⚔️' },
-  { url: './api/v1/master-armor.json',       key: 'items',      type: 'armor',      ico: '🛡️' },
-  { url: './api/v1/master-consumables.json', key: 'items',      type: 'consumable', ico: '🧪' },
-  { url: './api/v1/master-materials.json',   key: 'materials',  type: 'material',   ico: '🪨' },
-  { url: './api/v1/master-relics.json',      key: 'relics',     type: 'relic',      ico: '💎' },
-  { url: './api/v1/master-enchants.json',  key: 'enchants',   type: 'enchant',    ico: '✨' },
-  { url: './api/v1/master-infusions.json',   key: 'infusions',  type: 'infusion',   ico: '🌀' },
-  { url: './api/v1/master-artifacts.json',   key: 'artifacts',  type: 'artifact',   ico: '🏺' },
-  { url: './api/v1/master-recipes.json',     key: 'recipes',    type: 'recipe',     ico: '📜', kind: 'recipe' },
-  { url: './api/v1/master-spellRecipes.json', key: 'recipes',   type: 'spell-recipe', ico: '✦', kind: 'spell-recipe' },
-  { url: './api/v1/master-buildings.json',   key: 'buildings',  type: 'building',   ico: '🏛️' },
-  { url: './api/v1/master-mounts.json',      key: 'mounts',     type: 'mount',      ico: '🐴' },
+  { url: `${API}/master-items.json`,         key: 'items',      type: null,           ico: '📦' },
+  { url: `${API}/master-materials.json`,     key: 'materials',  type: 'material',     ico: '🪨' },
+  { url: `${API}/master-relics.json`,        key: 'relics',     type: 'relic',        ico: '💎' },
+  { url: `${API}/master-enchants.json`,      key: 'enchants',   type: 'enchant',      ico: '✨' },
+  { url: `${API}/master-infusions.json`,     key: 'infusions',  type: 'infusion',     ico: '🌀' },
+  { url: `${API}/master-artifacts.json`,     key: 'artifacts',  type: 'artifact',     ico: '🏺' },
+  { url: `${API}/master-recipes.json`,       key: 'recipes',    type: 'recipe',       ico: '📜', kind: 'recipe' },
+  { url: `${API}/master-spellRecipes.json`,  key: 'recipes',    type: 'spell-recipe', ico: '✦', kind: 'spell-recipe' },
+  { url: `${API}/master-buildings.json`,     key: 'buildings',  type: 'building',     ico: '🏛️' },
+  { url: `${API}/master-mounts.json`,        key: 'mounts',     type: 'mount',        ico: '🐴' },
 ];
 
 const TYPE_GROUPS = {
@@ -444,22 +443,23 @@ function parseTierNum(item) {
 }
 
 function resolveIcon(item) {
-  return resolveCatalogIcon(item);
+  return resolveCatalogIcon(item, CDN);
 }
 
-// ─── Registry + 3D model lookups ───────────────────────────────────────
+// ─── Registry + 3D model lookups (ObjectStore Worker SSOT) ─────────────
 let registryByUuid = {};
 let weaponModelByUuid = new Map();
+const seenUuids = new Set();
 
 async function loadAuxManifests() {
   try {
-    const res = await fetch('./api/v1/master-registry.json');
+    const res = await fetch(`${API}/master-registry.json`, { cache: 'no-cache' });
     if (res.ok) registryByUuid = (await res.json()).entries || {};
   } catch (err) {
     console.warn('Registry load failed:', err.message);
   }
   try {
-    const res = await fetch('./api/v1/weapon-model-game-urls.json');
+    const res = await fetch(`${API}/weapon-model-game-urls.json`, { cache: 'no-cache' });
     if (res.ok) {
       const data = await res.json();
       for (const m of data.mappings || []) {
@@ -479,10 +479,15 @@ function enrichItem(item) {
   const model = (uuid && weaponModelByUuid.get(uuid))
     || (baseUuid && weaponModelByUuid.get(baseUuid))
     || null;
+  const rawIcon =
+    item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl ||
+    item.icon || reg?.iconCdnUrl || '';
   return {
     ...item,
     uuid,
-    iconUrl: item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl || '',
+    iconUrl: rawIcon ? (absAssetUrl(rawIcon, CDN) || rawIcon) : '',
+    iconCdnUrl: reg?.iconCdnUrl || item.iconCdnUrl || '',
+    iconUuid: item.iconUuid || reg?.iconUuid || '',
     _gameModelUrl: model?.modelUrl || item.modelUrl || item._gameModelUrl || null,
     _gameModelUuid: model?.grudgeUUID || item._gameModelUuid || null,
     _attachmentProfile: model?.attachmentProfile || null,
@@ -553,7 +558,7 @@ function showCatalogError(message) {
     <div class="state-message" style="grid-column:1/-1">
       <div class="big">⚠️</div>
       <p>${e(message)}</p>
-      <p style="margin-top:10px;font-size:0.72rem">Sources: ./api/v1/master-*.json</p>
+      <p style="margin-top:10px;font-size:0.72rem">Sources: objectstore.grudge-studio.com/api/v1 · icons: assets.grudge-studio.com</p>
     </div>`;
   document.getElementById('resultInfo').textContent = 'Unavailable';
   document.getElementById('loadMoreWrap').style.display = 'none';
@@ -666,7 +671,8 @@ function normalizeCatalogEntry(raw, { type, ico, kind }) {
 
   const rawCat = raw.subType || raw.weaponType || raw.category || '';
   const enriched = enrichItem(raw);
-  const resolvedType = enriched.type || type;
+  // Prefer type from master-items SSOT when source.type is null
+  const resolvedType = enriched.type || type || 'item';
   return {
     ...enriched,
     _type: resolvedType,
@@ -680,12 +686,21 @@ function normalizeCatalogEntry(raw, { type, ico, kind }) {
 
 async function loadSource(source) {
   const { url, key } = source;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(res.status);
+  const res = await fetch(url, { cache: 'no-cache' });
+  if (!res.ok) throw new Error(`${res.status} ${url}`);
   const data = await res.json();
   if (data.deprecated || data.archived) return { items: [] };
-  const raw = data[key] || [];
-  return { items: raw.map(item => normalizeCatalogEntry(item, source)) };
+  const raw = data[key] || data.items || [];
+  const list = Array.isArray(raw) ? raw : [];
+  const items = [];
+  for (const item of list) {
+    const entry = normalizeCatalogEntry(item, source);
+    const id = entry.uuid || entry.id;
+    if (id && seenUuids.has(id)) continue;
+    if (id) seenUuids.add(id);
+    items.push(entry);
+  }
+  return { items };
 }
 
 // ─── Filters ──────────────────────────────────────────────────────────────
