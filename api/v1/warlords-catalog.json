@@ -274,7 +274,18 @@
   "ships": {
     "catalog": ["rowboat", "sloop", "galleon"],
     "plannedLadder": ["raft", "skiff", "sloop", "brigantine", "galleon", "man_o_war"],
-    "dockModel": "/models/camps/../buildings or fish/Dock*.glb from TI"
+    "dockModel": "/models/camps/../buildings or fish/Dock*.glb from TI",
+    "enemyDamageStates": {
+      "source": "dangerroom ship/state_{0,1,2}.glb",
+      "cdn": "https://assets.grudge-studio.com/models/ships/enemy/",
+      "states": {
+        "0": { "id": "healthy", "file": "healthy.glb" },
+        "1": { "id": "damaged", "file": "damaged.glb" },
+        "2": { "id": "sunk", "file": "sunk.glb" }
+      },
+      "runtime": "GrudgeBuilder client/src/game/sailing/EnemyShipModels.ts",
+      "usedBy": "tactical ocean NPC ships"
+    }
   },
   "uiModes": ["combat", "harvest", "build"],
   "deploymentTruth": {
