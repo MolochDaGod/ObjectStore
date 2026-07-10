@@ -1,0 +1,46 @@
+{
+  "name": "@grudge-studio/asset-convert",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production asset converter — fbx2gltf, glb2glb, glb2gltf, obj2fbx with scale, textures, animation/collider/mesh baking",
+  "type": "module",
+  "bin": {
+    "grudge-convert": "./bin/grudge-convert.mjs"
+  },
+  "scripts": {
+    "convert": "node ./bin/grudge-convert.mjs",
+    "doctor": "node ./bin/grudge-convert.mjs doctor",
+    "test:self": "node ./bin/grudge-convert.mjs --help",
+    "postinstall": "node -e \"try{require('fbx2gltf')}catch(e){}\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.2.0",
+    "@gltf-transform/extensions": "^4.2.0",
+    "@gltf-transform/functions": "^4.2.0",
+    "meshoptimizer": "^0.22.0",
+    "sharp": "^0.33.5"
+  },
+  "optionalDependencies": {
+    "draco3dgltf": "^1.5.7",
+    "fbx2gltf": "^0.9.7-p1"
+  },
+  "grudge": {
+    "role": "production-asset-pipeline",
+    "outputs": ["glb", "gltf", "fbx", "collider.json", "manifest.json"],
+    "pipelines": [
+      "fbx2gltf",
+      "fbx2glb",
+      "glb2glb",
+      "glb2gltf",
+      "gltf2glb",
+      "obj2glb",
+      "obj2fbx",
+      "glb2fbx",
+      "blend2glb"
+    ],
+    "backends": ["fbx2gltf", "blender", "gltf-transform", "sharp"]
+  }
+}
