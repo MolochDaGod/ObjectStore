@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-10T05:40:00.000Z",
+  "description": "Warlords naval deploy pack — boat dock (viking shipyard), piers, coastal buildings, sector island scenes",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "dockHub": {
+    "id": "boat_dock",
+    "alias": "viking_shipyard",
+    "label": "Viking Shipyard Boat Dock",
+    "model": "/models/buildings/warlords_era/viking_shipyard.glb",
+    "actions": ["craft_boats", "board_ship", "embark_tactical_ocean", "embark_world_map"],
+    "craftStationId": "shipwright",
+    "defaultVesselId": "argon_raft",
+    "embarkTactical": "/ocean",
+    "embarkWorldMap": "/world-map"
+  },
+  "buildings": [
+    { "id": "boat_dock", "path": "/models/buildings/warlords_era/viking_shipyard.glb", "category": "transport" },
+    { "id": "wooden_docks_kit", "path": "/models/buildings/docks/wooden_docks_vol3.glb", "category": "transport" },
+    { "id": "dock_simple", "path": "/models/buildings/docks/dock_simple.glb", "category": "transport" },
+    { "id": "dock_stairs", "path": "/models/buildings/docks/dock_stairs.glb", "category": "transport" },
+    { "id": "shipping_port", "path": "/models/buildings/docks/shipping_port.glb", "category": "transport" },
+    { "id": "port", "path": "/models/buildings/docks/port.glb", "category": "transport" },
+    { "id": "fantasy_sea_keep", "path": "/models/buildings/warlords_era/fantasy_sea_keep.glb", "category": "defense" },
+    { "id": "viking_military_outpost", "path": "/models/buildings/warlords_era/viking_military_outpost.glb", "category": "defense" },
+    { "id": "viking_fishing_store", "path": "/models/buildings/warlords_era/viking_fishing_store.glb", "category": "crafting" },
+    { "id": "shipwreck_hideout", "path": "/models/buildings/warlords_era/shipwreck_hideout.glb", "category": "camp" },
+    { "id": "wood_modular_pack", "path": "/models/buildings/era/wood_modular_structures.glb", "category": "structure" },
+    { "id": "brick_modular_pack", "path": "/models/buildings/era/brick_modular_structures.glb", "category": "structure" },
+    { "id": "medieval_buildings_pack", "path": "/models/buildings/era/medieval_buildings_pack.glb", "category": "structure" },
+    { "id": "village_buildings_pack", "path": "/models/buildings/era/village_buildings.glb", "category": "structure" }
+  ],
+  "islands": [
+    { "id": "tropical_island", "path": "/models/islands/tropical_island.glb", "sectors": ["tropical"] },
+    { "id": "green_island", "path": "/models/islands/green_island.glb", "sectors": ["forest"] },
+    { "id": "pirate_island", "path": "/models/islands/pirate_island.glb", "sectors": ["volcanic", "tropical"] },
+    { "id": "island_small", "path": "/models/islands/island_small.glb", "sectors": ["nexus"] }
+  ],
+  "ships": [
+    { "id": "queen_annes_revenge", "path": "/models/ships/fleet/queen_annes_revenge.glb", "role": "warship_optional" }
+  ],
+  "sourceLocal": "D:/Games/Models/_stage_warlords_naval"
+}
