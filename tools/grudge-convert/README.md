@@ -163,11 +163,25 @@ wrangler r2 object put grudge-assets/models/grudge6/races/WK_Characters.glb \
   --content-type=model/gltf-binary
 ```
 
+## Blender MCP
+
+Interactive cleanup lives in Blender + [blender-mcp](https://github.com/ahujasid/blender-mcp).  
+Grok skill: **`grudge-asset-convert`** (`references/blender-mcp.md`).
+
+```bash
+npm run blender:mcp:setup
+npm run blender:mcp:install-addon   # tools/grudge-convert/blender/addon.py
+# Blender: enable addon → Connect :9876
+# After MCP export → always re-run this CLI for production pack
+```
+
 ## Relation to other tools
 
 | Tool | Scope |
 |------|--------|
 | **This package** | CLI production bake (authoritative for CDN) |
+| **Skill `grudge-asset-convert`** | Process + best practices + deploy |
+| Blender MCP | Interactive DCC before bake |
 | `grudge-dev-tool` ingestion | Desktop upload gate (FBX2glTF/Blender subset, no full bake) |
 | Forge `assetConverter.ts` | In-browser export convenience |
 | Battle `grudge6-model-loader` | Runtime load + Y-hip normalize |

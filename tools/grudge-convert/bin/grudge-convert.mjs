@@ -103,6 +103,8 @@ async function cmdDoctor() {
   console.log(`  gltf-transform: bundled @gltf-transform/*`);
   console.log(`  sharp:       texture encode (webp/png/jpeg)`);
   console.log(`  package:     ${t.packageDir}`);
+  console.log(`  blender-mcp: Grok [mcp_servers.blender] + Blender addon Connect :9876`);
+  console.log(`  skill:       grudge-asset-convert (process + deploy)`);
   console.log("\nEnv overrides: FBX2GLTF_PATH, BLENDER_PATH, GRUDGE_FBX2GLTF, GRUDGE_BLENDER");
   console.log("\nNamed pipelines: " + Object.keys(NAMED_PIPELINES).join(", "));
   if (!t.fbx2gltf.available && !t.blender.available) {
