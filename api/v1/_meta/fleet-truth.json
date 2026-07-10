@@ -1,6 +1,11 @@
 {
+<<<<<<< Updated upstream
+  "version": "1.3.0",
+  "generated": "2026-07-10T00:36:11.744Z",
+=======
   "version": "1.2.0",
-  "generated": "2026-07-04T05:25:54.074Z",
+  "generated": "2026-07-07T05:47:25.152Z",
+>>>>>>> Stashed changes
   "description": "Grudge Studio fleet ONE TRUTH — canonical domains, API roles, contracts, probe manifest, and Legion context",
   "ssot": {
     "code": "GrudgeBuilder/shared/fleet/manifest.ts",
@@ -14,7 +19,8 @@
   },
   "communication": {
     "legionHub": "https://ai.grudge-studio.com",
-    "legionAgent": "https://legion-ai.grudge-studio.com",
+    "legionAgent": "https://ai.grudge-studio.com",
+    "legionUiOrigin": "https://grudaagent.vercel.app",
     "fleetHarbor": "https://grudox.grudge-studio.com",
     "gameDataManifest": "https://grudge-api-production-0d46.up.railway.app/api/fleet/manifest",
     "truthAuditApi": "https://grudge-api-production-0d46.up.railway.app/api/fleet/truth-audit",
@@ -65,7 +71,8 @@
       "id": "ai-gateway",
       "role": "ai",
       "domain": "ai.grudge-studio.com",
-      "proxy": "/api/ai"
+      "proxy": "/api/ai",
+      "notes": "Canonical: ai.grudge-studio.com — UI at / (GRUDA Agent), API at /v1/* + /health. Repo grudge-ai-hub."
     },
     {
       "id": "anythingllm",
@@ -124,6 +131,12 @@
       "notes": "Single instance — /api/carrier, /api/space, /api/brawl; CF Worker required for WS"
     },
     {
+      "id": "gameopen",
+      "role": "hub",
+      "domain": "gameopen.vercel.app",
+      "notes": "VFC animator (Danger Room) on Vercel. Exposes GRUDOX modes + native Ruins Brawler on grudoxGameServer /api/brawl. Shares one fleet character. Prod origins: gameopen.vercel.app + open.grudge-studio.com (alias pending)."
+    },
+    {
       "id": "supabase",
       "role": "supabase",
       "domain": "${SUPABASE_URL}",
@@ -150,12 +163,12 @@
     {
       "id": "grudge-ai-hub",
       "domain": "ai.grudge-studio.com",
-      "role": "AI gateway (D1 grudge-ai-hub)"
+      "role": "Canonical AI hub — public UI + gateway (D1 grudge-ai-hub); UI_ORIGIN=grudaagent.vercel.app"
     },
     {
       "id": "grudge-legion-ai",
-      "domain": "legion-ai.grudge-studio.com",
-      "role": "Legion agent personas"
+      "domain": "ai.grudge-studio.com/v1/*",
+      "role": "API path worker (same index.js) — /v1/* + /health on ai.grudge-studio.com"
     },
     {
       "id": "grudge-fleet-harbor",
@@ -217,7 +230,10 @@
     "grudox-live-health",
     "grudox-game-server-direct",
     "grudox-hub",
-    "carrier-hub"
+    "carrier-hub",
+    "ai-hub-health",
+    "ai-hub-agents",
+    "ai-hub-ui"
   ],
   "railwayAuthPaths": [
     "popup-token",
@@ -301,12 +317,167 @@
   "identity": {
     "portal": "https://grudge-studio.com",
     "authGateway": "https://id.grudge-studio.com",
-    "engineRailway": "https://the-engine.up.railway.app"
+    "authImplementation": "https://grudge-api-production-0d46.up.railway.app",
+    "engineRailway": "https://the-engine.up.railway.app",
+    "canonicalLogin": "https://id.grudge-studio.com/login?redirect_uri=<callback-url>",
+    "canonicalCallback": "<app-origin>/auth/callback?grudge_token=<jwt>",
+    "bootstrapScript": "https://id.grudge-studio.com/grudge-game-bootstrap.js",
+    "routes": {
+      "page": "/api/auth/page",
+      "guest": "POST /api/auth/guest",
+      "puterSso": "POST /api/auth/puter-sso",
+      "puter": "POST /api/auth/puter",
+      "popupToken": "POST /api/auth/popup-token",
+      "sessionExchange": "POST /api/auth/session/exchange",
+      "grudgeBridge": "POST /api/auth/grudge-bridge",
+      "me": "GET /api/auth/me",
+      "verify": "GET /api/auth/verify",
+      "ssoCheck": "GET /api/auth/sso-check"
+    },
+    "proxyPaths": {
+      "authApi": "/api/auth/:path*",
+      "authLegacy": "/auth/:path*",
+      "login": "/login",
+      "callbackSpa": "/auth/callback"
+    },
+    "wiring": {
+      "browserApps": [
+        "1. Load https://id.grudge-studio.com/grudge-game-bootstrap.js (or import @shared/fleet/authConnect).",
+        "2. On boot: GrudgeAuth.pickup() — consumes ?grudge_token / ?sso_token from URL.",
+        "3. Silent guest (no UI): POST same-origin /api/auth/guest (Vercel → Railway).",
+        "4. Explicit sign-in: GrudgeAuth.loginPage('/auth/callback') — canonical /login?redirect_uri=.",
+        "5. Game data: same-origin /api/characters, /api/account (Vercel → Railway). Never call Railway URL from browser CORS."
+      ],
+      "vercelSatellite": [
+        "Copy buildFleetSatelliteRewrites() into vercel.json BEFORE catch-all SPA rule.",
+        "Auth: /api/auth/* and /auth/* → id.grudge-studio.com",
+        "Game data: /api/characters, /api/account → Railway",
+        "SPA: /auth/callback → /index.html (client handles token pickup)"
+      ],
+      "idHub": [
+        "id.grudge-studio.com is a Vercel alias on GrudgeBuilder with buildFleetHubAuthRewrites().",
+        "/auth/:path* → Railway /api/auth/:path*",
+        "/login → Railway /api/auth/page",
+        "Do NOT point id DNS at api.grudge-studio.com (deprecated VPS)."
+      ],
+      "tokens": [
+        "Return params: grudge_token (popup-token flow), sso_token (sso-check flow), token (legacy)",
+        "Storage: localStorage grudge_auth_token + optional grudge_id, grudge_username",
+        "API: Authorization: Bearer <token> on /api/characters, /api/auth/me"
+      ],
+      "puter": [
+        "Browser: puter.auth.signIn({ attempt_temp_user_creation: true }) for silent guest cloud ID",
+        "Then POST /api/auth/puter-sso or /api/auth/puter with puterId uuid"
+      ]
+    },
+    "authProbes": [
+      "railway-sso-check",
+      "id-login",
+      "id-auth-page",
+      "id-sso-check",
+      "deprecated-api-sso",
+<<<<<<< Updated upstream
+      "railway-guest",
+      "id-puter",
+      "id-verify"
+=======
+      "railway-guest"
+>>>>>>> Stashed changes
+    ],
+    "probeAuth": "npx tsx scripts/probe-fleet-auth.ts",
+    "symptomFixes": [
+      {
+        "id": "sso-check-404",
+        "match": [
+          "cannot get /api/auth/sso-check",
+          "/auth/sso-check",
+          "id-sso-check",
+          "sso login failed"
+        ],
+        "symptom": "SSO redirect hits id.grudge-studio.com/auth/sso-check and returns 404",
+        "fix": "Use canonical login: buildFleetLoginUrl() → /login?redirect_uri=<callback>. Redeploy GrudgeBuilder to Vercel with id.grudge-studio.com alias and buildFleetHubAuthRewrites() (/auth/:path* → Railway /api/auth/:path*). Run npm run probe:auth until id-sso-check passes.",
+        "probeId": "id-sso-check"
+      },
+      {
+        "id": "deprecated-api",
+        "match": [
+          "api.grudge-studio.com",
+          "deprecated-api-sso"
+        ],
+        "symptom": "App still points auth at api.grudge-studio.com (dead VPS tunnel)",
+        "fix": "Replace all api.grudge-studio.com auth URLs with id.grudge-studio.com. Game data stays on same-origin /api/characters → Railway.",
+        "probeId": "deprecated-api-sso"
+      },
+      {
+        "id": "railway-cors",
+        "match": [
+          "grudge-api-production",
+          "cors",
+          "access-control-allow-origin",
+          "blocked by cors"
+        ],
+        "symptom": "Browser calls Railway URL directly and gets CORS errors",
+        "fix": "Never fetch grudge-api-production-0d46.up.railway.app from the browser. Proxy via Vercel: buildFleetSatelliteRewrites() — /api/auth/*, /api/characters, /api/account."
+      },
+      {
+        "id": "no-token-return",
+        "match": [
+          "grudge_token",
+          "sso_token",
+          "auth/callback",
+          "pickup",
+          "token missing"
+        ],
+        "symptom": "User returns from login but app has no token in localStorage",
+        "fix": "On boot call GrudgeAuth.pickup() or read ?grudge_token / ?sso_token from URL. Ensure callback route is /auth/callback (SPA rewrite to index.html). Store as grudge_auth_token. Token keys: grudge_auth_token, grudge_session_token, grudge.token, sso_token, grudge_token"
+      },
+      {
+        "id": "guest-fails",
+        "match": [
+          "/api/auth/guest",
+          "railway-guest",
+          "guest session"
+        ],
+        "symptom": "Silent guest session (POST /api/auth/guest) fails",
+        "fix": "Satellite app must proxy /api/auth/:path* to id.grudge-studio.com (or Railway on hub). Check Railway DATABASE_URL and auth route registration in server/routes/auth.ts.",
+        "probeId": "railway-guest"
+      },
+      {
+        "id": "id-login-broken",
+        "match": [
+          "id-login",
+          "/login?redirect_uri",
+          "cannot get /api/auth/page"
+        ],
+        "symptom": "id.grudge-studio.com/login does not redirect to auth page",
+        "fix": "Attach id.grudge-studio.com to GrudgeBuilder Vercel project. vercel.json needs /login → Railway /api/auth/page. Redeploy and re-run probe:auth.",
+        "probeId": "id-login"
+      },
+      {
+        "id": "split-brain",
+        "match": [
+          "split-brain",
+          "cannot get /api/auth"
+        ],
+        "symptom": "id gateway proxies to wrong backend (Express 404 on /api/auth/*)",
+        "fix": "Production Vercel is stale or mis-aliased. Sync: npx tsx scripts/sync-vercel-fleet.mjs, deploy GrudgeBuilder, confirm id.grudge-studio.com alias. Hub rewrites: buildFleetHubAuthRewrites()."
+      },
+      {
+        "id": "wrong-satellite-rewrite",
+        "match": [
+          "id.grudge-studio.com/auth/:path*",
+          "destination.*id.*auth/:path"
+        ],
+        "symptom": "Satellite vercel.json proxies /api/auth to id/auth (broken chain)",
+        "fix": "Use buildFleetSatelliteRewrites() from shared/fleet/manifest.ts — /api/auth/:path* → id.grudge-studio.com/api/auth/:path* (not /auth/). Login: /login → id.grudge-studio.com/login."
+      }
+    ]
   },
   "verify": {
     "cli": "npx tsx scripts/verify-fleet-truth.mjs --mode cli",
     "browser": "npx tsx scripts/verify-fleet-truth.mjs --mode browser",
     "direct": "npx tsx scripts/probe-truth-fleet.ts",
+    "auth": "npx tsx scripts/probe-fleet-auth.ts",
     "grudge6FleetUrls": "node scripts/validate-fleet-urls.mjs",
     "minScore": 85
   },
