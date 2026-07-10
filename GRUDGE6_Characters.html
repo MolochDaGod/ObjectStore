@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>grudge6 Characters — Working Prefabs · Mixamo / Bip001 · Y-Hip</title>
+  <title>grudge6 Characters — Equipment · Textures · Mesh Hide</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
   <style>
     :root {
       --bg:#0a0e14; --panel:#111821; --border:rgba(212,168,75,0.2);
-      --gold:#d4a84b; --text:#e8e6e3; --dim:#7a7877; --ok:#22c55e;
+      --gold:#d4a84b; --text:#e8e6e3; --dim:#7a7877; --ok:#22c55e; --err:#ef4444;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -16,8 +16,8 @@
     header h1{font-size:1.05rem;color:var(--gold);letter-spacing:0.04em}
     header .sub{font-size:0.75rem;color:var(--dim)}
     header a{color:var(--gold);font-size:0.78rem;margin-left:auto;text-decoration:none}
-    .layout{display:grid;grid-template-columns:280px 1fr 320px;height:calc(100vh - 56px)}
-    @media(max-width:960px){.layout{grid-template-columns:1fr;height:auto}}
+    .layout{display:grid;grid-template-columns:260px 1fr minmax(300px,360px);height:calc(100vh - 56px)}
+    @media(max-width:1100px){.layout{grid-template-columns:1fr;height:auto}}
     .side{overflow:auto;border-right:1px solid var(--border);padding:12px;background:#0c1118}
     .race{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;background:rgba(212,168,75,0.04)}
     .race:hover,.race.active{border-color:var(--gold);background:rgba(212,168,75,0.12)}
@@ -25,19 +25,34 @@
     .race .name{font-weight:700;font-size:0.95rem}
     .race .meta{font-size:0.72rem;color:var(--dim)}
     .badge{display:inline-block;font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(34,197,94,0.15);color:var(--ok);border:1px solid rgba(34,197,94,0.35)}
-    #viewport{position:relative;background:#06080c;min-height:360px}
+    .badge.warn{background:rgba(239,68,68,0.12);color:var(--err);border-color:rgba(239,68,68,0.35)}
+    #viewport{position:relative;background:#06080c;min-height:420px}
     #viewport canvas{display:block;width:100%;height:100%}
-    .vp-hud{position:absolute;left:10px;bottom:10px;font-size:0.7rem;color:var(--dim);background:rgba(0,0,0,0.55);padding:6px 10px;border-radius:6px;max-width:90%}
-    .panel{overflow:auto;border-left:1px solid var(--border);padding:14px;font-size:0.82rem}
-    .panel h2{font-size:0.85rem;color:var(--gold);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.06em}
+    .vp-hud{position:absolute;left:10px;bottom:10px;font-size:0.7rem;color:var(--dim);background:rgba(0,0,0,0.55);padding:6px 10px;border-radius:6px;max-width:92%;line-height:1.4}
+    .panel{overflow:auto;border-left:1px solid var(--border);padding:12px 14px;font-size:0.8rem}
+    .panel h2{font-size:0.78rem;color:var(--gold);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.06em}
     .panel h2:first-child{margin-top:0}
-    .panel code{font-size:0.72rem;color:#f0d890;word-break:break-all}
+    .panel code{font-size:0.68rem;color:#f0d890;word-break:break-all}
     .panel ul{margin:0 0 0 1.1rem;color:var(--dim);line-height:1.45}
     .panel li{margin-bottom:4px}
+    .row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;align-items:center}
+    .row label{font-size:0.72rem;color:var(--dim);min-width:72px}
+    select,button.tool{
+      background:#1a2435;border:1px solid var(--border);color:var(--text);
+      padding:5px 8px;border-radius:6px;font-size:0.75rem;cursor:pointer
+    }
+    select{flex:1;min-width:120px}
+    select:focus,button.tool:hover,button.tool.on{border-color:var(--gold);color:var(--gold);outline:none}
     .clips{display:flex;flex-wrap:wrap;gap:6px}
-    .clips button{background:#1a2435;border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem}
+    .clips button{background:#1a2435;border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.72rem}
     .clips button:hover,.clips button.on{border-color:var(--gold);color:var(--gold)}
-    .err{color:#ef4444;font-size:0.8rem;padding:12px}
+    .mesh-list{max-height:180px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:6px;background:#0c1118}
+    .mesh-list label{display:flex;gap:8px;align-items:center;padding:3px 4px;font-size:0.72rem;color:var(--dim);cursor:pointer}
+    .mesh-list label:hover{color:var(--text);background:rgba(212,168,75,0.06)}
+    .mesh-list input{accent-color:var(--gold)}
+    .err{color:var(--err);font-size:0.8rem;padding:8px 0}
+    .ok{color:var(--ok)}
+    .src-toggle{display:flex;gap:4px;flex-wrap:wrap}
   </style>
   <script type="importmap">
   {
@@ -52,9 +67,9 @@
 <header>
   <div>
     <h1>grudge6 Characters</h1>
-    <div class="sub">Working race prefabs · Bip001 / Mixamo Hips · Y-hip ground · attachment sockets</div>
+    <div class="sub">Textures · mesh hide · weapon / offhand / armor variants · Bip001 Y-hip</div>
   </div>
-  <a href="./GRUDGE_Item_Database">← Item Database (grudge6-ready gear)</a>
+  <a href="./GRUDGE_Item_Database">← Item Database</a>
 </header>
 <div class="layout">
   <aside class="side" id="raceList"><div class="sub" style="padding:8px">Loading grudge6 SSOT…</div></aside>
@@ -62,13 +77,44 @@
     <div class="vp-hud" id="hud">Select a race</div>
   </main>
   <aside class="panel" id="detail">
-    <h2>Rig practices</h2>
-    <ul id="practices"></ul>
+    <h2>Source</h2>
+    <div class="src-toggle" id="sourceToggle"></div>
+    <div id="texStatus" class="sub" style="margin-top:8px"></div>
+
+    <h2>Armor meshes</h2>
+    <div id="armorSlots"></div>
+
+    <h2>Weapon (main / 2H)</h2>
+    <div class="row">
+      <label>Weapon</label>
+      <select id="weaponSelect"><option value="">— none —</option></select>
+    </div>
+
+    <h2>Offhand</h2>
+    <div class="row">
+      <label>Shield</label>
+      <select id="offhandSelect"><option value="">— none —</option></select>
+    </div>
+    <div class="row">
+      <label>Utility</label>
+      <select id="utilitySelect"><option value="">— none —</option></select>
+    </div>
+
+    <h2>Mesh visibility</h2>
+    <div class="row">
+      <button class="tool" id="btnHideAllWeapons" type="button">Hide all weapons</button>
+      <button class="tool" id="btnDefaultLoadout" type="button">Default loadout</button>
+      <button class="tool" id="btnShowAllArmor" type="button">Show all armor</button>
+    </div>
+    <div class="mesh-list" id="meshList"><span class="sub">Load a race to list meshes</span></div>
+
     <h2>Clips</h2>
     <div class="clips" id="clips"></div>
-    <h2>Sockets</h2>
+
+    <h2>Sockets / bones</h2>
     <ul id="sockets"></ul>
-    <h2>Model URLs</h2>
+
+    <h2>Model / texture URLs</h2>
     <div id="urls"></div>
   </aside>
 </div>
@@ -76,9 +122,76 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
 const LOCAL_SSOT = './api/v1/grudge6-characters.json';
+const CDN = 'https://assets.grudge-studio.com';
+
+/** Race → modular model + atlas (metaverse GLBs ship a 1×1 stub map — always rebind atlas). */
+const RACE_ASSETS = {
+  human: {
+    prefix: 'WK_',
+    folder: 'western-kingdoms',
+    texture: 'WK_Standard_Units.webp',
+    fbx: `${CDN}/models/grudge6/races/WK_Characters.fbx`,
+  },
+  barbarian: {
+    prefix: 'BRB_',
+    folder: 'barbarians',
+    texture: 'BRB_StandardUnits_texture.webp',
+    fbx: `${CDN}/models/grudge6/races/BRB_Characters.fbx`,
+  },
+  orc: {
+    prefix: 'ORC_',
+    folder: 'orcs',
+    texture: 'ORC_StandardUnits.webp',
+    fbx: `${CDN}/models/grudge6/races/ORC_Characters.fbx`,
+  },
+  elf: {
+    prefix: 'ELF_',
+    folder: 'elves',
+    texture: 'ELF_HighElves_Texture.webp',
+    fbx: `${CDN}/models/grudge6/races/ELF_Characters.fbx`,
+  },
+  undead: {
+    prefix: 'UD_',
+    folder: 'undead',
+    texture: 'UD_Standard_Units.webp',
+    fbx: `${CDN}/models/grudge6/races/UD_Characters.fbx`,
+  },
+  dwarf: {
+    prefix: 'DWF_',
+    folder: 'dwarves',
+    texture: 'DWF_Standard_Units.webp',
+    fbx: `${CDN}/models/grudge6/races/DWF_Characters.fbx`,
+  },
+};
+
+const SLOT_DEFS = [
+  { slot: 'body', re: /^Units_Body_([A-Z])$/i, group: 'armor' },
+  { slot: 'arms', re: /^Units_Arms_([A-Z])$/i, group: 'armor' },
+  { slot: 'legs', re: /^Units_Legs_([A-Z])$/i, group: 'armor' },
+  { slot: 'head', re: /^Units_head_([A-Z])$/i, group: 'armor' },
+  { slot: 'shoulders', re: /^Units_shoulderpads_([A-Z])$/i, group: 'armor' },
+  { slot: 'axe', re: /(?:Units_|weapon_)[Aa]xe(?:_([A-Z]))?$/i, group: 'weapon_r' },
+  { slot: 'hammer', re: /(?:Units_|weapon_)[Hh]ammer(?:_([A-Z]))?$/i, group: 'weapon_r' },
+  { slot: 'mace', re: /(?:Units_|weapon_)[Mm]ace$/i, group: 'weapon_r', noVariant: true },
+  { slot: 'sword', re: /(?:Units_|weapon_)[Ss]word(?:_([A-Z]))?$/i, group: 'weapon_r' },
+  { slot: 'dagger', re: /(?:Units_|weapon_)[Dd]agger$/i, group: 'weapon_r', noVariant: true },
+  { slot: 'pick', re: /(?:Units_|weapon_)pick$/i, group: 'weapon_r', noVariant: true },
+  { slot: 'spear', re: /(?:Units_|weapon_)[Ss]pear$/i, group: 'weapon_r', noVariant: true },
+  { slot: 'bow', re: /(?:Units_|weapon_)[Bb]ow$/i, group: 'weapon_l', noVariant: true },
+  { slot: 'staff', re: /(?:Units_|weapon_)staff_([A-Z])$/i, group: 'weapon_l' },
+  { slot: 'shield', re: /(?:Units_|)[Ss]hield_([A-Z])$/i, group: 'shield' },
+  { slot: 'bag', re: /(?:Xtra_|Units_)bag$/i, group: 'utility', noVariant: true },
+  { slot: 'wood', re: /(?:Xtra_|Units_)wood$/i, group: 'utility', noVariant: true },
+  { slot: 'quiver', re: /(?:Xtra_|Units_)quiver$/i, group: 'utility', noVariant: true },
+];
+
+const WEAPON_R = new Set(['axe', 'hammer', 'mace', 'sword', 'dagger', 'pick', 'spear']);
+const WEAPON_L = new Set(['bow', 'staff']);
+const UTILITY = new Set(['bag', 'wood', 'quiver']);
 
 const BONE_ALIASES = {
   hips: /^(mixamorig:)?Hips$|Pelvis|Bip001$|Bip001 Pelvis|Root$/i,
@@ -90,51 +203,235 @@ const BONE_ALIASES = {
 
 let catalog = null;
 let activeRace = null;
+let activeSource = 'toonRts'; // metaverse | toonRts | fbx
 let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
+let equip = null; // EquipmentManager instance
+const texLoader = new THREE.TextureLoader();
+const texCache = new Map();
+
+class EquipmentManager {
+  constructor(prefix) {
+    this.prefix = prefix.endsWith('_') ? prefix : `${prefix}_`;
+    this.slots = {};
+    this.equipped = {};
+    this.allMeshes = [];
+    this.root = null;
+  }
+
+  catalog(root) {
+    this.root = root;
+    this.slots = {};
+    this.allMeshes = [];
+    this.equipped = {};
+
+    root.traverse((child) => {
+      if (!child.isMesh && !child.isSkinnedMesh) return;
+      const stripped = child.name.startsWith(this.prefix)
+        ? child.name.slice(this.prefix.length)
+        : child.name;
+
+      for (const def of SLOT_DEFS) {
+        const match = stripped.match(def.re);
+        if (!match) continue;
+        const variant = def.noVariant
+          ? '_default'
+          : (match[1] || '_default').toUpperCase();
+        if (!this.slots[def.slot]) this.slots[def.slot] = {};
+        this.slots[def.slot][variant] = child;
+        child.userData.equipSlot = def.slot;
+        child.userData.equipVariant = variant;
+        child.userData.equipGroup = def.group;
+        this.allMeshes.push(child);
+        child.visible = false;
+        break;
+      }
+    });
+    return this.summary();
+  }
+
+  summary() {
+    const out = {};
+    for (const [slot, variants] of Object.entries(this.slots)) {
+      out[slot] = Object.keys(variants).sort();
+    }
+    return out;
+  }
+
+  equip(slot, variant) {
+    const variants = this.slots[slot];
+    if (!variants) return false;
+    for (const [v, mesh] of Object.entries(variants)) {
+      mesh.visible = v === variant;
+    }
+    this.equipped[slot] = variant;
+    return true;
+  }
+
+  equipWeapon(slot, variant = '_default') {
+    const def = SLOT_DEFS.find((d) => d.slot === slot);
+    if (!def) return false;
+    for (const mesh of this.allMeshes) {
+      if (mesh.userData.equipGroup === def.group) {
+        mesh.visible = false;
+        delete this.equipped[mesh.userData.equipSlot];
+      }
+    }
+    return this.equip(slot, variant);
+  }
+
+  unequip(slot) {
+    const variants = this.slots[slot];
+    if (!variants) return;
+    for (const mesh of Object.values(variants)) mesh.visible = false;
+    delete this.equipped[slot];
+  }
+
+  hideGroup(group) {
+    for (const mesh of this.allMeshes) {
+      if (mesh.userData.equipGroup === group) {
+        mesh.visible = false;
+        delete this.equipped[mesh.userData.equipSlot];
+      }
+    }
+  }
+
+  applyDefaultLoadout() {
+    // Armor: first available variant per slot
+    for (const slot of ['body', 'arms', 'legs', 'head', 'shoulders']) {
+      const variants = this.slots[slot];
+      if (!variants) continue;
+      const keys = Object.keys(variants).sort();
+      const pick = keys.includes('A') ? 'A' : keys[0];
+      if (pick) this.equip(slot, pick);
+    }
+    // Prefer sword_A then any right-hand weapon
+    if (this.slots.sword) {
+      const v = this.slots.sword.A ? 'A' : Object.keys(this.slots.sword).sort()[0];
+      this.equipWeapon('sword', v);
+    } else {
+      for (const slot of WEAPON_R) {
+        if (this.slots[slot]) {
+          const v = Object.keys(this.slots[slot]).sort()[0];
+          this.equipWeapon(slot, v);
+          break;
+        }
+      }
+    }
+  }
+
+  listAllMeshes() {
+    return this.allMeshes
+      .map((m) => ({
+        name: m.name,
+        slot: m.userData.equipSlot,
+        variant: m.userData.equipVariant,
+        group: m.userData.equipGroup,
+        visible: m.visible,
+        mesh: m,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+}
 
 async function loadCatalog() {
   for (const url of [LOCAL_SSOT, `${API}/grudge6-characters.json`]) {
     try {
       const r = await fetch(url, { cache: 'no-cache' });
       if (r.ok) return r.json();
-    } catch { /* try next */ }
+    } catch { /* next */ }
   }
-  // Hard fallback — only CDN-proven working models
   return {
-    rig: { primarySkeleton: 'Bip001', yHip: { rule: 'position.y = -box.min.y' } },
-    races: ['human','barbarian','orc','elf','undead','dwarf'].map(id => ({
-      id, name: id[0].toUpperCase()+id.slice(1), working: true, prefix: '',
+    races: Object.keys(RACE_ASSETS).map((id) => ({
+      id,
+      name: id[0].toUpperCase() + id.slice(1),
+      working: true,
+      prefix: RACE_ASSETS[id].prefix,
       models: {
-        metaverse: `https://assets.grudge-studio.com/models/grudge6/metaverse/${id}.glb`,
-        toonRts: `https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/${id}.glb`,
+        metaverse: `${CDN}/models/grudge6/metaverse/${id}.glb`,
+        toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/${id}.glb`,
       },
-      clips: ['idle','walk','run','hit','attack'],
+      clips: ['idle', 'walk', 'run'],
       emoji: '⚔',
     })),
   };
+}
+
+function textureUrlForRace(raceId) {
+  const a = RACE_ASSETS[raceId];
+  if (!a) return null;
+  return `${CDN}/assets/${a.folder}/textures/${a.texture}`;
+}
+
+async function loadRaceTexture(raceId) {
+  const url = textureUrlForRace(raceId);
+  if (!url) return null;
+  if (texCache.has(url)) return texCache.get(url);
+  const tex = await new Promise((resolve) => {
+    texLoader.load(
+      url,
+      (t) => {
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.flipY = false;
+        t.wrapS = t.wrapT = THREE.RepeatWrapping;
+        texCache.set(url, t);
+        resolve(t);
+      },
+      undefined,
+      () => resolve(null),
+    );
+  });
+  return tex;
+}
+
+function applyTexture(root, texture) {
+  if (!texture || !root) return 0;
+  let n = 0;
+  root.traverse((obj) => {
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const mat of mats) {
+      if (!mat) continue;
+      // Metaverse GLBs embed a 1×1 stub — always overwrite map
+      if (mat.map) {
+        try { mat.map.dispose?.(); } catch { /* */ }
+      }
+      mat.map = texture;
+      if (mat.color) mat.color.setHex(0xffffff);
+      mat.needsUpdate = true;
+      n++;
+    }
+  });
+  return n;
 }
 
 function initThree() {
   const el = document.getElementById('viewport');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x06080c);
+  scene.fog = new THREE.Fog(0x06080c, 8, 22);
   camera = new THREE.PerspectiveCamera(40, 1, 0.05, 100);
-  camera.position.set(1.4, 1.2, 2.2);
+  camera.position.set(1.6, 1.35, 2.4);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   el.appendChild(renderer.domElement);
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.9, 0);
+  controls.target.set(0, 0.95, 0);
+  controls.enableDamping = true;
   controls.update();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 1.2));
-  const d = new THREE.DirectionalLight(0xffe6b0, 1.1);
-  d.position.set(3, 6, 2);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x1a2030, 0.85));
+  const d = new THREE.DirectionalLight(0xffe6b0, 1.35);
+  d.position.set(3.2, 6.5, 2.4);
   scene.add(d);
-  const grid = new THREE.GridHelper(4, 12, 0x3a2a10, 0x1a1510);
-  scene.add(grid);
+  const fill = new THREE.DirectionalLight(0x88aaff, 0.35);
+  fill.position.set(-3, 2, -2);
+  scene.add(fill);
+  scene.add(new THREE.GridHelper(4, 12, 0x3a2a10, 0x1a1510));
   clock = new THREE.Clock();
   function resize() {
-    const w = el.clientWidth, h = el.clientHeight || 400;
+    const w = el.clientWidth, h = el.clientHeight || 420;
     camera.aspect = w / Math.max(h, 1);
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
@@ -158,75 +455,262 @@ function discoverBones(root) {
     const b = bones.find((x) => re.test(x.name));
     if (b) found[slot] = b.name;
   }
-  return { found, total: bones.length, names: bones.slice(0, 24).map((b) => b.name) };
+  return { found, total: bones.length };
 }
 
 function groundYHip(root) {
-  // Y-hip / feet-on-ground practice
   root.position.set(0, 0, 0);
+  root.scale.setScalar(1);
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
+  const size = new THREE.Vector3();
+  box.getSize(size);
+  // Normalize tall packs to ~1.7m
+  const targetH = 1.7;
+  if (size.y > 0.01) {
+    const s = targetH / size.y;
+    root.scale.setScalar(s);
+    root.updateMatrixWorld(true);
+    box.setFromObject(root);
+  }
   root.position.y = -box.min.y;
   root.updateMatrixWorld(true);
-  return { minY: box.min.y, height: box.max.y - box.min.y };
+  box.setFromObject(root);
+  return { height: box.max.y - box.min.y };
 }
 
-async function loadRace(race, prefer = 'metaverse') {
+function resolveModelUrl(race, source) {
+  const a = RACE_ASSETS[race.id];
+  if (source === 'fbx' && a?.fbx) return a.fbx;
+  if (source === 'toonRts') return race.models?.toonRts || race.models?.metaverse;
+  if (source === 'metaverse') return race.models?.metaverse || race.models?.toonRts;
+  return race.models?.toonRts || race.models?.metaverse || a?.fbx;
+}
+
+async function loadModel(url) {
+  if (/\.fbx($|\?)/i.test(url)) {
+    const loader = new FBXLoader();
+    return loader.loadAsync(url);
+  }
+  const loader = new GLTFLoader();
+  const gltf = await loader.loadAsync(url);
+  return gltf;
+}
+
+async function loadRace(race, source = activeSource) {
   activeRace = race;
+  activeSource = source;
   document.querySelectorAll('.race').forEach((el) => {
     el.classList.toggle('active', el.dataset.id === race.id);
   });
+  renderSourceToggle(race);
+
   if (currentRoot) {
     scene.remove(currentRoot);
+    currentRoot.traverse((n) => {
+      if (n.geometry) n.geometry.dispose?.();
+    });
     currentRoot = null;
   }
   mixer = null;
   animActions = {};
-  const url = race.models?.[prefer] || race.models?.metaverse || race.models?.toonRts;
-  document.getElementById('hud').textContent = `Loading ${race.name}…`;
-  const loader = new GLTFLoader();
+  equip = null;
+
+  const url = resolveModelUrl(race, source);
+  document.getElementById('hud').textContent = `Loading ${race.name} (${source})…`;
+  document.getElementById('texStatus').innerHTML = '';
+
   try {
-    const gltf = await loader.loadAsync(url);
-    currentRoot = gltf.scene;
+    const loaded = await loadModel(url);
+    const root = loaded.scene || loaded;
+    const animations = loaded.animations || [];
+
+    currentRoot = root;
     currentRoot.traverse((n) => {
-      if (n.isMesh) {
+      if (n.isMesh || n.isSkinnedMesh) {
         n.castShadow = true;
         n.receiveShadow = true;
       }
     });
     scene.add(currentRoot);
+
+    // Texture: replace 1×1 stub / missing maps with race atlas
+    const texUrl = textureUrlForRace(race.id);
+    const tex = await loadRaceTexture(race.id);
+    let texNote = '';
+    if (tex) {
+      const n = applyTexture(currentRoot, tex);
+      texNote = `<span class="ok">Atlas applied</span> · ${n} mats · <code>${texUrl}</code>`;
+    } else {
+      texNote = `<span class="err">Texture failed</span> · <code>${texUrl || '—'}</code>`;
+    }
+    document.getElementById('texStatus').innerHTML = texNote;
+
     const ground = groundYHip(currentRoot);
     const bones = discoverBones(currentRoot);
-    if (gltf.animations?.length) {
+
+    const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
+    equip = new EquipmentManager(prefix);
+    const summary = equip.catalog(currentRoot);
+    equip.applyDefaultLoadout();
+    renderEquipUI(summary);
+    renderMeshList();
+
+    if (animations?.length) {
       mixer = new THREE.AnimationMixer(currentRoot);
-      for (const clip of gltf.animations) {
+      for (const clip of animations) {
         animActions[clip.name] = mixer.clipAction(clip);
       }
-      // Prefer idle
-      const idle = gltf.animations.find((c) => /idle|stand|breath/i.test(c.name)) || gltf.animations[0];
-      if (idle) {
-        animActions[idle.name].reset().fadeIn(0.2).play();
-      }
+      const idle = animations.find((c) => /idle|stand|breath/i.test(c.name)) || animations[0];
+      if (idle) animActions[idle.name].reset().fadeIn(0.2).play();
       renderClips(Object.keys(animActions), idle?.name);
     } else {
-      document.getElementById('clips').innerHTML = '<span class="sub">No clips in this GLB</span>';
+      document.getElementById('clips').innerHTML = '<span class="sub">No clips in this asset (use Mixamo retarget in game)</span>';
     }
+
+    const meshCount = equip.allMeshes.length;
     document.getElementById('hud').textContent =
-      `${race.name} · skeleton bones ${bones.total} · height ${ground.height.toFixed(2)} · Y-hip grounded`;
-    renderDetail(race, bones, url, prefer);
+      `${race.name} · ${source} · equip meshes ${meshCount} · bones ${bones.total} · h ${ground.height.toFixed(2)} · Y-hip`;
+    renderUrls(race, url, source, bones);
   } catch (err) {
     document.getElementById('hud').textContent = `Failed: ${err.message}`;
-    // try alternate
-    if (prefer === 'metaverse' && race.models?.toonRts) {
-      return loadRace(race, 'toonRts');
+    document.getElementById('texStatus').innerHTML = `<span class="err">${err.message}</span>`;
+    // Fallback chain
+    if (source === 'toonRts' && race.models?.metaverse) return loadRace(race, 'metaverse');
+    if (source === 'metaverse' && RACE_ASSETS[race.id]?.fbx) return loadRace(race, 'fbx');
+  }
+}
+
+function renderSourceToggle(race) {
+  const el = document.getElementById('sourceToggle');
+  const opts = [
+    { id: 'toonRts', label: 'Toon RTS GLB' },
+    { id: 'metaverse', label: 'Metaverse GLB' },
+    { id: 'fbx', label: 'Race FBX' },
+  ];
+  el.innerHTML = opts.map((o) =>
+    `<button type="button" class="tool ${activeSource === o.id ? 'on' : ''}" data-src="${o.id}">${o.label}</button>`
+  ).join('');
+  el.querySelectorAll('button').forEach((btn) => {
+    btn.onclick = () => loadRace(race, btn.dataset.src);
+  });
+}
+
+function fillSelect(sel, options, selected) {
+  sel.innerHTML = `<option value="">— none —</option>` +
+    options.map(([val, label]) =>
+      `<option value="${val}" ${val === selected ? 'selected' : ''}>${label}</option>`
+    ).join('');
+}
+
+function renderEquipUI(summary) {
+  // Armor dropdowns
+  const armorEl = document.getElementById('armorSlots');
+  const armorSlots = ['body', 'arms', 'legs', 'head', 'shoulders'];
+  armorEl.innerHTML = armorSlots.map((slot) => {
+    const variants = summary[slot] || [];
+    if (!variants.length) {
+      return `<div class="row"><label>${slot}</label><span class="sub">no meshes</span></div>`;
+    }
+    const cur = equip?.equipped[slot] || '';
+    return `<div class="row"><label>${slot}</label>
+      <select data-armor="${slot}">
+        <option value="">— hide —</option>
+        ${variants.map((v) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${v}</option>`).join('')}
+      </select></div>`;
+  }).join('');
+
+  armorEl.querySelectorAll('select[data-armor]').forEach((sel) => {
+    sel.onchange = () => {
+      const slot = sel.dataset.armor;
+      if (!sel.value) equip.unequip(slot);
+      else equip.equip(slot, sel.value);
+      renderMeshList();
+    };
+  });
+
+  // Weapon select — flatten weapon_r + weapon_l
+  const wOpts = [];
+  for (const slot of [...WEAPON_R, ...WEAPON_L]) {
+    for (const v of (summary[slot] || [])) {
+      wOpts.push([`${slot}:${v}`, `${slot} ${v}`]);
     }
   }
+  const wSel = document.getElementById('weaponSelect');
+  const curW = Object.entries(equip.equipped).find(([s]) => WEAPON_R.has(s) || WEAPON_L.has(s));
+  fillSelect(wSel, wOpts, curW ? `${curW[0]}:${curW[1]}` : '');
+  wSel.onchange = () => {
+    equip.hideGroup('weapon_r');
+    equip.hideGroup('weapon_l');
+    if (wSel.value) {
+      const [slot, variant] = wSel.value.split(':');
+      equip.equipWeapon(slot, variant);
+    }
+    renderMeshList();
+  };
+
+  // Offhand shield
+  const sOpts = (summary.shield || []).map((v) => [`shield:${v}`, `shield ${v}`]);
+  const oSel = document.getElementById('offhandSelect');
+  const curS = equip.equipped.shield ? `shield:${equip.equipped.shield}` : '';
+  fillSelect(oSel, sOpts, curS);
+  oSel.onchange = () => {
+    equip.hideGroup('shield');
+    if (oSel.value) {
+      const [, variant] = oSel.value.split(':');
+      equip.equip('shield', variant);
+    }
+    renderMeshList();
+  };
+
+  // Utility
+  const uOpts = [];
+  for (const slot of UTILITY) {
+    for (const v of (summary[slot] || [])) {
+      uOpts.push([`${slot}:${v}`, `${slot} ${v === '_default' ? '' : v}`.trim()]);
+    }
+  }
+  const uSel = document.getElementById('utilitySelect');
+  fillSelect(uSel, uOpts, '');
+  uSel.onchange = () => {
+    for (const slot of UTILITY) equip.unequip(slot);
+    if (uSel.value) {
+      const [slot, variant] = uSel.value.split(':');
+      equip.equip(slot, variant);
+    }
+    renderMeshList();
+  };
+}
+
+function renderMeshList() {
+  const el = document.getElementById('meshList');
+  if (!equip) {
+    el.innerHTML = '<span class="sub">—</span>';
+    return;
+  }
+  const items = equip.listAllMeshes();
+  if (!items.length) {
+    el.innerHTML = '<span class="sub">No equippable child meshes found on this model</span>';
+    return;
+  }
+  el.innerHTML = items.map((it, i) => `
+    <label>
+      <input type="checkbox" data-idx="${i}" ${it.visible ? 'checked' : ''}/>
+      <span><code>${it.name}</code> <span class="sub">${it.slot}/${it.variant}</span></span>
+    </label>
+  `).join('');
+  el.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+    cb.onchange = () => {
+      const item = items[+cb.dataset.idx];
+      if (item?.mesh) item.mesh.visible = cb.checked;
+    };
+  });
 }
 
 function renderClips(names, active) {
   const el = document.getElementById('clips');
   el.innerHTML = names.map((n) =>
-    `<button class="${n === active ? 'on' : ''}" data-clip="${n}">${n}</button>`
+    `<button type="button" class="${n === active ? 'on' : ''}" data-clip="${n}">${n}</button>`
   ).join('') || '<span class="sub">—</span>';
   el.querySelectorAll('button').forEach((btn) => {
     btn.onclick = () => {
@@ -238,24 +722,21 @@ function renderClips(names, active) {
   });
 }
 
-function renderDetail(race, bones, url, prefer) {
-  const rig = catalog.rig || {};
-  document.getElementById('practices').innerHTML = `
-    <li><strong>Skeleton:</strong> ${rig.primarySkeleton || 'Bip001'} (+ Mixamo <code>mixamorig:Hips</code>)</li>
-    <li><strong>Y-hip:</strong> ${(rig.yHip && rig.yHip.rule) || 'ground with -bbox.min.y'}</li>
-    <li><strong>Rigid body:</strong> ${(rig.rigidBody && rig.rigidBody.practice) || 'capsule on hips Y'}</li>
-    <li><strong>Prefix:</strong> <code>${race.prefix || '—'}</code> equipment child meshes</li>
-    <li><strong>Bones found:</strong> ${Object.entries(bones.found).map(([k,v]) => k+'='+v).join(', ') || 'none matched'}</li>
+function renderUrls(race, url, source, bones) {
+  const tex = textureUrlForRace(race.id);
+  const a = RACE_ASSETS[race.id];
+  document.getElementById('sockets').innerHTML = `
+    <li><strong>Bones matched:</strong> ${Object.entries(bones.found).map(([k, v]) => `${k}=${v}`).join(', ') || 'none'}</li>
+    <li><strong>Prefix:</strong> <code>${a?.prefix || race.prefix || '—'}</code></li>
+    <li><strong>Equipped:</strong> <code>${JSON.stringify(equip?.equipped || {})}</code></li>
   `;
-  const sock = rig.attachmentSockets || {};
-  document.getElementById('sockets').innerHTML = Object.entries(sock).map(([k, v]) =>
-    `<li><code>${k}</code> → ${v.bone} <span style="color:var(--dim)">(fallback ${v.fallback})</span></li>`
-  ).join('') || '<li>—</li>';
   document.getElementById('urls').innerHTML = `
-    <div style="margin-bottom:8px"><span class="badge">${prefer}</span></div>
-    <div><strong>Active</strong><br/><code>${url}</code></div>
+    <div style="margin-bottom:6px"><span class="badge">${source}</span></div>
+    <div><strong>Active model</strong><br/><code>${url}</code></div>
+    <div style="margin-top:8px"><strong>Race atlas</strong><br/><code>${tex || '—'}</code></div>
     <div style="margin-top:8px"><strong>metaverse</strong><br/><code>${race.models?.metaverse || '—'}</code></div>
     <div style="margin-top:8px"><strong>toon RTS</strong><br/><code>${race.models?.toonRts || '—'}</code></div>
+    <div style="margin-top:8px"><strong>race FBX</strong><br/><code>${a?.fbx || '—'}</code></div>
   `;
 }
 
@@ -266,17 +747,44 @@ function renderRaceList() {
       <div class="emoji">${r.emoji || '⚔'}</div>
       <div>
         <div class="name">${r.name}</div>
-        <div class="meta">${r.prefix || ''} · ${r.faction || 'grudge6'} · <span class="badge">LIVE</span></div>
+        <div class="meta">${RACE_ASSETS[r.id]?.prefix || r.prefix || ''} · ${r.faction || 'grudge6'} · <span class="badge">LIVE</span></div>
       </div>
     </div>
   `).join('');
   document.querySelectorAll('.race').forEach((el) => {
     el.onclick = () => {
       const race = races.find((r) => r.id === el.dataset.id);
-      if (race) loadRace(race);
+      if (race) loadRace(race, activeSource);
     };
   });
 }
+
+// Toolbar
+document.getElementById('btnHideAllWeapons').onclick = () => {
+  if (!equip) return;
+  equip.hideGroup('weapon_r');
+  equip.hideGroup('weapon_l');
+  equip.hideGroup('shield');
+  document.getElementById('weaponSelect').value = '';
+  document.getElementById('offhandSelect').value = '';
+  renderMeshList();
+};
+document.getElementById('btnDefaultLoadout').onclick = () => {
+  if (!equip) return;
+  equip.applyDefaultLoadout();
+  renderEquipUI(equip.summary());
+  renderMeshList();
+};
+document.getElementById('btnShowAllArmor').onclick = () => {
+  if (!equip) return;
+  for (const slot of ['body', 'arms', 'legs', 'head', 'shoulders']) {
+    const variants = equip.slots[slot];
+    if (!variants) continue;
+    // show all variants at once (debug) — usually exclusive
+    for (const mesh of Object.values(variants)) mesh.visible = true;
+  }
+  renderMeshList();
+};
 
 (async function main() {
   initThree();
@@ -286,9 +794,15 @@ function renderRaceList() {
     document.getElementById('raceList').innerHTML = `<div class="err">${e.message}</div>`;
     return;
   }
+  // Enrich races with CDN model URLs if missing
+  for (const r of catalog.races || []) {
+    r.models = r.models || {};
+    if (!r.models.metaverse) r.models.metaverse = `${CDN}/models/grudge6/metaverse/${r.id}.glb`;
+    if (!r.models.toonRts) r.models.toonRts = `${CDN}/asset-packs/toon-rts-characters/glb/characters/${r.id}.glb`;
+  }
   renderRaceList();
   const first = (catalog.races || []).find((r) => r.working !== false);
-  if (first) loadRace(first);
+  if (first) loadRace(first, 'toonRts');
 })();
 </script>
 </body>

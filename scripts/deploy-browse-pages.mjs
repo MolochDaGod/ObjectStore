@@ -14,6 +14,8 @@ const DST = join(ROOT, '.pages-deploy');
 
 const ROOT_FILES = [
   'WEAPON_SKILLS.html',
+  'GRUDGE6_Characters.html',
+  'GRUDGE_Item_Database.html',
   'index.html',
   'hub.html',
   'favicon.svg',
@@ -27,6 +29,7 @@ const API_FILES = [
   'weaponSkills.json',
   'classes.json',
   'races.json',
+  'grudge6-characters.json',
 ];
 
 const JS_FILES = ['weapon-skill-tree.js', 'nav.js'];
