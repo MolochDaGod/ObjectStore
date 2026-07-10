@@ -2,6 +2,24 @@
 
 Created by **Racalvin The Pirate King**.
 
+## Agent skills (load order)
+
+1. **`grudge-studio`** — umbrella (always first for Grudge work)
+2. **`grudge-asset-convert`** — **mandatory** for FBX/GLB/OBJ convert, bake, colliders, textures, production packs
+3. **`grudge-d1-r2`** — after bake, for R2/CDN/registry wiring
+
+```bash
+npm run convert:install
+npm run convert:doctor
+npm run convert -- fbx2gltf raw/in.fbx -o dist/out.glb --height 1.7 --cm-to-m
+npm run blender:mcp:setup
+```
+
+- CLI: `tools/grudge-convert`
+- Blender CLI (portable): `C:\Users\nugye\tools\Blender\blender.exe` via `BLENDER_PATH` / `.blender-path`
+- Microsoft Store Blender is **UI only** (headless Access Denied) — use portable for CLI
+- `POST /v1/convert` Durable Object stores results; **bake runs on agent/desktop** via grudge-convert
+
 ## What This Is
 Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static data host.
 - **R2 bucket** `grudge-assets`: stores all binary assets (sprites, audio, 3D models, icons)

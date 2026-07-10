@@ -4,7 +4,7 @@
  * npm-packaged FBX2glTF binaries (node_modules/fbx2gltf).
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
@@ -135,12 +135,48 @@ const FBX2GLTF_CANDIDATES = () =>
     join(homedir(), "npm-global", "node_modules", "fbx2gltf", "bin", "Windows_NT", "FBX2glTF.exe"),
   ].filter(Boolean);
 
+function readBlenderPathFile() {
+  try {
+    const p = join(__dirname, "..", ".blender-path");
+    if (existsSync(p)) {
+      const line = readFileSync(p, "utf8")
+        .split(/\r?\n/)
+        .map((s) => s.trim())
+        .find(Boolean);
+      return line || null;
+    }
+  } catch {
+    /* */
+  }
+  return null;
+}
+
+/** Microsoft Store package (may Access Denied when spawned outside alias) */
+function scanStoreBlender() {
+  const root = "C:\\Program Files\\WindowsApps";
+  if (!existsSync(root)) return [];
+  try {
+    const dirs = readdirSync(root, { withFileTypes: true }).filter(
+      (d) => d.isDirectory() && /BlenderFoundation\.Blender/i.test(d.name),
+    );
+    return dirs
+      .map((d) => join(root, d.name, "Blender", "blender.exe"))
+      .filter((p) => existsSync(p));
+  } catch {
+    return [];
+  }
+}
+
 const BLENDER_CANDIDATES = () =>
   [
     process.env.BLENDER_PATH,
     process.env.GRUDGE_BLENDER,
+    readBlenderPathFile(),
     which("blender"),
+    join(homedir(), "tools", "Blender", "blender.exe"),
+    "C:\\Users\\nugye\\tools\\Blender\\blender.exe",
     ...scanBlenderInstalls(),
+    ...scanStoreBlender(),
     "C:\\Program Files\\Blender Foundation\\Blender 4.5\\blender.exe",
     "C:\\Program Files\\Blender Foundation\\Blender 4.4\\blender.exe",
     "C:\\Program Files\\Blender Foundation\\Blender 4.3\\blender.exe",
