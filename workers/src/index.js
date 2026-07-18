@@ -73,6 +73,23 @@ export default {
         return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: API_VERSION, timestamp: new Date().toISOString() }), origin);
       }
 
+      // ── Compat: root-level design JSON → /api/v1/* (legacy clients) ──
+      // e.g. /weapons.json, /armor.json used by older warcamp bundles.
+      const rootJsonMatch = url.pathname.match(/^\/([a-zA-Z0-9_-]+)\.json$/);
+      if (rootJsonMatch && method === 'GET') {
+        const name = rootJsonMatch[1];
+        // Only proxy known catalog files — do not expose arbitrary R2 keys at root.
+        const allowRootJson = new Set([
+          'weapons', 'armor', 'materials', 'consumables', 'enemies', 'bosses',
+          'skills', 'races', 'classes', 'factions', 'master-items', 'catalog',
+          'master-weapon-prefabs', 'master-weaponSkills', 'master-attributes',
+          'weapon-stat-bridge', 't0-weapons', 'master-recipes', 'master-materials',
+        ]);
+        if (allowRootJson.has(name)) {
+          return corsResponse(env, await serveStaticJson(name, env), origin);
+        }
+      }
+
       // ── Static JSON catalog (/api/v1/*) — fleet games consume these ──
       if (url.pathname === '/api/v1/catalog' && method === 'GET') {
         return corsResponse(env, await serveStaticJson('catalog', env), origin);
