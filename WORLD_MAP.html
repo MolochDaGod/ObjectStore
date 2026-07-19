@@ -443,7 +443,7 @@
           <dt>Difficulty</dt><dd>L${z.difficultyMin ?? sc.difficulty?.[0] ?? '?'}–${z.difficultyMax ?? sc.difficulty?.[1] ?? '?'}</dd>
           <dt>Safe zone</dt><dd>${(z.isSafeZone || sc.isSafeZone) ? 'Yes' : 'No'}</dd>
           <dt>Contested</dt><dd>${(z.isContested || sc.isContested) ? 'Yes' : 'No'}</dd>
-          <dt>Entry ready</dt><dd>${z.entryReady === false ? 'No' : 'Yes'}</dt>
+          <dt>Entry ready</dt><dd>${z.entryReady === false ? 'No' : 'Yes'}</dd>
           <dt>Capital</dt><dd>${escapeHtml(z.capitalCityId || sc.npcs?.capitalCityId || '—')}</dd>
           <dt>Foundation</dt><dd>${escapeHtml(z.foundation || sc.foundation || '—')}</dd>
           <dt>Ecosystem</dt><dd>${escapeHtml(sc.ecosystemId || z.biome || '—')}</dd>
