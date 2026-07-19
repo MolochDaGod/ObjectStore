@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World Map — 9 Server Zones | Grudge Studio Info</title>
+  <meta name="description" content="Warlords era 3×3 world map — all server zones with health, lore, assets, enemies, wildlife, and play links." />
+  <meta name="theme-color" content="#0a0e14" />
+  <link rel="canonical" href="https://info.grudge-studio.com/WORLD_MAP.html" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --panel: #111821;
+      --card: #151d2b;
+      --border: #1e2a3a;
+      --gold: #d4a84b;
+      --gold-l: #f0d890;
+      --text: #e8e6e3;
+      --muted: #7a7877;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --amber: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--gold-l); }
+    header {
+      padding: 20px 24px 12px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #121a24, var(--bg));
+    }
+    header .nav { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+    header .nav a {
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+    header .nav a:hover { color: var(--gold); border-color: var(--gold); }
+    header h1 {
+      font-family: Cinzel, serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: 0.06em;
+      color: var(--gold-l);
+    }
+    header p { color: var(--muted); font-size: 0.9rem; max-width: 720px; margin-top: 6px; }
+    .status-row {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px; font-size: 11px;
+      border: 1px solid var(--border); background: var(--panel);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .pill.warn .dot { background: var(--amber); }
+    .pill.bad .dot { background: var(--red); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) 1fr;
+      gap: 16px;
+      padding: 16px 20px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .map-panel, .detail-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .map-panel { padding: 14px; }
+    .map-title {
+      font-family: Cinzel, serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      aspect-ratio: 1;
+    }
+    .cell {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 8px;
+      cursor: pointer;
+      background: linear-gradient(160deg, #1a2435, #0f141c);
+      transition: border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+      min-height: 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .cell:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .cell.active {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35), 0 0 18px rgba(251, 191, 36, 0.2);
+    }
+    .cell .legacy {
+      position: absolute; top: 6px; right: 8px;
+      font-size: 9px; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .cell .name { font-weight: 700; font-size: 12px; line-height: 1.25; padding-right: 28px; }
+    .cell .biome { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+    .cell .meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .badge {
+      font-size: 9px; padding: 2px 6px; border-radius: 4px;
+      border: 1px solid var(--border); color: var(--muted);
+    }
+    .badge.safe { color: #86efac; border-color: rgba(34,197,94,0.4); }
+    .badge.hot { color: #fca5a5; border-color: rgba(239,68,68,0.4); }
+    .badge.ok { color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+
+    .detail-head {
+      padding: 16px 18px 10px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #1a2230, transparent);
+    }
+    .detail-head h2 {
+      font-family: Cinzel, serif;
+      font-size: 1.35rem;
+      color: var(--gold-l);
+      letter-spacing: 0.04em;
+    }
+    .detail-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      text-decoration: none; border: 1px solid var(--border);
+      background: var(--card); color: var(--text); cursor: pointer;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--gold), #b8862e);
+      color: #0a0e14; border-color: transparent;
+    }
+    .btn:hover { filter: brightness(1.08); }
+
+    .tabs {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 10px 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 8px 12px; font-size: 12px; font-weight: 600;
+      color: var(--muted); border: none; background: transparent;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-body { padding: 16px 18px 24px; min-height: 320px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .kv { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; font-size: 13px; }
+    .kv dt { color: var(--muted); }
+    .kv dd { color: var(--text); word-break: break-word; }
+    .lore { font-size: 14px; color: #d6d3d1; line-height: 1.65; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+      font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      background: #0f141c; border: 1px solid var(--border); color: #cbd5e1;
+    }
+    .chip.enemy { border-color: rgba(239,68,68,0.35); color: #fecaca; }
+    .chip.boss { border-color: rgba(168,85,247,0.45); color: #e9d5ff; }
+    .chip.asset { border-color: rgba(59,130,246,0.4); color: #bfdbfe; }
+    .chip.sys-on { border-color: rgba(34,197,94,0.4); color: #bbf7d0; }
+    .chip.sys-off { border-color: rgba(113,113,122,0.4); color: #71717a; opacity: 0.7; }
+    h3.sec {
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); margin: 16px 0 8px;
+    }
+    h3.sec:first-child { margin-top: 0; }
+    .sys-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;
+    }
+    .sys-item {
+      padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+      background: #0f141c; font-size: 12px;
+    }
+    .sys-item strong { display: block; margin-bottom: 4px; }
+    .health-bar {
+      height: 8px; border-radius: 4px; background: #1e293b; overflow: hidden; margin-top: 6px;
+    }
+    .health-bar > i {
+      display: block; height: 100%;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+    }
+    .health-bar.mid > i { background: linear-gradient(90deg, #ca8a04, #facc15); }
+    .health-bar.low > i { background: linear-gradient(90deg, #b91c1c, #f87171); }
+    .asset-row {
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 8px; background: #0f141c; font-size: 12px;
+    }
+    .asset-row a { font-size: 11px; word-break: break-all; }
+    .empty { color: var(--muted); font-size: 13px; font-style: italic; }
+    footer {
+      text-align: center; padding: 20px; color: var(--muted); font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .err {
+      padding: 20px; color: #fca5a5; background: #1c1010; border: 1px solid #7f1d1d;
+      border-radius: 8px; margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a href="./hub.html">← Hub</a>
+      <a href="./docs">API Docs</a>
+      <a href="./api/v1/warlords-zones.json">warlords-zones.json</a>
+      <a href="./api/v1/sectors-content.json">sectors-content.json</a>
+      <a href="https://client.grudge-studio.com/play">Play</a>
+      <a href="https://client.grudge-studio.com/ocean">Ocean</a>
+    </div>
+    <h1>World Map — Server Zones</h1>
+    <p>
+      Canonical Warlords era <strong>3×3</strong> open world. Click a sector for lore, terrain health,
+      wildlife, enemies, landmarks, and system readiness. Data from ObjectStore SSOT (GrudgeBuilder publish).
+    </p>
+    <div class="status-row" id="statusRow">
+      <span class="pill" id="pillZones"><span class="dot"></span> Loading zones…</span>
+      <span class="pill" id="pillHealth"><span class="dot"></span> API health…</span>
+      <span class="pill" id="pillSeed"><span class="dot"></span> world seed…</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="map-panel">
+      <div class="map-title">Aethermoor · 3×3 grid (N↑)</div>
+      <div class="grid-3" id="zoneGrid" aria-label="World sector grid"></div>
+      <p style="margin-top:12px;font-size:11px;color:var(--muted)">
+        Legacy Colyseus keys NW–SE map via sectorBridge. Waterline is singular across play surfaces (canonical <code>waterLevel</code> in sector terrain).
+      </p>
+    </aside>
+
+    <main class="detail-panel" id="detail">
+      <div class="detail-head">
+        <h2 id="dName">Select a zone</h2>
+        <div class="sub" id="dSub">Click a cell on the map</div>
+        <div class="actions" id="dActions"></div>
+      </div>
+      <div class="tabs" id="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="overview">Overview</button>
+        <button type="button" class="tab" data-tab="lore">Lore</button>
+        <button type="button" class="tab" data-tab="terrain">Terrain</button>
+        <button type="button" class="tab" data-tab="life">Wildlife</button>
+        <button type="button" class="tab" data-tab="enemies">Enemies</button>
+        <button type="button" class="tab" data-tab="assets">Assets</button>
+        <button type="button" class="tab" data-tab="systems">Health</button>
+      </div>
+      <div class="tab-body">
+        <div class="tab-panel active" id="panel-overview"></div>
+        <div class="tab-panel" id="panel-lore"></div>
+        <div class="tab-panel" id="panel-terrain"></div>
+        <div class="tab-panel" id="panel-life"></div>
+        <div class="tab-panel" id="panel-enemies"></div>
+        <div class="tab-panel" id="panel-assets"></div>
+        <div class="tab-panel" id="panel-systems"></div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    info.grudge-studio.com · ObjectStore · Grudge Warlords ·
+    <a href="./hub.html">Hub</a> ·
+    <a href="https://github.com/MolochDaGod/ObjectStore">GitHub</a>
+  </footer>
+
+  <script>
+    const CDN = 'https://assets.grudge-studio.com';
+    const BIOME_COLORS = {
+      ethereal: '#a78bfa', frozen: '#7dd3fc', forest: '#4ade80', storm: '#fbbf24',
+      nexus: '#c084fc', desert: '#f59e0b', tropical: '#34d399', abyssal: '#6366f1', volcanic: '#f87171',
+      magic: '#c4b5fd',
+    };
+
+    let zonesById = {};
+    let sectorsById = {};
+    let selectedId = null;
+    let meta = {};
+
+    function el(html) {
+      const t = document.createElement('template');
+      t.innerHTML = html.trim();
+      return t.content.firstChild;
+    }
+
+    function chips(list, cls = '') {
+      if (!list || !list.length) return '<span class="empty">None listed</span>';
+      return `<div class="chips">${list.map((x) => `<span class="chip ${cls}">${escapeHtml(String(x))}</span>`).join('')}</div>`;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function systemScore(systems) {
+      if (!systems) return 0;
+      const keys = Object.keys(systems).filter((k) => typeof systems[k] === 'boolean');
+      if (!keys.length) return 0;
+      const on = keys.filter((k) => systems[k]).length;
+      return Math.round((on / keys.length) * 100);
+    }
+
+    async function load() {
+      const [healthRes, zonesRes, sectorsRes] = await Promise.all([
+        fetch('./health').then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        fetch('./api/v1/warlords-zones.json').then((r) => r.json()),
+        fetch('./api/v1/sectors-content.json').then((r) => r.json()).catch(() => null),
+      ]);
+
+      const pillH = document.getElementById('pillHealth');
+      if (healthRes?.status === 'ok') {
+        pillH.innerHTML = `<span class="dot"></span> API ${healthRes.version || 'ok'}`;
+      } else {
+        pillH.classList.add('warn');
+        pillH.innerHTML = `<span class="dot"></span> API offline / static`;
+      }
+
+      meta = zonesRes;
+      const zones = zonesRes.zones || [];
+      zones.forEach((z) => { zonesById[z.id] = z; });
+
+      if (sectorsRes?.sectors) {
+        sectorsRes.sectors.forEach((s) => { sectorsById[s.sectorId] = s; });
+      }
+
+      document.getElementById('pillZones').innerHTML =
+        `<span class="dot"></span> ${zones.length} zones`;
+      document.getElementById('pillSeed').innerHTML =
+        `<span class="dot"></span> seed ${escapeHtml(zonesRes.worldSeedDefault || 'grudge-world-1')}`;
+
+      const rows = zonesRes.grid?.rows || [
+        ['ethereal_falls', 'frostbite_expanse', 'thornwood_wilds'],
+        ['stormbreak_reef', 'convergence_nexus', 'ashen_wastes'],
+        ['abyssal_trench', 'haven_shore', 'ember_depths'],
+      ];
+
+      const grid = document.getElementById('zoneGrid');
+      grid.innerHTML = '';
+      rows.forEach((row) => {
+        row.forEach((id) => {
+          const z = zonesById[id] || { id, name: id, biome: '?', legacyId: '?' };
+          const sc = sectorsById[id];
+          const systems = z.systems || sc?.systems;
+          const score = systemScore(systems);
+          const accent = BIOME_COLORS[z.biome] || BIOME_COLORS[sc?.biome] || '#64748b';
+          const cell = el(`
+            <button type="button" class="cell" data-id="${escapeHtml(id)}" style="border-top: 3px solid ${accent}">
+              <span class="legacy">${escapeHtml(z.legacyId || sc?.legacyId || '')}</span>
+              <div>
+                <div class="name">${escapeHtml(z.name || sc?.name || id)}</div>
+                <div class="biome">${escapeHtml(z.biome || sc?.biome || '')}</div>
+              </div>
+              <div class="meta">
+                ${z.isSafeZone || sc?.isSafeZone ? '<span class="badge safe">Safe</span>' : '<span class="badge hot">PvE</span>'}
+                <span class="badge ok">L${z.difficultyMin ?? sc?.difficulty?.[0] ?? '?'}-${z.difficultyMax ?? sc?.difficulty?.[1] ?? '?'}</span>
+                <span class="badge">${score}% sys</span>
+              </div>
+            </button>
+          `);
+          cell.addEventListener('click', () => selectZone(id));
+          grid.appendChild(cell);
+        });
+      });
+
+      const start = zones.find((z) => z.recommendedStarter)?.id || 'haven_shore';
+      selectZone(zonesById[start] ? start : zones[0]?.id);
+
+      document.querySelectorAll('.tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.tab-panel').forEach((p) => p.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('panel-' + btn.dataset.tab)?.classList.add('active');
+        });
+      });
+    }
+
+    function selectZone(id) {
+      selectedId = id;
+      document.querySelectorAll('.cell').forEach((c) => {
+        c.classList.toggle('active', c.dataset.id === id);
+      });
+      const z = zonesById[id] || {};
+      const sc = sectorsById[id] || {};
+      const name = z.name || sc.name || id;
+      document.getElementById('dName').textContent = name;
+      document.getElementById('dSub').textContent =
+        `${id} · ${z.legacyId || sc.legacyId || '?'} · biome ${z.biome || sc.biome || '?'} · ${(z.sizeMeters || sc.terrain?.sizeMeters || 10000) / 1000} km`;
+
+      const play = z.playUrl || `https://client.grudge-studio.com/play?sector=${id}&mode=zone&worldSeed=${meta.worldSeedDefault || 'grudge-world-1'}`;
+      const island3d = sc.island3dUrl || `/island-3d?mode=zone&sector=${id}&worldSeed=${meta.worldSeedDefault || 'grudge-world-1'}`;
+      document.getElementById('dActions').innerHTML = `
+        <a class="btn primary" href="${escapeHtml(play)}" target="_blank" rel="noopener">▶ Play zone</a>
+        <a class="btn" href="https://client.grudge-studio.com${escapeHtml(island3d.startsWith('/') ? island3d : '/' + island3d)}" target="_blank" rel="noopener">Island-3D</a>
+        <a class="btn" href="./api/v1/sectors-content.json" target="_blank">Sector JSON</a>
+      `;
+
+      renderOverview(z, sc);
+      renderLore(z, sc);
+      renderTerrain(z, sc);
+      renderLife(sc);
+      renderEnemies(z, sc);
+      renderAssets(sc);
+      renderSystems(z, sc);
+    }
+
+    function renderOverview(z, sc) {
+      const systems = z.systems || sc.systems || {};
+      const score = systemScore(systems);
+      const barCls = score >= 75 ? '' : score >= 45 ? 'mid' : 'low';
+      document.getElementById('panel-overview').innerHTML = `
+        <dl class="kv">
+          <dt>Zone ID</dt><dd><code>${escapeHtml(z.id || sc.sectorId || '')}</code></dd>
+          <dt>Legacy grid</dt><dd>${escapeHtml(z.legacyId || sc.legacyId || '—')}</dd>
+          <dt>Map corner</dt><dd>${escapeHtml(sc.mapCorner || '—')}</dd>
+          <dt>Difficulty</dt><dd>L${z.difficultyMin ?? sc.difficulty?.[0] ?? '?'}–${z.difficultyMax ?? sc.difficulty?.[1] ?? '?'}</dd>
+          <dt>Safe zone</dt><dd>${(z.isSafeZone || sc.isSafeZone) ? 'Yes' : 'No'}</dd>
+          <dt>Contested</dt><dd>${(z.isContested || sc.isContested) ? 'Yes' : 'No'}</dd>
+          <dt>Entry ready</dt><dd>${z.entryReady === false ? 'No' : 'Yes'}</dt>
+          <dt>Capital</dt><dd>${escapeHtml(z.capitalCityId || sc.npcs?.capitalCityId || '—')}</dd>
+          <dt>Foundation</dt><dd>${escapeHtml(z.foundation || sc.foundation || '—')}</dd>
+          <dt>Ecosystem</dt><dd>${escapeHtml(sc.ecosystemId || z.biome || '—')}</dd>
+        </dl>
+        <h3 class="sec">Server readiness</h3>
+        <div class="sys-item">
+          <strong>Systems online · ${score}%</strong>
+          <div class="health-bar ${barCls}"><i style="width:${score}%"></i></div>
+        </div>
+        <h3 class="sec">Description</h3>
+        <p class="lore">${escapeHtml(z.description || sc.lore?.slice(0, 280) || '—')}${sc.lore && sc.lore.length > 280 ? '…' : ''}</p>
+      `;
+    }
+
+    function renderLore(z, sc) {
+      const lore = sc.lore || z.lore || z.description || 'No lore published for this sector yet.';
+      document.getElementById('panel-lore').innerHTML = `<p class="lore">${escapeHtml(lore)}</p>`;
+    }
+
+    function renderTerrain(z, sc) {
+      const t = sc.terrain || {};
+      document.getElementById('panel-terrain').innerHTML = `
+        <dl class="kv">
+          <dt>Heightmap</dt><dd><code>${escapeHtml(t.heightmapModifier || '—')}</code></dd>
+          <dt>Terrain seed</dt><dd><code>${escapeHtml(t.terrainSeedKey || '—')}</code></dd>
+          <dt>Population seed</dt><dd><code>${escapeHtml(t.populationSeedKey || '—')}</code></dd>
+          <dt>Size</dt><dd>${t.sizeMeters ?? z.sizeMeters ?? 10000} m</dd>
+          <dt>Height range</dt><dd>${t.minHeight ?? '—'} → ${t.maxHeight ?? '—'} m</dd>
+          <dt>Water level</dt><dd><strong>${t.waterLevel ?? '—'}</strong> (canonical sector waterline)</dd>
+          <dt>Segments</dt><dd>${t.segments ?? '—'}</dd>
+          <dt>Ambient / sun</dt><dd>${t.ambientIntensity ?? '—'} / ${t.sunIntensity ?? '—'}</dd>
+          <dt>Ground PBR</dt><dd>${escapeHtml(sc.harvest?.groundPbr || '—')}</dd>
+          <dt>Ground tex</dt><dd><code>${escapeHtml(sc.harvest?.groundTextureDir || '—')}</code></dd>
+        </dl>
+        <h3 class="sec">Resources</h3>
+        ${chips(sc.harvest?.resources || z.resources)}
+        <h3 class="sec">Hazards</h3>
+        ${chips(z.hazards || sc.hazards)}
+        <h3 class="sec">Ambient FX</h3>
+        ${chips(z.ambientFx || sc.ambientFx)}
+      `;
+    }
+
+    function renderLife(sc) {
+      const w = sc.wildlife || {};
+      document.getElementById('panel-life').innerHTML = `
+        <h3 class="sec">Land animals (${w.landSpawnCount ?? '?'} target)</h3>
+        ${chips(w.animals)}
+        <h3 class="sec">Fish pool (${w.fishSpawnCount ?? '?'} target)</h3>
+        ${chips(w.fishSpecies)}
+        <h3 class="sec">Trees / rocks</h3>
+        ${chips(w.treeVariants || sc.harvest?.treeVariants)}
+        ${chips(sc.harvest?.rockVariants)}
+        <h3 class="sec">Professions</h3>
+        ${chips(sc.harvest?.professions)}
+        <p style="margin-top:12px;font-size:12px;color:var(--muted)">
+          Seed key: <code>${escapeHtml(w.animalSeedKey || 'animals')}</code> ·
+          Fish only in water; land wildlife never below waterLevel+1.25m
+        </p>
+      `;
+    }
+
+    function renderEnemies(z, sc) {
+      const m = sc.monsters || {};
+      document.getElementById('panel-enemies').innerHTML = `
+        <h3 class="sec">Common</h3>
+        ${chips(m.common, 'enemy')}
+        <h3 class="sec">Elites</h3>
+        ${chips(m.elites, 'enemy')}
+        <h3 class="sec">Bosses</h3>
+        ${chips(m.bosses, 'boss')}
+        <h3 class="sec">Recommended level</h3>
+        <p>${m.recommendedLevel ? `L${m.recommendedLevel[0]}–${m.recommendedLevel[1]}` : `L${z.difficultyMin ?? '?'}–${z.difficultyMax ?? '?'}`}</p>
+        <h3 class="sec">NPC factions / camps</h3>
+        ${chips(sc.npcs?.factions)}
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">
+          Camps/island: ${sc.npcs?.campsPerIsland ?? '—'} ·
+          Vendors: ${sc.npcs?.vendors ? 'yes' : 'no'} ·
+          Missions: ${sc.npcs?.missions ? 'yes' : 'no'}
+        </p>
+        <h3 class="sec">Events</h3>
+        ${chips(sc.events?.eventTypes)}
+      `;
+    }
+
+    function renderAssets(sc) {
+      const landmarks = sc.events?.landmarks || [];
+      const trees = sc.harvest?.treeCdn || [];
+      let html = '<h3 class="sec">Landmarks</h3>';
+      if (!landmarks.length) html += '<p class="empty">No landmark GLBs listed</p>';
+      landmarks.forEach((lm) => {
+        const url = lm.cdnUrl || (lm.cdnKey ? `${CDN}/${lm.cdnKey}` : '');
+        html += `<div class="asset-row">
+          <strong>${escapeHtml(lm.name || lm.id)}</strong>
+          <span class="chip asset">${escapeHtml(lm.kind || 'prop')}</span>
+          <span style="color:var(--muted)">${escapeHtml(lm.notes || '')}</span>
+          ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a>` : ''}
+          ${lm.localPath ? `<code>${escapeHtml(lm.localPath)}</code>` : ''}
+        </div>`;
+      });
+      html += '<h3 class="sec">Nature CDN</h3>';
+      trees.forEach((p) => {
+        const url = p.startsWith('http') ? p : CDN + (p.startsWith('/') ? p : '/' + p);
+        html += `<div class="asset-row"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a></div>`;
+      });
+      if (!trees.length) html += '<p class="empty">No tree CDN paths</p>';
+      document.getElementById('panel-assets').innerHTML = html;
+    }
+
+    function renderSystems(z, sc) {
+      const systems = { ...(sc.systems || {}), ...(z.systems || {}) };
+      const score = systemScore(systems);
+      const barCls = score >= 75 ? '' : score >= 45 ? 'mid' : 'low';
+      let html = `
+        <div class="sys-item" style="margin-bottom:12px">
+          <strong>Overall system health · ${score}%</strong>
+          <div class="health-bar ${barCls}"><i style="width:${score}%"></i></div>
+          <p style="margin-top:8px;font-size:11px;color:var(--muted)">
+            Flags from warlords-zones + sectors-content SSOT (Colyseus sector, terrain, wildlife, camps…).
+          </p>
+        </div>
+        <div class="sys-grid">
+      `;
+      Object.entries(systems).forEach(([k, v]) => {
+        if (typeof v === 'boolean') {
+          html += `<div class="sys-item"><strong>${escapeHtml(k)}</strong>
+            <span class="chip ${v ? 'sys-on' : 'sys-off'}">${v ? 'ON' : 'OFF'}</span></div>`;
+        } else if (Array.isArray(v)) {
+          html += `<div class="sys-item"><strong>${escapeHtml(k)}</strong>${chips(v)}</div>`;
+        } else if (v != null) {
+          html += `<div class="sys-item"><strong>${escapeHtml(k)}</strong><code>${escapeHtml(String(v))}</code></div>`;
+        }
+      });
+      html += '</div>';
+      if (sc.seeds) {
+        html += '<h3 class="sec">Deterministic seeds</h3><dl class="kv">';
+        Object.entries(sc.seeds).forEach(([k, v]) => {
+          html += `<dt>${escapeHtml(k)}</dt><dd><code>${escapeHtml(String(v))}</code></dd>`;
+        });
+        html += '</dl>';
+      }
+      document.getElementById('panel-systems').innerHTML = html;
+    }
+
+    load().catch((e) => {
+      document.body.insertAdjacentHTML('afterbegin',
+        `<div class="err">Failed to load zone data: ${escapeHtml(e.message)}. Ensure /api/v1/warlords-zones.json is published.</div>`);
+    });
+  </script>
+</body>
+</html>
