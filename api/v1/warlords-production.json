@@ -1,0 +1,118 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-07-19",
+  "title": "Warlords Production SSOT",
+  "docs": {
+    "markdown": "/docs/WARLORDS-PRODUCTION-SSOT.md",
+    "infoHtml": "https://info.grudge-studio.com/docs/WARLORDS-PRODUCTION-SSOT.md",
+    "grudgeBuilder": "docs/DOCK_CREW_AND_WATER_SSOT.md"
+  },
+  "fleet": {
+    "auth": "https://id.grudge-studio.com",
+    "gameState": "Railway Postgres",
+    "catalogs": "https://objectstore.grudge-studio.com/api/v1",
+    "cdn": "https://assets.grudge-studio.com",
+    "docs": "https://info.grudge-studio.com",
+    "liveClient": "https://grudgewarlords.com",
+    "battle": "https://game.grudge-studio.com",
+    "crafting": "https://grudge-crafting.puter.site",
+    "ai": "https://ai.grudge-studio.com"
+  },
+  "buildLayers": [
+    "quick",
+    "camp",
+    "bench",
+    "modular",
+    "dock",
+    "rts",
+    "race_home"
+  ],
+  "dockCrewRoles": [
+    {
+      "id": "sailor",
+      "label": "Sailor",
+      "meshScale": 0.9,
+      "abilities": [
+        "crows_nest_sniper",
+        "harpoon_gun",
+        "auto_fish",
+        "repair_hull",
+        "ranged_weapon_skill",
+        "cook_t0"
+      ]
+    },
+    {
+      "id": "weatherman",
+      "label": "Weatherman",
+      "meshScale": 0.9,
+      "abilities": [
+        "cast_wind",
+        "cast_storm_barrier",
+        "cast_side_wave"
+      ],
+      "constants": {
+        "sideWavePushM": 20,
+        "barrierCrewOnlySwim": true
+      }
+    },
+    {
+      "id": "gunner",
+      "label": "Gunner",
+      "meshScale": 0.9,
+      "abilities": [
+        "use_cannons",
+        "sniper_nest",
+        "boarding_hook",
+        "throw_bomb",
+        "deploy_mine",
+        "fire_bomb",
+        "oil_trap",
+        "exploding_ball",
+        "scatter_ball",
+        "harpoon_fish"
+      ],
+      "constants": {
+        "oilBurnSec": 20
+      }
+    }
+  ],
+  "ships": [
+    { "size": "rowboat", "maxHp": 30, "speed": 4, "cannons": 0, "crewCap": 2, "starterFree": true },
+    { "size": "sloop", "maxHp": 80, "speed": 3, "cannons": 3, "crewCap": 5, "starterFree": false },
+    { "size": "galleon", "maxHp": 200, "speed": 2, "cannons": 5, "crewCap": 10, "starterFree": false }
+  ],
+  "gameLoops": [
+    "island_harvest_craft_build",
+    "rts_train_promote",
+    "harbor_ship_crew_sail",
+    "ocean_sector_combat_return",
+    "battle_lane_deploy"
+  ],
+  "missingSystems": [
+    { "id": "dock_crew_api", "priority": "P0" },
+    { "id": "crew_ai_ocean_runtime", "priority": "P0" },
+    { "id": "ship_stats_panel_full", "priority": "P0" },
+    { "id": "storm_barrier_physics", "priority": "P1" },
+    { "id": "oil_mine_entities", "priority": "P1" },
+    { "id": "ship_cargo_bag", "priority": "P1" },
+    { "id": "cdn_asset_verify_dock_tools", "priority": "P1" },
+    { "id": "sector_event_director", "priority": "P2" },
+    { "id": "fantasy_walls_as_build_pieces", "priority": "P2" }
+  ],
+  "codePaths": {
+    "dockCrew": "GrudgeBuilder/shared/definitions/dockCrew.ts",
+    "shipCatalog": "GrudgeBuilder/shared/definitions/shipCatalog.ts",
+    "buildSystem": "GrudgeBuilder/shared/definitions/buildSystem.ts",
+    "shipDockPanel": "GrudgeBuilder/client/src/components/ShipDockPanel.tsx",
+    "shipDockService": "GrudgeBuilder/client/src/lib/shipDockService.ts",
+    "playerShipsSql": "GrudgeBuilder/migrations/007_player_ships.sql",
+    "battleBuildCatalog": "Grudge-Studio-Game/artifacts/grudge-studio-game/src/lib/build-catalog.ts"
+  },
+  "deployChecklist": [
+    "Apply player_ships (+ dock_crew) migrations on Railway",
+    "Upload build packs and ship GLBs to R2 with magic-byte verify",
+    "Vercel rewrites: auth, Railway game API, objectstore, assets",
+    "Smoke: free rowboat → recruit sailor → board → ocean",
+    "Publish ObjectStore docs to info.grudge-studio.com"
+  ]
+}

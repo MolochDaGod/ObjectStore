@@ -1,0 +1,202 @@
+{
+  "version": "2.0.0",
+  "updated": "2026-07-19",
+  "title": "Grudge Studio Fleet — Canonical SSOT Codex",
+  "oneTruth": {
+    "identity": "https://id.grudge-studio.com",
+    "gameState": "https://grudge-api-production-0d46.up.railway.app",
+    "gameStateNote": "Railway Postgres — characters, accounts, island, wallet, ships. NOT D1.",
+    "definitions": "https://objectstore.grudge-studio.com/api/v1",
+    "definitionsMirror": "https://info.grudge-studio.com/api/v1",
+    "binaries": "https://assets.grudge-studio.com",
+    "docs": "https://info.grudge-studio.com",
+    "ai": "https://ai.grudge-studio.com",
+    "portal": "https://grudge-studio.com",
+    "deprecated": ["https://api.grudge-studio.com", "molochdagod.github.io", "grudge-objectstore.pages.dev"]
+  },
+  "directory": {
+    "liveGames": {
+      "warlords": "https://grudgewarlords.com",
+      "battle": "https://game.grudge-studio.com",
+      "characterStudio": "https://character.grudge-studio.com",
+      "water": "https://water.grudge-studio.com",
+      "forge": "https://forge.grudge-studio.com",
+      "rts": "https://rts-grudge.vercel.app",
+      "grudges": "https://grudges.grudge-studio.com",
+      "crafting": "https://grudge-crafting.puter.site"
+    },
+    "codeRepos": {
+      "gameState": "F:/GitHub/GrudgeBuilder",
+      "fleetTs": "GrudgeBuilder/shared/fleet/manifest.ts",
+      "dbMap": "GrudgeBuilder/shared/fleet/dbConnections.ts",
+      "truthProbes": "GrudgeBuilder/shared/fleet/truthProbes.ts",
+      "uuidRuntime": "GrudgeBuilder/shared/grudgeUUID.ts",
+      "buildSystem": "GrudgeBuilder/shared/definitions/buildSystem.ts",
+      "dockCrew": "GrudgeBuilder/shared/definitions/dockCrew.ts",
+      "shipCatalog": "GrudgeBuilder/shared/definitions/shipCatalog.ts",
+      "objectStore": "F:/GitHub/ObjectStore",
+      "aiHub": "F:/GitHub/grudge-ai-hub",
+      "aiGatewayWorker": "GrudgeBuilder/workers/ai",
+      "battleGame": "Grudge-Studio-Game/artifacts/grudge-studio-game"
+    },
+    "docs": {
+      "codex": "/docs/CANONICAL_CODEX.md",
+      "uuidGuide": "/docs/API-AND-UUID-GUIDE.md",
+      "dataLayer": "GrudgeBuilder/docs/CANONICAL_DATA_LAYER.md",
+      "identity": "GrudgeBuilder/docs/CANONICAL_IDENTITY.md",
+      "build": "GrudgeBuilder/docs/BUILD_SYSTEM_SSOT.md",
+      "dockWater": "GrudgeBuilder/docs/DOCK_CREW_AND_WATER_SSOT.md",
+      "warlordsProduction": "/docs/WARLORDS-PRODUCTION-SSOT.md",
+      "docsIndex": "GrudgeBuilder/docs/DOCS-INDEX.md"
+    }
+  },
+  "uuidFamilies": [
+    {
+      "id": "ICON",
+      "prefix": "ICON-",
+      "authority": "ObjectStore icon-registry + R2",
+      "use": "UI icons"
+    },
+    {
+      "id": "character",
+      "prefix": "char_ | UUID",
+      "authority": "Railway characters.id",
+      "use": "Player heroes",
+      "also": "grudgeCode GRDG-*"
+    },
+    {
+      "id": "catalog",
+      "prefix": "HERO- | EQIP- | ITEM- | SKIL-",
+      "authority": "ObjectStore master-registry",
+      "use": "Design catalog rows"
+    },
+    {
+      "id": "slotTier",
+      "format": "SLOT-TIER-ITEMID-TIMESTAMP-COUNTER",
+      "authority": "grudgeUUID.ts + /api/uuid/generate",
+      "use": "Crafted/loot instances"
+    },
+    {
+      "id": "assetRegistry",
+      "algorithm": "sha1(grudge-asset:r2Key)",
+      "authority": "D1 grudge-assets-db.asset_registry",
+      "use": "Binary search index only"
+    },
+    {
+      "id": "account",
+      "field": "users.grudge_id / accounts",
+      "authority": "Railway + id.grudge-studio.com JWT",
+      "use": "Human account"
+    }
+  ],
+  "databaseWiring": {
+    "playerState": {
+      "engine": "postgres",
+      "host": "Railway grudge-warlords-rpg / grudge-api",
+      "publicUrl": "https://grudge-api-production-0d46.up.railway.app",
+      "tables": [
+        "users",
+        "accounts",
+        "characters",
+        "account_inventory",
+        "account_resources",
+        "home_islands",
+        "player_ships",
+        "uuid_ledger",
+        "gbux_transactions"
+      ],
+      "envVar": "DATABASE_URL"
+    },
+    "definitions": {
+      "engine": "json-api",
+      "url": "https://objectstore.grudge-studio.com/api/v1"
+    },
+    "assetIndex": {
+      "engine": "d1",
+      "name": "grudge-assets-db",
+      "id": "3eeadd9e-832d-4d2e-bb14-8ddf75b3ac59"
+    },
+    "aiJobs": {
+      "engine": "d1",
+      "name": "grudge-ai-hub",
+      "id": "42ada55e-2095-46da-840b-6bb301a57253"
+    },
+    "objectstoreIndex": {
+      "engine": "d1",
+      "name": "grudge-objectstore",
+      "id": "8fc367a8-9120-490e-a503-b0fcb755c044"
+    },
+    "binaries": {
+      "engine": "r2",
+      "bucket": "grudge-assets",
+      "cdn": "https://assets.grudge-studio.com"
+    },
+    "notAuthority": [
+      "D1 for characters/islands",
+      "localStorage for player SSOT",
+      "Puter KV as sole truth",
+      "api.grudge-studio.com auth"
+    ]
+  },
+  "authWire": {
+    "login": "https://id.grudge-studio.com/login?redirect_uri=",
+    "implementation": "Railway /api/auth/*",
+    "tokenKeys": [
+      "grudge_auth_token",
+      "grudge_session_token",
+      "grudge.token",
+      "sso_token"
+    ],
+    "verify": "GET /api/auth/verify (Bearer)",
+    "bootstrap": "https://id.grudge-studio.com/grudge-game-bootstrap.js",
+    "code": "shared/fleet/authConnect.ts"
+  },
+  "frontToBack": {
+    "vercelSpa": "same-origin /api/* → vercel.json rewrites → Railway + id",
+    "puterStatic": "explicit Railway + ObjectStore + ID with CORS",
+    "satelliteHelper": "buildFleetSatelliteRewrites()"
+  },
+  "assets": {
+    "cdn": "https://assets.grudge-studio.com",
+    "fleetJs": "https://assets.grudge-studio.com/js/grudge-fleet.js",
+    "grudge6Kit": "https://assets.grudge-studio.com/js/grudge6-kit.js",
+    "grudge6Races": "/models/grudge6/races/",
+    "buildings": "/models/buildings/",
+    "ships": "/models/ships/",
+    "icons": "/icons/ and game-assets/icons/",
+    "rule": "Magic-byte verify GLB/FBX; never HTML fake-200; isolate multipack nodeName"
+  },
+  "ai": {
+    "public": "https://ai.grudge-studio.com",
+    "health": "https://ai.grudge-studio.com/health",
+    "models": "https://ai.grudge-studio.com/v1/models",
+    "chat": "POST /v1/chat",
+    "agents": "GET /v1/agents · POST /v1/agents/:role/chat",
+    "repo": "F:/GitHub/grudge-ai-hub",
+    "d1": "grudge-ai-hub"
+  },
+  "probes": {
+    "npm": [
+      "npm run probe:auth",
+      "npm run probe:truth",
+      "npm run probe:deployments",
+      "npm run verify:fleet-truth",
+      "npm run production:verify-cdn"
+    ],
+    "healthUrls": [
+      "https://grudge-api-production-0d46.up.railway.app/api/health",
+      "https://id.grudge-studio.com/login",
+      "https://ai.grudge-studio.com/health",
+      "https://objectstore.grudge-studio.com/api/v1/docs-catalog.json",
+      "https://assets.grudge-studio.com/js/grudge-fleet.js"
+    ]
+  },
+  "relatedJson": [
+    "/api/v1/docs-catalog.json",
+    "/api/v1/warlords-production.json",
+    "/api/v1/best-practices.json",
+    "/api/v1/assets-api.json",
+    "/api/v1/grudge6-canonical.json",
+    "/api/v1/home-island-contract.json"
+  ]
+}
