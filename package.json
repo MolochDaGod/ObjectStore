@@ -60,6 +60,8 @@
     "sync:docs": "node ./scripts/sync-docs-canonical.mjs",
     "import:armada": "node ./scripts/import-grudge-armada.mjs",
     "publish:armada": "node ./scripts/publish-static-json.mjs grudge-armada catalog",
+    "recognize:era": "node ./scripts/recognize-era.mjs",
+    "publish:era-taxonomy": "node ./scripts/publish-static-json.mjs era-asset-taxonomy era-recognition era-characters asset-media-types map-registry best-practices catalog",
     "convert": "node ./tools/grudge-convert/bin/grudge-convert.mjs",
     "convert:doctor": "node ./tools/grudge-convert/bin/grudge-convert.mjs doctor",
     "convert:glb": "node ./tools/grudge-convert/bin/grudge-convert.mjs glb2glb",
@@ -80,6 +82,7 @@
     "worker:tail": "wrangler tail",
     "generate:master": "node scripts/generate-master-database.mjs",
     "build:weapon-prefabs": "node scripts/build-weapon-prefabs.mjs",
+    "build:t1-weapon-skills": "node scripts/build-t1-weapon-skills.mjs --rebuild",
     "validate:weapon-pipeline": "node scripts/validate-weapon-pipeline.mjs",
     "enrich:weapon-skills": "node scripts/enrich-weapon-skills.mjs",
     "enrich:t0-starter-skills": "node scripts/enrich-t0-starter-skills.mjs",
@@ -159,7 +162,9 @@
     "generate:t0-addendum": "node scripts/generate-t0-addendum.js",
     "admin:merge": "node scripts/admin-merge.js",
     "import:craftpix-batch": "pwsh -NoProfile -File ./scripts/import-craftpix-batch-2026-04b.ps1",
-    "deploy:browse": "node scripts/deploy-browse-pages.mjs"
+    "deploy:browse": "node scripts/deploy-browse-pages.mjs",
+    "d1:meshes-library-urls": "node scripts/update-d1-meshes-glb-url.mjs",
+    "d1:meshes-library-urls:apply": "node scripts/update-d1-meshes-glb-url.mjs --apply"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,174 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-19T12:00:00.000Z",
+  "title": "Game-ready media type organization (2D + production systems)",
+  "cdn": "https://assets.grudge-studio.com",
+  "objectStore": "https://objectstore.grudge-studio.com/api/v1",
+  "mediaFamilies": {
+    "2d_effects": {
+      "id": "2d_effects",
+      "label": "2D effects / VFX sheets",
+      "paths": ["effects/", "effects/3d/", "sprites/animations/"],
+      "catalogs": ["effects-registry.json", "effectSprites.json", "3dfx-registry.json", "vfx-pipeline.json", "abilityEffects.json"],
+      "formats": ["png", "webp", "tga", "json meta"],
+      "bestPractices": [
+        "Atlas or frame sequence with manifest",
+        "Premultiplied alpha documented",
+        "Tag skill/spell id when linked to abilities"
+      ]
+    },
+    "2d_character_sprites": {
+      "id": "2d_character_sprites",
+      "label": "2D character sprites",
+      "paths": ["sprites/characters/", "sprites/", "heroes/"],
+      "catalogs": ["sprite-characters.json", "sprites2d.json", "heroCharacterSprites.json", "sprites.json"],
+      "formats": ["png", "webp", "gif"],
+      "bestPractices": [
+        "Folder per character id",
+        "Idle/walk/attack sheets named consistently",
+        "Link to era tag warlords|nexus|armada"
+      ]
+    },
+    "2d_icons": {
+      "id": "2d_icons",
+      "label": "2D icons",
+      "paths": ["icons/", "game-assets/icons/"],
+      "catalogs": ["icon-registry.json", "icon-path-index.json", "icon-category-index.json", "skill-icon-packs.json"],
+      "formats": ["png", "webp"],
+      "bestPractices": [
+        "Prefer ICON-* UUIDs in registry",
+        "Items must reference icon path from master-items",
+        "No emoji as production item icons"
+      ]
+    },
+    "2d_ui_psd_fonts": {
+      "id": "2d_ui_psd_fonts",
+      "label": "2D UI / fonts / PSD sources",
+      "paths": ["ui/", "fonts/", "icons/ui/"],
+      "catalogs": ["ui-packs.json", "ui-components.json", "ui-art.json"],
+      "formats": ["png", "psd", "ttf", "otf", "woff2"],
+      "bestPractices": [
+        "Ship sliced PNG/WebP to CDN; keep PSD as source under ui/src/ or private",
+        "Fonts under fonts/{family}/ with license file",
+        "UI packs versioned: ui/{pack}/v{ver}/"
+      ]
+    },
+    "2d_animations": {
+      "id": "2d_animations",
+      "label": "2D animations / sprite sheets",
+      "paths": ["sprites/animations/", "effects/"],
+      "catalogs": ["animations.json", "spriteMaps.json", "effectSprites.json"],
+      "formats": ["png atlas", "json frame data", "gif"],
+      "bestPractices": [
+        "Frame rate + pivot in JSON",
+        "Power-of-two atlases when possible",
+        "Do not bake UI chrome into combat VFX sheets"
+      ]
+    },
+    "2d_ui_production": {
+      "id": "2d_ui_production",
+      "label": "2D UI production systems",
+      "paths": ["ui/", "icons/ui/", "css/"],
+      "catalogs": ["ui-packs.json", "ui-components.json", "studio.json"],
+      "systems": [
+        "Kenney / pixel UI packs (ui-packs.json)",
+        "Component tokens in ui-components.json",
+        "Studio shell studio.json"
+      ],
+      "bestPractices": [
+        "9-slice panels for resizable chrome",
+        "Separate combat HUD sprites from menu UI",
+        "Theme by era only via color tokens — share layout components"
+      ]
+    },
+    "3d_warlords_home_island": {
+      "id": "3d_warlords_home_island",
+      "label": "Warlords home island assets",
+      "paths": [
+        "models/nature/realistic/",
+        "models/nature/stylized/",
+        "models/environment/home-island/",
+        "models/environment/"
+      ],
+      "catalogs": ["home-island-contract.json", "organized-nature-manifest.json", "biome-ecosystems.json", "master-harvest-nodes.json"],
+      "bestPractices": [
+        "Follow home-island-contract scale (1024m, 2m character)",
+        "Isolate multi-mesh pack children",
+        "No nature-megakit / Quaternius dump"
+      ]
+    },
+    "3d_warlords_9_sectors": {
+      "id": "3d_warlords_9_sectors",
+      "label": "Warlords 9-sector open world assets",
+      "paths": ["models/environment/sectors/{sectorId}/"],
+      "catalogs": ["warlords-zones.json", "map-registry.json", "warlords-catalog.json"],
+      "sectors": [
+        "ethereal_falls",
+        "frostbite_expanse",
+        "thornwood_wilds",
+        "stormbreak_reef",
+        "convergence_nexus",
+        "ashen_wastes",
+        "abyssal_trench",
+        "haven_shore",
+        "ember_depths"
+      ],
+      "bestPractices": [
+        "One folder per sector id",
+        "Share nature library; sector-specific props only in sector folder",
+        "Never use home-block TL/MC_HOME ids here"
+      ]
+    },
+    "3d_grudge_9_sectors": {
+      "id": "3d_grudge_9_sectors",
+      "label": "Grudge fleet 9-sector assets (same IDs as Warlords open world)",
+      "paths": ["models/environment/grudge-sectors/{sectorId}/"],
+      "catalogs": ["warlords-zones.json", "map-registry.json"],
+      "note": "Alias prefix for fleet tools; IDs identical to warlords_era_open_world. Prefer sectors/ for new uploads; grudge-sectors/ is mirror/compat."
+    },
+    "3d_armada_space_rts": {
+      "id": "3d_armada_space_rts",
+      "label": "Armada space RTS assets",
+      "paths": ["grudge-armada/", "models/ships/", "models/armada/"],
+      "catalogs": ["grudge-armada.json"],
+      "bestPractices": [
+        "Pack layout grudge-armada/{units|vehicles|environments|…}/{pack}/",
+        "scene.gltf or production .glb + textures co-located",
+        "Publish grudge-armada.json after pack add"
+      ]
+    },
+    "3d_characters_by_era": {
+      "id": "3d_characters_by_era",
+      "label": "3D characters by era",
+      "catalog": "era-characters.json",
+      "paths": {
+        "warlords": "models/grudge6/",
+        "nexus": "models/nexus/characters/",
+        "armada": "models/armada/characters/ + grudge-armada/units/"
+      }
+    },
+    "voxel": {
+      "id": "voxel",
+      "label": "Voxel assets",
+      "paths": ["models/voxel/", "models/vox/"],
+      "catalogs": ["voxelAssets.json"],
+      "bestPractices": [
+        "Tag style:voxel + optional era",
+        "Procedural ids stay in voxelAssets.json",
+        "Baked meshes still upload under models/voxel/{era}/"
+      ]
+    },
+    "audio": {
+      "id": "audio",
+      "paths": ["audio/"],
+      "catalogs": ["audio.json"],
+      "formats": ["ogg", "wav", "mp3"]
+    },
+    "video": {
+      "id": "video",
+      "paths": ["video/"],
+      "catalogs": ["video.json"],
+      "formats": ["mp4", "webm"]
+    }
+  }
+}

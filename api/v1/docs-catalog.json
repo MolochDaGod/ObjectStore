@@ -1,0 +1,80 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-11",
+  "description": "Catalog of human + machine documentation for Grudge Studio ObjectStore / info site",
+  "bases": {
+    "info": "https://info.grudge-studio.com",
+    "objectStore": "https://objectstore.grudge-studio.com",
+    "cdn": "https://assets.grudge-studio.com",
+    "repoDocs": "/docs"
+  },
+  "hubs": [
+    {
+      "id": "docs-html",
+      "title": "API Documentation Hub",
+      "url": "https://info.grudge-studio.com/docs",
+      "path": "/docs/index.html"
+    },
+    {
+      "id": "best-practices-html",
+      "title": "Best Practices (HTML)",
+      "url": "https://info.grudge-studio.com/docs/best-practices.html",
+      "path": "/docs/best-practices.html"
+    },
+    {
+      "id": "hub",
+      "title": "Browse Hub",
+      "url": "https://info.grudge-studio.com/hub.html"
+    }
+  ],
+  "markdown": [
+    { "id": "usage", "title": "Usage README", "path": "/docs/USAGE.md" },
+    { "id": "assets", "title": "Asset Documentation", "path": "/docs/ASSETS.md" },
+    { "id": "best-practices", "title": "Best Practices", "path": "/docs/BEST-PRACTICES.md" },
+    { "id": "grudge6", "title": "grudge6 Modular Characters", "path": "/docs/GRUDGE6.md" },
+    { "id": "api-uuid", "title": "API & UUID Guide", "path": "/docs/API-AND-UUID-GUIDE.md" },
+    { "id": "icons", "title": "Icon Asset Library", "path": "/docs/ICON-ASSET-LIBRARY.md" },
+    { "id": "equipment", "title": "Canonical Equipment", "path": "/docs/CANONICAL-EQUIPMENT.md" },
+    { "id": "items-warlords", "title": "Canonical Items Warlords", "path": "/docs/CANONICAL-ITEMS-WARLORDS.md" },
+    { "id": "weapon-stats", "title": "Weapon Stats & Attributes", "path": "/docs/WEAPON-STATS-ATTRIBUTES.md" },
+    { "id": "integration", "title": "Integration Guide", "path": "/INTEGRATION-GUIDE.md" },
+    { "id": "readme", "title": "ObjectStore README", "path": "/README.md" }
+  ],
+  "api": [
+    { "id": "best-practices-json", "path": "/api/v1/best-practices.json", "role": "machine best practices" },
+    { "id": "docs-catalog", "path": "/api/v1/docs-catalog.json", "role": "this catalog" },
+    { "id": "studio", "path": "/api/v1/studio.json", "role": "service map" },
+    { "id": "assets-api", "path": "/api/v1/assets-api.json", "role": "icon/asset API" },
+    { "id": "grudge6-canonical", "path": "/api/v1/grudge6-canonical.json", "role": "race kit SSOT map" },
+    { "id": "grudge6-gear-presets", "path": "/api/v1/grudge6-gear-presets.json", "role": "class prefabs mesh_ids" },
+    { "id": "grudge6-characters", "path": "/api/v1/grudge6-characters.json", "role": "race character catalog" },
+    { "id": "home-island", "path": "/api/v1/home-island-contract.json", "role": "island contract" },
+    { "id": "era-taxonomy", "title": "Multi-era asset taxonomy", "path": "/api/v1/era-asset-taxonomy.json", "role": "era organization SSOT" },
+    { "id": "era-recognition", "path": "/api/v1/era-recognition.json", "role": "upload era tagging" },
+    { "id": "era-characters", "path": "/api/v1/era-characters.json", "role": "characters by era" },
+    { "id": "asset-media-types", "path": "/api/v1/asset-media-types.json", "role": "2D/3D media families" },
+    { "id": "era-docs", "title": "Era taxonomy docs", "path": "/docs/ERA-ASSET-TAXONOMY.md" },
+    { "id": "map-registry", "path": "/api/v1/map-registry.json", "role": "map families" },
+    { "id": "master-attributes", "path": "/api/v1/master-attributes.json", "role": "combat pipeline" },
+    { "id": "spell-arsenal", "path": "/api/v1/spell-arsenal.json", "role": "VFX variants" }
+  ],
+  "cdnModules": [
+    { "id": "grudge6-kit", "url": "https://assets.grudge-studio.com/js/grudge6-kit.js" },
+    { "id": "grudge-id-client", "url": "https://assets.grudge-studio.com/js/grudge-id-client.js" },
+    { "id": "grudge-fleet", "url": "https://assets.grudge-studio.com/js/grudge-fleet.js" }
+  ],
+  "browsers": [
+    { "id": "grudge6", "url": "https://browse.grudge-studio.com/GRUDGE6_Characters" },
+    { "id": "icons", "url": "https://info.grudge-studio.com/ICON_BROWSER.html" },
+    { "id": "3dfx", "url": "https://info.grudge-studio.com/3dfx-viewer.html" },
+    { "id": "weapon-skills", "url": "https://info.grudge-studio.com/WEAPON_SKILLS.html" }
+  ],
+  "grudgeBuilderDocs": [
+    "docs/DOCS-INDEX.md",
+    "docs/API.md",
+    "docs/ASSETS.md",
+    "docs/COMBAT.md",
+    "docs/ISLANDS.md",
+    "docs/CHARACTER_PROGRESS_SSOT.md"
+  ]
+}

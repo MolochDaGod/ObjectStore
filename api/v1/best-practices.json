@@ -1,0 +1,160 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-11",
+  "title": "Grudge Studio Best Practices",
+  "docs": {
+    "markdown": "/docs/BEST-PRACTICES.md",
+    "html": "/docs/best-practices.html",
+    "usage": "/docs/USAGE.md",
+    "assets": "/docs/ASSETS.md",
+    "grudge6": "/docs/GRUDGE6.md",
+    "apiUuid": "/docs/API-AND-UUID-GUIDE.md",
+    "infoHub": "https://info.grudge-studio.com/docs"
+  },
+  "endpoints": {
+    "cdn": "https://assets.grudge-studio.com",
+    "objectStore": "https://objectstore.grudge-studio.com/api/v1",
+    "info": "https://info.grudge-studio.com",
+    "auth": "https://id.grudge-studio.com",
+    "gameApi": "https://grudge-api-production-0d46.up.railway.app",
+    "grudge6Kit": "https://assets.grudge-studio.com/js/grudge6-kit.js",
+    "grudgeIdClient": "https://assets.grudge-studio.com/js/grudge-id-client.js",
+    "fleetJs": "https://assets.grudge-studio.com/js/grudge-fleet.js",
+    "grudge6Canonical": "/api/v1/grudge6-canonical.json",
+    "grudge6GearPresets": "/api/v1/grudge6-gear-presets.json"
+  },
+  "principles": [
+    "One SSOT per concern: ObjectStore definitions, R2 binaries, Railway player state",
+    "Same-origin /api for first-party apps; Railway+ID for Puter/foreign hosts",
+    "Bearer JWT; fleet token keys only",
+    "Never mix account inventory with character PATCH",
+    "No Meshy/capsule stand-ins for grudge6 races",
+    "Validate visually and with stub/size gates before claiming fixed",
+    "Tag every upload with era (warlords|nexus|armada) + dim/style; follow era-asset-taxonomy.json paths",
+    "Never mix open-world 9 sector ids with home-block 3x3 slots"
+  ],
+  "eraAssets": {
+    "taxonomy": "/api/v1/era-asset-taxonomy.json",
+    "recognition": "/api/v1/era-recognition.json",
+    "characters": "/api/v1/era-characters.json",
+    "mediaTypes": "/api/v1/asset-media-types.json",
+    "eras": {
+      "warlords": "fantasy/medieval — grudge6, home island, 9 sectors, nature",
+      "nexus": "modern/post-modern — models/nexus/",
+      "armada": "future/sci-fi — grudge-armada/, ships, space RTS",
+      "voxel": "style family (not era) — voxelAssets.json + models/voxel/",
+      "shared2d": "icons, sprites, UI, fonts, VFX sheets — tag eras[] when specific"
+    },
+    "upload": [
+      "Convert production-ready → recognize era → correct R2 prefix → catalog + D1 → probe CDN"
+    ]
+  },
+  "domains": {
+    "converting": {
+      "summary": "Blender FBX import → modular glTF library; preserve Bip001; no join/flatten; re-verify UV vs FBX",
+      "commands": [
+        "npm run convert:grudge6-library",
+        "npm run convert:grudge6-library:upload",
+        "npm run validate:grudge6:strict",
+        "npm run d1:meshes-library-urls:apply"
+      ],
+      "skills": ["gltf-asset-pipeline", "grudge6-modular-characters"],
+      "rules": [
+        "FBX is visual SSOT until GLB matches screenshots",
+        "Rebind race atlas; invert UV V on Blender GLB if scrambled",
+        "Kill stub GLBs under ~50KB"
+      ]
+    },
+    "rendering": {
+      "summary": "Three.js loaders, SkeletonUtils.clone, sRGB, material clone per instance",
+      "skills": ["threejs-loaders", "threejs-materials", "animation-and-skinned-meshes"],
+      "rules": [
+        "FBXLoader for browse truth; GLTFLoader for kit GLB deploy path",
+        "Ground characters with bbox feet offset",
+        "Share AnimationClips; fade crossfades"
+      ]
+    },
+    "textures": {
+      "summary": "Race atlas WebP, sRGB, flipY=false for grudge6 rebind, ClampToEdge",
+      "rules": [
+        "No 1x1 stub baseColor maps",
+        "ICON-* registry for UI",
+        "Prefer WebP atlases on CDN"
+      ]
+    },
+    "meshMaterials": {
+      "summary": "Child-mesh equip; MeshStandard low metalness; fuzzy mesh_id match",
+      "module": "js/grudge6-kit.js",
+      "warlords": "client/src/lib/grudge6Equipment.ts"
+    },
+    "terrain": {
+      "summary": "Home island contract 1024m; organized nature; map-registry families",
+      "json": [
+        "/api/v1/home-island-contract.json",
+        "/api/v1/biome-ecosystems.json",
+        "/api/v1/organized-nature-manifest.json",
+        "/api/v1/map-registry.json"
+      ],
+      "rules": [
+        "No megakit forests",
+        "Warlords era open world != home 3x3 blocks"
+      ]
+    },
+    "npcs": {
+      "summary": "Same race kits + equip; clone skinned; regulator AI Hz",
+      "code": ["TownNPCManager", "TownNPCController"]
+    },
+    "vendors": {
+      "summary": "Stock from ObjectStore defs; mutations on Railway; ICON for items",
+      "rules": ["Account or island stockpile scope", "No hard-coded item tables on Puter"]
+    },
+    "allies": {
+      "summary": "Shared clips; material-clone tints; server-auth damage when multiplayer"
+    },
+    "climbing": {
+      "summary": "Kinematic capsule + surface tags walk/climb; separate climb SM from combat",
+      "skills": ["spatial-queries-and-surfaces", "rapier-physics-patterns"]
+    },
+    "combat": {
+      "summary": "8-attr pipeline; freeform ARPG equipment; soft/hard target; arsenal VFX",
+      "json": [
+        "/api/v1/master-attributes.json",
+        "/api/v1/weapon-stat-bridge.json",
+        "/api/v1/spell-arsenal.json"
+      ],
+      "skills": ["grudge-combat-targeting", "grudge-character-tester"]
+    },
+    "harvesting": {
+      "summary": "Biome/island nodes; tool mesh + profession; yield to account/stockpile; server deplete",
+      "json": ["/api/v1/master-materials.json", "/api/v1/master-recipes.json"]
+    },
+    "building": {
+      "summary": "1m snap Kenney prototype; blueprint then commit; Railway island persistence",
+      "skills": ["kenney-build", "kenney-roads"]
+    },
+    "authCharacters": {
+      "summary": "id.grudge-studio.com + Railway characters; grudge-id-client.js",
+      "skills": ["grudge-production-wiring"],
+      "tokenKeys": [
+        "grudge_auth_token",
+        "grudge_session_token",
+        "grudge.token",
+        "sso_token",
+        "grudge_token"
+      ]
+    }
+  },
+  "antiPatterns": [
+    { "bad": "localStorage-only characters", "good": "Railway Postgres + optional cache" },
+    { "bad": "stub ~44KB race GLB", "good": "real kit FBX/GLB from convert pipeline" },
+    { "bad": "account bag on character PATCH", "good": "/api/account or /api/inventory" },
+    { "bad": "models/characters/grudge6/*.glb", "good": "models/grudge6/races/*_Characters.*" },
+    { "bad": "api.grudge-studio.com auth", "good": "id.grudge-studio.com" },
+    { "bad": "Meshy/capsule for WK/BRB races", "good": "grudge6 modular kit" }
+  ],
+  "validate": {
+    "grudge6": "npm run validate:grudge6:strict",
+    "fleetAssets": "node scripts/verify-fleet-assets.mjs",
+    "auth": "npm run probe:auth"
+  }
+}

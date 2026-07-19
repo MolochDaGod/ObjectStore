@@ -1,7 +1,15 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-07-09",
+  "version": "1.1.0",
+  "updated": "2026-07-19",
   "warning": "TWO different 9-cell systems exist. Never mix Warlords era sector ids with player home-block slots.",
+  "assetTaxonomy": "/api/v1/era-asset-taxonomy.json",
+  "eraRecognition": "/api/v1/era-recognition.json",
+  "cdnPrefixes": {
+    "warlordsSectors": "models/environment/sectors/{sectorId}/",
+    "grudgeSectorsAlias": "models/environment/grudge-sectors/{sectorId}/",
+    "homeIsland": "models/environment/home-island/ + models/nature/",
+    "note": "Grudge fleet 9-sector assets use the SAME open-world sector ids as Warlords (haven_shore …). grudge-sectors/ is a path alias, not a third map."
+  },
   "twoNineSectorMaps": {
     "warlords_era_open_world": {
       "name": "Grudge Warlords Era — Open World",

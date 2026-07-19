@@ -1,0 +1,106 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-19T12:00:00.000Z",
+  "title": "Multi-era character asset map",
+  "cdn": "https://assets.grudge-studio.com",
+  "characterStudio": "https://character.grudge-studio.com",
+  "playerSsot": "Railway /api/characters (gameEra field)",
+  "eras": {
+    "warlords": {
+      "gameEra": "warlords",
+      "label": "Warlords era characters (fantasy / medieval)",
+      "bodySystem": "grudge6 modular races",
+      "catalog": "grudge6-canonical.json",
+      "gear": "grudge6-gear-presets.json",
+      "races": {
+        "human": {
+          "prefix": "WK_",
+          "fbx": "models/grudge6/races/WK_Characters.fbx",
+          "glb": "models/grudge6/races/WK_Characters.glb",
+          "atlas": "assets/western-kingdoms/textures/WK_Standard_Units.webp"
+        },
+        "barbarian": {
+          "prefix": "BRB_",
+          "fbx": "models/grudge6/races/BRB_Characters.fbx",
+          "glb": "models/grudge6/races/BRB_Characters.glb",
+          "atlas": "assets/barbarians/textures/BRB_StandardUnits_texture.webp"
+        },
+        "elf": {
+          "prefix": "ELF_",
+          "fbx": "models/grudge6/races/ELF_Characters.fbx",
+          "glb": "models/grudge6/races/ELF_Characters.glb",
+          "atlas": "assets/elves/textures/ELF_HighElves_Texture.webp"
+        },
+        "dwarf": {
+          "prefix": "DWF_",
+          "fbx": "models/grudge6/races/DWF_Characters.fbx",
+          "glb": "models/grudge6/races/DWF_Characters.glb",
+          "atlas": "assets/dwarves/textures/DWF_Standard_Units.webp"
+        },
+        "orc": {
+          "prefix": "ORC_",
+          "fbx": "models/grudge6/races/ORC_Characters.fbx",
+          "glb": "models/grudge6/races/ORC_Characters.glb",
+          "atlas": "assets/orcs/textures/ORC_StandardUnits.webp"
+        },
+        "undead": {
+          "prefix": "UD_",
+          "fbx": "models/grudge6/races/UD_Characters.fbx",
+          "glb": "models/grudge6/races/UD_Characters.glb",
+          "atlas": "assets/undead/textures/UD_Standard_Units.webp"
+        }
+      },
+      "libraryMeshes": "models/grudge6/races/library/{race}/*.glb",
+      "animations": "models/animations/{sword_shield,longbow,magic,rifle}/",
+      "2dSprites": {
+        "catalog": "sprite-characters.json",
+        "path": "sprites/characters/",
+        "heroes": "heroes/"
+      },
+      "hub": "https://character.grudge-studio.com?era=warlords",
+      "banned": ["Meshy heroes", "permanent capsules", "models/characters/grudge6/*.glb stubs ≤50KB"]
+    },
+    "nexus": {
+      "gameEra": "nexus",
+      "label": "Nexus era characters (modern / post-modern)",
+      "bodySystem": "GCS multi-era + dedicated nexus packs",
+      "paths": {
+        "characters": "models/nexus/characters/{faction}/{id}.glb",
+        "equipment": "models/nexus/equipment/",
+        "sprites": "sprites/nexus/characters/",
+        "icons": "icons/nexus/characters/"
+      },
+      "hub": "https://character.grudge-studio.com?era=nexus",
+      "notes": [
+        "Upload modern humanoids under models/nexus/characters/ only — do not dump into grudge6/",
+        "Tag gameEra=nexus on Railway character rows",
+        "Prefer GLB + WebP atlases; FBX only as convert source"
+      ]
+    },
+    "armada": {
+      "gameEra": "armada",
+      "label": "Armada era characters (future / sci-fi / space RTS)",
+      "bodySystem": "grudge-armada unit packs + GCS armada roster",
+      "catalog": "grudge-armada.json",
+      "paths": {
+        "units": "grudge-armada/units/",
+        "vehicles": "grudge-armada/vehicles/",
+        "characters": "models/armada/characters/",
+        "ships": "models/ships/",
+        "sprites": "sprites/spaceship-blocks/"
+      },
+      "hub": "https://character.grudge-studio.com?era=armada",
+      "spaceRts": "https://carrier.grudge-studio.com",
+      "notes": [
+        "Space RTS units live under grudge-armada/ with pack manifests",
+        "Pilot/crew heroes under models/armada/characters/",
+        "Tag gameEra=armada"
+      ]
+    }
+  },
+  "creationFlow": {
+    "studio": "character.grudge-studio.com?era={warlords|nexus|armada}",
+    "api": "POST Railway /api/characters with gameEra",
+    "renderJoin": "character.race or modelPath → CDN key from this map"
+  }
+}

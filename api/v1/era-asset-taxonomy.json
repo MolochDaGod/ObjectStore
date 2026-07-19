@@ -1,0 +1,315 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-19T12:00:00.000Z",
+  "title": "Grudge Studio multi-era asset taxonomy (production SSOT)",
+  "description": "Organized game-ready asset layout for Warlords, Nexus, Armada, Voxel, and shared 2D production systems. Extends existing ObjectStore + R2 + Railway layers — does not invent parallel storage.",
+  "authority": {
+    "definitions": "https://objectstore.grudge-studio.com/api/v1",
+    "binaries": "https://assets.grudge-studio.com",
+    "registryD1": "grudge-assets-db / asset_registry + ObjectStore D1 meta",
+    "playerState": "Railway Postgres (characters, islands, inventory) — NOT mesh SSOT",
+    "uploadCli": "grudge-dev-tool grudge-dev upload-pack + ObjectStore convert + R2",
+    "devTool": "https://grudge-warlords.github.io/grudge-dev-tool/",
+    "forge": "https://forge.grudge-studio.com",
+    "related": [
+      "/api/v1/era-recognition.json",
+      "/api/v1/era-characters.json",
+      "/api/v1/asset-media-types.json",
+      "/api/v1/map-registry.json",
+      "/api/v1/home-island-contract.json",
+      "/api/v1/warlords-catalog.json",
+      "/api/v1/warlords-zones.json",
+      "/api/v1/grudge-armada.json",
+      "/api/v1/grudge6-canonical.json",
+      "/api/v1/voxelAssets.json",
+      "/api/v1/sprite-characters.json",
+      "/api/v1/icon-registry.json",
+      "/api/v1/ui-packs.json",
+      "/api/v1/effects-registry.json",
+      "/api/v1/best-practices.json"
+    ]
+  },
+  "layers": {
+    "neverMix": [
+      "ObjectStore JSON = definitions + catalogs only",
+      "R2 grudge-assets = binary GLB/FBX/PNG/WebP/audio/fonts",
+      "Railway = player characters / islands / bags",
+      "D1 asset_registry = binary index (not character SSOT)"
+    ]
+  },
+  "eras": {
+    "warlords": {
+      "id": "warlords",
+      "label": "Warlords Era",
+      "tone": "organized fantasy / medieval",
+      "aliases": ["fantasy", "medieval", "feudal", "grudge6", "toon-rts", "warlord"],
+      "gameEra": "warlords",
+      "cdnRoots": [
+        "models/grudge6/",
+        "models/nature/",
+        "models/environment/",
+        "models/towns/",
+        "models/weapons/",
+        "models/buildings/",
+        "models/lobby/",
+        "asset-packs/",
+        "game-assets/"
+      ],
+      "catalogs": [
+        "warlords-catalog.json",
+        "warlords-zones.json",
+        "warlords-naval-assets.json",
+        "home-island-contract.json",
+        "map-registry.json",
+        "grudge6-canonical.json",
+        "grudge6-characters.json",
+        "grudge6-gear-presets.json",
+        "organized-nature-manifest.json",
+        "biome-ecosystems.json",
+        "master-items.json",
+        "master-recipes.json"
+      ],
+      "characters": {
+        "ssot": "grudge6 race kits (FBX visual, GLB deploy)",
+        "path": "models/grudge6/races/{WK,BRB,ELF,DWF,ORC,UD}_Characters.{fbx,glb}",
+        "library": "models/grudge6/races/library/{race}/*.glb",
+        "textures": "assets/{western-kingdoms,barbarians,elves,dwarves,orcs,undead}/textures/*.webp",
+        "api": "era-characters.json#warlords",
+        "banned": ["meshy_*", "capsule heroes as final", "models/characters/grudge6/*.glb stubs"]
+      },
+      "worldSystems": {
+        "openWorld9Sectors": {
+          "family": "warlords_era_open_world",
+          "catalog": "warlords-zones.json",
+          "mapRegistry": "map-registry.json#twoNineSectorMaps.warlords_era_open_world",
+          "sectors": [
+            "ethereal_falls",
+            "frostbite_expanse",
+            "thornwood_wilds",
+            "stormbreak_reef",
+            "convergence_nexus",
+            "ashen_wastes",
+            "abyssal_trench",
+            "haven_shore",
+            "ember_depths"
+          ],
+          "cdnHint": "models/environment/sectors/{sectorId}/",
+          "entry": "https://client.grudge-studio.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1"
+        },
+        "homeIsland": {
+          "family": "home_island",
+          "contract": "home-island-contract.json",
+          "cdnNature": "models/nature/realistic/* and models/nature/stylized/*",
+          "foundations": ["driftwood_bay", "ironfang_spire"],
+          "characterHeightM": 2,
+          "worldSizeM": 1024,
+          "entry": "https://client.grudge-studio.com/home-island",
+          "studio": "https://grudge-studio-editor.vercel.app/editor?mode=home-island"
+        },
+        "playerHomeBlock3x3": {
+          "family": "player_home_block",
+          "warning": "NOT the same IDs as open-world 9 sectors",
+          "slots": ["TL", "TC", "TR", "ML", "MC_HOME", "MR", "BL", "BC", "BR"]
+        },
+        "grudgeFleetSectors": {
+          "note": "Fleet-wide 'Grudge 9 sectors' = same warlords_era_open_world IDs (haven_shore …). Do not invent a third 9-id map.",
+          "assetPrefix": "models/environment/grudge-sectors/{sectorId}/",
+          "catalog": "warlords-zones.json"
+        }
+      },
+      "uploadPrefixes": {
+        "characters": "models/grudge6/",
+        "nature": "models/nature/",
+        "sectors": "models/environment/sectors/",
+        "homeIsland": "models/environment/home-island/",
+        "weapons": "models/weapons/",
+        "buildings": "models/buildings/",
+        "packs": "asset-packs/{pack-id}/v{version}/"
+      }
+    },
+    "nexus": {
+      "id": "nexus",
+      "label": "Nexus Era",
+      "tone": "modern / post-modern / near-future urban & tech",
+      "aliases": ["modern", "postmodern", "post-modern", "urban", "contemporary", "cyber-lite", "nexus"],
+      "gameEra": "nexus",
+      "cdnRoots": [
+        "models/nexus/",
+        "models/characters/nexus/",
+        "models/vehicles/modern/",
+        "models/environment/nexus/",
+        "sprites/nexus/",
+        "icons/nexus/"
+      ],
+      "catalogs": [
+        "era-characters.json#nexus",
+        "biome-ecosystems.json#nexus",
+        "environments.json"
+      ],
+      "characters": {
+        "ssot": "GCS multi-era roster gameEra=nexus + models/nexus/characters/",
+        "path": "models/nexus/characters/{faction}/{id}.{glb,fbx}",
+        "api": "era-characters.json#nexus",
+        "hub": "https://character.grudge-studio.com?era=nexus"
+      },
+      "worldSystems": {
+        "hubs": ["urban districts", "labs", "transit corridors"],
+        "cdnHint": "models/environment/nexus/{district}/"
+      },
+      "uploadPrefixes": {
+        "characters": "models/nexus/characters/",
+        "environment": "models/environment/nexus/",
+        "vehicles": "models/vehicles/modern/",
+        "ui": "icons/nexus/",
+        "sprites": "sprites/nexus/"
+      }
+    },
+    "armada": {
+      "id": "armada",
+      "label": "Armada Era",
+      "tone": "future / sci-fi / space RTS",
+      "aliases": ["scifi", "sci-fi", "future", "space", "spaceship", "mecha", "carrier", "grim-armada"],
+      "gameEra": "armada",
+      "cdnRoots": [
+        "grudge-armada/",
+        "models/armada/",
+        "models/ships/",
+        "sprites/spaceship-blocks/",
+        "icons/armada/"
+      ],
+      "catalogs": [
+        "grudge-armada.json",
+        "era-characters.json#armada",
+        "warlords-naval-assets.json"
+      ],
+      "characters": {
+        "ssot": "grudge-armada units + GCS gameEra=armada",
+        "path": "grudge-armada/units/{pack}/",
+        "api": "era-characters.json#armada",
+        "hub": "https://character.grudge-studio.com?era=armada",
+        "spaceRts": "https://carrier.grudge-studio.com"
+      },
+      "worldSystems": {
+        "spaceRts": {
+          "cdnRoot": "grudge-armada/",
+          "catalog": "grudge-armada.json",
+          "categories": ["units", "vehicles", "environments", "materials", "audio", "effects"]
+        }
+      },
+      "uploadPrefixes": {
+        "packs": "grudge-armada/{category}/{pack-id}/",
+        "ships": "models/ships/",
+        "characters": "models/armada/characters/",
+        "sprites": "sprites/spaceship-blocks/"
+      }
+    },
+    "voxel": {
+      "id": "voxel",
+      "label": "Voxel (cross-era style)",
+      "tone": "procedural / blocky / VoxGrudge style — own media family, not an era override",
+      "aliases": ["vox", "voxel", "blocky", "magica", "voxgrudge"],
+      "gameEra": null,
+      "note": "Voxel is a rendering/style family usable inside any era. Tag era + style:voxel.",
+      "cdnRoots": [
+        "models/voxel/",
+        "models/vox/",
+        "sprites/buildings/"
+      ],
+      "catalogs": ["voxelAssets.json"],
+      "uploadPrefixes": {
+        "models": "models/voxel/{eraOrShared}/",
+        "proceduralIds": "see voxelAssets.json categories"
+      }
+    },
+    "shared": {
+      "id": "shared",
+      "label": "Shared / cross-era production",
+      "tone": "2D UI, icons, fonts, VFX sheets, audio — tag with eras[] when era-specific",
+      "cdnRoots": [
+        "icons/",
+        "sprites/",
+        "ui/",
+        "effects/",
+        "audio/",
+        "fonts/",
+        "backgrounds/",
+        "js/"
+      ],
+      "catalogs": [
+        "asset-media-types.json",
+        "icon-registry.json",
+        "sprite-characters.json",
+        "sprites2d.json",
+        "effects-registry.json",
+        "ui-packs.json",
+        "backgrounds-registry.json",
+        "audio.json",
+        "animations.json",
+        "animations-gltf.json"
+      ]
+    }
+  },
+  "r2PathConvention": {
+    "pattern": "{domain}/{era?}/{category}/{pack-or-id}/v{semver?}/{file}",
+    "domains": {
+      "3d": "models/",
+      "armadaPacks": "grudge-armada/",
+      "assetPacks": "asset-packs/",
+      "2dIcons": "icons/",
+      "2dSprites": "sprites/",
+      "2dUi": "ui/",
+      "2dEffects": "effects/",
+      "audio": "audio/",
+      "fonts": "fonts/",
+      "backgrounds": "backgrounds/"
+    },
+    "metadataRequired": [
+      "era",
+      "category",
+      "contentType",
+      "sourceHash",
+      "grudgeUuid or deterministic r2Key uuid",
+      "license"
+    ],
+    "immutableVersioned": "Prefer asset-packs/<id>/vX.Y/ or /v1/ for immutable CDN cache"
+  },
+  "databaseOrganization": {
+    "objectStoreJson": "Catalog + item/recipe/character definitions (this API)",
+    "r2ObjectMetadata": "era, category, pack, grudge-uuid, source-hash on each binary",
+    "d1AssetRegistry": "r2_key UNIQUE, category, tags JSON, updated_at indexes",
+    "railwayCharacters": "gameEra column warlords|nexus|armada; modelPath → CDN key",
+    "searchTags": ["era:warlords", "era:nexus", "era:armada", "style:voxel", "dim:2d", "dim:3d", "sector:haven_shore"]
+  },
+  "uploadBestPractices": {
+    "pipeline": [
+      "1. Convert to production GLB/WebP (grudge-convert / glTF-Transform) — no raw multi-GB dumps",
+      "2. Magic-byte verify (not HTML fake-200)",
+      "3. Assign era + category + tags via era-recognition.json",
+      "4. Upload to correct R2 prefix (idempotent ETag skip)",
+      "5. Write/update ObjectStore catalog row + pack manifest.json",
+      "6. Seed D1 registry batch ≤100",
+      "7. Publish static-json catalog if definitions changed",
+      "8. Probe CDN HEAD + game loader path"
+    ],
+    "commands": {
+      "convert": "npm run convert -- <pipeline> raw/... -o dist/...",
+      "uploadPack": "grudge-dev upload-pack --root <path> --pack-id <id> --version <ver>",
+      "publishJson": "node scripts/publish-static-json.mjs era-asset-taxonomy era-recognition era-characters asset-media-types",
+      "recognize": "node scripts/recognize-era.mjs --path models/grudge6/races/WK_Characters.glb"
+    },
+    "banned": [
+      "api.grudge-studio.com as new upload target",
+      "Meshy/capsule as shipped Warlords heroes",
+      "Mixing home-block slot ids with open-world sector ids",
+      "Embedding multi-MB geometry in ObjectStore JSON",
+      "Leaving ≤50KB stub GLBs as production",
+      "Untagged dumps at bucket root"
+    ]
+  },
+  "gameReadyGates": {
+    "3dModel": ["real glTF/FBX magic bytes", "scale feet-grounded", "materials bound", "LOD or budget noted", "collider optional JSON"],
+    "2dSprite": ["power-of-two or atlas documented", "transparent PNG/WebP", "frame meta if animated"],
+    "icon": ["ICON-* registry id preferred", "path under icons/", "linked from master-items when item"],
+    "character": ["era set", "race or unit id", "equip slots if modular", "anim pack ids"]
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-19T12:00:00.000Z",
+  "title": "Era recognition rules for upload / search / AI tagging",
+  "description": "Keyword and path rules to classify assets into warlords | nexus | armada | voxel style | shared 2d. Used by grudge-dev-tool, ObjectStore scripts, and Legion context.",
+  "defaultEra": "shared",
+  "eras": ["warlords", "nexus", "armada", "voxel", "shared"],
+  "pathRules": [
+    { "match": "^models/grudge6/", "era": "warlords", "confidence": 1 },
+    { "match": "^models/nature/", "era": "warlords", "confidence": 0.9 },
+    { "match": "^models/environment/sectors/", "era": "warlords", "confidence": 1 },
+    { "match": "^models/environment/home-island/", "era": "warlords", "confidence": 1 },
+    { "match": "^models/environment/grudge-sectors/", "era": "warlords", "confidence": 1 },
+    { "match": "^models/lobby/", "era": "warlords", "confidence": 0.85 },
+    { "match": "^models/towns/", "era": "warlords", "confidence": 0.9 },
+    { "match": "^models/nexus/", "era": "nexus", "confidence": 1 },
+    { "match": "^models/characters/nexus/", "era": "nexus", "confidence": 1 },
+    { "match": "^models/environment/nexus/", "era": "nexus", "confidence": 1 },
+    { "match": "^models/vehicles/modern/", "era": "nexus", "confidence": 0.95 },
+    { "match": "^sprites/nexus/", "era": "nexus", "confidence": 1 },
+    { "match": "^icons/nexus/", "era": "nexus", "confidence": 1 },
+    { "match": "^grudge-armada/", "era": "armada", "confidence": 1 },
+    { "match": "^models/armada/", "era": "armada", "confidence": 1 },
+    { "match": "^models/ships/", "era": "armada", "confidence": 0.85 },
+    { "match": "^sprites/spaceship", "era": "armada", "confidence": 0.95 },
+    { "match": "^icons/armada/", "era": "armada", "confidence": 1 },
+    { "match": "^models/voxel/", "era": "voxel", "confidence": 1, "style": "voxel" },
+    { "match": "^models/vox/", "era": "voxel", "confidence": 1, "style": "voxel" },
+    { "match": "^icons/", "era": "shared", "dim": "2d", "confidence": 0.7 },
+    { "match": "^sprites/", "era": "shared", "dim": "2d", "confidence": 0.7 },
+    { "match": "^ui/", "era": "shared", "dim": "2d", "confidence": 0.8 },
+    { "match": "^effects/", "era": "shared", "dim": "2d", "confidence": 0.75 },
+    { "match": "^fonts/", "era": "shared", "dim": "2d", "confidence": 1 },
+    { "match": "^audio/", "era": "shared", "confidence": 0.6 },
+    { "match": "^backgrounds/", "era": "shared", "dim": "2d", "confidence": 0.7 },
+    { "match": "^asset-packs/", "era": "warlords", "confidence": 0.6, "note": "override with pack manifest era" }
+  ],
+  "keywordRules": [
+    { "any": ["medieval", "fantasy", "castle", "sword", "shield", "orc", "elf", "dwarf", "barbarian", "undead", "grudge6", "warlord", "haven_shore", "home-island", "home island", "stylized nature"], "era": "warlords", "weight": 2 },
+    { "any": ["modern", "urban", "city", "gun", "rifle", "car", "skyscraper", "lab", "neon", "cyber", "post-modern", "postmodern", "nexus"], "era": "nexus", "weight": 2 },
+    { "any": ["spaceship", "space", "sci-fi", "scifi", "mecha", "mech", "carrier", "laser", "plasma", "futuristic", "armada", "starfighter", "orbital"], "era": "armada", "weight": 2 },
+    { "any": ["voxel", "vox", "magica", "blocky", "pixel-3d"], "era": "voxel", "style": "voxel", "weight": 3 },
+    { "any": ["sprite", "icon", "ui pack", "font", "psd", "atlas", "sheet", "vfx sheet", "kenney ui"], "dim": "2d", "weight": 1 }
+  ],
+  "mediaTypeHints": [
+    { "ext": [".glb", ".gltf", ".fbx", ".obj"], "dim": "3d" },
+    { "ext": [".png", ".webp", ".jpg", ".gif", ".psd", ".aseprite"], "dim": "2d" },
+    { "ext": [".ogg", ".wav", ".mp3", ".flac"], "category": "audio" },
+    { "ext": [".ttf", ".otf", ".woff2"], "category": "font" },
+    { "ext": [".mp4", ".webm"], "category": "video" }
+  ],
+  "sectorRecognition": {
+    "warlordsOpenWorld": [
+      "ethereal_falls",
+      "frostbite_expanse",
+      "thornwood_wilds",
+      "stormbreak_reef",
+      "convergence_nexus",
+      "ashen_wastes",
+      "abyssal_trench",
+      "haven_shore",
+      "ember_depths"
+    ],
+    "homeBlockSlots": ["TL", "TC", "TR", "ML", "MC_HOME", "MR", "BL", "BC", "BR"],
+    "rule": "If path or tags contain a warlords sector id → era=warlords + sector=<id>. Never assign sector ids to home-block slots."
+  },
+  "outputShape": {
+    "era": "warlords|nexus|armada|voxel|shared",
+    "style": "optional voxel",
+    "dim": "2d|3d|audio|video|font|unknown",
+    "sector": "optional warlords sector id",
+    "tags": ["era:…", "dim:…", "sector:…"],
+    "suggestedR2Prefix": "string",
+    "confidence": 0
+  }
+}
