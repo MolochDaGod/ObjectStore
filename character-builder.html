@@ -80,16 +80,16 @@
     let selectedClass = 'Warrior', selectedRace = 'Human';
     let buildChart = null;
 
-    // Fallback icons only used if attribute JSON has no icon field
+    // Warlords Era attribute icons — ONLY icons/sigils/* (no other packs).
     const ATTR_ICONS_FALLBACK = {
-      strength:  'icons/wcs/weapons/Hammer_01.png',
-      intellect: 'icons/wcs/weapons/Book_1.png',
-      vitality:  'icons/wcs/misc/Core.png',
-      dexterity: 'icons/wcs/weapons/Dagger_01.png',
-      endurance: 'icons/wcs/weapons/shield_01.png',
-      wisdom:    'icons/wcs/weapons/staff_1.png',
-      agility:   'icons/wcs/misc/Slash_07.png',
-      tactics:   'icons/wcs/misc/runic_tablet_01.png',
+      strength:  'icons/sigils/strength.png',
+      intellect: 'icons/sigils/intellect.png',
+      vitality:  'icons/sigils/vitality.png',
+      dexterity: 'icons/sigils/dexterity.png',
+      endurance: 'icons/sigils/endurance.png',
+      wisdom:    'icons/sigils/wisdom.png',
+      agility:   'icons/sigils/agility.png',
+      tactics:   'icons/sigils/tactics.png',
     };
 
     const CLASS_DATA = {
@@ -194,9 +194,11 @@
 
     function getIconUrl(attrId) {
       const a = ATTR_DATA.find(x => x.id === attrId);
-      if (a && a.icon) return CDN + '/' + a.icon;
+      // Prefer explicit CDN field, then icon path (strip legacy game-assets/ prefix), then sigil fallback only.
+      if (a?.iconCdn) return a.iconCdn;
+      if (a?.icon) return CDN + '/' + String(a.icon).replace(/^game-assets\//, '');
       if (ATTR_ICONS_FALLBACK[attrId]) return CDN + '/' + ATTR_ICONS_FALLBACK[attrId];
-      return '';
+      return CDN + '/icons/sigils/' + attrId + '.png';
     }
 
     function renderRadarChart(stats) {
