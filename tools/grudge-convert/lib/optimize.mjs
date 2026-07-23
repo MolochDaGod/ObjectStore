@@ -43,35 +43,37 @@ function createIO() {
 }
 
 /**
- * Compute AABB from POSITION accessors.
- * Prefer accessor min/max (float-space bounds) so quantized meshes
- * still report real-world extents for colliders / height normalize.
+ * Mesh name looks like modular race body (not weapon/shield/all-variants stack).
+ * Used so --height fits human body, not the full equip multipack AABB.
  */
-function meshAabb(document) {
+function isBodyMeshName(name) {
+  const n = String(name || "").toLowerCase();
+  if (!n) return false;
+  if (/weapon|shield|bow|staff|sword|axe|hammer|mace|spear|dagger|pick|quiver|bag|wood|xtra_/.test(n)) {
+    return false;
+  }
+  // Toon RTS / grudge6 body pieces
+  if (/units_body|body_[a-z0-9]|_body$|torso|chest/.test(n)) return true;
+  if (/units_legs|legs_[a-z]|_legs$/.test(n)) return true;
+  if (/units_arms|arms_[a-z]|_arms$/.test(n)) return true;
+  if (/units_head|head_[a-z]|_head$/.test(n)) return true;
+  return false;
+}
+
+/**
+ * Compute AABB from POSITION accessors in **float space**.
+ * Always walk getElement() so quantized meshes and post-scale bakes are correct.
+ * Prefer body-only meshes when any body mesh exists (modular grudge6 kits).
+ *
+ * @param {import('@gltf-transform/core').Document} document
+ * @param {{ bodyOnly?: boolean }} [opts]
+ */
+function meshAabb(document, opts = {}) {
   let min = [Infinity, Infinity, Infinity];
   let max = [-Infinity, -Infinity, -Infinity];
   let has = false;
 
   const expandFromAccessor = (pos) => {
-    // getMin/getMax are dequantized float bounds when quantization is present
-    let amin = pos.getMin([]);
-    let amax = pos.getMax([]);
-    if (
-      amin &&
-      amax &&
-      amin.length >= 3 &&
-      amax.length >= 3 &&
-      Number.isFinite(amin[0]) &&
-      Number.isFinite(amax[0])
-    ) {
-      has = true;
-      for (let i = 0; i < 3; i++) {
-        min[i] = Math.min(min[i], amin[i]);
-        max[i] = Math.max(max[i], amax[i]);
-      }
-      return;
-    }
-    // Fallback: walk elements (handles non-quantized + missing min/max)
     const count = pos.getCount();
     if (!count) return;
     has = true;
@@ -87,42 +89,74 @@ function meshAabb(document) {
     }
   };
 
-  for (const mesh of document.getRoot().listMeshes()) {
+  const meshes = document.getRoot().listMeshes();
+  const bodyMeshes = meshes.filter((m) => isBodyMeshName(m.getName()));
+  const useBodyOnly = opts.bodyOnly !== false && bodyMeshes.length > 0;
+  const list = useBodyOnly ? bodyMeshes : meshes;
+
+  for (const mesh of list) {
     for (const prim of mesh.listPrimitives()) {
       const pos = prim.getAttribute("POSITION");
       if (!pos) continue;
       expandFromAccessor(pos);
     }
   }
+
+  // Fallback: full mesh set if body filter yielded nothing usable
+  if (!has && useBodyOnly) {
+    for (const mesh of meshes) {
+      for (const prim of mesh.listPrimitives()) {
+        const pos = prim.getAttribute("POSITION");
+        if (!pos) continue;
+        expandFromAccessor(pos);
+      }
+    }
+  }
+
   if (!has) return null;
-  return {
-    min,
-    max,
-    size: [max[0] - min[0], max[1] - min[1], max[2] - min[2]],
-  };
+  // Reject degenerate (all zeros / invalid)
+  const size = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
+  if (!Number.isFinite(size[1]) || size[1] < 1e-6) return null;
+  return { min, max, size, bodyOnly: useBodyOnly && bodyMeshes.length > 0 };
 }
 
 /**
  * Scale all POSITION accessors + node translations by s (true mesh bake).
+ * Uses getElement/setElement so **quantized** meshes scale in float space.
  */
 function bakeScaleIntoMeshes(document, s) {
-  if (!s || s === 1) return;
+  if (!s || s === 1 || !Number.isFinite(s)) return;
+  const el = [0, 0, 0];
   for (const mesh of document.getRoot().listMeshes()) {
     for (const prim of mesh.listPrimitives()) {
       const pos = prim.getAttribute("POSITION");
       if (!pos) continue;
-      const arr = pos.getArray();
-      if (!arr) continue;
-      for (let i = 0; i < arr.length; i++) arr[i] *= s;
-      pos.setArray(arr);
-      // Scale morph targets if present
+      const count = pos.getCount();
+      for (let i = 0; i < count; i++) {
+        pos.getElement(i, el);
+        el[0] *= s;
+        el[1] *= s;
+        el[2] *= s;
+        pos.setElement(i, el);
+      }
+      // Invalidate stale min/max so later AABB / colliders recompute
+      try {
+        pos.setMin([]);
+        pos.setMax([]);
+      } catch {
+        /* optional on some accessors */
+      }
       for (const target of prim.listTargets()) {
         const tpos = target.getAttribute("POSITION");
         if (!tpos) continue;
-        const tarr = tpos.getArray();
-        if (!tarr) continue;
-        for (let i = 0; i < tarr.length; i++) tarr[i] *= s;
-        tpos.setArray(tarr);
+        const tc = tpos.getCount();
+        for (let i = 0; i < tc; i++) {
+          tpos.getElement(i, el);
+          el[0] *= s;
+          el[1] *= s;
+          el[2] *= s;
+          tpos.setElement(i, el);
+        }
       }
     }
   }
@@ -138,10 +172,15 @@ function bakeScaleIntoMeshes(document, s) {
       if (!sampler) continue;
       const output = sampler.getOutput();
       if (!output) continue;
-      const arr = output.getArray();
-      if (!arr) continue;
-      for (let i = 0; i < arr.length; i++) arr[i] *= s;
-      output.setArray(arr);
+      const count = output.getCount();
+      const v = [0, 0, 0];
+      for (let i = 0; i < count; i++) {
+        output.getElement(i, v);
+        v[0] *= s;
+        v[1] *= s;
+        v[2] *= s;
+        output.setElement(i, v);
+      }
     }
   }
 }
@@ -236,23 +275,36 @@ export async function optimizeGlb(inputPath, outputPath, opts = {}) {
       bakeAnims,
       bakeMeshes,
       bakeColliders: doColliders,
+      bodyOnlyHeight: true,
     },
   };
 
-  // --- Scale bake ---
+  // --- Scale bake (float-space; body-only AABB for modular race kits) ---
   let scale = uniformScale > 0 ? uniformScale : 1;
   if (cmToMeters) scale *= 0.01;
+  let heightScaleApplied = 1;
+  let measureAabb = null;
 
   if (targetHeight > 0) {
-    if (cmToMeters || uniformScale) bakeScaleIntoMeshes(document, scale);
-    scale = 1;
-    const aabb = meshAabb(document);
-    if (aabb && aabb.size[1] > 1e-4) {
-      const s = targetHeight / aabb.size[1];
-      bakeScaleIntoMeshes(document, s);
+    if (cmToMeters || uniformScale > 0) {
+      bakeScaleIntoMeshes(document, scale);
+      scale = 1;
     }
+    // Prefer body meshes so all equip variants do not inflate height
+    measureAabb = meshAabb(document, { bodyOnly: true });
+    if (measureAabb && measureAabb.size[1] > 1e-4) {
+      heightScaleApplied = targetHeight / measureAabb.size[1];
+      // Guard absurd fits (already SI vs still cm)
+      if (heightScaleApplied > 0.001 && heightScaleApplied < 1000) {
+        bakeScaleIntoMeshes(document, heightScaleApplied);
+      } else {
+        heightScaleApplied = 1;
+      }
+    }
+    measureAabb = meshAabb(document, { bodyOnly: true });
   } else if (scale !== 1) {
     bakeScaleIntoMeshes(document, scale);
+    measureAabb = meshAabb(document, { bodyOnly: false });
   }
 
   if (yHipGround) bakeYGround(document);
@@ -299,7 +351,8 @@ export async function optimizeGlb(inputPath, outputPath, opts = {}) {
     }
   }
 
-  // Keep skinned mesh attributes; still drop unreferenced buffers
+  // Keep skinned mesh attributes + leave nodes (modular equip visibility)
+  // keepLeaves avoids dropping unused skin/bone leaves on multipacks
   transforms.push(prune({ keepAttributes: true, keepLeaves: true }));
 
   if (textureFormat) {
@@ -314,20 +367,25 @@ export async function optimizeGlb(inputPath, outputPath, opts = {}) {
 
   await document.transform(...transforms);
 
-  // Colliders + final AABB must run on float (or dequant-aware) geometry.
-  // Bake colliders BEFORE quantize/draco so companion JSON is meter-space.
+  // Colliders + final AABB must run on float geometry (before quantize).
   let colliderPayload = null;
   if (doColliders) {
     colliderPayload = bakeColliders(document, {
       capsule: true,
       yHip: yHipGround,
-      // When height-normalized (heroes), use production character capsule
       characterHeight: targetHeight > 0 ? targetHeight : 0,
     });
   }
-  const aabbPreCompress = meshAabb(document);
+  // Full multipack AABB + body-only for manifest accuracy
+  const aabbBody = meshAabb(document, { bodyOnly: true });
+  const aabbFull = meshAabb(document, { bodyOnly: false });
+  const aabbPreCompress = aabbBody || aabbFull;
 
-  if (useMeshopt) {
+  // Quantize last — scale bake already used float elements. Skip quantize
+  // on multi-skin modular kits when height-baked so every mesh stays accurate.
+  const skinCount = document.getRoot().listSkins().length;
+  const skipQuantize = skinCount > 1 && targetHeight > 0;
+  if (useMeshopt && !skipQuantize) {
     try {
       await document.transform(quantize());
     } catch {
@@ -352,6 +410,10 @@ export async function optimizeGlb(inputPath, outputPath, opts = {}) {
   // Stamp after all transforms — writer tools may overwrite earlier generator strings
   const asset = document.getRoot().getAsset();
   asset.generator = `@grudge-studio/asset-convert@1.0.0`;
+  pipelineExtras.heightScaleApplied = heightScaleApplied;
+  pipelineExtras.aabbBody = aabbBody;
+  pipelineExtras.aabbFull = aabbFull;
+  pipelineExtras.skipQuantize = skipQuantize;
   asset.extras = {
     ...(asset.extras || {}),
     grudgePipeline: pipelineExtras,

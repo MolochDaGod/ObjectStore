@@ -21,24 +21,7 @@ export function bakeColliders(document, opts = {}) {
     for (const prim of mesh.listPrimitives()) {
       const pos = prim.getAttribute("POSITION");
       if (!pos) continue;
-      // Prefer float min/max (correct even after mesh quantization)
-      const amin = pos.getMin([]);
-      const amax = pos.getMax([]);
-      if (
-        amin &&
-        amax &&
-        amin.length >= 3 &&
-        amax.length >= 3 &&
-        Number.isFinite(amin[0]) &&
-        Number.isFinite(amax[0])
-      ) {
-        has = true;
-        for (let i = 0; i < 3; i++) {
-          if (amin[i] < min[i]) min[i] = amin[i];
-          if (amax[i] > max[i]) max[i] = amax[i];
-        }
-        continue;
-      }
+      // Always walk float elements (correct after quantize + scale bake)
       const count = pos.getCount();
       if (!count) continue;
       has = true;
@@ -56,6 +39,10 @@ export function bakeColliders(document, opts = {}) {
     if (!has) continue;
 
     const size = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
+    // Skip degenerate / empty equip stubs so companion JSON stays accurate
+    if (!Number.isFinite(size[0]) || !Number.isFinite(size[1]) || size[1] < 1e-5) {
+      continue;
+    }
     const center = [
       (min[0] + max[0]) / 2,
       (min[1] + max[1]) / 2,
