@@ -1,0 +1,148 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-07-23",
+  "description": "Fleet asset catalog seed — roles, CDN prefixes, bake flags, game-mode tags. Promote only production/* after grudge-convert.",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "objectStoreApi": "https://objectstore.grudge-studio.com/api/v1",
+  "authoringRoot": "D:/Games/Models/library",
+  "convertCli": "ObjectStore/tools/grudge-convert",
+  "sources": {
+    "modelsZip": {
+      "path": "D:/Games/Models/Models.zip",
+      "format": "magicaVoxelMulti",
+      "extracted": "D:/Games/Models/library/raw/vox/Models.vox",
+      "inventory": "D:/Games/Models/library/inventory/Models.inventory.json",
+      "modelCount": 363,
+      "note": "Fuzzyman / MagicaVoxel multi-object pack — split to per-model GLB before CDN ship"
+    },
+    "voxelArtItch": {
+      "url": "https://fuzzymanstudios.itch.io/voxel-art",
+      "role": "voxel_style_reference",
+      "targetPrefix": "models/voxels/fuzzyman"
+    },
+    "voxgrudgeTvs": {
+      "catalog": "voxgrudge/assets/voxels/catalog.json",
+      "r2Prefix": "models/voxels/tvs"
+    }
+  },
+  "roles": {
+    "character": {
+      "r2Prefix": "models/characters",
+      "bake": { "pipeline": "glb2glb|fbx2gltf", "height": 1.7, "textureSize": 1024, "skinned": true, "flatten": false },
+      "collider": "capsule",
+      "modes": ["warlords", "grudox", "rts", "arena"]
+    },
+    "grudge6_race": {
+      "r2Prefix": "models/grudge6/races",
+      "bake": { "pipeline": "fbx2gltf", "height": 1.7, "textureSize": 1024, "skinned": true },
+      "collider": "capsule",
+      "modes": ["warlords", "rts", "arena"],
+      "sources": ["WK_Characters.fbx", "BRB_Characters.fbx", "DWF_Characters.fbx", "ELF_Characters.fbx", "ORC_Characters.fbx", "UD_Characters.fbx"]
+    },
+    "weapon": {
+      "r2Prefix": "models/weapons",
+      "bake": { "pipeline": "glb2glb", "textureSize": 512, "skinned": false },
+      "collider": "box",
+      "modes": ["warlords", "grudox", "arena", "rts"],
+      "attach": "handBone"
+    },
+    "building": {
+      "r2Prefix": "models/buildings",
+      "bake": { "pipeline": "glb2glb", "textureSize": 1024, "flatten": true },
+      "collider": "aabb",
+      "modes": ["warlords", "grudox", "rts"],
+      "isolateMesh": true
+    },
+    "nature": {
+      "r2Prefix": "models/nature/stylized",
+      "bake": { "pipeline": "glb2glb", "textureSize": 1024, "flatten": true },
+      "collider": "aabb|none",
+      "modes": ["warlords", "grudox"],
+      "isolateMesh": true,
+      "packs": ["biome", "rocks", "harvest", "cliffs", "concept"]
+    },
+    "creature": {
+      "r2Prefix": "models/creatures/land",
+      "bake": { "pipeline": "glb2glb", "height": null, "textureSize": 1024, "skinned": true },
+      "modes": ["warlords", "grudox", "arena"]
+    },
+    "voxel": {
+      "r2Prefix": "models/voxels",
+      "bake": { "pipeline": "glb2glb|vox_export", "textureSize": 512, "flatten": true },
+      "modes": ["grudox", "vox"],
+      "catalogScheme": "HERO|ENV|EQIP|ANIM|ITEM UUIDs"
+    },
+    "vehicle": {
+      "r2Prefix": "models/vehicles",
+      "bake": { "pipeline": "glb2glb", "textureSize": 1024 },
+      "modes": ["warlords", "rts"]
+    },
+    "prop": {
+      "r2Prefix": "models/props",
+      "bake": { "pipeline": "glb2glb", "textureSize": 512, "flatten": true },
+      "modes": ["warlords", "grudox", "rts", "fighter2d"]
+    },
+    "animation": {
+      "r2Prefix": "anims/baked",
+      "bake": { "pipeline": "fbx2gltf|glb2glb", "resample": true },
+      "modes": ["warlords", "arena", "rts"]
+    },
+    "icon": {
+      "r2Prefix": "icons",
+      "bake": { "format": "webp", "size": 128 },
+      "modes": ["warlords", "grudox", "fighter2d", "rts"]
+    },
+    "sprite2d": {
+      "r2Prefix": "sprites",
+      "bake": { "format": "png_sheet", "notGltf": true },
+      "modes": ["fighter2d"]
+    }
+  },
+  "gameModes": {
+    "warlords_island": {
+      "title": "Warlords Home Island",
+      "url": "https://water.grudge-studio.com",
+      "requiredRoles": ["grudge6_race", "nature", "prop", "icon"],
+      "optionalRoles": ["creature", "building", "weapon", "vehicle"],
+      "deploy": { "host": "vercel|fleet", "cdnOnlyMeshes": true }
+    },
+    "grudox_voxel": {
+      "title": "GRUDOX / VoxGrudge",
+      "url": "https://vox.grudge-studio.com",
+      "requiredRoles": ["voxel", "building", "prop", "icon"],
+      "optionalRoles": ["character", "weapon", "creature"],
+      "deploy": { "catalog": "voxgrudge/assets/voxels/catalog.json" }
+    },
+    "fighter_2d": {
+      "title": "Grudge RPG Sprite Attack",
+      "url": "https://grudge-rpg-sprite-attack.vercel.app/#fighter",
+      "requiredRoles": ["sprite2d", "icon"],
+      "optionalRoles": ["prop"],
+      "deploy": { "localPublic": "client/public/fighter2d" }
+    },
+    "rts_toon": {
+      "title": "Toon RTS / fleet RTS",
+      "requiredRoles": ["grudge6_race", "building", "weapon"],
+      "optionalRoles": ["vehicle", "nature", "animation"]
+    },
+    "arena_combat": {
+      "title": "Arena / combat lab",
+      "requiredRoles": ["character", "weapon", "animation"],
+      "optionalRoles": ["creature", "prop"]
+    }
+  },
+  "banned": {
+    "playerDefaults": ["meshy", "capsule_placeholder", "ai_random_hero"],
+    "cdn": ["html_fake_200", "unverified_toon_rts_html"]
+  },
+  "bakeChecklist": [
+    "convert:doctor green",
+    "scale baked into mesh (no runtime 0.01 hacks for heroes)",
+    "WebP textures ≤1024",
+    "Meshopt or Draco on production GLB",
+    "collider.json for interactables",
+    "manifest.json provenance",
+    "magic-byte verify after R2 put",
+    "mode smoke load"
+  ]
+}

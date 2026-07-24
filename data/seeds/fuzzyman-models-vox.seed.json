@@ -1,0 +1,55 @@
+{
+  "id": "fuzzyman-models-vox",
+  "source": "D:/Games/Models/library/raw/vox/Models.vox",
+  "format": "magicaVoxelMulti",
+  "modelCount": 363,
+  "roleGuess": {
+    "building": 31,
+    "prop": 260,
+    "nature": 63,
+    "weapon": 4,
+    "character": 5
+  },
+  "sampleNames": [
+    "Exit Node - Arrow Outline",
+    "Exit Node - Arrow",
+    "Shop - Variant2",
+    "Shop - Variant1",
+    "Shop - Base",
+    "Decoration - Barrel - Top",
+    "Decoration - Barrel - Ring",
+    "Decoration - Barrel - Fragment",
+    "Vegetation - Tree top - Cube - Light Green",
+    "Shop - Door",
+    "Elevated - Dirt Chunk",
+    "Elevated - Dirt Chunk Grass",
+    "Decoration - Table - Checker Variant4",
+    "Decoration - Table - Checker Variant3",
+    "Decoration - Table - Checker Variant2",
+    "Decoration - Table - Checker Variant1",
+    "Decoration - Table - Plank Variant4",
+    "Decoration - Table - Plank Variant3",
+    "Decoration - Table - Plank Variant2",
+    "Decoration - Table - Plank Variant1",
+    "Decoration - Table - Ornate Orange",
+    "Decoration - Table - Ornate Green",
+    "Decoration - Table - Ornate Blue",
+    "Decoration - Table - Ornate Red",
+    "Decoration - Table - Plain Dark",
+    "Decoration - Table - Dirty",
+    "Decoration - Table - Plain Light",
+    "Decoration - Swamp - Torch Light",
+    "Decoration - Swamp - Torch",
+    "Decoration - Swamp - Mushroom - Stem"
+  ],
+  "pipeline": [
+    "MagicaVoxel export per object OR batch VOX→GLB tool",
+    "grudge-convert glb2glb --texture-size 512",
+    "upload models/voxels/fuzzyman/{slug}.glb",
+    "register D1 + grudox catalog HERO/ENV/EQIP"
+  ],
+  "gameModes": [
+    "grudox_voxel",
+    "warlords_island"
+  ]
+}
