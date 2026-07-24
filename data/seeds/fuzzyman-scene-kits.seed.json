@@ -1,0 +1,4412 @@
+{
+  "version": "1.1.0",
+  "updatedAt": "2026-07-24",
+  "qualityBar": {
+    "example": "https://fuzzymanstudios.itch.io/voxel-art",
+    "principle": "Modular medieval voxels composed into lit scenes — shops, villages, dungeons, biomes — not single untextured heroes",
+    "render": "MagicaVoxel models + strong lighting + post (bloom/fog/color grade) as in pack screenshots"
+  },
+  "source": {
+    "itch": "https://fuzzymanstudios.itch.io/voxel-art",
+    "title": "Medieval Theme Voxels Asset Pack",
+    "author": "Fuzzy Man Studios",
+    "modelCount": 363,
+    "file": "Models.zip → Models.vox",
+    "license": "free + commercial, modify OK, credit appreciated"
+  },
+  "paths": {
+    "vox": "D:/Games/Models/library/raw/vox/Models.vox",
+    "inventory": "D:/Games/Models/library/inventory/Models.inventory.json",
+    "r2Prefix": "models/voxels/fuzzyman"
+  },
+  "pipeline": [
+    "Keep Models.vox as SSOT multipack",
+    "Export named objects (or batch VOX→GLB per index/name)",
+    "grudge-convert glb2glb --texture-size 512 (static voxel props)",
+    "Place by scene kit: never one mesh for whole village",
+    "GRUDOX/Warlords scene seed references piece names + transforms"
+  ],
+  "scenes": {
+    "shop_street": {
+      "id": "shop_street",
+      "title": "Market / Shop Street",
+      "prefixes": [
+        "Shop",
+        "Exit Node",
+        "Banner",
+        "Banner Holder",
+        "Chat Bubble",
+        "Light"
+      ],
+      "pieceCount": 28,
+      "pieces": [
+        {
+          "name": "Exit Node - Arrow Outline",
+          "index": 0,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Exit Node - Arrow",
+          "index": 1,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Shop - Variant2",
+          "index": 2,
+          "size": {
+            "x": 21,
+            "y": 25,
+            "z": 24
+          },
+          "volume": 12600
+        },
+        {
+          "name": "Shop - Variant1",
+          "index": 3,
+          "size": {
+            "x": 21,
+            "y": 25,
+            "z": 27
+          },
+          "volume": 14175
+        },
+        {
+          "name": "Shop - Base",
+          "index": 4,
+          "size": {
+            "x": 28,
+            "y": 28,
+            "z": 4
+          },
+          "volume": 3136
+        },
+        {
+          "name": "Shop - Door",
+          "index": 9,
+          "size": {
+            "x": 4,
+            "y": 20,
+            "z": 24
+          },
+          "volume": 1920
+        },
+        {
+          "name": "Shop - Desert - Wall variant",
+          "index": 119,
+          "size": {
+            "x": 30,
+            "y": 2,
+            "z": 22
+          },
+          "volume": 1320
+        },
+        {
+          "name": "Shop - Desert - Roof",
+          "index": 120,
+          "size": {
+            "x": 34,
+            "y": 28,
+            "z": 2
+          },
+          "volume": 1904
+        },
+        {
+          "name": "Shop - Desert - Doorway",
+          "index": 121,
+          "size": {
+            "x": 30,
+            "y": 2,
+            "z": 22
+          },
+          "volume": 1320
+        },
+        {
+          "name": "Shop - Desert - Stairs - Variant3",
+          "index": 124,
+          "size": {
+            "x": 22,
+            "y": 9,
+            "z": 25
+          },
+          "volume": 4950
+        },
+        {
+          "name": "Shop - Desert - Stairs - Variant2",
+          "index": 125,
+          "size": {
+            "x": 11,
+            "y": 23,
+            "z": 18
+          },
+          "volume": 4554
+        },
+        {
+          "name": "Shop - Desert - Stairs - Variant1",
+          "index": 126,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 18
+          },
+          "volume": 2178
+        },
+        {
+          "name": "Shop - Desert - Large",
+          "index": 132,
+          "size": {
+            "x": 60,
+            "y": 50,
+            "z": 64
+          },
+          "volume": 192000
+        },
+        {
+          "name": "Banner - Center",
+          "index": 148,
+          "size": {
+            "x": 20,
+            "y": 1,
+            "z": 5
+          },
+          "volume": 100
+        },
+        {
+          "name": "Banner - Bottom",
+          "index": 149,
+          "size": {
+            "x": 20,
+            "y": 1,
+            "z": 10
+          },
+          "volume": 200
+        },
+        {
+          "name": "Banner Holder - Poll",
+          "index": 150,
+          "size": {
+            "x": 4,
+            "y": 3,
+            "z": 17
+          },
+          "volume": 204
+        },
+        {
+          "name": "Banner Holder - Highlight",
+          "index": 151,
+          "size": {
+            "x": 16,
+            "y": 1,
+            "z": 19
+          },
+          "volume": 304
+        },
+        {
+          "name": "Banner - Top",
+          "index": 152,
+          "size": {
+            "x": 20,
+            "y": 1,
+            "z": 7
+          },
+          "volume": 140
+        },
+        {
+          "name": "Banner Holder - Top",
+          "index": 153,
+          "size": {
+            "x": 24,
+            "y": 5,
+            "z": 14
+          },
+          "volume": 1680
+        },
+        {
+          "name": "Chat Bubble - End Cap",
+          "index": 218,
+          "size": {
+            "x": 4,
+            "y": 2,
+            "z": 24
+          },
+          "volume": 192
+        },
+        {
+          "name": "Chat Bubble - Tag Indicator",
+          "index": 219,
+          "size": {
+            "x": 8,
+            "y": 2,
+            "z": 31
+          },
+          "volume": 496
+        },
+        {
+          "name": "Chat Bubble - Chat Area",
+          "index": 220,
+          "size": {
+            "x": 20,
+            "y": 2,
+            "z": 24
+          },
+          "volume": 960
+        },
+        {
+          "name": "Light - Wall Torch - Variant1",
+          "index": 299,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 7
+          },
+          "volume": 175
+        },
+        {
+          "name": "Light - Wall Torch - Variant2",
+          "index": 300,
+          "size": {
+            "x": 5,
+            "y": 3,
+            "z": 6
+          },
+          "volume": 90
+        },
+        {
+          "name": "Light - Short Torch",
+          "index": 301,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 9
+          },
+          "volume": 225
+        },
+        {
+          "name": "Light - Tall Torch",
+          "index": 302,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 14
+          },
+          "volume": 350
+        },
+        {
+          "name": "Light - Player Torch",
+          "index": 303,
+          "size": {
+            "x": 2,
+            "y": 2,
+            "z": 10
+          },
+          "volume": 40
+        },
+        {
+          "name": "Light - Brazier",
+          "index": 304,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 6
+          },
+          "volume": 486
+        }
+      ]
+    },
+    "goblin_village": {
+      "id": "goblin_village",
+      "title": "Goblin Village Camp",
+      "prefixes": [
+        "Goblin Village",
+        "Goblin Idol",
+        "Shelter",
+        "Tent",
+        "Fire Log",
+        "Fire Ring"
+      ],
+      "pieceCount": 13,
+      "pieces": [
+        {
+          "name": "Fire Log",
+          "index": 98,
+          "size": {
+            "x": 21,
+            "y": 4,
+            "z": 4
+          },
+          "volume": 336
+        },
+        {
+          "name": "Tent - Cloth",
+          "index": 166,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 100
+        },
+        {
+          "name": "Shelter - Stone - Brick",
+          "index": 167,
+          "size": {
+            "x": 12,
+            "y": 7,
+            "z": 10
+          },
+          "volume": 840
+        },
+        {
+          "name": "Goblin Village - Spear Rack",
+          "index": 168,
+          "size": {
+            "x": 20,
+            "y": 7,
+            "z": 10
+          },
+          "volume": 1400
+        },
+        {
+          "name": "Goblin Village - Wall Binder",
+          "index": 169,
+          "size": {
+            "x": 8,
+            "y": 13,
+            "z": 19
+          },
+          "volume": 1976
+        },
+        {
+          "name": "Goblin Village - Wall Variant2",
+          "index": 170,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 43
+          },
+          "volume": 1075
+        },
+        {
+          "name": "Goblin Village - Wall Variant1",
+          "index": 171,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 43
+          },
+          "volume": 1075
+        },
+        {
+          "name": "Goblin Village - Cloth",
+          "index": 172,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 100
+        },
+        {
+          "name": "Goblin Idol",
+          "index": 173,
+          "size": {
+            "x": 14,
+            "y": 14,
+            "z": 40
+          },
+          "volume": 7840
+        },
+        {
+          "name": "Goblin Village - Poll",
+          "index": 174,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 45
+          },
+          "volume": 405
+        },
+        {
+          "name": "Shelter - Wooden - Stone Side",
+          "index": 176,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 12
+          },
+          "volume": 2400
+        },
+        {
+          "name": "Shelter - Wooden - Roof",
+          "index": 177,
+          "size": {
+            "x": 45,
+            "y": 45,
+            "z": 15
+          },
+          "volume": 30375
+        },
+        {
+          "name": "Fire Ring",
+          "index": 323,
+          "size": {
+            "x": 40,
+            "y": 40,
+            "z": 3
+          },
+          "volume": 4800
+        }
+      ]
+    },
+    "graveyard": {
+      "id": "graveyard",
+      "title": "Medieval Graveyard",
+      "prefixes": [
+        "Graveyard"
+      ],
+      "pieceCount": 21,
+      "pieces": [
+        {
+          "name": "Graveyard - Tomb - Variant1",
+          "index": 179,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 8
+          },
+          "volume": 3600
+        },
+        {
+          "name": "Graveyard - Coffin - Variant2",
+          "index": 180,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 6
+          },
+          "volume": 2700
+        },
+        {
+          "name": "Graveyard - Coffin - Variant1",
+          "index": 181,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 6
+          },
+          "volume": 2700
+        },
+        {
+          "name": "Graveyard - Tomb - Variant2",
+          "index": 182,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 8
+          },
+          "volume": 3600
+        },
+        {
+          "name": "Graveyard - Wall - Degraded",
+          "index": 183,
+          "size": {
+            "x": 5,
+            "y": 13,
+            "z": 8
+          },
+          "volume": 520
+        },
+        {
+          "name": "Graveyard - Wall Broken",
+          "index": 184,
+          "size": {
+            "x": 5,
+            "y": 13,
+            "z": 8
+          },
+          "volume": 520
+        },
+        {
+          "name": "Graveyard - Grave Stone - Cross - Variant3",
+          "index": 185,
+          "size": {
+            "x": 11,
+            "y": 14,
+            "z": 6
+          },
+          "volume": 924
+        },
+        {
+          "name": "Graveyard - Grave Stone - Cross - Variant2",
+          "index": 186,
+          "size": {
+            "x": 11,
+            "y": 3,
+            "z": 13
+          },
+          "volume": 429
+        },
+        {
+          "name": "Graveyard - Grave Stone - Cross - Variant1",
+          "index": 187,
+          "size": {
+            "x": 11,
+            "y": 3,
+            "z": 15
+          },
+          "volume": 495
+        },
+        {
+          "name": "Graveyard - Grave Stone - Tall",
+          "index": 188,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 15
+          },
+          "volume": 1500
+        },
+        {
+          "name": "Graveyard - Grave Crypt - Highlight",
+          "index": 189,
+          "size": {
+            "x": 4,
+            "y": 1,
+            "z": 4
+          },
+          "volume": 16
+        },
+        {
+          "name": "Graveyard - Wall",
+          "index": 190,
+          "size": {
+            "x": 5,
+            "y": 13,
+            "z": 8
+          },
+          "volume": 520
+        },
+        {
+          "name": "Graveyard - Grave Crypt",
+          "index": 191,
+          "size": {
+            "x": 12,
+            "y": 10,
+            "z": 12
+          },
+          "volume": 1440
+        },
+        {
+          "name": "Graveyard - Grave marker",
+          "index": 192,
+          "size": {
+            "x": 7,
+            "y": 3,
+            "z": 2
+          },
+          "volume": 42
+        },
+        {
+          "name": "Graveyard - Grave Stone - Extras",
+          "index": 193,
+          "size": {
+            "x": 4,
+            "y": 1,
+            "z": 3
+          },
+          "volume": 12
+        },
+        {
+          "name": "Graveyard - Grave Dirt - Extras",
+          "index": 194,
+          "size": {
+            "x": 6,
+            "y": 9,
+            "z": 1
+          },
+          "volume": 54
+        },
+        {
+          "name": "Graveyard - Grave Dirt - Variant2",
+          "index": 195,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 3
+          },
+          "volume": 1350
+        },
+        {
+          "name": "Graveyard - Grave Dirt - Variant1",
+          "index": 196,
+          "size": {
+            "x": 15,
+            "y": 30,
+            "z": 3
+          },
+          "volume": 1350
+        },
+        {
+          "name": "Graveyard - Grave Stone - Variant3",
+          "index": 197,
+          "size": {
+            "x": 7,
+            "y": 1,
+            "z": 5
+          },
+          "volume": 35
+        },
+        {
+          "name": "Graveyard - Grave Stone - Variant2",
+          "index": 198,
+          "size": {
+            "x": 7,
+            "y": 1,
+            "z": 9
+          },
+          "volume": 63
+        },
+        {
+          "name": "Graveyard - Grave Stone - Variant1",
+          "index": 199,
+          "size": {
+            "x": 7,
+            "y": 1,
+            "z": 9
+          },
+          "volume": 63
+        }
+      ]
+    },
+    "dungeon": {
+      "id": "dungeon",
+      "title": "Dungeon Crawl",
+      "prefixes": [
+        "Dungeon",
+        "Chest",
+        "Transition",
+        "Exit Node",
+        "Light"
+      ],
+      "pieceCount": 32,
+      "pieces": [
+        {
+          "name": "Exit Node - Arrow Outline",
+          "index": 0,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Exit Node - Arrow",
+          "index": 1,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Dungeon - Top - Ground Variant",
+          "index": 154,
+          "size": {
+            "x": 8,
+            "y": 2,
+            "z": 17
+          },
+          "volume": 272
+        },
+        {
+          "name": "Dungeon - Top Variant3",
+          "index": 155,
+          "size": {
+            "x": 8,
+            "y": 7,
+            "z": 41
+          },
+          "volume": 2296
+        },
+        {
+          "name": "Dungeon - Floor Tile - Variant2",
+          "index": 156,
+          "size": {
+            "x": 20,
+            "y": 2,
+            "z": 20
+          },
+          "volume": 800
+        },
+        {
+          "name": "Dungeon - Floor Tile - Variant1",
+          "index": 157,
+          "size": {
+            "x": 20,
+            "y": 2,
+            "z": 20
+          },
+          "volume": 800
+        },
+        {
+          "name": "Dungeon - Top Variant2",
+          "index": 158,
+          "size": {
+            "x": 8,
+            "y": 2,
+            "z": 41
+          },
+          "volume": 656
+        },
+        {
+          "name": "Dungeon - Top Variant1",
+          "index": 159,
+          "size": {
+            "x": 8,
+            "y": 2,
+            "z": 41
+          },
+          "volume": 656
+        },
+        {
+          "name": "Dungeon - Pillar - Ground Variant2",
+          "index": 160,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 10
+          },
+          "volume": 160
+        },
+        {
+          "name": "Dungeon - Pillar - Ground Variant1",
+          "index": 161,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 16
+          },
+          "volume": 256
+        },
+        {
+          "name": "Dungeon - Pillar - Variant4",
+          "index": 162,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 9
+          },
+          "volume": 576
+        },
+        {
+          "name": "Dungeon - Pillar - Variant3",
+          "index": 163,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 17
+          },
+          "volume": 1088
+        },
+        {
+          "name": "Dungeon - Pillar - Variant2",
+          "index": 164,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 28
+          },
+          "volume": 1792
+        },
+        {
+          "name": "Dungeon - Pillar - Variant1",
+          "index": 165,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 41
+          },
+          "volume": 2624
+        },
+        {
+          "name": "Transition - Hill Straight",
+          "index": 229,
+          "size": {
+            "x": 50,
+            "y": 50,
+            "z": 20
+          },
+          "volume": 50000
+        },
+        {
+          "name": "Transition - Hill Corner",
+          "index": 230,
+          "size": {
+            "x": 50,
+            "y": 50,
+            "z": 20
+          },
+          "volume": 50000
+        },
+        {
+          "name": "Transition - Elevated Region Stairs Walkable",
+          "index": 231,
+          "size": {
+            "x": 28,
+            "y": 23,
+            "z": 15
+          },
+          "volume": 9660
+        },
+        {
+          "name": "Transition - Elevated Region Stairs",
+          "index": 232,
+          "size": {
+            "x": 29,
+            "y": 100,
+            "z": 17
+          },
+          "volume": 49300
+        },
+        {
+          "name": "Transition - Elevated Region No Stairs",
+          "index": 233,
+          "size": {
+            "x": 25,
+            "y": 100,
+            "z": 16
+          },
+          "volume": 40000
+        },
+        {
+          "name": "Transition - Elevated Region Corner",
+          "index": 234,
+          "size": {
+            "x": 100,
+            "y": 100,
+            "z": 20
+          },
+          "volume": 200000
+        },
+        {
+          "name": "Chest - Footlocker Varian2 Top",
+          "index": 293,
+          "size": {
+            "x": 18,
+            "y": 14,
+            "z": 1
+          },
+          "volume": 252
+        },
+        {
+          "name": "Chest - Footlocker Varian1 Top",
+          "index": 294,
+          "size": {
+            "x": 18,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 180
+        },
+        {
+          "name": "Chest - Wooden Top",
+          "index": 295,
+          "size": {
+            "x": 18,
+            "y": 10,
+            "z": 4
+          },
+          "volume": 720
+        },
+        {
+          "name": "Chest - Footlocker Varian2 Bottom",
+          "index": 296,
+          "size": {
+            "x": 18,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2268
+        },
+        {
+          "name": "Chest - Footlocker Varian1 Bottom",
+          "index": 297,
+          "size": {
+            "x": 18,
+            "y": 10,
+            "z": 9
+          },
+          "volume": 1620
+        },
+        {
+          "name": "Chest - Wooden Bottom",
+          "index": 298,
+          "size": {
+            "x": 18,
+            "y": 10,
+            "z": 9
+          },
+          "volume": 1620
+        },
+        {
+          "name": "Light - Wall Torch - Variant1",
+          "index": 299,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 7
+          },
+          "volume": 175
+        },
+        {
+          "name": "Light - Wall Torch - Variant2",
+          "index": 300,
+          "size": {
+            "x": 5,
+            "y": 3,
+            "z": 6
+          },
+          "volume": 90
+        },
+        {
+          "name": "Light - Short Torch",
+          "index": 301,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 9
+          },
+          "volume": 225
+        },
+        {
+          "name": "Light - Tall Torch",
+          "index": 302,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 14
+          },
+          "volume": 350
+        },
+        {
+          "name": "Light - Player Torch",
+          "index": 303,
+          "size": {
+            "x": 2,
+            "y": 2,
+            "z": 10
+          },
+          "volume": 40
+        },
+        {
+          "name": "Light - Brazier",
+          "index": 304,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 6
+          },
+          "volume": 486
+        }
+      ]
+    },
+    "swamp": {
+      "id": "swamp",
+      "title": "Swamp Edge",
+      "prefixes": [
+        "Swamp",
+        "Decoration - Swamp"
+      ],
+      "pieceCount": 12,
+      "pieces": [
+        {
+          "name": "Decoration - Swamp - Torch Light",
+          "index": 27,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 4
+          },
+          "volume": 36
+        },
+        {
+          "name": "Decoration - Swamp - Torch",
+          "index": 28,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 34
+          },
+          "volume": 850
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Stem",
+          "index": 29,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Top Highlight",
+          "index": 30,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Top",
+          "index": 31,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Swamp - Building Wood Wall Spear",
+          "index": 32,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 43
+          },
+          "volume": 1075
+        },
+        {
+          "name": "Decoration - Swamp - Old Tree Stump",
+          "index": 33,
+          "size": {
+            "x": 5,
+            "y": 6,
+            "z": 6
+          },
+          "volume": 180
+        },
+        {
+          "name": "Decoration - Swamp - Tree Highlights",
+          "index": 34,
+          "size": {
+            "x": 20,
+            "y": 18,
+            "z": 22
+          },
+          "volume": 7920
+        },
+        {
+          "name": "Decoration - Swamp - Old Tree",
+          "index": 35,
+          "size": {
+            "x": 20,
+            "y": 18,
+            "z": 22
+          },
+          "volume": 7920
+        },
+        {
+          "name": "Swamp - Building Variant",
+          "index": 36,
+          "size": {
+            "x": 23,
+            "y": 20,
+            "z": 1
+          },
+          "volume": 460
+        },
+        {
+          "name": "Swamp - Building Roof",
+          "index": 37,
+          "size": {
+            "x": 33,
+            "y": 35,
+            "z": 9
+          },
+          "volume": 10395
+        },
+        {
+          "name": "Swamp - Building Wood Wall Piece",
+          "index": 38,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 43
+          },
+          "volume": 1075
+        }
+      ]
+    },
+    "desert_oasis": {
+      "id": "desert_oasis",
+      "title": "Desert Oasis",
+      "prefixes": [
+        "Desert",
+        "Decoration - Desert"
+      ],
+      "pieceCount": 50,
+      "pieces": [
+        {
+          "name": "Decoration - Desert - Water Holder",
+          "index": 39,
+          "size": {
+            "x": 13,
+            "y": 30,
+            "z": 8
+          },
+          "volume": 3120
+        },
+        {
+          "name": "Decoration - Desert - Well",
+          "index": 40,
+          "size": {
+            "x": 30,
+            "y": 30,
+            "z": 19
+          },
+          "volume": 17100
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant10",
+          "index": 41,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant9",
+          "index": 42,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant8",
+          "index": 43,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant7",
+          "index": 44,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant6",
+          "index": 45,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant5",
+          "index": 46,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant4",
+          "index": 47,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant3",
+          "index": 48,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant2",
+          "index": 49,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant1",
+          "index": 50,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant10",
+          "index": 51,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant9",
+          "index": 52,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant8",
+          "index": 53,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant7",
+          "index": 54,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant6",
+          "index": 55,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant5",
+          "index": 56,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant4",
+          "index": 57,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant3",
+          "index": 58,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant2",
+          "index": 59,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant1",
+          "index": 60,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant4",
+          "index": 63,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant3",
+          "index": 64,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant2",
+          "index": 65,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant1",
+          "index": 66,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant4",
+          "index": 67,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 9
+          },
+          "volume": 576
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant3",
+          "index": 68,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant2",
+          "index": 69,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant1",
+          "index": 70,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Desert - Stone Obelisk Top",
+          "index": 102,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 13
+          },
+          "volume": 468
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant4",
+          "index": 103,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant3",
+          "index": 104,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant2",
+          "index": 105,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant1",
+          "index": 106,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant4",
+          "index": 107,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant3",
+          "index": 108,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant2",
+          "index": 109,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant1",
+          "index": 110,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Base Worn",
+          "index": 111,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 7
+          },
+          "volume": 700
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Column Worn",
+          "index": 112,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 9
+          },
+          "volume": 144
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Base",
+          "index": 113,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 7
+          },
+          "volume": 700
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Column",
+          "index": 114,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 9
+          },
+          "volume": 144
+        },
+        {
+          "name": "Desert - Well",
+          "index": 123,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 9
+          },
+          "volume": 1089
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant3",
+          "index": 127,
+          "size": {
+            "x": 7,
+            "y": 6,
+            "z": 1
+          },
+          "volume": 42
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant2",
+          "index": 128,
+          "size": {
+            "x": 8,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 80
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant1",
+          "index": 129,
+          "size": {
+            "x": 8,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 80
+        },
+        {
+          "name": "Desert - Wall - Step up",
+          "index": 130,
+          "size": {
+            "x": 20,
+            "y": 16,
+            "z": 6
+          },
+          "volume": 1920
+        },
+        {
+          "name": "Desert - Wall - Variant1",
+          "index": 131,
+          "size": {
+            "x": 20,
+            "y": 4,
+            "z": 8
+          },
+          "volume": 640
+        },
+        {
+          "name": "Decoration - Desert Rocks",
+          "index": 133,
+          "size": {
+            "x": 9,
+            "y": 7,
+            "z": 4
+          },
+          "volume": 252
+        }
+      ]
+    },
+    "crafting_yard": {
+      "id": "crafting_yard",
+      "title": "Crafting Yard",
+      "prefixes": [
+        "Crafting",
+        "Tool",
+        "Resource"
+      ],
+      "pieceCount": 35,
+      "pieces": [
+        {
+          "name": "Crafting - Work - Sharpening Wheel - Wheel",
+          "index": 202,
+          "size": {
+            "x": 22,
+            "y": 22,
+            "z": 22
+          },
+          "volume": 10648
+        },
+        {
+          "name": "Crafting - Work - Sharpening Wheel - Frame",
+          "index": 203,
+          "size": {
+            "x": 34,
+            "y": 18,
+            "z": 20
+          },
+          "volume": 12240
+        },
+        {
+          "name": "Crafting - Work - Anvil",
+          "index": 210,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 13
+          },
+          "volume": 2600
+        },
+        {
+          "name": "Crafting - Table - Runecraft",
+          "index": 211,
+          "size": {
+            "x": 12,
+            "y": 8,
+            "z": 1
+          },
+          "volume": 96
+        },
+        {
+          "name": "Crafting - Table - Armor - Leggings",
+          "index": 212,
+          "size": {
+            "x": 6,
+            "y": 8,
+            "z": 3
+          },
+          "volume": 144
+        },
+        {
+          "name": "Crafting - Table - Armor - Chest",
+          "index": 213,
+          "size": {
+            "x": 12,
+            "y": 10,
+            "z": 3
+          },
+          "volume": 360
+        },
+        {
+          "name": "Crafting - Table - Weapons",
+          "index": 214,
+          "size": {
+            "x": 3,
+            "y": 6,
+            "z": 1
+          },
+          "volume": 18
+        },
+        {
+          "name": "Crafting - Table - Woodworking",
+          "index": 215,
+          "size": {
+            "x": 16,
+            "y": 6,
+            "z": 1
+          },
+          "volume": 96
+        },
+        {
+          "name": "Crafting - Table - Workbench",
+          "index": 216,
+          "size": {
+            "x": 3,
+            "y": 4,
+            "z": 1
+          },
+          "volume": 12
+        },
+        {
+          "name": "Tool - Broom",
+          "index": 221,
+          "size": {
+            "x": 1,
+            "y": 7,
+            "z": 26
+          },
+          "volume": 182
+        },
+        {
+          "name": "Tool - Knife",
+          "index": 222,
+          "size": {
+            "x": 1,
+            "y": 2,
+            "z": 11
+          },
+          "volume": 22
+        },
+        {
+          "name": "Tool - Hoe",
+          "index": 223,
+          "size": {
+            "x": 1,
+            "y": 7,
+            "z": 26
+          },
+          "volume": 182
+        },
+        {
+          "name": "Tool - Shovel",
+          "index": 224,
+          "size": {
+            "x": 1,
+            "y": 5,
+            "z": 13
+          },
+          "volume": 65
+        },
+        {
+          "name": "Tool - Fishing Pole",
+          "index": 225,
+          "size": {
+            "x": 1,
+            "y": 20,
+            "z": 11
+          },
+          "volume": 220
+        },
+        {
+          "name": "Tool - Hammer",
+          "index": 226,
+          "size": {
+            "x": 1,
+            "y": 7,
+            "z": 11
+          },
+          "volume": 77
+        },
+        {
+          "name": "Tool - Axe",
+          "index": 227,
+          "size": {
+            "x": 1,
+            "y": 6,
+            "z": 11
+          },
+          "volume": 66
+        },
+        {
+          "name": "Tool - Pickaxe",
+          "index": 228,
+          "size": {
+            "x": 1,
+            "y": 11,
+            "z": 11
+          },
+          "volume": 121
+        },
+        {
+          "name": "Resource - Mine Node - Base",
+          "index": 305,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Resource - Mine Node - Highlight",
+          "index": 306,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Resource - Wood - Log",
+          "index": 307,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 10
+          },
+          "volume": 2000
+        },
+        {
+          "name": "Resource - Wood - Stump - Variant2",
+          "index": 308,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 18
+          },
+          "volume": 5832
+        },
+        {
+          "name": "Resource - Wood - Stump - Variant1",
+          "index": 309,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 18
+          },
+          "volume": 5832
+        },
+        {
+          "name": "Resource - Wood - Stick",
+          "index": 310,
+          "size": {
+            "x": 4,
+            "y": 9,
+            "z": 1
+          },
+          "volume": 36
+        },
+        {
+          "name": "Resource - Herb - Bloodvine",
+          "index": 311,
+          "size": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Herb - Silverleaf",
+          "index": 312,
+          "size": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Herb - Nightshade",
+          "index": 313,
+          "size": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Herb - Lifebane",
+          "index": 314,
+          "size": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Herb - Flax",
+          "index": 315,
+          "size": {
+            "x": 9,
+            "y": 8,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Herb - Thistle",
+          "index": 316,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 7
+          },
+          "volume": 63
+        },
+        {
+          "name": "Resource - Herb - Clover",
+          "index": 317,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 1
+          },
+          "volume": 9
+        },
+        {
+          "name": "Resource - Stone - Variant4",
+          "index": 318,
+          "size": {
+            "x": 12,
+            "y": 10,
+            "z": 6
+          },
+          "volume": 720
+        },
+        {
+          "name": "Resource - Stone - Variant3",
+          "index": 319,
+          "size": {
+            "x": 6,
+            "y": 5,
+            "z": 3
+          },
+          "volume": 90
+        },
+        {
+          "name": "Resource - Stone - Variant2",
+          "index": 320,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 2
+          },
+          "volume": 18
+        },
+        {
+          "name": "Resource - Stone - Variant1",
+          "index": 321,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 2
+          },
+          "volume": 18
+        },
+        {
+          "name": "Resource - Ingot",
+          "index": 322,
+          "size": {
+            "x": 20,
+            "y": 10,
+            "z": 7
+          },
+          "volume": 1400
+        }
+      ]
+    },
+    "training_grounds": {
+      "id": "training_grounds",
+      "title": "Training Grounds",
+      "prefixes": [
+        "Training",
+        "Weapon"
+      ],
+      "pieceCount": 6,
+      "pieces": [
+        {
+          "name": "Training - Melee Target Holder",
+          "index": 61,
+          "size": {
+            "x": 10,
+            "y": 5,
+            "z": 8
+          },
+          "volume": 400
+        },
+        {
+          "name": "Training - Melee Target Target",
+          "index": 62,
+          "size": {
+            "x": 15,
+            "y": 2,
+            "z": 7
+          },
+          "volume": 210
+        },
+        {
+          "name": "Training - Range Target Target",
+          "index": 135,
+          "size": {
+            "x": 14,
+            "y": 2,
+            "z": 13
+          },
+          "volume": 364
+        },
+        {
+          "name": "Training - Range Target Holder",
+          "index": 136,
+          "size": {
+            "x": 13,
+            "y": 10,
+            "z": 13
+          },
+          "volume": 1690
+        },
+        {
+          "name": "Weapon - Arrow",
+          "index": 137,
+          "size": {
+            "x": 3,
+            "y": 16,
+            "z": 3
+          },
+          "volume": 144
+        },
+        {
+          "name": "Weapon - Bow",
+          "index": 138,
+          "size": {
+            "x": 1,
+            "y": 6,
+            "z": 16
+          },
+          "volume": 96
+        }
+      ]
+    },
+    "nature_grove": {
+      "id": "nature_grove",
+      "title": "Vegetation Grove",
+      "prefixes": [
+        "Vegetation",
+        "Elevated",
+        "Grass Cube"
+      ],
+      "pieceCount": 48,
+      "pieces": [
+        {
+          "name": "Vegetation - Tree top - Cube - Light Green",
+          "index": 8,
+          "size": {
+            "x": 13,
+            "y": 13,
+            "z": 12
+          },
+          "volume": 2028
+        },
+        {
+          "name": "Elevated - Dirt Chunk",
+          "index": 10,
+          "size": {
+            "x": 22,
+            "y": 35,
+            "z": 13
+          },
+          "volume": 10010
+        },
+        {
+          "name": "Elevated - Dirt Chunk Grass",
+          "index": 11,
+          "size": {
+            "x": 26,
+            "y": 39,
+            "z": 8
+          },
+          "volume": 8112
+        },
+        {
+          "name": "Vegetation - Tree Base - Palm - Dark Brown",
+          "index": 71,
+          "size": {
+            "x": 11,
+            "y": 9,
+            "z": 50
+          },
+          "volume": 4950
+        },
+        {
+          "name": "Vegetation - Tree Base - Palm - Medium Brown",
+          "index": 72,
+          "size": {
+            "x": 11,
+            "y": 9,
+            "z": 50
+          },
+          "volume": 4950
+        },
+        {
+          "name": "Vegetation - Tree Base - Palm - Light Brown",
+          "index": 73,
+          "size": {
+            "x": 11,
+            "y": 9,
+            "z": 50
+          },
+          "volume": 4950
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Medium Brown",
+          "index": 74,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Light Brown",
+          "index": 75,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Dark Brown",
+          "index": 76,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Medium Green",
+          "index": 77,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Light Green",
+          "index": 78,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Vegetation - Tree top - Palm - Dark Green",
+          "index": 79,
+          "size": {
+            "x": 31,
+            "y": 31,
+            "z": 7
+          },
+          "volume": 6727
+        },
+        {
+          "name": "Grass Cube - Use as Terrain Grass",
+          "index": 205,
+          "size": {
+            "x": 2,
+            "y": 2,
+            "z": 1
+          },
+          "volume": 4
+        },
+        {
+          "name": "Vegetation - Crop - Wheat - Variant4",
+          "index": 325,
+          "size": {
+            "x": 23,
+            "y": 22,
+            "z": 23
+          },
+          "volume": 11638
+        },
+        {
+          "name": "Vegetation - Crop - Wheat - Variant3",
+          "index": 326,
+          "size": {
+            "x": 23,
+            "y": 22,
+            "z": 23
+          },
+          "volume": 11638
+        },
+        {
+          "name": "Vegetation - Crop - Wheat - Variant2",
+          "index": 327,
+          "size": {
+            "x": 23,
+            "y": 22,
+            "z": 23
+          },
+          "volume": 11638
+        },
+        {
+          "name": "Vegetation - Crop - Bail",
+          "index": 328,
+          "size": {
+            "x": 17,
+            "y": 12,
+            "z": 15
+          },
+          "volume": 3060
+        },
+        {
+          "name": "Vegetation - Tree Top - Fat - Light Green",
+          "index": 329,
+          "size": {
+            "x": 26,
+            "y": 24,
+            "z": 24
+          },
+          "volume": 14976
+        },
+        {
+          "name": "Vegetation - Tree top - Fat - Dark Green",
+          "index": 330,
+          "size": {
+            "x": 22,
+            "y": 24,
+            "z": 24
+          },
+          "volume": 12672
+        },
+        {
+          "name": "Vegetation - Tree Top - Fat - Brown",
+          "index": 331,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 25
+          },
+          "volume": 14400
+        },
+        {
+          "name": "Vegetation - Tree - Skinny - Green",
+          "index": 332,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 36
+          },
+          "volume": 11664
+        },
+        {
+          "name": "Vegetation - Tree - Skinny - Light Green",
+          "index": 333,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 36
+          },
+          "volume": 11664
+        },
+        {
+          "name": "Vegetation - Tree - Skinny - Brown",
+          "index": 334,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 36
+          },
+          "volume": 11664
+        },
+        {
+          "name": "Vegetation - Grass - Highlight - Variant3",
+          "index": 335,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 3
+          },
+          "volume": 75
+        },
+        {
+          "name": "Vegetation - Grass - Highlight - Variant2",
+          "index": 336,
+          "size": {
+            "x": 7,
+            "y": 7,
+            "z": 10
+          },
+          "volume": 490
+        },
+        {
+          "name": "Vegetation - Grass - Highlight - Variant1",
+          "index": 337,
+          "size": {
+            "x": 5,
+            "y": 6,
+            "z": 7
+          },
+          "volume": 210
+        },
+        {
+          "name": "Vegetation - Flower - Top",
+          "index": 338,
+          "size": {
+            "x": 2,
+            "y": 2,
+            "z": 1
+          },
+          "volume": 4
+        },
+        {
+          "name": "Vegetation - Flower - Base",
+          "index": 339,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 4
+          },
+          "volume": 144
+        },
+        {
+          "name": "Vegetation - Shrub - Desert Plant",
+          "index": 340,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 3
+          },
+          "volume": 75
+        },
+        {
+          "name": "Vegetation - Tree - Cactus",
+          "index": 341,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 12
+          },
+          "volume": 300
+        },
+        {
+          "name": "Vegetation - Crop - Strawberry",
+          "index": 342,
+          "size": {
+            "x": 10,
+            "y": 6,
+            "z": 6
+          },
+          "volume": 360
+        },
+        {
+          "name": "Vegetation - Crop - Cherry",
+          "index": 343,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 6
+          },
+          "volume": 54
+        },
+        {
+          "name": "Vegetation - Crop - Lime",
+          "index": 344,
+          "size": {
+            "x": 7,
+            "y": 7,
+            "z": 13
+          },
+          "volume": 637
+        },
+        {
+          "name": "Vegetation - Crop - Lemon",
+          "index": 345,
+          "size": {
+            "x": 7,
+            "y": 7,
+            "z": 13
+          },
+          "volume": 637
+        },
+        {
+          "name": "Vegetation - Crop - Orange",
+          "index": 346,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 13
+          },
+          "volume": 1300
+        },
+        {
+          "name": "Vegetation - Crop - Pear",
+          "index": 347,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 13
+          },
+          "volume": 1053
+        },
+        {
+          "name": "Vegetation - Crop - Apple",
+          "index": 348,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 13
+          },
+          "volume": 1300
+        },
+        {
+          "name": "Vegetation - Crop - Vines",
+          "index": 349,
+          "size": {
+            "x": 30,
+            "y": 30,
+            "z": 30
+          },
+          "volume": 27000
+        },
+        {
+          "name": "Vegetation - Crop - Watermellon",
+          "index": 350,
+          "size": {
+            "x": 30,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 12000
+        },
+        {
+          "name": "Vegetation - Crop - Pumpkin",
+          "index": 351,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 28
+          },
+          "volume": 11200
+        },
+        {
+          "name": "Vegetation - Crop - Lettuce",
+          "index": 352,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 6
+          },
+          "volume": 600
+        },
+        {
+          "name": "Vegetation - Crop - Wheat - Variant1",
+          "index": 353,
+          "size": {
+            "x": 23,
+            "y": 22,
+            "z": 23
+          },
+          "volume": 11638
+        },
+        {
+          "name": "Vegetation - Shrub - Skinny - Green",
+          "index": 354,
+          "size": {
+            "x": 5,
+            "y": 4,
+            "z": 6
+          },
+          "volume": 120
+        },
+        {
+          "name": "Vegetation - Shrub - Skinny - Light Green",
+          "index": 355,
+          "size": {
+            "x": 5,
+            "y": 4,
+            "z": 6
+          },
+          "volume": 120
+        },
+        {
+          "name": "Vegetation - Shrub - Skinny - Brown",
+          "index": 356,
+          "size": {
+            "x": 5,
+            "y": 4,
+            "z": 6
+          },
+          "volume": 120
+        },
+        {
+          "name": "Vegetation - Shrub - Fat - Brown",
+          "index": 357,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 6
+          },
+          "volume": 384
+        },
+        {
+          "name": "Vegetation - Shrub - Fat - Light Green",
+          "index": 358,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 6
+          },
+          "volume": 384
+        },
+        {
+          "name": "Vegetation - Shrub - Fat - Green",
+          "index": 359,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 6
+          },
+          "volume": 384
+        }
+      ]
+    },
+    "travel_hub": {
+      "id": "travel_hub",
+      "title": "Travel Hub / Portal",
+      "prefixes": [
+        "Transportation",
+        "Transport",
+        "Town Portal",
+        "Exit Node"
+      ],
+      "pieceCount": 8,
+      "pieces": [
+        {
+          "name": "Exit Node - Arrow Outline",
+          "index": 0,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Exit Node - Arrow",
+          "index": 1,
+          "size": {
+            "x": 3,
+            "y": 24,
+            "z": 10
+          },
+          "volume": 720
+        },
+        {
+          "name": "Transportation - Train Cart",
+          "index": 145,
+          "size": {
+            "x": 23,
+            "y": 27,
+            "z": 15
+          },
+          "volume": 9315
+        },
+        {
+          "name": "Transportation - Train Track Straight End",
+          "index": 146,
+          "size": {
+            "x": 16,
+            "y": 20,
+            "z": 3
+          },
+          "volume": 960
+        },
+        {
+          "name": "Transportation - Train Track Straight",
+          "index": 147,
+          "size": {
+            "x": 16,
+            "y": 20,
+            "z": 3
+          },
+          "volume": 960
+        },
+        {
+          "name": "Transport - Waggon Wheel",
+          "index": 206,
+          "size": {
+            "x": 1,
+            "y": 15,
+            "z": 15
+          },
+          "volume": 225
+        },
+        {
+          "name": "Transport - Waggon",
+          "index": 207,
+          "size": {
+            "x": 14,
+            "y": 34,
+            "z": 8
+          },
+          "volume": 3808
+        },
+        {
+          "name": "Town Portal",
+          "index": 360,
+          "size": {
+            "x": 35,
+            "y": 35,
+            "z": 5
+          },
+          "volume": 6125
+        }
+      ]
+    },
+    "decorations_kit": {
+      "id": "decorations_kit",
+      "title": "Furniture & Decor",
+      "prefixes": [
+        "Decoration"
+      ],
+      "pieceCount": 163,
+      "pieces": [
+        {
+          "name": "Decoration - Barrel - Top",
+          "index": 5,
+          "size": {
+            "x": 15,
+            "y": 15,
+            "z": 1
+          },
+          "volume": 225
+        },
+        {
+          "name": "Decoration - Barrel - Ring",
+          "index": 6,
+          "size": {
+            "x": 15,
+            "y": 15,
+            "z": 1
+          },
+          "volume": 225
+        },
+        {
+          "name": "Decoration - Barrel - Fragment",
+          "index": 7,
+          "size": {
+            "x": 4,
+            "y": 2,
+            "z": 20
+          },
+          "volume": 160
+        },
+        {
+          "name": "Decoration - Table - Checker Variant4",
+          "index": 12,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Checker Variant3",
+          "index": 13,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Checker Variant2",
+          "index": 14,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Checker Variant1",
+          "index": 15,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plank Variant4",
+          "index": 16,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plank Variant3",
+          "index": 17,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plank Variant2",
+          "index": 18,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plank Variant1",
+          "index": 19,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Ornate Orange",
+          "index": 20,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Ornate Green",
+          "index": 21,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Ornate Blue",
+          "index": 22,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Ornate Red",
+          "index": 23,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plain Dark",
+          "index": 24,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Dirty",
+          "index": 25,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Table - Plain Light",
+          "index": 26,
+          "size": {
+            "x": 22,
+            "y": 14,
+            "z": 9
+          },
+          "volume": 2772
+        },
+        {
+          "name": "Decoration - Swamp - Torch Light",
+          "index": 27,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 4
+          },
+          "volume": 36
+        },
+        {
+          "name": "Decoration - Swamp - Torch",
+          "index": 28,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 34
+          },
+          "volume": 850
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Stem",
+          "index": 29,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Top Highlight",
+          "index": 30,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Decoration - Swamp - Mushroom - Top",
+          "index": 31,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 20
+          },
+          "volume": 8000
+        },
+        {
+          "name": "Decoration - Swamp - Old Tree Stump",
+          "index": 33,
+          "size": {
+            "x": 5,
+            "y": 6,
+            "z": 6
+          },
+          "volume": 180
+        },
+        {
+          "name": "Decoration - Swamp - Tree Highlights",
+          "index": 34,
+          "size": {
+            "x": 20,
+            "y": 18,
+            "z": 22
+          },
+          "volume": 7920
+        },
+        {
+          "name": "Decoration - Swamp - Old Tree",
+          "index": 35,
+          "size": {
+            "x": 20,
+            "y": 18,
+            "z": 22
+          },
+          "volume": 7920
+        },
+        {
+          "name": "Decoration - Desert - Water Holder",
+          "index": 39,
+          "size": {
+            "x": 13,
+            "y": 30,
+            "z": 8
+          },
+          "volume": 3120
+        },
+        {
+          "name": "Decoration - Desert - Well",
+          "index": 40,
+          "size": {
+            "x": 30,
+            "y": 30,
+            "z": 19
+          },
+          "volume": 17100
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant10",
+          "index": 41,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant9",
+          "index": 42,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant8",
+          "index": 43,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant7",
+          "index": 44,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant6",
+          "index": 45,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant5",
+          "index": 46,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant4",
+          "index": 47,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant3",
+          "index": 48,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant2",
+          "index": 49,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn Shallow - Variant1",
+          "index": 50,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant10",
+          "index": 51,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant9",
+          "index": 52,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant8",
+          "index": 53,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant7",
+          "index": 54,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant6",
+          "index": 55,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant5",
+          "index": 56,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant4",
+          "index": 57,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant3",
+          "index": 58,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant2",
+          "index": 59,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Urn - Variant1",
+          "index": 60,
+          "size": {
+            "x": 24,
+            "y": 24,
+            "z": 30
+          },
+          "volume": 17280
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant4",
+          "index": 63,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant3",
+          "index": 64,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant2",
+          "index": 65,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Extra Tall - Variant1",
+          "index": 66,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 14
+          },
+          "volume": 896
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant4",
+          "index": 67,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 9
+          },
+          "volume": 576
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant3",
+          "index": 68,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant2",
+          "index": 69,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Desert - Stone Tall - Variant1",
+          "index": 70,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 8
+          },
+          "volume": 512
+        },
+        {
+          "name": "Decoration - Poll - Variant6",
+          "index": 80,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Poll - Variant5",
+          "index": 81,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Poll - Variant4",
+          "index": 82,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Poll - Variant3",
+          "index": 83,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Poll - Variant2",
+          "index": 84,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Poll - Variant1",
+          "index": 85,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 60
+          },
+          "volume": 540
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant6",
+          "index": 86,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant5",
+          "index": 87,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant4",
+          "index": 88,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant3",
+          "index": 89,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant2",
+          "index": 90,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank Short - Variant1",
+          "index": 91,
+          "size": {
+            "x": 10,
+            "y": 20,
+            "z": 2
+          },
+          "volume": 400
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant6",
+          "index": 92,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant5",
+          "index": 93,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant4",
+          "index": 94,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant3",
+          "index": 95,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant2",
+          "index": 96,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Wooden Plank - Variant1",
+          "index": 97,
+          "size": {
+            "x": 10,
+            "y": 40,
+            "z": 2
+          },
+          "volume": 800
+        },
+        {
+          "name": "Decoration - Ladder - Variant3",
+          "index": 99,
+          "size": {
+            "x": 18,
+            "y": 3,
+            "z": 27
+          },
+          "volume": 1458
+        },
+        {
+          "name": "Decoration - Ladder - Variant2",
+          "index": 100,
+          "size": {
+            "x": 18,
+            "y": 3,
+            "z": 27
+          },
+          "volume": 1458
+        },
+        {
+          "name": "Decoration - Ladder - Variant1",
+          "index": 101,
+          "size": {
+            "x": 18,
+            "y": 3,
+            "z": 27
+          },
+          "volume": 1458
+        },
+        {
+          "name": "Decoration - Desert - Stone Obelisk Top",
+          "index": 102,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 13
+          },
+          "volume": 468
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant4",
+          "index": 103,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant3",
+          "index": 104,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant2",
+          "index": 105,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone Rough - Variant1",
+          "index": 106,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant4",
+          "index": 107,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant3",
+          "index": 108,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant2",
+          "index": 109,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Stone - Variant1",
+          "index": 110,
+          "size": {
+            "x": 8,
+            "y": 8,
+            "z": 5
+          },
+          "volume": 320
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Base Worn",
+          "index": 111,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 7
+          },
+          "volume": 700
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Column Worn",
+          "index": 112,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 9
+          },
+          "volume": 144
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Base",
+          "index": 113,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 7
+          },
+          "volume": 700
+        },
+        {
+          "name": "Decoration - Desert - Pillar - Column",
+          "index": 114,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 9
+          },
+          "volume": 144
+        },
+        {
+          "name": "Decoration - Wooden Body - Variant3",
+          "index": 115,
+          "size": {
+            "x": 15,
+            "y": 5,
+            "z": 22
+          },
+          "volume": 1650
+        },
+        {
+          "name": "Decoration - Wooden Body - Variant2",
+          "index": 116,
+          "size": {
+            "x": 20,
+            "y": 4,
+            "z": 23
+          },
+          "volume": 1840
+        },
+        {
+          "name": "Decoration - Wooden Body - Variant1",
+          "index": 117,
+          "size": {
+            "x": 20,
+            "y": 4,
+            "z": 23
+          },
+          "volume": 1840
+        },
+        {
+          "name": "Decoration - Wooden Cross",
+          "index": 118,
+          "size": {
+            "x": 26,
+            "y": 2,
+            "z": 30
+          },
+          "volume": 1560
+        },
+        {
+          "name": "Decoration - Wooden Poll",
+          "index": 122,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 30
+          },
+          "volume": 480
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant3",
+          "index": 127,
+          "size": {
+            "x": 7,
+            "y": 6,
+            "z": 1
+          },
+          "volume": 42
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant2",
+          "index": 128,
+          "size": {
+            "x": 8,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 80
+        },
+        {
+          "name": "Decoration - Desert - Tablet - Variant1",
+          "index": 129,
+          "size": {
+            "x": 8,
+            "y": 10,
+            "z": 1
+          },
+          "volume": 80
+        },
+        {
+          "name": "Decoration - Desert Rocks",
+          "index": 133,
+          "size": {
+            "x": 9,
+            "y": 7,
+            "z": 4
+          },
+          "volume": 252
+        },
+        {
+          "name": "Decoration - Plant - Variant1",
+          "index": 134,
+          "size": {
+            "x": 13,
+            "y": 15,
+            "z": 30
+          },
+          "volume": 5850
+        },
+        {
+          "name": "Decoration - Box - Variant5",
+          "index": 139,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 11
+          },
+          "volume": 1331
+        },
+        {
+          "name": "Decoration - Box - Variant4",
+          "index": 140,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 11
+          },
+          "volume": 1331
+        },
+        {
+          "name": "Decoration - Box - Variant3",
+          "index": 141,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 11
+          },
+          "volume": 1331
+        },
+        {
+          "name": "Decoration - Box Long",
+          "index": 142,
+          "size": {
+            "x": 20,
+            "y": 10,
+            "z": 10
+          },
+          "volume": 2000
+        },
+        {
+          "name": "Decoration - Box - Variant1",
+          "index": 143,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 10
+          },
+          "volume": 1000
+        },
+        {
+          "name": "Decoration - Box - Variant2",
+          "index": 144,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 11
+          },
+          "volume": 1331
+        },
+        {
+          "name": "Decoration - Table - Spoon",
+          "index": 235,
+          "size": {
+            "x": 5,
+            "y": 9,
+            "z": 1
+          },
+          "volume": 45
+        },
+        {
+          "name": "Decoration - Table - Fork",
+          "index": 236,
+          "size": {
+            "x": 5,
+            "y": 9,
+            "z": 1
+          },
+          "volume": 45
+        },
+        {
+          "name": "Decoration - Table - Knife",
+          "index": 237,
+          "size": {
+            "x": 1,
+            "y": 9,
+            "z": 1
+          },
+          "volume": 9
+        },
+        {
+          "name": "Decoration - Table - Bowl",
+          "index": 238,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 6
+          },
+          "volume": 600
+        },
+        {
+          "name": "Decoration - Table - Mug",
+          "index": 239,
+          "size": {
+            "x": 8,
+            "y": 6,
+            "z": 8
+          },
+          "volume": 384
+        },
+        {
+          "name": "Decoration - Table - Cup",
+          "index": 240,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 10
+          },
+          "volume": 360
+        },
+        {
+          "name": "Decoration - Table - Plate",
+          "index": 241,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 2
+          },
+          "volume": 162
+        },
+        {
+          "name": "Decoration - Armor Stand",
+          "index": 242,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 15
+          },
+          "volume": 375
+        },
+        {
+          "name": "Decoration - Water Trough",
+          "index": 243,
+          "size": {
+            "x": 12,
+            "y": 22,
+            "z": 7
+          },
+          "volume": 1848
+        },
+        {
+          "name": "Decoration - Candle - Variant2",
+          "index": 244,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 10
+          },
+          "volume": 160
+        },
+        {
+          "name": "Decoration - Candle - Variant1",
+          "index": 245,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 10
+          },
+          "volume": 360
+        },
+        {
+          "name": "Decoration - Rock - Modular",
+          "index": 246,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 10
+          },
+          "volume": 1000
+        },
+        {
+          "name": "Decoration - Flour Bag - Standing Open",
+          "index": 247,
+          "size": {
+            "x": 15,
+            "y": 16,
+            "z": 14
+          },
+          "volume": 3360
+        },
+        {
+          "name": "Decoration - Flour Bag - Standing Closed",
+          "index": 248,
+          "size": {
+            "x": 30,
+            "y": 16,
+            "z": 14
+          },
+          "volume": 6720
+        },
+        {
+          "name": "Decoration - Flour Bag - Open",
+          "index": 249,
+          "size": {
+            "x": 30,
+            "y": 16,
+            "z": 8
+          },
+          "volume": 3840
+        },
+        {
+          "name": "Decoration - Flour Bag",
+          "index": 250,
+          "size": {
+            "x": 22,
+            "y": 16,
+            "z": 8
+          },
+          "volume": 2816
+        },
+        {
+          "name": "Decoration - Cauldron - Filler",
+          "index": 251,
+          "size": {
+            "x": 11,
+            "y": 11,
+            "z": 5
+          },
+          "volume": 605
+        },
+        {
+          "name": "Decoration - Well Crank",
+          "index": 252,
+          "size": {
+            "x": 15,
+            "y": 7,
+            "z": 11
+          },
+          "volume": 1155
+        },
+        {
+          "name": "Decoration - Well",
+          "index": 253,
+          "size": {
+            "x": 45,
+            "y": 36,
+            "z": 57
+          },
+          "volume": 92340
+        },
+        {
+          "name": "Decoration - Bookshelf - Paper",
+          "index": 254,
+          "size": {
+            "x": 14,
+            "y": 21,
+            "z": 4
+          },
+          "volume": 1176
+        },
+        {
+          "name": "Decoration - Water Tower",
+          "index": 255,
+          "size": {
+            "x": 22,
+            "y": 22,
+            "z": 21
+          },
+          "volume": 10164
+        },
+        {
+          "name": "Decoration - Bookshelf - End",
+          "index": 256,
+          "size": {
+            "x": 7,
+            "y": 8,
+            "z": 27
+          },
+          "volume": 1512
+        },
+        {
+          "name": "Decoration - Bookshelf - Center",
+          "index": 257,
+          "size": {
+            "x": 11,
+            "y": 8,
+            "z": 27
+          },
+          "volume": 2376
+        },
+        {
+          "name": "Decoration - Basket Tall",
+          "index": 258,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 10
+          },
+          "volume": 810
+        },
+        {
+          "name": "Decoration - Slat Crate",
+          "index": 259,
+          "size": {
+            "x": 10,
+            "y": 10,
+            "z": 10
+          },
+          "volume": 1000
+        },
+        {
+          "name": "Decoration - Barrel - Highlight - Rack Extension",
+          "index": 260,
+          "size": {
+            "x": 12,
+            "y": 20,
+            "z": 17
+          },
+          "volume": 4080
+        },
+        {
+          "name": "Decoration - Barrel - Highlight - Rack",
+          "index": 261,
+          "size": {
+            "x": 12,
+            "y": 20,
+            "z": 10
+          },
+          "volume": 2400
+        },
+        {
+          "name": "Decoration - Barrel - Highlight - Tap",
+          "index": 262,
+          "size": {
+            "x": 3,
+            "y": 3,
+            "z": 4
+          },
+          "volume": 36
+        },
+        {
+          "name": "Decoration - Bookshelf - Scroll - Variant3",
+          "index": 263,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 17
+          },
+          "volume": 425
+        },
+        {
+          "name": "Decoration - Bookshelf - Scroll - Variant2",
+          "index": 264,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 17
+          },
+          "volume": 425
+        },
+        {
+          "name": "Decoration - Bookshelf - Scroll - Variant1",
+          "index": 265,
+          "size": {
+            "x": 5,
+            "y": 5,
+            "z": 17
+          },
+          "volume": 425
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant7",
+          "index": 266,
+          "size": {
+            "x": 28,
+            "y": 21,
+            "z": 6
+          },
+          "volume": 3528
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant6",
+          "index": 267,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant5",
+          "index": 268,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant4",
+          "index": 269,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant3",
+          "index": 270,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant2",
+          "index": 271,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bookshelf - Book - Variant1",
+          "index": 272,
+          "size": {
+            "x": 15,
+            "y": 21,
+            "z": 3
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Bridge",
+          "index": 273,
+          "size": {
+            "x": 80,
+            "y": 136,
+            "z": 45
+          },
+          "volume": 489600
+        },
+        {
+          "name": "Decoration - Box - Dirt",
+          "index": 274,
+          "size": {
+            "x": 18,
+            "y": 18,
+            "z": 4
+          },
+          "volume": 1296
+        },
+        {
+          "name": "Decoration - Box - Open Top",
+          "index": 275,
+          "size": {
+            "x": 20,
+            "y": 20,
+            "z": 8
+          },
+          "volume": 3200
+        },
+        {
+          "name": "Decoration - Bench",
+          "index": 276,
+          "size": {
+            "x": 20,
+            "y": 9,
+            "z": 15
+          },
+          "volume": 2700
+        },
+        {
+          "name": "Decoration - Chair",
+          "index": 277,
+          "size": {
+            "x": 7,
+            "y": 9,
+            "z": 15
+          },
+          "volume": 945
+        },
+        {
+          "name": "Decoration - Stool",
+          "index": 278,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 7
+          },
+          "volume": 567
+        },
+        {
+          "name": "Decoration - Post",
+          "index": 280,
+          "size": {
+            "x": 6,
+            "y": 6,
+            "z": 20
+          },
+          "volume": 720
+        },
+        {
+          "name": "Decoration - Cauldron",
+          "index": 281,
+          "size": {
+            "x": 15,
+            "y": 15,
+            "z": 13
+          },
+          "volume": 2925
+        },
+        {
+          "name": "Decoration - Scrap Wood",
+          "index": 282,
+          "size": {
+            "x": 4,
+            "y": 17,
+            "z": 2
+          },
+          "volume": 136
+        },
+        {
+          "name": "Decoration - Fence Straight",
+          "index": 283,
+          "size": {
+            "x": 44,
+            "y": 4,
+            "z": 20
+          },
+          "volume": 3520
+        },
+        {
+          "name": "Decoration - Saw Dust",
+          "index": 284,
+          "size": {
+            "x": 19,
+            "y": 17,
+            "z": 2
+          },
+          "volume": 646
+        },
+        {
+          "name": "Decoration - Barrel",
+          "index": 285,
+          "size": {
+            "x": 15,
+            "y": 15,
+            "z": 20
+          },
+          "volume": 4500
+        },
+        {
+          "name": "Decoration - Bucket",
+          "index": 286,
+          "size": {
+            "x": 7,
+            "y": 7,
+            "z": 9
+          },
+          "volume": 441
+        },
+        {
+          "name": "Decoration - Sign Healer",
+          "index": 287,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        },
+        {
+          "name": "Decoration - Sign Trainer",
+          "index": 288,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        },
+        {
+          "name": "Decoration - Sign Magic",
+          "index": 289,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        },
+        {
+          "name": "Decoration - Sign Weapons",
+          "index": 290,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        },
+        {
+          "name": "Decoration - Sign Armor",
+          "index": 291,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        },
+        {
+          "name": "Decoration - Sign Alchemy",
+          "index": 292,
+          "size": {
+            "x": 14,
+            "y": 4,
+            "z": 17
+          },
+          "volume": 952
+        }
+      ]
+    },
+    "npcs_indicators": {
+      "id": "npcs_indicators",
+      "title": "NPCs & Indicators",
+      "prefixes": [
+        "NPC",
+        "Player",
+        "Indicator",
+        "Potion"
+      ],
+      "pieceCount": 7,
+      "pieces": [
+        {
+          "name": "Indicator - Quest Icon",
+          "index": 178,
+          "size": {
+            "x": 8,
+            "y": 1,
+            "z": 16
+          },
+          "volume": 128
+        },
+        {
+          "name": "Potion - Contents",
+          "index": 200,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 4
+          },
+          "volume": 64
+        },
+        {
+          "name": "Potion - Container",
+          "index": 201,
+          "size": {
+            "x": 4,
+            "y": 4,
+            "z": 6
+          },
+          "volume": 96
+        },
+        {
+          "name": "NPC - Demon Dog",
+          "index": 204,
+          "size": {
+            "x": 8,
+            "y": 28,
+            "z": 22
+          },
+          "volume": 4928
+        },
+        {
+          "name": "Player - Mailbox - Mail Indicator",
+          "index": 208,
+          "size": {
+            "x": 9,
+            "y": 1,
+            "z": 7
+          },
+          "volume": 63
+        },
+        {
+          "name": "Player - Mailbox",
+          "index": 209,
+          "size": {
+            "x": 9,
+            "y": 9,
+            "z": 20
+          },
+          "volume": 1620
+        },
+        {
+          "name": "NPC - Chicken",
+          "index": 324,
+          "size": {
+            "x": 14,
+            "y": 29,
+            "z": 21
+          },
+          "volume": 8526
+        }
+      ]
+    }
+  },
+  "gameModes": [
+    "grudox_voxel",
+    "warlords_island"
+  ]
+}

@@ -12,7 +12,7 @@
 | Source | Finding |
 |--------|---------|
 | `D:\Games\Models\Models.zip` | Unzips to **one MagicaVoxel multi-model file**: `Models.vox` (~2.9 MB). Not a folder of GLBs. |
-| [fuzzymanstudios Voxel Art (itch)](https://fuzzymanstudios.itch.io/voxel-art) | Voxel / MagicaVoxel style pack reference for GRUDOX-style content (itch rate-limited at review time). |
+| [fuzzymanstudios Voxel Art (itch)](https://fuzzymanstudios.itch.io/voxel-art) | **Scene quality bar** — Medieval Theme Voxels (363 Magica models). Screenshot-pretty open-world scenes from modular shops/graveyards/dungeons/biomes + lighting + post. Seeds: `fuzzyman-scene-kits.seed.json`. |
 | `D:\Games\Models\` flat dump | Hundreds of zip/glb/fbx/png mixed (nature, weapons, voxels, Meshy, craftpix, Toon RTS, docks…). Needs **role folders**, not runtime scanning of the whole disk. |
 | `voxgrudge` | Mature path: `models/{kenney,voxels/tvs,creatures,buildings}`, `scripts/optimize-glb.mjs` (Meshopt+WebP), `assets/voxels/catalog.json` UUID catalog, `upload-r2.mjs`. |
 | Fleet convert | `grudge-convert`: fbx2gltf / glb2glb, height bake, WebP, colliders, manifest. |
