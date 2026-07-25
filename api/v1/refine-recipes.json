@@ -1,0 +1,523 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-07-25",
+  "total": 27,
+  "note": "Result items live in materials.json (ingot/plank/fabric). cloth=thread input; fabric=*-cloth bolt output.",
+  "recipes": [
+    {
+      "id": "refine-smelt-scrap-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 0,
+      "inputs": [
+        {
+          "id": "scrap-ore",
+          "qty": 2
+        }
+      ],
+      "output": {
+        "id": "scrap-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-copper-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 1,
+      "inputs": [
+        {
+          "id": "copper-ore",
+          "qty": 2
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "copper-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-iron-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 2,
+      "inputs": [
+        {
+          "id": "iron-ore",
+          "qty": 3
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "iron-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-steel-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 3,
+      "inputs": [
+        {
+          "id": "steel-ore",
+          "qty": 3
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "steel-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-mithril-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 4,
+      "inputs": [
+        {
+          "id": "mithril-ore",
+          "qty": 4
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "mithril-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-adamantine-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 5,
+      "inputs": [
+        {
+          "id": "adamantine-ore",
+          "qty": 4
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "adamantine-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-orichalcum-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 6,
+      "inputs": [
+        {
+          "id": "orichalcum-ore",
+          "qty": 5
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "orichalcum-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-starmetal-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 7,
+      "inputs": [
+        {
+          "id": "starmetal-ore",
+          "qty": 5
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "starmetal-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-smelt-divine-ingot",
+      "process": "smelt",
+      "profession": "Miner",
+      "station": "forge",
+      "tier": 8,
+      "inputs": [
+        {
+          "id": "divine-ore",
+          "qty": 6
+        },
+        {
+          "id": "coal",
+          "qty": 1
+        },
+        {
+          "id": "flux",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "divine-ingot",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-mill-scrap-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 0,
+      "inputs": [
+        {
+          "id": "driftwood-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "scrap-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-pine-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 1,
+      "inputs": [
+        {
+          "id": "pine-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "pine-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-oak-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 2,
+      "inputs": [
+        {
+          "id": "oak-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "oak-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-maple-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 3,
+      "inputs": [
+        {
+          "id": "maple-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "maple-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-ash-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 4,
+      "inputs": [
+        {
+          "id": "ash-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "ash-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-ironwood-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 5,
+      "inputs": [
+        {
+          "id": "ironwood-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "ironwood-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-ebony-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 6,
+      "inputs": [
+        {
+          "id": "ebony-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "ebony-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-wyrmwood-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 7,
+      "inputs": [
+        {
+          "id": "wyrmwood-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "wyrmwood-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-mill-worldtree-plank",
+      "process": "mill",
+      "profession": "Forester",
+      "station": "sawmill",
+      "tier": 8,
+      "inputs": [
+        {
+          "id": "worldtree-log",
+          "qty": 1
+        }
+      ],
+      "output": {
+        "id": "worldtree-plank",
+        "qty": 2
+      }
+    },
+    {
+      "id": "refine-weave-torn-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 0,
+      "inputs": [
+        {
+          "id": "rag-thread",
+          "qty": 3
+        }
+      ],
+      "output": {
+        "id": "torn-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-linen-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 1,
+      "inputs": [
+        {
+          "id": "linen-thread",
+          "qty": 3
+        }
+      ],
+      "output": {
+        "id": "linen-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-wool-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 2,
+      "inputs": [
+        {
+          "id": "wool-thread",
+          "qty": 4
+        }
+      ],
+      "output": {
+        "id": "wool-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-cotton-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 3,
+      "inputs": [
+        {
+          "id": "cotton-thread",
+          "qty": 4
+        }
+      ],
+      "output": {
+        "id": "cotton-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-silk-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 4,
+      "inputs": [
+        {
+          "id": "silk-thread",
+          "qty": 5
+        }
+      ],
+      "output": {
+        "id": "silk-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-moonweave-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 5,
+      "inputs": [
+        {
+          "id": "moonweave-thread",
+          "qty": 5
+        }
+      ],
+      "output": {
+        "id": "moonweave-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-starweave-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 6,
+      "inputs": [
+        {
+          "id": "starweave-thread",
+          "qty": 6
+        }
+      ],
+      "output": {
+        "id": "starweave-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-voidweave-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 7,
+      "inputs": [
+        {
+          "id": "voidweave-thread",
+          "qty": 6
+        }
+      ],
+      "output": {
+        "id": "voidweave-cloth",
+        "qty": 1
+      }
+    },
+    {
+      "id": "refine-weave-divine-cloth",
+      "process": "weave",
+      "profession": "Mystic",
+      "station": "loom",
+      "tier": 8,
+      "inputs": [
+        {
+          "id": "divine-thread",
+          "qty": 7
+        }
+      ],
+      "output": {
+        "id": "divine-cloth",
+        "qty": 1
+      }
+    }
+  ]
+}

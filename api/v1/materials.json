@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-02-16",
-  "total": 161,
+  "updated": "2026-07-25",
+  "total": 104,
   "categories": {
     "ore": {
       "iconBase": "Res",
@@ -88,63 +88,81 @@
           "name": "Scrap Ingot",
           "tier": 0,
           "emoji": "🟤",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "copper-ingot",
           "name": "Copper Ingot",
           "tier": 1,
           "emoji": "🟫",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "iron-ingot",
           "name": "Iron Ingot",
           "tier": 2,
           "emoji": "⬛",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "steel-ingot",
           "name": "Steel Ingot",
           "tier": 3,
           "emoji": "⬜",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "mithril-ingot",
           "name": "Mithril Ingot",
           "tier": 4,
           "emoji": "🔵",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "adamantine-ingot",
           "name": "Adamantine Ingot",
           "tier": 5,
           "emoji": "🟣",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "orichalcum-ingot",
           "name": "Orichalcum Ingot",
           "tier": 6,
           "emoji": "🟡",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "starmetal-ingot",
           "name": "Starmetal Ingot",
           "tier": 7,
           "emoji": "⭐",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         },
         {
           "id": "divine-ingot",
           "name": "Divine Ingot",
           "tier": 8,
           "emoji": "👑",
-          "grudgeType": "material"
+          "grudgeType": "material",
+          "craftedBy": "Miner",
+          "refineProcess": "smelt"
         }
       ]
     },
@@ -228,62 +246,367 @@
     "plank": {
       "iconBase": "Res",
       "items": [
-        { "id": "scrap-plank", "name": "Scrap Plank", "tier": 0, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "pine-plank", "name": "Pine Plank", "tier": 1, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "oak-plank", "name": "Oak Plank", "tier": 2, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "maple-plank", "name": "Maple Plank", "tier": 3, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "ash-plank", "name": "Ash Plank", "tier": 4, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "ironwood-plank", "name": "Ironwood Plank", "tier": 5, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "ebony-plank", "name": "Ebony Plank", "tier": 6, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "wyrmwood-plank", "name": "Wyrmwood Plank", "tier": 7, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" },
-        { "id": "worldtree-plank", "name": "Worldtree Plank", "tier": 8, "craftedBy": "Forester", "emoji": "🪵", "grudgeType": "material" }
+        {
+          "id": "scrap-plank",
+          "name": "Scrap Plank",
+          "tier": 0,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "pine-plank",
+          "name": "Pine Plank",
+          "tier": 1,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "oak-plank",
+          "name": "Oak Plank",
+          "tier": 2,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "maple-plank",
+          "name": "Maple Plank",
+          "tier": 3,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "ash-plank",
+          "name": "Ash Plank",
+          "tier": 4,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "ironwood-plank",
+          "name": "Ironwood Plank",
+          "tier": 5,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "ebony-plank",
+          "name": "Ebony Plank",
+          "tier": 6,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "wyrmwood-plank",
+          "name": "Wyrmwood Plank",
+          "tier": 7,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        },
+        {
+          "id": "worldtree-plank",
+          "name": "Worldtree Plank",
+          "tier": 8,
+          "craftedBy": "Forester",
+          "emoji": "🪵",
+          "grudgeType": "material",
+          "refineProcess": "mill"
+        }
       ]
     },
     "fabric": {
       "iconBase": "Loot",
       "items": [
-        { "id": "torn-cloth", "name": "Torn Cloth", "tier": 0, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "linen-cloth", "name": "Linen Cloth", "tier": 1, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "wool-cloth", "name": "Wool Cloth", "tier": 2, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "cotton-cloth", "name": "Cotton Cloth", "tier": 3, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "silk-cloth", "name": "Silk Cloth", "tier": 4, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "moonweave-cloth", "name": "Moonweave Cloth", "tier": 5, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "starweave-cloth", "name": "Starweave Cloth", "tier": 6, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "voidweave-cloth", "name": "Voidweave Cloth", "tier": 7, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" },
-        { "id": "divine-cloth", "name": "Divine Cloth", "tier": 8, "craftedBy": "Mystic", "emoji": "🧵", "grudgeType": "material" }
+        {
+          "id": "torn-cloth",
+          "name": "Torn Cloth",
+          "tier": 0,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "linen-cloth",
+          "name": "Linen Cloth",
+          "tier": 1,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "wool-cloth",
+          "name": "Wool Cloth",
+          "tier": 2,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "cotton-cloth",
+          "name": "Cotton Cloth",
+          "tier": 3,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "silk-cloth",
+          "name": "Silk Cloth",
+          "tier": 4,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "moonweave-cloth",
+          "name": "Moonweave Cloth",
+          "tier": 5,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "starweave-cloth",
+          "name": "Starweave Cloth",
+          "tier": 6,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "voidweave-cloth",
+          "name": "Voidweave Cloth",
+          "tier": 7,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        },
+        {
+          "id": "divine-cloth",
+          "name": "Divine Cloth",
+          "tier": 8,
+          "craftedBy": "Mystic",
+          "emoji": "🧵",
+          "grudgeType": "material",
+          "refineProcess": "weave"
+        }
       ]
     },
     "component": {
       "iconBase": "Loot",
       "items": [
-        { "id": "coal", "name": "Coal", "tier": 1, "gatheredBy": "Miner", "emoji": "⚫", "grudgeType": "material" },
-        { "id": "flux", "name": "Flux", "tier": 1, "gatheredBy": "Miner", "emoji": "🧪", "grudgeType": "material" },
-        { "id": "string", "name": "String", "tier": 1, "craftedBy": "Forester", "emoji": "🧶", "grudgeType": "material" },
-        { "id": "hemp-fiber", "name": "Hemp Fiber", "tier": 1, "gatheredBy": "Forester", "emoji": "🌿", "grudgeType": "material" },
-        { "id": "silk", "name": "Silk", "tier": 2, "gatheredBy": "Forester", "emoji": "🕸️", "grudgeType": "material" },
-        { "id": "salt", "name": "Salt", "tier": 1, "gatheredBy": "Chef", "emoji": "🧂", "grudgeType": "material" },
-        { "id": "bowstring", "name": "Bowstring", "tier": 2, "craftedBy": "Forester", "emoji": "🏹", "grudgeType": "material" },
-        { "id": "gunpowder", "name": "Gunpowder", "tier": 2, "craftedBy": "Engineer", "emoji": "💥", "grudgeType": "material" },
-        { "id": "raw-scraps", "name": "Raw Scraps", "tier": 0, "gatheredBy": "Chef", "emoji": "🥩", "grudgeType": "material" },
-        { "id": "raw-meat", "name": "Raw Meat", "tier": 1, "gatheredBy": "Chef", "emoji": "🍖", "grudgeType": "material" },
-        { "id": "wild-herb", "name": "Wild Herb", "tier": 1, "gatheredBy": "Chef", "emoji": "🌿", "grudgeType": "material" },
-        { "id": "common-herb", "name": "Common Herb", "tier": 1, "gatheredBy": "Chef", "emoji": "🌿", "grudgeType": "material" },
-        { "id": "dragon-sinew", "name": "Dragon Sinew", "tier": 5, "gatheredBy": "Forester", "emoji": "🐉", "grudgeType": "material" },
-        { "id": "demon-hide", "name": "Demon Hide", "tier": 6, "gatheredBy": "Forester", "emoji": "😈", "grudgeType": "material" },
-        { "id": "titan-hide", "name": "Titan Hide", "tier": 7, "gatheredBy": "Forester", "emoji": "🦣", "grudgeType": "material" },
-        { "id": "divine-hide", "name": "Divine Hide", "tier": 8, "gatheredBy": "Forester", "emoji": "👼", "grudgeType": "material" }
+        {
+          "id": "coal",
+          "name": "Coal",
+          "tier": 1,
+          "gatheredBy": "Miner",
+          "emoji": "⚫",
+          "grudgeType": "material"
+        },
+        {
+          "id": "flux",
+          "name": "Flux",
+          "tier": 1,
+          "gatheredBy": "Miner",
+          "emoji": "🧪",
+          "grudgeType": "material"
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "tier": 1,
+          "craftedBy": "Forester",
+          "emoji": "🧶",
+          "grudgeType": "material"
+        },
+        {
+          "id": "hemp-fiber",
+          "name": "Hemp Fiber",
+          "tier": 1,
+          "gatheredBy": "Forester",
+          "emoji": "🌿",
+          "grudgeType": "material"
+        },
+        {
+          "id": "silk",
+          "name": "Silk",
+          "tier": 2,
+          "gatheredBy": "Forester",
+          "emoji": "🕸️",
+          "grudgeType": "material"
+        },
+        {
+          "id": "salt",
+          "name": "Salt",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🧂",
+          "grudgeType": "material"
+        },
+        {
+          "id": "bowstring",
+          "name": "Bowstring",
+          "tier": 2,
+          "craftedBy": "Forester",
+          "emoji": "🏹",
+          "grudgeType": "material"
+        },
+        {
+          "id": "gunpowder",
+          "name": "Gunpowder",
+          "tier": 2,
+          "craftedBy": "Engineer",
+          "emoji": "💥",
+          "grudgeType": "material"
+        },
+        {
+          "id": "raw-scraps",
+          "name": "Raw Scraps",
+          "tier": 0,
+          "gatheredBy": "Chef",
+          "emoji": "🥩",
+          "grudgeType": "material"
+        },
+        {
+          "id": "raw-meat",
+          "name": "Raw Meat",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🍖",
+          "grudgeType": "material"
+        },
+        {
+          "id": "wild-herb",
+          "name": "Wild Herb",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🌿",
+          "grudgeType": "material"
+        },
+        {
+          "id": "common-herb",
+          "name": "Common Herb",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🌿",
+          "grudgeType": "material"
+        },
+        {
+          "id": "dragon-sinew",
+          "name": "Dragon Sinew",
+          "tier": 5,
+          "gatheredBy": "Forester",
+          "emoji": "🐉",
+          "grudgeType": "material"
+        },
+        {
+          "id": "demon-hide",
+          "name": "Demon Hide",
+          "tier": 6,
+          "gatheredBy": "Forester",
+          "emoji": "😈",
+          "grudgeType": "material"
+        },
+        {
+          "id": "titan-hide",
+          "name": "Titan Hide",
+          "tier": 7,
+          "gatheredBy": "Forester",
+          "emoji": "🦣",
+          "grudgeType": "material"
+        },
+        {
+          "id": "divine-hide",
+          "name": "Divine Hide",
+          "tier": 8,
+          "gatheredBy": "Forester",
+          "emoji": "👼",
+          "grudgeType": "material"
+        }
       ]
     },
     "herb": {
       "iconBase": "Loot",
       "items": [
-        { "id": "red-flower", "name": "Red Flower", "tier": 1, "gatheredBy": "Chef", "emoji": "🌺", "grudgeType": "material" },
-        { "id": "blue-flower", "name": "Blue Flower", "tier": 1, "gatheredBy": "Chef", "emoji": "🌸", "grudgeType": "material" },
-        { "id": "white-flower", "name": "White Flower", "tier": 1, "gatheredBy": "Chef", "emoji": "🤍", "grudgeType": "material" },
-        { "id": "yellow-flower", "name": "Yellow Flower", "tier": 1, "gatheredBy": "Chef", "emoji": "🌼", "grudgeType": "material" },
-        { "id": "medium-mushroom", "name": "Medium Mushroom", "tier": 2, "gatheredBy": "Chef", "emoji": "🍄", "grudgeType": "material" },
-        { "id": "large-mushroom", "name": "Large Mushroom", "tier": 3, "gatheredBy": "Chef", "emoji": "🍄", "grudgeType": "material" },
-        { "id": "blue-whisp", "name": "Blue Whisp", "tier": 2, "gatheredBy": "Mystic", "emoji": "💫", "grudgeType": "material" }
+        {
+          "id": "red-flower",
+          "name": "Red Flower",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🌺",
+          "grudgeType": "material"
+        },
+        {
+          "id": "blue-flower",
+          "name": "Blue Flower",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🌸",
+          "grudgeType": "material"
+        },
+        {
+          "id": "white-flower",
+          "name": "White Flower",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🤍",
+          "grudgeType": "material"
+        },
+        {
+          "id": "yellow-flower",
+          "name": "Yellow Flower",
+          "tier": 1,
+          "gatheredBy": "Chef",
+          "emoji": "🌼",
+          "grudgeType": "material"
+        },
+        {
+          "id": "medium-mushroom",
+          "name": "Medium Mushroom",
+          "tier": 2,
+          "gatheredBy": "Chef",
+          "emoji": "🍄",
+          "grudgeType": "material"
+        },
+        {
+          "id": "large-mushroom",
+          "name": "Large Mushroom",
+          "tier": 3,
+          "gatheredBy": "Chef",
+          "emoji": "🍄",
+          "grudgeType": "material"
+        },
+        {
+          "id": "blue-whisp",
+          "name": "Blue Whisp",
+          "tier": 2,
+          "gatheredBy": "Mystic",
+          "emoji": "💫",
+          "grudgeType": "material"
+        }
       ]
     },
     "cloth": {

@@ -1368,24 +1368,30 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
     }
 
     function createConsumableCard(item, category) {
-      let iconPath = null;
-      
+      // Best practice: named icon first — consumables/{category}/{slug}.png
+      const slug = item.slug || toSlug(item.name);
+      const namedPath = item.iconPath
+        ? `${ICONS_URL}/${item.iconPath.replace(/^icons\//, '')}`
+        : `${ICONS_URL}/consumables/${category}/${slug}.png`;
+      const flatNamed = `${ICONS_URL}/consumables/named/${slug}.png`;
+
+      let fallbackPath = null;
       if (category === 'redFoods' || category === 'greenFoods' || category === 'blueFoods') {
-        // Semantic food icon based on item name
         const foodIcon = getFoodIconForName(item.name);
-        iconPath = `${ICONS_URL}/consumables/food_${foodIcon}.png`;
+        fallbackPath = `${ICONS_URL}/consumables/food_${foodIcon}.png`;
       } else if (category === 'mysticPotions') {
-        // All potions get icons from health/mana sprites or RPG icon pack
-        iconPath = getPotionIconPath(item.name);
+        fallbackPath = getPotionIconPath(item.name);
       } else if (category === 'engineerConsumables') {
-        // Engineer items use RPG icon pack
-        iconPath = getEngineerIconPath(item.name);
+        fallbackPath = getEngineerIconPath(item.name);
       }
-      
-      const iconHtml = createIconElement(iconPath, item.icon || '🧪');
+
+      const emoji = item.icon || '🧪';
+      // Cascade: named category path → named flat → pack fallback → emoji
+      const fb2 = fallbackPath || flatNamed;
+      const imgHtml = `<img src="${namedPath}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML='<span class=item-icon>${emoji}</span>'};this.src='${fb2}';">`;
       return `
-        <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" onclick="showConsumableDetail('${item.id}', '${category}')">
-          ${iconHtml}
+        <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" data-slug="${slug}" onclick="showConsumableDetail('${item.id}', '${category}')">
+          ${imgHtml}
           <div class="item-name">${item.name}</div>
           <div class="item-meta">Lvl ${item.lvl || '?'}</div>
         </div>
