@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GRUDGE Item Database — ObjectStore</title>
   <link rel="canonical" href="./GRUDGE_Item_Database.html">
-  <meta name="description" content="Canonical Grudge Warlords item catalog — weapons, armor, relics, enchants, infusions, materials. Single source wired to master APIs, icon resolver, and game-ready 3D models.">
+  <meta name="description" content="Canonical Grudge Warlords item catalog — weapons, armor, consumables, recipes. Every row shows prefab info, assets used, effects, and game-ready 3D models from master APIs.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Spectral+SC:ital,wght@0,400;0,600;1,400&family=Uncial+Antiqua&display=swap" rel="stylesheet">
   <style>
@@ -206,6 +206,19 @@
 
     .uuid-line{font-family:'Cinzel',serif;font-size:0.57rem;color:var(--text-dim);word-break:break-all;line-height:1.5;}
 
+    /* Canonical prefab / assets / effects blocks */
+    .canon-block{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;margin:4px 0 8px;}
+    .canon-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px;font-size:0.72rem;line-height:1.45;}
+    .canon-row:last-child{margin-bottom:0;}
+    .canon-k{font-family:'Cinzel',serif;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);min-width:72px;flex-shrink:0;padding-top:1px;}
+    .canon-v{color:var(--text-muted);word-break:break-word;flex:1;}
+    .canon-v a{color:var(--gold-light);text-decoration:none;}
+    .canon-v a:hover{text-decoration:underline;}
+    .canon-pill{display:inline-block;font-family:'Cinzel',serif;font-size:0.58rem;padding:1px 7px;border-radius:10px;border:1px solid var(--border-gold);color:var(--gold);background:var(--gold-dim);margin:1px 3px 1px 0;}
+    .canon-pill.ok{border-color:rgba(34,197,94,.45);color:#86efac;background:rgba(34,197,94,.08);}
+    .canon-pill.warn{border-color:rgba(250,204,21,.4);color:#fde047;background:rgba(250,204,21,.06);}
+    .asset-link{font-size:0.65rem;color:var(--gold-light);word-break:break-all;}
+
     /* Responsive */
     @media(max-width:768px){
       .site-header h1{font-size:1rem;}
@@ -228,7 +241,7 @@
 <header class="site-header">
   <img src="favicon.svg" alt="Grudge Studio">
   <h1>GRUDGE ITEM DATABASE</h1>
-  <span class="header-sub">SSOT · objectstore.grudge-studio.com · icons @ assets.grudge-studio.com</span>
+  <span class="header-sub">SSOT · prefab · assets · effects · info.grudge-studio.com</span>
   <div class="header-counts" id="headerCounts"></div>
 </header>
 
@@ -415,22 +428,62 @@ import { resolveCatalogIcon } from './utils/icon-resolver.js';
 import { ICON_CDN, OBJECTSTORE_API, absAssetUrl } from './utils/asset-config.js';
 
 const CDN = ICON_CDN;
-/** Fleet ONE TRUTH — catalog JSON from ObjectStore Worker, never github.io */
-const API = OBJECTSTORE_API || 'https://objectstore.grudge-studio.com/api/v1';
+/**
+ * Catalog JSON: prefer info static SSOT (Vercel), then ObjectStore Worker.
+ * objectstore custom domain may 404 static /api/v1 when Worker owns the host.
+ */
+const API_CANDIDATES = [
+  'https://info.grudge-studio.com/api/v1',
+  OBJECTSTORE_API || 'https://objectstore.grudge-studio.com/api/v1',
+  'https://objectstore.grudge-studio.com/api/v1',
+].filter((v, i, a) => v && a.indexOf(v) === i);
+
+let API = API_CANDIDATES[0];
+
+async function resolveApiBase() {
+  for (const base of API_CANDIDATES) {
+    try {
+      const res = await fetch(`${base}/master-items.json`, { method: 'HEAD', cache: 'no-cache' });
+      if (res.ok) {
+        API = base;
+        console.info('[ItemDB] catalog API →', base);
+        return base;
+      }
+    } catch (_) { /* try next */ }
+  }
+  // GET probe (some hosts reject HEAD)
+  for (const base of API_CANDIDATES) {
+    try {
+      const res = await fetch(`${base}/master-items.json`, { cache: 'no-cache' });
+      if (res.ok) {
+        API = base;
+        console.info('[ItemDB] catalog API (GET) →', base);
+        return base;
+      }
+    } catch (_) { /* try next */ }
+  }
+  console.warn('[ItemDB] no API base confirmed; using', API);
+  return API;
+}
 
 // ─── Data sources: master-items SSOT + economy catalogs ───────────────────
-const SOURCES = [
-  { url: `${API}/master-items.json`,         key: 'items',      type: null,           ico: '📦' },
-  { url: `${API}/master-materials.json`,     key: 'materials',  type: 'material',     ico: '🪨' },
-  { url: `${API}/master-relics.json`,        key: 'relics',     type: 'relic',        ico: '💎' },
-  { url: `${API}/master-enchants.json`,      key: 'enchants',   type: 'enchant',      ico: '✨' },
-  { url: `${API}/master-infusions.json`,     key: 'infusions',  type: 'infusion',     ico: '🌀' },
-  { url: `${API}/master-artifacts.json`,     key: 'artifacts',  type: 'artifact',     ico: '🏺' },
-  { url: `${API}/master-recipes.json`,       key: 'recipes',    type: 'recipe',       ico: '📜', kind: 'recipe' },
-  { url: `${API}/master-spellRecipes.json`,  key: 'recipes',    type: 'spell-recipe', ico: '✦', kind: 'spell-recipe' },
-  { url: `${API}/master-buildings.json`,     key: 'buildings',  type: 'building',     ico: '🏛️' },
-  { url: `${API}/master-mounts.json`,        key: 'mounts',     type: 'mount',        ico: '🐴' },
-];
+function buildSources() {
+  return [
+    { url: `${API}/master-items.json`,         key: 'items',      type: null,           ico: '📦' },
+    { url: `${API}/master-t0-t1-addendum.json`, key: 'items',      type: null,           ico: '⚔️' },
+    { url: `${API}/t0-weapons.json`,           key: 'weapons',    type: 'weapon',       ico: '🗡️' },
+    { url: `${API}/master-materials.json`,     key: 'materials',  type: 'material',     ico: '🪨' },
+    { url: `${API}/master-relics.json`,        key: 'relics',     type: 'relic',        ico: '💎' },
+    { url: `${API}/master-enchants.json`,      key: 'enchants',   type: 'enchant',      ico: '✨' },
+    { url: `${API}/master-infusions.json`,     key: 'infusions',  type: 'infusion',     ico: '🌀' },
+    { url: `${API}/master-artifacts.json`,     key: 'artifacts',  type: 'artifact',     ico: '🏺' },
+    { url: `${API}/master-consumables.json`,   key: 'items',      type: null,           ico: '🧪' },
+    { url: `${API}/master-recipes.json`,       key: 'recipes',    type: 'recipe',       ico: '📜', kind: 'recipe' },
+    { url: `${API}/master-spellRecipes.json`,  key: 'recipes',    type: 'spell-recipe', ico: '✦', kind: 'spell-recipe' },
+    { url: `${API}/master-buildings.json`,     key: 'buildings',  type: 'building',     ico: '🏛️' },
+    { url: `${API}/master-mounts.json`,        key: 'mounts',     type: 'mount',        ico: '🐴' },
+  ];
+}
 
 const TYPE_GROUPS = {
   consumable: ['consumable', 'food', 'potion'],
@@ -458,7 +511,16 @@ function resolveIcon(item) {
 // ─── Registry + 3D model lookups (ObjectStore Worker SSOT) ─────────────
 let registryByUuid = {};
 let weaponModelByUuid = new Map();
+/** uuid → canonical prefab/assets/effects from master-item-prefabs.json */
+let prefabByUuid = new Map();
 const seenUuids = new Set();
+
+const SOCKET_MAP = {
+  main_hand: 'R_hand_container → mixamorig:RightHand',
+  two_hand: 'R_hand_container → mixamorig:RightHand',
+  ranged_2h: 'L_hand_container → mixamorig:LeftHand',
+  off_hand: 'L_shield_container → mixamorig:LeftHand',
+};
 
 async function loadAuxManifests() {
   try {
@@ -477,6 +539,24 @@ async function loadAuxManifests() {
     }
   } catch (err) {
     console.warn('Weapon model map load failed:', err.message);
+  }
+  // Prefab index (optional; large) — byUuid preferred
+  try {
+    const res = await fetch(`${API}/master-item-prefabs.json`, { cache: 'no-cache' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.byUuid && typeof data.byUuid === 'object') {
+        for (const [k, v] of Object.entries(data.byUuid)) prefabByUuid.set(k, v);
+      } else {
+        for (const e of data.entries || []) {
+          if (e.uuid) prefabByUuid.set(e.uuid, e);
+          if (e.id) prefabByUuid.set(e.id, e);
+        }
+      }
+      console.info('[ItemDB] prefab index', prefabByUuid.size);
+    }
+  } catch (err) {
+    console.warn('Prefab index load failed:', err.message);
   }
 }
 
@@ -500,6 +580,51 @@ function resolveGameModelUrl(model) {
   };
 }
 
+function r2ToCdn(r2) {
+  if (!r2) return null;
+  const s = String(r2).replace(/^\//, '');
+  if (s.startsWith('http')) return absAssetUrl(s, CDN) || s;
+  return `${CDN}/${s}`;
+}
+
+function collectEffectsList(item) {
+  const out = [];
+  const push = (x) => {
+    if (x == null || x === '') return;
+    const s = typeof x === 'object' ? (x.name || x.stat || JSON.stringify(x)) : String(x);
+    if (s && !out.includes(s)) out.push(s);
+  };
+  push(item.effect);
+  if (item.buff) push(typeof item.buff === 'string' ? item.buff : JSON.stringify(item.buff));
+  if (item.passive) push(`passive: ${item.passive}`);
+  if (item.proc) push(`proc: ${item.proc}`);
+  if (item.setBonus) push(`set: ${item.setBonus}`);
+  if (item.sideEffect) push(item.sideEffect);
+  if (item.signature) push(`signature: ${item.signature}`);
+  if (Array.isArray(item.effects)) item.effects.forEach(push);
+  if (item.effects && typeof item.effects === 'object' && !Array.isArray(item.effects)) {
+    if (item.effects.vfxKeys) push(`vfx: ${item.effects.vfxKeys.join(', ')}`);
+    if (item.effects.castAura) push(`castAura: ${item.effects.castAura.variant || item.effects.castAura.school}`);
+    if (item.effects.impact) push(`impact: ${item.effects.impact.variant || item.effects.impact.vfxKey}`);
+    if (item.effects.animKey) push(`anim: ${item.effects.animKey}`);
+  }
+  if (Array.isArray(item.abilities)) item.abilities.forEach((a) => push(typeof a === 'object' ? a.name || JSON.stringify(a) : a));
+  if (Array.isArray(item.passives)) item.passives.forEach((p) => push(typeof p === 'object' ? p.name || JSON.stringify(p) : p));
+  // weaponSkills from t0-weapons
+  if (item.weaponSkills) {
+    const ws = item.weaponSkills;
+    ['slot1', 'slot2'].forEach((k) => { if (ws[k]?.name) push(`skill: ${ws[k].name}`); });
+    if (Array.isArray(ws.slot3Options)) ws.slot3Options.forEach((s) => push(s?.name ? `skill: ${s.name}` : null));
+  }
+  if (item.stats && typeof item.stats === 'object') {
+    // consumable % buffs already in stats
+    for (const [k, v] of Object.entries(item.stats)) {
+      if (typeof v === 'string' && /%|regen|\+|heal|restor/i.test(v)) push(`${k}: ${v}`);
+    }
+  }
+  return out;
+}
+
 function enrichItem(item) {
   const uuid = item.uuid || item.id || '';
   const baseUuid = item.baseUuid || uuid;
@@ -508,25 +633,75 @@ function enrichItem(item) {
   const model = (uuid && weaponModelByUuid.get(uuid))
     || (baseUuid && weaponModelByUuid.get(baseUuid))
     || null;
+  const prefabIdx = (uuid && prefabByUuid.get(uuid))
+    || (baseUuid && prefabByUuid.get(baseUuid))
+    || (item.id && prefabByUuid.get(item.id))
+    || null;
   const rawIcon =
     item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl ||
-    item.icon || reg?.iconCdnUrl || '';
-  const resolved = resolveGameModelUrl(model);
-  const isEquip = ['weapon', 'tool', 'shield'].includes(String(item.type || '').toLowerCase())
-    || /weapon|tool|shield/i.test(String(item.category || ''));
-  const grudge6Ready = !!(resolved?.primary && resolved?.attachmentProfile && isEquip);
+    item.icon || reg?.iconCdnUrl || prefabIdx?.assets?.iconUrl || '';
+
+  // Model: weapon-model map → item fields → prefab index → assets block
+  const fromItemR2 = item.modelR2Key || item.modelPath || item.assets?.mesh?.r2Key || null;
+  const fromItemUrl = item.modelUrl || item.assets?.mesh?.cdnUrl || r2ToCdn(fromItemR2);
+  const resolvedMap = resolveGameModelUrl(model);
+  const modelPrimary =
+    resolvedMap?.primary ||
+    (fromItemUrl ? absAssetUrl(fromItemUrl, CDN) || fromItemUrl : null) ||
+    prefabIdx?.assets?.modelUrl ||
+    null;
+  const attachmentProfile =
+    item.attachmentProfile ||
+    item.prefab?.attachmentProfile ||
+    resolvedMap?.attachmentProfile ||
+    prefabIdx?.prefab?.attachmentProfile ||
+    null;
+  const attachBone = item.attachBone || item.prefab?.sockets?.[0] || null;
+  const modelSourcePath =
+    fromItemR2 ||
+    resolvedMap?.sourcePath ||
+    prefabIdx?.assets?.modelR2Key ||
+    null;
+
+  const isEquip = ['weapon', 'tool', 'shield', 'armor'].includes(String(item.type || '').toLowerCase())
+    || /weapon|tool|shield|armor/i.test(String(item.category || ''));
+  const raceKitOnly = !!(item.raceKit || item.assets?.mesh?.raceKitOnly || item.prefab?.visualKind === 'race_kit');
+  const grudge6Ready = !!(
+    (modelPrimary && attachmentProfile && isEquip) ||
+    (raceKitOnly && isEquip) ||
+    item.prefab?.grudge6Ready ||
+    item.runtimePrefab
+  );
+
+  const effectsList = collectEffectsList(item);
+  if (prefabIdx?.effects?.length) {
+    for (const ef of prefabIdx.effects) {
+      if (ef && !effectsList.includes(ef)) effectsList.push(ef);
+    }
+  }
+
   return {
     ...item,
     uuid,
     iconUrl: rawIcon ? (absAssetUrl(rawIcon, CDN) || rawIcon) : '',
     iconCdnUrl: reg?.iconCdnUrl || item.iconCdnUrl || '',
     iconUuid: item.iconUuid || reg?.iconUuid || '',
-    _gameModelUrl: resolved?.primary || null,
-    _gameModelFallback: resolved?.fallback || null,
-    _gameModelUuid: resolved?.grudgeUUID || null,
-    _attachmentProfile: resolved?.attachmentProfile || null,
-    _modelSourcePath: resolved?.sourcePath || null,
+    _gameModelUrl: modelPrimary,
+    _gameModelFallback: resolvedMap?.fallback || null,
+    _gameModelUuid: resolvedMap?.grudgeUUID || item.prefab?.grudgeUUID || null,
+    _attachmentProfile: attachmentProfile,
+    _attachBone: attachBone,
+    _modelSourcePath: modelSourcePath,
+    _modelR2Key: fromItemR2 || modelSourcePath,
     _grudge6Ready: grudge6Ready,
+    _runtimePrefab: !!(item.runtimePrefab || item.prefab || modelPrimary || raceKitOnly),
+    _prefabSource: item.prefabSource || item.prefab?.style || prefabIdx?.prefab?.style || null,
+    _prefabKind: item.prefab?.kind || item.type || null,
+    _raceKit: item.raceKit || item.assets?.mesh || prefabIdx?.assets?.raceKit || null,
+    _effectsList: effectsList,
+    _prefabMeta: item.prefab || prefabIdx?.prefab || null,
+    _assetsMeta: item.assets || prefabIdx?.assets || null,
+    _isIceStaff: !!(item.prefab?.isIceStaff || item.prefab?.isIceStaffCanonical || item.id === 't1_staff_undead_frost'),
   };
 }
 
@@ -603,7 +778,9 @@ function showCatalogError(message) {
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────
 (async () => {
+  await resolveApiBase();
   await loadAuxManifests();
+  const SOURCES = buildSources();
   const results = await Promise.allSettled(SOURCES.map(s => loadSource(s)));
   const loadErrors = [];
   results.forEach((r, i) => {
@@ -732,7 +909,15 @@ async function loadSource(source) {
   if (!res.ok) throw new Error(`${res.status} ${url}`);
   const data = await res.json();
   if (data.deprecated || data.archived) return { items: [] };
-  const raw = data[key] || data.items || [];
+  const raw =
+    data[key] ||
+    data.items ||
+    data.weapons ||
+    data.consumables ||
+    data.materials ||
+    data.recipes ||
+    data.entries ||
+    [];
   const list = Array.isArray(raw) ? raw : [];
   const items = [];
   for (const item of list) {
@@ -1007,27 +1192,108 @@ function openDrawer(item, cardEl) {
     body += `<div class="section-title">Lore</div><p style="font-size:0.77rem;color:var(--text-dim);font-style:italic;line-height:1.65">${e(item.lore)}</p>`;
   }
 
-  // ── 3D model (grudge6 sockets + Mixamo hand aliases) ──
-  if (item._gameModelUrl || item._grudge6Ready) {
-    const sock = {
-      main_hand: 'R_hand_container → mixamorig:RightHand',
-      two_hand: 'R_hand_container → mixamorig:RightHand',
-      ranged_2h: 'L_hand_container → mixamorig:LeftHand',
-      off_hand: 'L_shield_container → mixamorig:LeftHand',
-    }[item._attachmentProfile] || 'see grudge6-characters.json';
-    body += `<div class="section-title">grudge6 3D Prefab</div>
-      <div class="ability-list">
-        <div class="ability-item"><a href="./GRUDGE6_Characters" style="color:var(--gold-light)">Race prefabs (Y-hip · Mixamo/Bip001)</a></div>
-        ${item._gameModelUrl ? `<div class="ability-item" style="font-size:0.7rem;word-break:break-all">${e(item._gameModelUrl)}</div>` : ''}
-        ${item._attachmentProfile ? `<div class="ability-item">Profile: <strong>${e(item._attachmentProfile)}</strong></div>` : ''}
-        <div class="ability-item" style="font-size:0.72rem;color:var(--text-dim)">Socket: ${e(sock)}</div>
-        <div class="ability-item" style="font-size:0.7rem;color:var(--text-dim)">Rigid body: capsule on hips Y — weapon is kinematic attach, not separate body</div>
-        ${item._gameModelUuid ? `<div class="ability-item" style="font-size:0.65rem;color:var(--text-dim)">${e(item._gameModelUuid)}</div>` : ''}
-      </div>`;
+  // ── Armor set / passive / proc (if not already in abilities) ──
+  if (item._type === 'armor' || item.type === 'armor') {
+    const armorBits = [];
+    if (item.passive) armorBits.push(`Passive: ${item.passive}`);
+    if (item.proc) armorBits.push(`Proc: ${item.proc}`);
+    if (item.setBonus) armorBits.push(`Set: ${item.setBonus}`);
+    if (item.setName) armorBits.push(`Set name: ${item.setName}`);
+    if (item.material) armorBits.push(`Material: ${item.material}`);
+    if (item.slotType) armorBits.push(`Slot: ${item.slotType}`);
+    if (armorBits.length) {
+      body += `<div class="section-title">Armor Affixes</div><div class="ability-list">${
+        armorBits.map((b) => `<div class="ability-item fx">◈ ${e(b)}</div>`).join('')
+      }</div>`;
+    }
+  }
+
+  // ── Consumable buff ──
+  if (['consumable', 'food', 'potion'].includes(item._type) || item.buff || item.effect) {
+    if (item.buff || item.effect) {
+      body += `<div class="section-title">Consumable Effect</div><div class="ability-list">`;
+      if (item.effect) body += `<div class="ability-item fx">✦ ${e(typeof item.effect === 'string' ? item.effect : JSON.stringify(item.effect))}</div>`;
+      if (item.buff) body += `<div class="ability-item fx">✦ Buff: ${e(typeof item.buff === 'string' ? item.buff : JSON.stringify(item.buff))}</div>`;
+      body += `</div>`;
+    }
+  }
+
+  // ── Canonical Prefab (all item types) ──
+  {
+    const sock = SOCKET_MAP[item._attachmentProfile] || (item._attachBone ? item._attachBone : null);
+    const pills = [];
+    if (item._runtimePrefab || item.runtimePrefab) pills.push('<span class="canon-pill ok">runtimePrefab</span>');
+    if (item._grudge6Ready) pills.push('<span class="canon-pill ok">grudge6 ready</span>');
+    else if (['weapon', 'tool', 'armor'].includes(item._type)) pills.push('<span class="canon-pill warn">mesh pending</span>');
+    if (item._isIceStaff) pills.push('<span class="canon-pill ok">ice staff SSOT</span>');
+    if (item.prefab?.isIceStaff || item.prefab?.isIceStaffCanonical) pills.push('<span class="canon-pill ok">canonical ice mesh</span>');
+    body += `<div class="section-title">Canonical Prefab</div><div class="canon-block">`;
+    if (pills.length) body += `<div class="canon-row"><span class="canon-v">${pills.join('')}</span></div>`;
+    body += `<div class="canon-row"><span class="canon-k">Kind</span><span class="canon-v">${e(item._prefabKind || item._type || 'item')}</span></div>`;
+    if (item._prefabSource) body += `<div class="canon-row"><span class="canon-k">Source</span><span class="canon-v">${e(item._prefabSource)}</span></div>`;
+    if (item._attachmentProfile) body += `<div class="canon-row"><span class="canon-k">Profile</span><span class="canon-v">${e(item._attachmentProfile)}</span></div>`;
+    if (sock) body += `<div class="canon-row"><span class="canon-k">Socket</span><span class="canon-v">${e(sock)}</span></div>`;
+    if (item._raceKit && (item._raceKit.slot || item._raceKit.variant)) {
+      body += `<div class="canon-row"><span class="canon-k">Race kit</span><span class="canon-v">${e((item._raceKit.slot || '') + (item._raceKit.variant ? '_' + item._raceKit.variant : ''))}</span></div>`;
+    }
+    if (item.element || item.school || item.damageType) {
+      body += `<div class="canon-row"><span class="canon-k">School</span><span class="canon-v">${e([item.element, item.school, item.damageType].filter(Boolean).join(' · '))}</span></div>`;
+    }
+    if (item.race) body += `<div class="canon-row"><span class="canon-k">Race</span><span class="canon-v">${e(item.race)}</span></div>`;
+    body += `<div class="canon-row"><span class="canon-k">Link</span><span class="canon-v"><a href="./GRUDGE6_Characters">Race prefabs (Y-hip · Mixamo/Bip001)</a></span></div>`;
+    if (item._gameModelUuid) body += `<div class="canon-row"><span class="canon-k">3D UUID</span><span class="canon-v uuid-line">${e(item._gameModelUuid)}</span></div>`;
+    body += `</div>`;
+  }
+
+  // ── Assets Used (icon, mesh, R2) ──
+  {
+    const icon = resolveIcon(item) || item.iconUrl;
+    const mesh = item._gameModelUrl;
+    const r2 = item._modelR2Key || item._modelSourcePath;
+    body += `<div class="section-title">Assets Used</div><div class="canon-block">`;
+    if (icon) {
+      body += `<div class="canon-row"><span class="canon-k">Icon</span><span class="canon-v"><a class="asset-link" href="${e(icon)}" target="_blank" rel="noopener">${e(icon)}</a></span></div>`;
+    } else {
+      body += `<div class="canon-row"><span class="canon-k">Icon</span><span class="canon-v" style="color:var(--text-dim)">—</span></div>`;
+    }
+    if (mesh) {
+      body += `<div class="canon-row"><span class="canon-k">Mesh</span><span class="canon-v"><a class="asset-link" href="${e(mesh)}" target="_blank" rel="noopener">${e(mesh)}</a></span></div>`;
+    } else if (item._raceKit) {
+      body += `<div class="canon-row"><span class="canon-k">Mesh</span><span class="canon-v">race-kit only (${e(JSON.stringify(item._raceKit))})</span></div>`;
+    } else {
+      body += `<div class="canon-row"><span class="canon-k">Mesh</span><span class="canon-v" style="color:var(--text-dim)">— (catalog / non-equip)</span></div>`;
+    }
+    if (r2) body += `<div class="canon-row"><span class="canon-k">R2 key</span><span class="canon-v asset-link">${e(r2)}</span></div>`;
+    if (item._assetsMeta?.mesh?.aliasOf) {
+      body += `<div class="canon-row"><span class="canon-k">Alias of</span><span class="canon-v">${e(item._assetsMeta.mesh.aliasOf)}</span></div>`;
+    }
+    if (item.recipeUuid) body += `<div class="canon-row"><span class="canon-k">Recipe</span><span class="canon-v uuid-line">${e(item.recipeUuid)}</span></div>`;
+    if (item.resultItemId) body += `<div class="canon-row"><span class="canon-k">Produces</span><span class="canon-v">${e(item.resultName || item.resultItemId)}</span></div>`;
+    body += `</div>`;
+  }
+
+  // ── Effects (abilities / VFX / buffs / used) ──
+  {
+    const list = item._effectsList || collectEffectsList(item);
+    body += `<div class="section-title">Effects · Used</div><div class="canon-block">`;
+    if (list.length) {
+      body += list.map((ef) => `<div class="canon-row"><span class="canon-v">✦ ${e(ef)}</span></div>`).join('');
+    } else {
+      body += `<div class="canon-row"><span class="canon-v" style="color:var(--text-dim)">No effect pack on this row — stats / craft only</span></div>`;
+    }
+    if (item.craftedBy) body += `<div class="canon-row"><span class="canon-k">Crafted by</span><span class="canon-v">${e(item.craftedBy)}</span></div>`;
+    if (item.source || item.acquisition) body += `<div class="canon-row"><span class="canon-k">Source</span><span class="canon-v">${e(item.source || item.acquisition)}</span></div>`;
+    if (item.usedInT1Crafting) {
+      const u = Array.isArray(item.usedInT1Crafting) ? item.usedInT1Crafting.join(', ') : String(item.usedInT1Crafting);
+      body += `<div class="canon-row"><span class="canon-k">Used in</span><span class="canon-v">${e(u)}</span></div>`;
+    }
+    if (item.primaryStat) body += `<div class="canon-row"><span class="canon-k">Primary</span><span class="canon-v">${e(item.primaryStat)}</span></div>`;
+    body += `</div>`;
   }
 
   // ── UUID ──
   if (item.uuid) body += `<div class="section-title">UUID</div><p class="uuid-line">${item.uuid}</p>`;
+  if (item.id && item.id !== item.uuid) body += `<div class="section-title">ID</div><p class="uuid-line">${e(item.id)}</p>`;
 
   document.getElementById('drawerContent').innerHTML = `
     <div class="drawer-icon-wrap">

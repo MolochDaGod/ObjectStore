@@ -11,9 +11,14 @@ export const MODEL_CDN = 'https://assets.grudge-studio.com';
 /** @deprecated Use OBJECTSTORE_API for JSON — github.io is not SSOT */
 export const OBJECTSTORE_PAGES = 'https://molochdagod.github.io/ObjectStore';
 
-/** ObjectStore Worker — definitions JSON SSOT */
-export const OBJECTSTORE_API = 'https://objectstore.grudge-studio.com/api/v1';
-export const OBJECTSTORE_ORIGIN = 'https://objectstore.grudge-studio.com';
+/**
+ * Catalog JSON SSOT — prefer info static (Vercel) so /api/v1/*.json always resolve.
+ * objectstore.grudge-studio.com is Worker-owned and may not serve static JSON.
+ */
+export const OBJECTSTORE_API = 'https://info.grudge-studio.com/api/v1';
+export const OBJECTSTORE_ORIGIN = 'https://info.grudge-studio.com';
+/** Worker origin for uploads / dynamic APIs (not static catalog) */
+export const OBJECTSTORE_WORKER = 'https://objectstore.grudge-studio.com';
 
 /** Legacy host aliases rewritten to R2 for binaries */
 export const OBJECTSTORE_REDIRECT = 'https://objectstore.grudge-studio.com';
