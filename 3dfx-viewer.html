@@ -3,83 +3,70 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grudge 3DFX Viewer — Production VFX · UUID · GLB</title>
+<title>Grudge 3DFX Viewer — skillswrite · VFXLibrary · production GLB</title>
 <link rel="icon" href="./branding/favicon-32x32.png" type="image/png" />
 <meta name="theme-color" content="#0a0e14" />
 <meta property="og:title" content="Grudge 3DFX Viewer" />
-<meta property="og:description" content="Browse production VFX: GRDG-3DFX UUIDs, R2 GLBs, 3DFX registry + spell library." />
+<meta property="og:description" content="Same spell stack as vfxgrudge: skillswrite, GLSL particles, VFXLibrary, AdvancedFX, R2 GLBs, GRDG-3DFX UUIDs." />
 <style>
 :root{
-  --bg:#0a0e14;--panel:#121826;--panel2:#0f1520;--line:#243044;--text:#e8eef5;--muted:#8b95a8;
+  --bg:#070b12;--panel:#0f1520;--panel2:#121a28;--line:#243044;--text:#e8eef5;--muted:#8b95a8;
   --gold:#d4a84b;--blue:#4a9eff;--green:#4ade80;--red:#ff5a5a;--purple:#b070ff;
-  --fire:#ff6a1e;--ice:#5fd6ff;--lightning:#ffe066;--magic:#b070ff;
-  --radius:10px;--font:Inter,Segoe UI,system-ui,sans-serif;--mono:ui-monospace,Cascadia Code,Consolas,monospace;
+  --font:Inter,Segoe UI,system-ui,sans-serif;--mono:ui-monospace,Cascadia Code,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-button,input,select{font:inherit}
-.app{display:grid;grid-template-columns:300px 1fr 320px;grid-template-rows:52px 1fr;height:100vh;min-height:560px}
-@media(max-width:1100px){.app{grid-template-columns:260px 1fr 280px}}
-@media(max-width:860px){
-  .app{grid-template-columns:1fr;grid-template-rows:52px auto 42vh auto;height:auto;min-height:100vh;overflow:auto}
-  .side,.insp{max-height:40vh;overflow:auto}
-}
-.top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141b28,#101722)}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+button,input{font:inherit}
+.app{display:grid;grid-template-columns:310px 1fr 300px;grid-template-rows:54px 1fr;height:100vh}
+@media(max-width:1000px){.app{grid-template-columns:1fr;grid-template-rows:54px auto 46vh auto;height:auto;min-height:100vh;overflow:auto}.side,.insp{max-height:42vh;overflow:auto}}
+.top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c2b,#0d131d)}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand h1{font-size:14px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
-.brand h1 span{color:var(--gold)}
-.brand .badge{font-size:10px;color:var(--gold);border:1px solid rgba(212,168,75,.35);background:rgba(212,168,75,.1);padding:2px 8px;border-radius:999px}
-.top-links{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
-.top-links a,.btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 10px;border-radius:7px;font-size:11px;cursor:pointer}
-.top-links a:hover,.btn:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
+.brand h1{font-size:14px;font-weight:700}.brand h1 span{color:var(--gold)}
+.badge{font-size:10px;color:var(--gold);border:1px solid rgba(212,168,75,.35);background:rgba(212,168,75,.1);padding:2px 8px;border-radius:999px}
+.top a,.btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 10px;border-radius:7px;font-size:11px;cursor:pointer}
+.top a:hover,.btn:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
 .btn.primary{background:var(--gold);border-color:var(--gold);color:#111;font-weight:700}
-.btn.primary:hover{filter:brightness(1.05);color:#111}
-.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.top-links{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 .side{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
 .tabs{display:flex;border-bottom:1px solid var(--line)}
-.tab{flex:1;padding:9px 6px;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;cursor:pointer}
+.tab{flex:1;padding:9px 4px;background:0;border:0;border-bottom:2px solid transparent;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.35px;cursor:pointer}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(212,168,75,.06)}
-.pane{display:none;flex:1;min-height:0;overflow:auto}
-.pane.active{display:flex;flex-direction:column}
+.pane{display:none;flex:1;min-height:0;overflow:auto}.pane.active{display:flex;flex-direction:column}
 .search{padding:10px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
-.search input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#0b1018;color:var(--text);outline:none}
+.search input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#0b1018;color:var(--text);outline:0}
 .search input:focus{border-color:var(--gold)}
 .cats{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border-bottom:1px solid var(--line)}
-.chip{border:1px solid var(--line);background:transparent;color:var(--muted);padding:3px 8px;border-radius:999px;font-size:10px;cursor:pointer}
+.chip{border:1px solid var(--line);background:0;color:var(--muted);padding:3px 8px;border-radius:999px;font-size:10px;cursor:pointer}
 .chip.active{border-color:var(--gold);color:var(--gold);background:rgba(212,168,75,.1)}
 .list{padding:8px;display:flex;flex-direction:column;gap:4px}
-.item{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid transparent;background:#0e1420;cursor:pointer}
-.item:hover{border-color:var(--line)}
-.item.active{border-color:var(--gold);background:rgba(212,168,75,.1)}
+.item{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid transparent;background:#0c121c;cursor:pointer}
+.item:hover{border-color:var(--line)}.item.active{border-color:var(--gold);background:rgba(212,168,75,.1)}
 .dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 10px currentColor}
 .item .name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item .meta{font-size:10px;color:var(--muted);margin-top:2px}
-.item .uuid{font-family:var(--mono);font-size:9px;color:var(--blue);max-width:92px;overflow:hidden;text-overflow:ellipsis}
-.stage-wrap{position:relative;min-height:0;background:radial-gradient(ellipse at center,#152033 0%,#080b11 70%)}
+.item .uuid{font-family:var(--mono);font-size:9px;color:var(--blue);max-width:90px;overflow:hidden;text-overflow:ellipsis}
+.stage-wrap{position:relative;min-height:0;background:radial-gradient(ellipse at 50% 40%,#152033 0%,#06090f 72%)}
 #stage{width:100%;height:100%;display:block}
-.hud{position:absolute;left:12px;top:12px;right:12px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-.hud .pill{pointer-events:auto;background:rgba(10,14,20,.78);border:1px solid var(--line);backdrop-filter:blur(8px);padding:7px 10px;border-radius:8px;font-size:11px}
+.hud{position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:2}
+.hud .pill{pointer-events:auto;background:rgba(8,12,18,.82);border:1px solid var(--line);backdrop-filter:blur(8px);padding:7px 10px;border-radius:8px;font-size:11px}
 .hud .controls{display:flex;gap:6px;flex-wrap:wrap}
-.hud .controls .btn{padding:5px 9px}
-.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none}
-.insp{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:12px;display:flex;flex-direction:column;gap:12px}
+.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;padding:24px;text-align:center}
+.insp{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:12px;display:flex;flex-direction:column;gap:11px}
 .insp h2{font-size:15px;font-weight:700}
 .insp .sub{font-size:11px;color:var(--muted);line-height:1.45}
-.block{border:1px solid var(--line);background:var(--panel2);border-radius:var(--radius);padding:10px}
+.block{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px}
 .block h3{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
-.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
-.row:last-child{margin-bottom:0}
+.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}.row:last-child{margin-bottom:0}
 .code{font-family:var(--mono);font-size:11px;background:#0b1018;border:1px solid var(--line);border-radius:6px;padding:7px 8px;word-break:break-all;flex:1}
 .tags{display:flex;flex-wrap:wrap;gap:4px}
 .tag{font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(74,158,255,.12);color:var(--blue);border:1px solid rgba(74,158,255,.25)}
-.kv{display:grid;grid-template-columns:88px 1fr;gap:4px 8px;font-size:11px}
+.kv{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:11px}
 .kv b{color:var(--muted);font-weight:600}
-.msg{font-size:11px;color:var(--muted);padding:6px 0}
-.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
-.status-bar{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
-.footer-note{font-size:10px;color:var(--muted);line-height:1.4}
+.msg{font-size:11px;color:var(--muted)}.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
+.note{font-size:10px;color:var(--muted);line-height:1.45}
+.warn{font-size:11px;color:#ffcc88;background:rgba(255,170,60,.08);border:1px solid rgba(255,170,60,.25);border-radius:8px;padding:8px}
 </style>
 <script type="importmap">
 {
@@ -94,59 +81,71 @@ button,input,select{font:inherit}
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1>Grudge <span>3DFX</span> Viewer</h1>
+      <h1>Grudge <span>3DFX</span></h1>
       <span class="badge" id="countBadge">loading…</span>
     </div>
     <div class="top-links">
       <a href="./hub.html">Hub</a>
-      <a href="./api/v1/3dfx-registry.json" target="_blank" rel="noopener">Registry JSON</a>
-      <a href="./api/v1/vfx-production-glb.json" target="_blank" rel="noopener">GLB JSON</a>
-      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">Fantasy Panel</a>
+      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">vfxgrudge (ref)</a>
       <a href="https://vfx.grudge.studio/" target="_blank" rel="noopener">VFX Studio</a>
-      <a href="https://open.grudge-studio.com/danger" target="_blank" rel="noopener">Danger Room</a>
+      <a href="https://open.grudge-studio.com/danger" target="_blank" rel="noopener">Danger</a>
+      <a href="./api/v1/vfx-production-glb.json" target="_blank" rel="noopener">GLB JSON</a>
     </div>
   </header>
 
   <aside class="side">
     <div class="tabs">
-      <button class="tab active" data-tab="effects">Effects</button>
-      <button class="tab" data-tab="glb">Prod GLB</button>
-      <button class="tab" data-tab="spells">Spells</button>
+      <button class="tab active" data-tab="skills">Skills</button>
+      <button class="tab" data-tab="library">Library</button>
+      <button class="tab" data-tab="advanced">Advanced</button>
+      <button class="tab" data-tab="glb">R2 GLB</button>
+      <button class="tab" data-tab="registry">Registry</button>
     </div>
-    <div class="pane active" id="pane-effects">
-      <div class="search"><input id="qEffects" placeholder="Search effects / UUID…" /></div>
-      <div class="cats" id="catsEffects"></div>
-      <div class="list" id="listEffects"></div>
+    <div class="pane active" id="pane-skills">
+      <div class="search"><input id="qSkills" placeholder="Search skillswrite spells…" /></div>
+      <div class="list" id="listSkills"></div>
+    </div>
+    <div class="pane" id="pane-library">
+      <div class="search"><input id="qLib" placeholder="Search AnimationLib catalog…" /></div>
+      <div class="cats" id="catsLib"></div>
+      <div class="list" id="listLib"></div>
+    </div>
+    <div class="pane" id="pane-advanced">
+      <div class="search"><input id="qAdv" placeholder="Search advanced FX…" /></div>
+      <div class="list" id="listAdv"></div>
     </div>
     <div class="pane" id="pane-glb">
-      <div class="search"><input id="qGlb" placeholder="Search production GLB…" /></div>
+      <div class="search"><input id="qGlb" placeholder="Search production R2 GLBs…" /></div>
       <div class="list" id="listGlb"></div>
     </div>
-    <div class="pane" id="pane-spells">
-      <div class="search"><input id="qSpells" placeholder="Search spells…" /></div>
-      <div class="cats" id="catsSpells"></div>
-      <div class="list" id="listSpells"></div>
+    <div class="pane" id="pane-registry">
+      <div class="search"><input id="qReg" placeholder="Search ObjectStore 3DFX registry…" /></div>
+      <div class="cats" id="catsReg"></div>
+      <div class="list" id="listReg"></div>
     </div>
   </aside>
 
   <main class="stage-wrap">
     <canvas id="stage"></canvas>
     <div class="hud">
-      <div class="pill" id="hudLeft">Select an effect</div>
+      <div class="pill" id="hudLeft">Loading skillswrite + catalogs…</div>
       <div class="pill controls">
-        <button class="btn" id="btnPlay" type="button">Pause</button>
-        <button class="btn" id="btnRestart" type="button">Restart</button>
+        <button class="btn" id="btnReplay" type="button">Replay</button>
+        <button class="btn" id="btnPause" type="button">Pause</button>
         <button class="btn" id="btnGrid" type="button">Grid</button>
-        <button class="btn" id="btnResetCam" type="button">Reset cam</button>
+        <button class="btn" id="btnResetCam" type="button">Cam</button>
       </div>
     </div>
-    <div class="empty" id="emptyHint">Loading catalogs…</div>
+    <div class="empty" id="emptyHint">Booting Three.js + skillswrite stack…</div>
   </main>
 
-  <aside class="insp" id="insp">
+  <aside class="insp">
     <div>
       <h2 id="title">No selection</h2>
-      <p class="sub" id="desc">Browse the 3DFX registry, spell library, and production R2 GLBs. Every item shows a Grudge UUID.</p>
+      <p class="sub" id="desc">This viewer uses the same runtime as vfxgrudge / vfx.grudge.studio — not spheres.</p>
+    </div>
+    <div class="warn" id="stackNote">
+      Stack: skillswrite (GLSL particles, FireAura, IceSnake, Meteor…) · VFXLibrary (catalog beams/projectiles) · AdvancedFX (splines/ribbons) · UnrealBloom · R2 GLBs · GRDG-3DFX UUIDs
     </div>
     <div class="block">
       <h3>Grudge UUID</h3>
@@ -157,7 +156,7 @@ button,input,select{font:inherit}
       <div class="msg" id="copyMsg"></div>
     </div>
     <div class="block">
-      <h3>Details</h3>
+      <h3>Runtime</h3>
       <div class="kv" id="details"></div>
     </div>
     <div class="block">
@@ -165,135 +164,207 @@ button,input,select{font:inherit}
       <div class="tags" id="tags"></div>
     </div>
     <div class="block" id="cdnBlock" hidden>
-      <h3>CDN / R2 GLB</h3>
+      <h3>CDN / R2</h3>
       <div class="row">
         <div class="code" id="cdnUrl">—</div>
         <button class="btn" id="btnCopyCdn" type="button">Copy</button>
       </div>
       <div class="row" style="margin-top:8px">
-        <button class="btn primary" id="btnLoadGlb" type="button">Load GLB</button>
         <a class="btn" id="btnOpenCdn" href="#" target="_blank" rel="noopener">Open URL</a>
       </div>
-      <p class="footer-note" id="glbNote" style="margin-top:8px"></p>
     </div>
     <div class="block">
-      <h3>Snippet</h3>
-      <div class="code" id="snippet" style="white-space:pre-wrap;min-height:64px">// select an effect</div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn" id="btnCopySnippet" type="button">Copy snippet</button>
-      </div>
+      <h3>Cast snippet</h3>
+      <div class="code" id="snippet" style="white-space:pre-wrap;min-height:72px">// select an item</div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="btnCopySnippet" type="button">Copy</button></div>
     </div>
-    <div class="status-bar" id="statusBar">
-      <span id="stFps">FPS —</span>
-      <span id="stMode">mode —</span>
-      <span id="stCount">0 items</span>
-    </div>
-    <p class="footer-note">
-      Data: <code>/api/v1/3dfx-registry.json</code> · <code>3dfx-uuids.json</code> · <code>vfx-spells.json</code> · <code>vfx-production-glb.json</code><br />
-      Binaries: <code>assets.grudge-studio.com</code> · UUID prefix <code>GRDG-3DFX-*</code><br />
-      Keys: Space pause · R restart · G grid
+    <div class="note" id="statusBar">FPS — · mode —</div>
+    <p class="note">
+      Hotkeys: Space replay · P pause · G grid<br />
+      Data: ObjectStore <code>3dfx-*</code> + production GLB · Runtime: <code>vfx.grudge.studio/skillswrite</code> + <code>VFXLibrary</code>
     </p>
   </aside>
 </div>
 
 <script type="module">
+/**
+ * 3DFX Viewer — production stack (parity with vfxgrudge / vfx.grudge.studio)
+ *
+ * What the previous trash page was missing:
+ *  - skillswrite spell classes (FireCast, IceSnake, MoonBeam, MeteorShower, …)
+ *  - GLSL point-sprite materials (spellShaders fire/smoke/lightning/arcane/frost/beam/slash)
+ *  - textured flame particles (FireAura dual-layer PointsMaterial + map)
+ *  - VFXLibrary catalog builders (beam / projectile / status / slash arc geometry)
+ *  - AdvancedFX (TubeGeometry splines, ribbons, energy shells, shock rings)
+ *  - UnrealBloomPass postprocessing
+ *  - GLB-backed spells (meteor/dragon/turret) with fitted loaders
+ *  - impact building blocks (Impact / FireBurst / IceLightningImpact)
+ *
+ * This page imports those modules from vfx.grudge.studio (live SSOT) and maps
+ * ObjectStore GRDG-3DFX UUIDs + R2 meshes on top.
+ */
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
+const VFX_ORIGIN = "https://vfx.grudge.studio";
+const ASSET_FALLBACK = "https://vfx-studio-sigma.vercel.app";
 const CDN = "https://assets.grudge-studio.com";
-const API = {
-  registry: "./api/v1/3dfx-registry.json",
-  uuids: "./api/v1/3dfx-uuids.json",
-  spells: "./api/v1/vfx-spells.json",
-  glb: "./api/v1/vfx-production-glb.json",
+
+// skillswrite + library (ESM from live studio — same as vfxgrudge)
+const SpellLib = await import(`${VFX_ORIGIN}/skillswrite/src/index.js`);
+const { VFXLibrary } = await import(`${VFX_ORIGIN}/assets/three/VFXLibrary.js`);
+const { AdvancedFX, ADVANCED_PRESETS } = await import(`${VFX_ORIGIN}/src/advanced/AdvancedFX.js`);
+
+const {
+  setAssetBasePath,
+  clearAssetCache,
+  SHADER_KEYS,
+  EarthWave, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
+  FrostWave, EarthWall, Roots, FireCast, Shockwave, FlameBody, ShaderEffect,
+  FireAura, Impact, FireBurst, IceLightningImpact, FlameBolt,
+} = SpellLib;
+
+// Prefer studio assets; GLBs also resolve via CDN override when needed
+setAssetBasePath(`${ASSET_FALLBACK}/skillswrite/assets/`);
+
+const CLASS_MAP = {
+  EarthWave, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
+  FrostWave, EarthWall, Roots, FireCast, Shockwave, FlameBody, ShaderEffect,
+  FireAura, Impact, FireBurst, IceLightningImpact, FlameBolt,
 };
 
-const CAT_COLOR = {
-  fire: "#ff6a1e", ice: "#5fd6ff", lightning: "#ffe066", magic: "#b070ff",
-  arcane: "#b070ff", impact: "#ffaa00", aura: "#ffd890", portal: "#4a8bff",
-  combat: "#ff6666", environment: "#4ade80", annihilator: "#ff0044",
-  holy: "#ffe9a8", nature: "#44cc66", earth: "#88aa44", wind: "#aaddff",
-  poison: "#44cc66", utility: "#8fd0ff", melee: "#ff6a8a", gun: "#fff2a8",
-  buff: "#4ade80", debuff: "#ff5a5a", cast: "#d8c38a", beam: "#d0e8ff",
-  projectile: "#ff8a3d", aoe: "#ff6a1e", prop: "#8b95a8", telegraph: "#ffb24d",
-  marker: "#7dd3fc",
+/** skillswrite panel order (matches sandbox hotkeys) */
+const SKILLS = [
+  { id: "FireCast", name: "Fire Cast", key: "C", cat: "fire", color: "#ff6a1e", uuid: "GRDG-3DFX-SKILL-FIRECAST" },
+  { id: "FireAura", name: "Fire Aura", key: "Q", cat: "fire", color: "#ff5510", uuid: "GRDG-3DFX-SKILL-FIREAURA" },
+  { id: "FlameBody", name: "Flame Body", key: "N", cat: "fire", color: "#ff6020", uuid: "GRDG-3DFX-SKILL-FLAMEBODY" },
+  { id: "IceSnake", name: "Ice Serpent", key: "V", cat: "ice", color: "#9fdcff", uuid: "GRDG-3DFX-SKILL-ICESNAKE" },
+  { id: "FrostWave", name: "Frost Wave", key: "F", cat: "ice", color: "#5fd6ff", uuid: "GRDG-3DFX-SKILL-FROSTWAVE" },
+  { id: "Blizzard", name: "Blizzard", key: "I", cat: "ice", color: "#8fe6ff", uuid: "GRDG-3DFX-SKILL-BLIZZARD" },
+  { id: "MoonBeam", name: "Moon Beam", key: "B", cat: "holy", color: "#d0e8ff", uuid: "GRDG-3DFX-SKILL-MOONBEAM" },
+  { id: "Shockwave", name: "Shockwave", key: "D", cat: "earth", color: "#ffb24d", uuid: "GRDG-3DFX-SKILL-SHOCKWAVE" },
+  { id: "EarthWave", name: "Earth Wave", key: "T", cat: "earth", color: "#c4a574", uuid: "GRDG-3DFX-SKILL-EARTHWAVE" },
+  { id: "EarthWall", name: "Earth Wall", key: "Y", cat: "earth", color: "#b8956a", uuid: "GRDG-3DFX-SKILL-EARTHWALL" },
+  { id: "MeteorShower", name: "Meteor Shower", key: "O", cat: "fire", color: "#ff8a3d", uuid: "GRDG-3DFX-SKILL-METEOR" },
+  { id: "Dragon", name: "Fire Dragon", key: "J", cat: "fire", color: "#ff5a1f", uuid: "GRDG-3DFX-SKILL-DRAGON" },
+  { id: "Turret", name: "Turret", key: "K", cat: "utility", color: "#8fd0ff", uuid: "GRDG-3DFX-SKILL-TURRET" },
+  { id: "Roots", name: "Roots", key: "W", cat: "nature", color: "#44cc66", uuid: "GRDG-3DFX-SKILL-ROOTS" },
+  { id: "FlameBolt", name: "Flame Bolt", key: "—", cat: "fire", color: "#ff7a1a", uuid: "GRDG-3DFX-SKILL-FLAMEBOLT" },
+  { id: "Impact", name: "Impact", key: "—", cat: "impact", color: "#ffaa00", uuid: "GRDG-3DFX-SKILL-IMPACT" },
+  { id: "FireBurst", name: "Fire Burst", key: "—", cat: "fire", color: "#ff6622", uuid: "GRDG-3DFX-SKILL-FIREBURST" },
+  { id: "IceLightningImpact", name: "Ice / Lightning Impact", key: "R", cat: "ice", color: "#7ec8ff", uuid: "GRDG-3DFX-SKILL-ICELIGHT" },
+  // shader keys 1-9,0
+  ...SHADER_KEYS.map((k, i) => ({
+    id: "ShaderEffect",
+    name: `Shader · ${k}`,
+    key: String((i + 1) % 10),
+    cat: "shader",
+    color: "#b070ff",
+    uuid: `GRDG-3DFX-SHADER-${k.toUpperCase()}`,
+    shaderKey: k,
+  })),
+];
+
+/** Registry effect id → skillswrite cast */
+const REG_TO_SKILL = {
+  inferno: "FireBurst", hellfire: "FlameBody", frost_nova: "FrostWave", blizzard: "Blizzard",
+  chain_lightning: "IceLightningImpact", thunderstrike: "IceLightningImpact",
+  arcane_burst: "ShaderEffect", void_rift: "ShaderEffect", meteor_impact: "MeteorShower",
+  shockwave: "Shockwave", holy_aura: "MoonBeam", dark_aura: "ShaderEffect",
+  casting_fire: "FireCast", fire_nova: "FireBurst", flame_ball: "FlameBolt",
+  lava_orb: "FlameBolt", chaos_orb: "ShaderEffect", frozen_orb: "FrostWave",
+  ice_ball: "FrostWave", sword_slash: "Impact", energy_explosion: "FireBurst",
+  meteor_hit: "MeteorShower", level_up: "MoonBeam", blessing: "MoonBeam",
 };
 
-/** @type {{effects:object,spells:object,uuids:object,glb:object[],effectToGlb:Map}} */
-const DB = { effects: {}, spells: {}, uuids: {}, glb: [], effectToGlb: new Map() };
-
+const DB = { catalog: [], reg: {}, uuids: {}, glb: [], spells: {} };
 const state = {
-  tab: "effects",
-  cat: "all",
-  q: "",
-  selected: null,
-  playing: true,
-  showGrid: true,
-  clock: new THREE.Clock(),
-  mixers: [],
-  proc: null,
-  glbRoot: null,
-  frames: 0,
-  lastFps: performance.now(),
-  fps: 0,
+  tab: "skills", cat: "all", selected: null, playing: true, showGrid: true,
+  active: null, libFx: null, advHandle: null, glbRoot: null, mixers: [],
+  frames: 0, lastFps: performance.now(), fps: 0,
 };
 
-// ── Three scene ──────────────────────────────────────────────────────────
+// ── Three ────────────────────────────────────────────────────────────────
 const canvas = document.getElementById("stage");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0e14);
-scene.fog = new THREE.Fog(0x0a0e14, 12, 40);
+scene.background = new THREE.Color(0x070b12);
+scene.fog = new THREE.Fog(0x070b12, 14, 42);
 
 const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
-camera.position.set(3.2, 2.4, 4.2);
+camera.position.set(4.2, 2.8, 5.6);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.target.set(0, 0.9, 0);
-controls.maxDistance = 24;
-controls.minDistance = 0.6;
+controls.target.set(0, 1.0, -1.5);
+controls.maxDistance = 28;
 
-const hemi = new THREE.HemisphereLight(0xb8d0ff, 0x1a1208, 0.65);
-scene.add(hemi);
-const key = new THREE.DirectionalLight(0xffffff, 1.15);
-key.position.set(4, 8, 3);
+scene.add(new THREE.HemisphereLight(0xb8d0ff, 0x1a1208, 0.7));
+const key = new THREE.DirectionalLight(0xffffff, 1.2);
+key.position.set(5, 9, 4);
 scene.add(key);
 const fill = new THREE.DirectionalLight(0x88aaff, 0.35);
-fill.position.set(-5, 2, -3);
+fill.position.set(-6, 2, -3);
 scene.add(fill);
 
-const grid = new THREE.GridHelper(12, 24, 0x3a465c, 0x1c2433);
-grid.position.y = 0.001;
+const grid = new THREE.GridHelper(16, 32, 0x3a465c, 0x1c2433);
 scene.add(grid);
 const ground = new THREE.Mesh(
-  new THREE.CircleGeometry(6, 48),
-  new THREE.MeshStandardMaterial({ color: 0x101820, metalness: 0.2, roughness: 0.9 }),
+  new THREE.CircleGeometry(8, 64),
+  new THREE.MeshStandardMaterial({ color: 0x0e141c, metalness: 0.15, roughness: 0.92 }),
 );
 ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
 scene.add(ground);
+
+// dummy caster marker (subtle)
+const casterMark = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.18, 0.22, 1.7, 12),
+  new THREE.MeshStandardMaterial({ color: 0x2a3548, transparent: true, opacity: 0.35 }),
+);
+casterMark.position.set(0, 0.85, 0);
+scene.add(casterMark);
 
 const fxRoot = new THREE.Group();
 scene.add(fxRoot);
 
-const loader = new GLTFLoader();
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 1.15, 0.42, 0.18);
+composer.addPass(bloom);
+
+const gltfLoader = new GLTFLoader();
 const draco = new DRACOLoader();
-draco.setDecoderPath("https://www.gstatic.com/draco/versioned/gltf/1.5.6/");
-loader.setDRACOLoader(draco);
+draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+gltfLoader.setDRACOLoader(draco);
+
+const vfxLib = new VFXLibrary({ THREE, baseUrl: `${VFX_ORIGIN}/assets/` });
+const advanced = new AdvancedFX(THREE, scene);
+
+const clock = new THREE.Clock();
+const ANCHORS = {
+  caster: [0, 0, 0],
+  hand: [0.35, 1.25, -0.25],
+  targetGround: [0, 0, -5.2],
+  targetChest: [0, 1.15, -5.2],
+};
 
 function resize() {
   const w = canvas.clientWidth || canvas.parentElement.clientWidth;
   const h = canvas.clientHeight || canvas.parentElement.clientHeight;
   if (!w || !h) return;
   renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  bloom.resolution.set(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
@@ -301,76 +372,73 @@ window.addEventListener("resize", resize);
 new ResizeObserver(resize).observe(canvas.parentElement);
 resize();
 
-// ── Data load ────────────────────────────────────────────────────────────
+// ── Data ─────────────────────────────────────────────────────────────────
 async function fetchJson(url) {
   const r = await fetch(url, { cache: "no-cache" });
-  if (!r.ok) throw new Error(`${url} → ${r.status}`);
+  if (!r.ok) throw new Error(`${url} ${r.status}`);
   return r.json();
 }
 
 async function boot() {
   const empty = document.getElementById("emptyHint");
   try {
-    const [reg, uuidData, spells, glbPack] = await Promise.all([
-      fetchJson(API.registry),
-      fetchJson(API.uuids),
-      fetchJson(API.spells),
-      fetchJson(API.glb),
+    await vfxLib.init().catch(() => null);
+    const [cat, reg, uuids, glb, spells] = await Promise.all([
+      fetchJson(`${VFX_ORIGIN}/assets/catalog.json`).catch(() => ({ effects: [] })),
+      fetchJson("./api/v1/3dfx-registry.json").catch(() => ({ effects: {} })),
+      fetchJson("./api/v1/3dfx-uuids.json").catch(() => ({ uuids: {} })),
+      fetchJson("./api/v1/vfx-production-glb.json").catch(() => ({ meshes: [] })),
+      fetchJson("./api/v1/vfx-spells.json").catch(() => ({ spells: {} })),
     ]);
-    DB.effects = reg.effects || {};
+    DB.catalog = cat.effects || cat.items || [];
+    if (!Array.isArray(DB.catalog) && cat.effects && typeof cat.effects === "object") {
+      DB.catalog = Object.values(cat.effects);
+    }
+    DB.reg = reg.effects || {};
+    DB.uuids = uuids.uuids || {};
+    DB.glb = glb.meshes || [];
     DB.spells = spells.spells || {};
-    DB.uuids = uuidData.uuids || {};
-    DB.glb = glbPack.meshes || [];
-    for (const m of DB.glb) {
-      for (const eid of m.effectIds || []) DB.effectToGlb.set(eid, m);
-    }
-    // attach uuids onto defs
-    for (const [id, def] of Object.entries(DB.effects)) {
+
+    // stamp UUIDs
+    for (const [id, def] of Object.entries(DB.reg)) {
       def.id = def.id || id;
-      def.grudgeUuid = DB.uuids[id] || def.grudgeUuid || null;
-      def._source = "registry";
+      def.grudgeUuid = DB.uuids[id] || def.grudgeUuid;
     }
-    for (const [id, def] of Object.entries(DB.spells)) {
-      def.id = def.id || id;
-      def.grudgeUuid = DB.uuids[id] || def.grudgeUuid || null;
-      def._source = "spell";
-    }
-    for (const m of DB.glb) {
-      m.grudgeUuid = m.grudgeUuid || `GRDG-3DFX-PROD-${m.id.toUpperCase()}`;
-      m._source = "glb";
-    }
-    const n = Object.keys(DB.effects).length + Object.keys(DB.spells).length + DB.glb.length;
-    document.getElementById("countBadge").textContent = `${n} items · ${DB.glb.length} prod GLB`;
-    document.getElementById("stCount").textContent = `${n} items`;
-    empty.textContent = "Pick an effect, spell, or production GLB";
+    for (const m of DB.glb) m.grudgeUuid = m.grudgeUuid || `GRDG-3DFX-PROD-${m.id.toUpperCase()}`;
+
+    const n = SKILLS.length + DB.catalog.length + ADVANCED_PRESETS.length + DB.glb.length + Object.keys(DB.reg).length;
+    document.getElementById("countBadge").textContent = `${n} · skillswrite live`;
+    empty.textContent = "Pick a skill (same stack as vfxgrudge)";
     buildCats();
-    renderLists();
-    // auto-select first production GLB explosion or first effect
-    const firstGlb = DB.glb.find((m) => m.id === "explosion") || DB.glb[0];
-    if (firstGlb) selectItem({ kind: "glb", data: firstGlb });
-    else {
-      const firstId = Object.keys(DB.effects)[0];
-      if (firstId) selectItem({ kind: "effect", data: DB.effects[firstId] });
-    }
+    renderAll();
+    // auto-play signature cast
+    selectItem({ kind: "skill", data: SKILLS[0] });
   } catch (e) {
     console.error(e);
-    empty.textContent = `Failed to load catalogs: ${e.message}`;
-    document.getElementById("countBadge").textContent = "error";
+    empty.innerHTML = `Boot failed: ${escapeHtml(e.message)}<br><span class="note">Need skillswrite from ${VFX_ORIGIN}</span>`;
   }
 }
 
-// ── UI lists ─────────────────────────────────────────────────────────────
-function buildCats() {
-  const regCats = new Set(["all"]);
-  for (const d of Object.values(DB.effects)) if (d.category) regCats.add(d.category);
-  const spellCats = new Set(["all"]);
-  for (const d of Object.values(DB.spells)) if (d.category) spellCats.add(d.category);
-  fillChips("catsEffects", [...regCats]);
-  fillChips("catsSpells", [...spellCats]);
+// ── UI ───────────────────────────────────────────────────────────────────
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function shortUuid(u) {
+  if (!u) return "—";
+  return u.length > 14 ? u.slice(0, 12) + "…" : u;
 }
 
-function fillChips(elId, cats) {
-  const el = document.getElementById(elId);
+function buildCats() {
+  const packs = new Set(["all"]);
+  for (const e of DB.catalog) packs.add(e.pack || e.category || "misc");
+  fillChips("catsLib", [...packs]);
+  const regCats = new Set(["all"]);
+  for (const e of Object.values(DB.reg)) if (e.category) regCats.add(e.category);
+  fillChips("catsReg", [...regCats]);
+}
+
+function fillChips(id, cats) {
+  const el = document.getElementById(id);
   el.innerHTML = "";
   for (const c of cats) {
     const b = document.createElement("button");
@@ -378,89 +446,194 @@ function fillChips(elId, cats) {
     b.className = "chip" + (c === "all" ? " active" : "");
     b.dataset.cat = c;
     b.textContent = c;
-    b.addEventListener("click", () => {
+    b.onclick = () => {
       el.querySelectorAll(".chip").forEach((x) => x.classList.remove("active"));
       b.classList.add("active");
       state.cat = c;
-      renderLists();
-    });
+      renderAll();
+    };
     el.appendChild(b);
   }
 }
 
-function matchQ(text, q) {
+function match(text, q) {
   if (!q) return true;
-  return String(text || "").toLowerCase().includes(q);
+  return String(text).toLowerCase().includes(q);
 }
 
-function renderLists() {
-  const qE = document.getElementById("qEffects").value.trim().toLowerCase();
-  const qS = document.getElementById("qSpells").value.trim().toLowerCase();
+function renderAll() {
+  const qS = document.getElementById("qSkills").value.trim().toLowerCase();
+  const qL = document.getElementById("qLib").value.trim().toLowerCase();
+  const qA = document.getElementById("qAdv").value.trim().toLowerCase();
   const qG = document.getElementById("qGlb").value.trim().toLowerCase();
+  const qR = document.getElementById("qReg").value.trim().toLowerCase();
 
-  const listE = document.getElementById("listEffects");
-  listE.innerHTML = "";
-  for (const def of Object.values(DB.effects).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (state.tab === "effects" && state.cat !== "all" && def.category !== state.cat) continue;
-    if (!matchQ(`${def.name} ${def.id} ${def.grudgeUuid} ${(def.tags || []).join(" ")}`, qE)) continue;
-    listE.appendChild(makeItem(def, "effect"));
+  const listSkills = document.getElementById("listSkills");
+  listSkills.innerHTML = "";
+  for (const s of SKILLS) {
+    if (!match(`${s.name} ${s.id} ${s.uuid} ${s.shaderKey || ""} ${s.key}`, qS)) continue;
+    listSkills.appendChild(makeRow(s, "skill", s.color, s.cat, s.uuid));
   }
 
-  const listS = document.getElementById("listSpells");
-  listS.innerHTML = "";
-  for (const def of Object.values(DB.spells).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (state.tab === "spells" && state.cat !== "all" && def.category !== state.cat) continue;
-    if (!matchQ(`${def.name} ${def.id} ${def.grudgeUuid} ${(def.tags || []).join(" ")}`, qS)) continue;
-    listS.appendChild(makeItem(def, "spell"));
+  const listLib = document.getElementById("listLib");
+  listLib.innerHTML = "";
+  for (const e of DB.catalog) {
+    const pack = e.pack || e.category || "misc";
+    if (state.tab === "library" && state.cat !== "all" && pack !== state.cat) continue;
+    if (!match(`${e.name} ${e.id} ${pack} ${(e.tags || []).join(" ")}`, qL)) continue;
+    const col = e.colors?.primary || "#4a9eff";
+    listLib.appendChild(makeRow(e, "library", col, pack, e.grudgeUuid || DB.uuids[e.id]));
   }
 
-  const listG = document.getElementById("listGlb");
-  listG.innerHTML = "";
+  const listAdv = document.getElementById("listAdv");
+  listAdv.innerHTML = "";
+  for (const p of ADVANCED_PRESETS) {
+    if (!match(`${p.name} ${p.id} ${p.category} ${p.description}`, qA)) continue;
+    listAdv.appendChild(makeRow(
+      { ...p, grudgeUuid: `GRDG-3DFX-ADV-${p.id.toUpperCase()}` },
+      "advanced",
+      p.defaults?.color || "#66ccff",
+      p.category,
+      `GRDG-3DFX-ADV-${p.id.toUpperCase()}`,
+    ));
+  }
+
+  const listGlb = document.getElementById("listGlb");
+  listGlb.innerHTML = "";
   for (const m of DB.glb) {
-    if (!matchQ(`${m.name} ${m.id} ${m.grudgeUuid} ${m.path} ${(m.tags || []).join(" ")}`, qG)) continue;
-    listG.appendChild(makeItem(m, "glb"));
+    if (!match(`${m.name} ${m.id} ${m.path} ${m.grudgeUuid}`, qG)) continue;
+    listGlb.appendChild(makeRow(m, "glb", "#d4a84b", m.kind, m.grudgeUuid));
+  }
+
+  const listReg = document.getElementById("listReg");
+  listReg.innerHTML = "";
+  for (const e of Object.values(DB.reg).sort((a, b) => (a.name || "").localeCompare(b.name || ""))) {
+    if (state.tab === "registry" && state.cat !== "all" && e.category !== state.cat) continue;
+    if (!match(`${e.name} ${e.id} ${e.grudgeUuid} ${(e.tags || []).join(" ")}`, qR)) continue;
+    listReg.appendChild(makeRow(e, "registry", e.colors?.primary || "#d4a84b", e.category, e.grudgeUuid));
   }
 }
 
-function makeItem(data, kind) {
+function makeRow(data, kind, color, meta, uuid) {
   const el = document.createElement("div");
   el.className = "item";
-  if (state.selected && state.selected.data.id === data.id && state.selected.kind === kind) el.classList.add("active");
-  const color = CAT_COLOR[data.category] || CAT_COLOR[data.kind] || "#d4a84b";
+  if (state.selected?.data?.id === data.id && state.selected?.kind === kind &&
+      state.selected?.data?.shaderKey === data.shaderKey) el.classList.add("active");
   el.innerHTML = `
     <span class="dot" style="color:${color};background:${color}"></span>
     <div>
       <div class="name">${escapeHtml(data.name || data.id)}</div>
-      <div class="meta">${escapeHtml(data.category || data.kind || kind)} · ${escapeHtml(data.id)}</div>
+      <div class="meta">${escapeHtml(meta || kind)}${data.key ? ` · ${escapeHtml(data.key)}` : ""} · ${escapeHtml(data.id)}</div>
     </div>
-    <div class="uuid" title="${escapeHtml(data.grudgeUuid || "")}">${escapeHtml(shortUuid(data.grudgeUuid))}</div>
+    <div class="uuid" title="${escapeHtml(uuid || "")}">${escapeHtml(shortUuid(uuid))}</div>
   `;
-  el.addEventListener("click", () => selectItem({ kind, data }));
+  el.onclick = () => selectItem({ kind, data });
   return el;
 }
 
-function shortUuid(u) {
-  if (!u) return "—";
-  return u.length > 14 ? u.slice(0, 12) + "…" : u;
-}
-function escapeHtml(s) {
-  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// ── Cast / play ──────────────────────────────────────────────────────────
+function clearActive() {
+  try { state.active?.dispose?.(); } catch {}
+  state.active = null;
+  try { state.libFx?.stop?.() || state.libFx?.dispose?.(); } catch {}
+  state.libFx = null;
+  try { state.advHandle?.stop?.() || state.advHandle?.dispose?.(); } catch {}
+  state.advHandle = null;
+  for (const m of state.mixers) { try { m.stopAllAction(); } catch {} }
+  state.mixers = [];
+  if (state.glbRoot) {
+    fxRoot.remove(state.glbRoot);
+    state.glbRoot.traverse((o) => {
+      o.geometry?.dispose?.();
+      const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+      for (const mat of mats) { mat.map?.dispose?.(); mat.dispose?.(); }
+    });
+    state.glbRoot = null;
+  }
+  // clear orphan skillswrite groups under fxRoot / scene that spells attach
+  while (fxRoot.children.length) fxRoot.remove(fxRoot.children[0]);
 }
 
-// ── Selection / preview ──────────────────────────────────────────────────
+function buildSkillOpts(id, data) {
+  const a = ANCHORS;
+  const base = {
+    origin: a.hand,
+    target: a.targetChest,
+    pos: a.targetGround,
+    center: a.targetGround,
+    dir: [0, 0, -1],
+    dist: 5.5,
+  };
+  if (id === "ShaderEffect") {
+    return { ...base, key: data.shaderKey || "fire", pos: a.targetGround };
+  }
+  if (id === "FireAura") return { origin: a.hand };
+  if (id === "FlameBody") return { origin: a.caster };
+  if (id === "Turret") {
+    return {
+      from: [a.hand[0], 1.3, a.hand[2]],
+      landing: [a.targetGround[0] * 0.55, 0, a.targetGround[2] * 0.55],
+      target: a.targetChest,
+    };
+  }
+  if (id === "Shockwave") return { center: a.caster, dir: [0, 0, -1], dist: 5.5 };
+  if (id === "Impact" || id === "FireBurst" || id === "IceLightningImpact") {
+    return { pos: a.targetGround, big: true, kind: id === "FireBurst" ? "fire" : "default" };
+  }
+  if (id === "EarthWave" || id === "EarthWall" || id === "Roots") {
+    return { origin: a.caster, target: a.targetGround };
+  }
+  return base;
+}
+
+function castSkill(data) {
+  const id = data.id;
+  const Cls = CLASS_MAP[id];
+  if (!Cls) throw new Error(`Unknown spell ${id}`);
+  const opts = buildSkillOpts(id, data);
+
+  let attachGroup = null;
+  let spell;
+  if (id === "FireAura") {
+    attachGroup = new THREE.Group();
+    const o = opts.origin || ANCHORS.hand;
+    attachGroup.position.set(o[0], o[1] ?? 1.2, o[2]);
+    scene.add(attachGroup);
+    spell = new FireAura(attachGroup, opts);
+  } else if (id === "Impact" || id === "FireBurst" || id === "IceLightningImpact") {
+    spell = new Cls(scene, opts);
+  } else if (id === "ShaderEffect") {
+    spell = new ShaderEffect(scene, { ...opts, key: data.shaderKey || "fire" });
+  } else {
+    spell = new Cls(scene, opts);
+  }
+
+  return {
+    spell,
+    get finished() { return !!spell.finished; },
+    update(dt) { spell.update?.(dt); },
+    dispose() {
+      try { spell.dispose?.(); } catch {}
+      if (attachGroup) scene.remove(attachGroup);
+    },
+  };
+}
+
 async function selectItem(sel) {
   state.selected = sel;
-  renderLists();
+  renderAll();
   const d = sel.data;
   document.getElementById("emptyHint").style.display = "none";
   document.getElementById("title").textContent = d.name || d.id;
-  document.getElementById("desc").textContent = d.description || d.notes || `${sel.kind} · production preview`;
-  document.getElementById("uuid").textContent = d.grudgeUuid || "—";
-  document.getElementById("hudLeft").textContent = `${d.name || d.id} · ${d.grudgeUuid || "no uuid"}`;
+  document.getElementById("desc").textContent =
+    d.description || `${sel.kind} runtime · ${d.id}`;
+  const uuid = d.uuid || d.grudgeUuid || DB.uuids[d.id] || "—";
+  document.getElementById("uuid").textContent = uuid;
+  document.getElementById("hudLeft").textContent = `${d.name || d.id} · ${uuid}`;
 
   const tags = document.getElementById("tags");
   tags.innerHTML = "";
-  for (const t of d.tags || []) {
+  for (const t of d.tags || [sel.kind, d.cat || d.category || d.kind].filter(Boolean)) {
     const s = document.createElement("span");
     s.className = "tag";
     s.textContent = t;
@@ -468,278 +641,169 @@ async function selectItem(sel) {
   }
 
   const details = document.getElementById("details");
-  const rows = [
+  details.innerHTML = [
+    ["runtime", sel.kind],
     ["id", d.id],
-    ["source", d._source || sel.kind],
-    ["category", d.category || d.kind || "—"],
-    ["shader", d.shader || "—"],
-    ["duration", d.timing?.duration != null ? `${d.timing.duration}s` : "—"],
-    ["loop", d.timing?.loop != null ? String(d.timing.loop) : "—"],
-  ];
-  details.innerHTML = rows.map(([k, v]) => `<b>${escapeHtml(k)}</b><span>${escapeHtml(v)}</span>`).join("");
+    ["category", d.cat || d.category || d.kind || "—"],
+    ["hotkey", d.key || "—"],
+    ["shader", d.shaderKey || d.shader || "—"],
+    ["format", d.format || (sel.kind === "glb" ? "glb" : "spell")],
+  ].map(([k, v]) => `<b>${escapeHtml(k)}</b><span>${escapeHtml(v)}</span>`).join("");
 
-  // CDN block
-  const mesh = sel.kind === "glb" ? d : DB.effectToGlb.get(d.id) || null;
+  // CDN
+  const mesh = sel.kind === "glb" ? d : DB.glb.find((m) => (m.effectIds || []).includes(d.id));
   const cdnBlock = document.getElementById("cdnBlock");
   if (mesh?.path) {
     const url = `${CDN}/${mesh.path.replace(/^\//, "")}`;
     cdnBlock.hidden = false;
     document.getElementById("cdnUrl").textContent = url;
     document.getElementById("btnOpenCdn").href = url;
-    document.getElementById("glbNote").textContent = mesh.notes || `SI target max dim ≈ ${mesh.siMaxM || 2} m · kind ${mesh.kind || "—"}`;
-    document.getElementById("btnLoadGlb").onclick = () => loadGlb(url, mesh.siMaxM || 2);
   } else {
     cdnBlock.hidden = true;
   }
 
-  document.getElementById("snippet").textContent = buildSnippet(d, mesh);
-  document.getElementById("stMode").textContent = mesh ? "mode GLB" : "mode procedural";
-
-  clearPreview();
-  if (mesh?.path) {
-    await loadGlb(`${CDN}/${mesh.path.replace(/^\//, "")}`, mesh.siMaxM || 2);
-  } else {
-    spawnProcedural(d);
-  }
+  document.getElementById("snippet").textContent = buildSnippet(sel, uuid, mesh);
+  await playSelection(sel);
 }
 
-function buildSnippet(d, mesh) {
-  const uuid = d.grudgeUuid || "GRDG-3DFX-…";
-  if (mesh?.path) {
-    return `// Grudge UUID: ${uuid}\n// CDN GLB\nconst url = "${CDN}/${mesh.path}";\n// three.js: GLTFLoader.load(url, …)\n// SI scale target max dim ≈ ${mesh.siMaxM || 2} m`;
+function buildSnippet(sel, uuid, mesh) {
+  if (sel.kind === "skill") {
+    const sk = sel.data.shaderKey ? `, shaderKey: "${sel.data.shaderKey}"` : "";
+    return `// ${uuid}\n// skillswrite (vfxgrudge stack)\nimport { ${sel.data.id} } from "…/skillswrite/src/index.js";\nconst spell = new ${sel.data.id}(scene, { /* anchors */${sk} });\n// loop: spell.update(dt); if (spell.finished) spell.dispose();`;
   }
-  return `// Grudge UUID: ${uuid}\n// Registry id: ${d.id}\n// import { loadEffectByUUID } from '/examples/3dfx/grudge-3dfx-loader.js'\nconst fx = await loadEffectByUUID("${uuid}");`;
+  if (sel.kind === "library") {
+    return `// ${uuid}\n// VFXLibrary catalog\nconst vfx = new VFXLibrary({ THREE, baseUrl: "${VFX_ORIGIN}/assets/" });\nawait vfx.init();\nconst fx = await vfx.play("${sel.data.id}", { parent: scene });`;
+  }
+  if (sel.kind === "advanced") {
+    return `// ${uuid}\n// AdvancedFX\nconst adv = new AdvancedFX(THREE, scene);\nadv.play("${sel.data.id}", { origin, target });`;
+  }
+  if (mesh?.path) {
+    return `// ${uuid}\nconst url = "${CDN}/${mesh.path}";\n// GLTFLoader + SI normalize`;
+  }
+  if (sel.kind === "registry") {
+    const map = REG_TO_SKILL[sel.data.id];
+    return `// ${uuid}\n// ObjectStore registry → skillswrite:${map || "?"}\n// loadEffectByUUID("${uuid}")`;
+  }
+  return `// ${uuid}`;
 }
 
-function clearPreview() {
-  for (const m of state.mixers) {
-    try { m.stopAllAction(); } catch {}
-  }
-  state.mixers = [];
-  while (fxRoot.children.length) {
-    const c = fxRoot.children[0];
-    fxRoot.remove(c);
-    c.traverse?.((o) => {
-      if (o.geometry) o.geometry.dispose?.();
-      if (o.material) {
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        for (const mat of mats) {
-          mat.map?.dispose?.();
-          mat.dispose?.();
-        }
+async function playSelection(sel) {
+  clearActive();
+  state.playing = true;
+  document.getElementById("btnPause").textContent = "Pause";
+  const d = sel.data;
+  try {
+    if (sel.kind === "skill") {
+      state.active = castSkill(d);
+      document.getElementById("statusBar").textContent = `mode skillswrite · ${d.id}`;
+    } else if (sel.kind === "library") {
+      // VFXLibrary play
+      const fx = await vfxLib.play(d.id, {
+        parent: fxRoot,
+        position: new THREE.Vector3(...ANCHORS.targetGround),
+      });
+      state.libFx = fx;
+      document.getElementById("statusBar").textContent = `mode VFXLibrary · ${d.id}`;
+    } else if (sel.kind === "advanced") {
+      const origin = new THREE.Vector3(...ANCHORS.hand);
+      const target = new THREE.Vector3(...ANCHORS.targetChest);
+      state.advHandle = advanced.play(d.id, {
+        origin,
+        target,
+        color: d.defaults?.color,
+        ...d.defaults,
+      });
+      document.getElementById("statusBar").textContent = `mode AdvancedFX · ${d.id}`;
+    } else if (sel.kind === "glb") {
+      await loadGlb(`${CDN}/${d.path.replace(/^\//, "")}`, d.siMaxM || 2);
+      document.getElementById("statusBar").textContent = `mode R2 GLB · ${d.id}`;
+    } else if (sel.kind === "registry") {
+      // Prefer skillswrite mapping, else try library id, else spell def visual via skill
+      const skillId = REG_TO_SKILL[d.id];
+      if (skillId && CLASS_MAP[skillId]) {
+        const fake = { id: skillId, name: d.name, shaderKey: d.shader === "lightning" ? "lightning" : d.shader === "fire" ? "fire" : "arcane" };
+        state.active = castSkill(fake);
+        document.getElementById("statusBar").textContent = `mode registry→skillswrite:${skillId}`;
+      } else if (DB.catalog.some((c) => c.id === d.id)) {
+        const fx = await vfxLib.play(d.id, { parent: fxRoot, position: new THREE.Vector3(...ANCHORS.targetGround) });
+        state.libFx = fx;
+        document.getElementById("statusBar").textContent = `mode registry→library`;
+      } else {
+        // map category to shader effect
+        const key = /ice|frost/.test(d.category) ? "frost"
+          : /lightning/.test(d.category) ? "lightning"
+          : /fire/.test(d.category) ? "fire"
+          : /magic|arcane/.test(d.category) ? "arcane"
+          : "burst";
+        state.active = castSkill({ id: "ShaderEffect", shaderKey: key });
+        document.getElementById("statusBar").textContent = `mode registry→ShaderEffect:${key}`;
       }
-    });
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById("statusBar").textContent = `cast error: ${e.message}`;
+    document.getElementById("copyMsg").textContent = e.message;
+    document.getElementById("copyMsg").className = "msg err";
   }
-  state.proc = null;
-  state.glbRoot = null;
 }
 
 async function loadGlb(url, targetMaxM = 2) {
-  clearPreview();
-  document.getElementById("stMode").textContent = "mode loading GLB…";
-  try {
-    const gltf = await loader.loadAsync(url);
-    const root = gltf.scene || gltf.scenes?.[0];
-    if (!root) throw new Error("empty gltf");
-    // SI normalize
-    const box = new THREE.Box3().setFromObject(root);
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z) || 1;
-    const s = targetMaxM / maxDim;
-    root.scale.setScalar(s);
-    box.setFromObject(root);
-    const center = box.getCenter(new THREE.Vector3());
-    root.position.sub(center);
-    root.position.y -= box.min.y * 0; // keep after center
-    // re-ground feet
-    box.setFromObject(root);
-    root.position.y -= box.min.y;
-    fxRoot.add(root);
-    state.glbRoot = root;
-    if (gltf.animations?.length) {
-      const mixer = new THREE.AnimationMixer(root);
-      for (const clip of gltf.animations) {
-        const a = mixer.clipAction(clip);
-        a.play();
-      }
-      state.mixers.push(mixer);
-    }
-    document.getElementById("stMode").textContent = `mode GLB · ${gltf.animations?.length || 0} clips`;
-    controls.target.set(0, Math.max(0.6, targetMaxM * 0.35), 0);
-  } catch (e) {
-    console.warn("GLB load failed, procedural fallback", e);
-    document.getElementById("stMode").textContent = "mode GLB failed → procedural";
-    if (state.selected?.data) spawnProcedural(state.selected.data);
-  }
-}
-
-function spawnProcedural(def) {
-  clearPreview();
-  const color = new THREE.Color(def.colors?.primary || CAT_COLOR[def.category] || "#d4a84b");
-  const secondary = new THREE.Color(def.colors?.secondary || color).offsetHSL(0, 0, 0.15);
-  const group = new THREE.Group();
-  fxRoot.add(group);
-  state.proc = { group, color, secondary, t: 0, def, particles: null, core: null };
-
-  // Core
-  const core = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.35, 2),
-    new THREE.MeshStandardMaterial({
-      color,
-      emissive: color,
-      emissiveIntensity: 1.4,
-      metalness: 0.2,
-      roughness: 0.35,
-      transparent: true,
-      opacity: 0.95,
-    }),
-  );
-  core.position.y = 1.0;
-  group.add(core);
-  state.proc.core = core;
-
-  // Ring / aura
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(0.85, 0.04, 12, 48),
-    new THREE.MeshBasicMaterial({ color: secondary, transparent: true, opacity: 0.75 }),
-  );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.y = 0.05;
-  group.add(ring);
-
-  // Particles
-  const count = Math.min(800, def.particles?.count || 220);
-  const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(count * 3);
-  const vel = new Float32Array(count * 3);
-  const cat = (def.category || "").toLowerCase();
-  for (let i = 0; i < count; i++) {
-    const i3 = i * 3;
-    const r = 0.2 + Math.random() * 1.2;
-    const a = Math.random() * Math.PI * 2;
-    pos[i3] = Math.cos(a) * r;
-    pos[i3 + 1] = 0.2 + Math.random() * 1.8;
-    pos[i3 + 2] = Math.sin(a) * r;
-    if (cat === "ice" || cat === "blizzard") {
-      vel[i3] = (Math.random() - 0.5) * 0.4;
-      vel[i3 + 1] = -0.6 - Math.random() * 1.2;
-      vel[i3 + 2] = (Math.random() - 0.5) * 0.4;
-    } else if (cat === "lightning") {
-      vel[i3] = (Math.random() - 0.5) * 2;
-      vel[i3 + 1] = (Math.random() - 0.5) * 2;
-      vel[i3 + 2] = (Math.random() - 0.5) * 2;
-    } else {
-      vel[i3] = (Math.random() - 0.5) * 0.6;
-      vel[i3 + 1] = 0.4 + Math.random() * 1.4;
-      vel[i3 + 2] = (Math.random() - 0.5) * 0.6;
-    }
-  }
-  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const pts = new THREE.Points(
-    geo,
-    new THREE.PointsMaterial({
-      color,
-      size: def.particles?.size || 0.08,
-      transparent: true,
-      opacity: 0.85,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      sizeAttenuation: true,
-    }),
-  );
-  group.add(pts);
-  state.proc.particles = { pts, vel, count };
-
-  // Lightning bolts
-  if (cat === "lightning" || def.shader === "lightning") {
-    for (let b = 0; b < 3; b++) {
-      const ptsArr = [];
-      let y = 3.2;
-      let x = (Math.random() - 0.5) * 0.4;
-      let z = (Math.random() - 0.5) * 0.4;
-      for (let s = 0; s < 10; s++) {
-        ptsArr.push(new THREE.Vector3(x, y, z));
-        x += (Math.random() - 0.5) * 0.45;
-        z += (Math.random() - 0.5) * 0.45;
-        y -= 0.32;
-      }
-      const curve = new THREE.CatmullRomCurve3(ptsArr);
-      const tube = new THREE.Mesh(
-        new THREE.TubeGeometry(curve, 32, 0.025, 5, false),
-        new THREE.MeshBasicMaterial({ color: 0xffffaa, transparent: true, opacity: 0.9 }),
-      );
-      group.add(tube);
-    }
-  }
-
-  // Shockwave disc for nova/impact
-  if (/nova|shock|impact|aoe|meteor/i.test(`${def.id} ${def.name} ${(def.tags || []).join(" ")}`)) {
-    const disc = new THREE.Mesh(
-      new THREE.RingGeometry(0.3, 1.4, 48),
-      new THREE.MeshBasicMaterial({ color: secondary, transparent: true, opacity: 0.45, side: THREE.DoubleSide }),
-    );
-    disc.rotation.x = -Math.PI / 2;
-    disc.position.y = 0.04;
-    group.add(disc);
-    state.proc.disc = disc;
-  }
-
-  document.getElementById("stMode").textContent = "mode procedural";
-}
-
-function updateProcedural(dt) {
-  const p = state.proc;
-  if (!p) return;
-  p.t += dt;
-  if (p.core) {
-    p.core.rotation.y += dt * 1.2;
-    p.core.rotation.x += dt * 0.4;
-    const pulse = 1 + Math.sin(p.t * 4) * 0.08;
-    p.core.scale.setScalar(pulse);
-  }
-  if (p.disc) {
-    const s = 1 + (p.t % 1.2) * 1.6;
-    p.disc.scale.set(s, s, s);
-    p.disc.material.opacity = Math.max(0, 0.5 - (p.t % 1.2) * 0.4);
-  }
-  if (p.particles) {
-    const { pts, vel, count } = p.particles;
-    const arr = pts.geometry.attributes.position.array;
-    for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      arr[i3] += vel[i3] * dt;
-      arr[i3 + 1] += vel[i3 + 1] * dt;
-      arr[i3 + 2] += vel[i3 + 2] * dt;
-      if (arr[i3 + 1] < 0 || arr[i3 + 1] > 4 || Math.hypot(arr[i3], arr[i3 + 2]) > 3.5) {
-        const r = 0.2 + Math.random() * 0.8;
-        const a = Math.random() * Math.PI * 2;
-        arr[i3] = Math.cos(a) * r;
-        arr[i3 + 1] = 0.3 + Math.random() * 0.4;
-        arr[i3 + 2] = Math.sin(a) * r;
-      }
-    }
-    pts.geometry.attributes.position.needsUpdate = true;
+  const gltf = await gltfLoader.loadAsync(url);
+  const root = gltf.scene;
+  const box = new THREE.Box3().setFromObject(root);
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z) || 1;
+  root.scale.setScalar(targetMaxM / maxDim);
+  box.setFromObject(root);
+  const c = box.getCenter(new THREE.Vector3());
+  root.position.sub(c);
+  box.setFromObject(root);
+  root.position.y -= box.min.y;
+  root.position.z = -2.5;
+  fxRoot.add(root);
+  state.glbRoot = root;
+  if (gltf.animations?.length) {
+    const mixer = new THREE.AnimationMixer(root);
+    for (const clip of gltf.animations) mixer.clipAction(clip).play();
+    state.mixers.push(mixer);
   }
 }
 
 // ── Loop ─────────────────────────────────────────────────────────────────
 function tick() {
   requestAnimationFrame(tick);
-  const dt = Math.min(0.05, state.clock.getDelta());
+  const dt = Math.min(0.05, clock.getDelta());
   controls.update();
   if (state.playing) {
+    state.active?.update?.(dt);
+    if (state.active?.finished) {
+      // loop skills that finish once
+      if (state.selected?.kind === "skill" || state.selected?.kind === "registry") {
+        try { state.active.dispose(); } catch {}
+        state.active = null;
+        // auto-replay continuous demo
+        if (state.selected) playSelection(state.selected);
+      }
+    }
+    state.libFx?.update?.(dt);
+    advanced.update?.(dt);
+    state.advHandle?.update?.(dt);
     for (const m of state.mixers) m.update(dt);
-    updateProcedural(dt);
-    if (state.glbRoot) state.glbRoot.rotation.y += dt * 0.15;
+    vfxLib.update?.(dt);
+    if (state.glbRoot) state.glbRoot.rotation.y += dt * 0.12;
   }
-  renderer.render(scene, camera);
+  composer.render();
   state.frames++;
   const now = performance.now();
   if (now - state.lastFps > 500) {
     state.fps = Math.round((state.frames * 1000) / (now - state.lastFps));
     state.frames = 0;
     state.lastFps = now;
-    document.getElementById("stFps").textContent = `FPS ${state.fps}`;
+    const sb = document.getElementById("statusBar");
+    if (sb && !sb.textContent.startsWith("cast error")) {
+      const mode = sb.textContent.replace(/^FPS \d+ · /, "");
+      sb.textContent = `FPS ${state.fps} · ${mode.startsWith("mode") ? mode : "mode " + mode}`;
+    }
   }
 }
 tick();
@@ -753,68 +817,44 @@ document.querySelectorAll(".tab").forEach((tab) => {
     state.tab = tab.dataset.tab;
     state.cat = "all";
     document.getElementById(`pane-${state.tab}`).classList.add("active");
-    // reset chips active "all"
-    document.querySelectorAll(`#cats${state.tab === "spells" ? "Spells" : "Effects"} .chip`).forEach((c) => {
-      c.classList.toggle("active", c.dataset.cat === "all");
-    });
-    renderLists();
+    renderAll();
   });
 });
-
-for (const id of ["qEffects", "qSpells", "qGlb"]) {
-  document.getElementById(id).addEventListener("input", renderLists);
+for (const id of ["qSkills", "qLib", "qAdv", "qGlb", "qReg"]) {
+  document.getElementById(id).addEventListener("input", renderAll);
 }
-
-document.getElementById("btnPlay").addEventListener("click", () => {
+document.getElementById("btnReplay").onclick = () => state.selected && playSelection(state.selected);
+document.getElementById("btnPause").onclick = () => {
   state.playing = !state.playing;
-  document.getElementById("btnPlay").textContent = state.playing ? "Pause" : "Play";
-});
-document.getElementById("btnRestart").addEventListener("click", () => {
-  if (state.selected) selectItem(state.selected);
-});
-document.getElementById("btnGrid").addEventListener("click", () => {
+  document.getElementById("btnPause").textContent = state.playing ? "Pause" : "Play";
+};
+document.getElementById("btnGrid").onclick = () => {
   state.showGrid = !state.showGrid;
-  grid.visible = state.showGrid;
-  ground.visible = state.showGrid;
-});
-document.getElementById("btnResetCam").addEventListener("click", () => {
-  camera.position.set(3.2, 2.4, 4.2);
-  controls.target.set(0, 0.9, 0);
-  controls.update();
-});
-
-function copyText(text, msgEl) {
+  grid.visible = ground.visible = state.showGrid;
+};
+document.getElementById("btnResetCam").onclick = () => {
+  camera.position.set(4.2, 2.8, 5.6);
+  controls.target.set(0, 1.0, -1.5);
+};
+function copy(text) {
   navigator.clipboard.writeText(text).then(() => {
-    msgEl.textContent = "Copied";
-    msgEl.className = "msg ok";
-    setTimeout(() => { msgEl.textContent = ""; }, 1200);
-  }).catch(() => {
-    msgEl.textContent = "Copy failed";
-    msgEl.className = "msg err";
+    const m = document.getElementById("copyMsg");
+    m.textContent = "Copied";
+    m.className = "msg ok";
+    setTimeout(() => { m.textContent = ""; }, 1000);
   });
 }
-document.getElementById("btnCopyUuid").addEventListener("click", () => {
-  copyText(document.getElementById("uuid").textContent, document.getElementById("copyMsg"));
-});
-document.getElementById("btnCopyCdn").addEventListener("click", () => {
-  copyText(document.getElementById("cdnUrl").textContent, document.getElementById("copyMsg"));
-});
-document.getElementById("btnCopySnippet").addEventListener("click", () => {
-  copyText(document.getElementById("snippet").textContent, document.getElementById("copyMsg"));
-});
-
+document.getElementById("btnCopyUuid").onclick = () => copy(document.getElementById("uuid").textContent);
+document.getElementById("btnCopyCdn").onclick = () => copy(document.getElementById("cdnUrl").textContent);
+document.getElementById("btnCopySnippet").onclick = () => copy(document.getElementById("snippet").textContent);
 window.addEventListener("keydown", (e) => {
   if (e.target.matches("input,textarea")) return;
-  if (e.code === "Space") {
-    e.preventDefault();
-    document.getElementById("btnPlay").click();
-  } else if (e.code === "KeyR") document.getElementById("btnRestart").click();
-  else if (e.code === "KeyG") document.getElementById("btnGrid").click();
+  if (e.code === "Space") { e.preventDefault(); document.getElementById("btnReplay").click(); }
+  if (e.code === "KeyP") document.getElementById("btnPause").click();
+  if (e.code === "KeyG") document.getElementById("btnGrid").click();
 });
 
-// optional site nav (if present)
 try { await import("./js/nav.js"); } catch {}
-
 boot();
 </script>
 </body>
