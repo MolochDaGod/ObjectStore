@@ -802,7 +802,10 @@
 
     const starter = isStarterPattern(typeDef);
     const barSlots = starter ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
+    const labels = starter ? T0_SLOT_UI_LABELS : SLOT_UI_LABELS;
 
+    // Structure: label ABOVE the icon slot (not overlaid on top of the icon).
+    // Key number sits under the icon so the art stays clean (Unity/hotbar style).
     let html = '';
     barSlots.forEach((slotType, i) => {
       const slot = typeDef.slots.find((s) => s.type === slotType);
@@ -810,13 +813,18 @@
       const selectedId = selected[slotType];
       const skill = selectedId ? findSkill(typeDef, slotType, selectedId) : null;
       const icon = skill ? asset(skill.icon) : '';
+      const title = labels[slotType] || slotType;
+      const skillName = skill?.name || (isUnlocked ? 'Empty' : 'Locked');
 
-      html += `<div class="action-slot" data-type="${esc(slotType)}" style="${isUnlocked ? '' : 'opacity:0.4'}">
-        <div class="slot-num">${i + 1}</div>
-        ${skill
-          ? `<img src="${esc(icon)}" alt="${esc(skill.name)}" onerror="this.style.display='none'">`
-          : `<span style="color:var(--text-muted);font-size:1.5em;">${isUnlocked ? '—' : '🔒'}</span>`}
-        <div class="slot-label">${esc((starter ? T0_SLOT_UI_LABELS : SLOT_UI_LABELS)[slotType] || slotType)}</div>
+      html += `<div class="action-slot-wrap" data-type="${esc(slotType)}" title="${esc(title)}: ${esc(skillName)}">
+        <div class="slot-label-above">${esc(title)}</div>
+        <div class="action-slot" style="${isUnlocked ? '' : 'opacity:0.4'}">
+          ${skill
+            ? `<img src="${esc(icon)}" alt="${esc(skill.name)}" onerror="this.style.display='none'">`
+            : `<span class="slot-empty">${isUnlocked ? '—' : '🔒'}</span>`}
+        </div>
+        <div class="slot-key">${i + 1}</div>
+        <div class="slot-skill-name">${esc(skillName)}</div>
       </div>`;
     });
 
@@ -826,10 +834,13 @@
     const passiveLabel = passives.length
       ? parseAbilityName(passives[0]) || 'Passive'
       : '—';
-    html += `<div class="action-slot" data-type="passive" style="${passives.length ? '' : 'opacity:0.35;border-color:var(--stone)'}">
-      <div class="slot-num">5</div>
-      <span style="color:var(--text-muted);font-size:0.75em;text-align:center;padding:4px;line-height:1.2;">${esc(passiveLabel)}</span>
-      <div class="slot-label">${esc(SLOT_UI_LABELS.passive)}</div>
+    html += `<div class="action-slot-wrap" data-type="passive" title="${esc(SLOT_UI_LABELS.passive)}">
+      <div class="slot-label-above">${esc(SLOT_UI_LABELS.passive)}</div>
+      <div class="action-slot" style="${passives.length ? '' : 'opacity:0.35'}">
+        <span class="slot-empty" style="font-size:0.7em;padding:4px;text-align:center;line-height:1.15;">${esc(passiveLabel)}</span>
+      </div>
+      <div class="slot-key">5</div>
+      <div class="slot-skill-name">${esc(passiveLabel)}</div>
     </div>`;
 
     return html;

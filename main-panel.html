@@ -146,11 +146,56 @@
     .tree-node.passive .node-name { color:#6ec96e; }
     .tree-node.passive .node-type { background:rgba(110,201,110,0.12); color:#6ec96e; }
 
-    /* Canonical weapon skill slots (master-weaponSkills.json) */
-    .wst-action-bar-compact { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:12px 0; }
-    .wst-action-bar-compact .action-slot { width:48px; height:48px; border-radius:6px; border:2px solid #3a2a1a; background:#221710; position:relative; display:flex; align-items:center; justify-content:center; }
-    .wst-action-bar-compact .action-slot img { width:34px; height:34px; object-fit:contain; }
-    .wst-action-bar-compact .slot-num { position:absolute; top:-6px; left:-6px; width:16px; height:16px; border-radius:50%; background:#1a100a; border:1px solid var(--gold); font-size:8px; color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; }
+    /* Canonical weapon skill slots — label ABOVE icon (not overlaid on art) */
+    .wst-action-bar-compact { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0; align-items:flex-start; }
+    .wst-action-bar-compact .action-slot-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; width:88px; }
+    .wst-action-bar-compact .slot-label-above {
+      font-family:var(--font-display); font-size:8px; font-weight:700; letter-spacing:0.04em;
+      text-transform:uppercase; color:var(--gold); text-align:center; line-height:1.25;
+      min-height:2.4em; display:flex; align-items:flex-end; justify-content:center;
+      padding:0 2px;
+    }
+    .wst-action-bar-compact .action-slot {
+      width:52px; height:52px; border-radius:8px; border:2px solid #3a2a1a; background:#221710;
+      position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .wst-action-bar-compact .action-slot img { width:36px; height:36px; object-fit:contain; image-rendering:pixelated; }
+    .wst-action-bar-compact .slot-empty { color:var(--dim); font-size:1.25em; }
+    .wst-action-bar-compact .slot-key {
+      font-size:9px; font-weight:700; color:var(--gold); font-family:monospace;
+      width:18px; height:18px; border-radius:50%; border:1px solid var(--gold-dim);
+      display:flex; align-items:center; justify-content:center; background:#1a100a;
+    }
+    .wst-action-bar-compact .slot-skill-name {
+      font-size:8px; color:var(--muted); text-align:center; line-height:1.2;
+      max-width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    /* legacy .slot-num overlay — hidden if any old markup remains */
+    .wst-action-bar-compact .slot-num { display:none !important; }
+    .wst-action-bar-compact .slot-label { display:none !important; }
+
+    /* Crafting tab — full Puter suite embed */
+    .craft-embed-wrap { display:flex; flex-direction:column; gap:8px; height:calc(100vh - 180px); min-height:520px; }
+    .craft-embed-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:11px; color:var(--muted); }
+    .craft-embed-bar a { color:var(--gold); }
+    .craft-embed {
+      flex:1; width:100%; min-height:480px; border:2px solid #3a2a1a; border-radius:8px;
+      background:#0a0a10;
+    }
+
+    /* Equipped mesh strip (Unity paperdoll: only worn gear) */
+    .eq-mesh-strip {
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px;
+      padding:10px; background:rgba(0,0,0,0.25); border:1px solid rgba(212,175,55,0.12); border-radius:8px;
+    }
+    .eq-mesh-chip {
+      display:flex; align-items:center; gap:6px; padding:4px 8px; border-radius:6px;
+      border:1px solid #3a2a1a; background:#221710; font-size:10px; max-width:160px;
+    }
+    .eq-mesh-chip img { width:28px; height:28px; object-fit:contain; image-rendering:pixelated; }
+    .eq-mesh-chip .chip-slot { font-size:7px; color:var(--dim); text-transform:uppercase; letter-spacing:0.5px; }
+    .eq-mesh-chip .chip-name { color:var(--text); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px; }
+    .eq-mesh-empty { font-size:10px; color:var(--dim); padding:8px; }
     .wst-compact-cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:8px; }
     .wst-compact-cols .slot-header { text-align:center; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #3a2a1a; font-family:var(--font-display); font-size:9px; font-weight:700; text-transform:uppercase; color:var(--gold); }
     .wst-compact-cols .unlock-tag { display:block; font-size:8px; color:var(--dim); margin-top:3px; text-transform:none; font-weight:400; }
@@ -222,10 +267,13 @@
     return url;
   }
   const API_SOURCES = [
+    'https://info.grudge-studio.com/api/v1',
     'https://objectstore.grudge-studio.com/api/v1',
     'https://assets.grudge-studio.com/api/v1',
     './api/v1',  // local ObjectStore JSON fallback
   ];
+  /** Production Puter crafting suite (migrated into this panel as embed). */
+  const CRAFTING_SUITE_URL = 'https://grudge-crafting.puter.site/';
   const TABS = ['Equipment','Attributes','Skills','Crafting','Quests'];
   let activeTab = 'Equipment';
   let allItems = [], allRecipes = [], allAttributes = [], allMaterials = [];
@@ -246,13 +294,16 @@
   // Classes exist but players don't switch class — it's set at character creation
   // Class only affects armor material type for the demo display
 
-  // Equipment slot definitions — matches ObjectStore armor slotTypes
+  // Equipment slot definitions — Unity-style paperdoll (body mesh + weapons).
+  // Only MESH gear is auto-equipped / listed as "equipped meshes" (not bag junk).
   const ARMOR_SLOTS = ['Helm','Shoulder','Chest','Hands','Feet','Relic'];
   const WEAPON_SLOTS = ['Mainhand','Offhand'];
   const JEWELRY_SLOTS = ['Ring','Necklace'];
   const LEFT_SLOTS  = ARMOR_SLOTS;
   const RIGHT_SLOTS = [...WEAPON_SLOTS, ...JEWELRY_SLOTS];
   const ALL_SLOTS = [...LEFT_SLOTS, ...RIGHT_SLOTS];
+  /** Slots that drive character mesh visuals (Unity character equipment). */
+  const MESH_SLOTS = ['Helm','Shoulder','Chest','Hands','Feet','Mainhand','Offhand'];
 
   // Slot placeholder icons
   const SLOT_ICONS = {
@@ -393,45 +444,56 @@
   function getClassWeapons() { return ALL_WEAPON_CATS; }
   function getClassOffhands() { return ALL_OFFHAND_CATS; }
 
+  /** True if catalog item can appear on the character mesh paperdoll (Unity equip). */
+  function isMeshEquipmentItem(item) {
+    if (!item) return false;
+    const t = String(item.type || '').toLowerCase();
+    const cat = String(item.category || '').toLowerCase();
+    if (t === 'weapon' || t === 'tool' || t === 'offhand-tome' || t === 'shield') return true;
+    if (t === 'armor' || item.slotType) {
+      // Armor / jewelry with a body slot — mesh or attachment
+      const meshSlots = new Set(['Helm','Shoulder','Chest','Hands','Feet','Mainhand','Offhand','Relic','Ring','Necklace']);
+      if (item.slotType && meshSlots.has(item.slotType)) return true;
+    }
+    // Explicit 3D path from catalog
+    if (item.modelUrl || item.mesh || item.glb || item.model) return true;
+    // Skip pure consumables / materials
+    if (/food|potion|material|recipe|quest|currency/.test(t) || /food|potion|mat/.test(cat)) return false;
+    return false;
+  }
+
   // ── Demo Data Population ────────────────────────────────────────────
   function autoEquipDemo() {
-    // Clear previous
+    // Clear previous — only fill MESH gear (weapons + armor pieces), Unity-style
     Object.keys(equippedItems).forEach(k => delete equippedItems[k]);
 
     const mat = getClassArmorMaterial();
     const allowedWpns = getClassWeapons();
     const allowedOff = getClassOffhands();
 
-    // Equip armor: pick first T1 set piece in the right material for each slot
-    ARMOR_SLOTS.forEach(slot => {
-      const piece = allArmor.find(i => i.slotType === slot && i.material === mat && i.tier === 1);
+    // Body mesh armor only (Helm/Shoulder/Chest/Hands/Feet) — skip Relic unless mesh
+    ['Helm','Shoulder','Chest','Hands','Feet'].forEach(slot => {
+      const piece = allArmor.find(i =>
+        i.slotType === slot && i.material === mat && i.tier === 1 && isMeshEquipmentItem(i)
+      ) || allArmor.find(i => i.slotType === slot && i.tier === 1 && isMeshEquipmentItem(i));
       if (piece) equippedItems[slot] = piece.uuid;
     });
 
-    // Equip jewelry from armor data
-    JEWELRY_SLOTS.forEach(slot => {
-      const piece = allArmor.find(i => i.slotType === slot && i.material === mat && i.tier === 1);
-      if (piece) equippedItems[slot] = piece.uuid;
-    });
-
-    // Equip mainhand: first allowed weapon category T1
+    // Mainhand weapon mesh
     if (allowedWpns.length) {
-      const wpn = allItems.find(i => i.type === 'weapon' && allowedWpns.includes(i.category) && i.tier === 1);
+      const wpn = allItems.find(i =>
+        i.type === 'weapon' && allowedWpns.includes(i.category) && i.tier === 1 && isMeshEquipmentItem(i)
+      );
       if (wpn) equippedItems['Mainhand'] = wpn.uuid;
     }
 
-    // Equip offhand: shield/tome/dagger or gem relic
+    // Offhand mesh (shield / offhand weapon) — not random jewelry
     if (allowedOff.length) {
-      // Try weapon offhand first
-      const off = allItems.find(i => i.type === 'weapon' && allowedOff.includes(i.category) && i.tier === 1)
-        || allItems.find(i => allowedOff.includes(i.type) && i.tier === 1);
+      const off = allItems.find(i => i.type === 'weapon' && allowedOff.includes(i.category) && i.tier === 1 && isMeshEquipmentItem(i))
+        || allItems.find(i => (i.type === 'shield' || allowedOff.includes(i.type) || allowedOff.includes(i.category)) && i.tier === 1 && isMeshEquipmentItem(i));
       if (off) equippedItems['Offhand'] = off.uuid;
-      else {
-        // Gem relic from armor
-        const relic = allArmor.find(i => i.slotType === 'Offhand' && i.material === 'gem' && i.tier === 1);
-        if (relic) equippedItems['Offhand'] = relic.uuid;
-      }
     }
+    // Jewelry stays empty until player equips from bag (Unity: not auto-filled cosmetics)
   }
 
   function populateInventoryDemo() {
@@ -603,6 +665,11 @@
     // Try finding in weapons/items first, then armor
     const item = findItemByUuid(uuid) || findArmorItem(uuid);
     if (!item) return;
+    // Paperdoll only accepts mesh weapons / armor (Unity character equipment)
+    if (!isMeshEquipmentItem(item)) {
+      showError('Only mesh weapons and armor can equip to the paperdoll.');
+      return;
+    }
     const slot = findBestSlot(item);
     if (slot) {
       if (equippedItems[slot]) {
@@ -794,13 +861,19 @@
         <div class="eq-sum-item"><div class="eq-sum-val">${stats.block}%</div><div class="eq-sum-lbl">Block</div></div>
         <div class="eq-sum-item"><div class="eq-sum-val">${stats.speed.toFixed(1)}</div><div class="eq-sum-lbl">Speed</div></div>
       </div>
-      <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--dim);">Click equipped slot to unequip &middot; Click inventory item to equip &middot; <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" target="_blank" rel="noopener" style="font-size:10px;">Item Database &#8599;</a></div>
+      <div class="section-title" style="margin-top:14px;font-size:11px;">Equipped meshes</div>
+      ${renderEquippedMeshStrip()}
+      <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--dim);">Unity-style paperdoll: only worn weapons &amp; armor · bag is on the right · click slot to unequip · <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" target="_blank" rel="noopener" style="font-size:10px;">Item Database &#8599;</a></div>
     `;
   }
 
   function renderSlot(slotName) {
     const uuid = equippedItems[slotName];
-    const item = uuid ? findEquippedItem(uuid) : null;
+    let item = uuid ? findEquippedItem(uuid) : null;
+    // Unity paperdoll: only show mesh gear in slots (clear non-mesh junk)
+    if (item && !isMeshEquipmentItem(item) && MESH_SLOTS.includes(slotName)) {
+      item = null;
+    }
     const isEquipped = !!item;
     const tier = item ? item.tier : 0;
     const tierColor = TIER_COLORS[tier] || '#3a2a1a';
@@ -810,11 +883,36 @@
     const tierBadge = item
       ? `<span class="slot-tier" style="background:${tierColor};color:#000;">T${tier}</span>`
       : '';
-    return `<div class="eq-slot ${isEquipped ? 'equipped' : ''}" data-slot="${slotName}" data-uuid="${uuid||''}" style="${isEquipped ? 'border-color:'+tierColor : ''}">
+    return `<div class="eq-slot ${isEquipped ? 'equipped' : ''}" data-slot="${slotName}" data-uuid="${item ? uuid : ''}" style="${isEquipped ? 'border-color:'+tierColor : ''}" title="${isEquipped ? esc(item.name) : slotName + ' (empty)'}">
       ${tierBadge}
       ${iconHtml}
       <span class="slot-label">${slotName}</span>
     </div>`;
+  }
+
+  /** Unity-style strip: only currently equipped mesh weapons / armor pieces. */
+  function renderEquippedMeshStrip() {
+    const chips = [];
+    for (const slot of ALL_SLOTS) {
+      const uuid = equippedItems[slot];
+      if (!uuid) continue;
+      const item = findEquippedItem(uuid);
+      if (!item || !isMeshEquipmentItem(item)) continue;
+      const icon = item.iconUrl
+        ? `<img src="${fixIconUrl(item.iconUrl)}" alt="" onerror="this.style.display='none'">`
+        : `<span style="font-size:16px">${SLOT_ICONS[slot] || '◾'}</span>`;
+      chips.push(`<div class="eq-mesh-chip" data-slot="${slot}" data-uuid="${uuid}">
+        ${icon}
+        <div>
+          <div class="chip-slot">${slot}</div>
+          <div class="chip-name">${esc(item.name)}</div>
+        </div>
+      </div>`);
+    }
+    if (!chips.length) {
+      return `<div class="eq-mesh-strip"><div class="eq-mesh-empty">No mesh gear equipped — equip weapons / armor from inventory (right)</div></div>`;
+    }
+    return `<div class="eq-mesh-strip" title="Currently worn mesh equipment">${chips.join('')}</div>`;
   }
 
   // ── Attributes Tab ─────────────────────────────────────────────────
@@ -848,26 +946,33 @@ return `<div class="section-title">Attributes</div><p style="color:var(--muted)"
     return html;
   }
 
-  // ── Crafting Tab ───────────────────────────────────────────────────
+  // ── Crafting Tab (migrated Puter suite) ────────────────────────────
   function renderCraftingTab() {
-    const recipes = allRecipes.slice(0, 40);
-    return `<div class="section-title">Crafting Recipes (${allRecipes.length} total)</div>
-      <div style="font-size:10px;color:var(--dim);margin-bottom:10px;">Showing ${recipes.length} of ${allRecipes.length} — <a href="crafting.html" style="font-size:10px;">View all recipes →</a></div>` +
-      recipes.map(r => {
-        const resultItem = r.resultItemId ? findAnyItem(r.resultItemId) : null;
-        const iconUrl = resultItem?.iconUrl || '';
-        const iconHtml = iconUrl
-          ? `<img src="${esc(iconUrl)}" alt="${esc(r.resultName || r.name)}" style="width:36px;height:36px;object-fit:contain;image-rendering:pixelated;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2);padding:2px;flex-shrink:0;" onerror="this.style.display='none'">`
-          : '';
-        return `<div style="padding:10px;margin-bottom:6px;background:#1e1510;border-radius:8px;border-left:3px solid var(--gold);transition:all 0.15s;cursor:default;display:flex;gap:10px;align-items:flex-start;" onmouseenter="this.style.borderLeftColor='var(--gold-light)'" onmouseleave="this.style.borderLeftColor='var(--gold)'">
-          ${iconHtml}
-          <div>
-            <div style="font-weight:700;font-size:13px">${esc(r.resultName || r.name)}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(r.profession)} · ${esc(r.category)}</div>
-            <div style="font-size:10px;color:var(--dim);margin-top:4px">${(r.materials||[]).map(m=>`${esc(m.name)} ×${m.quantity}`).join(', ')}</div>
-          </div>
-        </div>`;
-      }).join('');
+    const catalogHint = allRecipes.length
+      ? `${allRecipes.length} recipes in ObjectStore catalog`
+      : 'loading catalog…';
+    // Full production crafting UI (Grudge ID · Railway bag · master recipes)
+    // hosted at grudge-crafting.puter.site — embedded here as the SSOT craft surface.
+    return `<div class="craft-embed-wrap">
+      <div class="craft-embed-bar">
+        <div>
+          <div class="section-title" style="margin:0 0 4px;border-left:3px solid var(--gold);padding-left:10px;">Crafting &amp; Professions</div>
+          <div style="font-size:10px;color:var(--dim);">${esc(catalogHint)} · account bag + per-character XP (Railway)</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="${CRAFTING_SUITE_URL}" target="_blank" rel="noopener">Open full window ↗</a>
+          <a href="https://docs.grudge-studio.com/crafting" target="_blank" rel="noopener">Docs</a>
+        </div>
+      </div>
+      <iframe
+        class="craft-embed"
+        title="Grudge Crafting Suite"
+        src="${CRAFTING_SUITE_URL}"
+        allow="clipboard-read; clipboard-write"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>`;
   }
 
   // ── Slot Interactions ──────────────────────────────────────────────
