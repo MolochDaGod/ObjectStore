@@ -211,14 +211,34 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-const VFX_ORIGIN = "https://vfx.grudge.studio";
-const ASSET_FALLBACK = "https://vfx-studio-sigma.vercel.app";
+const VFX_ORIGINS = [
+  "https://vfx.grudge.studio",
+  // Pages mirror ships Access-Control-Allow-Origin: * (Worker custom domain used to omit CORS on static ESM).
+  "https://grudge-vfx-studio.pages.dev",
+  "https://vfx-studio-sigma.vercel.app",
+];
 const CDN = "https://assets.grudge-studio.com";
 
+/** Cross-origin ESM import with fallbacks (CORS / CF edge cache). */
+async function importVfxModule(relPath) {
+  let lastErr;
+  for (const origin of VFX_ORIGINS) {
+    try {
+      return await import(`${origin}${relPath}`);
+    } catch (e) {
+      lastErr = e;
+      console.warn(`[3dfx-viewer] import failed ${origin}${relPath}`, e?.message || e);
+    }
+  }
+  throw lastErr || new Error(`Failed to import ${relPath} from all VFX origins`);
+}
+
 // skillswrite + library (ESM from live studio — same as vfxgrudge)
-const SpellLib = await import(`${VFX_ORIGIN}/skillswrite/src/index.js`);
-const { VFXLibrary } = await import(`${VFX_ORIGIN}/assets/three/VFXLibrary.js`);
-const { AdvancedFX, ADVANCED_PRESETS } = await import(`${VFX_ORIGIN}/src/advanced/AdvancedFX.js`);
+const SpellLib = await importVfxModule("/skillswrite/src/index.js");
+const { VFXLibrary } = await importVfxModule("/assets/three/VFXLibrary.js");
+const { AdvancedFX, ADVANCED_PRESETS } = await importVfxModule("/src/advanced/AdvancedFX.js");
+const VFX_ORIGIN = VFX_ORIGINS[0];
+const ASSET_FALLBACK = VFX_ORIGINS[2] || VFX_ORIGINS[0];
 
 const {
   setAssetBasePath,
