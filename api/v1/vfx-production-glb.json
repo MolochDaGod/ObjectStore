@@ -1,0 +1,202 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-07-29T00:00:00.000Z",
+  "description": "Production VFX GLB meshes on R2 CDN (assets.grudge-studio.com). Used by 3DFX viewer, Danger Room, and fleet combat.",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "never": [
+    "Do not load whole fireball.glb as a staff projectile — prefer orbs when present, or explosion/meteor for AoE."
+  ],
+  "meshes": [
+    {
+      "id": "explosion",
+      "name": "Explosion",
+      "grudgeUuid": "GRDG-3DFX-PROD-EXPLOSION",
+      "path": "models/vfx/explosion.glb",
+      "kind": "aoe",
+      "tags": ["fire", "aoe", "impact"],
+      "siMaxM": 2.4,
+      "effectIds": ["inferno", "hellfire", "energy_explosion", "meteor_impact"]
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning",
+      "grudgeUuid": "GRDG-3DFX-PROD-LIGHTNING",
+      "path": "models/vfx/lightning.glb",
+      "kind": "magic",
+      "tags": ["lightning", "electric"],
+      "siMaxM": 3.0,
+      "effectIds": ["chain_lightning", "thunderstrike", "ground_lightning"]
+    },
+    {
+      "id": "meteor",
+      "name": "Meteor",
+      "grudgeUuid": "GRDG-3DFX-PROD-METEOR",
+      "path": "models/vfx/meteor.glb",
+      "kind": "projectile",
+      "tags": ["fire", "meteor", "aoe"],
+      "siMaxM": 1.8,
+      "effectIds": ["meteor_impact", "meteor_hit"]
+    },
+    {
+      "id": "dragon",
+      "name": "Dragon",
+      "grudgeUuid": "GRDG-3DFX-PROD-DRAGON",
+      "path": "models/vfx/dragon.glb",
+      "kind": "projectile",
+      "tags": ["fire", "dragon"],
+      "siMaxM": 2.4,
+      "effectIds": ["hellfire"]
+    },
+    {
+      "id": "spell_glyph",
+      "name": "Spell Glyph",
+      "grudgeUuid": "GRDG-3DFX-PROD-SPELLGLYPH",
+      "path": "models/vfx/spell-glyph.glb",
+      "kind": "cast",
+      "tags": ["arcane", "cast", "tome"],
+      "siMaxM": 1.2,
+      "effectIds": ["arcane_burst", "casting_fire", "arcane_channeling"]
+    },
+    {
+      "id": "chaos_glyph",
+      "name": "Chaos Glyph",
+      "grudgeUuid": "GRDG-3DFX-PROD-CHAOSGLYPH",
+      "path": "models/vfx/chaos-glyph.glb",
+      "kind": "cast",
+      "tags": ["void", "cast"],
+      "siMaxM": 1.2,
+      "effectIds": ["void_rift", "chaos_orb"]
+    },
+    {
+      "id": "light_beam",
+      "name": "Light Beam",
+      "grudgeUuid": "GRDG-3DFX-PROD-LIGHTBEAM",
+      "path": "models/vfx/light-beam.glb",
+      "kind": "beam",
+      "tags": ["holy", "beam", "light"],
+      "siMaxM": 4.0,
+      "effectIds": ["holy_aura", "light_channeling", "blessing"]
+    },
+    {
+      "id": "energy_beam",
+      "name": "Energy Beam",
+      "grudgeUuid": "GRDG-3DFX-PROD-ENERGYBEAM",
+      "path": "models/vfx/energy-beam.glb",
+      "kind": "beam",
+      "tags": ["arcane", "beam"],
+      "siMaxM": 4.0,
+      "effectIds": ["arcane_burst"]
+    },
+    {
+      "id": "strawberry_strike",
+      "name": "Strawberry Strike",
+      "grudgeUuid": "GRDG-3DFX-PROD-STRAWBERRY",
+      "path": "models/vfx/strawberry-strike.glb",
+      "kind": "melee",
+      "tags": ["slash", "melee", "impact"],
+      "siMaxM": 2.2,
+      "effectIds": ["sword_slash", "spikes_attack"]
+    },
+    {
+      "id": "attack_slashes",
+      "name": "Attack Slashes",
+      "grudgeUuid": "GRDG-3DFX-PROD-SLASHES",
+      "path": "models/vfx/attack-slashes.glb",
+      "kind": "melee",
+      "tags": ["slash", "combat"],
+      "siMaxM": 2.0,
+      "effectIds": ["sword_slash"]
+    },
+    {
+      "id": "muzzle",
+      "name": "Muzzle Flash",
+      "grudgeUuid": "GRDG-3DFX-PROD-MUZZLE",
+      "path": "models/vfx/muzzle.glb",
+      "kind": "gun",
+      "tags": ["gun", "muzzle"],
+      "siMaxM": 0.8,
+      "effectIds": []
+    },
+    {
+      "id": "crystals",
+      "name": "Crystals",
+      "grudgeUuid": "GRDG-3DFX-PROD-CRYSTALS",
+      "path": "models/vfx/crystals.glb",
+      "kind": "prop",
+      "tags": ["ice", "frost"],
+      "siMaxM": 1.6,
+      "effectIds": ["frost_nova", "blizzard", "ice_ball", "frozen_orb"]
+    },
+    {
+      "id": "aoe_warning",
+      "name": "AoE Warning",
+      "grudgeUuid": "GRDG-3DFX-PROD-AOEWARN",
+      "path": "models/vfx/aoe-warning.glb",
+      "kind": "telegraph",
+      "tags": ["telegraph", "aoe"],
+      "siMaxM": 3.0,
+      "effectIds": ["shockwave"]
+    },
+    {
+      "id": "ring_green",
+      "name": "Ring Green",
+      "grudgeUuid": "GRDG-3DFX-PROD-RINGGREEN",
+      "path": "models/vfx/ring-green.glb",
+      "kind": "buff",
+      "tags": ["buff", "ring"],
+      "siMaxM": 2.0,
+      "effectIds": ["health_aura", "blessing"]
+    },
+    {
+      "id": "ring_red",
+      "name": "Ring Red",
+      "grudgeUuid": "GRDG-3DFX-PROD-RINGRED",
+      "path": "models/vfx/ring-red.glb",
+      "kind": "debuff",
+      "tags": ["debuff", "ring"],
+      "siMaxM": 2.0,
+      "effectIds": ["dark_aura"]
+    },
+    {
+      "id": "yellow_light",
+      "name": "Yellow Light",
+      "grudgeUuid": "GRDG-3DFX-PROD-YELLOWLIGHT",
+      "path": "models/vfx/yellow-light.glb",
+      "kind": "buff",
+      "tags": ["holy", "light"],
+      "siMaxM": 1.5,
+      "effectIds": ["holy_aura", "level_up"]
+    },
+    {
+      "id": "location",
+      "name": "Location Marker",
+      "grudgeUuid": "GRDG-3DFX-PROD-LOCATION",
+      "path": "models/vfx/location.glb",
+      "kind": "marker",
+      "tags": ["marker", "ui"],
+      "siMaxM": 1.0,
+      "effectIds": []
+    },
+    {
+      "id": "fireball_scene",
+      "name": "Fireball Scene (extract source — not a projectile)",
+      "grudgeUuid": "GRDG-3DFX-PROD-FIREBALLSCENE",
+      "path": "models/vfx/fireball.glb",
+      "kind": "prop",
+      "tags": ["fire", "source", "do-not-use-as-projectile"],
+      "siMaxM": 4.0,
+      "effectIds": ["flame_ball", "lava_orb"],
+      "notes": "Demo scene only. Prefer explosion / meteor for combat."
+    },
+    {
+      "id": "turret",
+      "name": "Turret",
+      "grudgeUuid": "GRDG-3DFX-PROD-TURRET",
+      "path": "models/vfx/turret.glb",
+      "kind": "utility",
+      "tags": ["gun", "deploy"],
+      "siMaxM": 1.4,
+      "effectIds": []
+    }
+  ]
+}
