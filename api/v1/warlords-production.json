@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-07-19",
+  "version": "1.1.0",
+  "updated": "2026-07-29",
   "title": "Warlords Production SSOT",
   "docs": {
     "markdown": "/docs/WARLORDS-PRODUCTION-SSOT.md",
@@ -9,11 +9,15 @@
   },
   "fleet": {
     "auth": "https://id.grudge-studio.com",
-    "gameState": "Railway Postgres",
+    "gameState": "Railway Postgres grudge-api-production-0d46",
+    "gameApi": "https://grudge-api-production-0d46.up.railway.app",
     "catalogs": "https://objectstore.grudge-studio.com/api/v1",
+    "catalogsDocs": "https://info.grudge-studio.com/api/v1",
     "cdn": "https://assets.grudge-studio.com",
-    "docs": "https://info.grudge-studio.com",
-    "liveClient": "https://grudgewarlords.com",
+    "docs": "https://info.grudge-studio.com/docs",
+    "liveClientPrimary": "https://client.grudge-studio.com",
+    "liveClientAlias": "https://grudgewarlords.com",
+    "characterStudio": "https://character.grudge-studio.com",
     "battle": "https://game.grudge-studio.com",
     "crafting": "https://grudge-crafting.puter.site",
     "ai": "https://ai.grudge-studio.com"
@@ -77,9 +81,30 @@
     }
   ],
   "ships": [
-    { "size": "rowboat", "maxHp": 30, "speed": 4, "cannons": 0, "crewCap": 2, "starterFree": true },
-    { "size": "sloop", "maxHp": 80, "speed": 3, "cannons": 3, "crewCap": 5, "starterFree": false },
-    { "size": "galleon", "maxHp": 200, "speed": 2, "cannons": 5, "crewCap": 10, "starterFree": false }
+    {
+      "size": "rowboat",
+      "maxHp": 30,
+      "speed": 4,
+      "cannons": 0,
+      "crewCap": 2,
+      "starterFree": true
+    },
+    {
+      "size": "sloop",
+      "maxHp": 80,
+      "speed": 3,
+      "cannons": 3,
+      "crewCap": 5,
+      "starterFree": false
+    },
+    {
+      "size": "galleon",
+      "maxHp": 200,
+      "speed": 2,
+      "cannons": 5,
+      "crewCap": 10,
+      "starterFree": false
+    }
   ],
   "gameLoops": [
     "island_harvest_craft_build",
@@ -89,15 +114,42 @@
     "battle_lane_deploy"
   ],
   "missingSystems": [
-    { "id": "dock_crew_api", "priority": "P0" },
-    { "id": "crew_ai_ocean_runtime", "priority": "P0" },
-    { "id": "ship_stats_panel_full", "priority": "P0" },
-    { "id": "storm_barrier_physics", "priority": "P1" },
-    { "id": "oil_mine_entities", "priority": "P1" },
-    { "id": "ship_cargo_bag", "priority": "P1" },
-    { "id": "cdn_asset_verify_dock_tools", "priority": "P1" },
-    { "id": "sector_event_director", "priority": "P2" },
-    { "id": "fantasy_walls_as_build_pieces", "priority": "P2" }
+    {
+      "id": "dock_crew_api",
+      "priority": "P0"
+    },
+    {
+      "id": "crew_ai_ocean_runtime",
+      "priority": "P0"
+    },
+    {
+      "id": "ship_stats_panel_full",
+      "priority": "P0"
+    },
+    {
+      "id": "storm_barrier_physics",
+      "priority": "P1"
+    },
+    {
+      "id": "oil_mine_entities",
+      "priority": "P1"
+    },
+    {
+      "id": "ship_cargo_bag",
+      "priority": "P1"
+    },
+    {
+      "id": "cdn_asset_verify_dock_tools",
+      "priority": "P1"
+    },
+    {
+      "id": "sector_event_director",
+      "priority": "P2"
+    },
+    {
+      "id": "fantasy_walls_as_build_pieces",
+      "priority": "P2"
+    }
   ],
   "codePaths": {
     "dockCrew": "GrudgeBuilder/shared/definitions/dockCrew.ts",
@@ -109,10 +161,12 @@
     "battleBuildCatalog": "Grudge-Studio-Game/artifacts/grudge-studio-game/src/lib/build-catalog.ts"
   },
   "deployChecklist": [
-    "Apply player_ships (+ dock_crew) migrations on Railway",
+    "Railway grudge-api health: database connected",
+    "Primary play: client.grudge-studio.com (not water/open/genesis)",
+    "Create: character.grudge-studio.com → return characterId to client",
+    "Strip id.* and rts-grudge.vercel.app from grudge-builder aliases",
     "Upload build packs and ship GLBs to R2 with magic-byte verify",
-    "Vercel rewrites: auth, Railway game API, objectstore, assets",
-    "Smoke: free rowboat → recruit sailor → board → ocean",
+    "Smoke: login → create hero → home-island or lobby with characterId",
     "Publish ObjectStore docs to info.grudge-studio.com"
   ],
   "attributes": {
@@ -138,5 +192,26 @@
       "agility": "https://assets.grudge-studio.com/icons/sigils/agility.png",
       "tactics": "https://assets.grudge-studio.com/icons/sigils/tactics.png"
     }
-  }
+  },
+  "createFunnel": {
+    "steps": [
+      "id.grudge-studio.com/login",
+      "client.grudge-studio.com/home",
+      "character.grudge-studio.com Foundry create",
+      "client /airship?characterId=&from=gcs",
+      "/home-island | /play | /tutorial | lobby"
+    ],
+    "playerStateSsot": "Railway Postgres",
+    "definitionsSsot": "ObjectStore api/v1",
+    "binariesSsot": "assets.grudge-studio.com"
+  },
+  "notSsot": [
+    "water.grudge-studio.com",
+    "warlord-genesis.vercel.app",
+    "open.grudge-studio.com as Warlords hub",
+    "rts-grudge.vercel.app when aliased to Warlords SPA",
+    "Supabase player DB",
+    "api.grudge-studio.com for auth/characters",
+    "grudge-builder Vercel aliases on id.grudge-studio.com"
+  ]
 }

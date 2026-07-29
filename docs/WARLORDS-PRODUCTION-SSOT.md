@@ -1,19 +1,21 @@
 # Warlords Production SSOT — Build · Dock · Ships · Water · Fleet
 
-**Canonical hub:** [info.grudge-studio.com/docs](https://info.grudge-studio.com/docs)  
+**Canonical hub:** [info.grudge-studio.com/docs](https://info.grudge-studio.com/docs) · [Creation of Truth](https://info.grudge-studio.com/docs#creation-truth)  
 **Machine JSON:** [`/api/v1/warlords-production.json`](../api/v1/warlords-production.json)  
 **Game repo:** GrudgeBuilder · **Battle satellite:** Grudge-Studio-Game  
-**Updated:** 2026-07-19
+**Updated:** 2026-07-29
 
 ---
 
 ## Principles
 
-1. **One SSOT per concern** — definitions (ObjectStore + `shared/definitions`), binaries (R2), player state (Railway).  
-2. **Assets scripted ≠ assets managed** — convert/upload scripts must complete with CDN magic-byte verify.  
-3. **Dock crew** = three roles only at harbor: Sailor, Weatherman, Gunner (race of captain, scale **0.9** grudge6).  
-4. **Build layers never mixed** — quick craft ≠ bench ≠ modular ≠ dock ≠ RTS train.  
-5. **Hardened HUD** — few tabs, visible costs, empty states, hotkeys, no silent fail on missing mesh.
+1. **One SSOT per concern** — definitions (ObjectStore + `shared/definitions`), binaries (R2), player state (Railway Postgres).  
+2. **Create truth from the owner** — heroes on Railway via Foundry; never invent a second character DB.  
+3. **Assets scripted ≠ assets managed** — convert/upload scripts must complete with CDN magic-byte verify.  
+4. **Dock crew** = three roles only at harbor: Sailor, Weatherman, Gunner (race of captain, scale **0.9** grudge6).  
+5. **Build layers never mixed** — quick craft ≠ bench ≠ modular ≠ dock ≠ RTS train.  
+6. **Hardened HUD** — few tabs, visible costs, empty states, hotkeys, no silent fail on missing mesh.  
+7. **One play client** — primary host `client.grudge-studio.com` (Vercel `grudge-builder`); `grudgewarlords.com` is an alias only.
 
 ---
 
@@ -21,15 +23,40 @@
 
 | Concern | Host | Notes |
 |---------|------|--------|
-| Auth | `id.grudge-studio.com` | Login + JWT |
-| Characters / island / wallet / ships | Railway Postgres | `grudge-api-production-…` |
-| Catalogs JSON | `objectstore.grudge-studio.com/api/v1` | weapons, races, recipes |
+| Auth | `id.grudge-studio.com` | Login + JWT — **not** the Warlords SPA project |
+| Characters / island / wallet / ships | Railway Postgres | `grudge-api-production-0d46` |
+| Catalogs JSON | `objectstore.grudge-studio.com/api/v1` · `info…/api/v1` | weapons, races, recipes |
 | Binary models | `assets.grudge-studio.com` | grudge6, buildings, ships |
 | Docs / UUID browsers | `info.grudge-studio.com` | this site |
-| Live client | `grudgewarlords.com` | Island3D + dock + ocean |
-| Battle Triad | `game.grudge-studio.com` | Lane deploy builds (separate catalog) |
+| **Live play client (primary)** | **`client.grudge-studio.com`** | Hub `/home`, heroes, home-island, lobby, tutorial, play |
+| Live play client (alias) | `grudgewarlords.com` | Same Vercel project as client |
+| Hero creation | `character.grudge-studio.com` | Foundry create-only → return with `characterId` |
+| Battle Triad | `game.grudge-studio.com` | Lane deploy builds (separate product) |
 | Crafting shell | `grudge-crafting.puter.site` | WCS benches |
 | AI | `ai.grudge-studio.com` | crew chat / mission agents |
+
+### Create → play funnel (only this)
+
+```
+id.grudge-studio.com/login
+  → client.grudge-studio.com/home
+  → character.grudge-studio.com (Foundry create)
+  → client /airship?characterId=&from=gcs
+  → /home-island | /play | /tutorial | lobby
+```
+
+Do **not** bounce `/play` / `/tutorial` / `/airship` to empty `/heroes` without a Create path.
+
+### Not Warlords play SSOT (cut / do not compete)
+
+| Host | Why not |
+|------|---------|
+| `water.grudge-studio.com` | Separate Tactical Infinity / “Tethical” app |
+| `warlord-genesis.vercel.app` | Separate MOBA |
+| `open.grudge-studio.com` | Open combat sandbox |
+| `rts-grudge.vercel.app` when aliased to Warlords SPA | RTS URL hijacked — fix alias |
+| Failed Railway `grudge-warlords-rpg` + MySQL | Dead duplicate — use `grudge-api` only |
+| Supabase | Not production player DB |
 
 ---
 

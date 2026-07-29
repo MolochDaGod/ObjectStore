@@ -7,7 +7,7 @@
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
   <!-- CANONICAL_META:START -->
     <link rel="canonical" href="https://info.grudge-studio.com/docs">
-    <meta name="grudge-canonical-generated" content="2026-07-25T10:07:37.622Z">
+    <meta name="grudge-canonical-generated" content="2026-07-29T10:24:51.198Z">
     <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -268,6 +268,7 @@
     <a href="#nature-assets">Nature Assets</a>
     <a href="#biome-ecosystems">Biome Ecosystems</a>
     <a href="#freeform-arpg">Freeform ARPG</a>
+    <a href="#creation-truth">Creation of Truth (SSOT)</a>
     <a href="#production-wiring">Production Wiring</a>
     <a href="#animations">Animations</a>
     <a href="#ai">AI Systems</a>
@@ -337,7 +338,7 @@
         <li><strong>2,765 Registry Entries</strong> in <code class="inline-code">master-registry.json</code></li>
         <li><strong>0 Unified Items</strong> in items-database.json (browser UI)</li>
         <li><strong>313 Animated Characters</strong> in sprite-characters.json</li>
-        <li><strong>147 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
+        <li><strong>149 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
       <!-- CANONICAL_STATS:END -->
       </ul>
       
@@ -364,15 +365,15 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
     <section id="architecture">
       <h2>Data Architecture — What Controls What</h2>
       <div class="card">
-        <p><strong>ObjectStore</strong> (this repo) is the single source of truth for all game data schemas.</p>
+        <p><strong>ObjectStore</strong> (this repo) is the single source of truth for <em>static game definitions</em> (items, skills, maps contracts). Player state is a different SSOT — see <a href="#creation-truth">Creation of Truth</a>.</p>
         <ul>
-          <li><strong>ObjectStore JSON</strong> (<code class="inline-code">api/v1/master-*.json</code>) — canonical item definitions, skills, weapon skills, recipes, materials, tiers. Every entry has a GRUDGE UUID.</li>
+          <li><strong>ObjectStore JSON</strong> (<code class="inline-code">api/v1/master-*.json</code>) — canonical item definitions, skills, weapon skills, recipes, materials, tiers. Every entry has a GRUDGE UUID. Served at <code class="inline-code">info.grudge-studio.com/api/v1/</code> and <code class="inline-code">objectstore.grudge-studio.com/api/v1/</code>.</li>
           <li><strong>R2 CDN</strong> (<code class="inline-code">assets.grudge-studio.com</code>) — binary files only: GLB/GLTF models, PNG icons, textures, audio. Served by the <code class="inline-code">r2-cdn</code> Worker with CORS <code class="inline-code">*</code>. Never commit large GLBs to git — upload to R2.</li>
-          <li><strong>Railway Postgres <code class="inline-code">home_islands</code></strong> — player home-island seed SSOT (NOT Cloudflare D1). See <a href="#home-islands">Home Islands</a>.</li>
-          <li><strong>D1 <code class="inline-code">asset_registry</code></strong> (<code class="inline-code">grudge-assets-db</code>) — searchable index for 3D models: category, R2 key, bone map, animation packs, deterministic <code class="inline-code">grudgeUuid</code>. API: <code class="inline-code">api.grudge-studio.com/assets</code>.</li>
+          <li><strong>Railway Postgres</strong> (<code class="inline-code">grudge-api-production-0d46</code>) — <strong>player-state SSOT</strong>: characters, account bag, inventory, wallet, professions, <code class="inline-code">home_islands</code>. Not D1, not Supabase, not Puter KV alone.</li>
+          <li><strong>D1 <code class="inline-code">asset_registry</code></strong> (<code class="inline-code">grudge-assets-db</code>) — searchable index for 3D models only (category, R2 key, bones). Prefer <code class="inline-code">assets.grudge-studio.com/{r2_key}</code> for binaries; D1 is an index, not player data.</li>
           <li><strong>ObjectStore D1</strong> (<code class="inline-code">grudge-objectstore</code>) — icon search index + catalog metadata. API: <code class="inline-code">objectstore.grudge-studio.com/api/v1/icons/*</code>.</li>
-          <li><strong>info.grudge-studio.com</strong> — public browsable UI for all game data (this site).</li>
-          <li><strong>api.grudge-studio.com / Railway game API</strong> — live game API; island state via <code class="inline-code">GET/PATCH /api/island/*</code>.</li>
+          <li><strong>info.grudge-studio.com</strong> — public browsable docs + JSON for all definition data (this site).</li>
+          <li><strong>Game API</strong> — <code class="inline-code">https://grudge-api-production-0d46.up.railway.app</code> (or same-origin <code class="inline-code">/api/*</code> on <code class="inline-code">client.grudge-studio.com</code>). Island state: <code class="inline-code">GET/PATCH /api/island/*</code>. Do <strong>not</strong> treat <code class="inline-code">api.grudge-studio.com</code> as auth or character SSOT.</li>
         </ul>
         <p><strong>GRUDGE UUID links everything:</strong> <code class="inline-code">SKIL-...(skill)</code> → <code class="inline-code">prefab.vfxRef</code> → <code class="inline-code">R2 path</code>. Game client resolves UUIDs via the ObjectStore API at runtime.</p>
         <p><strong>3D GLB binaries</strong> are a separate stack from ObjectStore JSON — see <a href="#3d-storage">3D Storage &amp; CDN</a> for R2 URLs, D1 <code class="inline-code">asset_registry</code>, and Forge <code class="inline-code">builtin:</code> keys. Do not use <code class="inline-code">/api/v1/asset-registry.json</code> for live GLB lookup.</p>
@@ -399,8 +400,84 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
       <p>The ObjectStore API is completely public. No API keys, tokens, or authentication headers are needed. Simply make HTTP GET requests to any endpoint.</p>
       
       <div class="warning">
-        <div class="warning-title">⚠️ Player Data</div>
-        <p>This API only serves static game definitions. For player-specific data (inventory, characters, progress), you'll need authenticated access to our Supabase database. See <a href="./DATABASE.md">Database Schema</a> for details.</p>
+        <div class="warning-title">⚠️ Player Data (not this API)</div>
+        <p>ObjectStore only serves <strong>static definitions</strong>. Player data (characters, inventory, bag, island seeds, wallet) is <strong>Railway Postgres</strong> via Grudge ID JWT — never Supabase, never ObjectStore JSON writes. See <a href="#creation-truth">Creation of Truth</a>, <a href="#production-wiring">Production Wiring</a>, and <a href="./DATABASE.md">Database Schema</a>.</p>
+      </div>
+    </section>
+
+    <section id="creation-truth">
+      <h2>Creation of Truth (SSOT hierarchy)</h2>
+      <p>Agents and apps must create and resolve truth from the owning source — not from previews, Puter caches, or competing hosts.</p>
+
+      <table>
+        <tr><th>Truth kind</th><th>Source of truth</th><th>How to create / write</th><th>How to read</th></tr>
+        <tr>
+          <td><strong>Item / skill / recipe definitions</strong></td>
+          <td>ObjectStore <code class="inline-code">api/v1/*</code></td>
+          <td>PR into ObjectStore → publish Pages / R2 catalogs</td>
+          <td><code class="inline-code">info…/api/v1/</code> or <code class="inline-code">objectstore…/api/v1/</code></td>
+        </tr>
+        <tr>
+          <td><strong>3D / audio binaries</strong></td>
+          <td>R2 <code class="inline-code">assets.grudge-studio.com</code></td>
+          <td>Upload + optional D1 <code class="inline-code">asset_registry</code> seed</td>
+          <td>CDN URL (preferred) · D1 index for search only</td>
+        </tr>
+        <tr>
+          <td><strong>Account identity</strong></td>
+          <td><code class="inline-code">id.grudge-studio.com</code></td>
+          <td>Login / register / guest / bridge → JWT</td>
+          <td>Bearer JWT · bootstrap <code class="inline-code">grudge-game-bootstrap.js</code></td>
+        </tr>
+        <tr>
+          <td><strong>Characters · bag · wallet · home island</strong></td>
+          <td>Railway Postgres via <code class="inline-code">grudge-api-production-0d46</code></td>
+          <td>Authenticated <code class="inline-code">POST/PATCH /api/characters</code>, <code class="inline-code">/api/account/*</code>, <code class="inline-code">/api/island/*</code></td>
+          <td>Same-origin <code class="inline-code">client…/api/*</code> or Railway absolute URL</td>
+        </tr>
+        <tr>
+          <td><strong>New Warlords hero mesh/slots</strong></td>
+          <td><code class="inline-code">character.grudge-studio.com</code> (Foundry)</td>
+          <td>Create-only funnel → save character on Railway</td>
+          <td>Return to play client with <code class="inline-code">characterId</code> (not stay on Foundry)</td>
+        </tr>
+        <tr>
+          <td><strong>Live play UI / open world</strong></td>
+          <td>Vercel <code class="inline-code">grudge-builder</code></td>
+          <td>Deploy from GrudgeBuilder <code class="inline-code">main</code></td>
+          <td><strong>Primary:</strong> <code class="inline-code">client.grudge-studio.com</code> · alias <code class="inline-code">grudgewarlords.com</code></td>
+        </tr>
+      </table>
+
+      <h3>Warlords create → play funnel (only this)</h3>
+      <pre><code>id.grudge-studio.com/login?redirect_uri=https://client.grudge-studio.com/auth/callback
+  → client.grudge-studio.com/home  (hub; roster from Railway)
+  → empty roster: Create hero → character.grudge-studio.com (Foundry create)
+  → save → return client /airship?characterId=&amp;from=gcs
+  → /home-island | /play | /tutorial | lobby with that characterId
+  → definitions: ObjectStore JSON · meshes: assets CDN</code></pre>
+
+      <div class="warning">
+        <div class="warning-title">Do not treat as Warlords SSOT</div>
+        <ul>
+          <li><code class="inline-code">water.grudge-studio.com</code> (Tactical Infinity / “Tethical”) — second home-island app; not the client play funnel.</li>
+          <li><code class="inline-code">warlord-genesis.vercel.app</code> + genesis API — separate MOBA product.</li>
+          <li><code class="inline-code">open.grudge-studio.com</code> — combat sandbox (Open), not Warlords hub.</li>
+          <li><code class="inline-code">rts-grudge.vercel.app</code> when aliased to Warlords SPA — RTS must not steal this host from Warlords or vice versa.</li>
+          <li><code class="inline-code">grudge-builder</code> Vercel aliases on <code class="inline-code">id.grudge-studio.com</code> — auth must stay off the game project.</li>
+          <li>Supabase, Puter KV alone, localStorage — never player bag/XP/roster SSOT.</li>
+          <li>Silent redirect of <code class="inline-code">/play</code>/<code class="inline-code">/tutorial</code>/<code class="inline-code">/airship</code> to empty <code class="inline-code">/heroes</code> without a create path — funnel failure.</li>
+        </ul>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/warlords-production.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Machine-readable Warlords production SSOT (fleet hosts, create funnel, cut list). Markdown: <a href="./WARLORDS-PRODUCTION-SSOT.md">WARLORDS-PRODUCTION-SSOT.md</a>.</p>
+        </div>
       </div>
     </section>
 
@@ -1230,29 +1307,39 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
 
     <section id="production-wiring">
       <h2>Production Wiring (Characters · Accounts · Crafting)</h2>
-      <p>Industry-standard multi-app identity: one Grudge ID account, many character UUIDs, shared account bag, per-character progression. Full agent skill: <code class="inline-code">grudge-production-wiring</code>.</p>
+      <p>Industry-standard multi-app identity: one Grudge ID account, many character UUIDs, shared account bag, per-character progression. Full agent skill: <code class="inline-code">grudge-production-wiring</code>. Creation hierarchy: <a href="#creation-truth">Creation of Truth</a>.</p>
 
       <table>
         <tr><th>Layer</th><th>Production URL</th><th>Role</th></tr>
         <tr>
           <td><strong>Identity</strong></td>
           <td><code class="inline-code">https://id.grudge-studio.com</code></td>
-          <td>Login UI, JWT mint, Puter link. Bootstrap: <code class="inline-code">/grudge-game-bootstrap.js</code></td>
+          <td>Login UI, JWT mint, Puter link. Bootstrap: <code class="inline-code">/grudge-game-bootstrap.js</code> (auth host only — not the Warlords SPA)</td>
         </tr>
         <tr>
           <td><strong>Game API</strong></td>
           <td><code class="inline-code">https://grudge-api-production-0d46.up.railway.app</code></td>
-          <td>Postgres SSOT — characters, account, inventory, professions, island, wallet</td>
+          <td>Postgres SSOT — characters, account, inventory, professions, island, wallet. Health: <code class="inline-code">/api/health</code></td>
         </tr>
         <tr>
-          <td><strong>Character Studio</strong></td>
+          <td><strong>Character Studio (Foundry)</strong></td>
           <td><code class="inline-code">https://character.grudge-studio.com</code></td>
-          <td>Creation SSOT (GCS). Warlords redirects here for new characters.</td>
+          <td>Create-only heroes (GCS). After save → return to <strong>client</strong> with <code class="inline-code">characterId</code></td>
         </tr>
         <tr>
-          <td><strong>Warlords client</strong></td>
+          <td><strong>Warlords play client (primary)</strong></td>
+          <td><code class="inline-code">https://client.grudge-studio.com</code></td>
+          <td>Hub <code class="inline-code">/home</code>, heroes, home-island, lobby, tutorial, play. Same-origin <code class="inline-code">/api/*</code> → Railway</td>
+        </tr>
+        <tr>
+          <td><strong>Warlords play client (alias)</strong></td>
           <td><code class="inline-code">https://grudgewarlords.com</code></td>
-          <td>Same-origin <code class="inline-code">/api/*</code> rewrites → Railway</td>
+          <td>Same Vercel project as client — marketing alias, not a second app</td>
+        </tr>
+        <tr>
+          <td><strong>Definitions docs</strong></td>
+          <td><code class="inline-code">https://info.grudge-studio.com/docs</code></td>
+          <td>This page — ObjectStore API reference</td>
         </tr>
         <tr>
           <td><strong>Crafting (Puter)</strong></td>
@@ -1277,11 +1364,13 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
       <div class="warning">
         <div class="warning-title">Standards (do not regress)</div>
         <ul>
-          <li>Railway Postgres is player-state SSOT — not D1, not localStorage, not Puter KV alone.</li>
+          <li>Railway Postgres is player-state SSOT — not D1, not Supabase, not localStorage, not Puter KV alone.</li>
           <li>Never write account inventory on character PATCH.</li>
-          <li>SSO return allowlist includes <code class="inline-code">*.puter.site</code>.</li>
-          <li>Vercel apps: same-origin <code class="inline-code">/api</code> rewrites. Puter sites: call Railway + ID explicitly with CORS.</li>
-          <li>Do not use deprecated <code class="inline-code">api.grudge-studio.com</code> for auth.</li>
+          <li>SSO return allowlist includes <code class="inline-code">*.puter.site</code> and <code class="inline-code">*.grudge-studio.com</code>.</li>
+          <li>Vercel apps: same-origin <code class="inline-code">/api</code> rewrites to Railway. Puter sites: call Railway + ID explicitly with CORS.</li>
+          <li>Do not use <code class="inline-code">api.grudge-studio.com</code> for auth or as character SSOT.</li>
+          <li>Primary play host is <code class="inline-code">client.grudge-studio.com</code> — not water.*, not open.*, not genesis.</li>
+          <li>Do not alias <code class="inline-code">id.grudge-studio.com</code> or <code class="inline-code">rts-grudge.vercel.app</code> onto the Warlords SPA project.</li>
         </ul>
       </div>
 
@@ -1758,17 +1847,18 @@ const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: '
 
     <section id="backend-clients">
       <h2>Backend Service Clients (SDK v5.0)</h2>
-      <p>The SDK v5.0 includes authenticated clients for all Grudge Studio VPS services:</p>
+      <p>Authenticated clients for live fleet services. Prefer Railway + ID + CDN over legacy hostnames.</p>
 
       <table>
-        <tr><th>Client</th><th>URL</th><th>Description</th></tr>
-        <tr><td><code>sdk.auth</code></td><td>id.grudge-studio.com</td><td>Login, register, guest, wallet, Discord, Puter auth</td></tr>
-        <tr><td><code>sdk.game</code></td><td>api.grudge-studio.com</td><td>Characters, crafting, combat, lobbies, islands</td></tr>
-        <tr><td><code>sdk.account</code></td><td>account.grudge-studio.com</td><td>Profile, friends, inventory management</td></tr>
-        <tr><td><code>sdk.launcher</code></td><td>launcher.grudge-studio.com</td><td>App manifest, patch notes, update checks</td></tr>
-        <tr><td><code>sdk.assets</code></td><td>assets-api.grudge-studio.com</td><td>R2 asset listing, upload, CDN URL resolution</td></tr>
-        <tr><td><code>sdk.ws</code></td><td>ws.grudge-studio.com</td><td>Real-time WebSocket for islands, PvP, chat</td></tr>
+        <tr><th>Client</th><th>URL (production)</th><th>Description</th></tr>
+        <tr><td><code>sdk.auth</code></td><td><code class="inline-code">id.grudge-studio.com</code></td><td>Login, register, guest, wallet, Discord, Puter auth</td></tr>
+        <tr><td><code>sdk.game</code></td><td><code class="inline-code">grudge-api-production-0d46.up.railway.app</code> (or same-origin <code class="inline-code">/api</code> on client)</td><td>Characters, account bag, island, wallet, lobbies</td></tr>
+        <tr><td><code>sdk.account</code></td><td>same Railway game API <code class="inline-code">/api/account/*</code></td><td>Profile / bag — do not invent a second account DB</td></tr>
+        <tr><td><code>sdk.definitions</code></td><td><code class="inline-code">objectstore.grudge-studio.com/api/v1</code> or <code class="inline-code">info…/api/v1</code></td><td>Static ObjectStore JSON (this catalog)</td></tr>
+        <tr><td><code>sdk.assets</code></td><td><code class="inline-code">assets.grudge-studio.com</code></td><td>R2 binaries; optional D1 index for search</td></tr>
+        <tr><td><code>sdk.ws</code></td><td>Railway Colyseus / world endpoints on game API</td><td>Islands, PvP, lobbies — not a separate “ws.” product host</td></tr>
       </table>
+      <p class="text-dim" style="color:var(--text-dim);font-size:0.9rem;margin:12px 0;">Legacy names <code class="inline-code">api.grudge-studio.com</code>, <code class="inline-code">assets-api.grudge-studio.com</code>, <code class="inline-code">ws.grudge-studio.com</code> are not player-state SSOT. Use Railway + CDN paths above.</p>
 
       <pre><code>const sdk = new GrudgeSDK({ token: '&lt;JWT&gt;' });
 
@@ -1909,7 +1999,7 @@ function getCraftingRequirements(weaponId, tier) {
 
     <footer style="text-align: center; color: var(--text-dim); margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);">
       <p>© 2026 Grudge Studio | ObjectStore v5.1.0 | Home-island foundations · organized nature · freeform ARPG</p>
-      <p style="margin-top:8px;"><a href="https://grudgewarlords.com">grudgewarlords.com</a> · <a href="https://client.grudge-studio.com">client.grudge-studio.com</a> · <a href="https://assets.grudge-studio.com">assets CDN</a></p>
+      <p style="margin-top:8px;"><a href="https://client.grudge-studio.com">client.grudge-studio.com</a> (play primary) · <a href="https://grudgewarlords.com">grudgewarlords.com</a> (alias) · <a href="https://character.grudge-studio.com">Foundry</a> · <a href="https://assets.grudge-studio.com">assets CDN</a> · <a href="#creation-truth">Creation of Truth</a></p>
     </footer>
   </main>
   <script src="../js/nav.js"></script>

@@ -1,155 +1,109 @@
 # Grudge Studio Database Architecture
 
+**Canonical docs:** [info.grudge-studio.com/docs](https://info.grudge-studio.com/docs) · [Creation of Truth](https://info.grudge-studio.com/docs#creation-truth)  
+**Updated:** 2026-07-29
+
 ## Overview
 
-Grudge Studio uses a hybrid data architecture:
+Grudge Studio uses a **split** data architecture:
 
-1. **ObjectStore (Static)** - Game definitions, no auth needed
-2. **Supabase (Dynamic)** - Player data, requires authentication
+| Layer | Role | Auth |
+|-------|------|------|
+| **1. ObjectStore (static)** | Game definitions (items, skills, maps contracts) | None — public GET |
+| **2. Railway Postgres (dynamic)** | Player state: characters, bag, island, wallet | Grudge ID JWT |
+| **3. R2 + D1 index** | Binary assets + search index | Public CDN / index APIs |
+| **4. Puter KV / localStorage** | Cache only — never sole bag/XP/roster SSOT | User session |
 
-## ObjectStore API (Public, Read-Only)
+**Supabase is not the production player SSOT.** Do not write characters or inventory to Supabase for Warlords/client play.
 
-No authentication required. Perfect for AI agents.
+---
 
-### Base URL
+## ObjectStore API (public, read-only)
+
+No authentication required. Perfect for AI agents and definition browsers.
+
+### Base URLs
+
 ```
-https://molochdagod.github.io/ObjectStore
+https://info.grudge-studio.com/api/v1/
+https://objectstore.grudge-studio.com/api/v1/
+https://molochdagod.github.io/ObjectStore/api/v1/   # mirror
 ```
 
-### Endpoints
+### Common endpoints
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/v1/weapons.json` | All weapon definitions |
+| `GET /api/v1/weapons.json` | Weapon definitions |
 | `GET /api/v1/materials.json` | Crafting materials |
-| `GET /api/v1/armor.json` | Armor slots and tier info |
-| `GET /api/v1/consumables.json` | Potions, food, grenades |
-
-### Example Usage
-```javascript
-const weapons = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json')
-  .then(r => r.json());
-
-// Get all sword names
-const swordNames = weapons.categories.swords.items.map(w => w.name);
-```
-
----
-
-## Supabase Database (Player Data)
-
-**Project URL:** `https://wfbcuyaiwtfxincdiihc.supabase.co`
-
-### Schema: `public` (Default)
-
-#### accounts
-Primary user account table - SINGLE source of truth for authentication.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | uuid | Primary key |
-| `grudge_id` | varchar(64) | Unique GRUDGE-{timestamp}-{random} |
-| `username` | varchar(50) | Unique username |
-| `password_hash` | varchar(255) | bcrypt hash |
-| `wallet_address` | varchar(255) | Solana wallet (optional) |
-| `puter_uuid` | varchar(255) | Puter auth (optional) |
-| `is_premium` | boolean | Premium subscription status |
-| `gold` | integer | Account-wide gold |
-| `gbux_balance` | integer | Premium currency |
-| `created_at` | bigint | Unix timestamp |
-
-#### characters
-Player characters with RPG stats.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | uuid | Primary key |
-| `account_id` | uuid | FK → accounts.id |
-| `name` | varchar | Character name |
-| `class_id` | varchar | Class (warrior, mage, etc.) |
-| `race_id` | varchar | Race |
-| `profession` | varchar | Active gathering profession |
-| `level` | integer | Character level (1-100) |
-| `experience` | integer | Current XP |
-| `gold` | integer | Character gold |
-| `skill_points` | integer | Unspent skill points |
-| `attributes` | jsonb | {Strength, Vitality, etc.} |
-| `equipment` | jsonb | Equipped item IDs |
-| `profession_progression` | jsonb | XP per profession |
-
-#### inventory_items
-Player inventory.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | uuid | Primary key |
-| `character_id` | uuid | FK → characters.id |
-| `item_id` | varchar | Reference to item definition |
-| `quantity` | integer | Stack count |
-| `tier` | integer | Item tier (1-8) |
-| `grudge_uuid` | varchar | Unique item tracking ID |
-| `metadata` | jsonb | Enchants, sockets, etc. |
-
-#### islands
-Player home islands.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | uuid | Primary key |
-| `account_id` | uuid | FK → accounts.id |
-| `name` | varchar | Island name |
-| `biome` | varchar | Island type |
-| `resources` | jsonb | Resource nodes |
-| `buildings` | jsonb | Placed structures |
-
----
-
-## AI Integration Guide
-
-### For Game Data (No Auth)
-Use ObjectStore endpoints directly:
-
-```python
-import requests
-
-# Get all weapons
-weapons = requests.get(
-    'https://molochdagod.github.io/ObjectStore/api/v1/weapons.json'
-).json()
-
-# Find a specific weapon
-def find_weapon(weapon_id):
-    for category in weapons['categories'].values():
-        for item in category['items']:
-            if item['id'] == weapon_id:
-                return item
-    return None
-```
-
-### For Player Data (Requires Auth)
-Contact Grudge Studio for API key access to player data.
+| `GET /api/v1/master-items.json` | Master item registry (GRUDGE UUIDs) |
+| `GET /api/v1/warlords-production.json` | Live Warlords fleet + create funnel SSOT |
+| `GET /api/v1/home-island-contract.json` | Home island scale / foundations |
+| `GET /api/v1/map-registry.json` | Map family SSOT |
 
 ```javascript
-// With API key
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Get character inventory
-const { data } = await supabase
-  .from('inventory_items')
-  .select('*, characters(name)')
-  .eq('character_id', characterId);
+const weapons = await fetch(
+  "https://info.grudge-studio.com/api/v1/weapons.json"
+).then((r) => r.json());
 ```
 
 ---
 
-## Best Practices
+## Railway Postgres (player data SSOT)
 
-1. **Cache Static Data** - ObjectStore data rarely changes
-2. **Use Pagination** - Large queries should use limit/offset
-3. **Respect Rate Limits** - Supabase has connection limits
-4. **No Sensitive Data in Logs** - Never log API keys or passwords
+**Service:** `grudge-api-production-0d46.up.railway.app`  
+**Health:** `GET https://grudge-api-production-0d46.up.railway.app/api/health`  
+**Client access:** same-origin `https://client.grudge-studio.com/api/*` (Vercel rewrites)
 
-## Contact
+### Auth
 
-- Website: https://grudgewarlords.com
-- Support: games@grudgestudio.org
+1. Login at `https://id.grudge-studio.com/login?redirect_uri=…`
+2. JWT stored under fleet token keys (`grudge_auth_token`, etc.)
+3. `Authorization: Bearer <JWT>` on Railway / same-origin `/api/*`
+
+### Primary tables / resources (conceptual)
+
+| Concern | API | Notes |
+|---------|-----|--------|
+| Characters | `/api/characters` | Roster SSOT; era = `warlords` for product heroes |
+| Progress | `/api/characters/:id/progress` | Professions, mastery |
+| Account bag | `/api/account/*`, `/api/inventory/*` | Shared across characters |
+| Wallet | `/api/wallet` | Server-side wallet |
+| Home island | `/api/island/*` | Seeds + harvest state (`home_islands`) |
+
+**Rules:**
+
+- Never put account inventory on character PATCH.
+- Never use D1 for bag/XP/roster.
+- Never treat ObjectStore JSON as writable player state.
+
+---
+
+## R2 + D1 (assets only)
+
+| Store | Role |
+|-------|------|
+| **R2** `assets.grudge-studio.com` | GLB, textures, icons, audio |
+| **D1** `grudge-assets-db` / `asset_registry` | Search index (category, r2_key, bones) — not player data |
+| **D1** `grudge-objectstore` | Icon search for ObjectStore worker |
+
+---
+
+## Deprecations
+
+| Wrong / legacy | Use instead |
+|----------------|-------------|
+| Supabase as player DB | Railway Postgres |
+| `api.grudge-studio.com` for auth | `id.grudge-studio.com` |
+| `api.grudge-studio.com` as character API | Railway or client same-origin `/api` |
+| Puter KV alone for bag/XP | Railway + optional Puter cache |
+| `water.grudge-studio.com` as Warlords play SSOT | `client.grudge-studio.com` |
+
+---
+
+## Related
+
+- [docs/index.html#creation-truth](./index.html#creation-truth)
+- [docs/index.html#production-wiring](./index.html#production-wiring)
+- [WARLORDS-PRODUCTION-SSOT.md](./WARLORDS-PRODUCTION-SSOT.md)
+- Agent skill: `grudge-production-wiring`

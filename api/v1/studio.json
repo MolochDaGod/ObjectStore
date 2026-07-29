@@ -59,9 +59,7 @@
         "mapRegistry": "/api/v1/map-registry.json",
         "homeIslandContract": "/api/v1/home-island-contract.json",
         "biomeEcosystems": "/api/v1/biome-ecosystems.json",
-        "organizedNature": "/api/v1/organized-nature-manifest.json",
-        "enemies": "/api/v1/enemies.json",
-        "bosses": "/api/v1/bosses.json"
+        "organizedNature": "/api/v1/organized-nature-manifest.json"
       },
       "warlordsCanonical": {
         "description": "Warlords ERA open-world only (9 macro sectors). Class flavor-only freeform ARPG. NOT player home-block 3x3.",
@@ -92,7 +90,10 @@
         "worldSizeM": 1024,
         "characterHeightM": 2,
         "mountainPeakHeightM": 20,
-        "foundations": ["driftwood_bay", "ironfang_spire"],
+        "foundations": [
+          "driftwood_bay",
+          "ironfang_spire"
+        ],
         "version": "1.3.0"
       },
       "productionWiring": {
@@ -112,16 +113,45 @@
         "definitions": "https://objectstore.grudge-studio.com/api/v1",
         "cdn": "https://assets.grudge-studio.com",
         "scope": {
-          "account": ["inventory", "resources", "GBUX", "wallet"],
-          "character": ["professions", "mastery", "attributes", "equipment", "skillTrees"]
+          "account": [
+            "inventory",
+            "resources",
+            "GBUX",
+            "wallet"
+          ],
+          "character": [
+            "professions",
+            "mastery",
+            "attributes",
+            "equipment",
+            "skillTrees"
+          ]
         },
         "rules": [
-          "Railway Postgres is player-state SSOT — not D1, not localStorage, not Puter KV alone",
+          "Railway Postgres is player-state SSOT — not D1, not Supabase, not localStorage, not Puter KV alone",
           "Never put account inventory on character PATCH",
-          "SSO return allowlist includes *.puter.site",
-          "Vercel apps use same-origin /api rewrites; Puter sites call Railway+ID explicitly"
+          "SSO return allowlist includes *.puter.site and *.grudge-studio.com",
+          "Vercel apps use same-origin /api rewrites; Puter sites call Railway+ID explicitly",
+          "Primary play host is client.grudge-studio.com — not water.*, open.*, or genesis",
+          "Do not alias id.grudge-studio.com or rts-grudge.vercel.app onto the Warlords SPA",
+          "Create heroes only via character.grudge-studio.com Foundry; return with characterId"
         ],
-        "version": "1.0.0"
+        "version": "1.1.0",
+        "updated": "2026-07-29",
+        "warlordsPrimary": "https://client.grudge-studio.com",
+        "createFunnel": [
+          "id login",
+          "client /home",
+          "Foundry create on character.grudge-studio.com",
+          "return /airship?characterId=&from=gcs",
+          "home-island | play | tutorial | lobby"
+        ],
+        "notSsot": [
+          "water.grudge-studio.com",
+          "warlord-genesis",
+          "Supabase",
+          "api.grudge-studio.com for auth/characters"
+        ]
       }
     },
     "storage": {
@@ -133,9 +163,19 @@
         "delete": "DELETE /api/storage/{key}",
         "list": "GET /api/storage/list?prefix={prefix}"
       },
-      "adapters": ["local", "s3"],
+      "adapters": [
+        "local",
+        "s3"
+      ],
       "s3Config": {
-        "envVars": ["S3_ENDPOINT", "S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY", "S3_REGION", "S3_PUBLIC_URL"]
+        "envVars": [
+          "S3_ENDPOINT",
+          "S3_BUCKET",
+          "S3_ACCESS_KEY_ID",
+          "S3_SECRET_ACCESS_KEY",
+          "S3_REGION",
+          "S3_PUBLIC_URL"
+        ]
       }
     },
     "assetRegistry": {
@@ -160,11 +200,23 @@
     "path": "/sdk/grudge-sdk.js",
     "npm": "@grudge-studio/objectstore",
     "methods": [
-      "getSprites()", "getSprite(uuid)", "searchSprites(query, opts)",
-      "getCharacters(opts)", "getCharacter(uuid)", "getAnimationUrl(charUuid, animName)",
-      "getWeapons()", "getArmor()", "getMaterials()", "getConsumables()",
-      "getSkills()", "getProfessions()", "getRaces()", "getClasses()",
-      "getFactions()", "getEnemies()", "getBosses()"
+      "getSprites()",
+      "getSprite(uuid)",
+      "searchSprites(query, opts)",
+      "getCharacters(opts)",
+      "getCharacter(uuid)",
+      "getAnimationUrl(charUuid, animName)",
+      "getWeapons()",
+      "getArmor()",
+      "getMaterials()",
+      "getConsumables()",
+      "getSkills()",
+      "getProfessions()",
+      "getRaces()",
+      "getClasses()",
+      "getFactions()",
+      "getEnemies()",
+      "getBosses()"
     ]
   },
   "scripts": {
