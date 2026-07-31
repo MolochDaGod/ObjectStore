@@ -32,6 +32,17 @@ npm run audit:assets:strict
 
 # Limit for smoke
 node scripts/asset-fleet-audit.mjs --max 200
+
+# R2 object list (S3 API — wrangler has no "r2 object list")
+npm run r2:list:env
+# set CLOUDFLARE_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY
+npm run r2:list
+npm run r2:list:creeps
+
+# Mirror WC3 neutrals from threejs-games → local → optional R2 put
+npm run creeps:mirror:dry
+npm run creeps:mirror
+npm run creeps:mirror:upload   # needs wrangler auth
 ```
 
 ### Outputs

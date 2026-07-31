@@ -55,6 +55,7 @@ const USE_CDN = flag("--cdn");
 const PURGE_DRY = flag("--purge-dry-run");
 const FAIL_RED = flag("--fail-on-red");
 const MAX = parseInt(argVal("--max", "0"), 10) || 0;
+const R2_KEYS_FILE = argVal("--r2-keys-file", "");
 const rootsArg = argVal(
   "--roots",
   "models,api/v1,icons,audio,sprites,effects,heroes,textures",
@@ -159,6 +160,16 @@ async function main() {
   const allow = loadAllowlist();
   const registryKeys = loadRegistryKeys();
   console.log("[asset-fleet-audit] registry keys loaded:", registryKeys.size);
+
+  // Optional join: flat key list from `npm run r2:list` → r2-keys-flat.txt
+  if (R2_KEYS_FILE && existsSync(R2_KEYS_FILE)) {
+    const lines = readFileSync(R2_KEYS_FILE, "utf8")
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+    for (const k of lines) registryKeys.add(k.toLowerCase());
+    console.log("[asset-fleet-audit] r2 keys file joined:", lines.length);
+  }
 
   /** @type {string[]} */
   let files = [];
