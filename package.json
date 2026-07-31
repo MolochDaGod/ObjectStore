@@ -70,6 +70,10 @@
     "convert:install": "npm install --prefix ./tools/grudge-convert",
     "bake:grudge6": "node ./scripts/bake-grudge6-races.mjs",
     "convert:process": "node ./tools/grudge-convert/bin/grudge-convert.mjs doctor",
+    "assets:gltf": "node ./scripts/assets-to-gltf-pipeline.mjs",
+    "assets:gltf:characters": "node ./scripts/assets-to-gltf-pipeline.mjs --class characters --height 1.85",
+    "assets:gltf:upload": "node ./scripts/assets-to-gltf-pipeline.mjs --upload --remote",
+    "assets:gltf:verify": "node ./scripts/verify-assets-gltf.mjs --require-player",
     "optimize:images": "node ./scripts/optimize-images.mjs",
     "validate:schemas": "node ./scripts/validate-schemas.mjs",
     "extract:gamedata": "node ./scripts/extract-game-data.mjs",
@@ -165,7 +169,12 @@
     "import:craftpix-batch": "pwsh -NoProfile -File ./scripts/import-craftpix-batch-2026-04b.ps1",
     "deploy:browse": "node scripts/deploy-browse-pages.mjs",
     "d1:meshes-library-urls": "node scripts/update-d1-meshes-glb-url.mjs",
-    "d1:meshes-library-urls:apply": "node scripts/update-d1-meshes-glb-url.mjs --apply"
+    "d1:meshes-library-urls:apply": "node scripts/update-d1-meshes-glb-url.mjs --apply",
+    "packages:prod": "node ./scripts/build-prod-gltf-packages.mjs",
+    "packages:prod:upload": "node ./scripts/build-prod-gltf-packages.mjs --upload --remote",
+    "wire:prod-gltf-weapons": "node ./scripts/wire-prod-gltf-weapon-prefabs.mjs",
+    "packages:anims": "node ./scripts/build-prod-anim-packages.mjs",
+    "packages:anims:upload": "node ./scripts/build-prod-anim-packages.mjs --upload --remote"
   },
   "repository": {
     "type": "git",

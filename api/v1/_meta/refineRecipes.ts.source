@@ -1,0 +1,387 @@
+/**
+ * Material refine processes — raw gather → refined craft result.
+ *
+ * Matches ObjectStore materials.json ladders:
+ *   ore    → smelt → ingot
+ *   wood   → mill  → plank
+ *   cloth (thread) → weave → fabric (*-cloth bolts)
+ *   leather raw hide → tan → tanned leather (where mapped)
+ *   grain  → grind → flour
+ *
+ * Result items live in materials.ts under the refined category.
+ */
+
+export type RefineProcess =
+  | 'smelt'
+  | 'mill'
+  | 'weave'
+  | 'tan'
+  | 'grind'
+  | 'spin';
+
+export type RefineProfession =
+  | 'Miner'
+  | 'Forester'
+  | 'Mystic'
+  | 'Chef'
+  | 'Engineer';
+
+export interface RefineIngredient {
+  materialId: string;
+  qty: number;
+  /** If true, not consumed when station has fuel (display only) */
+  catalyst?: boolean;
+}
+
+export interface RefineRecipe {
+  id: string;
+  /** Display name e.g. "Smelt Copper Ingot" */
+  name: string;
+  process: RefineProcess;
+  profession: RefineProfession;
+  /** Station / workbench key */
+  station: string;
+  tier: number;
+  inputs: RefineIngredient[];
+  /** Primary result of the refine */
+  output: { materialId: string; qty: number };
+  craftTimeSec: number;
+  /** Gold cost to run once (optional station fee) */
+  goldCost: number;
+  description: string;
+}
+
+// ── Ladder pairs (tier 0–8) aligned with ObjectStore ─────────────────────────
+
+/** ore id → ingot id */
+export const SMELT_LADDER: Array<{
+  tier: number;
+  ore: string;
+  ingot: string;
+  name: string;
+}> = [
+  { tier: 0, ore: 'scrap-ore', ingot: 'scrap-ingot', name: 'Scrap' },
+  { tier: 1, ore: 'copper-ore', ingot: 'copper-ingot', name: 'Copper' },
+  { tier: 2, ore: 'iron-ore', ingot: 'iron-ingot', name: 'Iron' },
+  { tier: 3, ore: 'steel-ore', ingot: 'steel-ingot', name: 'Steel' },
+  { tier: 4, ore: 'mithril-ore', ingot: 'mithril-ingot', name: 'Mithril' },
+  { tier: 5, ore: 'adamantine-ore', ingot: 'adamantine-ingot', name: 'Adamantine' },
+  { tier: 6, ore: 'orichalcum-ore', ingot: 'orichalcum-ingot', name: 'Orichalcum' },
+  { tier: 7, ore: 'starmetal-ore', ingot: 'starmetal-ingot', name: 'Starmetal' },
+  { tier: 8, ore: 'divine-ore', ingot: 'divine-ingot', name: 'Divine' },
+];
+
+/** log → plank */
+export const MILL_LADDER: Array<{
+  tier: number;
+  log: string;
+  plank: string;
+  name: string;
+}> = [
+  { tier: 0, log: 'driftwood-log', plank: 'scrap-plank', name: 'Driftwood' },
+  { tier: 1, log: 'pine-log', plank: 'pine-plank', name: 'Pine' },
+  { tier: 2, log: 'oak-log', plank: 'oak-plank', name: 'Oak' },
+  { tier: 3, log: 'maple-log', plank: 'maple-plank', name: 'Maple' },
+  { tier: 4, log: 'ash-log', plank: 'ash-plank', name: 'Ash' },
+  { tier: 5, log: 'ironwood-log', plank: 'ironwood-plank', name: 'Ironwood' },
+  { tier: 6, log: 'ebony-log', plank: 'ebony-plank', name: 'Ebony' },
+  { tier: 7, log: 'wyrmwood-log', plank: 'wyrmwood-plank', name: 'Wyrmwood' },
+  { tier: 8, log: 'worldtree-log', plank: 'worldtree-plank', name: 'Worldtree' },
+];
+
+/**
+ * cloth category = thread (input)
+ * fabric category = *-cloth bolt (output)
+ */
+export const WEAVE_LADDER: Array<{
+  tier: number;
+  thread: string;
+  fabric: string;
+  name: string;
+}> = [
+  { tier: 0, thread: 'rag-thread', fabric: 'torn-cloth', name: 'Rag' },
+  { tier: 1, thread: 'linen-thread', fabric: 'linen-cloth', name: 'Linen' },
+  { tier: 2, thread: 'wool-thread', fabric: 'wool-cloth', name: 'Wool' },
+  { tier: 3, thread: 'cotton-thread', fabric: 'cotton-cloth', name: 'Cotton' },
+  { tier: 4, thread: 'silk-thread', fabric: 'silk-cloth', name: 'Silk' },
+  { tier: 5, thread: 'moonweave-thread', fabric: 'moonweave-cloth', name: 'Moonweave' },
+  { tier: 6, thread: 'starweave-thread', fabric: 'starweave-cloth', name: 'Starweave' },
+  { tier: 7, thread: 'voidweave-thread', fabric: 'voidweave-cloth', name: 'Voidweave' },
+  { tier: 8, thread: 'divine-thread', fabric: 'divine-cloth', name: 'Divine' },
+];
+
+/**
+ * Tan: raw/hide tier → leather product (same tier when possible).
+ * OS keeps all under leather; refine produces the "finished" leather id.
+ */
+export const TAN_LADDER: Array<{
+  tier: number;
+  hide: string;
+  leather: string;
+  name: string;
+  needsSalt?: boolean;
+}> = [
+  { tier: 0, hide: 'scraps-leather', leather: 'scraps-leather', name: 'Scraps' }, // identity / clean-up
+  { tier: 1, hide: 'rawhide', leather: 'rawhide', name: 'Rawhide', needsSalt: true },
+  { tier: 2, hide: 'thick-hide', leather: 'thick-hide', name: 'Thick Hide', needsSalt: true },
+  { tier: 3, hide: 'thick-hide', leather: 'rugged-leather', name: 'Rugged', needsSalt: true },
+  { tier: 4, hide: 'rugged-leather', leather: 'hardened-leather', name: 'Hardened', needsSalt: true },
+  { tier: 5, hide: 'hardened-leather', leather: 'wyrm-leather', name: 'Wyrm', needsSalt: true },
+  { tier: 6, hide: 'wyrm-leather', leather: 'infernal-leather', name: 'Infernal', needsSalt: true },
+  { tier: 7, hide: 'infernal-leather', leather: 'titan-leather', name: 'Titan', needsSalt: true },
+  { tier: 8, hide: 'titan-leather', leather: 'divine-leather', name: 'Divine', needsSalt: true },
+];
+
+function craftTimeForTier(tier: number): number {
+  return 3 + tier * 2;
+}
+
+function goldForTier(tier: number): number {
+  return Math.max(0, tier) * 25;
+}
+
+function generateSmeltRecipes(): RefineRecipe[] {
+  return SMELT_LADDER.map((row) => {
+    const inputs: RefineIngredient[] = [
+      { materialId: row.ore, qty: 2 + Math.floor(row.tier / 2) },
+    ];
+    if (row.tier >= 1) {
+      inputs.push({ materialId: 'coal', qty: 1, catalyst: false });
+    }
+    if (row.tier >= 3) {
+      inputs.push({ materialId: 'flux', qty: 1 });
+    }
+    return {
+      id: `refine-smelt-${row.ingot}`,
+      name: `Smelt ${row.name} Ingot`,
+      process: 'smelt' as const,
+      profession: 'Miner' as const,
+      station: 'forge',
+      tier: row.tier,
+      inputs,
+      output: { materialId: row.ingot, qty: 1 },
+      craftTimeSec: craftTimeForTier(row.tier),
+      goldCost: goldForTier(row.tier),
+      description: `Smelt ${row.ore} into ${row.ingot} at a forge.`,
+    };
+  });
+}
+
+function generateMillRecipes(): RefineRecipe[] {
+  return MILL_LADDER.map((row) => ({
+    id: `refine-mill-${row.plank}`,
+    name: `Mill ${row.name} Plank`,
+    process: 'mill' as const,
+    profession: 'Forester' as const,
+    station: 'sawmill',
+    tier: row.tier,
+    inputs: [{ materialId: row.log, qty: 1 }],
+    output: { materialId: row.plank, qty: 2 },
+    craftTimeSec: craftTimeForTier(row.tier) - 1,
+    goldCost: goldForTier(row.tier),
+    description: `Mill ${row.log} into ${row.plank}.`,
+  }));
+}
+
+function generateWeaveRecipes(): RefineRecipe[] {
+  return WEAVE_LADDER.map((row) => ({
+    id: `refine-weave-${row.fabric}`,
+    name: `Weave ${row.name} Cloth`,
+    process: 'weave' as const,
+    profession: 'Mystic' as const,
+    station: 'loom',
+    tier: row.tier,
+    inputs: [{ materialId: row.thread, qty: 3 + Math.floor(row.tier / 2) }],
+    output: { materialId: row.fabric, qty: 1 },
+    craftTimeSec: craftTimeForTier(row.tier),
+    goldCost: goldForTier(row.tier),
+    description: `Weave ${row.thread} into a bolt of ${row.fabric} (fabric category).`,
+  }));
+}
+
+function generateTanRecipes(): RefineRecipe[] {
+  return TAN_LADDER.filter((row) => row.hide !== row.leather).map((row) => {
+    const inputs: RefineIngredient[] = [
+      { materialId: row.hide, qty: 1 },
+    ];
+    if (row.needsSalt) {
+      inputs.push({ materialId: 'salt', qty: 1 });
+    }
+    return {
+      id: `refine-tan-${row.leather}`,
+      name: `Tan ${row.name} Leather`,
+      process: 'tan' as const,
+      profession: 'Forester' as const,
+      station: 'tanning_rack',
+      tier: row.tier,
+      inputs,
+      output: { materialId: row.leather, qty: 1 },
+      craftTimeSec: craftTimeForTier(row.tier) + 1,
+      goldCost: goldForTier(row.tier),
+      description: `Tan ${row.hide} into ${row.leather}.`,
+    };
+  });
+}
+
+function generateGrindRecipes(): RefineRecipe[] {
+  return [
+    {
+      id: 'refine-grind-flour',
+      name: 'Grind Flour',
+      process: 'grind' as const,
+      profession: 'Chef' as const,
+      station: 'millstone',
+      tier: 2,
+      inputs: [{ materialId: 'grain', qty: 2 }],
+      output: { materialId: 'flour', qty: 1 },
+      craftTimeSec: 4,
+      goldCost: 10,
+      description: 'Grind grain into flour.',
+    },
+  ];
+}
+
+function generateSpinRecipes(): RefineRecipe[] {
+  return [
+    {
+      id: 'refine-spin-string',
+      name: 'Spin String',
+      process: 'spin' as const,
+      profession: 'Forester' as const,
+      station: 'spinning_wheel',
+      tier: 1,
+      inputs: [{ materialId: 'hemp-fiber', qty: 2 }],
+      output: { materialId: 'string', qty: 1 },
+      craftTimeSec: 3,
+      goldCost: 5,
+      description: 'Spin hemp fiber into string.',
+    },
+    {
+      id: 'refine-spin-linen-thread',
+      name: 'Spin Linen Thread',
+      process: 'spin' as const,
+      profession: 'Mystic' as const,
+      station: 'spinning_wheel',
+      tier: 1,
+      inputs: [{ materialId: 'hemp-fiber', qty: 3 }],
+      output: { materialId: 'linen-thread', qty: 1 },
+      craftTimeSec: 4,
+      goldCost: 15,
+      description: 'Spin plant fiber into linen thread (cloth category).',
+    },
+    {
+      id: 'refine-spin-silk-thread',
+      name: 'Spin Silk Thread',
+      process: 'spin' as const,
+      profession: 'Mystic' as const,
+      station: 'spinning_wheel',
+      tier: 4,
+      inputs: [{ materialId: 'silk', qty: 2 }],
+      output: { materialId: 'silk-thread', qty: 1 },
+      craftTimeSec: 8,
+      goldCost: 40,
+      description: 'Spin raw silk into silk thread.',
+    },
+  ];
+}
+
+export const REFINE_RECIPES: RefineRecipe[] = [
+  ...generateSmeltRecipes(),
+  ...generateMillRecipes(),
+  ...generateWeaveRecipes(),
+  ...generateTanRecipes(),
+  ...generateGrindRecipes(),
+  ...generateSpinRecipes(),
+];
+
+export function getRefineRecipesByProcess(process: RefineProcess): RefineRecipe[] {
+  return REFINE_RECIPES.filter((r) => r.process === process);
+}
+
+export function getRefineRecipesByProfession(
+  profession: string,
+): RefineRecipe[] {
+  return REFINE_RECIPES.filter((r) => r.profession === profession);
+}
+
+export function getRefineRecipeById(id: string): RefineRecipe | undefined {
+  return REFINE_RECIPES.find((r) => r.id === id);
+}
+
+export function getRefineRecipeForOutput(
+  materialId: string,
+): RefineRecipe | undefined {
+  return REFINE_RECIPES.find((r) => r.output.materialId === materialId);
+}
+
+export function listRefineOutputs(): string[] {
+  return [...new Set(REFINE_RECIPES.map((r) => r.output.materialId))];
+}
+
+export function listRefineInputs(): string[] {
+  const ids = new Set<string>();
+  for (const r of REFINE_RECIPES) {
+    for (const i of r.inputs) ids.add(i.materialId);
+  }
+  return [...ids];
+}
+
+export const REFINE_PROCESS_META: Record<
+  RefineProcess,
+  { label: string; station: string; profession: RefineProfession; inputCategory: string; outputCategory: string }
+> = {
+  smelt: {
+    label: 'Smelt',
+    station: 'forge',
+    profession: 'Miner',
+    inputCategory: 'ore',
+    outputCategory: 'ingot',
+  },
+  mill: {
+    label: 'Mill',
+    station: 'sawmill',
+    profession: 'Forester',
+    inputCategory: 'wood',
+    outputCategory: 'plank',
+  },
+  weave: {
+    label: 'Weave',
+    station: 'loom',
+    profession: 'Mystic',
+    inputCategory: 'cloth',
+    outputCategory: 'fabric',
+  },
+  tan: {
+    label: 'Tan',
+    station: 'tanning_rack',
+    profession: 'Forester',
+    inputCategory: 'leather',
+    outputCategory: 'leather',
+  },
+  grind: {
+    label: 'Grind',
+    station: 'millstone',
+    profession: 'Chef',
+    inputCategory: 'ingredient',
+    outputCategory: 'component',
+  },
+  spin: {
+    label: 'Spin',
+    station: 'spinning_wheel',
+    profession: 'Mystic',
+    inputCategory: 'component',
+    outputCategory: 'cloth',
+  },
+};
+
+export const REFINE_STATS = {
+  total: REFINE_RECIPES.length,
+  byProcess: {
+    smelt: getRefineRecipesByProcess('smelt').length,
+    mill: getRefineRecipesByProcess('mill').length,
+    weave: getRefineRecipesByProcess('weave').length,
+    tan: getRefineRecipesByProcess('tan').length,
+    grind: getRefineRecipesByProcess('grind').length,
+    spin: getRefineRecipesByProcess('spin').length,
+  },
+};
