@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Paths and patterns that must never be auto-purged from R2/D1. Audit still scores them.",
+  "version": 1,
+  "pathPrefixes": [
+    "models/grudge6/",
+    "models/voxels/tvs/",
+    "anims/baked/",
+    "js/",
+    "icons/",
+    "api/v1/",
+    "gamedata/"
+  ],
+  "pathIncludes": [
+    "master-items",
+    "master-recipes",
+    "master-materials",
+    "professions",
+    "home-island-contract",
+    "grudge-fleet.js",
+    "unit-roster.json"
+  ],
+  "extensionsAlwaysKeep": [
+    ".json",
+    ".mp3",
+    ".ogg",
+    ".wav",
+    ".png",
+    ".webp",
+    ".jpg",
+    ".jpeg",
+    ".svg",
+    ".glsl",
+    ".md"
+  ],
+  "erasProtected": ["grudge6", "tvs", "gamedata"],
+  "notes": [
+    "grudge6 races may remain FBX by design (material pipeline).",
+    "gamedata JSON is definitions, not mesh-converted.",
+    "icons/audio are stack-usable without glb bake."
+  ]
+}
