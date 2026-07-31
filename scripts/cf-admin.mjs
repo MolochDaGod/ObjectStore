@@ -45,30 +45,52 @@ function loadEnvFile(filePath) {
 }
 
 function loadWranglerOauth() {
-  const cfg = path.join(os.homedir(), 'AppData', 'Roaming', 'xdg.config', '.wrangler', 'config', 'default.toml');
-  if (!fs.existsSync(cfg)) return null;
-  const text = fs.readFileSync(cfg, 'utf8');
-  const m = text.match(/oauth_token\s*=\s*"([^"]+)"/);
-  return m ? m[1] : null;
+  const candidates = [
+    path.join(os.homedir(), '.wrangler', 'config', 'default.toml'),
+    path.join(os.homedir(), 'AppData', 'Roaming', 'xdg.config', '.wrangler', 'config', 'default.toml'),
+  ];
+  for (const cfg of candidates) {
+    if (!fs.existsSync(cfg)) continue;
+    const text = fs.readFileSync(cfg, 'utf8');
+    const m = text.match(/oauth_token\s*=\s*"([^"]+)"/);
+    if (m) return m[1];
+  }
+  return null;
 }
 
 function loadCreds() {
-  const envKnown = loadEnvFile('D:/Grudge-Engine-Web/.env');
+  // Fleet vault first (Desktop secretnow.txt) then legacy Grudge-Engine-Web
+  const desktop = path.join(os.homedir(), 'Desktop');
+  const envKnown = {
+    ...loadEnvFile(path.join(desktop, 'secretnow.txt')),
+    ...loadEnvFile(path.join(desktop, 'secret.txt')),
+    ...loadEnvFile('D:/Grudge-Engine-Web/.env'),
+  };
   const adminToken =
     process.env.CLOUDFLARE_ADMIN_TOKEN ||
     process.env.CLOUDFLARE_API_TOKEN ||
     envKnown.CLOUDFLARE_ADMIN_TOKEN ||
     envKnown.CLOUDFLARE_API_TOKEN ||
+    envKnown.CF_WORKER_R2_API ||
+    envKnown.CF_DNS_API_TOKEN ||
+    envKnown.CLOUDFLARE_USER_API ||
     null;
   const wranglerToken = loadWranglerOauth();
-  const dnsToken = envKnown.CLOUDFLARE_USER_API || null;
+  const dnsToken = envKnown.CLOUDFLARE_USER_API || envKnown.CF_DNS_API_TOKEN || null;
   // Primary token (for account-level ops: pages, workers, r2, d1, kv, etc.)
   const token = adminToken || wranglerToken || dnsToken;
   // Separate DNS token (falls back to primary)
   const tokenDns = adminToken || dnsToken || wranglerToken;
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || envKnown.CF_ACCOUNT_ID;
-  const zoneId   = process.env.CLOUDFLARE_ZONE_ID    || envKnown.CF_ZONE_ID;
-  if (!token) throw new Error('No Cloudflare token found. Set CLOUDFLARE_ADMIN_TOKEN.');
+  const accountId =
+    process.env.CLOUDFLARE_ACCOUNT_ID ||
+    process.env.CF_ACCOUNT_ID ||
+    envKnown.CF_ACCOUNT_ID ||
+    envKnown.CLOUDFLARE_ACCOUNT_ID;
+  const zoneId =
+    process.env.CLOUDFLARE_ZONE_ID ||
+    process.env.CF_ZONE_ID ||
+    envKnown.CF_ZONE_ID;
+  if (!token) throw new Error('No Cloudflare token found. Set CLOUDFLARE_ADMIN_TOKEN or use Desktop secretnow.txt.');
   return { token, tokenDns, accountId, zoneId };
 }
 

@@ -2,17 +2,17 @@
 /**
  * List R2 objects (wrangler has no `r2 object list` — use S3 API).
  *
- * Env (R2 S3 credentials):
- *   CLOUDFLARE_ACCOUNT_ID
- *   R2_ACCESS_KEY_ID
- *   R2_SECRET_ACCESS_KEY
- *   R2_BUCKET_NAME          (default grudge-assets)
+ * Credentials via scripts/lib/load-fleet-env.mjs (Desktop secretnow.txt pattern):
+ *   CF_ACCOUNT_ID / CLOUDFLARE_ACCOUNT_ID
+ *   OBJECT_STORAGE_KEY → R2_ACCESS_KEY_ID
+ *   OBJECT_STORAGE_SECRET → R2_SECRET_ACCESS_KEY
+ *   OBJECT_STORAGE_BUCKET / R2_BUCKET_ASSETS → R2_BUCKET_NAME
  *
  * Usage:
  *   node scripts/r2-list-objects.mjs
  *   node scripts/r2-list-objects.mjs --prefix models/creeps/
  *   node scripts/r2-list-objects.mjs --prefix models/ --max 200 --out docs/reports/r2-list.json
- *   node scripts/r2-list-objects.mjs --dry-env   # print whether env is set
+ *   node scripts/r2-list-objects.mjs --dry-env   # print whether env is set (no secrets)
  *
  * Also writes a flat key list for asset-fleet-audit --r2-keys-file
  */
@@ -20,6 +20,10 @@
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import {
+  loadFleetEnv,
+  resolveR2S3Config,
+} from "./lib/load-fleet-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -33,11 +37,17 @@ const val = (n, d) => {
   return args[i + 1] ?? d;
 };
 
-const ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID;
-const KEY = process.env.R2_ACCESS_KEY_ID || process.env.OBJECT_STORAGE_KEY;
-const SECRET =
-  process.env.R2_SECRET_ACCESS_KEY || process.env.OBJECT_STORAGE_SECRET;
-const BUCKET = process.env.R2_BUCKET_NAME || "grudge-assets";
+// Bridge: secretnow / vault → process.env aliases (never prints values)
+loadFleetEnv({ quiet: flag("--help") });
+const r2 = resolveR2S3Config();
+
+const ACCOUNT = r2?.accountId || "";
+const KEY = r2?.accessKeyId || "";
+const SECRET = r2?.secretAccessKey || "";
+const BUCKET = r2?.bucket || process.env.R2_BUCKET_NAME || "grudge-assets";
+const ENDPOINT =
+  r2?.endpoint ||
+  (ACCOUNT ? `https://${ACCOUNT}.r2.cloudflarestorage.com` : "");
 const PREFIX = val("--prefix", "");
 const MAX = parseInt(val("--max", "5000"), 10) || 5000;
 const OUT = val(
@@ -46,29 +56,34 @@ const OUT = val(
 );
 
 if (flag("--dry-env") || flag("--help")) {
-  console.log(`R2 list helper
+  console.log(`R2 list helper (fleet env bridge)
 
-Env:
+Env (after load-fleet-env):
   CLOUDFLARE_ACCOUNT_ID = ${ACCOUNT ? "set" : "MISSING"}
   R2_ACCESS_KEY_ID      = ${KEY ? "set" : "MISSING"}
   R2_SECRET_ACCESS_KEY  = ${SECRET ? "set" : "MISSING"}
   R2_BUCKET_NAME        = ${BUCKET}
+  R2_ENDPOINT           = ${ENDPOINT ? "set" : "MISSING"}
 
-Note: wrangler 4.x has no "r2 object list". Use this script (S3 ListObjectsV2)
-or AWS CLI:
-  aws s3api list-objects-v2 --bucket grudge-assets --prefix models/ \\
-    --endpoint-url https://$ACCOUNT.r2.cloudflarestorage.com
+Vault: Desktop\\secretnow.txt  (OBJECT_STORAGE_* + CF_ACCOUNT_ID)
+Aliases: OBJECT_STORAGE_KEY→R2_ACCESS_KEY_ID, CF_ACCOUNT_ID→CLOUDFLARE_ACCOUNT_ID
+
+Note: wrangler 4.x has no "r2 object list". Use this script (S3 ListObjectsV2).
 
 Mirror creeps:
   npm run creeps:mirror
 `);
   if (flag("--help")) process.exit(0);
   if (!ACCOUNT || !KEY || !SECRET) process.exit(1);
+  process.exit(0);
 }
 
 if (!ACCOUNT || !KEY || !SECRET) {
   console.error(
-    "[r2-list] Missing R2 S3 credentials. Set CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY",
+    "[r2-list] Missing R2 S3 credentials after fleet env load.",
+  );
+  console.error(
+    "[r2-list] Expected Desktop\\secretnow.txt OBJECT_STORAGE_KEY/SECRET + CF_ACCOUNT_ID",
   );
   console.error("[r2-list] Run with --dry-env for status. No objects listed.");
   // Write empty report so audit can still run offline
@@ -87,52 +102,61 @@ if (!ACCOUNT || !KEY || !SECRET) {
 }
 
 async function main() {
-  let S3Client, ListObjectsV2Command;
+  // Prefer pure SigV4 (no @aws-sdk) — disk-full / broken node_modules safe.
+  // Fall back to SDK if present and importable.
+  let keys = [];
+  let used = "sigv4";
   try {
-    const mod = await import("@aws-sdk/client-s3");
-    S3Client = mod.S3Client;
-    ListObjectsV2Command = mod.ListObjectsV2Command;
-  } catch {
-    console.error(
-      "[r2-list] Install @aws-sdk/client-s3: npm i -D @aws-sdk/client-s3",
-    );
-    process.exit(3);
-  }
-
-  const client = new S3Client({
-    region: "auto",
-    endpoint: `https://${ACCOUNT}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId: KEY, secretAccessKey: SECRET },
-  });
-
-  const keys = [];
-  let token;
-  do {
-    const res = await client.send(
-      new ListObjectsV2Command({
-        Bucket: BUCKET,
-        Prefix: PREFIX || undefined,
-        ContinuationToken: token,
-        MaxKeys: Math.min(1000, MAX - keys.length),
-      }),
-    );
-    for (const o of res.Contents || []) {
-      if (o.Key) {
-        keys.push({
-          key: o.Key,
-          size: o.Size || 0,
-          lastModified: o.LastModified?.toISOString?.() || null,
-        });
-      }
+    const { listR2Objects } = await import("./lib/r2-s3-sigv4.mjs");
+    const listed = await listR2Objects({
+      prefix: PREFIX,
+      max: MAX,
+      bucket: BUCKET,
+    });
+    keys = listed.keys;
+  } catch (sigErr) {
+    try {
+      const mod = await import("@aws-sdk/client-s3");
+      const client = new mod.S3Client({
+        region: "auto",
+        endpoint: ENDPOINT,
+        credentials: { accessKeyId: KEY, secretAccessKey: SECRET },
+      });
+      used = "aws-sdk";
+      let token;
+      do {
+        const res = await client.send(
+          new mod.ListObjectsV2Command({
+            Bucket: BUCKET,
+            Prefix: PREFIX || undefined,
+            ContinuationToken: token,
+            MaxKeys: Math.min(1000, MAX - keys.length),
+          }),
+        );
+        for (const o of res.Contents || []) {
+          if (o.Key) {
+            keys.push({
+              key: o.Key,
+              size: o.Size || 0,
+              lastModified: o.LastModified?.toISOString?.() || null,
+            });
+          }
+        }
+        token = res.IsTruncated ? res.NextContinuationToken : undefined;
+      } while (token && keys.length < MAX);
+    } catch (sdkErr) {
+      console.error("[r2-list] SigV4 failed:", sigErr.message);
+      console.error("[r2-list] SDK fallback failed:", sdkErr.message);
+      process.exit(3);
     }
-    token = res.IsTruncated ? res.NextContinuationToken : undefined;
-  } while (token && keys.length < MAX);
+  }
 
   const report = {
     generatedAt: new Date().toISOString(),
     bucket: BUCKET,
     prefix: PREFIX,
     count: keys.length,
+    transport: used,
     keys,
   };
 

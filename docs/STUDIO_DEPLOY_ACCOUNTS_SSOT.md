@@ -4,6 +4,61 @@ One page for **game studio operations**: identity, player data, deployments, and
 
 ---
 
+## 0. Machine env / secrets / bridges (this workstation)
+
+**Do not invent parallel credential paths.** Everything needed for ops lives on this machine under patterned vault + repo env + wrangler OAuth.
+
+| Layer | Location | Role |
+|-------|----------|------|
+| **Canonical vault** | `%USERPROFILE%\Desktop\secretnow.txt` | Full KEY=VALUE secrets (CF, R2/S3, Railway, JWT, Puter, AI, …) |
+| Fallbacks | Desktop `secret.txt`, `newenv.txt`, `oldenv.txt` | Older / fuller dumps — prefer secretnow |
+| Client public env | Repo `.env` (`VITE_*` only) | Auth URLs, CDN, ObjectStore public base — never R2 write keys |
+| Wrangler OAuth | `~\.wrangler\config\default.toml` | Workers / D1 / Pages; **not** a substitute for R2 S3 list keys |
+| Fleet loader | `ObjectStore/scripts/lib/load-fleet-env.mjs` | Loads vault → aliases into standard env names |
+
+### R2 / S3 (binaries)
+
+secretnow names → script names (applied by `load-fleet-env`):
+
+| secretnow | Used as |
+|-----------|---------|
+| `CF_ACCOUNT_ID` | `CLOUDFLARE_ACCOUNT_ID` |
+| `OBJECT_STORAGE_KEY` | `R2_ACCESS_KEY_ID` |
+| `OBJECT_STORAGE_SECRET` | `R2_SECRET_ACCESS_KEY` |
+| `OBJECT_STORAGE_BUCKET` / `R2_BUCKET_ASSETS` | `R2_BUCKET_NAME` (usually `grudge-assets`) |
+| `OBJECT_STORAGE_ENDPOINT` | `R2_ENDPOINT` |
+| `OBJECT_STORAGE_PUBLIC_URL` | CDN public base → `assets.grudge-studio.com` |
+
+Ops commands (after loader):
+
+```bash
+cd ObjectStore
+npm run r2:list -- --dry-env
+npm run r2:list -- --prefix models/creeps/
+npm run creeps:mirror:upload   # S3 put via fleet env, else wrangler put
+```
+
+**Do not** put R2 write secrets in browser `VITE_*`. Clients only use public CDN URLs.
+
+### Accounts stay logged in (browser)
+
+| Piece | Pattern |
+|-------|---------|
+| Login UI | `https://id.grudge-studio.com` only |
+| JWT mint / auth impl | Railway `grudge-api-production` (via ID rewrites) |
+| Token keys (read all, write canonical) | `grudge_auth_token` · `grudge_session_token` · `grudge.token` · `sso_token` |
+| Account id cache | `grudge_id` / `grudge_account_id` |
+| Game API | same-origin `/api/*` → Railway (Vercel rewrites) |
+| Characters / bag | Railway Postgres — not D1, not localStorage SSOT |
+
+Skill: **`grudge-production-wiring`**. DCQ: `client/src/lib/grudgeBackend.ts` uses the full fleet key read order.
+
+### Other bridges on secretnow (names only)
+
+`VERCEL_TOKEN` · `RAILWAY_API_TOKEN` · `CF_DNS_API_TOKEN` · `CF_WORKER_R2_API` · `OBJECTSTORE_API_KEY` · `OBJECTSTORE_WORKER_URL` · `JWT_SECRET` · `INTERNAL_API_KEY` · `PUTER_*` · `GRUDGE_AUTH_URL` · DB URLs (`GRUDGE_ACCOUNT_DB*`)
+
+---
+
 ## 1. Stack law (Steam model)
 
 ```

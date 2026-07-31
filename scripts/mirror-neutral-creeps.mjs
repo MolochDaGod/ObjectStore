@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Mirror threejs-games neutral creep FBX → local models/creeps/threejs-games/
- * Then optionally upload to R2 (requires credentials + wrangler or S3 put).
+ * Then optionally upload to R2 (S3 put via fleet env, or wrangler put fallback).
  *
  * Usage:
  *   node scripts/mirror-neutral-creeps.mjs
- *   node scripts/mirror-neutral-creeps.mjs --upload   # needs R2 env + wrangler put
+ *   node scripts/mirror-neutral-creeps.mjs --upload   # fleet secretnow S3 or wrangler
  *   node scripts/mirror-neutral-creeps.mjs --dry-run
  *
  * R2 key pattern:
@@ -16,16 +16,64 @@
  * LICENSE: RigModels personal — commercial requires Premium.
  */
 
-import { mkdirSync, writeFileSync, existsSync, createWriteStream } from "fs";
+import {
+  mkdirSync,
+  writeFileSync,
+  unlinkSync,
+  existsSync,
+  createWriteStream,
+  readFileSync,
+} from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
 import { execSync } from "child_process";
+import { loadFleetEnv, resolveR2S3Config } from "./lib/load-fleet-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const OUT_ROOT = join(ROOT, "models", "creeps", "threejs-games");
+// Prefer roomy path when D: is full — override with CREEP_MIRROR_OUT or --out
+const DEFAULT_OUT = join(ROOT, "models", "creeps", "threejs-games");
+const CACHE_OUT = join(
+  process.env.USERPROFILE || process.env.HOME || ROOT,
+  ".cache",
+  "grudge-creeps",
+  "threejs-games",
+);
+const outFlag = (() => {
+  const i = process.argv.findIndex(
+    (a) => a === "--out" || a.startsWith("--out="),
+  );
+  if (i < 0) return null;
+  if (process.argv[i].includes("="))
+    return process.argv[i].split("=").slice(1).join("=");
+  return process.argv[i + 1] || null;
+})();
+function pickOutRoot() {
+  if (outFlag) return outFlag;
+  if (process.env.CREEP_MIRROR_OUT) return process.env.CREEP_MIRROR_OUT;
+  if (process.env.CREEP_MIRROR_USE_CACHE === "1") return CACHE_OUT;
+  // Always prefer user cache when ObjectStore root is on a full drive —
+  // probe write; on failure fall back to %USERPROFILE%\.cache (usually C:)
+  try {
+    const probe = join(ROOT, ".write-probe-creeps");
+    writeFileSync(probe, "ok");
+    unlinkSync(probe);
+  } catch {
+    console.warn(
+      "[creeps:mirror] ObjectStore drive full/unwritable — using",
+      CACHE_OUT,
+    );
+    return CACHE_OUT;
+  }
+  // Prefer cache when CREEP_MIRROR_PREFER_CACHE=1 or default for reliability
+  if (process.env.CREEP_MIRROR_PREFER_CACHE !== "0") {
+    return CACHE_OUT;
+  }
+  return DEFAULT_OUT;
+}
+const OUT_ROOT = pickOutRoot();
 const CDN = "https://threejs-games.github.io/assets/models/character";
 const R2_PREFIX = "models/creeps/threejs-games";
 
@@ -83,6 +131,7 @@ async function main() {
           file: c.file,
           family: c.family,
           local: `models/creeps/threejs-games/${c.slug}/${c.file}`,
+          localAbs: local,
           r2Key,
           cdn: `https://assets.grudge-studio.com/${r2Key}`,
           sourceUrl: url,
@@ -107,19 +156,42 @@ async function main() {
   console.log("[creeps:mirror] manifest", manPath);
 
   if (UPLOAD && !DRY) {
-    console.log("[creeps:mirror] uploading via wrangler r2 object put…");
-    for (const f of manifest.files) {
-      if (!f.r2Key || f.error) continue;
-      const local = join(ROOT, f.local);
-      if (!existsSync(local)) continue;
-      const cmd = `npx wrangler r2 object put ${f.r2Key.replace(/^/, "grudge-assets/")} --file="${local}" --content-type=application/octet-stream --remote`;
-      // wrangler expects bucket/key as bucket/path
-      const put = `npx wrangler r2 object put grudge-assets/${f.r2Key} --file="${local}" --content-type=model/fbx --remote`;
-      try {
-        console.log("  put", f.r2Key);
-        execSync(put, { cwd: ROOT, stdio: "inherit" });
-      } catch (e) {
-        console.warn("  put failed", f.r2Key, e.message);
+    loadFleetEnv({ quiet: false });
+    const r2 = resolveR2S3Config();
+    if (r2) {
+      console.log("[creeps:mirror] uploading via S3 SigV4 (fleet env / secretnow)…");
+      const { putR2Object } = await import("./lib/r2-s3-sigv4.mjs");
+      for (const f of manifest.files) {
+        if (!f.r2Key || f.error) continue;
+        const local = f.localAbs || join(OUT_ROOT, f.slug, f.file);
+        if (!existsSync(local)) continue;
+        try {
+          console.log("  put", f.r2Key);
+          await putR2Object({
+            key: f.r2Key,
+            body: readFileSync(local),
+            contentType: "model/fbx",
+            bucket: r2.bucket,
+          });
+        } catch (e) {
+          console.warn("  put failed", f.r2Key, e.message);
+        }
+      }
+    } else {
+      console.log(
+        "[creeps:mirror] no S3 fleet creds — falling back to wrangler r2 object put…",
+      );
+      for (const f of manifest.files) {
+        if (!f.r2Key || f.error) continue;
+        const local = f.localAbs || join(OUT_ROOT, f.slug, f.file);
+        if (!existsSync(local)) continue;
+        const put = `npx wrangler r2 object put grudge-assets/${f.r2Key} --file="${local}" --content-type=model/fbx --remote`;
+        try {
+          console.log("  put", f.r2Key);
+          execSync(put, { cwd: ROOT, stdio: "inherit" });
+        } catch (e) {
+          console.warn("  put failed", f.r2Key, e.message);
+        }
       }
     }
   }
