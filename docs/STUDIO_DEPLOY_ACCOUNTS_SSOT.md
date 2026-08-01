@@ -53,6 +53,18 @@ npm run creeps:mirror:upload   # S3 put via fleet env, else wrangler put
 
 Skill: **`grudge-production-wiring`**. DCQ: `client/src/lib/grudgeBackend.ts` uses the full fleet key read order.
 
+### Neutral creeps as enemies (fleet)
+
+| Surface | Integration |
+|---------|-------------|
+| **Catalog SSOT** | `api/v1/neutral-creeps.json` + R2 `models/creeps/threejs-games/*` |
+| **DCQ** | dungeon3d + sandbox farm; arena ~60% creep rival |
+| **Warlords** | `NeutralCreepManifest` → `CreatureManifest` aggressive land spawns |
+| **Genesis** | `neutralCreepModels.ts` maps `enemyTypes` → R2 FBX |
+| **Flare** | `cdnMonsters` `tjg_*` + FBX load path in `MonsterModels` |
+
+License: RigModels personal until re-licensed / baked owned GLB.
+
 ### Other bridges on secretnow (names only)
 
 `VERCEL_TOKEN` · `RAILWAY_API_TOKEN` · `CF_DNS_API_TOKEN` · `CF_WORKER_R2_API` · `OBJECTSTORE_API_KEY` · `OBJECTSTORE_WORKER_URL` · `JWT_SECRET` · `INTERNAL_API_KEY` · `PUTER_*` · `GRUDGE_AUTH_URL` · DB URLs (`GRUDGE_ACCOUNT_DB*`)
