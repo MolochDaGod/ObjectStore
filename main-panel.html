@@ -9,7 +9,7 @@
   <title>Grudge Warlords — Main Panel</title>
   <link rel="stylesheet" href="css/grudge-theme.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
     .app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
     .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: linear-gradient(90deg,#1a100a,#221710,#1a100a); border-bottom: 2px solid var(--gold); flex-shrink: 0; }
@@ -59,10 +59,25 @@
     .prof-row .prof-lv { font-family: monospace; font-size: 10px; color: var(--gold); width: 20px; text-align: right; }
 
     /* ===== Equipment Panel Layout ===== */
-    .eq-panel { display: flex; align-items: stretch; gap: 0; width: 100%; min-height: 480px; }
+    .eq-panel { display: flex; align-items: stretch; gap: 0; width: 100%; min-height: 560px; }
     .eq-col { display: flex; flex-direction: column; gap: 6px; justify-content: center; padding: 8px 6px; width: 86px; flex-shrink: 0; }
-    .eq-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: radial-gradient(ellipse at center, rgba(212,175,55,0.04) 0%, transparent 70%); border-left: 1px solid rgba(212,175,55,0.1); border-right: 1px solid rgba(212,175,55,0.1); min-width: 160px; }
+    .eq-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; background: radial-gradient(ellipse at center, rgba(212,175,55,0.04) 0%, transparent 70%); border-left: 1px solid rgba(212,175,55,0.1); border-right: 1px solid rgba(212,175,55,0.1); min-width: 280px; padding: 8px 12px 12px; }
     .eq-center .silhouette { width: 130px; height: 240px; background: linear-gradient(180deg, rgba(30,20,12,0.9) 0%, rgba(20,14,8,0.7) 100%); border: 2px solid rgba(212,175,55,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 60px; text-shadow: 0 0 20px rgba(212,175,55,0.2); }
+    /* Large 3D hero viewport — grudge6 modular equip mesh */
+    .hero-viewport {
+      width: min(100%, 340px);
+      height: 420px;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.35);
+      background: linear-gradient(180deg, #1a120c 0%, #0e0a06 100%);
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.55), 0 0 18px rgba(212,175,55,0.08);
+      position: relative;
+    }
+    @media (min-width: 1100px) {
+      .hero-viewport { width: 380px; height: 460px; }
+    }
     .eq-slot { width: 68px; height: 68px; border: 2px solid var(--gold-dim); border-radius: 8px; background: linear-gradient(180deg, #2e1f14 0%, #221710 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; font-size: 8px; color: var(--muted); text-transform: uppercase; position: relative; transition: all 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); }
     .eq-slot:hover { border-color: var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.3), inset 0 2px 4px rgba(0,0,0,0.4); transform: scale(1.05); z-index: 2; }
     .eq-slot.equipped { border-color: var(--gold); background: linear-gradient(180deg, #3a2a1a 0%, #2e1f14 100%); }
@@ -870,6 +885,20 @@
     if (activeTab === 'Equipment') {
       area.innerHTML = renderEquipmentPanel();
       attachSlotListeners();
+      // Mount Three.js hero after DOM paint (equip mesh filter)
+      requestAnimationFrame(() => {
+        import('./js/main-panel-hero-viewport.js')
+          .then((mod) => {
+            const host = document.getElementById('hero-viewport');
+            if (!host) return;
+            return mod.mountHeroViewport(host, {
+              race: selectedRace,
+              equippedItems,
+              findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
+            });
+          })
+          .catch((e) => console.warn('[main-panel] hero viewport', e));
+      });
     } else if (activeTab === 'Attributes') {
       area.innerHTML = renderAttributesTab();
       attachAttributesTab();
@@ -927,21 +956,21 @@
     }).join('');
 
 
-    // Race info panel (replaces silhouette)
+    // Large grudge6 hero viewport — equip mesh visibility (bag/lumber hidden)
+    const grudge6Url = `https://assets.grudge-studio.com/models/grudge6/races/${
+      selectedRace === 'human' ? 'WK' :
+      selectedRace === 'orc' ? 'ORC' :
+      selectedRace === 'elf' ? 'ELF' :
+      selectedRace === 'dwarf' ? 'DWF' :
+      selectedRace === 'undead' ? 'UD' :
+      selectedRace === 'barbarian' ? 'BRB' : 'WK'
+    }_Characters.glb`;
     let centerHtml = `
-      <div style="text-align:center;padding:8px;">
+      <div style="text-align:center;padding:4px 8px 8px;width:100%;">
         <div style="font-family:var(--font-display);font-size:14px;color:${rm.color};letter-spacing:1px;">${rm.name}</div>
-        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin:2px 0 8px;">${rm.display} · ${rm.faction}</div>
-        <div style="width:140px;height:200px;margin:0 auto;border-radius:8px;overflow:hidden;border:2px solid ${rm.color}44;
-          background:linear-gradient(180deg,rgba(30,20,12,0.95),rgba(20,14,8,0.8));position:relative;">
-          <model-viewer src="${modelUrl}" alt="${rm.name}" auto-rotate camera-controls
-            style="width:100%;height:100%;--poster-color:transparent;"
-            camera-orbit="0deg 80deg 2.2m" min-camera-orbit="auto auto 1.5m" max-camera-orbit="auto auto 4m"
-            interaction-prompt="none" ar-status="not-presenting"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"></model-viewer>
-          <div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:48px;color:var(--dim);position:absolute;top:0;left:0;">&#9876;</div>
-        </div>
-        <div style="font-size:8px;color:var(--dim);margin-top:6px;">Mount: ${rm.mount}</div>`;
+        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin:2px 0 10px;">${rm.display} · ${rm.faction}</div>
+        <div id="hero-viewport" class="hero-viewport" data-race="${selectedRace}" title="Drag to orbit · equip filters bag/lumber"></div>
+        <div style="font-size:8px;color:var(--dim);margin-top:8px;">Mount: ${rm.mount} · mesh: equip only (no bag / lumber)</div>`;
 
     // Equipment slot info from manifest
     if (equipSlots) {
@@ -967,7 +996,10 @@
       centerHtml += `<div style="font-size:8px;color:var(--dim);margin-top:4px;">${Object.keys(animPacks).length} anim packs · ${totalClips} clips</div>`;
     }
 
-    centerHtml += `<div style="margin-top:6px;"><a href="${modelUrl}" target="_blank" style="font-size:8px;color:var(--gold);">Download GLB ↗</a></div>`;
+    centerHtml += `<div style="margin-top:6px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <a href="${grudge6Url}" target="_blank" rel="noopener" style="font-size:8px;color:var(--gold);">grudge6 GLB ↗</a>
+      <a href="${modelUrl}" target="_blank" rel="noopener" style="font-size:8px;color:var(--dim);">toon pack ↗</a>
+    </div>`;
     centerHtml += `</div>`;
 
     return `
