@@ -33,41 +33,75 @@ export const TOON_RTS_DISK = {
   barbarian: 'barbarian',
 };
 
-/** SI heights (m) — infantry from race manifests; cavalry/siege from customizer SSOT */
+/**
+ * Faction allies share siege / range engines (Toon RTS SSOT):
+ *   dwarf → elf boltthrower · undead → orc catapult · barbarian → human catapult
+ * Infantry + cavalry stay per-race (own glTF on disk).
+ */
+export const TOON_RTS_SIEGE_ALLY = {
+  dwarf: 'elf',
+  undead: 'orc',
+  barbarian: 'human',
+};
+
+/** SI heights (m) — infantry from race manifests; cavalry/siege from customizer SSOT.
+ *  Ally races use the provider race's siege height. */
 export const TOON_RTS_HEIGHT_M = {
   human: { infantry: 1.83, cavalry: 2.55, siege: 3.5 },
   orc: { infantry: 2.13, cavalry: 2.9, siege: 4.2 },
   elf: { infantry: 1.95, cavalry: 2.65, siege: 3.6 },
-  dwarf: { infantry: 1.52, cavalry: 2.1, siege: 3.2 },
-  undead: { infantry: 1.83, cavalry: 2.55, siege: 3.5 },
-  barbarian: { infantry: 1.98, cavalry: 2.7, siege: 3.8 },
+  dwarf: { infantry: 1.52, cavalry: 2.1, siege: 3.6 }, // shares elf boltthrower
+  undead: { infantry: 1.83, cavalry: 2.55, siege: 4.2 }, // shares orc catapult
+  barbarian: { infantry: 1.98, cavalry: 2.7, siege: 3.5 }, // shares human catapult
 };
 
-/** Siege / range engines present in the editable tree */
+/** Siege / range engines — relative path on the *provider* race folder */
 export const TOON_RTS_SIEGE = {
   human: 'character/siege_wk_catapult.gltf',
   orc: 'character/siege_orc_catapult.gltf',
   elf: 'character/siege_elf_boltthrower.gltf',
-  // dwarf / undead / barbarian: gap — no siege glTF yet
+  // allies resolve via TOON_RTS_SIEGE_ALLY → provider entry
+  dwarf: 'character/siege_elf_boltthrower.gltf',
+  undead: 'character/siege_orc_catapult.gltf',
+  barbarian: 'character/siege_wk_catapult.gltf',
 };
+
+/** Resolve which race folder owns siege mesh + clips for this fleet race */
+export function toonRtsSiegeProvider(raceId) {
+  return TOON_RTS_SIEGE_ALLY[raceId] || raceId;
+}
 
 /**
  * Resolve a Toon RTS unit glTF URL.
  * @param {string} raceId fleet id (human|orc|…)
  * @param {'infantry'|'cavalry'|'siege'} kind
  * @param {{ base?: string }} opts base defaults to `/assets/{disk}/`
+ *   For siege, base is the *provider* race folder when ally share applies.
  */
 export function toonRtsUnitUrl(raceId, kind = 'infantry', opts = {}) {
+  if (kind === 'siege') {
+    // Always load from provider race folder (ally share)
+    const provider = toonRtsSiegeProvider(raceId);
+    const disk = TOON_RTS_DISK[provider];
+    if (!disk) return null;
+    const rel = TOON_RTS_SIEGE[provider];
+    if (!rel) return null;
+    const base = (opts.base || `/assets/${disk}/`).replace(/\/?$/, '/');
+    return `${base}${rel}`;
+  }
   const disk = TOON_RTS_DISK[raceId];
   if (!disk) return null;
   const base = (opts.base || `/assets/${disk}/`).replace(/\/?$/, '/');
   if (kind === 'infantry') return `${base}character/infantry.gltf`;
   if (kind === 'cavalry') return `${base}character/cavalry.gltf`;
-  if (kind === 'siege') {
-    const rel = TOON_RTS_SIEGE[raceId];
-    return rel ? `${base}${rel}` : null;
-  }
   return null;
+}
+
+/** Siege animation clip URLs live on the provider race folder */
+export function toonRtsSiegeAnimBase(raceId) {
+  const provider = toonRtsSiegeProvider(raceId);
+  const disk = TOON_RTS_DISK[provider];
+  return disk ? `/assets/${disk}/animations/` : null;
 }
 
 /** Canonical race kits — FBX is production paperdoll SSOT until GLB passes visual gate */

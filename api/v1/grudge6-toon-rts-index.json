@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-05T00:29:36.549Z",
+  "generated": "2026-08-05T00:52:55.477Z",
   "schema": "grudge6-toon-rts-ssot/v1",
   "ssot": "/assets/GRUDGE6_TOON_RTS_SSOT.json",
   "principle": "Singular editable Toon RTS tree. Each race folder is the unit of truth: infantry (modular foot), cavalry (mount+rider), siege (catapult/boltthrower), optional equipment glTFs, Bip001 anim clips, PNG atlases. Manifest is the race catalog; .bin is only the glTF buffer.",
@@ -37,6 +37,14 @@
             "id": "siege_wk_catapult"
           }
         ]
+      },
+      "siegeShare": {
+        "providerRace": "human",
+        "providerFleetId": "human",
+        "gltf": "character/siege_wk_catapult.gltf",
+        "baseUrl": "/assets/human/",
+        "heightMeters": 3.5,
+        "note": "owns siege mesh on disk"
       },
       "defaultBodyTexture": "textures/WK_Standard_Units.png",
       "mountTextures": [
@@ -99,6 +107,14 @@
             "id": "siege_orc_catapult"
           }
         ]
+      },
+      "siegeShare": {
+        "providerRace": "orc",
+        "providerFleetId": "orc",
+        "gltf": "character/siege_orc_catapult.gltf",
+        "baseUrl": "/assets/orc/",
+        "heightMeters": 4.2,
+        "note": "owns siege mesh on disk"
       },
       "defaultBodyTexture": "textures/ORC_StandardUnits.png",
       "mountTextures": [
@@ -164,6 +180,14 @@
           }
         ]
       },
+      "siegeShare": {
+        "providerRace": "elf",
+        "providerFleetId": "elf",
+        "gltf": "character/siege_elf_boltthrower.gltf",
+        "baseUrl": "/assets/elf/",
+        "heightMeters": 3.6,
+        "note": "owns siege mesh on disk"
+      },
       "defaultBodyTexture": "textures/ELF_DarkElves_Texture.png",
       "mountTextures": [],
       "equipmentIds": [
@@ -201,7 +225,7 @@
       "heightMeters": {
         "infantry": 1.52,
         "cavalry": 2.1,
-        "siege": 3.2
+        "siege": 3.6
       },
       "character": {
         "infantry": {
@@ -217,6 +241,14 @@
           ]
         },
         "siege": []
+      },
+      "siegeShare": {
+        "providerRace": "elf",
+        "providerFleetId": "elf",
+        "gltf": "character/siege_elf_boltthrower.gltf",
+        "baseUrl": "/assets/elf/",
+        "heightMeters": 3.6,
+        "note": "dwarf uses elf siege/range engine (faction ally share)"
       },
       "defaultBodyTexture": "textures/DWF_Standard_Units.png",
       "mountTextures": [],
@@ -253,7 +285,7 @@
       "heightMeters": {
         "infantry": 1.83,
         "cavalry": 2.55,
-        "siege": 3.5
+        "siege": 4.2
       },
       "character": {
         "infantry": {
@@ -269,6 +301,14 @@
           ]
         },
         "siege": []
+      },
+      "siegeShare": {
+        "providerRace": "orc",
+        "providerFleetId": "orc",
+        "gltf": "character/siege_orc_catapult.gltf",
+        "baseUrl": "/assets/orc/",
+        "heightMeters": 4.2,
+        "note": "undead uses orc siege/range engine (faction ally share)"
       },
       "defaultBodyTexture": "textures/UD_Standard_Units.png",
       "mountTextures": [],
@@ -299,7 +339,7 @@
       "heightMeters": {
         "infantry": 1.98,
         "cavalry": 2.7,
-        "siege": 3.8
+        "siege": 3.5
       },
       "character": {
         "infantry": {
@@ -315,6 +355,14 @@
           ]
         },
         "siege": []
+      },
+      "siegeShare": {
+        "providerRace": "human",
+        "providerFleetId": "human",
+        "gltf": "character/siege_wk_catapult.gltf",
+        "baseUrl": "/assets/human/",
+        "heightMeters": 3.5,
+        "note": "barbarian uses human siege/range engine (faction ally share)"
       },
       "defaultBodyTexture": "textures/BRB_StandardUnits_texture.png",
       "mountTextures": [],

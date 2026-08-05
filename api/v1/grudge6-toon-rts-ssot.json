@@ -1,6 +1,6 @@
 {
   "schema": "grudge6-toon-rts-ssot/v1",
-  "generated": "2026-08-05T00:29:36.549Z",
+  "generated": "2026-08-05T00:52:55.477Z",
   "sourceRoot": "F:/GitHub/Asset-Rig-Editor/artifacts/character-customizer/public/assets",
   "principle": "Singular editable Toon RTS tree. Each race folder is the unit of truth: infantry (modular foot), cavalry (mount+rider), siege (catapult/boltthrower), optional equipment glTFs, Bip001 anim clips, PNG atlases. Manifest is the race catalog; .bin is only the glTF buffer.",
   "howBinsWork": {
@@ -46,6 +46,19 @@
       "grudgeId": "barbarians"
     }
   },
+  "factionAllySiege": {
+    "rule": "Faction allies share siege / range engines; infantry+cavalry stay per-race.",
+    "map": {
+      "dwarf": "elf",
+      "undead": "orc",
+      "barbarian": "human"
+    },
+    "providers": {
+      "human": "character/siege_wk_catapult.gltf",
+      "orc": "character/siege_orc_catapult.gltf",
+      "elf": "character/siege_elf_boltthrower.gltf"
+    }
+  },
   "unitKinds": {
     "infantry": {
       "role": "modular foot soldier",
@@ -60,8 +73,9 @@
     "siege": {
       "role": "catapult / bolt thrower",
       "meshEquip": "engine mesh only; never hero-fit to 1.8 m",
-      "si": "heightMeters.siege ~3.2–4.2 m",
-      "range": true
+      "si": "heightMeters.siege from provider race when ally share",
+      "range": true,
+      "allyShare": "dwarf→elf, undead→orc, barbarian→human"
     },
     "equipment": {
       "role": "optional external weapon glTF (hand attach)",
@@ -69,7 +83,7 @@
     },
     "projectile": {
       "role": "bolt / rock props for siege",
-      "example": "elf/misc/ELF_bolt.gltf"
+      "example": "elf/misc/ELF_bolt.gltf (also used when dwarf shares elf siege)"
     }
   },
   "totals": {
@@ -82,20 +96,7 @@
   "integrity": {
     "binOrphans": [],
     "gltfMissingBin": [],
-    "gaps": [
-      {
-        "race": "dwarf",
-        "issue": "no siege engine (optional)"
-      },
-      {
-        "race": "undead",
-        "issue": "no siege engine (optional)"
-      },
-      {
-        "race": "barbarian",
-        "issue": "no siege engine (optional)"
-      }
-    ]
+    "gaps": []
   },
   "races": {
     "human": {
@@ -731,6 +732,14 @@
         "siege": 1,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "human",
+        "providerFleetId": "human",
+        "gltf": "character/siege_wk_catapult.gltf",
+        "baseUrl": "/assets/human/",
+        "heightMeters": 3.5,
+        "note": "owns siege mesh on disk"
       }
     },
     "orc": {
@@ -1416,6 +1425,14 @@
         "siege": 1,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "orc",
+        "providerFleetId": "orc",
+        "gltf": "character/siege_orc_catapult.gltf",
+        "baseUrl": "/assets/orc/",
+        "heightMeters": 4.2,
+        "note": "owns siege mesh on disk"
       }
     },
     "elf": {
@@ -2166,6 +2183,14 @@
         "siege": 1,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "elf",
+        "providerFleetId": "elf",
+        "gltf": "character/siege_elf_boltthrower.gltf",
+        "baseUrl": "/assets/elf/",
+        "heightMeters": 3.6,
+        "note": "owns siege mesh on disk"
       }
     },
     "dwarf": {
@@ -2178,7 +2203,7 @@
       "heightMeters": {
         "infantry": 1.52,
         "cavalry": 2.1,
-        "siege": 3.2
+        "siege": 3.6
       },
       "accentColor": "#ffb86b",
       "baseUrl": "/assets/dwarf/",
@@ -2777,6 +2802,14 @@
         "siege": 0,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "elf",
+        "providerFleetId": "elf",
+        "gltf": "character/siege_elf_boltthrower.gltf",
+        "baseUrl": "/assets/elf/",
+        "heightMeters": 3.6,
+        "note": "dwarf uses elf siege/range engine (faction ally share)"
       }
     },
     "undead": {
@@ -2789,7 +2822,7 @@
       "heightMeters": {
         "infantry": 1.83,
         "cavalry": 2.55,
-        "siege": 3.5
+        "siege": 4.2
       },
       "accentColor": "#c89cff",
       "baseUrl": "/assets/undead/",
@@ -3090,6 +3123,14 @@
         "siege": 0,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "orc",
+        "providerFleetId": "orc",
+        "gltf": "character/siege_orc_catapult.gltf",
+        "baseUrl": "/assets/orc/",
+        "heightMeters": 4.2,
+        "note": "undead uses orc siege/range engine (faction ally share)"
       }
     },
     "barbarian": {
@@ -3102,7 +3143,7 @@
       "heightMeters": {
         "infantry": 1.98,
         "cavalry": 2.7,
-        "siege": 3.8
+        "siege": 3.5
       },
       "accentColor": "#ff8a72",
       "baseUrl": "/assets/barbarian/",
@@ -3537,6 +3578,14 @@
         "siege": 0,
         "hasCavalry": true,
         "hasInfantry": true
+      },
+      "siegeShare": {
+        "providerRace": "human",
+        "providerFleetId": "human",
+        "gltf": "character/siege_wk_catapult.gltf",
+        "baseUrl": "/assets/human/",
+        "heightMeters": 3.5,
+        "note": "barbarian uses human siege/range engine (faction ally share)"
       }
     }
   },
