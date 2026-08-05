@@ -1,0 +1,344 @@
+{
+  "generated": "2026-08-05T00:29:36.549Z",
+  "schema": "grudge6-toon-rts-ssot/v1",
+  "ssot": "/assets/GRUDGE6_TOON_RTS_SSOT.json",
+  "principle": "Singular editable Toon RTS tree. Each race folder is the unit of truth: infantry (modular foot), cavalry (mount+rider), siege (catapult/boltthrower), optional equipment glTFs, Bip001 anim clips, PNG atlases. Manifest is the race catalog; .bin is only the glTF buffer.",
+  "races": {
+    "human": {
+      "manifest": "/assets/human/manifest.json",
+      "colors": "/assets/human/colors.json",
+      "fleetId": "human",
+      "grudgeRaceId": "western-kingdoms",
+      "prefix": "WK_",
+      "heightMeters": {
+        "infantry": 1.83,
+        "cavalry": 2.55,
+        "siege": 3.5
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": [
+          {
+            "gltf": "character/siege_wk_catapult.gltf",
+            "bin": [
+              "character/siege_wk_catapult.bin"
+            ],
+            "id": "siege_wk_catapult"
+          }
+        ]
+      },
+      "defaultBodyTexture": "textures/WK_Standard_Units.png",
+      "mountTextures": [
+        "textures/WK_Horse_A.png"
+      ],
+      "equipmentIds": [
+        "WK_weapon_staff_B",
+        "WK_weapon_sword_A"
+      ],
+      "animationIds": [
+        "catapult_catapult_01_idle",
+        "catapult_catapult_02_move",
+        "catapult_catapult_03_attack",
+        "catapult_catapult_04_death",
+        "cavalry_cavalry_01_idle",
+        "cavalry_cavalry_03_run",
+        "cavalry_cavalry_10_death_b"
+      ],
+      "counts": {
+        "gltf": 12,
+        "bin": 12,
+        "png": 8,
+        "equipment": 2,
+        "animations": 7,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "orc": {
+      "manifest": "/assets/orc/manifest.json",
+      "colors": "/assets/orc/colors.json",
+      "fleetId": "orc",
+      "grudgeRaceId": "orcs",
+      "prefix": "ORC_",
+      "heightMeters": {
+        "infantry": 2.13,
+        "cavalry": 2.9,
+        "siege": 4.2
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": [
+          {
+            "gltf": "character/siege_orc_catapult.gltf",
+            "bin": [
+              "character/siege_orc_catapult.bin"
+            ],
+            "id": "siege_orc_catapult"
+          }
+        ]
+      },
+      "defaultBodyTexture": "textures/ORC_StandardUnits.png",
+      "mountTextures": [
+        "textures/ORC_Wolf_texture_A.png"
+      ],
+      "equipmentIds": [
+        "ORC_Shield_D",
+        "ORC_weapon_Axe_A",
+        "ORC_weapon_staff_B"
+      ],
+      "animationIds": [
+        "catapult_catapult_01_idle",
+        "catapult_catapult_02_move",
+        "catapult_catapult_03_attack",
+        "catapult_catapult_04_death",
+        "cavalry_cavalry_01_idle",
+        "cavalry_cavalry_03_run",
+        "cavalry_cavalry_10_death_b",
+        "worker_worker_12_working_a"
+      ],
+      "counts": {
+        "gltf": 14,
+        "bin": 14,
+        "png": 7,
+        "equipment": 3,
+        "animations": 8,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "elf": {
+      "manifest": "/assets/elf/manifest.json",
+      "colors": "/assets/elf/colors.json",
+      "fleetId": "elf",
+      "grudgeRaceId": "high-elves",
+      "prefix": "ELF_",
+      "heightMeters": {
+        "infantry": 1.95,
+        "cavalry": 2.65,
+        "siege": 3.6
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": [
+          {
+            "gltf": "character/siege_elf_boltthrower.gltf",
+            "bin": [
+              "character/siege_elf_boltthrower.bin"
+            ],
+            "id": "siege_elf_boltthrower"
+          }
+        ]
+      },
+      "defaultBodyTexture": "textures/ELF_DarkElves_Texture.png",
+      "mountTextures": [],
+      "equipmentIds": [
+        "ELF_weapon_spear",
+        "ELF_weapon_staff_C"
+      ],
+      "animationIds": [
+        "boltthrower_boltthrower_01_idle",
+        "boltthrower_boltthrower_02_move",
+        "boltthrower_boltthrower_03_attack",
+        "boltthrower_boltthrower_04_death",
+        "cavalry_mage_cavalry_mage_08_attack_b",
+        "cavalry_spear_cavalry_spear_04_charge",
+        "cavalry_spear_cavalry_spear_05_combat_idle",
+        "cavalry_spear_cavalry_spear_07_attack",
+        "cavalry_spear_cavalry_spear_10_death_a"
+      ],
+      "counts": {
+        "gltf": 15,
+        "bin": 15,
+        "png": 7,
+        "equipment": 2,
+        "animations": 9,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "dwarf": {
+      "manifest": "/assets/dwarf/manifest.json",
+      "colors": "/assets/dwarf/colors.json",
+      "fleetId": "dwarf",
+      "grudgeRaceId": "dwarves",
+      "prefix": "DWF_",
+      "heightMeters": {
+        "infantry": 1.52,
+        "cavalry": 2.1,
+        "siege": 3.2
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": []
+      },
+      "defaultBodyTexture": "textures/DWF_Standard_Units.png",
+      "mountTextures": [],
+      "equipmentIds": [],
+      "animationIds": [
+        "cavalry_cavalry_01_idle",
+        "cavalry_cavalry_03_run",
+        "cavalry_cavalry_10_death_b",
+        "worker_run",
+        "worker_run_diagonal",
+        "worker_run_diagonal_1",
+        "worker_run_reverse",
+        "worker_worker_07_attack",
+        "worker_worker_10_death_b",
+        "worker__idle"
+      ],
+      "counts": {
+        "gltf": 12,
+        "bin": 12,
+        "png": 2,
+        "equipment": 0,
+        "animations": 10,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "undead": {
+      "manifest": "/assets/undead/manifest.json",
+      "colors": "/assets/undead/colors.json",
+      "fleetId": "undead",
+      "grudgeRaceId": "undead",
+      "prefix": "UD_",
+      "heightMeters": {
+        "infantry": 1.83,
+        "cavalry": 2.55,
+        "siege": 3.5
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": []
+      },
+      "defaultBodyTexture": "textures/UD_Standard_Units.png",
+      "mountTextures": [],
+      "equipmentIds": [
+        "UD_Shield_C",
+        "UD_weapon_Spear",
+        "UD_weapon_staff_B",
+        "UD_weapon_Sword_C"
+      ],
+      "animationIds": [],
+      "counts": {
+        "gltf": 6,
+        "bin": 6,
+        "png": 2,
+        "equipment": 4,
+        "animations": 0,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "barbarian": {
+      "manifest": "/assets/barbarian/manifest.json",
+      "colors": "/assets/barbarian/colors.json",
+      "fleetId": "barbarian",
+      "grudgeRaceId": "barbarians",
+      "prefix": "BRB_",
+      "heightMeters": {
+        "infantry": 1.98,
+        "cavalry": 2.7,
+        "siege": 3.8
+      },
+      "character": {
+        "infantry": {
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ]
+        },
+        "cavalry": {
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ]
+        },
+        "siege": []
+      },
+      "defaultBodyTexture": "textures/BRB_StandardUnits_texture.png",
+      "mountTextures": [],
+      "equipmentIds": [
+        "BRB_bag",
+        "BRB_weapon_hammer_B",
+        "BRB_weapon_spear",
+        "BRB_weapon_staff_B",
+        "BRB_weapon_sword_B"
+      ],
+      "animationIds": [
+        "mage_mage_11_cast_b",
+        "spearman_spearman_07_attack"
+      ],
+      "counts": {
+        "gltf": 9,
+        "bin": 9,
+        "png": 2,
+        "equipment": 5,
+        "animations": 2,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    }
+  }
+}

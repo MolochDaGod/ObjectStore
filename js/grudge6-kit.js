@@ -2,16 +2,75 @@
  * @grudge-studio/grudge6-kit (ObjectStore js/)
  *
  * Shared modular race kit loader + equipment for Grudge games / browse.
- * SSOT mesh: race FBX on assets CDN. Equip = child-mesh visibility + D1 mesh_ids.
  *
- * Usage (browser module):
- *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, bindRaceAtlas } from './grudge6-kit.js';
- *   const { root, equip, race } = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, 'human', { source: 'fbx' });
- *   equip.applyMeshIds(['WK_Units_Body_A', 'WK_weapon_sword_A']);
+ * TWO surfaces (do not invent a third):
+ *  A) Production monolith kits on CDN — FBX/GLB Characters for paperdoll/cinema
+ *  B) Editable Toon RTS split tree (infantry/cavalry/siege) — SSOT catalog:
+ *     api/v1/grudge6-toon-rts-ssot.json  ← built from Asset-Rig-Editor public/assets
+ *
+ * Usage:
+ *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, bindRaceAtlas,
+ *            toonRtsUnitUrl, TOON_RTS_HEIGHT_M } from './grudge6-kit.js';
+ *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human', { source: 'fbx' });
  */
 export const CDN = 'https://assets.grudge-studio.com';
 
-/** Canonical race kits — FBX is SSOT until GLB passes visual gate */
+/** Fleet catalog of editable Toon RTS tree (regenerate via customizer script) */
+export const TOON_RTS_SSOT_URL = '/api/v1/grudge6-toon-rts-ssot.json';
+export const TOON_RTS_INDEX_URL = '/api/v1/grudge6-toon-rts-index.json';
+
+/**
+ * Local / customizer base for split glTF+bin packs.
+ * When hosting the Asset-Rig-Editor customizer: `/assets/{diskFolder}/...`
+ * When promoting to CDN, map diskFolder → R2 under models/grudge6/toon-rts/{diskFolder}/
+ */
+export const TOON_RTS_DISK = {
+  human: 'human',
+  orc: 'orc',
+  elf: 'elf',
+  dwarf: 'dwarf',
+  undead: 'undead',
+  barbarian: 'barbarian',
+};
+
+/** SI heights (m) — infantry from race manifests; cavalry/siege from customizer SSOT */
+export const TOON_RTS_HEIGHT_M = {
+  human: { infantry: 1.83, cavalry: 2.55, siege: 3.5 },
+  orc: { infantry: 2.13, cavalry: 2.9, siege: 4.2 },
+  elf: { infantry: 1.95, cavalry: 2.65, siege: 3.6 },
+  dwarf: { infantry: 1.52, cavalry: 2.1, siege: 3.2 },
+  undead: { infantry: 1.83, cavalry: 2.55, siege: 3.5 },
+  barbarian: { infantry: 1.98, cavalry: 2.7, siege: 3.8 },
+};
+
+/** Siege / range engines present in the editable tree */
+export const TOON_RTS_SIEGE = {
+  human: 'character/siege_wk_catapult.gltf',
+  orc: 'character/siege_orc_catapult.gltf',
+  elf: 'character/siege_elf_boltthrower.gltf',
+  // dwarf / undead / barbarian: gap — no siege glTF yet
+};
+
+/**
+ * Resolve a Toon RTS unit glTF URL.
+ * @param {string} raceId fleet id (human|orc|…)
+ * @param {'infantry'|'cavalry'|'siege'} kind
+ * @param {{ base?: string }} opts base defaults to `/assets/{disk}/`
+ */
+export function toonRtsUnitUrl(raceId, kind = 'infantry', opts = {}) {
+  const disk = TOON_RTS_DISK[raceId];
+  if (!disk) return null;
+  const base = (opts.base || `/assets/${disk}/`).replace(/\/?$/, '/');
+  if (kind === 'infantry') return `${base}character/infantry.gltf`;
+  if (kind === 'cavalry') return `${base}character/cavalry.gltf`;
+  if (kind === 'siege') {
+    const rel = TOON_RTS_SIEGE[raceId];
+    return rel ? `${base}${rel}` : null;
+  }
+  return null;
+}
+
+/** Canonical race kits — FBX is production paperdoll SSOT until GLB passes visual gate */
 export const RACE_ASSETS = {
   human: {
     id: 'human',
@@ -20,6 +79,8 @@ export const RACE_ASSETS = {
     texture: 'WK_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/WK_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/WK_Characters.glb`,
+    toonDisk: 'human',
+    mountTexture: 'WK_Horse_A.png',
   },
   barbarian: {
     id: 'barbarian',
@@ -28,6 +89,7 @@ export const RACE_ASSETS = {
     texture: 'BRB_StandardUnits_texture.webp',
     fbx: `${CDN}/models/grudge6/races/BRB_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/BRB_Characters.glb`,
+    toonDisk: 'barbarian',
   },
   orc: {
     id: 'orc',
@@ -36,6 +98,8 @@ export const RACE_ASSETS = {
     texture: 'ORC_StandardUnits.webp',
     fbx: `${CDN}/models/grudge6/races/ORC_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/ORC_Characters.glb`,
+    toonDisk: 'orc',
+    mountTexture: 'ORC_Wolf_texture_A.png',
   },
   elf: {
     id: 'elf',
@@ -44,6 +108,7 @@ export const RACE_ASSETS = {
     texture: 'ELF_HighElves_Texture.webp',
     fbx: `${CDN}/models/grudge6/races/ELF_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/ELF_Characters.glb`,
+    toonDisk: 'elf',
   },
   undead: {
     id: 'undead',
@@ -52,6 +117,7 @@ export const RACE_ASSETS = {
     texture: 'UD_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/UD_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/UD_Characters.glb`,
+    toonDisk: 'undead',
   },
   dwarf: {
     id: 'dwarf',
@@ -60,6 +126,7 @@ export const RACE_ASSETS = {
     texture: 'DWF_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/DWF_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/DWF_Characters.glb`,
+    toonDisk: 'dwarf',
   },
 };
 

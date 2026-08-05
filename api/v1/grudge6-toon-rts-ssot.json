@@ -1,0 +1,3559 @@
+{
+  "schema": "grudge6-toon-rts-ssot/v1",
+  "generated": "2026-08-05T00:29:36.549Z",
+  "sourceRoot": "F:/GitHub/Asset-Rig-Editor/artifacts/character-customizer/public/assets",
+  "principle": "Singular editable Toon RTS tree. Each race folder is the unit of truth: infantry (modular foot), cavalry (mount+rider), siege (catapult/boltthrower), optional equipment glTFs, Bip001 anim clips, PNG atlases. Manifest is the race catalog; .bin is only the glTF buffer.",
+  "howBinsWork": {
+    "rule": "NEVER load .bin alone. Load the .gltf; GLTFLoader fetches buffers[].uri.",
+    "example": "character/infantry.gltf → buffers[0].uri = \"infantry.bin\"",
+    "generator": "FBX2glTF v0.9.7 + KHR_materials_unlit (toon flat)"
+  },
+  "raceIdMap": {
+    "human": {
+      "fleetId": "human",
+      "prefix": "WK_",
+      "folder": "western-kingdoms",
+      "grudgeId": "western-kingdoms"
+    },
+    "orc": {
+      "fleetId": "orc",
+      "prefix": "ORC_",
+      "folder": "orcs",
+      "grudgeId": "orcs"
+    },
+    "elf": {
+      "fleetId": "elf",
+      "prefix": "ELF_",
+      "folder": "elves",
+      "grudgeId": "high-elves"
+    },
+    "dwarf": {
+      "fleetId": "dwarf",
+      "prefix": "DWF_",
+      "folder": "dwarves",
+      "grudgeId": "dwarves"
+    },
+    "undead": {
+      "fleetId": "undead",
+      "prefix": "UD_",
+      "folder": "undead",
+      "grudgeId": "undead"
+    },
+    "barbarian": {
+      "fleetId": "barbarian",
+      "prefix": "BRB_",
+      "folder": "barbarians",
+      "grudgeId": "barbarians"
+    }
+  },
+  "unitKinds": {
+    "infantry": {
+      "role": "modular foot soldier",
+      "meshEquip": "visibility on skinned Units_* variants in one glTF",
+      "si": "heightMeters.infantry ~1.52–2.13 m"
+    },
+    "cavalry": {
+      "role": "rider + mount",
+      "meshEquip": "separate mount material (Horse/Wolf); do not tint mount as body",
+      "si": "heightMeters.cavalry ~2.1–2.9 m"
+    },
+    "siege": {
+      "role": "catapult / bolt thrower",
+      "meshEquip": "engine mesh only; never hero-fit to 1.8 m",
+      "si": "heightMeters.siege ~3.2–4.2 m",
+      "range": true
+    },
+    "equipment": {
+      "role": "optional external weapon glTF (hand attach)",
+      "note": "Prefer kit-embedded mesh visibility for body armor; equipment/ is extras"
+    },
+    "projectile": {
+      "role": "bolt / rock props for siege",
+      "example": "elf/misc/ELF_bolt.gltf"
+    }
+  },
+  "totals": {
+    "races": 6,
+    "gltf": 68,
+    "bin": 68,
+    "binOrphans": 0,
+    "gltfMissingBin": 0
+  },
+  "integrity": {
+    "binOrphans": [],
+    "gltfMissingBin": [],
+    "gaps": [
+      {
+        "race": "dwarf",
+        "issue": "no siege engine (optional)"
+      },
+      {
+        "race": "undead",
+        "issue": "no siege engine (optional)"
+      },
+      {
+        "race": "barbarian",
+        "issue": "no siege engine (optional)"
+      }
+    ]
+  },
+  "races": {
+    "human": {
+      "diskFolder": "human",
+      "fleetId": "human",
+      "grudgeRaceId": "western-kingdoms",
+      "prefix": "WK_",
+      "cdnFolder": "western-kingdoms",
+      "label": "Northern Kingdoms",
+      "heightMeters": {
+        "infantry": 1.83,
+        "cavalry": 2.55,
+        "siege": 3.5
+      },
+      "accentColor": "#7aa8ff",
+      "baseUrl": "/assets/human/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 124123,
+          "meshes": 42,
+          "skins": 23,
+          "nodeCount": 74,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "WK_weapon_staff_A",
+            "WK_weapon_staff_B",
+            "WK_weapon_staff_C"
+          ],
+          "meshNodeSample": [
+            "WK_weapon_staff_A",
+            "WK_weapon_staff_B",
+            "WK_weapon_staff_C",
+            "WK_weapon_Bow",
+            "L_shield_container",
+            "WK_Shield_A",
+            "WK_Shield_C",
+            "WK_Shield_B",
+            "WK_Shield_D",
+            "WK_weapon_spear",
+            "WK_weapon_sword_A",
+            "WK_weapon_hammer_B",
+            "WK_weapon_pick",
+            "WK_weapon_sword_B",
+            "WK_weapon_axe_B",
+            "WK_weapon_hammer_A",
+            "WK_weapon_axe_A",
+            "WK_Xtra_wood",
+            "WK_Xtra_bag",
+            "WK_Xtra_quiver",
+            "WK_Units_Body_A",
+            "WK_Units_Body_B",
+            "WK_Units_Body_D",
+            "WK_Units_Body_C"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 141490,
+          "meshes": 43,
+          "skins": 25,
+          "nodeCount": 106,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "WK_Horse",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 L Finger0Nub",
+            "Bip001 R Clavicle"
+          ],
+          "meshNodeSample": [
+            "WK_Horse",
+            "WK_weapon_staff_A",
+            "WK_weapon_staff_B",
+            "WK_weapon_staff_C",
+            "WK_weapon_Bow",
+            "L_shield_container",
+            "WK_Shield_A",
+            "WK_Shield_C",
+            "WK_Shield_B",
+            "WK_Shield_D",
+            "WK_weapon_spear",
+            "WK_weapon_sword_A",
+            "WK_weapon_hammer_B",
+            "WK_weapon_pick",
+            "WK_weapon_sword_B",
+            "WK_weapon_axe_B",
+            "WK_weapon_lance",
+            "WK_weapon_hammer_A",
+            "WK_weapon_axe_A",
+            "WK_Xtra_quiver",
+            "WK_Units_Body_A",
+            "WK_Units_Body_B",
+            "WK_Units_Body_D",
+            "WK_Units_Body_C"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": [
+          {
+            "id": "siege_wk_catapult",
+            "gltf": "character/siege_wk_catapult.gltf",
+            "bin": [
+              "character/siege_wk_catapult.bin"
+            ],
+            "bytes": 10758,
+            "meshes": 2,
+            "skins": 1,
+            "nodeCount": 14,
+            "animsEmbedded": [],
+            "nodeSample": [
+              "RootNode",
+              "Bone_Root",
+              "Bone_Platform",
+              "Bone_Arm",
+              "Bone_stone",
+              "WK_Catapult_rock",
+              "Bone_body_B",
+              "Bone_body_A",
+              "WK_Catapult",
+              "Bone_front",
+              "Bone_wheel_A",
+              "Bone_wheel_B",
+              "Bone_wheel_C",
+              "Bone_wheel_C001D"
+            ],
+            "meshNodeSample": [
+              "WK_Catapult_rock",
+              "WK_Catapult"
+            ],
+            "generator": "FBX2glTF v0.9.7",
+            "extensionsUsed": [
+              "KHR_materials_unlit"
+            ]
+          }
+        ]
+      },
+      "equipment": [
+        {
+          "id": "WK_weapon_staff_B",
+          "gltf": "equipment/WK_weapon_staff_B.gltf",
+          "bin": [
+            "equipment/WK_weapon_staff_B.bin"
+          ],
+          "bytes": 3569,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "WK_weapon_staff_B"
+          ],
+          "meshNodeSample": [
+            "WK_weapon_staff_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "WK_weapon_sword_A",
+          "gltf": "equipment/WK_weapon_sword_A.gltf",
+          "bin": [
+            "equipment/WK_weapon_sword_A.bin"
+          ],
+          "bytes": 3271,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "WK_weapon_sword_A"
+          ],
+          "meshNodeSample": [
+            "WK_weapon_sword_A"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "animations": [
+        {
+          "id": "catapult_catapult_01_idle",
+          "gltf": "animations/catapult_catapult_01_idle.gltf",
+          "bin": [
+            "animations/catapult_catapult_01_idle.bin"
+          ],
+          "bytes": 5586,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_02_move",
+          "gltf": "animations/catapult_catapult_02_move.gltf",
+          "bin": [
+            "animations/catapult_catapult_02_move.bin"
+          ],
+          "bytes": 8275,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "move",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_03_attack",
+          "gltf": "animations/catapult_catapult_03_attack.gltf",
+          "bin": [
+            "animations/catapult_catapult_03_attack.bin"
+          ],
+          "bytes": 12316,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_04_death",
+          "gltf": "animations/catapult_catapult_04_death.gltf",
+          "bin": [
+            "animations/catapult_catapult_04_death.bin"
+          ],
+          "bytes": 14559,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_01_idle",
+          "gltf": "animations/cavalry_cavalry_01_idle.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_01_idle.bin"
+          ],
+          "bytes": 44673,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_03_run",
+          "gltf": "animations/cavalry_cavalry_03_run.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_03_run.bin"
+          ],
+          "bytes": 47982,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "run",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_10_death_b",
+          "gltf": "animations/cavalry_cavalry_10_death_b.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_10_death_b.bin"
+          ],
+          "bytes": 48327,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": "b"
+        }
+      ],
+      "textures": {
+        "defaultBody": {
+          "id": "WK_Standard_Units",
+          "url": "textures/WK_Standard_Units.png",
+          "bytes": 5297299,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "WK_StandardUnits_black",
+            "url": "textures/WK_StandardUnits_black.png",
+            "bytes": 5189671,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_blue",
+            "url": "textures/WK_StandardUnits_blue.png",
+            "bytes": 5304579,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_brown",
+            "url": "textures/WK_StandardUnits_brown.png",
+            "bytes": 3705424,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_green",
+            "url": "textures/WK_StandardUnits_green.png",
+            "bytes": 3695037,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_red",
+            "url": "textures/WK_StandardUnits_red.png",
+            "bytes": 3705171,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_white",
+            "url": "textures/WK_StandardUnits_white.png",
+            "bytes": 3798533,
+            "kind": "body"
+          },
+          {
+            "id": "WK_Standard_Units",
+            "url": "textures/WK_Standard_Units.png",
+            "bytes": 5297299,
+            "kind": "body"
+          }
+        ],
+        "mount": [
+          {
+            "id": "WK_Horse_A",
+            "url": "textures/WK_Horse_A.png",
+            "bytes": 263089,
+            "kind": "mount"
+          }
+        ],
+        "all": [
+          {
+            "id": "WK_Horse_A",
+            "url": "textures/WK_Horse_A.png",
+            "bytes": 263089,
+            "kind": "mount"
+          },
+          {
+            "id": "WK_StandardUnits_black",
+            "url": "textures/WK_StandardUnits_black.png",
+            "bytes": 5189671,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_blue",
+            "url": "textures/WK_StandardUnits_blue.png",
+            "bytes": 5304579,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_brown",
+            "url": "textures/WK_StandardUnits_brown.png",
+            "bytes": 3705424,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_green",
+            "url": "textures/WK_StandardUnits_green.png",
+            "bytes": 3695037,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_red",
+            "url": "textures/WK_StandardUnits_red.png",
+            "bytes": 3705171,
+            "kind": "body"
+          },
+          {
+            "id": "WK_StandardUnits_white",
+            "url": "textures/WK_StandardUnits_white.png",
+            "bytes": 3798533,
+            "kind": "body"
+          },
+          {
+            "id": "WK_Standard_Units",
+            "url": "textures/WK_Standard_Units.png",
+            "bytes": 5297299,
+            "kind": "body"
+          }
+        ]
+      },
+      "projectiles": [],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 12,
+        "bin": 12,
+        "png": 8,
+        "equipment": 2,
+        "animations": 7,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "orc": {
+      "diskFolder": "orc",
+      "fleetId": "orc",
+      "grudgeRaceId": "orcs",
+      "prefix": "ORC_",
+      "cdnFolder": "orcs",
+      "label": "Iron Horde",
+      "heightMeters": {
+        "infantry": 2.13,
+        "cavalry": 2.9,
+        "siege": 4.2
+      },
+      "accentColor": "#a3e063",
+      "baseUrl": "/assets/orc/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 142916,
+          "meshes": 48,
+          "skins": 30,
+          "nodeCount": 80,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "ORC_weapon_Bow",
+            "ORC_weapon_staff_A",
+            "ORC_weapon_staff_C"
+          ],
+          "meshNodeSample": [
+            "ORC_weapon_Bow",
+            "ORC_weapon_staff_A",
+            "ORC_weapon_staff_C",
+            "ORC_weapon_staff_B",
+            "L_shield_container",
+            "ORC_Shield_A",
+            "ORC_Shield_C",
+            "ORC_Shield_B",
+            "ORC_Shield_D",
+            "ORC_weapon_spear",
+            "ORC_weapon_Hammer",
+            "ORC_weapon_Dagger",
+            "ORC_weapon_Axe_C",
+            "ORC_weapon_Sword_B",
+            "ORC_weapon_Axe_A",
+            "ORC_weapon_Mace_A",
+            "ORC_weapon_Axe_B",
+            "ORC_weapon_Sword_A",
+            "ORC_Xtra_quiver",
+            "ORC_Units_Body_A",
+            "ORC_Units_Body_C",
+            "ORC_Xtra_Wood",
+            "ORC_Xtra_Bag",
+            "ORC_Units_Body_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 152896,
+          "meshes": 47,
+          "skins": 29,
+          "nodeCount": 108,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ORC_Mount_Wolf",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 Neck",
+            "Bip001 Head"
+          ],
+          "meshNodeSample": [
+            "ORC_Mount_Wolf",
+            "ORC_weapon_Bow",
+            "ORC_weapon_staff_A",
+            "ORC_weapon_staff_C",
+            "ORC_weapon_staff_B",
+            "L_shield_container",
+            "ORC_Shield_A",
+            "ORC_Shield_C",
+            "ORC_Shield_B",
+            "ORC_Shield_D",
+            "ORC_weapon_spear",
+            "ORC_weapon_Hammer",
+            "ORC_weapon_Dagger",
+            "ORC_weapon_Axe_C",
+            "ORC_weapon_Sword_B",
+            "ORC_weapon_Axe_A",
+            "ORC_weapon_Mace_A",
+            "ORC_weapon_Axe_B",
+            "ORC_weapon_Sword_A",
+            "ORC_Xtra_quiver",
+            "ORC_Units_Body_A",
+            "ORC_Units_Body_C",
+            "ORC_Units_Body_B",
+            "ORC_Units_Body_F"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": [
+          {
+            "id": "siege_orc_catapult",
+            "gltf": "character/siege_orc_catapult.gltf",
+            "bin": [
+              "character/siege_orc_catapult.bin"
+            ],
+            "bytes": 10701,
+            "meshes": 2,
+            "skins": 1,
+            "nodeCount": 14,
+            "animsEmbedded": [],
+            "nodeSample": [
+              "RootNode",
+              "Bone_Root",
+              "Bone_Platform",
+              "Bone_Arm",
+              "Bone_stone",
+              "Orc_Catapult_stone",
+              "Bone_body_B",
+              "Bone_body_A",
+              "Bone_front",
+              "Bone_wheel_A",
+              "Bone_wheel_B",
+              "Bone_wheel_C",
+              "Bone_wheel_C001D",
+              "Orc_Catapult"
+            ],
+            "meshNodeSample": [
+              "Orc_Catapult_stone",
+              "Orc_Catapult"
+            ],
+            "generator": "FBX2glTF v0.9.7",
+            "extensionsUsed": [
+              "KHR_materials_unlit"
+            ]
+          }
+        ]
+      },
+      "equipment": [
+        {
+          "id": "ORC_Shield_D",
+          "gltf": "equipment/ORC_Shield_D.gltf",
+          "bin": [
+            "equipment/ORC_Shield_D.bin"
+          ],
+          "bytes": 3563,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ORC_Shield_D"
+          ],
+          "meshNodeSample": [
+            "ORC_Shield_D"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "ORC_weapon_Axe_A",
+          "gltf": "equipment/ORC_weapon_Axe_A.gltf",
+          "bin": [
+            "equipment/ORC_weapon_Axe_A.bin"
+          ],
+          "bytes": 3530,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ORC_weapon_Axe_A"
+          ],
+          "meshNodeSample": [
+            "ORC_weapon_Axe_A"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "ORC_weapon_staff_B",
+          "gltf": "equipment/ORC_weapon_staff_B.gltf",
+          "bin": [
+            "equipment/ORC_weapon_staff_B.bin"
+          ],
+          "bytes": 3601,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ORC_weapon_staff_B"
+          ],
+          "meshNodeSample": [
+            "ORC_weapon_staff_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "animations": [
+        {
+          "id": "catapult_catapult_01_idle",
+          "gltf": "animations/catapult_catapult_01_idle.gltf",
+          "bin": [
+            "animations/catapult_catapult_01_idle.bin"
+          ],
+          "bytes": 5586,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_02_move",
+          "gltf": "animations/catapult_catapult_02_move.gltf",
+          "bin": [
+            "animations/catapult_catapult_02_move.bin"
+          ],
+          "bytes": 8275,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "move",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_03_attack",
+          "gltf": "animations/catapult_catapult_03_attack.gltf",
+          "bin": [
+            "animations/catapult_catapult_03_attack.bin"
+          ],
+          "bytes": 12316,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        },
+        {
+          "id": "catapult_catapult_04_death",
+          "gltf": "animations/catapult_catapult_04_death.gltf",
+          "bin": [
+            "animations/catapult_catapult_04_death.bin"
+          ],
+          "bytes": 14559,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 12,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bone_Root",
+            "Bone_Platform",
+            "Bone_Arm",
+            "Bone_stone",
+            "Bone_body_B",
+            "Bone_body_A",
+            "Bone_front",
+            "Bone_wheel_A",
+            "Bone_wheel_B",
+            "Bone_wheel_C",
+            "Bone_wheel_C001D"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_01_idle",
+          "gltf": "animations/cavalry_cavalry_01_idle.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_01_idle.bin"
+          ],
+          "bytes": 40210,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 46,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bone_Mount",
+            "Bip002"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_03_run",
+          "gltf": "animations/cavalry_cavalry_03_run.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_03_run.bin"
+          ],
+          "bytes": 42681,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 46,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bone_Mount",
+            "Bip002"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "run",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_10_death_b",
+          "gltf": "animations/cavalry_cavalry_10_death_b.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_10_death_b.bin"
+          ],
+          "bytes": 43747,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 46,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bone_Mount",
+            "Bip002"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": "b"
+        },
+        {
+          "id": "worker_worker_12_working_a",
+          "gltf": "animations/worker_worker_12_working_a.gltf",
+          "bin": [
+            "animations/worker_worker_12_working_a.bin"
+          ],
+          "bytes": 19068,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "working",
+          "variant": "a"
+        }
+      ],
+      "textures": {
+        "defaultBody": {
+          "id": "ORC_StandardUnits",
+          "url": "textures/ORC_StandardUnits.png",
+          "bytes": 5576737,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "ORC_StandardUnits",
+            "url": "textures/ORC_StandardUnits.png",
+            "bytes": 5576737,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_black",
+            "url": "textures/ORC_StandardUnits_black.png",
+            "bytes": 3821847,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_blue",
+            "url": "textures/ORC_StandardUnits_blue.png",
+            "bytes": 3911351,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_brown",
+            "url": "textures/ORC_StandardUnits_brown.png",
+            "bytes": 3884347,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_green",
+            "url": "textures/ORC_StandardUnits_green.png",
+            "bytes": 3871738,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_red",
+            "url": "textures/ORC_StandardUnits_red.png",
+            "bytes": 3855187,
+            "kind": "body"
+          }
+        ],
+        "mount": [
+          {
+            "id": "ORC_Wolf_texture_A",
+            "url": "textures/ORC_Wolf_texture_A.png",
+            "bytes": 1060103,
+            "kind": "mount"
+          }
+        ],
+        "all": [
+          {
+            "id": "ORC_StandardUnits",
+            "url": "textures/ORC_StandardUnits.png",
+            "bytes": 5576737,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_black",
+            "url": "textures/ORC_StandardUnits_black.png",
+            "bytes": 3821847,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_blue",
+            "url": "textures/ORC_StandardUnits_blue.png",
+            "bytes": 3911351,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_brown",
+            "url": "textures/ORC_StandardUnits_brown.png",
+            "bytes": 3884347,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_green",
+            "url": "textures/ORC_StandardUnits_green.png",
+            "bytes": 3871738,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_StandardUnits_red",
+            "url": "textures/ORC_StandardUnits_red.png",
+            "bytes": 3855187,
+            "kind": "body"
+          },
+          {
+            "id": "ORC_Wolf_texture_A",
+            "url": "textures/ORC_Wolf_texture_A.png",
+            "bytes": 1060103,
+            "kind": "mount"
+          }
+        ]
+      },
+      "projectiles": [],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 14,
+        "bin": 14,
+        "png": 7,
+        "equipment": 3,
+        "animations": 8,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "elf": {
+      "diskFolder": "elf",
+      "fleetId": "elf",
+      "grudgeRaceId": "high-elves",
+      "prefix": "ELF_",
+      "cdnFolder": "elves",
+      "label": "Sylvan Ascendancy",
+      "heightMeters": {
+        "infantry": 1.95,
+        "cavalry": 2.65,
+        "siege": 3.6
+      },
+      "accentColor": "#9beea8",
+      "baseUrl": "/assets/elf/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 142101,
+          "meshes": 47,
+          "skins": 31,
+          "nodeCount": 79,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "ELF_weapon_bow",
+            "ELF_weapon_staff_B",
+            "ELF_weapon_staff_C"
+          ],
+          "meshNodeSample": [
+            "ELF_weapon_bow",
+            "ELF_weapon_staff_B",
+            "ELF_weapon_staff_C",
+            "ELF_weapon_staff_A",
+            "L_shield_container",
+            "ELF_shield_C",
+            "ELF_shield_B",
+            "ELF_shield_A",
+            "ELF_weapon_axe",
+            "ELF_weapon_hammer",
+            "ELF_weapon_sword_B",
+            "ELF_weapon_dagger",
+            "ELF_weapon_sword_A",
+            "ELF_weapon_spear",
+            "ELF_Xtra_wood",
+            "ELF_Xtra_bag",
+            "ELF_Xtra_quiver",
+            "ELF_Units_Legs_A",
+            "ELF_Units_Arms_A",
+            "ELF_Units_Body_F",
+            "ELF_Units_Body_A",
+            "ELF_Units_Head_A",
+            "ELF_Units_Body_B",
+            "ELF_Units_Arms_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 159545,
+          "meshes": 48,
+          "skins": 33,
+          "nodeCount": 113,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ELF_Horse",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 L Finger0Nub",
+            "Bip001 R Clavicle"
+          ],
+          "meshNodeSample": [
+            "ELF_Horse",
+            "ELF_weapon_bow",
+            "ELF_weapon_staff_B",
+            "ELF_weapon_staff_C",
+            "ELF_weapon_staff_A",
+            "L_shield_container",
+            "ELF_shield_C",
+            "ELF_shield_B",
+            "ELF_shield_A",
+            "ELF_weapon_axe",
+            "ELF_weapon_hammer",
+            "ELF_weapon_sword_B",
+            "ELF_weapon_dagger",
+            "ELF_weapon_sword_A",
+            "ELF_weapon_spear",
+            "ELF_weapon_lance",
+            "ELF_Xtra_quiver",
+            "ELF_horse_Seat",
+            "ELF_Units_Legs_A",
+            "ELF_Units_Arms_A",
+            "ELF_Units_Body_F",
+            "ELF_Units_Body_A",
+            "ELF_Units_Head_A",
+            "ELF_Units_Body_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": [
+          {
+            "id": "siege_elf_boltthrower",
+            "gltf": "character/siege_elf_boltthrower.gltf",
+            "bin": [
+              "character/siege_elf_boltthrower.bin"
+            ],
+            "bytes": 10759,
+            "meshes": 1,
+            "skins": 1,
+            "nodeCount": 17,
+            "animsEmbedded": [
+              "Take 001"
+            ],
+            "nodeSample": [
+              "RootNode",
+              "ELF_BoltThrower",
+              "BONE_BASE",
+              "Bone_Ballista",
+              "Bone_L_block",
+              "Bone_front",
+              "Bone_R_block",
+              "Bone_Bolt",
+              "Bone_string",
+              "Bone_L_wing_A",
+              "Bone_L_wing_B",
+              "Bone_R_wing_A",
+              "Bone_R_wing_B",
+              "Bone_R_wheel_A",
+              "Bone_L_wheel_A",
+              "Bone_L_wheel_B"
+            ],
+            "meshNodeSample": [
+              "ELF_BoltThrower",
+              "Bone_Bolt"
+            ],
+            "generator": "FBX2glTF v0.9.7",
+            "extensionsUsed": [
+              "KHR_materials_unlit"
+            ]
+          }
+        ]
+      },
+      "equipment": [
+        {
+          "id": "ELF_weapon_spear",
+          "gltf": "equipment/ELF_weapon_spear.gltf",
+          "bin": [
+            "equipment/ELF_weapon_spear.bin"
+          ],
+          "bytes": 3600,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ELF_weapon_spear"
+          ],
+          "meshNodeSample": [
+            "ELF_weapon_spear"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "ELF_weapon_staff_C",
+          "gltf": "equipment/ELF_weapon_staff_C.gltf",
+          "bin": [
+            "equipment/ELF_weapon_staff_C.bin"
+          ],
+          "bytes": 3577,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ELF_weapon_staff_C"
+          ],
+          "meshNodeSample": [
+            "ELF_weapon_staff_C"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "animations": [
+        {
+          "id": "boltthrower_boltthrower_01_idle",
+          "gltf": "animations/boltthrower_boltthrower_01_idle.gltf",
+          "bin": [
+            "animations/boltthrower_boltthrower_01_idle.bin"
+          ],
+          "bytes": 6245,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 16,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "BONE_BASE",
+            "Bone_Ballista",
+            "Bone_L_block",
+            "Bone_front",
+            "Bone_R_block",
+            "Bone_Bolt",
+            "Bone_string",
+            "Bone_L_wing_A",
+            "Bone_L_wing_B",
+            "Bone_R_wing_A",
+            "Bone_R_wing_B",
+            "Bone_R_wheel_A",
+            "Bone_L_wheel_A",
+            "Bone_L_wheel_B",
+            "Bone_R_wheel_B"
+          ],
+          "meshNodeSample": [
+            "Bone_Bolt"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "boltthrower_boltthrower_02_move",
+          "gltf": "animations/boltthrower_boltthrower_02_move.gltf",
+          "bin": [
+            "animations/boltthrower_boltthrower_02_move.bin"
+          ],
+          "bytes": 11147,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 16,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "BONE_BASE",
+            "Bone_Ballista",
+            "Bone_L_block",
+            "Bone_front",
+            "Bone_R_block",
+            "Bone_Bolt",
+            "Bone_string",
+            "Bone_L_wing_A",
+            "Bone_L_wing_B",
+            "Bone_R_wing_A",
+            "Bone_R_wing_B",
+            "Bone_R_wheel_A",
+            "Bone_L_wheel_A",
+            "Bone_L_wheel_B",
+            "Bone_R_wheel_B"
+          ],
+          "meshNodeSample": [
+            "Bone_Bolt"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "move",
+          "variant": null
+        },
+        {
+          "id": "boltthrower_boltthrower_03_attack",
+          "gltf": "animations/boltthrower_boltthrower_03_attack.gltf",
+          "bin": [
+            "animations/boltthrower_boltthrower_03_attack.bin"
+          ],
+          "bytes": 13414,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 16,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "BONE_BASE",
+            "Bone_Ballista",
+            "Bone_L_block",
+            "Bone_front",
+            "Bone_R_block",
+            "Bone_Bolt",
+            "Bone_string",
+            "Bone_L_wing_A",
+            "Bone_L_wing_B",
+            "Bone_R_wing_A",
+            "Bone_R_wing_B",
+            "Bone_R_wheel_A",
+            "Bone_L_wheel_A",
+            "Bone_L_wheel_B",
+            "Bone_R_wheel_B"
+          ],
+          "meshNodeSample": [
+            "Bone_Bolt"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        },
+        {
+          "id": "boltthrower_boltthrower_04_death",
+          "gltf": "animations/boltthrower_boltthrower_04_death.gltf",
+          "bin": [
+            "animations/boltthrower_boltthrower_04_death.bin"
+          ],
+          "bytes": 17899,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 16,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "BONE_BASE",
+            "Bone_Ballista",
+            "Bone_L_block",
+            "Bone_front",
+            "Bone_R_block",
+            "Bone_Bolt",
+            "Bone_string",
+            "Bone_L_wing_A",
+            "Bone_L_wing_B",
+            "Bone_R_wing_A",
+            "Bone_R_wing_B",
+            "Bone_R_wheel_A",
+            "Bone_L_wheel_A",
+            "Bone_L_wheel_B",
+            "Bone_R_wheel_B"
+          ],
+          "meshNodeSample": [
+            "Bone_Bolt"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": null
+        },
+        {
+          "id": "cavalry_mage_cavalry_mage_08_attack_b",
+          "gltf": "animations/cavalry_mage_cavalry_mage_08_attack_b.gltf",
+          "bin": [
+            "animations/cavalry_mage_cavalry_mage_08_attack_b.bin"
+          ],
+          "bytes": 49645,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": "b"
+        },
+        {
+          "id": "cavalry_spear_cavalry_spear_04_charge",
+          "gltf": "animations/cavalry_spear_cavalry_spear_04_charge.gltf",
+          "bin": [
+            "animations/cavalry_spear_cavalry_spear_04_charge.bin"
+          ],
+          "bytes": 48884,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "charge",
+          "variant": null
+        },
+        {
+          "id": "cavalry_spear_cavalry_spear_05_combat_idle",
+          "gltf": "animations/cavalry_spear_cavalry_spear_05_combat_idle.gltf",
+          "bin": [
+            "animations/cavalry_spear_cavalry_spear_05_combat_idle.bin"
+          ],
+          "bytes": 42756,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "cavalry_spear_cavalry_spear_07_attack",
+          "gltf": "animations/cavalry_spear_cavalry_spear_07_attack.gltf",
+          "bin": [
+            "animations/cavalry_spear_cavalry_spear_07_attack.bin"
+          ],
+          "bytes": 48360,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        },
+        {
+          "id": "cavalry_spear_cavalry_spear_10_death_a",
+          "gltf": "animations/cavalry_spear_cavalry_spear_10_death_a.gltf",
+          "bin": [
+            "animations/cavalry_spear_cavalry_spear_10_death_a.bin"
+          ],
+          "bytes": 49186,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 48,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": "a"
+        }
+      ],
+      "textures": {
+        "defaultBody": {
+          "id": "ELF_DarkElves_Texture",
+          "url": "textures/ELF_DarkElves_Texture.png",
+          "bytes": 6148102,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "ELF_DarkElves_Blue",
+            "url": "textures/ELF_DarkElves_Blue.png",
+            "bytes": 6174281,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Green",
+            "url": "textures/ELF_DarkElves_Green.png",
+            "bytes": 6140017,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Red",
+            "url": "textures/ELF_DarkElves_Red.png",
+            "bytes": 6140828,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Texture",
+            "url": "textures/ELF_DarkElves_Texture.png",
+            "bytes": 6148102,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_HighElves_Texture",
+            "url": "textures/ELF_HighElves_Texture.png",
+            "bytes": 6423700,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_WoodElves_Brown",
+            "url": "textures/ELF_WoodElves_Brown.png",
+            "bytes": 5758242,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_WoodElves_Texture",
+            "url": "textures/ELF_WoodElves_Texture.png",
+            "bytes": 5682763,
+            "kind": "body"
+          }
+        ],
+        "mount": [],
+        "all": [
+          {
+            "id": "ELF_DarkElves_Blue",
+            "url": "textures/ELF_DarkElves_Blue.png",
+            "bytes": 6174281,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Green",
+            "url": "textures/ELF_DarkElves_Green.png",
+            "bytes": 6140017,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Red",
+            "url": "textures/ELF_DarkElves_Red.png",
+            "bytes": 6140828,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_DarkElves_Texture",
+            "url": "textures/ELF_DarkElves_Texture.png",
+            "bytes": 6148102,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_HighElves_Texture",
+            "url": "textures/ELF_HighElves_Texture.png",
+            "bytes": 6423700,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_WoodElves_Brown",
+            "url": "textures/ELF_WoodElves_Brown.png",
+            "bytes": 5758242,
+            "kind": "body"
+          },
+          {
+            "id": "ELF_WoodElves_Texture",
+            "url": "textures/ELF_WoodElves_Texture.png",
+            "bytes": 5682763,
+            "kind": "body"
+          }
+        ]
+      },
+      "projectiles": [
+        {
+          "id": "ELF_bolt",
+          "gltf": "misc/ELF_bolt.gltf",
+          "bin": [
+            "misc/ELF_bolt.bin"
+          ],
+          "bytes": 3223,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "ELF_Bolt"
+          ],
+          "meshNodeSample": [
+            "ELF_Bolt"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 15,
+        "bin": 15,
+        "png": 7,
+        "equipment": 2,
+        "animations": 9,
+        "siege": 1,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "dwarf": {
+      "diskFolder": "dwarf",
+      "fleetId": "dwarf",
+      "grudgeRaceId": "dwarves",
+      "prefix": "DWF_",
+      "cdnFolder": "dwarves",
+      "label": "Mountain Holds",
+      "heightMeters": {
+        "infantry": 1.52,
+        "cavalry": 2.1,
+        "siege": 3.2
+      },
+      "accentColor": "#ffb86b",
+      "baseUrl": "/assets/dwarf/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 141191,
+          "meshes": 48,
+          "skins": 28,
+          "nodeCount": 80,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "DWF_Weapon_bow",
+            "DWF_Weapon_staff_B",
+            "DWF_Weapon_staff_A"
+          ],
+          "meshNodeSample": [
+            "DWF_Weapon_bow",
+            "DWF_Weapon_staff_B",
+            "DWF_Weapon_staff_A",
+            "L_shield_container",
+            "DWF_Shield_B",
+            "DWF_Shield_A",
+            "DWF_Shield_C",
+            "DWF_Shield_D",
+            "DWF_Weapon_dagger",
+            "DWF_Weapon_spear",
+            "DWF_Weapon_axe_B",
+            "DWF_Weapon_pick",
+            "DWF_Weapon_axe_A",
+            "DWF_Weapon_axe_C",
+            "DWF_Weapon_sword_B",
+            "DWF_Weapon_hammer_B",
+            "DWF_Weapon_hammer_A",
+            "DWF_Weapon_sword_A",
+            "DWF_Xtra_wood",
+            "DWF_Xtra_bag",
+            "DWF_Xtra_quiver",
+            "DWF_Units_Body_A",
+            "DWF_Units_Head_A",
+            "DWF_Units_Body_E"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 153430,
+          "meshes": 47,
+          "skins": 29,
+          "nodeCount": 111,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 L Finger0Nub",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm"
+          ],
+          "meshNodeSample": [
+            "DWF_Weapon_bow",
+            "DWF_Weapon_staff_B",
+            "DWF_Weapon_staff_A",
+            "L_shield_container",
+            "DWF_Shield_B",
+            "DWF_Shield_A",
+            "DWF_Shield_C",
+            "DWF_Shield_D",
+            "DWF_Weapon_dagger",
+            "DWF_Weapon_spear",
+            "DWF_Weapon_axe_B",
+            "DWF_Weapon_pick",
+            "DWF_Weapon_axe_A",
+            "DWF_Weapon_axe_C",
+            "DWF_Weapon_sword_B",
+            "DWF_Weapon_hammer_B",
+            "DWF_Weapon_hammer_A",
+            "DWF_Weapon_sword_A",
+            "DWF_Xtra_quiver",
+            "DWF_Mount_Ram",
+            "DWF_Units_Body_A",
+            "DWF_Units_Head_A",
+            "DWF_Units_Body_E",
+            "DWF_Units_Body_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": []
+      },
+      "equipment": [],
+      "animations": [
+        {
+          "id": "cavalry_cavalry_01_idle",
+          "gltf": "animations/cavalry_cavalry_01_idle.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_01_idle.bin"
+          ],
+          "bytes": 40832,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 47,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_03_run",
+          "gltf": "animations/cavalry_cavalry_03_run.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_03_run.bin"
+          ],
+          "bytes": 45441,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 47,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "run",
+          "variant": null
+        },
+        {
+          "id": "cavalry_cavalry_10_death_b",
+          "gltf": "animations/cavalry_cavalry_10_death_b.gltf",
+          "bin": [
+            "animations/cavalry_cavalry_10_death_b.bin"
+          ],
+          "bytes": 46729,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 47,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 R Finger0"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": "b"
+        },
+        {
+          "id": "worker_run",
+          "gltf": "animations/worker_run.gltf",
+          "bin": [
+            "animations/worker_run.bin"
+          ],
+          "bytes": 19975,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "run",
+          "variant": null
+        },
+        {
+          "id": "worker_run_diagonal",
+          "gltf": "animations/worker_run_diagonal.gltf",
+          "bin": [
+            "animations/worker_run_diagonal.bin"
+          ],
+          "bytes": 19984,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": null,
+          "variant": null
+        },
+        {
+          "id": "worker_run_diagonal_1",
+          "gltf": "animations/worker_run_diagonal_1.gltf",
+          "bin": [
+            "animations/worker_run_diagonal_1.bin"
+          ],
+          "bytes": 19986,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": null,
+          "variant": null
+        },
+        {
+          "id": "worker_run_reverse",
+          "gltf": "animations/worker_run_reverse.gltf",
+          "bin": [
+            "animations/worker_run_reverse.bin"
+          ],
+          "bytes": 19983,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": null,
+          "variant": null
+        },
+        {
+          "id": "worker_worker_07_attack",
+          "gltf": "animations/worker_worker_07_attack.gltf",
+          "bin": [
+            "animations/worker_worker_07_attack.bin"
+          ],
+          "bytes": 20773,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        },
+        {
+          "id": "worker_worker_10_death_b",
+          "gltf": "animations/worker_worker_10_death_b.gltf",
+          "bin": [
+            "animations/worker_worker_10_death_b.bin"
+          ],
+          "bytes": 21179,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "death",
+          "variant": "b"
+        },
+        {
+          "id": "worker__idle",
+          "gltf": "animations/worker__idle.gltf",
+          "bin": [
+            "animations/worker__idle.bin"
+          ],
+          "bytes": 18279,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 24,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bone_wood",
+            "Bone_bag"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "idle",
+          "variant": null
+        }
+      ],
+      "textures": {
+        "defaultBody": {
+          "id": "DWF_Standard_Units",
+          "url": "textures/DWF_Standard_Units.png",
+          "bytes": 5445819,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "DWF_Standard_Units",
+            "url": "textures/DWF_Standard_Units.png",
+            "bytes": 5445819,
+            "kind": "body"
+          },
+          {
+            "id": "DWF_Units_Brown",
+            "url": "textures/DWF_Units_Brown.png",
+            "bytes": 5371494,
+            "kind": "body"
+          }
+        ],
+        "mount": [],
+        "all": [
+          {
+            "id": "DWF_Standard_Units",
+            "url": "textures/DWF_Standard_Units.png",
+            "bytes": 5445819,
+            "kind": "body"
+          },
+          {
+            "id": "DWF_Units_Brown",
+            "url": "textures/DWF_Units_Brown.png",
+            "bytes": 5371494,
+            "kind": "body"
+          }
+        ]
+      },
+      "projectiles": [],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 12,
+        "bin": 12,
+        "png": 2,
+        "equipment": 0,
+        "animations": 10,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "undead": {
+      "diskFolder": "undead",
+      "fleetId": "undead",
+      "grudgeRaceId": "undead",
+      "prefix": "UD_",
+      "cdnFolder": "undead",
+      "label": "Forsaken Court",
+      "heightMeters": {
+        "infantry": 1.83,
+        "cavalry": 2.55,
+        "siege": 3.5
+      },
+      "accentColor": "#c89cff",
+      "baseUrl": "/assets/undead/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 149649,
+          "meshes": 50,
+          "skins": 32,
+          "nodeCount": 82,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "UD_weapon_staff_C",
+            "UD_weapon_Bow",
+            "UD_weapon_staff_D"
+          ],
+          "meshNodeSample": [
+            "UD_weapon_staff_C",
+            "UD_weapon_Bow",
+            "UD_weapon_staff_D",
+            "UD_weapon_staff_A",
+            "UD_weapon_staff_B",
+            "L_shield_container",
+            "UD_Shield_A",
+            "UD_Shield_B",
+            "UD_Shield_C",
+            "UD_weapon_Hammer",
+            "UD_weapon_Axe_A",
+            "UD_weapon_Axe_B",
+            "UD_weapon_Spear",
+            "UD_weapon_Sword_A",
+            "UD_weapon_Sword_B",
+            "UD_weapon_Sword_C",
+            "UD_Xtra_Wood",
+            "UD_Xtra_Bag",
+            "UD_Xtra_Quiver",
+            "UD_Units_body_G",
+            "UD_Units_body_C",
+            "UD_Units_body_F",
+            "UD_Units_body_D",
+            "UD_Units_shoulderpads_A"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 164306,
+          "meshes": 50,
+          "skins": 33,
+          "nodeCount": 115,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "UD_Horse",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 L Finger0Nub",
+            "Bip001 R Clavicle"
+          ],
+          "meshNodeSample": [
+            "UD_Horse",
+            "UD_weapon_staff_C",
+            "UD_weapon_Bow",
+            "UD_weapon_staff_D",
+            "UD_weapon_staff_A",
+            "UD_weapon_staff_B",
+            "L_shield_container",
+            "UD_Shield_A",
+            "UD_Shield_B",
+            "UD_Shield_C",
+            "UD_weapon_Hammer",
+            "UD_weapon_Axe_A",
+            "UD_weapon_Axe_B",
+            "UD_weapon_Spear",
+            "UD_weapon_Sword_A",
+            "UD_weapon_Sword_B",
+            "UD_weapon_Sword_C",
+            "UD_weapon_lance",
+            "UD_Xtra_Quiver",
+            "UD_Units_body_G",
+            "UD_Units_body_C",
+            "UD_Units_body_F",
+            "UD_Units_body_D",
+            "UD_Units_shoulderpads_A"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": []
+      },
+      "equipment": [
+        {
+          "id": "UD_Shield_C",
+          "gltf": "equipment/UD_Shield_C.gltf",
+          "bin": [
+            "equipment/UD_Shield_C.bin"
+          ],
+          "bytes": 3560,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "UD_Shield_C"
+          ],
+          "meshNodeSample": [
+            "UD_Shield_C"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "UD_weapon_Spear",
+          "gltf": "equipment/UD_weapon_Spear.gltf",
+          "bin": [
+            "equipment/UD_weapon_Spear.bin"
+          ],
+          "bytes": 3534,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "UD_weapon_Spear"
+          ],
+          "meshNodeSample": [
+            "UD_weapon_Spear"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "UD_weapon_staff_B",
+          "gltf": "equipment/UD_weapon_staff_B.gltf",
+          "bin": [
+            "equipment/UD_weapon_staff_B.bin"
+          ],
+          "bytes": 3609,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "UD_weapon_staff_B"
+          ],
+          "meshNodeSample": [
+            "UD_weapon_staff_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "UD_weapon_Sword_C",
+          "gltf": "equipment/UD_weapon_Sword_C.gltf",
+          "bin": [
+            "equipment/UD_weapon_Sword_C.bin"
+          ],
+          "bytes": 3543,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "UD_weapon_Sword_C"
+          ],
+          "meshNodeSample": [
+            "UD_weapon_Sword_C"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "animations": [],
+      "textures": {
+        "defaultBody": {
+          "id": "UD_Standard_Units",
+          "url": "textures/UD_Standard_Units.png",
+          "bytes": 5961922,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "UD_Standard_Units",
+            "url": "textures/UD_Standard_Units.png",
+            "bytes": 5961922,
+            "kind": "body"
+          },
+          {
+            "id": "UD_Standard_Units_brown",
+            "url": "textures/UD_Standard_Units_brown.png",
+            "bytes": 5950539,
+            "kind": "body"
+          }
+        ],
+        "mount": [],
+        "all": [
+          {
+            "id": "UD_Standard_Units",
+            "url": "textures/UD_Standard_Units.png",
+            "bytes": 5961922,
+            "kind": "body"
+          },
+          {
+            "id": "UD_Standard_Units_brown",
+            "url": "textures/UD_Standard_Units_brown.png",
+            "bytes": 5950539,
+            "kind": "body"
+          }
+        ]
+      },
+      "projectiles": [],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 6,
+        "bin": 6,
+        "png": 2,
+        "equipment": 4,
+        "animations": 0,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    },
+    "barbarian": {
+      "diskFolder": "barbarian",
+      "fleetId": "barbarian",
+      "grudgeRaceId": "barbarians",
+      "prefix": "BRB_",
+      "cdnFolder": "barbarians",
+      "label": "Frost Clans",
+      "heightMeters": {
+        "infantry": 1.98,
+        "cavalry": 2.7,
+        "siege": 3.8
+      },
+      "accentColor": "#ff8a72",
+      "baseUrl": "/assets/barbarian/",
+      "character": {
+        "infantry": {
+          "id": "infantry",
+          "gltf": "character/infantry.gltf",
+          "bin": [
+            "character/infantry.bin"
+          ],
+          "bytes": 138360,
+          "meshes": 47,
+          "skins": 27,
+          "nodeCount": 79,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "BRB_weapon_staff_A",
+            "BRB_weapon_Bow",
+            "BRB_weapon_staff_C"
+          ],
+          "meshNodeSample": [
+            "BRB_weapon_staff_A",
+            "BRB_weapon_Bow",
+            "BRB_weapon_staff_C",
+            "BRB_weapon_staff_B",
+            "L_shield_container",
+            "BRB_Shield_A",
+            "BRB_Shield_C",
+            "BRB_Shield_D",
+            "BRB_Shield_B",
+            "BRB_weapon_sword_A",
+            "BRB_weapon_spear",
+            "BRB_weapon_axe_A",
+            "BRB_weapon_sword_B",
+            "BRB_weapon_hammer_A",
+            "BRB_weapon_Dagger",
+            "BRB_weapon_axe_B",
+            "BRB_weapon_hammer_B",
+            "BRB_weapon_axe_C",
+            "BRB_Xtra_wood",
+            "BRB_Xtra_bag",
+            "BRB_Xtra_quiver",
+            "BRB_body_F",
+            "BRB_head_I",
+            "BRB_head_J"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "cavalry": {
+          "id": "cavalry",
+          "gltf": "character/cavalry.gltf",
+          "bin": [
+            "character/cavalry.bin"
+          ],
+          "bytes": 152942,
+          "meshes": 47,
+          "skins": 29,
+          "nodeCount": 110,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "BRB_Horse",
+            "Bip001",
+            "Bip001 Footsteps",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 HeadNub",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 L Finger0",
+            "Bip001 L Finger0Nub",
+            "Bip001 R Clavicle"
+          ],
+          "meshNodeSample": [
+            "BRB_Horse",
+            "BRB_weapon_staff_A",
+            "BRB_weapon_Bow",
+            "BRB_weapon_staff_C",
+            "BRB_weapon_staff_B",
+            "L_shield_container",
+            "BRB_Shield_A",
+            "BRB_Shield_C",
+            "BRB_Shield_D",
+            "BRB_Shield_B",
+            "BRB_weapon_sword_A",
+            "BRB_weapon_spear",
+            "BRB_weapon_axe_A",
+            "BRB_weapon_sword_B",
+            "BRB_weapon_hammer_A",
+            "BRB_weapon_Dagger",
+            "BRB_weapon_axe_B",
+            "BRB_weapon_hammer_B",
+            "BRB_weapon_axe_C",
+            "BRB_Xtra_quiver",
+            "BRB_horse_Seat",
+            "BRB_body_F",
+            "BRB_head_I",
+            "BRB_head_J"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        "siege": []
+      },
+      "equipment": [
+        {
+          "id": "BRB_bag",
+          "gltf": "equipment/BRB_bag.gltf",
+          "bin": [
+            "equipment/BRB_bag.bin"
+          ],
+          "bytes": 3221,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 2,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "WK_Xtra_bag"
+          ],
+          "meshNodeSample": [
+            "WK_Xtra_bag"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "BRB_weapon_hammer_B",
+          "gltf": "equipment/BRB_weapon_hammer_B.gltf",
+          "bin": [
+            "equipment/BRB_weapon_hammer_B.bin"
+          ],
+          "bytes": 6840,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 10,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "R_hand_container",
+            "BRB_weapon_hammer_B"
+          ],
+          "meshNodeSample": [
+            "BRB_weapon_hammer_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "BRB_weapon_spear",
+          "gltf": "equipment/BRB_weapon_spear.gltf",
+          "bin": [
+            "equipment/BRB_weapon_spear.bin"
+          ],
+          "bytes": 6877,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 10,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "R_hand_container",
+            "BRB_weapon_spear"
+          ],
+          "meshNodeSample": [
+            "BRB_weapon_spear"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "BRB_weapon_staff_B",
+          "gltf": "equipment/BRB_weapon_staff_B.gltf",
+          "bin": [
+            "equipment/BRB_weapon_staff_B.bin"
+          ],
+          "bytes": 6888,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 10,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "L_hand_container",
+            "BRB_weapon_staff_B"
+          ],
+          "meshNodeSample": [
+            "BRB_weapon_staff_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        },
+        {
+          "id": "BRB_weapon_sword_B",
+          "gltf": "equipment/BRB_weapon_sword_B.gltf",
+          "bin": [
+            "equipment/BRB_weapon_sword_B.bin"
+          ],
+          "bytes": 6606,
+          "meshes": 1,
+          "skins": 0,
+          "nodeCount": 10,
+          "animsEmbedded": [],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "R_hand_container",
+            "BRB_weapon_sword_B"
+          ],
+          "meshNodeSample": [
+            "BRB_weapon_sword_B"
+          ],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ]
+        }
+      ],
+      "animations": [
+        {
+          "id": "mage_mage_11_cast_b",
+          "gltf": "animations/mage_mage_11_cast_b.gltf",
+          "bin": [
+            "animations/mage_mage_11_cast_b.bin"
+          ],
+          "bytes": 19634,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 22,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 L Thigh",
+            "Bip001 L Calf"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "cast",
+          "variant": "b"
+        },
+        {
+          "id": "spearman_spearman_07_attack",
+          "gltf": "animations/spearman_spearman_07_attack.gltf",
+          "bin": [
+            "animations/spearman_spearman_07_attack.bin"
+          ],
+          "bytes": 18761,
+          "meshes": 0,
+          "skins": 0,
+          "nodeCount": 22,
+          "animsEmbedded": [
+            "Take 001"
+          ],
+          "nodeSample": [
+            "RootNode",
+            "Bip001",
+            "Bip001 Pelvis",
+            "Bip001 Spine",
+            "Bip001 Neck",
+            "Bip001 Head",
+            "Bip001 L Clavicle",
+            "Bip001 L UpperArm",
+            "Bip001 L Forearm",
+            "Bip001 L Hand",
+            "Bip001 R Clavicle",
+            "Bip001 R UpperArm",
+            "Bip001 R Forearm",
+            "Bip001 R Hand",
+            "Bip001 L Thigh",
+            "Bip001 L Calf"
+          ],
+          "meshNodeSample": [],
+          "generator": "FBX2glTF v0.9.7",
+          "extensionsUsed": [
+            "KHR_materials_unlit"
+          ],
+          "action": "attack",
+          "variant": null
+        }
+      ],
+      "textures": {
+        "defaultBody": {
+          "id": "BRB_StandardUnits_texture",
+          "url": "textures/BRB_StandardUnits_texture.png",
+          "bytes": 5758404,
+          "kind": "body"
+        },
+        "body": [
+          {
+            "id": "BRB_StandardUnits_texture",
+            "url": "textures/BRB_StandardUnits_texture.png",
+            "bytes": 5758404,
+            "kind": "body"
+          },
+          {
+            "id": "BRB_Standard_Units_brown",
+            "url": "textures/BRB_Standard_Units_brown.png",
+            "bytes": 5722507,
+            "kind": "body"
+          }
+        ],
+        "mount": [],
+        "all": [
+          {
+            "id": "BRB_StandardUnits_texture",
+            "url": "textures/BRB_StandardUnits_texture.png",
+            "bytes": 5758404,
+            "kind": "body"
+          },
+          {
+            "id": "BRB_Standard_Units_brown",
+            "url": "textures/BRB_Standard_Units_brown.png",
+            "bytes": 5722507,
+            "kind": "body"
+          }
+        ]
+      },
+      "projectiles": [],
+      "colorVariants": [
+        {
+          "id": "original",
+          "label": "Original",
+          "hex": "#ffffff"
+        },
+        {
+          "id": "royal",
+          "label": "Royal Blue",
+          "hex": "#7aa8ff"
+        },
+        {
+          "id": "crimson",
+          "label": "Crimson",
+          "hex": "#ff4d6d"
+        },
+        {
+          "id": "forest",
+          "label": "Forest Green",
+          "hex": "#5fbf72"
+        },
+        {
+          "id": "shadow",
+          "label": "Black Knight",
+          "hex": "#5a5a66"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Trim",
+          "hex": "#ffd166"
+        }
+      ],
+      "counts": {
+        "gltf": 9,
+        "bin": 9,
+        "png": 2,
+        "equipment": 5,
+        "animations": 2,
+        "siege": 0,
+        "hasCavalry": true,
+        "hasInfantry": true
+      }
+    }
+  },
+  "loadContract": {
+    "infantry": "GLTFLoader(baseUrl + character.infantry.gltf); bind textures.defaultBody; equip via mesh visibility",
+    "cavalry": "load cavalry.gltf; apply textures.mount to mount materials only; SI = heightMeters.cavalry",
+    "siege": "load character.siege[n].gltf; play animations where class matches catapult_* or boltthrower_*",
+    "never": [
+      "load .bin without gltf",
+      "hero-fit siege or cavalry to 1.8 m",
+      "Mixamo retarget onto Bip001 multipack infantry",
+      "use Meshy/capsule as grudge6 stand-in"
+    ]
+  },
+  "fleetCdnBridge": {
+    "note": "Production CDN still hosts monolithic WK_Characters.fbx/glb for paperdoll. This tree is the editable split Toon RTS SSOT for customizer + mounts + siege. Bake/publish should promote from here.",
+    "monolithicKit": "https://assets.grudge-studio.com/models/grudge6/races/{PREFIX}_Characters.(fbx|glb)",
+    "atlasCdn": "https://assets.grudge-studio.com/assets/{cdnFolder}/textures/..."
+  }
+}
