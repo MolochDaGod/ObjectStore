@@ -167,8 +167,9 @@ function fitRootSi(root, targetH) {
   // center XZ in viewport
   root.position.x -= (box.min.x + box.max.x) * 0.5;
   root.position.z -= (box.min.z + box.max.z) * 0.5;
-  // art-forward +Z once (grudge6 FBX kits)
-  root.rotation.y = Math.PI / 2;
+  // Paperdoll: face camera. Kit is art-forward +Z; camera sits on +Z looking at origin,
+  // so yaw=0 faces the player (π/2 is for world/cinema staging, not the panel).
+  root.rotation.y = 0;
   root.updateMatrixWorld(true);
   return h * s;
 }
