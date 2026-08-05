@@ -1,0 +1,30 @@
+/**
+ * Kenney Cursor Pack — optional helper classes
+ * Prefer js/ui-cursor.js setCursorIntent / data-cursor attributes.
+ */
+
+:root {
+  --cursor-base: /ui/cursors;
+  --cursor-variant: outline; /* outline | basic */
+}
+
+/* Static helpers when JS not loaded */
+.cursor-default { cursor: url('/ui/cursors/outline/pointer_b.png') 4 2, auto; }
+.cursor-attack { cursor: url('/ui/cursors/outline/tool_sword_a.png') 8 8, crosshair; }
+.cursor-harvest { cursor: url('/ui/cursors/outline/tool_axe.png') 8 8, pointer; }
+.cursor-talk { cursor: url('/ui/cursors/outline/message_round.png') 4 2, pointer; }
+.cursor-busy { cursor: url('/ui/cursors/outline/busy_hourglass.png') 16 16, wait; }
+.cursor-target { cursor: url('/ui/cursors/outline/target_a.png') 16 16, crosshair; }
+.cursor-party { cursor: url('/ui/cursors/outline/pointer_c.png') 4 2, pointer; }
+.cursor-command { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
+.cursor-inspect { cursor: url('/ui/cursors/outline/zoom.png') 8 8, zoom-in; }
+.cursor-hand { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
+.cursor-grabbing { cursor: url('/ui/cursors/outline/hand_closed.png') 12 4, grabbing; }
+
+[data-cursor='attack'] { cursor: url('/ui/cursors/outline/tool_sword_a.png') 8 8, crosshair; }
+[data-cursor='talk'] { cursor: url('/ui/cursors/outline/message_round.png') 4 2, pointer; }
+[data-cursor='harvest'] { cursor: url('/ui/cursors/outline/tool_axe.png') 8 8, pointer; }
+[data-cursor='party_select'] { cursor: url('/ui/cursors/outline/pointer_c.png') 4 2, pointer; }
+[data-cursor='command'] { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
+[data-cursor='inspect'] { cursor: url('/ui/cursors/outline/zoom.png') 8 8, zoom-in; }
+[data-cursor='disabled'] { cursor: url('/ui/cursors/outline/cursor_disabled.png') 4 2, not-allowed; }

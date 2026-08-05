@@ -11,6 +11,8 @@
   <!-- Fantasy RPG type + World Map Scroll container (Humble Appear/Disappear) -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/ui-scroll-container.css">
+  <link rel="stylesheet" href="css/ui-cursor.css">
+  <link rel="stylesheet" href="css/ui-party.css">
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
     .app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
@@ -315,6 +317,11 @@
   <div class="main-body">
     <aside class="left-col" id="leftCol"></aside>
     <main class="center-col">
+      <div class="unit-context-banner" id="unitContextBanner" aria-live="polite">
+        <span class="uc-kind" id="ucKind">Unit</span>
+        <span id="ucName">—</span>
+        <button type="button" class="uc-clear" id="ucClear">Clear · Self</button>
+      </div>
       <div class="error-banner" id="errorBanner"></div>
       <nav class="tab-strip" id="tabStrip"></nav>
       <!-- World Map Scroll shell — Appear/Disappear UX (ui-scroll-container) -->
@@ -556,6 +563,105 @@
         console.warn('[main-panel] scroll shell', e);
         renderTab();
       });
+
+    // Kenney cursors + party/crew radial (Humble Player UI + Smart holders)
+    initCursorAndParty().catch((e) => console.warn('[main-panel] cursor/party', e));
+  }
+
+  async function initCursorAndParty() {
+    const [cursorMod, partyMod] = await Promise.all([
+      import('./js/ui-cursor.js'),
+      import('./js/ui-party-radial.js'),
+    ]);
+    cursorMod.configureCursors({ variant: 'outline' });
+    await cursorMod.preloadCursors([
+      'default', 'attack', 'harvest', 'talk', 'busy', 'party_select', 'command',
+      'inspect', 'gauntlet', 'magic', 'hand_open', 'hand_closed', 'target',
+    ]);
+    cursorMod.bindCursorContext(document.body);
+
+    const onCommand = ({ unit, command }) => {
+      partyMod.setActiveUnit(unit);
+      updateUnitContextBanner();
+      if (command.panel && TABS.includes(command.panel)) {
+        switchTab(command.panel);
+      }
+      if (command.id === 'equipment' || command.panel === 'Equipment') {
+        renderTab();
+      }
+    };
+
+    const partyOpts = {
+      units: partyMod.demoPartyUnits(),
+      horizontal: false,
+      onSelect: (u) => {
+        partyMod.setActiveUnit(u);
+        updateUnitContextBanner();
+        cursorMod.setCursorIntent('party_select');
+      },
+      onCommand,
+    };
+
+    function ensurePartyHost() {
+      let partyHost = document.getElementById('partyStrip');
+      const left = document.getElementById('leftCol');
+      if (!left) return null;
+      if (!partyHost) {
+        partyHost = document.createElement('div');
+        partyHost.id = 'partyStrip';
+        partyHost.style.cssText = 'margin-top:16px;border-top:1px solid #3a2a1a;padding-top:10px;';
+        left.appendChild(partyHost);
+      } else if (partyHost.parentElement !== left) {
+        left.appendChild(partyHost);
+      }
+      return partyHost;
+    }
+
+    window._remountPartyStrip = (host) => {
+      const h = host || ensurePartyHost();
+      if (!h) return;
+      window._partyStripApi = partyMod.mountPartyStrip(h, partyOpts);
+    };
+    window._remountPartyStrip();
+
+    document.getElementById('ucClear')?.addEventListener('click', () => {
+      partyMod.setActiveUnit(null);
+      updateUnitContextBanner();
+      renderTab();
+    });
+    window.addEventListener('party:unit', updateUnitContextBanner);
+    updateUnitContextBanner();
+
+    // Deep-link ?unit=
+    try {
+      const u = new URLSearchParams(location.search).get('unit');
+      if (u) {
+        const units = partyMod.demoPartyUnits();
+        const hit = units.find((x) => x.id === u);
+        if (hit) {
+          partyMod.setActiveUnit(hit);
+          updateUnitContextBanner();
+        }
+      }
+    } catch { /* */ }
+  }
+
+  function updateUnitContextBanner() {
+    const banner = document.getElementById('unitContextBanner');
+    if (!banner) return;
+    let unit = null;
+    try {
+      unit = JSON.parse(sessionStorage.getItem('grudge_active_unit') || 'null');
+    } catch { /* */ }
+    if (!unit || unit.id === 'self') {
+      banner.classList.remove('is-visible');
+      return;
+    }
+    banner.classList.add('is-visible');
+    const kindEl = document.getElementById('ucKind');
+    const nameEl = document.getElementById('ucName');
+    if (kindEl) kindEl.textContent = (unit.kind || 'unit').toUpperCase();
+    if (nameEl) nameEl.textContent = `${unit.name || unit.id} · viewing their panels`;
   }
 
   /** Mount parchment scroll containers (center content + inventory rail). */
@@ -682,6 +788,8 @@
     const stats = computeStats();
     const profs = allProfessions.length ? allProfessions : PROFESSION_FALLBACK;
     const col = document.getElementById('leftCol');
+    // Preserve party strip node if present (innerHTML would wipe it)
+    const savedParty = document.getElementById('partyStrip');
     col.innerHTML = `
       <div class="section-title">Combat Stats</div>
       <div class="stat-row"><span class="k">Health</span><span class="v">${stats.health}</span></div>
@@ -741,6 +849,18 @@
         Artifacts: ${allArtifacts.length}
       </div>
     `;
+    // Re-attach party strip (crew / ally / camp / party radial)
+    if (savedParty) {
+      col.appendChild(savedParty);
+    } else if (window._partyStripApi) {
+      const partyHost = document.createElement('div');
+      partyHost.id = 'partyStrip';
+      partyHost.style.cssText = 'margin-top:16px;border-top:1px solid #3a2a1a;padding-top:10px;';
+      col.appendChild(partyHost);
+      window._partyStripApi.refresh?.();
+      // re-parent: refresh paints into old host — remount if needed
+      if (typeof window._remountPartyStrip === 'function') window._remountPartyStrip(partyHost);
+    }
   }
 
   function computeStats() {

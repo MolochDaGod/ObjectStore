@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Party + Cursor Demo — Grudge</title>
+  <link rel="stylesheet" href="/css/grudge-theme.css" />
+  <link rel="stylesheet" href="/css/ui-cursor.css" />
+  <link rel="stylesheet" href="/css/ui-party.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; min-height: 100vh; background: #0c0a08; color: #eee; font-family: Cinzel, serif; padding: 24px; }
+    h1 { font-size: 1.1rem; color: #e8c878; letter-spacing: 0.08em; text-transform: uppercase; }
+    .hint { color: #8a7a60; font-size: 12px; max-width: 520px; line-height: 1.45; margin-bottom: 16px; }
+    .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+    .log {
+      flex: 1; min-width: 240px; max-width: 400px; min-height: 200px;
+      background: #14100a; border: 1px solid #3a2a1a; border-radius: 8px; padding: 12px;
+      font-family: ui-monospace, monospace; font-size: 11px; color: #c9b48a; white-space: pre-wrap;
+    }
+    .targets { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .targets button {
+      padding: 10px 14px; border: 1px solid #3a2a1a; background: #1a120c; color: #e8c878;
+      font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+    }
+    a { color: #e8c878; }
+  </style>
+</head>
+<body>
+  <h1>Party strip · Radial · Kenney cursors</h1>
+  <p class="hint">
+    Right-click a unit for the command radial (Inspect / Gear / Skills / Orders / Follow / Camp / Bag).
+    Hover targets below to try cursor intents. <a href="/main-panel.html">Main Panel</a> ·
+    <a href="/ui/scroll-demo.html">Scroll demo</a>
+  </p>
+  <div class="targets">
+    <button type="button" data-cursor="default">Default</button>
+    <button type="button" data-cursor="attack">Attack</button>
+    <button type="button" data-cursor="harvest">Harvest</button>
+    <button type="button" data-cursor="talk">Talk</button>
+    <button type="button" data-cursor="target">Target</button>
+    <button type="button" data-cursor="busy">Busy</button>
+    <button type="button" data-cursor="inspect">Inspect</button>
+  </div>
+  <div class="row">
+    <div id="party"></div>
+    <div class="log" id="log">Events…\n</div>
+  </div>
+  <script type="module">
+    import { configureCursors, preloadCursors, bindCursorContext, setCursorIntent } from '/js/ui-cursor.js';
+    import { mountPartyStrip, demoPartyUnits } from '/js/ui-party-radial.js';
+
+    configureCursors({ variant: 'outline' });
+    await preloadCursors();
+    bindCursorContext(document.body);
+
+    const log = document.getElementById('log');
+    const line = (s) => { log.textContent += s + '\n'; log.scrollTop = log.scrollHeight; };
+
+    mountPartyStrip(document.getElementById('party'), {
+      units: demoPartyUnits(),
+      onSelect: (u) => {
+        setCursorIntent('party_select');
+        line(`select ${u.kind}: ${u.name}`);
+      },
+      onCommand: ({ unit, command }) => {
+        line(`command ${command.id} → ${unit.name} panel=${command.panel || command.action || '—'}`);
+        if (command.panel) {
+          line(`  open main-panel?tab=${command.panel}&unit=${unit.id}`);
+        }
+      },
+    });
+
+    document.querySelectorAll('.targets [data-cursor]').forEach((btn) => {
+      btn.addEventListener('mouseenter', () => setCursorIntent(btn.dataset.cursor));
+      btn.addEventListener('mouseleave', () => setCursorIntent('default'));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{
+  "id": "humble-player-ui-v1.1",
+  "label": "Humble Gift — Player UI v1.1 (+ Smart UI holders for party frames)",
+  "sourceAuthor": "D:/Games/Models/gge/Humble Gift - Player UI/Humble Gift - Player UI v1.1",
+  "companion": "D:/Games/Models/gge/Humble 43Gift - Smart UI/Humble Gift - Smart UI v1.0/Sprites",
+  "role": "Crew / camp / ally / party frames, radial commands, panel handoff to main/equipment",
+  "paths": {
+    "local": "/ui/player",
+    "sheet": "/ui/player/sheet/SpriteSheet.png",
+    "slices": "/ui/player/slices/",
+    "smartHolders": "/ui/player/smart/holders/",
+    "smartButtons": "/ui/player/smart/buttons/",
+    "cdn": "https://assets.grudge-studio.com/ui/player"
+  },
+  "sheetSize": { "w": 2864, "h": 672 },
+  "animatedSystems": {
+    "idlePortrait": "Aseprite/Idle Animated.aseprite — portrait bob / status pulse",
+    "inventoryBar": "Aseprite/Player Inventory Bar.aseprite — bar open/close",
+    "dialogue": "Aseprite/Dialogue System.aseprite — talk frames",
+    "pauseMenu": "Aseprite/Pause Menu.aseprite — pause transition",
+    "loadRings": "sheet load circle frames — busy / channel"
+  },
+  "roles": {
+    "partySlot": "smart/holders — unit frame chrome",
+    "partyPortrait": "slices/portrait_frame + race portrait URL",
+    "partyHudCluster": "slices/hud_cluster — mini HP/MP cluster",
+    "radialWedge": "smart/buttons — command icons",
+    "radialChevron": "slices/chevron_set — expand/collapse party rail",
+    "panelOpen": "pair with ui-scroll-container Appear/Disappear"
+  },
+  "partyModel": {
+    "kinds": ["self", "crew", "ally", "camp", "party"],
+    "maxSlots": 5,
+    "commands": [
+      { "id": "inspect", "label": "Inspect", "panel": "summary", "cursor": "inspect" },
+      { "id": "equipment", "label": "Equipment", "panel": "equipment", "cursor": "gauntlet" },
+      { "id": "skills", "label": "Skills", "panel": "skills", "cursor": "magic" },
+      { "id": "commands", "label": "Commands", "panel": "commands", "cursor": "command" },
+      { "id": "follow", "label": "Follow", "panel": null, "cursor": "move" },
+      { "id": "camp", "label": "Camp", "panel": "camp", "cursor": "door" },
+      { "id": "trade", "label": "Trade", "panel": "inventory", "cursor": "hand_open" }
+    ],
+    "panelMap": {
+      "summary": "main-panel Attributes/Equipment overview for unit",
+      "equipment": "main-panel Equipment tab bound to unit loadout",
+      "skills": "main-panel Skills tab for unit class",
+      "commands": "command list (follow/hold/defend/gather)",
+      "camp": "camp roster + rest/craft at camp",
+      "inventory": "unit bag / shared camp chest"
+    }
+  },
+  "radial": {
+    "open": "right-click party slot OR hold Q over member",
+    "layout": "pie 5–7 wedges around cursor",
+    "close": "mouseup outside / Esc / select wedge",
+    "confirm": "pointerup on wedge → setUnitContext + open panel"
+  },
+  "code": [
+    "js/ui-party-radial.js",
+    "css/ui-party.css",
+    "js/ui-cursor.js"
+  ],
+  "uxRules": [
+    "Selecting a party member sets activeUnitId — main panel reads that context",
+    "Radial does not invent new panels — routes to existing main-panel tabs / scroll shells",
+    "Crew/camp/ally use same slot chrome; color rim distinguishes kind",
+    "Honor prefers-reduced-motion for radial expand"
+  ]
+}
