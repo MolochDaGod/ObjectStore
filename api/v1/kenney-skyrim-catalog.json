@@ -1,0 +1,115 @@
+{
+  "id": "kenney-skyrim-mods",
+  "label": "KenneyNL Skyrim Mods (archive)",
+  "upstream": "https://github.com/KenneyNL/Skyrim-Mods.git",
+  "license": "CC-BY-3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "attribution": "Kenney (www.kenney.nl) — credit required under CC-BY 3.0",
+  "authorClone": "D:/Games/Models/KenneyNL-Skyrim-Mods",
+  "shippedWebRoot": "/ui/kenney-skyrim",
+  "cdnTarget": "https://assets.grudge-studio.com/ui/kenney-skyrim",
+  "criticalNotes": [
+    "These are Skyrim Scaleform (SWF) UI mods + previews — NOT browser Three.js meshes.",
+    "Do NOT load .swf into Forge scene as 3D, or as production web UI without decompile/export to PNG/SVG.",
+    "Runtime cursors for Grudge = ui/cursors (Kenney Cursor Pack CC0 PNG), not Skyrim SWF.",
+    "Use previews as fantasy UI style reference for agents, designers, and Forge moodboards.",
+    "Item Icons live inside SWF — extract with JPEXS/FFDec only if you need individual inventory icons."
+  ],
+  "mods": [
+    {
+      "id": "alternative-cursors",
+      "folder": "Alternative Cursors",
+      "kind": "cursor-swf",
+      "webUsable": ["previews", "settings-patterns"],
+      "runtimeMerge": "ui-cursor.js intents — style reference only; PNGs remain kenney cursor pack",
+      "preview": "previews/Alternative_Cursors-Preview.png",
+      "settings": "settings/Alternative_Cursors-cursormenu_settings.txt",
+      "swf": ["Interface/cursormenu.swf", "archive versions: default/dragon/enhanced/selection/simplified/time.swf"]
+    },
+    {
+      "id": "navi-cursor",
+      "folder": "Navi cursor",
+      "kind": "cursor-swf",
+      "webUsable": ["previews"],
+      "runtimeMerge": "optional pointer_toon / whimsical cursor intent",
+      "preview": "previews/Navi_cursor-Preview.jpg"
+    },
+    {
+      "id": "item-icons",
+      "folder": "Item Icons",
+      "kind": "inventory-swf",
+      "webUsable": ["previews"],
+      "runtimeMerge": "master-items icon style reference; production icons stay assets pack / Desktop icons",
+      "preview": "previews/Item_Icons-Preview.png",
+      "swf": ["Interface/inventory components/inventorylists.swf", "craftingmenu.swf"]
+    },
+    {
+      "id": "lockpick-pro",
+      "folder": "Lockpick Pro",
+      "kind": "minigame-ui-swf",
+      "webUsable": ["previews", "settings-patterns"],
+      "runtimeMerge": "lockpicking / skill-check UI pattern for Open/Forge interactables",
+      "preview": "previews/Lockpick_Pro-Preview.jpg",
+      "settings": "settings/*lockpickingmenu_settings*"
+    },
+    {
+      "id": "lockpick-pro-se",
+      "folder": "Lockpick Pro (Special edition)",
+      "kind": "minigame-ui-swf",
+      "webUsable": ["previews", "settings-patterns"],
+      "runtimeMerge": "same as lockpick-pro, SE path",
+      "preview": "previews/Lockpick_Pro_Special_edition-Preview.jpg"
+    },
+    {
+      "id": "loading-game",
+      "folder": "Loading Game",
+      "kind": "loading-ui-swf",
+      "webUsable": ["previews"],
+      "runtimeMerge": "loading screen layout language for gameopen / Foundry",
+      "preview": "previews/Loading_Game-Preview.jpg"
+    },
+    {
+      "id": "time-on-loading-screen",
+      "folder": "Time On Loading Screen",
+      "kind": "loading-ui-swf",
+      "webUsable": ["previews", "settings-patterns"],
+      "runtimeMerge": "loading progress + clock UX patterns",
+      "preview": ["previews/Time_On_Loading_Screen-PreviewA.png", "previews/Time_On_Loading_Screen-PreviewB.png"]
+    },
+    {
+      "id": "ui-overhaul",
+      "folder": "UI Overhaul",
+      "kind": "loading-ui-swf",
+      "webUsable": ["previews"],
+      "runtimeMerge": "loading/menu chrome moodboard",
+      "preview": "previews/UI_Overhaul-Preview.jpg"
+    },
+    {
+      "id": "skip-bethesda-intro",
+      "folder": "Skip Bethesda Intro",
+      "kind": "engine-bik",
+      "webUsable": [],
+      "runtimeMerge": "NOT for browser — BIK video for Skyrim only",
+      "preview": "previews/Skip_Bethesda_Intro-Preview.png"
+    }
+  ],
+  "agentRoles": {
+    "ui_style_fantasy_cursor": "previews/Alternative_Cursors-Preview.png",
+    "ui_style_inventory_icons": "previews/Item_Icons-Preview.png",
+    "ui_style_lockpick": "previews/Lockpick_Pro-Preview.jpg",
+    "ui_style_loading": "previews/Loading_Game-Preview.jpg",
+    "ui_style_loading_time": "previews/Time_On_Loading_Screen-PreviewA.png",
+    "ui_style_overhaul": "previews/UI_Overhaul-Preview.jpg",
+    "cursor_runtime": "/ui/cursors (Kenney Cursor Pack CC0 PNG — separate pack)"
+  },
+  "forge": {
+    "import": "reference/moodboard only — do not spawn SWF as scene meshes",
+    "textureDrop": "previews/* as 2D panel textures if designer wants Skyrim-adjacent loading art",
+    "prefer": "craftpix-rpg-mmo-ui + ui/scroll + ui/cursors for playable HUD"
+  },
+  "databases": {
+    "d1": "index only if promoted to R2 — never store SWF as player assets",
+    "r2Keys": "ui/kenney-skyrim/previews/* (optional)",
+    "objectstore": "this folder under info.grudge-studio.com/ui/kenney-skyrim/"
+  }
+}
