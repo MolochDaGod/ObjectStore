@@ -31,7 +31,18 @@ Unity-style paperdoll and mesh-level kit editor for Toon RTS / grudge6 races. **
 
 Equip rule: **one kit + child mesh visibility** (UMMORPG-style) — never whole-body GLB swap.
 
-Docs: [docs/ASSETS.md](docs/ASSETS.md) · skill `toon-rts-author` · skill `grudge6-modular-characters`
+Docs: [docs/ASSETS.md](docs/ASSETS.md) · [docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md](docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md) · skill `toon-rts-author` · skill `grudge6-modular-characters`
+
+### Deployment-wide rule (browser gameplay assets)
+
+Systems that need **web-ready playable** assets (characters, equip, icons, anims, catalogs) must ship **fleet-wide**:
+
+1. Binaries → `assets.grudge-studio.com` (R2)  
+2. Definitions → `info.grudge-studio.com/api/v1`  
+3. App shells → production Vercel/CF hosts  
+4. Smoke **live** URLs (not localhost / not Desktop paths)  
+
+Full contract: **[docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md](docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md)**.
 
 ---
 
