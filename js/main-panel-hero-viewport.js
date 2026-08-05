@@ -2,12 +2,13 @@
  * Main Panel hero viewport — SSOT path via grudge6-kit.js
  *
  * Visual contract (grudge6 paperdoll):
- *  1. Production kit from CDN (FBX preferred for paperdoll UV/skin; GLB fallback)
+ *  1. Production kit from CDN (GLB primary + embedded atlas; FBX fallback)
  *  2. EquipmentManager: hide all → exclusive body/weapon variants only
  *  3. hardenVisibility() — no ghost layers
  *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
  *  5. Face camera: yaw = π (kit shows back at yaw 0 with camera on +Z)
  *  6. Idle from CDN baked pack when kit has no embedded clips
+ *  7. Never auto invert UV V on production kits (opts.invertUvV opt-in only)
  */
 import * as THREE from 'https://esm.sh/three@0.185.0';
 import { GLTFLoader } from 'https://esm.sh/three@0.185.0/examples/jsm/loaders/GLTFLoader.js';

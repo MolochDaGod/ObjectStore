@@ -7,12 +7,16 @@
   "paths": {
     "local": "/ui/player",
     "sheet": "/ui/player/sheet/SpriteSheet.png",
-    "slices": "/ui/player/slices/",
     "smartHolders": "/ui/player/smart/holders/",
     "smartButtons": "/ui/player/smart/buttons/",
-    "cdn": "https://assets.grudge-studio.com/ui/player"
+    "portraits": "/images/portraits/{race}.png",
+    "cdn": "https://assets.grudge-studio.com/ui/player (optional promote — Pages is SSOT)"
   },
   "sheetSize": { "w": 2864, "h": 672 },
+  "notes": [
+    "Do not use empty auto-slices as production art — smart holders + race portraits only",
+    "session-placeholder party slots until Railway crew API"
+  ],
   "animatedSystems": {
     "idlePortrait": "Aseprite/Idle Animated.aseprite — portrait bob / status pulse",
     "inventoryBar": "Aseprite/Player Inventory Bar.aseprite — bar open/close",

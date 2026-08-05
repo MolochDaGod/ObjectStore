@@ -48,7 +48,7 @@
   </div>
   <script type="module">
     import { configureCursors, preloadCursors, bindCursorContext, setCursorIntent } from '/js/ui-cursor.js';
-    import { mountPartyStrip, demoPartyUnits } from '/js/ui-party-radial.js';
+    import { mountPartyStrip, buildSessionParty } from '/js/ui-party-radial.js';
 
     configureCursors({ variant: 'outline' });
     await preloadCursors();
@@ -58,15 +58,17 @@
     const line = (s) => { log.textContent += s + '\n'; log.scrollTop = log.scrollHeight; };
 
     mountPartyStrip(document.getElementById('party'), {
-      units: demoPartyUnits(),
+      units: buildSessionParty({ race: 'human', className: 'Warrior', level: 1, name: 'Demo hero' }),
       onSelect: (u) => {
         setCursorIntent('party_select');
-        line(`select ${u.kind}: ${u.name}`);
+        line(`select ${u.kind}: ${u.name} race=${u.race} source=${u.source}`);
       },
       onCommand: ({ unit, command }) => {
         line(`command ${command.id} → ${unit.name} panel=${command.panel || command.action || '—'}`);
         if (command.panel) {
-          line(`  open main-panel?tab=${command.panel}&unit=${unit.id}`);
+          line(`  → main-panel.html?tab=${command.panel}&unit=${unit.id}`);
+        } else if (command.action) {
+          line(`  → host action "${command.action}" (no panel — not silent)`);
         }
       },
     });

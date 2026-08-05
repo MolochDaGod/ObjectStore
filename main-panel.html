@@ -93,7 +93,18 @@
     .eq-slot .slot-icon { width: 44px; height: 44px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); }
     .eq-slot .slot-label { font-size: 7px; margin-top: 1px; letter-spacing: 1px; color: var(--dim); }
     .eq-slot .slot-tier { position: absolute; top: 2px; right: 3px; font-size: 7px; font-weight: 700; padding: 1px 4px; border-radius: 3px; }
-    .eq-slot .slot-placeholder { font-size: 18px; opacity: 0.15; margin-bottom: 2px; }
+    .eq-slot .slot-placeholder { font-size: 8px; opacity: 0.45; margin-bottom: 2px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dim); }
+    .mp-status {
+      font-size: 10px; color: var(--gold); padding: 6px 12px; margin: 0;
+      background: rgba(212,175,55,0.08); border-bottom: 1px solid rgba(212,175,55,0.15);
+      font-family: var(--font-display); letter-spacing: 0.04em; display: none;
+    }
+    .mp-status.is-visible { display: block; }
+    .party-strip-label {
+      font-family: var(--font-display); font-size: 9px; color: var(--gold);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+    }
+    .party-strip-note { font-size: 8px; color: var(--dim); margin-bottom: 8px; line-height: 1.35; }
     .eq-summary { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 14px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(212,175,55,0.08); }
     .eq-summary .eq-sum-item { text-align: center; min-width: 50px; }
     .eq-summary .eq-sum-val { font-family: monospace; font-size: 13px; font-weight: 700; color: var(--green); }
@@ -322,6 +333,7 @@
         <span id="ucName">—</span>
         <button type="button" class="uc-clear" id="ucClear">Clear · Self</button>
       </div>
+      <div class="mp-status" id="mpStatus" role="status" aria-live="polite"></div>
       <div class="error-banner" id="errorBanner"></div>
       <nav class="tab-strip" id="tabStrip"></nav>
       <!-- World Map Scroll shell — Appear/Disappear UX (ui-scroll-container) -->
@@ -405,10 +417,10 @@
   /** Slots that drive character mesh visuals (Unity character equipment). */
   const MESH_SLOTS = ['Helm','Shoulder','Chest','Hands','Feet','Mainhand','Offhand'];
 
-  // Slot placeholder icons
-  const SLOT_ICONS = {
-    Helm:'🪖', Shoulder:'🛡', Chest:'🎽', Hands:'🧤', Feet:'🥾', Relic:'🔮',
-    Mainhand:'⚔', Offhand:'🛡', Ring:'💍', Necklace:'📿'
+  // Empty-slot labels (no emoji placeholders — real icons only when item equipped)
+  const SLOT_LABELS = {
+    Helm:'Helm', Shoulder:'Shoulder', Chest:'Chest', Hands:'Hands', Feet:'Feet', Relic:'Relic',
+    Mainhand:'Main', Offhand:'Off', Ring:'Ring', Necklace:'Neck'
   };
 
   // Class → armor material type
@@ -568,11 +580,61 @@
     initCursorAndParty().catch((e) => console.warn('[main-panel] cursor/party', e));
   }
 
+  function showMpStatus(msg, ms = 3200) {
+    const el = document.getElementById('mpStatus');
+    if (!el) return;
+    if (!msg) {
+      el.classList.remove('is-visible');
+      el.textContent = '';
+      return;
+    }
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    clearTimeout(showMpStatus._t);
+    showMpStatus._t = setTimeout(() => {
+      el.classList.remove('is-visible');
+    }, ms);
+  }
+
+  function sessionPartyUnits() {
+    const nameEl = document.getElementById('playerName');
+    const name = (nameEl?.textContent || 'You').trim() || 'You';
+    return window._partyMod.buildSessionParty({
+      race: selectedRace,
+      className: selectedClass,
+      level: charState?.level || 1,
+      name,
+    });
+  }
+
+  /** Apply party unit context to paperdoll race + banner (self restores selectedRace). */
+  function applyUnitToHero(unit) {
+    if (!unit) return;
+    if (unit.kind === 'self' || unit.id === 'self') {
+      // keep selectedRace as hero
+      if (activeTab === 'Equipment') renderTab();
+      return;
+    }
+    if (unit.race && RACE_IDS.includes(unit.race) && unit.race !== selectedRace) {
+      // Preview that unit's race kit without rewriting character create race permanently
+      // unless user clicks race buttons — store preview race for remount only
+      window._previewRace = unit.race;
+    } else {
+      window._previewRace = null;
+    }
+    if (activeTab === 'Equipment') renderTab();
+  }
+
+  function heroRaceForViewport() {
+    return window._previewRace || selectedRace;
+  }
+
   async function initCursorAndParty() {
     const [cursorMod, partyMod] = await Promise.all([
       import('./js/ui-cursor.js'),
       import('./js/ui-party-radial.js'),
     ]);
+    window._partyMod = partyMod;
     cursorMod.configureCursors({ variant: 'outline' });
     await cursorMod.preloadCursors([
       'default', 'attack', 'harvest', 'talk', 'busy', 'party_select', 'command',
@@ -583,24 +645,45 @@
     const onCommand = ({ unit, command }) => {
       partyMod.setActiveUnit(unit);
       updateUnitContextBanner();
+      applyUnitToHero(unit);
+
       if (command.panel && TABS.includes(command.panel)) {
         switchTab(command.panel);
+        showMpStatus(`${unit.name}: open ${command.panel}`);
+        return;
       }
-      if (command.id === 'equipment' || command.panel === 'Equipment') {
-        renderTab();
+      // Actions without a panel — honest feedback (no silent no-op)
+      if (command.action === 'orders') {
+        showMpStatus(`${unit.name}: Orders — world command API not connected yet`);
+      } else if (command.action === 'follow') {
+        showMpStatus(`${unit.name}: Follow — world AI not connected yet`);
+      } else if (command.action === 'trade') {
+        showMpStatus(`${unit.name}: Trade — open their bag from Inventory (session only)`);
+        // focus inventory rail
+        document.getElementById('invScroll')?.scrollIntoView?.({ block: 'nearest' });
+      } else {
+        showMpStatus(`${unit.name}: ${command.label}`);
       }
     };
 
-    const partyOpts = {
-      units: partyMod.demoPartyUnits(),
-      horizontal: false,
-      onSelect: (u) => {
-        partyMod.setActiveUnit(u);
-        updateUnitContextBanner();
-        cursorMod.setCursorIntent('party_select');
-      },
-      onCommand,
-    };
+    function partyOpts() {
+      return {
+        units: sessionPartyUnits(),
+        horizontal: false,
+        onSelect: (u) => {
+          partyMod.setActiveUnit(u);
+          updateUnitContextBanner();
+          applyUnitToHero(u);
+          cursorMod.setCursorIntent('party_select');
+          showMpStatus(
+            u.id === 'self'
+              ? 'Viewing your hero'
+              : `${u.name} (${u.kind}) — session slot; right-click for panels`,
+          );
+        },
+        onCommand,
+      };
+    }
 
     function ensurePartyHost() {
       let partyHost = document.getElementById('partyStrip');
@@ -620,14 +703,37 @@
     window._remountPartyStrip = (host) => {
       const h = host || ensurePartyHost();
       if (!h) return;
-      window._partyStripApi = partyMod.mountPartyStrip(h, partyOpts);
+      h.innerHTML = '';
+      const label = document.createElement('div');
+      label.className = 'party-strip-label';
+      label.textContent = 'Party · Crew · Ally · Camp';
+      const note = document.createElement('div');
+      note.className = 'party-strip-note';
+      note.textContent = 'Self = your hero. Other slots are session previews until Railway crew loads. Right-click → panels.';
+      h.appendChild(label);
+      h.appendChild(note);
+      const mount = document.createElement('div');
+      mount.id = 'partyStripMount';
+      h.appendChild(mount);
+      window._partyStripApi = partyMod.mountPartyStrip(mount, partyOpts());
     };
     window._remountPartyStrip();
 
+    // Keep party strip in sync when race/class changes
+    window._refreshPartyUnits = () => {
+      if (window._partyStripApi?.setUnits) {
+        window._partyStripApi.setUnits(sessionPartyUnits());
+      } else {
+        window._remountPartyStrip?.();
+      }
+    };
+
     document.getElementById('ucClear')?.addEventListener('click', () => {
       partyMod.setActiveUnit(null);
+      window._previewRace = null;
       updateUnitContextBanner();
-      renderTab();
+      showMpStatus('Back to your hero');
+      if (activeTab === 'Equipment') renderTab();
     });
     window.addEventListener('party:unit', updateUnitContextBanner);
     updateUnitContextBanner();
@@ -636,14 +742,17 @@
     try {
       const u = new URLSearchParams(location.search).get('unit');
       if (u) {
-        const units = partyMod.demoPartyUnits();
+        const units = sessionPartyUnits();
         const hit = units.find((x) => x.id === u);
         if (hit) {
           partyMod.setActiveUnit(hit);
           updateUnitContextBanner();
+          applyUnitToHero(hit);
         }
       }
-    } catch { /* */ }
+    } catch (e) {
+      console.warn('[main-panel] unit deep-link', e);
+    }
   }
 
   function updateUnitContextBanner() {
@@ -652,16 +761,22 @@
     let unit = null;
     try {
       unit = JSON.parse(sessionStorage.getItem('grudge_active_unit') || 'null');
-    } catch { /* */ }
+    } catch (e) {
+      unit = null;
+    }
     if (!unit || unit.id === 'self') {
       banner.classList.remove('is-visible');
+      window._previewRace = null;
       return;
     }
     banner.classList.add('is-visible');
     const kindEl = document.getElementById('ucKind');
     const nameEl = document.getElementById('ucName');
     if (kindEl) kindEl.textContent = (unit.kind || 'unit').toUpperCase();
-    if (nameEl) nameEl.textContent = `${unit.name || unit.id} · viewing their panels`;
+    if (nameEl) {
+      const src = unit.source === 'session-placeholder' ? ' · session preview' : '';
+      nameEl.textContent = `${unit.name || unit.id} · ${unit.race || '?'}${src}`;
+    }
   }
 
   /** Mount parchment scroll containers (center content + inventory rail). */
@@ -776,11 +891,11 @@
     const altArmor = allArmor.filter(i => i.material === mat && i.tier === 2);
     altArmor.slice(0, 4).forEach(a => inventoryItems.push({ uuid: a.uuid, stack: 1 }));
 
-    // Add food and potions
-    allItems.filter(i => i.type === 'food').slice(0, 4).forEach(i =>
-      inventoryItems.push({ uuid: i.uuid, stack: Math.floor(Math.random()*10)+1 }));
-    allItems.filter(i => i.type === 'potion').slice(0, 3).forEach(i =>
-      inventoryItems.push({ uuid: i.uuid, stack: Math.floor(Math.random()*5)+1 }));
+    // Food and potions — fixed stacks (deterministic; not random demo noise)
+    allItems.filter(i => i.type === 'food').slice(0, 4).forEach((i, n) =>
+      inventoryItems.push({ uuid: i.uuid, stack: 3 + (n % 4) }));
+    allItems.filter(i => i.type === 'potion').slice(0, 3).forEach((i, n) =>
+      inventoryItems.push({ uuid: i.uuid, stack: 2 + (n % 3) }));
   }
 
   // ── Left Column: Stats + Professions ────────────────────────────────
@@ -852,14 +967,9 @@
     // Re-attach party strip (crew / ally / camp / party radial)
     if (savedParty) {
       col.appendChild(savedParty);
-    } else if (window._partyStripApi) {
-      const partyHost = document.createElement('div');
-      partyHost.id = 'partyStrip';
-      partyHost.style.cssText = 'margin-top:16px;border-top:1px solid #3a2a1a;padding-top:10px;';
-      col.appendChild(partyHost);
-      window._partyStripApi.refresh?.();
-      // re-parent: refresh paints into old host — remount if needed
-      if (typeof window._remountPartyStrip === 'function') window._remountPartyStrip(partyHost);
+      window._refreshPartyUnits?.();
+    } else if (typeof window._remountPartyStrip === 'function') {
+      window._remountPartyStrip();
     }
   }
 
@@ -1045,6 +1155,8 @@
     _contentScrollApi?.snapOpen?.();
     renderTab();
   }
+  // Expose for party radial / deep-links (must be on window for ES module callers)
+  window.switchTab = switchTab;
 
   function raceDisplayName() {
     return RACE_META[selectedRace]?.name || selectedRace;
@@ -1155,7 +1267,7 @@
             const host = document.getElementById('hero-viewport');
             if (!host) return;
             await mod.mountHeroViewport(host, {
-              race: selectedRace,
+              race: heroRaceForViewport(),
               equippedItems,
               findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
               // Production GLB primary (CDN SSOT) — kit keeps embedded atlas (no UV invert double-bind)
@@ -1187,6 +1299,7 @@
   // ── Race/Class Selector ────────────────────────────────────────────
   function selectRace(race) {
     selectedRace = race;
+    window._previewRace = null; // race button is authoritative for hero
     if (charState) {
       charState.raceKey = race;
       if (typeof MainPanelSystems !== 'undefined') {
@@ -1196,8 +1309,10 @@
     document.getElementById('playerClass').textContent = `Lv.${charState?.level || 1} ${selectedClass}`;
     autoEquipDemo();
     populateInventoryDemo();
+    window._refreshPartyUnits?.();
     refreshAll();
   }
+  window.selectRace = selectRace;
 
   // ── Equipment Panel ─────────────────────────────────────────────────
   function renderEquipmentPanel() {
@@ -1236,8 +1351,8 @@
       <div style="text-align:center;padding:4px 8px 8px;width:100%;">
         <div style="font-family:var(--font-display);font-size:14px;color:${rm.color};letter-spacing:1px;">${rm.name}</div>
         <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin:2px 0 10px;">${rm.display} · ${rm.faction}</div>
-        <div id="hero-viewport" class="hero-viewport" data-race="${selectedRace}" title="Drag to orbit · equip filters bag/lumber"></div>
-        <div style="font-size:8px;color:var(--dim);margin-top:8px;">Mount: ${rm.mount} · mesh: equip only (no bag / lumber)</div>`;
+        <div id="hero-viewport" class="hero-viewport" data-race="${heroRaceForViewport()}" title="Drag to orbit · equip mesh only"></div>
+        <div style="font-size:8px;color:var(--dim);margin-top:8px;">${window._previewRace ? `Preview race: ${window._previewRace} (party unit)` : `Mount: ${rm.mount}`} · mesh equip only</div>`;
 
     // Equipment slot info from manifest
     if (equipSlots) {
@@ -1324,7 +1439,7 @@
     const tierColor = TIER_COLORS[tier] || '#3a2a1a';
     const iconHtml = item && item.iconUrl
       ? `<img class="slot-icon" src="${fixIconUrl(item.iconUrl)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`
-      : `<span class="slot-placeholder">${SLOT_ICONS[slotName] || '◻'}</span>`;
+      : `<span class="slot-placeholder">${SLOT_LABELS[slotName] || slotName}</span>`;
     const tierBadge = item
       ? `<span class="slot-tier" style="background:${tierColor};color:#000;">T${tier}</span>`
       : '';
@@ -1345,7 +1460,7 @@
       if (!item || !isMeshEquipmentItem(item)) continue;
       const icon = item.iconUrl
         ? `<img src="${fixIconUrl(item.iconUrl)}" alt="" onerror="this.style.display='none'">`
-        : `<span style="font-size:16px">${SLOT_ICONS[slot] || '◾'}</span>`;
+        : `<span style="font-size:9px;color:var(--dim)">${SLOT_LABELS[slot] || slot}</span>`;
       chips.push(`<div class="eq-mesh-chip" data-slot="${slot}" data-uuid="${uuid}">
         ${icon}
         <div>

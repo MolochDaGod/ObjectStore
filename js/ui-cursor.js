@@ -82,14 +82,13 @@ let _current = 'default';
 
 export function resolveCursorBase(preferred) {
   if (preferred) return preferred.replace(/\/$/, '');
-  if (typeof location !== 'undefined' && /grudge-studio\.com|localhost|127\.0\.0\.1/.test(location.host)) {
-    return CURSOR_BASE_LOCAL;
-  }
-  return CURSOR_BASE_CDN;
+  // Same-origin Pages ships /ui/cursors — do not assume R2 CDN is populated
+  return CURSOR_BASE_LOCAL;
 }
 
 export function configureCursors(opts = {}) {
   if (opts.base) _base = resolveCursorBase(opts.base);
+  else _base = resolveCursorBase();
   if (opts.variant === 'basic' || opts.variant === 'outline') _variant = opts.variant;
 }
 

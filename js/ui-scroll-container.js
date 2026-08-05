@@ -2,25 +2,28 @@
  * Fleet scroll container — Humble World Map Scroll Appear/Disappear
  *
  * Usage (any game deploy):
- *   import { mountScrollContainer, openScroll, closeScroll, SCROLL_BASE } from './ui-scroll-container.js';
+ *   import { mountScrollContainer } from './ui-scroll-container.js';
  *   const api = mountScrollContainer(hostEl, { autoOpen: true });
- *   await api.close(); // plays disappear
+ *   await api.open(); await api.close();
  *
  * SSOT: /ui/scroll/manifest.json · css/ui-scroll-container.css
  * Do not invent a second open/close chrome pack.
+ *
+ * CDN path is optional (may 404 until R2 promote). Same-origin Pages is SSOT.
  */
 
 export const SCROLL_BASE_LOCAL = '/ui/scroll';
+/** Promote with: wrangler r2 object put …/ui/scroll/* — not assumed live */
 export const SCROLL_BASE_CDN = 'https://assets.grudge-studio.com/ui/scroll';
 
-/** Prefer same-origin Pages assets; CDN when cross-app. */
+/** Prefer same-origin Pages assets (always ship with ObjectStore). */
 export function resolveScrollBase(preferred) {
   if (preferred) return preferred.replace(/\/$/, '');
-  // info.grudge-studio.com ships /ui/scroll with the site
-  if (typeof location !== 'undefined' && /grudge-studio\.com|localhost|127\.0\.0\.1/.test(location.host)) {
+  // Always prefer site-relative paths when in browser (Pages / local server)
+  if (typeof location !== 'undefined' && location.protocol?.startsWith('http')) {
     return SCROLL_BASE_LOCAL;
   }
-  return SCROLL_BASE_CDN;
+  return SCROLL_BASE_LOCAL;
 }
 
 const APPEAR_FRAMES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

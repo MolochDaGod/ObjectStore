@@ -13,9 +13,17 @@ import { setCursorIntent } from './ui-cursor.js';
 
 export const PARTY_BASE = '/ui/player';
 
-/** Default radial commands → main-panel tab / intent */
+/** Same-origin portraits shipped with ObjectStore Pages */
+export function racePortraitUrl(raceId) {
+  const r = String(raceId || 'human').toLowerCase();
+  const ok = new Set(['human', 'orc', 'elf', 'dwarf', 'undead', 'barbarian']);
+  const id = ok.has(r) ? r : 'human';
+  return `/images/portraits/${id}.png`;
+}
+
+/** Default radial commands → main-panel tab / intent (tabs must match main-panel TABS) */
 export const PARTY_COMMANDS = [
-  { id: 'inspect', label: 'Inspect', panel: 'Attributes', cursor: 'inspect', icon: '20.png' },
+  { id: 'inspect', label: 'Inspect', panel: 'Attributes', cursor: 'inspect', icon: '0.png' },
   { id: 'equipment', label: 'Gear', panel: 'Equipment', cursor: 'gauntlet', icon: '1.png' },
   { id: 'skills', label: 'Skills', panel: 'Skills', cursor: 'magic', icon: '2.png' },
   { id: 'commands', label: 'Orders', panel: null, cursor: 'command', icon: '3.png', action: 'orders' },
@@ -202,7 +210,7 @@ export function mountPartyStrip(host, opts = {}) {
       const frame = el('div', 'party-slot-frame');
       frame.innerHTML = `
         <span class="party-kind-tag">${KIND_LABEL[u.kind] || u.kind || 'Unit'}</span>
-        <img class="party-portrait" src="${u.portraitUrl || `${PARTY_BASE}/smart/holders/20.png`}" alt="" />
+        <img class="party-portrait" src="${u.portraitUrl || racePortraitUrl(u.race)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${racePortraitUrl('human')}'" />
         <div class="party-name">${escapeHtml(u.name || 'Unknown')}</div>
         <div class="party-meta">Lv ${u.level || 1}${u.className ? ' · ' + escapeHtml(u.className) : ''}</div>
         <div class="party-hp"><div class="party-hp-fill" style="width:${Math.round(((u.hp ?? 1) / (u.hpMax || 1)) * 100)}%"></div></div>
@@ -245,25 +253,40 @@ export function mountPartyStrip(host, opts = {}) {
   };
 }
 
-/** Default: switch main-panel tab when possible */
+/**
+ * Route radial command → main-panel tab or action event.
+ * Requires host to set window.switchTab (main-panel does).
+ */
 export function defaultPanelRouter({ unit, command }) {
   setActiveUnit(unit);
-  if (command.panel && typeof window.switchTab === 'function') {
-    window.switchTab(command.panel);
-  } else if (command.panel) {
-    // Deep-link fallback
-    const url = new URL(location.href);
-    url.searchParams.set('tab', String(command.panel).toLowerCase());
-    url.searchParams.set('unit', unit.id);
-    // Soft navigate if already on main-panel
-    if (/main-panel/i.test(location.pathname)) {
+  const tab = command.panel;
+  if (tab) {
+    if (typeof window.switchTab === 'function') {
+      window.switchTab(tab);
+    } else if (/main-panel/i.test(location.pathname || '')) {
+      const url = new URL(location.href);
+      url.searchParams.set('tab', String(tab).toLowerCase());
+      if (unit?.id) url.searchParams.set('unit', unit.id);
       history.replaceState({}, '', url);
       window.dispatchEvent(new CustomEvent('party:panel', { detail: { unit, command } }));
     } else {
-      location.href = `/main-panel.html?tab=${encodeURIComponent(command.panel)}&unit=${encodeURIComponent(unit.id)}`;
+      const q = new URLSearchParams({
+        tab: String(tab).toLowerCase(),
+        unit: unit?.id || '',
+      });
+      location.href = `/main-panel.html?${q.toString()}`;
     }
   }
-  window.dispatchEvent(new CustomEvent('party:command', { detail: { unit, command } }));
+  window.dispatchEvent(
+    new CustomEvent('party:command', {
+      detail: {
+        unit,
+        command,
+        /** Host should surface this when action has no panel (orders/follow/trade). */
+        needsHostAction: !tab && !!command.action,
+      },
+    }),
+  );
 }
 
 function escapeHtml(s) {
@@ -275,15 +298,72 @@ function escapeHtml(s) {
 }
 
 /**
- * Demo / bootstrap units if none provided
+ * Session party for paperdoll / panel context.
+ * Self mirrors the live hero race/class; companions are local session placeholders
+ * until Railway crew API is wired (kind tags stay honest — not production roster).
+ *
+ * @param {{ race?: string, className?: string, level?: number, name?: string }} opts
  */
-export function demoPartyUnits() {
+export function buildSessionParty(opts = {}) {
+  const race = opts.race || 'human';
+  const className = opts.className || 'Warrior';
+  const level = opts.level || 1;
+  const name = opts.name || 'You';
   return [
-    { id: 'self', name: 'Warlord', kind: 'self', level: 12, className: 'Warrior', race: 'human', hp: 0.82, hpMax: 1 },
-    { id: 'crew-1', name: 'Brakka', kind: 'crew', level: 10, className: 'Ranger', race: 'orc', hp: 0.7, hpMax: 1 },
-    { id: 'ally-1', name: 'Sylwen', kind: 'ally', level: 11, className: 'Mage', race: 'elf', hp: 0.55, hpMax: 1 },
-    { id: 'camp-1', name: 'Camp A', kind: 'camp', level: 1, className: 'Outpost', race: 'human', hp: 1, hpMax: 1 },
+    {
+      id: 'self',
+      name,
+      kind: 'self',
+      level,
+      className,
+      race,
+      hp: 1,
+      hpMax: 1,
+      portraitUrl: racePortraitUrl(race),
+      source: 'session',
+    },
+    {
+      id: 'crew-1',
+      name: 'Crew slot',
+      kind: 'crew',
+      level: Math.max(1, level - 1),
+      className: 'Ranger',
+      race: race === 'orc' ? 'human' : 'orc',
+      hp: 0.85,
+      hpMax: 1,
+      portraitUrl: racePortraitUrl(race === 'orc' ? 'human' : 'orc'),
+      source: 'session-placeholder',
+    },
+    {
+      id: 'ally-1',
+      name: 'Ally slot',
+      kind: 'ally',
+      level: Math.max(1, level),
+      className: 'Mage Priest',
+      race: race === 'elf' ? 'human' : 'elf',
+      hp: 0.7,
+      hpMax: 1,
+      portraitUrl: racePortraitUrl(race === 'elf' ? 'human' : 'elf'),
+      source: 'session-placeholder',
+    },
+    {
+      id: 'camp-1',
+      name: 'Camp',
+      kind: 'camp',
+      level: 1,
+      className: 'Outpost',
+      race,
+      hp: 1,
+      hpMax: 1,
+      portraitUrl: racePortraitUrl(race),
+      source: 'session-placeholder',
+    },
   ];
+}
+
+/** @deprecated use buildSessionParty — kept for older callers */
+export function demoPartyUnits(opts) {
+  return buildSessionParty(opts);
 }
 
 export default {
@@ -292,6 +372,9 @@ export default {
   getActiveUnit,
   setActiveUnit,
   defaultPanelRouter,
+  buildSessionParty,
   demoPartyUnits,
+  racePortraitUrl,
   PARTY_COMMANDS,
+  PARTY_BASE,
 };
