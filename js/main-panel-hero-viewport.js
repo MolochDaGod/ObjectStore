@@ -20,6 +20,7 @@ import {
   loadRaceKit,
   WEAPON_R,
   WEAPON_L,
+  fitRootUniformSi,
 } from './grudge6-kit.js';
 
 /** SI height targets (m) — human 1.8 yardstick; orc taller; dwarf shorter */
@@ -143,35 +144,19 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
   }
 }
 
-/** Uniform root SI fit + plant feet (skinned min.y). No per-mesh scale. */
+/**
+ * Paperdoll SI fit — ROOT uniform only + structural body measure.
+ * Stretch comes from mesh.scale / non-uniform / measuring stacked variants.
+ */
 function fitRootSi(root, targetH) {
-  root.position.set(0, 0, 0);
-  root.scale.set(1, 1, 1);
-  root.rotation.set(0, 0, 0);
-  root.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(root);
-  const size = box.getSize(new THREE.Vector3());
-  let h = Math.max(size.y, 1e-4);
-  // classic 100× (cm-as-m) on root only
-  if (h > 40) {
-    root.scale.setScalar(0.01);
-    root.updateMatrixWorld(true);
-    box.setFromObject(root);
-    h = Math.max(box.getSize(new THREE.Vector3()).y, 1e-4);
-  }
-  const s = targetH / h;
-  root.scale.setScalar(root.scale.x * s);
-  root.updateMatrixWorld(true);
-  box.setFromObject(root);
-  root.position.y -= box.min.y;
-  // center XZ in viewport
-  root.position.x -= (box.min.x + box.max.x) * 0.5;
-  root.position.z -= (box.min.z + box.max.z) * 0.5;
-  // Paperdoll: face camera. Kit is art-forward +Z; camera sits on +Z looking at origin,
-  // so yaw=0 faces the player (π/2 is for world/cinema staging, not the panel).
+  const result = fitRootUniformSi(THREE, root, targetH, {
+    characterType: 'infantry',
+    centerXZ: true,
+  });
+  // Paperdoll: face camera (kit art-forward +Z; camera on +Z)
   root.rotation.y = 0;
   root.updateMatrixWorld(true);
-  return h * s;
+  return result.height;
 }
 
 let _state = null;

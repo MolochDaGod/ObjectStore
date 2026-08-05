@@ -457,22 +457,139 @@ export function invertGeometryUVV(root) {
   });
 }
 
-export function groundYHip(root, THREE, targetH = 1.7) {
+/**
+ * HARD SCALE RULES (stretch / squash always comes from breaking these):
+ *
+ *  ✅ DO:  root.scale.setScalar(s) once — uniform XYZ on the whole kit
+ *  ✅ DO:  measure STRUCTURAL visible body only (one head/body/arms/legs, + mount/siege)
+ *  ✅ DO:  plant feet from structural box.min.y (not pelvis.y)
+ *
+ *  ❌ NEVER: mesh.scale.set / bone.scale / scaleHeadMeshes (non-uniform → stretch)
+ *  ❌ NEVER: setFromObject(whole kit) while ALL armor variants are visible
+ *            (stacked A–N plumes inflate height → wrong fit scale)
+ *  ❌ NEVER: hero-fit siege/weapons/projectiles to 1.8 m
+ *  ❌ NEVER: non-uniform root.scale.set(sx, sy, sz) with sx≠sy≠sz
+ */
+
+/** Structural silhouette only — matches customizer CharacterModel. */
+export function isStructuralMeshName(name, characterType = 'infantry') {
+  const n = String(name || '').toLowerCase();
+  if (/_weapon_|weapon_|_shield|shield_/.test(n)) return false;
+  if (/_xtra_|quiver|wood$|_bag$|bag$|lumber|log/.test(n)) return false;
+  if (/units_(body|head|arms?|legs?|shoulderpads?)_/.test(n)) return true;
+  if (/^[a-z]{2,4}_(body|head|arms?|legs?|shoulderpads?)_/.test(n)) return true;
+  if (characterType === 'cavalry' && /(horse|wolf|ram|mount|steed|boar)/.test(n)) return true;
+  if (
+    characterType === 'siege' &&
+    /(catapult|boltthrower|ballista|wheel|frame|arm_l|arm_r)/.test(n)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * World AABB of structural meshes only.
+ * If onlyVisible=true (default), skip hidden meshes so equip loadout drives height.
+ * @param {typeof import('three')} THREE
+ * @param {import('three').Object3D} root
+ * @param {'infantry'|'cavalry'|'siege'} characterType
+ * @param {{ onlyVisible?: boolean }} opts
+ */
+export function measureStructuralBBox(THREE, root, characterType = 'infantry', opts = {}) {
+  const onlyVisible = opts.onlyVisible !== false;
+  const box = new THREE.Box3();
+  root.updateMatrixWorld(true);
+  let any = false;
+  root.traverse((o) => {
+    if (!o.isMesh && !o.isSkinnedMesh) return;
+    if (onlyVisible && o.visible === false) return;
+    if (!isStructuralMeshName(o.name, characterType)) return;
+    if (!o.geometry) return;
+    // Prefer live skinned extent when available
+    if (o.isSkinnedMesh && typeof o.computeBoundingBox === 'function') {
+      try {
+        o.computeBoundingBox();
+        if (o.boundingBox && !o.boundingBox.isEmpty()) {
+          const mb = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
+          if (Number.isFinite(mb.min.y) && Number.isFinite(mb.max.y)) {
+            box.union(mb);
+            any = true;
+            return;
+          }
+        }
+      } catch {
+        /* fall through */
+      }
+    }
+    const mb = new THREE.Box3().setFromObject(o);
+    if (Number.isFinite(mb.min.y) && Number.isFinite(mb.max.y)) {
+      box.union(mb);
+      any = true;
+    }
+  });
+  if (!any) box.setFromObject(root);
+  return box;
+}
+
+/**
+ * Uniform SI fit on ROOT only + plant feet.
+ * Replaces the old full-kit measure (which stacked every armor variant).
+ *
+ * @param {typeof import('three')} THREE
+ * @param {import('three').Object3D} root
+ * @param {number} targetH metres
+ * @param {{ characterType?: 'infantry'|'cavalry'|'siege', centerXZ?: boolean }} opts
+ */
+export function fitRootUniformSi(THREE, root, targetH = 1.8, opts = {}) {
+  const characterType = opts.characterType || 'infantry';
+  const centerXZ = opts.centerXZ !== false;
+
+  // Identity root; do not touch child mesh/bone scales
   root.position.set(0, 0, 0);
+  root.rotation.set(0, 0, 0);
   root.scale.setScalar(1);
   root.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(root);
-  const size = new THREE.Vector3();
-  box.getSize(size);
-  if (size.y > 0.01) {
-    root.scale.setScalar(targetH / size.y);
+
+  let box = measureStructuralBBox(THREE, root, characterType);
+  let h = Math.max(box.max.y - box.min.y, 1e-4);
+
+  // Classic 100× (cm authored as m) — uniform decade on ROOT only
+  if (h > 40) {
+    root.scale.setScalar(0.01);
     root.updateMatrixWorld(true);
-    box.setFromObject(root);
+    box = measureStructuralBBox(THREE, root, characterType);
+    h = Math.max(box.max.y - box.min.y, 1e-4);
   }
-  root.position.y = -box.min.y;
+
+  const s = targetH / h;
+  root.scale.setScalar(root.scale.x * s); // always uniform
   root.updateMatrixWorld(true);
-  box.setFromObject(root);
-  return { height: box.max.y - box.min.y };
+  box = measureStructuralBBox(THREE, root, characterType);
+
+  // Feet = structural min.y (NOT pelvis / hip bone)
+  root.position.y -= box.min.y;
+  if (centerXZ) {
+    const cx = (box.min.x + box.max.x) * 0.5;
+    const cz = (box.min.z + box.max.z) * 0.5;
+    root.position.x -= cx;
+    root.position.z -= cz;
+  }
+  root.updateMatrixWorld(true);
+  box = measureStructuralBBox(THREE, root, characterType);
+  const finalH = box.max.y - box.min.y;
+  return { height: finalH, scale: root.scale.x, authoredH: h / (root.scale.x || 1), targetH };
+}
+
+/**
+ * @deprecated name was wrong (not hip). Prefer fitRootUniformSi.
+ * Kept as alias for older callers.
+ */
+export function groundYHip(root, THREE, targetH = 1.7) {
+  return fitRootUniformSi(THREE, root, targetH, {
+    characterType: 'infantry',
+    centerXZ: false,
+  });
 }
 
 const texCache = new Map();
@@ -538,7 +655,12 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   else equip.applyDefaultLoadout();
 
   let ground = null;
-  if (opts.ground !== false) ground = groundYHip(root, THREE, opts.targetHeight ?? 1.7);
+  if (opts.ground !== false) {
+    ground = fitRootUniformSi(THREE, root, opts.targetHeight ?? 1.8, {
+      characterType: opts.characterType || 'infantry',
+      centerXZ: opts.centerXZ !== false,
+    });
+  }
 
   return {
     root,
