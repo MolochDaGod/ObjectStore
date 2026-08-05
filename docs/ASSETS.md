@@ -137,7 +137,10 @@ Pipeline notes:
 5. glTF-Transform: light prune only — **no join/flatten** that destroys equip pieces.  
 6. Upload kit + `library/{race}/*.glb` to R2.  
 7. Point D1 `meshes.glb_url` at library files.  
-8. Browse: rebind atlas; Blender GLB may need **invert UV V** once vs FBX.
+8. Browse materials (loadRaceKit):
+   - **Production CDN race GLB** → keep embedded atlas (normalize only). **Do not** auto invert UV V.
+   - **FBX / 1×1 stubs / team atlas** → rebind CDN atlas (`flipY=false`). No invert.
+   - **Blender export mismatch only** → `opts.invertUvV: true` (idempotent). Never combine invert + rebind on already-correct production kits.
 
 Also: `tools/grudge-convert/README.md`, skill `gltf-asset-pipeline` / `grudge-asset-convert`.
 

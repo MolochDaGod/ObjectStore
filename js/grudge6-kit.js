@@ -490,39 +490,145 @@ export class EquipmentManager {
   }
 }
 
+/** 1×1 / empty maps = failed embed stubs (must rebind atlas). */
+export function isStubMap(map) {
+  if (!map) return true;
+  const img = map.image;
+  if (!img) return true;
+  const w = img.naturalWidth || img.width || img.videoWidth || 0;
+  const h = img.naturalHeight || img.height || img.videoHeight || 0;
+  if (w > 0 && h > 0) return w <= 2 || h <= 2;
+  if (img.data && typeof img.data.length === 'number') return img.data.length <= 16;
+  return false;
+}
+
+/** True when kit already has a real color map (production GLB bake). */
+export function kitHasUsableMaps(root) {
+  let ok = false;
+  if (!root) return false;
+  root.traverse((obj) => {
+    if (ok) return;
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of mats) {
+      if (m?.map && !isStubMap(m.map)) {
+        ok = true;
+        return;
+      }
+    }
+  });
+  return ok;
+}
+
 /**
- * Bind race atlas onto every mesh (MeshStandardMaterial).
- * @param {typeof import('three')} THREE
+ * Normalize embedded glTF/FBX maps in place — NO UV rewrite, NO atlas swap.
+ * Production race GLBs already ship the correct atlas + UVs (asset-convert).
  */
-export function bindRaceAtlas(THREE, root, texture) {
-  if (!texture || !root) return 0;
+export function normalizeEmbeddedMaps(THREE, root) {
+  if (!root || !THREE) return 0;
   let n = 0;
   root.traverse((obj) => {
     if (!obj.isMesh && !obj.isSkinnedMesh) return;
-    const prev = obj.material;
-    obj.material = new THREE.MeshStandardMaterial({
-      map: texture,
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 0.75,
-      side: THREE.DoubleSide,
-      alphaTest: 0.02,
-    });
     obj.castShadow = true;
     obj.receiveShadow = true;
-    n++;
-    try {
-      if (Array.isArray(prev)) prev.forEach((m) => m?.dispose?.());
-      else prev?.dispose?.();
-    } catch {
-      /* */
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of mats) {
+      if (!m) continue;
+      if (m.map && !isStubMap(m.map)) {
+        m.map.colorSpace = THREE.SRGBColorSpace;
+        m.map.flipY = false;
+        m.map.wrapS = m.map.wrapT = THREE.ClampToEdgeWrapping;
+        m.map.needsUpdate = true;
+        if (m.color) m.color.setHex(0xffffff);
+        if ('metalness' in m) m.metalness = Math.min(m.metalness ?? 0, 0.15);
+        if ('roughness' in m && (m.roughness == null || m.roughness < 0.2)) m.roughness = 0.75;
+        m.needsUpdate = true;
+        n++;
+      } else if (m.map && isStubMap(m.map)) {
+        m.map = null;
+        m.needsUpdate = true;
+      }
     }
   });
+  root.userData.grudge6MaterialMode = 'embedded';
   return n;
 }
 
-/** Invert UV V (Blender glTF often differs from FBXLoader space for these kits) */
-export function invertGeometryUVV(root) {
+/**
+ * Bind race atlas onto every mesh.
+ * Soft path (default): swap `map` on existing materials (matches GRUDGE6_Characters).
+ * Hard path: only when mesh has no material.
+ * Never inverts UVs — that is a separate, opt-in step.
+ *
+ * @param {typeof import('three')} THREE
+ * @param {import('three').Object3D} root
+ * @param {import('three').Texture} texture
+ */
+export function bindRaceAtlas(THREE, root, texture) {
+  if (!texture || !root) return 0;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.flipY = false;
+  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.needsUpdate = true;
+
+  let n = 0;
+  root.traverse((obj) => {
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    obj.castShadow = true;
+    obj.receiveShadow = true;
+
+    const mats = Array.isArray(obj.material) ? obj.material : obj.material ? [obj.material] : [];
+    if (!mats.length) {
+      obj.material = new THREE.MeshStandardMaterial({
+        map: texture,
+        color: 0xffffff,
+        metalness: 0,
+        roughness: 0.75,
+        side: THREE.DoubleSide,
+      });
+      n++;
+      return;
+    }
+
+    const next = mats.map((mat) => {
+      if (!mat) {
+        return new THREE.MeshStandardMaterial({
+          map: texture,
+          color: 0xffffff,
+          metalness: 0,
+          roughness: 0.75,
+          side: THREE.DoubleSide,
+        });
+      }
+      // Clone so we do not mutate shared FBX/glTF material templates across kits
+      const m = typeof mat.clone === 'function' ? mat.clone() : mat;
+      m.map = texture;
+      if (m.color?.setHex) m.color.setHex(0xffffff);
+      if ('metalness' in m) m.metalness = 0;
+      if ('roughness' in m) m.roughness = 0.75;
+      if ('side' in m) m.side = THREE.DoubleSide;
+      // Avoid accidental cutouts from stale alphaTest on cloned mats
+      if ('alphaTest' in m && m.alphaTest > 0 && m.alphaTest < 0.5) m.alphaTest = 0;
+      m.needsUpdate = true;
+      return m;
+    });
+    obj.material = next.length === 1 ? next[0] : next;
+    n++;
+  });
+  root.userData.grudge6AtlasBound = true;
+  root.userData.grudge6MaterialMode = 'atlas-rebind';
+  return n;
+}
+
+/**
+ * Invert UV V once (idempotent).
+ * ONLY for Blender glTF exports that still disagree with FBX atlas space.
+ * Production CDN race GLBs from asset-convert must NOT use this (already correct).
+ * @returns {boolean} true if inverted this call
+ */
+export function invertGeometryUVV(root, { force = false } = {}) {
+  if (!root) return false;
+  if (root.userData.grudge6UvVInverted && !force) return false;
   const seen = new Set();
   root.traverse((obj) => {
     const g = obj.geometry;
@@ -533,6 +639,8 @@ export function invertGeometryUVV(root) {
     for (let i = 0; i < uv.count; i++) uv.setY(i, 1 - uv.getY(i));
     uv.needsUpdate = true;
   });
+  root.userData.grudge6UvVInverted = true;
+  return true;
 }
 
 /**
@@ -699,22 +807,33 @@ export async function loadRaceTexture(THREE, raceId, variant = 'default') {
 }
 
 /**
- * Load race kit + catalog equipment + bind atlas.
+ * Load race kit + catalog equipment + materials.
+ *
+ * Texture SSOT (do not double-process):
+ *  - Production GLB: already has atlas baked → keep embedded maps (normalize only).
+ *  - FBX / stub maps / team atlas variant: rebind CDN atlas, flipY=false.
+ *  - invert UV V: OPT-IN only (`opts.invertUvV === true`) for Blender exports that need it.
+ *    Never auto-invert production CDN race kits.
+ *
  * @param {object} loaders { FBXLoader, GLTFLoader } classes
  * @param {string} raceId
- * @param {{ source?: 'fbx'|'glb', meshIds?: string[], ground?: boolean }} opts
+ * @param {{ source?: 'fbx'|'glb', meshIds?: string[], ground?: boolean,
+ *           atlasVariant?: string, forceAtlas?: boolean, invertUvV?: boolean,
+ *           skipDefaultLoadout?: boolean, targetHeight?: number,
+ *           characterType?: string, centerXZ?: boolean }} opts
  */
 export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   const race = RACE_ASSETS[raceId];
   if (!race) throw new Error(`Unknown race: ${raceId}`);
-  // Prefer production GLB for web paperdoll (FBX still available via source:'fbx')
+  // Prefer production GLB for web (CDN SSOT); FBX = author / fallback
   const source = opts.source || 'glb';
   let url = kitUrl(raceId, source);
   url = resolveCanonicalAssetUrl(url);
 
   let root;
   let animations = [];
-  if (/\.fbx($|\?)/i.test(url)) {
+  const isFbxUrl = /\.fbx($|\?)/i.test(url);
+  if (isFbxUrl) {
     const loader = new loaders.FBXLoader();
     root = await loader.loadAsync(url);
     animations = root.animations || [];
@@ -723,11 +842,46 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
     const gltf = await loader.loadAsync(url);
     root = gltf.scene || gltf;
     animations = gltf.animations || [];
-    if (source !== 'fbx') invertGeometryUVV(root);
   }
 
-  const tex = await loadRaceTexture(THREE, raceId, opts.atlasVariant || 'default');
-  const matCount = tex ? bindRaceAtlas(THREE, root, tex) : 0;
+  // Opt-in UV V flip only (Blender export mismatch). Idempotent.
+  let uvInverted = false;
+  if (opts.invertUvV === true) {
+    uvInverted = invertGeometryUVV(root);
+  }
+
+  const atlasVariant = opts.atlasVariant || 'default';
+  const hasUsable = kitHasUsableMaps(root);
+  // Rebind when: FBX (embeds often missing/wrong), stubs, team atlas, or forced
+  const mustRebind =
+    opts.forceAtlas === true ||
+    isFbxUrl ||
+    !hasUsable ||
+    (atlasVariant && atlasVariant !== 'default');
+
+  let tex = null;
+  let matCount = 0;
+  let materialMode = 'none';
+
+  if (mustRebind) {
+    tex = await loadRaceTexture(THREE, raceId, atlasVariant);
+    if (tex) {
+      matCount = bindRaceAtlas(THREE, root, tex);
+      materialMode = uvInverted ? 'atlas-rebind+invert' : 'atlas-rebind';
+    } else if (hasUsable) {
+      matCount = normalizeEmbeddedMaps(THREE, root);
+      materialMode = 'embedded-fallback';
+    }
+  } else {
+    // Production GLB path: keep bake, do not invert, do not double-bind
+    matCount = normalizeEmbeddedMaps(THREE, root);
+    materialMode = 'embedded';
+    // Still resolve default atlas for callers that want the URL/handle
+    tex = await loadRaceTexture(THREE, raceId, atlasVariant);
+  }
+
+  root.userData.grudge6MaterialMode = materialMode;
+  root.userData.grudge6UvVInverted = !!root.userData.grudge6UvVInverted;
 
   const equip = new EquipmentManager(race.prefix);
   equip.catalog(root);
@@ -751,9 +905,11 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
     equip,
     race,
     url,
-    source,
+    source: isFbxUrl ? 'fbx' : source,
     atlas: tex,
     matCount,
+    materialMode,
+    uvInverted,
     equipResult,
     ground,
   };

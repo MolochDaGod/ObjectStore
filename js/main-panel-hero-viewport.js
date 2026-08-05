@@ -407,9 +407,12 @@ export async function mountHeroViewport(host, opts) {
     },
     async setAtlas(variant = 'default') {
       if (!root) return 0;
+      // Team / color swap: rebind atlas only — never invert UVs (already on kit)
       const tex = await loadRaceTexture(THREE, race, variant);
       if (!tex) return 0;
-      return bindRaceAtlas(THREE, root, tex);
+      const n = bindRaceAtlas(THREE, root, tex);
+      root.userData.grudge6MaterialMode = 'atlas-rebind';
+      return n;
     },
     listAtlasVariants() {
       return Object.keys(ATLAS_VARIANTS[race] || { default: true });
@@ -419,22 +422,28 @@ export async function mountHeroViewport(host, opts) {
   };
 
   try {
-    // Prefer FBX for paperdoll visual SSOT (correct skin/UV); GLB fallback
+    // Production GLB primary (embedded atlas, no auto UV invert). FBX fallback.
+    // Never pass invertUvV here — that double-process scrambles production kits.
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: opts.source || 'fbx',
+        source: opts.source || 'glb',
         ground: false,
         skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
+        // forceAtlas only for non-default team colors (handled by setAtlas)
+        forceAtlas: !!(opts.atlasVariant && opts.atlasVariant !== 'default'),
+        invertUvV: opts.invertUvV === true,
       });
-    } catch (fbxErr) {
-      console.warn('[main-panel hero] FBX fail, trying GLB', fbxErr);
+    } catch (glbErr) {
+      console.warn('[main-panel hero] GLB fail, trying FBX', glbErr);
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: 'glb',
+        source: 'fbx',
         ground: false,
         skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
+        forceAtlas: true,
+        invertUvV: false,
       });
     }
     if (disposed) return;
@@ -449,6 +458,7 @@ export async function mountHeroViewport(host, opts) {
     scene.add(root);
     _state.root = root;
     _state.equip = equip;
+    _state.materialMode = kit.materialMode;
 
     // Idle: embedded kit clips first, else CDN baked Bip001 idle (fixes T-pose)
     let clips = (kit.animations || []).slice();
@@ -473,11 +483,14 @@ export async function mountHeroViewport(host, opts) {
     }
 
     const vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
-    status.textContent = `${race} · ${kit.source} · atlas×${kit.matCount || 0} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
+    const matMode = kit.materialMode || root.userData.grudge6MaterialMode || '?';
+    status.textContent = `${race} · ${kit.source} · ${matMode} · mats×${kit.matCount || 0} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
     console.info('[main-panel hero]', {
       race,
       url: kit.url,
       source: kit.source,
+      materialMode: matMode,
+      uvInverted: !!kit.uvInverted,
       matCount: kit.matCount,
       height: finalH,
       visible: vis,

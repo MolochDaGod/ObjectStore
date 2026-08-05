@@ -988,8 +988,9 @@
               race: selectedRace,
               equippedItems,
               findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
-              // FBX = paperdoll visual SSOT (atlas UV + skin); GLB fallback inside viewport
-              source: 'fbx',
+              // Production GLB primary (CDN SSOT) — kit keeps embedded atlas (no UV invert double-bind)
+              // FBX fallback inside viewport if GLB fails
+              source: 'glb',
             });
             wireMeshKitEditor(mod);
           })
