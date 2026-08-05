@@ -988,7 +988,8 @@
               race: selectedRace,
               equippedItems,
               findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
-              source: 'glb',
+              // FBX = paperdoll visual SSOT (atlas UV + skin); GLB fallback inside viewport
+              source: 'fbx',
             });
             wireMeshKitEditor(mod);
           })

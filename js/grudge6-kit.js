@@ -471,6 +471,23 @@ export class EquipmentManager {
     }
     return { matched, missing, wanted };
   }
+
+  /**
+   * Hard exclusivity: ONLY meshes in `this.equipped` stay visible.
+   * Fixes ghost layers / stacked helmets when regex double-matched or
+   * bind-pose weapons leaked visibility.
+   */
+  hardenVisibility() {
+    const keep = new Set();
+    for (const [slot, variant] of Object.entries(this.equipped || {})) {
+      const mesh = this.slots[slot]?.[variant];
+      if (mesh) keep.add(mesh.uuid);
+    }
+    for (const m of this.allMeshes) {
+      m.visible = keep.has(m.uuid);
+    }
+    return keep.size;
+  }
 }
 
 /**
@@ -716,7 +733,9 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   equip.catalog(root);
   let equipResult = null;
   if (opts.meshIds?.length) equipResult = equip.applyMeshIds(opts.meshIds);
-  else equip.applyDefaultLoadout();
+  else if (opts.skipDefaultLoadout) {
+    // Leave all equippable hidden — caller applies paperdoll loadout
+  } else equip.applyDefaultLoadout();
 
   let ground = null;
   if (opts.ground !== false) {

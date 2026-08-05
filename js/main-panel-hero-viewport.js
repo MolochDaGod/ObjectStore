@@ -1,15 +1,13 @@
 /**
  * Main Panel hero viewport — SSOT path via grudge6-kit.js
  *
- * Deep fix (vs ad-hoc GLB + soft name regex):
- *  1. loadRaceKit: race FBX preferred + race atlas rebind (sRGB, flipY=false)
- *  2. EquipmentManager: hide all equippable → show exclusive body/weapon variants
- *  3. Utility bag/lumber/quiver always off for paperdoll
- *  4. Root SI fit only (1.8 m human yardstick; race bands) — never per-mesh scale
- *  5. Art-forward +Z yaw once
- *
- * Reference: grudge6-modular-characters skill, Asset-Rig-Editor classifyPart/defaultLoadout,
- * tpose-for-mixamo SI (~1.8 m human mesh extents).
+ * Visual contract (grudge6 paperdoll):
+ *  1. Production kit from CDN (FBX preferred for paperdoll UV/skin; GLB fallback)
+ *  2. EquipmentManager: hide all → exclusive body/weapon variants only
+ *  3. hardenVisibility() — no ghost layers
+ *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
+ *  5. Face camera: yaw = π (kit shows back at yaw 0 with camera on +Z)
+ *  6. Idle from CDN baked pack when kit has no embedded clips
  */
 import * as THREE from 'https://esm.sh/three@0.185.0';
 import { GLTFLoader } from 'https://esm.sh/three@0.185.0/examples/jsm/loaders/GLTFLoader.js';
@@ -26,15 +24,11 @@ import {
   fitRootUniformSi,
 } from './grudge6-kit.js';
 
-/** SI height targets (m) — human 1.8 yardstick; orc taller; dwarf shorter */
-const RACE_HEIGHT_M = {
-  human: 1.8,
-  orc: 2.05,
-  elf: 1.85,
-  dwarf: 1.45,
-  undead: 1.8,
-  barbarian: 1.95,
-};
+/**
+ * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
+ * no special orc stretch). Proportions come from the mesh, not per-race height hacks.
+ */
+const PAPERDOLL_HEIGHT_M = 1.8;
 
 /** Panel armor slot → kit equip slot */
 const PANEL_TO_BODY = {
@@ -43,6 +37,37 @@ const PANEL_TO_BODY = {
   Hands: 'arms',
   Feet: 'legs',
   Shoulder: 'shoulders',
+};
+
+/**
+ * Race → baked idle clip on assets CDN (verified HEAD 200).
+ * Prefer pack idle; fall back to locomotion/idle.json.
+ * Tracks use Bip001_* names — rematchClipBones maps _ ↔ space for FBX kits.
+ */
+const IDLE_CLIP_URLS = {
+  human: [
+    'https://assets.grudge-studio.com/anims/baked/sword_shield/sword-and-shield-idle.json',
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
+  barbarian: [
+    'https://assets.grudge-studio.com/anims/baked/sword_shield/sword-and-shield-idle.json',
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
+  orc: [
+    'https://assets.grudge-studio.com/anims/baked/sword_shield/sword-and-shield-idle.json',
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
+  elf: [
+    'https://assets.grudge-studio.com/anims/baked/longbow/idle.json',
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
+  undead: [
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
+  dwarf: [
+    'https://assets.grudge-studio.com/anims/baked/sword_shield/sword-and-shield-idle.json',
+    'https://assets.grudge-studio.com/anims/baked/locomotion/idle.json',
+  ],
 };
 
 function armorLetterFromItem(item) {
@@ -59,7 +84,6 @@ function armorLetterFromItem(item) {
   return 'A';
 }
 
-/** Map inventory weapon category → kit weapon slot id */
 function weaponSlotFromItem(item) {
   if (!item) return null;
   const cat = String(item.category || item.type || item.name || '').toLowerCase();
@@ -73,7 +97,7 @@ function weaponSlotFromItem(item) {
   if (/pick/.test(cat)) return 'pick';
   if (/bow|longbow|crossbow/.test(cat)) return 'bow';
   if (/staff|stave|wand|tome|book/.test(cat)) return 'staff';
-  if (/gun|rifle|pistol/.test(cat)) return 'sword'; // no gun slot — leave unarmed look
+  if (/gun|rifle|pistol/.test(cat)) return 'sword';
   return null;
 }
 
@@ -89,12 +113,10 @@ function pickVariant(slotMap, preferred) {
 
 /**
  * Apply paperdoll equippedItems onto EquipmentManager.
- * Mirrors customizer defaultLoadout: body A base, weapons only if equipped, utility off.
  */
 export function applyPanelEquip(equip, equippedItems, findItem) {
   if (!equip) return;
 
-  // Body slots: always one letter (A if empty)
   for (const [panelSlot, kitSlot] of Object.entries(PANEL_TO_BODY)) {
     const uuid = equippedItems?.[panelSlot];
     const item = uuid && findItem ? findItem(uuid) : null;
@@ -104,12 +126,10 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     else equip.unequip?.(kitSlot);
   }
 
-  // Shoulders optional — hide if no shoulder piece
   if (!equippedItems?.Shoulder && equip.slots.shoulders) {
     equip.unequip('shoulders');
   }
 
-  // Clear all weapons / shields / utility first
   equip.hideGroup('weapon_r');
   equip.hideGroup('weapon_l');
   equip.hideGroup('shield');
@@ -123,12 +143,20 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     if (slot && slot !== 'shield') {
       const letter = armorLetterFromItem(main);
       if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
-        const v = pickVariant(equip.slots[slot], letter) || pickVariant(equip.slots[slot], '_default');
+        const v =
+          pickVariant(equip.slots[slot], letter) ||
+          pickVariant(equip.slots[slot], '_default');
         if (v) equip.equipWeapon(slot, v);
       }
     } else if (slot === 'shield') {
       const v = pickVariant(equip.slots.shield, armorLetterFromItem(main));
       if (v) equip.equip('shield', v);
+    }
+  } else {
+    // No mainhand: still show a default sword for paperdoll preview (variant A)
+    if (equip.slots.sword) {
+      const v = pickVariant(equip.slots.sword, 'A');
+      if (v) equip.equipWeapon('sword', v);
     }
   }
 
@@ -140,26 +168,112 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     }
   }
 
-  // Hard-hide utility even if something matched wrong
+  // Utility always off on paperdoll
   for (const m of equip.allMeshes || []) {
     const n = (m.name || '').toLowerCase();
     if (/bag|wood|lumber|quiver|xtra_/.test(n)) m.visible = false;
   }
+
+  // CRITICAL: only equipped slots remain visible (no stacked ghosts)
+  if (typeof equip.hardenVisibility === 'function') {
+    equip.hardenVisibility();
+  } else {
+    // Fallback if old kit cached
+    const keep = new Set();
+    for (const [slot, variant] of Object.entries(equip.equipped || {})) {
+      const mesh = equip.slots[slot]?.[variant];
+      if (mesh) keep.add(mesh.uuid);
+    }
+    for (const m of equip.allMeshes || []) {
+      m.visible = keep.has(m.uuid);
+    }
+  }
 }
 
 /**
- * Paperdoll SI fit — ROOT uniform only + structural body measure.
- * Stretch comes from mesh.scale / non-uniform / measuring stacked variants.
+ * Paperdoll SI fit + face camera.
+ * Camera sits at +Z looking at origin. Production kits present their BACK at yaw=0
+ * in this viewport, so yaw = π faces the player.
  */
 function fitRootSi(root, targetH) {
   const result = fitRootUniformSi(THREE, root, targetH, {
     characterType: 'infantry',
     centerXZ: true,
   });
-  // Paperdoll: face camera (kit art-forward +Z; camera on +Z)
-  root.rotation.y = 0;
+  // Face camera (see screenshot 2026-08-04: yaw 0 showed back)
+  root.rotation.y = Math.PI;
   root.updateMatrixWorld(true);
   return result.height;
+}
+
+/**
+ * Map baked track node names onto kit bones.
+ * CDN JSON uses Bip001_Pelvis; FBX kits use "Bip001 Pelvis".
+ * Drop .position tracks so grounded SI feet stay planted.
+ */
+function rematchClipBones(root, clip) {
+  if (!clip?.tracks?.length || !root) return clip;
+  const names = new Set();
+  root.traverse((o) => {
+    if (o.name) names.add(o.name);
+  });
+  const resolved = [];
+  for (const track of clip.tracks) {
+    // Skip hip/root position — prevents float after SI ground
+    if (/\.position$/.test(track.name)) continue;
+    const dot = track.name.indexOf('.');
+    if (dot < 0) {
+      resolved.push(track);
+      continue;
+    }
+    const node = track.name.slice(0, dot);
+    const prop = track.name.slice(dot + 1);
+    let hit = null;
+    if (names.has(node)) hit = node;
+    else if (names.has(node.replace(/_/g, ' '))) hit = node.replace(/_/g, ' ');
+    else if (names.has(node.replace(/ /g, '_'))) hit = node.replace(/ /g, '_');
+    if (!hit) continue;
+    if (hit !== node) {
+      const t = track.clone();
+      t.name = `${hit}.${prop}`;
+      resolved.push(t);
+    } else {
+      resolved.push(track);
+    }
+  }
+  if (!resolved.length) return null;
+  return new THREE.AnimationClip(clip.name, clip.duration, resolved);
+}
+
+/** Load first available baked Bip001 idle JSON from URL list */
+async function tryLoadIdleClip(urls) {
+  const list = Array.isArray(urls) ? urls : urls ? [urls] : [];
+  for (const url of list) {
+    if (!url) continue;
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) continue;
+      const data = await res.json();
+      // Fleet baked: { name, duration, tracks:[{name,times,values,type}] }
+      if (data.tracks && Array.isArray(data.tracks)) {
+        return THREE.AnimationClip.parse(data);
+      }
+      if (data.clip) return THREE.AnimationClip.parse(data.clip);
+    } catch (e) {
+      console.warn('[main-panel hero] idle fetch fail', url, e);
+    }
+  }
+  return null;
+}
+
+/** Plant feet after first anim sample (position tracks may have shifted hips). */
+function reGroundFeet(root) {
+  if (!root) return;
+  root.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(root);
+  if (!Number.isFinite(box.min.y)) return;
+  root.position.y -= box.min.y;
+  root.updateMatrixWorld(true);
 }
 
 let _state = null;
@@ -177,14 +291,15 @@ export async function mountHeroViewport(host, opts) {
   if (!RACE_ASSETS[race]) {
     console.warn('[main-panel hero] unknown race', race);
   }
-  const targetH = RACE_HEIGHT_M[race] ?? 1.8;
+  const targetH = PAPERDOLL_HEIGHT_M;
   const w = Math.max(host.clientWidth, 200);
   const h = Math.max(host.clientHeight, 280);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x120c08);
   const camera = new THREE.PerspectiveCamera(35, w / h, 0.05, 80);
-  camera.position.set(0, 1.15, 3.4);
+  // Slightly elevated look-at for full body in frame
+  camera.position.set(0, 1.05, 3.6);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(w, h, false);
@@ -203,7 +318,7 @@ export async function mountHeroViewport(host, opts) {
   scene.add(fill);
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.95, 0);
+  controls.target.set(0, 0.9, 0);
   controls.enableDamping = true;
   controls.minDistance = 1.4;
   controls.maxDistance = 7;
@@ -212,7 +327,7 @@ export async function mountHeroViewport(host, opts) {
   const status = document.createElement('div');
   status.style.cssText =
     'position:absolute;left:8px;bottom:8px;font-size:9px;color:#8a7a60;pointer-events:none;font-family:monospace;z-index:2;';
-  status.textContent = `Loading ${race} kit (FBX+atlas)…`;
+  status.textContent = `Loading ${race} kit…`;
   host.style.position = 'relative';
   host.appendChild(status);
 
@@ -261,25 +376,26 @@ export async function mountHeroViewport(host, opts) {
       if (!equip) return;
       applyPanelEquip(equip, equippedItems || {}, findItem);
     },
-    /** Mesh-level: equip one slot letter (body A, sword B, …); empty = unequip */
     setSlot(slot, variant) {
       if (!equip) return false;
       if (!variant) {
         if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
           equip.hideGroup?.(WEAPON_R.has(slot) ? 'weapon_r' : 'weapon_l');
-          return true;
-        }
-        if (slot === 'shield') {
+        } else if (slot === 'shield') {
           equip.hideGroup?.('shield');
-          return true;
+        } else {
+          equip.unequip?.(slot);
         }
-        equip.unequip?.(slot);
+        equip.hardenVisibility?.();
         return true;
       }
       if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
-        return equip.equipWeapon(slot, variant || '_default');
+        equip.equipWeapon(slot, variant || '_default');
+      } else {
+        equip.equip(slot, variant);
       }
-      return equip.equip(slot, variant);
+      equip.hardenVisibility?.();
+      return true;
     },
     getSlots() {
       return equip?.summary?.() || equip?.summary() || {};
@@ -303,20 +419,21 @@ export async function mountHeroViewport(host, opts) {
   };
 
   try {
-    // Prefer production GLB (optimized); FBX fallback for paperdoll SSOT gate
+    // Prefer FBX for paperdoll visual SSOT (correct skin/UV); GLB fallback
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: opts.source || 'glb',
-        ground: false, // we fit ourselves with race height
-        meshIds: null,
+        source: opts.source || 'fbx',
+        ground: false,
+        skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
       });
-    } catch (glbErr) {
-      console.warn('[main-panel hero] GLB fail, trying FBX', glbErr);
+    } catch (fbxErr) {
+      console.warn('[main-panel hero] FBX fail, trying GLB', fbxErr);
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: 'fbx',
+        source: 'glb',
         ground: false,
+        skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
       });
     }
@@ -325,7 +442,7 @@ export async function mountHeroViewport(host, opts) {
     root = kit.root;
     equip = kit.equip;
 
-    // Paperdoll loadout (not default sword dump)
+    // Paperdoll loadout only (no default dump + panel double-apply ghosts)
     applyPanelEquip(equip, opts.equippedItems || {}, opts.findItem);
 
     const finalH = fitRootSi(root, targetH);
@@ -333,14 +450,26 @@ export async function mountHeroViewport(host, opts) {
     _state.root = root;
     _state.equip = equip;
 
-    // Idle clip if embedded on kit
-    const clips = kit.animations || [];
+    // Idle: embedded kit clips first, else CDN baked Bip001 idle (fixes T-pose)
+    let clips = (kit.animations || []).slice();
+    if (!clips.length) {
+      const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
+      if (idleClip) clips = [idleClip];
+    }
     if (clips.length) {
       mixer = new THREE.AnimationMixer(root);
-      const idle =
-        clips.find((c) => /idle|stand|wait/i.test(c.name)) || clips[0];
-      const action = mixer.clipAction(idle);
-      action.play();
+      let idle =
+        clips.find((c) => /idle|stand|wait/i.test(c.name || '')) || clips[0];
+      idle = rematchClipBones(root, idle) || idle;
+      try {
+        const action = mixer.clipAction(idle);
+        action.play();
+        // Sample one frame so skinned weapons leave bind-float, then re-ground
+        mixer.update(1 / 30);
+        reGroundFeet(root);
+      } catch (animErr) {
+        console.warn('[main-panel hero] idle bind failed (skeleton mismatch?)', animErr);
+      }
     }
 
     const vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
@@ -352,7 +481,9 @@ export async function mountHeroViewport(host, opts) {
       matCount: kit.matCount,
       height: finalH,
       visible: vis,
+      visibleNames: equip.allMeshes?.filter((m) => m.visible).map((m) => m.name),
       slots: equip.summary?.() || equip.summary(),
+      yaw: root.rotation.y,
     });
     setTimeout(() => {
       if (status.parentNode) status.remove();
@@ -372,7 +503,6 @@ export function refreshHeroEquip(equippedItems, findItem) {
   if (_state?.applyEquip) _state.applyEquip(equippedItems, findItem);
 }
 
-/** Live mesh-slot edit from main-panel mesh editor UI */
 export function setHeroMeshSlot(slot, variant) {
   return _state?.setSlot?.(slot, variant) ?? false;
 }
