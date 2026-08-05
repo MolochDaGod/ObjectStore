@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scroll Container Demo — Grudge</title>
+  <link rel="stylesheet" href="/css/ui-scroll-container.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600&family=IM+Fell+English&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; min-height: 100vh; background: #0c0a08; color: #eee; font-family: Cinzel, serif;
+      display: grid; place-items: center; padding: 24px; }
+    .wrap { width: min(720px, 96vw); height: min(560px, 80vh); }
+    .toolbar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
+    .toolbar button {
+      font-family: Cinzel, serif; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 8px 14px; border: 1px solid #c48a4a; background: #1a120c; color: #e8c878; cursor: pointer;
+    }
+    .toolbar button:hover { background: #2a1e14; }
+    .inner h1 { margin: 0 0 8px; font-size: 1.35rem; }
+    .inner p { line-height: 1.5; margin: 0 0 12px; }
+    .inner code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+  </style>
+</head>
+<body class="scroll-theme">
+  <div class="toolbar">
+    <button type="button" id="btnOpen">Appear</button>
+    <button type="button" id="btnClose">Disappear</button>
+    <a href="/main-panel.html" style="color:#e8c878;align-self:center;font-size:12px">→ Main Panel</a>
+  </div>
+  <div class="wrap" id="host">
+    <div class="inner">
+      <h1 class="scroll-title">World Map Scroll</h1>
+      <p class="scroll-subtitle">Humble Gift · Appear / Disappear learning surface</p>
+      <p>
+        This container is the fleet SSOT for parchment open/close UX.
+        Games import <code>js/ui-scroll-container.js</code> — no second chrome pack.
+      </p>
+      <p class="scroll-muted">
+        Frame 0 = rods closed · Frame 10 = full open with corner ornaments.
+        Content reveals mid-appear (~65–72%). Reduced-motion snaps open.
+      </p>
+    </div>
+  </div>
+  <script type="module">
+    import { mountScrollContainer, preloadScrollFrames } from '/js/ui-scroll-container.js';
+    await preloadScrollFrames();
+    const api = mountScrollContainer(document.getElementById('host'), { autoOpen: true, fps: 14 });
+    document.getElementById('btnOpen').onclick = () => api.open(true);
+    document.getElementById('btnClose').onclick = () => api.close(true);
+  </script>
+</body>
+</html>

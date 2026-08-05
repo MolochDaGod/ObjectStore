@@ -8,10 +8,17 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <title>Grudge Warlords — Main Panel</title>
   <link rel="stylesheet" href="css/grudge-theme.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Fantasy RPG type + World Map Scroll container (Humble Appear/Disappear) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/ui-scroll-container.css">
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
     .app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
+    /* Scroll shells fill flex children */
+    .center-col .scroll-shell { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .right-col.scroll-shell { flex: 1; min-height: 0; }
+    .right-col .scroll-content { display: flex; flex-direction: column; min-height: 0; }
+    .right-col .inv-grid { flex: 1; min-height: 0; }
     .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: linear-gradient(90deg,#1a100a,#221710,#1a100a); border-bottom: 2px solid var(--gold); flex-shrink: 0; }
     .logo h1 { font-family: var(--font-display); font-size: 15px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
     .player-info { display: flex; align-items: center; gap: 14px; font-size: 12px; }
@@ -20,7 +27,7 @@
     .player-info .xp-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); border-radius: 3px; transition: width 0.3s; }
     .main-body { display: flex; flex: 1; min-height: 0; }
     .left-col { width: 260px; flex-shrink: 0; background: #1a120c; border-right: 2px solid #3a2a1a; overflow-y: auto; padding: 12px; }
-    .center-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .center-col { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
     .right-col { width: 280px; flex-shrink: 0; background: #1a120c; border-left: 2px solid #3a2a1a; display: flex; flex-direction: column; }
     .tab-strip { display: flex; background: #14100a; border-bottom: 2px solid var(--gold); flex-shrink: 0; overflow-x: auto; }
     .tab-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
@@ -295,7 +302,7 @@
     .mp-node-tooltip .tt-req { color:#ef4444; font-size:10px; margin-top:4px; }
   </style>
 </head>
-<body>
+<body class="scroll-theme">
 <div class="app">
   <header class="top-bar">
     <div class="logo"><a href="index.html" style="color:var(--gold)">← Hub</a> <h1 style="display:inline;margin-left:12px" class="gold-text">Grudge Warlords</h1></div>
@@ -310,9 +317,12 @@
     <main class="center-col">
       <div class="error-banner" id="errorBanner"></div>
       <nav class="tab-strip" id="tabStrip"></nav>
-      <div class="content-area" id="contentArea"></div>
+      <!-- World Map Scroll shell — Appear/Disappear UX (ui-scroll-container) -->
+      <div id="contentScroll" class="content-scroll-host" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+        <div class="content-area" id="contentArea"></div>
+      </div>
     </main>
-    <aside class="right-col">
+    <aside class="right-col" id="invScroll">
       <div class="inv-header">
         <h3>Inventory</h3>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -538,7 +548,45 @@
     renderLeftCol();
     renderInventory();
     renderHotbar();
-    renderTab();
+
+    // World Map Scroll chrome (Appear/Disappear) — fleet container SSOT
+    initScrollShells()
+      .then(() => renderTab())
+      .catch((e) => {
+        console.warn('[main-panel] scroll shell', e);
+        renderTab();
+      });
+  }
+
+  /** Mount parchment scroll containers (center content + inventory rail). */
+  let _contentScrollApi = null;
+  let _invScrollApi = null;
+  async function initScrollShells() {
+    const mod = await import('./js/ui-scroll-container.js');
+    await mod.preloadScrollFrames();
+    const centerHost = document.getElementById('contentScroll');
+    const invHost = document.getElementById('invScroll');
+    if (centerHost && centerHost.dataset.scrollMounted !== '1') {
+      _contentScrollApi = mod.mountScrollContainer(centerHost, {
+        autoOpen: true,
+        fps: 14,
+        contentRevealAt: 0.65,
+      });
+    } else if (centerHost?._scrollApi) {
+      _contentScrollApi = centerHost._scrollApi;
+      _contentScrollApi.snapOpen();
+    }
+    if (invHost && invHost.dataset.scrollMounted !== '1') {
+      _invScrollApi = mod.mountScrollContainer(invHost, {
+        autoOpen: true,
+        compact: true,
+        fps: 14,
+        contentRevealAt: 0.7,
+      });
+    } else if (invHost?._scrollApi) {
+      _invScrollApi = invHost._scrollApi;
+      _invScrollApi.snapOpen();
+    }
   }
 
   function showError(msg) {
@@ -873,6 +921,8 @@
   function switchTab(t) {
     activeTab = t;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === t));
+    // Keep scroll open without replaying Appear every tab
+    _contentScrollApi?.snapOpen?.();
     renderTab();
   }
 

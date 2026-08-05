@@ -1,0 +1,221 @@
+/**
+ * World Map Scroll container — fleet SSOT styles
+ * Pack: Humble Gift World Map Scroll (Appear / Disappear / open)
+ * Wire: js/ui-scroll-container.js · ui/scroll/manifest.json
+ */
+
+:root {
+  /* Learned from open parchment + rods */
+  --scroll-parchment: #c4ad7e;
+  --scroll-parchment-deep: #a89060;
+  --scroll-ink: #2a1c0e;
+  --scroll-ink-muted: #5a4028;
+  --scroll-rod: #c48a4a;
+  --scroll-rod-dark: #8a5a28;
+  --scroll-brass: #e8c878;
+  --scroll-grid: rgba(90, 64, 40, 0.12);
+  --scroll-pad-x: 11%;
+  --scroll-pad-y: 8%;
+  --scroll-radius: 4px;
+  --scroll-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(232, 200, 120, 0.15);
+
+  /* Fantasy RPG type (production Google Fonts — no npm) */
+  --font-fantasy-display: 'Cinzel Decorative', 'Cinzel', 'Palatino Linotype', serif;
+  --font-fantasy-heading: 'Cinzel', 'Palatino Linotype', serif;
+  --font-fantasy-body: 'IM Fell English', 'Spectral', Georgia, serif;
+  --font-fantasy-ui: 'Cinzel', system-ui, sans-serif;
+  --font-fantasy-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ── Shell ─────────────────────────────────────────────────────────── */
+.scroll-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  isolation: isolate;
+  /* Steady-state open parchment */
+  background-color: transparent;
+  background-image: var(--scroll-open-url, url('/ui/scroll/open.png'));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  box-shadow: var(--scroll-shadow);
+  border-radius: var(--scroll-radius);
+  color: var(--scroll-ink);
+  font-family: var(--font-fantasy-body);
+}
+
+.scroll-shell.is-closed {
+  background-image: var(--scroll-closed-url, url('/ui/scroll/closed.png'));
+}
+
+.scroll-shell.is-animating {
+  /* During FX, solid bg comes from the sprite layer */
+  background-image: none;
+}
+
+/* Full-bleed appear/disappear sprite overlay */
+.scroll-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.scroll-shell.is-animating .scroll-fx {
+  display: flex;
+}
+
+.scroll-fx img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Content sits in parchment well (inside rods) */
+.scroll-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--scroll-pad-y) var(--scroll-pad-x);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  color: var(--scroll-ink);
+  /* Soft parchment wash so HTML UI is readable over grid */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(196, 173, 126, 0.88) 0%,
+      rgba(184, 160, 110, 0.92) 50%,
+      rgba(196, 173, 126, 0.88) 100%
+    );
+  margin: 4.5% 7.5%;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(90, 64, 40, 0.15);
+}
+
+.scroll-shell.is-animating .scroll-content,
+.scroll-shell.is-closed .scroll-content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scroll-shell.is-open .scroll-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Typography inside scroll ──────────────────────────────────────── */
+.scroll-content h1,
+.scroll-content h2,
+.scroll-content h3,
+.scroll-content .section-title,
+.scroll-content .scroll-title {
+  font-family: var(--font-fantasy-display);
+  color: var(--scroll-ink);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.35);
+}
+
+.scroll-content .scroll-subtitle {
+  font-family: var(--font-fantasy-heading);
+  color: var(--scroll-ink-muted);
+  font-size: 0.85em;
+  letter-spacing: 0.04em;
+}
+
+.scroll-content,
+.scroll-content p,
+.scroll-content label {
+  font-family: var(--font-fantasy-body);
+  color: var(--scroll-ink);
+}
+
+.scroll-content .muted,
+.scroll-content .scroll-muted {
+  color: var(--scroll-ink-muted);
+}
+
+.scroll-content code,
+.scroll-content .mono,
+.scroll-content .eq-sum-val {
+  font-family: var(--font-fantasy-mono);
+}
+
+/* Cards / chips on parchment (dark ink on light) */
+.scroll-content .fantasy-panel,
+.scroll-content .attr-card,
+.scroll-content .eq-slot,
+.scroll-content .mp-attr-row,
+.scroll-content .tree-node {
+  background: linear-gradient(180deg, rgba(255, 248, 230, 0.55), rgba(200, 175, 120, 0.45));
+  border-color: rgba(90, 64, 40, 0.35);
+  color: var(--scroll-ink);
+}
+
+.scroll-content .eq-slot:hover,
+.scroll-content .tab-btn:hover {
+  border-color: var(--scroll-brass);
+  box-shadow: 0 0 10px rgba(200, 140, 50, 0.25);
+}
+
+/* Hero viewport stays dark for 3D contrast inside scroll */
+.scroll-content .hero-viewport {
+  border-color: rgba(90, 64, 40, 0.55);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(42, 28, 14, 0.35);
+}
+
+/* Compact variant (side panels) — less padding */
+.scroll-shell.scroll-compact {
+  --scroll-pad-x: 8%;
+  --scroll-pad-y: 5%;
+}
+
+.scroll-shell.scroll-compact .scroll-content {
+  margin: 3.5% 6%;
+}
+
+/* Full app chrome still dark; only scroll shells get parchment */
+body.scroll-theme {
+  --font-display: var(--font-fantasy-display);
+  --font-heading: var(--font-fantasy-heading);
+  --font-body: var(--font-fantasy-body);
+  --font-mono: var(--font-fantasy-mono);
+}
+
+body.scroll-theme .top-bar,
+body.scroll-theme .tab-strip,
+body.scroll-theme .hotbar {
+  font-family: var(--font-fantasy-ui);
+}
+
+body.scroll-theme .tab-btn {
+  font-family: var(--font-fantasy-heading);
+  letter-spacing: 0.12em;
+}
+
+body.scroll-theme .logo h1,
+body.scroll-theme .player-info .name {
+  font-family: var(--font-fantasy-display);
+}
+
+/* Reduced motion: no frame flip */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-shell.is-animating .scroll-fx {
+    display: none !important;
+  }
+  .scroll-shell .scroll-content {
+    transition: none;
+  }
+}

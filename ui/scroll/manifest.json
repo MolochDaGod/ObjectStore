@@ -1,0 +1,41 @@
+{
+  "id": "humble-world-map-scroll",
+  "label": "Humble Gift — World Map Scroll v1.0",
+  "sourceAuthor": "D:/Games/Models/gge/Humbl33e Gift - World Map Scroll v1.0",
+  "role": "Fleet modal / panel open-close chrome + parchment content container",
+  "frameSize": { "w": 784, "h": 688 },
+  "fps": 14,
+  "paths": {
+    "local": "/ui/scroll",
+    "cdn": "https://assets.grudge-studio.com/ui/scroll"
+  },
+  "sequences": {
+    "appear": {
+      "dir": "appear",
+      "frames": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.png"],
+      "meaning": "Rolled rods → fully open parchment (content may show after last frame)"
+    },
+    "disappear": {
+      "dir": "disappear",
+      "frames": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.png"],
+      "meaning": "Open parchment → rolled closed (hide content after first or during)"
+    }
+  },
+  "static": {
+    "open": "open.png",
+    "closed": "closed.png"
+  },
+  "uxRules": [
+    "Play appear once on open; do not loop",
+    "Content opacity 0 until appear completes (or 70% through for snappier UX)",
+    "Honor prefers-reduced-motion: skip to open frame",
+    "Use open.png as steady-state background for resizable panels",
+    "Rods occupy ~8–12% width each side — pad content accordingly",
+    "Never invent second scroll pack; extend this manifest"
+  ],
+  "consumers": [
+    "main-panel.html",
+    "js/ui-scroll-container.js",
+    "css/ui-scroll-container.css"
+  ]
+}
