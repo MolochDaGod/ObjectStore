@@ -3,7 +3,35 @@
 
 The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
-**Live API:** [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
+**Live API:** [info.grudge-studio.com](https://info.grudge-studio.com) · [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
+
+---
+
+## grudge6 Main Panel + modular mesh equip (live)
+
+Unity-style paperdoll and mesh-level kit editor for Toon RTS / grudge6 races. **Do not use local-only deploys** — open the live host after Vercel ships `main`.
+
+| Surface | Live URL |
+|---------|----------|
+| **Main Panel** (paperdoll + hero + mesh kit editor) | https://info.grudge-studio.com/main-panel.html |
+| **Mesh lab** (full mesh hide/show, bones) | https://info.grudge-studio.com/GRUDGE6_Characters.html |
+| **Item database** | https://info.grudge-studio.com/GRUDGE_Item_Database.html |
+| **Author mesh catalog** | https://info.grudge-studio.com/api/v1/toon-rts-author-inventory.json |
+
+| Code | Role |
+|------|------|
+| `js/grudge6-kit.js` | `EquipmentManager`, `loadRaceKit`, atlas variants (`ATLAS_VARIANTS`), stone atlas URLs |
+| `js/main-panel-hero-viewport.js` | 3D hero, SI fit, paperdoll → mesh, `setHeroMeshSlot` / `setHeroAtlas` |
+| `main-panel.html` | Equipment tab + mesh kit editor UI |
+| `tools/toon-rts-inspect/` | Read Desktop Toon_RTS `.meta` / `.mat` (author SSOT) |
+
+**Runtime kits (CDN):** `https://assets.grudge-studio.com/models/grudge6/races/{WK\|BRB\|ELF\|DWF\|ORC\|UD}_Characters.glb`  
+**Atlases:** `https://assets.grudge-studio.com/textures/grudge6/{folder}/*.webp`  
+**Author pack (machine):** `C:\Users\nugye\Desktop\grudgeproduction\Toon_RTS` (junction → extract; zip is not a folder path)
+
+Equip rule: **one kit + child mesh visibility** (UMMORPG-style) — never whole-body GLB swap.
+
+Docs: [docs/ASSETS.md](docs/ASSETS.md) · skill `toon-rts-author` · skill `grudge6-modular-characters`
 
 ---
 

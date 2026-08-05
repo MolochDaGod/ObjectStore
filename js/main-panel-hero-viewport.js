@@ -17,7 +17,10 @@ import { FBXLoader } from 'https://esm.sh/three@0.185.0/examples/jsm/loaders/FBX
 import { OrbitControls } from 'https://esm.sh/three@0.185.0/examples/jsm/controls/OrbitControls.js';
 import {
   RACE_ASSETS,
+  ATLAS_VARIANTS,
   loadRaceKit,
+  loadRaceTexture,
+  bindRaceAtlas,
   WEAPON_R,
   WEAPON_L,
   fitRootUniformSi,
@@ -258,24 +261,63 @@ export async function mountHeroViewport(host, opts) {
       if (!equip) return;
       applyPanelEquip(equip, equippedItems || {}, findItem);
     },
+    /** Mesh-level: equip one slot letter (body A, sword B, …); empty = unequip */
+    setSlot(slot, variant) {
+      if (!equip) return false;
+      if (!variant) {
+        if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
+          equip.hideGroup?.(WEAPON_R.has(slot) ? 'weapon_r' : 'weapon_l');
+          return true;
+        }
+        if (slot === 'shield') {
+          equip.hideGroup?.('shield');
+          return true;
+        }
+        equip.unequip?.(slot);
+        return true;
+      }
+      if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
+        return equip.equipWeapon(slot, variant || '_default');
+      }
+      return equip.equip(slot, variant);
+    },
+    getSlots() {
+      return equip?.summary?.() || equip?.summary() || {};
+    },
+    getVisibleMeshes() {
+      return (equip?.allMeshes || [])
+        .filter((m) => m.visible)
+        .map((m) => m.name);
+    },
+    async setAtlas(variant = 'default') {
+      if (!root) return 0;
+      const tex = await loadRaceTexture(THREE, race, variant);
+      if (!tex) return 0;
+      return bindRaceAtlas(THREE, root, tex);
+    },
+    listAtlasVariants() {
+      return Object.keys(ATLAS_VARIANTS[race] || { default: true });
+    },
     root: null,
     equip: null,
   };
 
   try {
-    // Prefer FBX SSOT (skill); fall back GLB with UV invert + atlas
+    // Prefer production GLB (optimized); FBX fallback for paperdoll SSOT gate
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: opts.source || 'fbx',
+        source: opts.source || 'glb',
         ground: false, // we fit ourselves with race height
         meshIds: null,
+        atlasVariant: opts.atlasVariant || 'default',
       });
-    } catch (fbxErr) {
-      console.warn('[main-panel hero] FBX fail, trying GLB', fbxErr);
+    } catch (glbErr) {
+      console.warn('[main-panel hero] GLB fail, trying FBX', glbErr);
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: 'glb',
+        source: 'fbx',
         ground: false,
+        atlasVariant: opts.atlasVariant || 'default',
       });
     }
     if (disposed) return;
@@ -328,4 +370,25 @@ export function disposeHeroViewport() {
 
 export function refreshHeroEquip(equippedItems, findItem) {
   if (_state?.applyEquip) _state.applyEquip(equippedItems, findItem);
+}
+
+/** Live mesh-slot edit from main-panel mesh editor UI */
+export function setHeroMeshSlot(slot, variant) {
+  return _state?.setSlot?.(slot, variant) ?? false;
+}
+
+export function getHeroMeshSlots() {
+  return _state?.getSlots?.() || {};
+}
+
+export function getHeroVisibleMeshes() {
+  return _state?.getVisibleMeshes?.() || [];
+}
+
+export async function setHeroAtlas(variant) {
+  return _state?.setAtlas?.(variant) ?? 0;
+}
+
+export function listHeroAtlasVariants() {
+  return _state?.listAtlasVariants?.() || ['default'];
 }

@@ -880,22 +880,117 @@
     return RACE_META[selectedRace]?.name || selectedRace;
   }
 
+  /**
+   * Mesh-level kit editor: live slot variants from EquipmentManager on the hero viewport.
+   * Verifies Toon RTS modular parts (body/arms/legs/head/weapons/shield) without a second system.
+   */
+  function wireMeshKitEditor(heroMod) {
+    if (!heroMod) return;
+    const rows = document.getElementById('meshKitRows');
+    const atlasSel = document.getElementById('meshAtlasSelect');
+    const visEl = document.getElementById('meshKitVisible');
+    if (!rows) return;
+
+    const BODY_SLOTS = ['body', 'arms', 'legs', 'head', 'shoulders'];
+    const WPN_SLOTS = ['sword', 'axe', 'hammer', 'mace', 'dagger', 'spear', 'pick', 'bow', 'staff', 'shield'];
+
+    function paintVisible() {
+      if (!visEl) return;
+      const names = heroMod.getHeroVisibleMeshes?.() || [];
+      visEl.textContent = names.length
+        ? `Visible (${names.length}): ${names.join(', ')}`
+        : 'No catalogued meshes visible yet — wait for kit load or press Refresh';
+    }
+
+    function buildRows() {
+      const slots = heroMod.getHeroMeshSlots?.() || {};
+      rows.innerHTML = '';
+      const order = [...BODY_SLOTS, ...WPN_SLOTS].filter((s) => slots[s]?.length);
+      if (!order.length) {
+        rows.innerHTML = `<span style="color:var(--dim)">Loading kit slots…</span>`;
+        return;
+      }
+      for (const slot of order) {
+        const variants = slots[slot] || [];
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `
+          <div style="color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">${slot}</div>
+          <select data-mesh-slot="${slot}" style="width:100%;background:#1a120c;color:var(--text);border:1px solid #3a2a1a;border-radius:4px;padding:3px 4px;font-size:10px;">
+            <option value="">— off —</option>
+            ${variants.map((v) => `<option value="${v}">${v === '_default' ? 'default' : v}</option>`).join('')}
+          </select>`;
+        rows.appendChild(wrap);
+      }
+      rows.querySelectorAll('select[data-mesh-slot]').forEach((sel) => {
+        sel.addEventListener('change', () => {
+          const slot = sel.getAttribute('data-mesh-slot');
+          const val = sel.value;
+          if (!val) {
+            // unequip via set none: hide group for weapons, unequip body
+            heroMod.setHeroMeshSlot?.(slot, '');
+          } else {
+            heroMod.setHeroMeshSlot?.(slot, val);
+          }
+          paintVisible();
+        });
+      });
+      paintVisible();
+    }
+
+    // Atlas options
+    if (atlasSel) {
+      const vars = heroMod.listHeroAtlasVariants?.() || ['default'];
+      atlasSel.innerHTML = vars.map((v) => `<option value="${v}">${v}</option>`).join('');
+      atlasSel.onchange = async () => {
+        await heroMod.setHeroAtlas?.(atlasSel.value);
+        paintVisible();
+      };
+    }
+
+    document.getElementById('btnMeshRefresh')?.addEventListener('click', () => {
+      buildRows();
+    });
+    document.getElementById('btnMeshDefault')?.addEventListener('click', () => {
+      // Re-apply paperdoll + prefer A variants
+      heroMod.refreshHeroEquip?.(equippedItems, (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid));
+      const slots = heroMod.getHeroMeshSlots?.() || {};
+      for (const s of BODY_SLOTS) {
+        if (slots[s]?.includes('A')) heroMod.setHeroMeshSlot?.(s, 'A');
+      }
+      if (slots.sword?.includes('A')) heroMod.setHeroMeshSlot?.('sword', 'A');
+      buildRows();
+    });
+
+    // Kit may still be loading — poll slots briefly
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      const slots = heroMod.getHeroMeshSlots?.() || {};
+      if (Object.keys(slots).length || tries > 40) {
+        clearInterval(t);
+        buildRows();
+      }
+    }, 200);
+  }
+
   function renderTab() {
     const area = document.getElementById('contentArea');
     if (activeTab === 'Equipment') {
       area.innerHTML = renderEquipmentPanel();
       attachSlotListeners();
-      // Mount Three.js hero after DOM paint (equip mesh filter)
+      // Mount Three.js hero after DOM paint (equip mesh filter + mesh kit editor)
       requestAnimationFrame(() => {
         import('./js/main-panel-hero-viewport.js')
-          .then((mod) => {
+          .then(async (mod) => {
             const host = document.getElementById('hero-viewport');
             if (!host) return;
-            return mod.mountHeroViewport(host, {
+            await mod.mountHeroViewport(host, {
               race: selectedRace,
               equippedItems,
               findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
+              source: 'glb',
             });
+            wireMeshKitEditor(mod);
           })
           .catch((e) => console.warn('[main-panel] hero viewport', e));
       });
@@ -1027,6 +1122,20 @@
       </div>
       <div class="section-title" style="margin-top:14px;font-size:11px;">Equipped meshes</div>
       ${renderEquippedMeshStrip()}
+      <div class="section-title" style="margin-top:14px;font-size:11px;">Mesh kit editor (verify build)</div>
+      <div id="meshKitEditor" style="background:#14100a;border:1px solid #3a2a1a;border-radius:8px;padding:10px;font-size:10px;">
+        <div style="color:var(--dim);margin-bottom:8px;">Toon RTS modular parts · one body / one weapon · atlas = team / sub-race ·
+          <a href="./GRUDGE6_Characters.html" style="color:var(--gold);">Full mesh lab ↗</a>
+        </div>
+        <div id="meshKitRows" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;">
+          <label style="color:var(--dim);">Atlas</label>
+          <select id="meshAtlasSelect" style="background:#1a120c;color:var(--text);border:1px solid #3a2a1a;border-radius:4px;padding:3px 6px;font-size:10px;"></select>
+          <button type="button" id="btnMeshDefault" style="background:#2a1e14;border:1px solid var(--gold);color:var(--gold);border-radius:4px;padding:3px 8px;font-size:9px;cursor:pointer;">Default A loadout</button>
+          <button type="button" id="btnMeshRefresh" style="background:#2a1e14;border:1px solid #3a2a1a;color:var(--muted);border-radius:4px;padding:3px 8px;font-size:9px;cursor:pointer;">Refresh slots</button>
+        </div>
+        <div id="meshKitVisible" style="margin-top:8px;font-size:9px;color:var(--dim);font-family:monospace;max-height:72px;overflow:auto;"></div>
+      </div>
       <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--dim);">Unity-style paperdoll: only worn weapons &amp; armor · bag is on the right · click slot to unequip · <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" target="_blank" rel="noopener" style="font-size:10px;">Item Database &#8599;</a></div>
     `;
   }

@@ -73,6 +73,25 @@ https://assets.grudge-studio.com/
 | orc | `ORC_` | `ORC_Characters` | `orcs` |
 | undead | `UD_` | `UD_Characters` | `undead` |
 
+**Runtime (production web):** prefer  
+`https://assets.grudge-studio.com/models/grudge6/races/{PREFIX}_Characters.glb`  
+**Author (Desktop Unity pack):**  
+`C:\Users\nugye\Desktop\grudgeproduction\Toon_RTS\{Race}\models\*_Characters_customizable.FBX`  
++ `Materials/` and `Materials/Colors/textures/` (team / high-dark-wood atlases).
+
+**Atlases (stone):**  
+`https://assets.grudge-studio.com/textures/grudge6/{folder}/{file}.webp`  
+Team colors and elf sub-races are **atlas swaps** on the same kit (see `js/grudge6-kit.js` `ATLAS_VARIANTS`).
+
+**Main panel mesh equip (live):**  
+- https://info.grudge-studio.com/main-panel.html — paperdoll + mesh kit editor  
+- https://info.grudge-studio.com/GRUDGE6_Characters.html — full mesh lab  
+- `js/grudge6-kit.js` · `js/main-panel-hero-viewport.js`  
+- Catalog from author pack: [`/api/v1/toon-rts-author-inventory.json`](../api/v1/toon-rts-author-inventory.json)  
+- Inspect CLI: `tools/toon-rts-inspect` (`node bin/cli.mjs inventory|meshes Elves`)
+
+**Equip rule:** child-mesh visibility (`mesh_ids` / EquipmentManager) — never whole-body GLB swap.
+
 **Blocked / rewrite:** `models/characters/grudge6/*.glb` stubs → race kit via `resolveCanonicalAssetUrl` / `resolveCanonicalRaceModelPath`.
 
 **D1 meshes:** `glb_url` =  

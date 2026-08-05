@@ -67,8 +67,9 @@
 <header>
   <div>
     <h1>grudge6 Characters</h1>
-    <div class="sub">Textures · mesh hide · weapon / offhand / armor variants · Bip001 Y-hip</div>
+    <div class="sub">Textures · mesh hide · weapon / offhand / armor variants · Bip001 Y-hip · verify Toon RTS builds</div>
   </div>
+  <a href="./main-panel.html" style="margin-right:12px">Main Panel</a>
   <a href="./GRUDGE_Item_Database">← Item Database</a>
 </header>
 <div class="layout">
@@ -359,7 +360,8 @@ async function loadCatalog() {
 function textureUrlForRace(raceId) {
   const a = RACE_ASSETS[raceId];
   if (!a) return null;
-  return `${CDN}/assets/${a.folder}/textures/${a.texture}`;
+  // Stone path first (grudge6-cdn-ssot)
+  return `${CDN}/textures/grudge6/${a.folder}/${a.texture}`;
 }
 
 async function loadRaceTexture(raceId) {

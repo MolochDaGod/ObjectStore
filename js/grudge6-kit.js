@@ -177,7 +177,7 @@ export const SLOT_DEFS = [
   { slot: 'body', re: /^(?:Units_)?Body_([A-Z])$/i, group: 'armor' },
   { slot: 'arms', re: /^(?:Units_)?Arms_([A-Z])$/i, group: 'armor' },
   { slot: 'legs', re: /^(?:Units_)?Legs_([A-Z])$/i, group: 'armor' },
-  { slot: 'head', re: /^(?:Units_)?Head_([A-Z])$/i, group: 'armor' },
+  { slot: 'head', re: /^(?:Units_)?(?:Head|Haed)_([A-Z])$/i, group: 'armor' },
   { slot: 'shoulders', re: /^(?:Units_)?Shoulderpads_([A-Z])$/i, group: 'armor' },
   { slot: 'axe', re: /^(?:Units_|weapon_|Weapon_)?[Aa]xe(?:_([A-Z]))?$/i, group: 'weapon_r' },
   { slot: 'hammer', re: /^(?:Units_|weapon_|Weapon_)?[Hh]ammer(?:_([A-Z]))?$/i, group: 'weapon_r' },
@@ -197,10 +197,71 @@ export const SLOT_DEFS = [
 export const WEAPON_R = new Set(['axe', 'hammer', 'mace', 'sword', 'dagger', 'pick', 'spear']);
 export const WEAPON_L = new Set(['bow', 'staff']);
 
-export function atlasUrl(raceId) {
+/**
+ * Stone atlas paths (grudge6-cdn-ssot): textures/grudge6/{folder}/{file}
+ * Legacy assets/{folder}/textures kept as fallback in bind loaders.
+ */
+export const ATLAS_VARIANTS = {
+  human: {
+    default: 'WK_Standard_Units.webp',
+    black: 'WK_StandardUnits_black.webp',
+    blue: 'WK_StandardUnits_blue.webp',
+    brown: 'WK_StandardUnits_brown.webp',
+    green: 'WK_StandardUnits_green.webp',
+    red: 'WK_StandardUnits_red.webp',
+    white: 'WK_StandardUnits_white.webp',
+  },
+  barbarian: {
+    default: 'BRB_StandardUnits_texture.webp',
+    brown: 'BRB_Standard_Units_brown.webp',
+  },
+  elf: {
+    default: 'ELF_HighElves_Texture.webp',
+    high: 'ELF_HighElves_Texture.webp',
+    dark: 'ELF_DarkElves_Texture.webp',
+    dark_blue: 'ELF_DarkElves_Blue.webp',
+    dark_green: 'ELF_DarkElves_Green.webp',
+    dark_red: 'ELF_DarkElves_Red.webp',
+    wood: 'ELF_WoodElves_Texture.webp',
+    wood_brown: 'ELF_WoodElves_Brown.webp',
+  },
+  dwarf: {
+    default: 'DWF_Standard_Units.webp',
+    brown: 'DWF_Units_Brown.webp',
+  },
+  orc: {
+    default: 'ORC_StandardUnits.webp',
+    black: 'ORC_StandardUnits_black.webp',
+    blue: 'ORC_StandardUnits_blue.webp',
+    brown: 'ORC_StandardUnits_brown.webp',
+    green: 'ORC_StandardUnits_green.webp',
+    red: 'ORC_StandardUnits_red.webp',
+  },
+  undead: {
+    default: 'UD_Standard_Units.webp',
+    brown: 'UD_Standard_Units_brown.webp',
+  },
+};
+
+export function atlasUrl(raceId, variant = 'default') {
   const a = RACE_ASSETS[raceId];
   if (!a) return null;
-  return `${CDN}/assets/${a.folder}/textures/${a.texture}`;
+  const variants = ATLAS_VARIANTS[raceId] || {};
+  const file =
+    variants[variant] ||
+    variants.default ||
+    a.texture;
+  // Prefer stone path; callers may fall back to legacy if 404
+  return `${CDN}/textures/grudge6/${a.folder}/${file}`;
+}
+
+/** Legacy path some older deploys still use */
+export function atlasUrlLegacy(raceId, variant = 'default') {
+  const a = RACE_ASSETS[raceId];
+  if (!a) return null;
+  const variants = ATLAS_VARIANTS[raceId] || {};
+  const file = variants[variant] || variants.default || a.texture;
+  return `${CDN}/assets/${a.folder}/textures/${file}`;
 }
 
 export function kitUrl(raceId, source = 'fbx') {
@@ -594,28 +655,30 @@ export function groundYHip(root, THREE, targetH = 1.7) {
 
 const texCache = new Map();
 
-export async function loadRaceTexture(THREE, raceId) {
-  const url = atlasUrl(raceId);
-  if (!url) return null;
-  if (texCache.has(url)) return texCache.get(url);
+export async function loadRaceTexture(THREE, raceId, variant = 'default') {
+  const urls = [atlasUrl(raceId, variant), atlasUrlLegacy(raceId, variant)].filter(Boolean);
   const loader = new THREE.TextureLoader();
-  const tex = await new Promise((resolve) => {
-    loader.load(
-      url,
-      (t) => {
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.flipY = false;
-        t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
-        t.anisotropy = 8;
-        t.needsUpdate = true;
-        texCache.set(url, t);
-        resolve(t);
-      },
-      undefined,
-      () => resolve(null),
-    );
-  });
-  return tex;
+  for (const url of urls) {
+    if (texCache.has(url)) return texCache.get(url);
+    const tex = await new Promise((resolve) => {
+      loader.load(
+        url,
+        (t) => {
+          t.colorSpace = THREE.SRGBColorSpace;
+          t.flipY = false;
+          t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+          t.anisotropy = 8;
+          t.needsUpdate = true;
+          texCache.set(url, t);
+          resolve(t);
+        },
+        undefined,
+        () => resolve(null),
+      );
+    });
+    if (tex) return tex;
+  }
+  return null;
 }
 
 /**
@@ -627,7 +690,8 @@ export async function loadRaceTexture(THREE, raceId) {
 export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   const race = RACE_ASSETS[raceId];
   if (!race) throw new Error(`Unknown race: ${raceId}`);
-  const source = opts.source || 'fbx';
+  // Prefer production GLB for web paperdoll (FBX still available via source:'fbx')
+  const source = opts.source || 'glb';
   let url = kitUrl(raceId, source);
   url = resolveCanonicalAssetUrl(url);
 
@@ -645,7 +709,7 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
     if (source !== 'fbx') invertGeometryUVV(root);
   }
 
-  const tex = await loadRaceTexture(THREE, raceId);
+  const tex = await loadRaceTexture(THREE, raceId, opts.atlasVariant || 'default');
   const matCount = tex ? bindRaceAtlas(THREE, root, tex) : 0;
 
   const equip = new EquipmentManager(race.prefix);
