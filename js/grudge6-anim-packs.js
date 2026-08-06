@@ -66,6 +66,9 @@ export const WEAPON_TO_PACK = {
   wand: 'magic',
   rifle: 'rifle',
   unarmed: 'unarmed',
+  // utility / unarmed gap-fill
+  kick: 'unarmed',
+  stomp: 'unarmed',
 };
 
 /** Pack aliases → canonical pack id */
@@ -76,6 +79,7 @@ export const PACK_ALIASES = {
   greataxe: '2h_melee',
   greatsword_samurai: '2h_melee',
   samurai: '2h_melee',
+  // extra stays pack id "extra" (mobility overlays) — do not alias to locomotion
 };
 
 /**
@@ -161,7 +165,12 @@ export const PACK_CLIPS = {
     authorSource: 'D:\\\\Games\\\\Models\\\\_anim_packs\\\\_gap_fill_stage\\\\2h_melee',
   },
   longbow: {
-    idle: ['longbow/idle', 'longbow/standing idle 01', 'locomotion/idle'],
+    idle: [
+      'prod:extra/aim-idle.glb',
+      'longbow/idle',
+      'longbow/standing idle 01',
+      'locomotion/idle',
+    ],
     walk: ['longbow/standing walk forward', 'magic/Standing Walk Forward'],
     run: ['longbow/standing run forward', 'locomotion/run_forward'],
     attack: [
@@ -169,6 +178,7 @@ export const PACK_CLIPS = {
       'longbow/standing aim recoil',
       'longbow/draw',
     ],
+    aim: ['prod:extra/aim-idle.glb'],
   },
   magic: {
     idle: ['magic/standing idle', 'magic/idle', 'locomotion/idle'],
@@ -177,12 +187,21 @@ export const PACK_CLIPS = {
     attack: ['magic/standing 1h cast spell 01', 'locomotion/idle'],
   },
   rifle: {
-    idle: ['locomotion/idle'],
+    idle: ['prod:extra/aim-idle.glb', 'locomotion/idle'],
     attack: [],
+    aim: ['prod:extra/aim-idle.glb'],
   },
   unarmed: {
     idle: ['unarmed/fight_idle', 'locomotion/idle'],
-    attack: ['unarmed/punching'],
+    attack: [
+      'prod:extra/utility-kick.glb',
+      'prod:extra/stomp.glb',
+      'prod:extra/hurricane-kick.glb',
+      'unarmed/punching',
+    ],
+    skill1: ['prod:extra/stomp.glb'],
+    skill2: ['prod:extra/utility-kick.glb'],
+    skill3: ['prod:extra/hurricane-kick.glb'],
   },
   /**
    * Hit reactions (animator-dist reactions/*).
@@ -227,6 +246,51 @@ export const PACK_CLIPS = {
    * Base locomotion — prefers grudge 8-way pack (Warlords SSOT), then legacy baked.
    * For directional blend use resolveLoco8Way / DirLocoBlend, not just walk/run roles.
    */
+  /**
+   * Mobility extras (animator-dist extra/*) — overlay one-shots only.
+   * Never add as gait bands (would fight DirLocoBlend).
+   * Bake → prod/anims/extra/*.glb (or .json Bip001 rotation-only preferred).
+   */
+  extra: {
+    jump: [
+      'prod:extra/jump-up.glb',
+      'prod:extra/jumping-down.glb',
+      'prod:extra/backwards-jump.glb',
+      'prod:extra/long-backward-jump.glb',
+    ],
+    jump_up: ['prod:extra/jump-up.glb'],
+    jump_down: ['prod:extra/jumping-down.glb'],
+    /** Air evade / stylish flip — skill overlay while airborne */
+    air_evade: [
+      'prod:extra/running-forward-flip.glb',
+      'prod:extra/front-twist-flip.glb',
+      'prod:extra/front-flip.glb',
+      'prod:extra/stylish-flip.glb',
+      'prod:extra/corkscrew-evade.glb',
+    ],
+    flip: [
+      'prod:extra/front-flip.glb',
+      'prod:extra/front-twist-flip.glb',
+      'prod:extra/running-forward-flip.glb',
+      'prod:extra/stylish-flip.glb',
+    ],
+    dodge: [
+      'prod:extra/running-slide.glb',
+      'prod:extra/corkscrew-evade.glb',
+      'prod:extra/evading-a-threat.glb',
+      'prod:extra/jump-away.glb',
+      'prod:extra/left-side-step.glb',
+      'prod:reactions/dodging-back.glb',
+    ],
+    slide: ['prod:extra/running-slide.glb'],
+    strafe: ['prod:extra/left-side-step.glb', 'prod:extra/right-pivot.glb'],
+    pivot: ['prod:extra/right-pivot.glb'],
+    sprint_enter: ['prod:extra/crouched-to-sprinting.glb'],
+    throw: ['prod:extra/grenade-throw.glb'],
+    emote: ['prod:extra/hip-hop-dancing.glb', 'prod:extra/intoout.glb'],
+    authorSource:
+      'D:\\\\Games\\\\Models\\\\_anim_packs\\\\_incoming_2026-08-06_animator-dist\\\\extra',
+  },
   locomotion: {
     idle: [
       'prod:locomotion_8way/idle.json',
@@ -245,10 +309,24 @@ export const PACK_CLIPS = {
     sprint: [
       'prod:locomotion_8way/sprint-forward.json',
       'prod:locomotion_8way/run-forward.json',
+      'prod:extra/crouched-to-sprinting.glb',
     ],
     jump: [
+      'prod:extra/jump-up.glb',
       'prod:locomotion_8way/jump-up.json',
       'prod:locomotion_8way/jump-loop.json',
+    ],
+    land: ['prod:extra/jumping-down.glb'],
+    dodge: [
+      'prod:extra/running-slide.glb',
+      'prod:extra/evading-a-threat.glb',
+      'prod:extra/corkscrew-evade.glb',
+      'prod:extra/jump-away.glb',
+    ],
+    air_evade: [
+      'prod:extra/running-forward-flip.glb',
+      'prod:extra/front-twist-flip.glb',
+      'prod:extra/front-flip.glb',
     ],
     attack: [],
     authorSource:
@@ -273,6 +351,97 @@ PACK_CLIPS.greatsword_samurai = PACK_CLIPS['2h_melee'];
 PACK_CLIPS.samurai = PACK_CLIPS['2h_melee'];
 PACK_CLIPS['8way'] = PACK_CLIPS.locomotion_8way;
 PACK_CLIPS.loco8 = PACK_CLIPS.locomotion_8way;
+PACK_CLIPS.mobility = PACK_CLIPS.extra;
+PACK_CLIPS.evade = PACK_CLIPS.extra;
+
+/**
+ * AnimationDirector / mixer role map (best practices).
+ *
+ * Gait (loop, DirLocoBlend): idle | walk | run | sprint
+ * Overlay one-shots (requestOneShot, scale loco by 1-influence):
+ *   attack, skill1–4, dodge, jump, air_evade, flip, land, hit, parry, throw
+ * Never put flips/evades in gait bands.
+ *
+ * Hotkeys (combat-runtime): Q E R F skills · V/G utility dodge · space jump
+ */
+export const MIXER_ROLE_USE = {
+  locomotion: {
+    gait: ['idle', 'walk', 'run', 'sprint'],
+    jump: 'jump',
+    land: 'land',
+    dodge: 'dodge',
+    air_evade: 'air_evade',
+  },
+  weapon: {
+    attack: 'attack',
+    heavy: 'heavy',
+    skill1: 'skill1',
+    skill2: 'skill2',
+    skill3: 'skill3',
+    skill4: 'skill4',
+    draw: 'draw',
+    sheath: 'sheath',
+    aim: 'aim',
+  },
+  reactions: {
+    hit: 'hit',
+    stagger: 'stagger',
+    knockback: 'knockback',
+    knockdown: 'knockdown',
+    getup: 'getup',
+    parry: 'parry',
+  },
+  extra: {
+    jump: 'jump',
+    air_evade: 'air_evade',
+    flip: 'flip',
+    dodge: 'dodge',
+    slide: 'slide',
+    throw: 'throw',
+    emote: 'emote',
+  },
+};
+
+/**
+ * Gap-fill: resolve best clip URLs for a combat role across packs.
+ * Prefer weapon pack → extra → locomotion → reactions.
+ * Does NOT fall back to idle when role missing (unlike clipUrlsFor alone).
+ */
+export function clipUrlsForCombatRole(weaponSlot, role) {
+  const weaponPack = packForWeaponSlot(weaponSlot);
+  const order = [weaponPack, 'extra', 'locomotion', 'reactions', 'unarmed'];
+  const seen = new Set();
+  const urls = [];
+  for (const p of order) {
+    if (seen.has(p) || !PACK_CLIPS[p]) continue;
+    seen.add(p);
+    const rels = PACK_CLIPS[p][role];
+    if (!Array.isArray(rels) || !rels.length) continue;
+    for (const rel of rels) {
+      if (typeof rel !== 'string' || rel.startsWith('authorSource')) continue;
+      if (rel.startsWith('prod:')) {
+        const u = `${CDN}/prod/anims/${rel.slice(5)}`;
+        if (!urls.includes(u)) urls.push(u);
+      } else {
+        for (const u of bakedUrls(rel)) {
+          if (!urls.includes(u)) urls.push(u);
+        }
+      }
+    }
+    if (urls.length) break;
+  }
+  return urls;
+}
+
+/** Preferred in-game bake format (director + Bip001 rematch). */
+export const BAKE_FORMAT_SSOT = {
+  preferred: 'json',
+  note: 'Three.AnimationClip JSON, Bip001 rotation tracks only (strip root/hip position). Rematch spaces/underscores at runtime.',
+  alt: 'glb',
+  altWhen: 'Full-body flip/ragdoll-heavy clips where JSON track export is incomplete',
+  cdnLayout: 'prod/anims/{pack}/{clip-id}.{json|glb}',
+  authorStage: 'D:/Games/Models/_anim_packs/_incoming_2026-08-06_animator-dist/',
+};
 
 /** 8 cardinal/diagonal move directions (matches character-kit LocoDir). */
 export const LOCO_DIRS = [

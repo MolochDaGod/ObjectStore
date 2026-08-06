@@ -196,10 +196,50 @@
     "5. Wire roles in js/grudge6-anim-packs.js PACK_CLIPS (prod: paths)",
     "6. Lab verify: GRUDGE6_Characters clip buttons / combat-runtime attack one-shots"
   ],
+  "extraPack": {
+    "animPackId": "extra",
+    "staged": "D:/Games/Models/_anim_packs/_incoming_2026-08-06_animator-dist/extra",
+    "count": 22,
+    "roles": {
+      "jump": ["jump-up", "jumping-down", "backwards-jump", "long-backward-jump"],
+      "air_evade": ["running-forward-flip", "front-twist-flip", "front-flip", "stylish-flip", "corkscrew-evade"],
+      "dodge": ["running-slide", "evading-a-threat", "corkscrew-evade", "jump-away", "left-side-step"],
+      "slide": ["running-slide"],
+      "sprint_enter": ["crouched-to-sprinting"],
+      "throw": ["grenade-throw"],
+      "unarmed_attack": ["stomp", "utility-kick", "hurricane-kick"],
+      "aim": ["aim-idle"],
+      "emote": ["hip-hop-dancing", "intoout"],
+      "pivot": ["right-pivot"]
+    },
+    "lastTwoReview": {
+      "running-forward-flip.fbx": {
+        "bytes": 149728,
+        "use": "air_evade / flip while moving",
+        "mixer": "requestOneShot while airborne — never gait band"
+      },
+      "running-slide.fbx": {
+        "bytes": 178320,
+        "use": "ground dodge / slide skill",
+        "mixer": "requestOneShot + dodge physics window; resume gait after"
+      }
+    },
+    "notes": [
+      "hip-hop-dancing.fbx ~10MB — emote only, bake last",
+      "jump-away also in reactions/ — bake once under extra or reactions"
+    ]
+  },
+  "mixerBestPractices": {
+    "gait": "DirLocoBlend idle/walk/run/sprint only from locomotion_8way",
+    "overlay": "attack/skills/dodge/jump/air_evade/flip/hit via requestOneShot; scale loco by (1-influence)",
+    "weaponSkills": "Q/E/R/F → skill1–4 from weapon pack; V/G dodge from locomotion/extra",
+    "bakeFormat": "prefer Bip001 JSON rotation-only; GLB ok for flips/full-body"
+  },
   "status": {
     "characterMeshGolden": "live CDN Toon RTS pack — do not replace with races bake",
     "animStaged": true,
+    "extraStaged": true,
     "animBakedToCdn": false,
-    "nextAction": "run anim bake + upload for spear/greataxe/sword/reactions"
+    "nextAction": "bake spear/sword/greataxe/reactions/extra → prod/anims + R2 upload"
   }
 }
