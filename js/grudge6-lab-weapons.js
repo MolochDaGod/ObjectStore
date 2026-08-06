@@ -38,8 +38,8 @@ export const LAB_WEAPON_KIND = {
   greataxe: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.35, animPack: '2h_melee' },
   axe: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.05, animPack: '2h_melee' },
   spear: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 2.0, animPack: '2h_melee' },
-  mace: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.0, animPack: '2h_melee' },
-  hammer: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.9, animPack: '2h_melee' },
+  mace: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 1.0, animPack: '2h_melee' },
+  hammer: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 0.9, animPack: '2h_melee' },
   // ranged / magic
   crossbow: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.95, animPack: 'longbow' },
   staff: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
@@ -63,7 +63,9 @@ export function kindMeta(kind) {
 export function resolveLabAttachSlot(entry, role = 'main') {
   const meta = kindMeta(entry?.kind);
   if (role === 'off') {
-    if (!meta.canOffhand) return null;
+    // Catalog flag wins when present; else kind table
+    const ok = entry?.canOffhand != null ? !!entry.canOffhand : !!meta.canOffhand;
+    if (!ok) return null;
     return 'off_hand';
   }
   // Prefer catalog.attach when valid
