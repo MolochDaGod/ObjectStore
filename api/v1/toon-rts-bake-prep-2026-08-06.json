@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-06T09:00:00.000Z",
+  "title": "Toon RTS Unity inventory + animator-dist anim bake queue",
+  "authorRoot": "C:/Users/nugye/Desktop/grudgeproduction/Toon_RTS",
+  "runtimeGoldenMesh": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
+  "note": "Author Unity pack is INPUT only. Play mesh = Toon RTS GLB ★. Bake with grudge-convert; do not load Desktop paths in browser.",
+  "races": {
+    "human": {
+      "folder": "WesternKingdoms",
+      "prefix": "WK_",
+      "kitFbx": "WesternKingdoms/models/WK_Characters_customizable.FBX",
+      "cavalryFbx": "WesternKingdoms/models/WK_Cavalry_customizable.FBX",
+      "siegeFbx": ["WesternKingdoms/models/WK_Catapult.FBX"],
+      "extraWeapons": [
+        "WesternKingdoms/models/extra models/equipment/WK_weapon_staff_B.FBX",
+        "WesternKingdoms/models/extra models/equipment/WK_weapon_sword_A.FBX"
+      ],
+      "meshPartsAuthor": 41,
+      "bones": 29,
+      "atlases": [
+        "WK_Standard_Units.tga",
+        "WK_StandardUnits_{black,blue,brown,green,red,white}.tga",
+        "WK_Horse_A.tga"
+      ],
+      "kitWeapons": [
+        "WK_Units_axe_A/B",
+        "WK_Units_Bow",
+        "WK_Units_hammer_A/B",
+        "WK_Units_pick",
+        "WK_Units_shield_A–D",
+        "WK_Units_spear",
+        "WK_Units_staff_A–C",
+        "WK_Units_sword_A/B"
+      ],
+      "kitArmor": [
+        "WK_Units_Body_A–E",
+        "WK_Units_Arms_A–D",
+        "WK_Units_Legs_A–C",
+        "WK_Units_head_A–I",
+        "WK_Units_shoulderpads_A/B",
+        "WK_Units_bag",
+        "WK_Units_wood"
+      ]
+    },
+    "barbarian": {
+      "folder": "Barbarians",
+      "prefix": "BRB_",
+      "kitFbx": "Barbarians/models/BRB_Characters_customizable.FBX",
+      "cavalryFbx": "Barbarians/models/BRB_Cavalry_customizable.FBX",
+      "extraWeapons": [
+        "BRB_weapon_hammer_B",
+        "BRB_weapon_spear",
+        "BRB_weapon_staff_B",
+        "BRB_weapon_sword_B",
+        "BRB_bag"
+      ],
+      "meshPartsAuthor": 56,
+      "bones": 31,
+      "note": "Author names use body_A / haed_A (typo) not Units_; CDN Toon GLB matches BRB_body_* / BRB_head_*",
+      "atlases": ["BRB_StandardUnits_texture.tga", "BRB_Standard_Units_brown.tga"]
+    },
+    "elf": {
+      "folder": "Elves",
+      "prefix": "ELF_",
+      "kitFbx": "Elves/models/ELF_Characters_customizable.FBX",
+      "cavalryFbx": "Elves/models/ELF_Cavalry_customizable.FBX",
+      "siegeFbx": ["Elves/models/ELF_BoltThrower.FBX"],
+      "meshPartsAuthor": 46,
+      "bones": 35,
+      "atlases": [
+        "ELF_HighElves_Texture.tga",
+        "ELF_DarkElves_Texture.tga",
+        "ELF_DarkElves_{Blue,Green,Red}.tga",
+        "ELF_WoodElves_Texture.tga",
+        "ELF_WoodElves_Brown.tga"
+      ],
+      "note": "One body kit; High/Dark/Wood via atlas only"
+    },
+    "dwarf": {
+      "folder": "Dwarves",
+      "prefix": "DWF_",
+      "kitFbx": "Dwarves/models/DWF_Characters_customizable.FBX",
+      "cavalryFbx": "Dwarves/models/DWF_Cavalry_customizable.FBX",
+      "meshPartsAuthorMeta": 41,
+      "bones": 29,
+      "note": "FBX.meta table reuses WK_* mesh name strings in some exports — filter carefully; use DWF CDN Toon GLB for runtime names",
+      "atlases": ["DWF_Standard_Units.tga", "DWF_Units_Brown.tga"]
+    },
+    "orc": {
+      "folder": "Orcs",
+      "prefix": "ORC_",
+      "kitFbx": "Orcs/models/ORC_Characters_Customizable.FBX",
+      "cavalryFbx": "Orcs/models/ORC_Cavalry_Customizable.FBX",
+      "siegeFbx": ["Orcs/models/ORC_Catapult.FBX"],
+      "meshPartsAuthor": 40,
+      "bones": 29,
+      "atlases": ["ORC_StandardUnits.tga", "ORC_StandardUnits_{black,blue,brown,green,red}.tga", "ORC_Wolf_texture_A.tga"]
+    },
+    "undead": {
+      "folder": "Undead",
+      "prefix": "UD_",
+      "kitFbx": "Undead/models/UD_Characters_customizable.FBX",
+      "cavalryFbx": "Undead/models/UD_Cavalry_customizable.FBX",
+      "meshPartsAuthor": 28,
+      "bones": 30,
+      "bodyVariants": ["A–F", "ghoul", "heavy", "light", "necro", "spearman"],
+      "atlases": ["UD_Standard_Units.tga", "UD_Standard_Units_brown.tga"]
+    }
+  },
+  "addedExtraMeshes": {
+    "note": "Separate FBX under extra models/ — not always inside Characters.glb; promote via lab-weapons or library if needed",
+    "byRace": {
+      "human": ["WK_weapon_staff_B", "WK_weapon_sword_A"],
+      "barbarian": ["BRB_weapon_hammer_B", "BRB_weapon_spear", "BRB_weapon_staff_B", "BRB_weapon_sword_B", "BRB_bag"],
+      "elf": ["ELF_weapon_spear", "ELF_weapon_staff_C", "ELF_bolt"],
+      "orc": ["ORC_Shield_D", "ORC_weapon_Axe_A", "ORC_weapon_staff_B"],
+      "undead": ["UD_Shield_C", "UD_weapon_Spear", "UD_weapon_staff_B", "UD_weapon_Sword_C"]
+    }
+  },
+  "skeleton": {
+    "rig": "Bip001",
+    "sockets": ["R_hand_container", "L_hand_container", "L_shield_container", "Bone_bag", "Bone_wood", "Quiver_container"],
+    "bakeTarget": "Bip001 bone tracks only; strip root/hip position for grounded kits"
+  },
+  "animIncoming": {
+    "stagedAuthor": "D:/Games/Models/_anim_packs/_incoming_2026-08-06_animator-dist",
+    "stagedRepo": "raw/anim_incoming_2026-08-06",
+    "sourceRoot": "D:/Games/Models/animator-dist (2)/anim/animations",
+    "cdnTargetAfterBake": "prod/anims/{pack}/",
+    "packs": {
+      "spear": {
+        "animPackId": "2h_melee",
+        "role": "attack",
+        "clips": [
+          { "file": "spear/lance-spartan.fbx", "role": "attack", "id": "lance-spartan" },
+          { "file": "spear/rising-thrust.fbx", "role": "attack", "id": "rising-thrust" },
+          { "file": "spear/upward-thrust.fbx", "role": "attack", "id": "upward-thrust" }
+        ]
+      },
+      "greataxe": {
+        "animPackId": "2h_melee",
+        "role": "attack",
+        "clips": [
+          { "file": "greataxe/great-axe-combo.fbx", "role": "attack", "id": "great-axe-combo", "note": "2H axe combo" }
+        ]
+      },
+      "sword": {
+        "animPackId": "sword_shield",
+        "relatedPack": "2h_melee",
+        "clips": [
+          { "file": "sword/slash-advance.fbx", "role": "attack", "id": "slash-advance", "pack": "sword_shield" },
+          { "file": "sword/draw-sword-1.fbx", "role": "draw", "id": "draw-sword-1", "pack": "sword_shield" },
+          { "file": "sword/sheath-sword-1.fbx", "role": "sheath", "id": "sheath-sword-1", "pack": "sword_shield" },
+          { "file": "sword/inward-slash.fbx", "role": "attack", "id": "inward-slash", "pack": "sword_shield" },
+          { "file": "sword/outward-slash.fbx", "role": "attack", "id": "outward-slash", "pack": "sword_shield" },
+          { "file": "sword/melee-downward.fbx", "role": "attack", "id": "melee-downward", "pack": "sword_shield" },
+          { "file": "sword/melee-horizontal.fbx", "role": "attack", "id": "melee-horizontal", "pack": "sword_shield" },
+          { "file": "sword/one-hand-sword-combo.fbx", "role": "attack", "id": "one-hand-sword-combo", "pack": "sword_shield" },
+          { "file": "sword/great-sword-slide-attack.fbx", "role": "attack", "id": "great-sword-slide-attack", "pack": "2h_melee" }
+        ]
+      },
+      "reactions": {
+        "animPackId": "reactions",
+        "role": "hit_reaction",
+        "clips": [
+          "big-body-blow",
+          "dodging-back",
+          "fallen",
+          "falling",
+          "falling-idle",
+          "flying-back",
+          "get-up",
+          "hit-to-head",
+          "jogging-stumble",
+          "jump-away",
+          "knocked-out",
+          "knocked-unconscious",
+          "knocked-up",
+          "knocked-up-and-back",
+          "parry",
+          "running-crawl",
+          "stunned",
+          "uppercut",
+          "wall-crash"
+        ]
+      }
+    }
+  },
+  "bakeSteps": [
+    "1. Character kits: already GOLDEN as Toon RTS GLB on CDN — only re-bake if author FBX changes",
+    "2. Stage anims: D:/Games/Models/_anim_packs/_incoming_2026-08-06_animator-dist (done)",
+    "3. Bake FBX→Bip001 JSON/GLB: node scripts/build-prod-anim-packages.mjs --only=incoming_2026-08-06 (after wiring pack)",
+    "   or per-clip: grudge-convert fbx2gltf <fbx> -o dist/prod/anims/<pack>/<id>.glb",
+    "4. Upload: wrangler r2 put grudge-assets/prod/anims/<pack>/<file> --remote",
+    "5. Wire roles in js/grudge6-anim-packs.js PACK_CLIPS (prod: paths)",
+    "6. Lab verify: GRUDGE6_Characters clip buttons / combat-runtime attack one-shots"
+  ],
+  "status": {
+    "characterMeshGolden": "live CDN Toon RTS pack — do not replace with races bake",
+    "animStaged": true,
+    "animBakedToCdn": false,
+    "nextAction": "run anim bake + upload for spear/greataxe/sword/reactions"
+  }
+}

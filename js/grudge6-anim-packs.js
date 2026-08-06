@@ -2,13 +2,21 @@
  * grudge6 anim packs — weapon → pack → baked Bip001 clips.
  *
  * Pack ids (combat-runtime SSOT):
- *   sword_shield | longbow | magic | 2h_melee | rifle | unarmed | locomotion
+ *   sword_shield | longbow | magic | 2h_melee | rifle | unarmed | locomotion | locomotion_8way
  *
  * 2h_melee = greatsword + samurai set (primary), also axe/hammer/spear when 2H.
  * Aliases: twohand, greatsword → 2h_melee
  *
+ * Locomotion (Warlords):
+ *   Author: D:\Games\Models\_anim_packs\grudge6_incoming_2026-08-01\grudge-8-Way-Locomotion-Pack
+ *   Bake:   Mixamo → Bip001 rotation-only (bake-anims.mjs)
+ *   CDN:    prod/anims/locomotion_8way/*.json
+ *   Blend:  DirLocoBlend — gait bands idle@0 / walk@0.34 / run@0.7 / sprint@1 + 8 LocoDir
+ *   Overlay attacks scale loco by (1 - influence) — "blend off" locomotion
+ *
  * Local author: D:\Games\Models\_anim_packs\{greatsword|sword_shield|…}\
  * Runtime hosts (first hit wins):
+ *   assets.grudge-studio.com/prod/anims/  (prod: prefix)
  *   assets.grudge-studio.com/anims/baked/
  *   open.grudge-studio.com/anims/baked/
  */
@@ -84,9 +92,18 @@ export const PACK_CLIPS = {
     walk: ['locomotion/run_forward', 'magic/Standing Walk Forward'],
     run: ['locomotion/run_forward'],
     attack: [
+      // incoming animator-dist (after bake → prod/anims/sword_shield/)
+      'prod:sword_shield/one-hand-sword-combo.glb',
+      'prod:sword_shield/slash-advance.glb',
+      'prod:sword_shield/inward-slash.glb',
+      'prod:sword_shield/outward-slash.glb',
+      'prod:sword_shield/melee-downward.glb',
+      'prod:sword_shield/melee-horizontal.glb',
       'sword_shield/sword-and-shield-attack',
       'sword_shield/sword and shield attack',
     ],
+    draw: ['prod:sword_shield/draw-sword-1.glb'],
+    sheath: ['prod:sword_shield/sheath-sword-1.glb'],
   },
   /**
    * 2H melee / greatsword.
@@ -114,14 +131,21 @@ export const PACK_CLIPS = {
       'locomotion/run_forward',
     ],
     attack: [
+      // spear (animator-dist) + greataxe combo + greatsword
+      'prod:2h_melee/lance-spartan.glb',
+      'prod:2h_melee/rising-thrust.glb',
+      'prod:2h_melee/upward-thrust.glb',
+      'prod:2h_melee/great-axe-combo.glb',
       'prod:2h_melee/great-sword-slash.glb',
       'prod:2h_melee/great-sword-attack.glb',
+      'prod:2h_melee/great-sword-slide-attack.glb',
       'greatsword_samurai/gs_samurai_combo_a',
       'greatsword_samurai/gs_samurai_combo_b',
       'greatsword/great sword attack',
       'greatsword/great sword slash',
     ],
     heavy: [
+      'prod:2h_melee/great-axe-combo.glb',
       'prod:2h_melee/great-sword-high-spin-attack.glb',
       'prod:2h_melee/great-sword-jump-attack.glb',
       'greatsword_samurai/gs_samurai_combo_b',
@@ -160,11 +184,85 @@ export const PACK_CLIPS = {
     idle: ['unarmed/fight_idle', 'locomotion/idle'],
     attack: ['unarmed/punching'],
   },
-  locomotion: {
+  /**
+   * Hit reactions (animator-dist reactions/*).
+   * Stage: D:/Games/Models/_anim_packs/_incoming_2026-08-06_animator-dist/reactions
+   * Bake → prod/anims/reactions/*.glb
+   */
+  reactions: {
     idle: ['locomotion/idle'],
-    walk: ['magic/Standing Walk Forward', 'locomotion/run_forward'],
-    run: ['locomotion/run_forward'],
+    hit: [
+      'prod:reactions/hit-to-head.glb',
+      'prod:reactions/big-body-blow.glb',
+      'prod:reactions/stunned.glb',
+    ],
+    stagger: [
+      'prod:reactions/jogging-stumble.glb',
+      'prod:reactions/flying-back.glb',
+    ],
+    knockback: [
+      'prod:reactions/knocked-up-and-back.glb',
+      'prod:reactions/knocked-up.glb',
+      'prod:reactions/jump-away.glb',
+    ],
+    knockdown: [
+      'prod:reactions/knocked-out.glb',
+      'prod:reactions/knocked-unconscious.glb',
+      'prod:reactions/fallen.glb',
+      'prod:reactions/falling.glb',
+      'prod:reactions/falling-idle.glb',
+    ],
+    getup: ['prod:reactions/get-up.glb'],
+    dodge: ['prod:reactions/dodging-back.glb'],
+    parry: ['prod:reactions/parry.glb'],
+    special: [
+      'prod:reactions/uppercut.glb',
+      'prod:reactions/wall-crash.glb',
+      'prod:reactions/running-crawl.glb',
+    ],
+    authorSource:
+      'D:\\\\Games\\\\Models\\\\_anim_packs\\\\_incoming_2026-08-06_animator-dist\\\\reactions',
+  },
+  /**
+   * Base locomotion — prefers grudge 8-way pack (Warlords SSOT), then legacy baked.
+   * For directional blend use resolveLoco8Way / DirLocoBlend, not just walk/run roles.
+   */
+  locomotion: {
+    idle: [
+      'prod:locomotion_8way/idle.json',
+      'locomotion/idle',
+    ],
+    walk: [
+      'prod:locomotion_8way/walk-forward.json',
+      'magic/Standing Walk Forward',
+      'locomotion/run_forward',
+    ],
+    run: [
+      'prod:locomotion_8way/run-forward.json',
+      'prod:locomotion_8way/sprint-forward.json',
+      'locomotion/run_forward',
+    ],
+    sprint: [
+      'prod:locomotion_8way/sprint-forward.json',
+      'prod:locomotion_8way/run-forward.json',
+    ],
+    jump: [
+      'prod:locomotion_8way/jump-up.json',
+      'prod:locomotion_8way/jump-loop.json',
+    ],
     attack: [],
+    authorSource:
+      'D:\\\\Games\\\\Models\\\\_anim_packs\\\\grudge6_incoming_2026-08-01\\\\grudge-8-Way-Locomotion-Pack',
+  },
+  locomotion_8way: {
+    idle: ['prod:locomotion_8way/idle.json'],
+    walk: ['prod:locomotion_8way/walk-forward.json'],
+    run: ['prod:locomotion_8way/run-forward.json'],
+    sprint: ['prod:locomotion_8way/sprint-forward.json'],
+    jump: ['prod:locomotion_8way/jump-up.json'],
+    attack: [],
+    authorSource:
+      'D:\\\\Games\\\\Models\\\\_anim_packs\\\\grudge6_incoming_2026-08-01\\\\grudge-8-Way-Locomotion-Pack',
   },
 };
 
@@ -173,6 +271,181 @@ PACK_CLIPS.twohand = PACK_CLIPS['2h_melee'];
 PACK_CLIPS.greatsword = PACK_CLIPS['2h_melee'];
 PACK_CLIPS.greatsword_samurai = PACK_CLIPS['2h_melee'];
 PACK_CLIPS.samurai = PACK_CLIPS['2h_melee'];
+PACK_CLIPS['8way'] = PACK_CLIPS.locomotion_8way;
+PACK_CLIPS.loco8 = PACK_CLIPS.locomotion_8way;
+
+/** 8 cardinal/diagonal move directions (matches character-kit LocoDir). */
+export const LOCO_DIRS = [
+  'forward',
+  'forward-left',
+  'forward-right',
+  'backward',
+  'backward-left',
+  'backward-right',
+  'left',
+  'right',
+];
+
+/**
+ * Map gait band + direction → prod locomotion_8way clip file (no path prefix).
+ * Crouch uses walk-crouching-* only (no run/sprint crouch in author pack).
+ */
+export function resolveLoco8WayFile(band, dir = 'forward', crouch = false) {
+  const d = LOCO_DIRS.includes(dir) ? dir : 'forward';
+  if (band === 'idle' || !band) {
+    if (crouch) return 'idle-crouching.json';
+    return 'idle.json';
+  }
+  if (crouch) {
+    return `walk-crouching-${d}.json`;
+  }
+  const speed =
+    band === 'walk' ? 'walk' : band === 'sprint' ? 'sprint' : 'run';
+  return `${speed}-${d}.json`;
+}
+
+/** Absolute CDN URLs for an 8-way band+dir (prod first). */
+export function clipUrlsForLoco8Way(band, dir = 'forward', crouch = false) {
+  const file = resolveLoco8WayFile(band, dir, crouch);
+  return [
+    `${CDN}/prod/anims/locomotion_8way/${file}`,
+    ...bakedUrls(`locomotion_8way/${file.replace(/\.json$/i, '')}`),
+  ];
+}
+
+/**
+ * Stick / camera-relative (lx = strafe right+, lz = forward+) → LocoDir.
+ * Deadzone ~0.08. Mirrors arpg tpsMath 8-way quantize.
+ */
+export function quantizeLocoDir(lx, lz, dead = 0.08) {
+  const x = Number(lx) || 0;
+  const z = Number(lz) || 0;
+  if (Math.hypot(x, z) < dead) return 'forward';
+  const ang = Math.atan2(x, z); // -PI..PI, 0 = forward
+  const deg = (ang * 180) / Math.PI;
+  if (deg >= -22.5 && deg < 22.5) return 'forward';
+  if (deg >= 22.5 && deg < 67.5) return 'forward-right';
+  if (deg >= 67.5 && deg < 112.5) return 'right';
+  if (deg >= 112.5 && deg < 157.5) return 'backward-right';
+  if (deg >= 157.5 || deg < -157.5) return 'backward';
+  if (deg >= -157.5 && deg < -112.5) return 'backward-left';
+  if (deg >= -112.5 && deg < -67.5) return 'left';
+  return 'forward-left';
+}
+
+/**
+ * Gait target 0..1 from move speed + sprint (DirLocoBlend / AnimationDirector bands).
+ */
+export function computeGaitTarget(speed01, sprint, moving) {
+  if (!moving || speed01 < 0.05) return 0;
+  if (sprint) return 1;
+  const t = Math.min(1, Math.max(0, speed01));
+  if (t < 0.6) return 0.34 + (t / 0.6) * 0.36;
+  return 0.7 + ((t - 0.6) / 0.4) * 0.29;
+}
+
+const GAIT_BANDS = [
+  { band: 'idle', at: 0 },
+  { band: 'walk', at: 0.34 },
+  { band: 'run', at: 0.7 },
+  { band: 'sprint', at: 1 },
+];
+
+/**
+ * 8-way locomotion blend tree for Warlords / grudge6 (one mixer layer).
+ * setBlend(dir, crouch) rebinds clips; setGaitTarget + update each frame.
+ * Call setOverlayInfluence(0..1) so attacks "blend off" locomotion weight.
+ */
+export class DirLocoBlend {
+  constructor(ensureAction) {
+    this.ensureAction = ensureAction;
+    this.gait = 0;
+    this.gaitTarget = 0;
+    this.gaitRate = 9;
+    this.dir = 'forward';
+    this.crouch = false;
+    this.overlayInfluence = 0;
+    this.bandKeys = { idle: '', walk: '', run: '', sprint: '' };
+    this.bandActions = {};
+  }
+
+  /**
+   * @param {string} dir LocoDir
+   * @param {boolean} [crouch]
+   * @param {number} [fade]
+   */
+  setBlend(dir, crouch = false, fade = 0.15) {
+    this.dir = LOCO_DIRS.includes(dir) ? dir : 'forward';
+    this.crouch = !!crouch;
+    for (const { band } of GAIT_BANDS) {
+      const file = resolveLoco8WayFile(band, this.dir, this.crouch);
+      const key = `loco8:${file}`;
+      if (key === this.bandKeys[band] && this.bandActions[band]) continue;
+      this.bandKeys[band] = key;
+      // ensureAction(key, urls) must return a looping AnimationAction (or null).
+      const action = this.ensureAction(key, clipUrlsForLoco8Way(band, this.dir, this.crouch));
+      if (!action) continue;
+      const prev = this.bandActions[band];
+      action.enabled = true;
+      action.setEffectiveWeight(0);
+      try {
+        // THREE.LoopRepeat === 2201
+        action.setLoop(2201, Infinity);
+      } catch {
+        /* ignore */
+      }
+      action.play();
+      if (prev && prev !== action) prev.fadeOut(fade);
+      this.bandActions[band] = action;
+    }
+  }
+
+  setGaitTarget(target) {
+    this.gaitTarget = Math.max(0, Math.min(1, Number(target) || 0));
+  }
+
+  /** 0 = full loco, 1 = attack/skill fully takes over (blend off locomotion). */
+  setOverlayInfluence(v) {
+    this.overlayInfluence = Math.max(0, Math.min(1, Number(v) || 0));
+  }
+
+  update(dt) {
+    const rate = this.gaitRate;
+    this.gait +=
+      (this.gaitTarget - this.gait) * (1 - Math.exp(-rate * Math.max(0, dt || 0)));
+    const w = { idle: 0, walk: 0, run: 0, sprint: 0 };
+    if (this.gait >= 1) {
+      w.sprint = 1;
+    } else {
+      for (let i = 0; i < GAIT_BANDS.length - 1; i++) {
+        const a = GAIT_BANDS[i];
+        const b = GAIT_BANDS[i + 1];
+        if (this.gait >= a.at && this.gait <= b.at) {
+          const t = (this.gait - a.at) / (b.at - a.at || 1);
+          w[a.band] = 1 - t;
+          w[b.band] = t;
+          break;
+        }
+      }
+    }
+    const scale = 1 - this.overlayInfluence;
+    for (const { band } of GAIT_BANDS) {
+      const action = this.bandActions[band];
+      if (action) action.setEffectiveWeight(w[band] * scale);
+    }
+  }
+
+  reset(fade = 0.12) {
+    for (const { band } of GAIT_BANDS) {
+      this.bandActions[band]?.fadeOut(fade);
+      this.bandKeys[band] = '';
+      delete this.bandActions[band];
+    }
+    this.gait = 0;
+    this.gaitTarget = 0;
+    this.overlayInfluence = 0;
+  }
+}
 
 export function normalizePackId(packOrSlot) {
   const raw = String(packOrSlot || 'sword_shield').toLowerCase().trim();
