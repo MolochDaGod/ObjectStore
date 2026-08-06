@@ -111,23 +111,29 @@ export function toonRtsSiegeAnimBase(raceId) {
 }
 
 /**
- * Canonical race kits.
+ * Canonical race kits — ONE golden play mesh for fleet / heroes / Warlords / lab.
  *
- * Visual GOLDEN (Characters lab): `toonRts` — asset-packs/toon-rts-characters/glb/characters/{id}.glb
- * Fleet races bake: `glb` — models/grudge6/races/{PREFIX}_Characters.glb (compare only until re-bake matches toon)
- * Metaverse: alternate bake for diagnostics
- * FBX: author-only (force atlas rebind — Unity TGA embeds 404 on web)
+ * GOLDEN (Toon RTS ★, embedded-kept): asset-packs/toon-rts-characters/glb/characters/{id}.glb
+ *   → fields: toonRts, glb (alias), kitUrl() default
+ * Compare-only bake: models/grudge6/races/{PREFIX}_Characters.glb → racesBake
+ * Metaverse / FBX: diagnostics only — never play default
  */
+const TOON = (id) => `${CDN}/asset-packs/toon-rts-characters/glb/characters/${id}.glb`;
+const RACES = (pfx) => `${CDN}/models/grudge6/races/${pfx}_Characters.glb`;
+const FBX = (pfx) => `${CDN}/models/grudge6/races/${pfx}_Characters.fbx`;
+const META = (id) => `${CDN}/models/grudge6/metaverse/${id}.glb`;
+
 export const RACE_ASSETS = {
   human: {
     id: 'human',
     prefix: 'WK_',
     folder: 'western-kingdoms',
     texture: 'WK_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/WK_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/WK_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/human.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/human.glb`,
+    toonRts: TOON('human'),
+    glb: TOON('human'),
+    racesBake: RACES('WK'),
+    fbx: FBX('WK'),
+    metaverse: META('human'),
     toonDisk: 'human',
     mountTexture: 'WK_Horse_A.png',
   },
@@ -136,10 +142,11 @@ export const RACE_ASSETS = {
     prefix: 'BRB_',
     folder: 'barbarians',
     texture: 'BRB_StandardUnits_texture.webp',
-    fbx: `${CDN}/models/grudge6/races/BRB_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/BRB_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/barbarian.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/barbarian.glb`,
+    toonRts: TOON('barbarian'),
+    glb: TOON('barbarian'),
+    racesBake: RACES('BRB'),
+    fbx: FBX('BRB'),
+    metaverse: META('barbarian'),
     toonDisk: 'barbarian',
   },
   orc: {
@@ -147,10 +154,11 @@ export const RACE_ASSETS = {
     prefix: 'ORC_',
     folder: 'orcs',
     texture: 'ORC_StandardUnits.webp',
-    fbx: `${CDN}/models/grudge6/races/ORC_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/ORC_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/orc.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/orc.glb`,
+    toonRts: TOON('orc'),
+    glb: TOON('orc'),
+    racesBake: RACES('ORC'),
+    fbx: FBX('ORC'),
+    metaverse: META('orc'),
     toonDisk: 'orc',
     mountTexture: 'ORC_Wolf_texture_A.png',
   },
@@ -159,10 +167,11 @@ export const RACE_ASSETS = {
     prefix: 'ELF_',
     folder: 'elves',
     texture: 'ELF_HighElves_Texture.webp',
-    fbx: `${CDN}/models/grudge6/races/ELF_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/ELF_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/elf.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/elf.glb`,
+    toonRts: TOON('elf'),
+    glb: TOON('elf'),
+    racesBake: RACES('ELF'),
+    fbx: FBX('ELF'),
+    metaverse: META('elf'),
     toonDisk: 'elf',
   },
   undead: {
@@ -170,10 +179,11 @@ export const RACE_ASSETS = {
     prefix: 'UD_',
     folder: 'undead',
     texture: 'UD_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/UD_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/UD_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/undead.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/undead.glb`,
+    toonRts: TOON('undead'),
+    glb: TOON('undead'),
+    racesBake: RACES('UD'),
+    fbx: FBX('UD'),
+    metaverse: META('undead'),
     toonDisk: 'undead',
   },
   dwarf: {
@@ -181,10 +191,11 @@ export const RACE_ASSETS = {
     prefix: 'DWF_',
     folder: 'dwarves',
     texture: 'DWF_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/DWF_Characters.fbx`,
-    glb: `${CDN}/models/grudge6/races/DWF_Characters.glb`,
-    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/dwarf.glb`,
-    metaverse: `${CDN}/models/grudge6/metaverse/dwarf.glb`,
+    toonRts: TOON('dwarf'),
+    glb: TOON('dwarf'),
+    racesBake: RACES('DWF'),
+    fbx: FBX('DWF'),
+    metaverse: META('dwarf'),
     toonDisk: 'dwarf',
   },
 };
@@ -295,18 +306,24 @@ export function atlasUrlLegacy(raceId, variant = 'default') {
 
 /**
  * Kit URL by source.
- * - `toonRts` / `toon` — GOLDEN visual pack (Characters lab default)
- * - `glb` / `prod` / `races` — fleet races/*_Characters.glb bake
- * - `metaverse` — diagnostic alternate bake
- * - `fbx` — author only
+ * Play / heroes / Warlords / default: Toon RTS ★ (glb === toonRts).
+ * Compare bake only: races | racesBake | compare | prodBake.
+ * metaverse / fbx: diagnostics only.
  */
 export function kitUrl(raceId, source = 'toonRts') {
   const a = RACE_ASSETS[raceId];
   if (!a) return null;
   if (source === 'fbx' || source === 'raceFbx') return a.fbx;
-  if (source === 'toonRts' || source === 'toon') return a.toonRts || a.glb;
   if (source === 'metaverse') return a.metaverse || a.toonRts || a.glb;
-  if (source === 'glb' || source === 'prod' || source === 'races') return a.glb;
+  if (
+    source === 'races' ||
+    source === 'racesBake' ||
+    source === 'compare' ||
+    source === 'prodBake'
+  ) {
+    return a.racesBake || a.glb;
+  }
+  // toonRts | toon | glb | prod | default → GOLDEN
   return a.toonRts || a.glb;
 }
 
@@ -331,8 +348,16 @@ export function resolveCanonicalAssetUrl(urlOrKey) {
       dark_elf: 'elf',
     };
     const race = map[id];
-    // Always rewrite legacy stubs to production GLB (not FBX)
-    if (race && RACE_ASSETS[race]) return RACE_ASSETS[race].glb;
+    // Legacy stubs → GOLDEN Toon RTS pack (not races bake, not FBX)
+    if (race && RACE_ASSETS[race]) return RACE_ASSETS[race].toonRts || RACE_ASSETS[race].glb;
+  }
+  // Old “prod” races kit URL → GOLDEN toon pack when used as play mesh
+  const racesKit = key.match(/^models\/grudge6\/races\/(WK|BRB|ELF|DWF|ORC|UD)_Characters\.glb$/i);
+  if (racesKit) {
+    const pfx = racesKit[1].toUpperCase();
+    const byPfx = { WK: 'human', BRB: 'barbarian', ELF: 'elf', DWF: 'dwarf', ORC: 'orc', UD: 'undead' };
+    const race = byPfx[pfx];
+    if (race && RACE_ASSETS[race]) return RACE_ASSETS[race].toonRts || RACE_ASSETS[race].glb;
   }
   // toon-rts separate equipment → prefer mesh library path (best-effort naming)
   const eq = key.match(
@@ -954,6 +979,29 @@ export function groundYHip(root, THREE, targetH = 1.7) {
   });
 }
 
+/**
+ * Default view facing (Characters lab + Race Scenes + Warstrat lobby).
+ *
+ * Camera sits on **+Z** looking at the origin (typical OrbitControls start).
+ * Grudge6 / Toon RTS kits are **art-forward +Z** after SI plant → yaw **0**
+ * faces the user. **Never** use Math.PI here (that shows the back).
+ *
+ * Author FBX that still faces +X needs +π/2 once (see facePlusXArtToPlusZ).
+ */
+export const GRUDGE6_FACE_CAMERA_YAW = 0;
+/** FBX art often faces +X → play +Z with one yaw. */
+export const GRUDGE6_ART_PLUSX_TO_PLUSZ_YAW = Math.PI / 2;
+
+/**
+ * Face root toward the user camera (+Z).
+ * @param {import('three').Object3D} root
+ * @param {{ artFacesPlusX?: boolean }} [opts]
+ */
+export function faceRootTowardCamera(root, opts = {}) {
+  const yaw = opts.artFacesPlusX ? GRUDGE6_ART_PLUSX_TO_PLUSZ_YAW : GRUDGE6_FACE_CAMERA_YAW;
+  root.rotation.set(0, yaw, 0);
+}
+
 const texCache = new Map();
 
 export async function loadRaceTexture(THREE, raceId, variant = 'default') {
@@ -1001,10 +1049,13 @@ export async function loadRaceTexture(THREE, raceId, variant = 'default') {
 export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   const race = RACE_ASSETS[raceId];
   if (!race) throw new Error(`Unknown race: ${raceId}`);
-  // GOLDEN default = toonRts pack. FBX = author. glb/prod = races bake compare.
+  // GOLDEN default = toonRts. Never use races bake / metaverse as implicit default.
   const source = opts.source || 'toonRts';
   let url = opts.url || kitUrl(raceId, source);
-  url = resolveCanonicalAssetUrl(url);
+  // Only rewrite legacy play paths to golden; leave explicit racesBake / fbx alone
+  if (source !== 'fbx' && source !== 'races' && source !== 'racesBake' && source !== 'compare' && source !== 'prodBake') {
+    url = resolveCanonicalAssetUrl(url);
+  }
 
   let root;
   let animations = [];

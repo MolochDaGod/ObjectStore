@@ -205,8 +205,9 @@ const RACE_ASSETS = Object.fromEntries(
     id,
     {
       ...a,
-      prod: a.glb,
-      toonRts: a.toonRts,
+      // GOLDEN play = toonRts; prod button = racesBake compare only
+      prod: a.racesBake || a.glb,
+      toonRts: a.toonRts || a.glb,
       metaverse: a.metaverse,
       fbx: a.fbx,
       folder: a.folder,
@@ -402,7 +403,8 @@ function resolveModelUrl(race, source) {
   if (source === 'metaverse') {
     return race.models?.metaverse || a?.metaverse || a?.toonRts || a?.prod;
   }
-  if (source === 'prod' && a?.prod) return a.prod;
+  // prod toggle = racesBake compare (not play default)
+  if (source === 'prod' && (a?.prod || a?.racesBake)) return a.prod || a.racesBake;
   if (source === 'fbx' && a?.fbx) return a.fbx;
   return a?.toonRts || a?.prod || race.models?.toonRts || a?.fbx;
 }
@@ -493,7 +495,8 @@ async function loadRace(race, source = activeSource) {
     document.getElementById('texStatus').innerHTML = texNote;
 
     ground = applySiFit(currentRoot);
-    currentRoot.rotation.y = Math.PI; // face camera
+    // Art-forward +Z faces user (camera on +Z). Math.PI showed the back.
+    currentRoot.rotation.y = 0;
     const bones = discoverBones(currentRoot);
 
     // Always re-catalog on this root (kit SSOT EquipmentManager)

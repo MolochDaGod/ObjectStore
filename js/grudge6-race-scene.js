@@ -13,6 +13,7 @@ import {
   RACE_ASSETS,
   loadRaceKit,
   fitRootUniformSi,
+  faceRootTowardCamera,
   WEAPON_R,
   WEAPON_L,
 } from './grudge6-kit.js';
@@ -134,15 +135,16 @@ export class Grudge6RaceScene {
     } catch (e) {
       console.warn('[race-scene] Toon RTS fail → races glb', e);
       try {
+        // Explicit compare bake only if golden pack missing — not play default
         kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
-          source: 'glb',
+          source: 'racesBake',
           ground: false,
           skipDefaultLoadout: true,
           forceAtlas: false,
           invertUvV: false,
         });
       } catch (e2) {
-        console.warn('[race-scene] races glb fail → FBX author', e2);
+        console.warn('[race-scene] racesBake fail → FBX author', e2);
         kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
           source: 'fbx',
           ground: false,
@@ -206,7 +208,8 @@ export class Grudge6RaceScene {
       characterType: 'infantry',
       centerXZ: true,
     });
-    this.root.rotation.y = Math.PI; // face camera
+    // Art-forward +Z → face user camera on +Z (never Math.PI = back view)
+    faceRootTowardCamera(this.root);
 
     if (opts.playAnim !== false) {
       this.mixer?.stopAllAction();
@@ -219,7 +222,7 @@ export class Grudge6RaceScene {
         characterType: 'infantry',
         centerXZ: true,
       });
-      this.root.rotation.y = Math.PI;
+      faceRootTowardCamera(this.root);
       this.status(
         `${resource.id} · pack=${pack} · weapon=${wSlot || '—'} · h≈1.8m`,
       );

@@ -432,7 +432,8 @@ export async function mountHeroViewport(host, opts) {
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        source: opts.source || 'glb',
+        // GOLDEN: Toon RTS pack (same as Characters lab ★) — keep embeds
+        source: opts.source || 'toonRts',
         ground: false,
         skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
@@ -440,7 +441,7 @@ export async function mountHeroViewport(host, opts) {
         invertUvV: opts.invertUvV === true,
       });
     } catch (glbErr) {
-      console.warn('[main-panel hero] GLB fail, trying FBX', glbErr);
+      console.warn('[main-panel hero] Toon RTS fail, trying FBX', glbErr);
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
         source: 'fbx',
         ground: false,
