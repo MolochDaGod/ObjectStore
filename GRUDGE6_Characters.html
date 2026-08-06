@@ -68,7 +68,7 @@
   <div>
     <h1>grudge6 Characters</h1>
     <div class="sub">
-      Warlords · <strong>Prod GLB ★ ship path</strong> · mesh_ids equip · bone SI · lab never writes CDN ·
+      Warlords · <strong>Toon RTS GLB ★ golden</strong> · mesh_ids equip · bone SI · lab never writes CDN ·
       <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md" style="color:var(--gold)">intentional add process</a>
     </div>
   </div>
@@ -90,8 +90,8 @@
     <div class="sub" style="margin-top:10px;line-height:1.45;border:1px solid var(--border);border-radius:8px;padding:8px;background:#0c1118">
       <strong style="color:var(--gold)">Intentional Warlords add</strong><br/>
       Mesh/weapon/anim go: author Toon_RTS → bake → R2 CDN → api/v1 defs → this lab previews.<br/>
-      <code>mesh_id</code> = Object3D name on Prod GLB (e.g. <code>ELF_Units_Body_A</code>).<br/>
-      Do not overwrite prod GLB/atlas from browser. FBX = author diagnostics only.<br/>
+      <code>mesh_id</code> = Object3D name on <strong>Toon RTS GLB</strong> (e.g. <code>BRB_body_A</code>, <code>WK_Units_Body_A</code>).<br/>
+      Do not force-rebind atlas on good GLBs. FBX = author diagnostics only. Prod races bake = compare only.<br/>
       <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md" style="color:var(--gold)">Full process SSOT</a>
       · <a href="./docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md" style="color:var(--gold)">Deploy SSOT</a>
       · <a href="./docs/API-AND-UUID-GUIDE.md" style="color:var(--gold)">UUID guide</a>
@@ -163,6 +163,10 @@ import {
   loadRaceTexture as kitLoadRaceTexture,
   fitRootUniformSi,
   atlasUrl,
+  EquipmentManager as KitEquipmentManager,
+  SLOT_DEFS as KIT_SLOT_DEFS,
+  WEAPON_R as KIT_WEAPON_R,
+  WEAPON_L as KIT_WEAPON_L,
 } from './js/grudge6-kit.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
@@ -170,10 +174,11 @@ const LOCAL_SSOT = './api/v1/grudge6-characters.json';
 const CDN = 'https://assets.grudge-studio.com';
 
 /**
- * Race assets for this lab.
- * prod = fleet SSOT races/*_Characters.glb (same as race-scenes / main-panel)
- * toonRts / metaverse = alternate GLBs that already look right in this lab
- * fbx = author Unity export — broken relative TGA on web; always force CDN atlas
+ * Race assets for this lab (protect golden path).
+ * toonRts = GOLDEN visual pack (default ★)
+ * prod = races/*_Characters.glb compare bake (never forceAtlas)
+ * metaverse = diagnostic alternate
+ * fbx = author only — force CDN atlas
  */
 const RACE_ASSETS = Object.fromEntries(
   Object.entries(KIT_RACES).map(([id, a]) => [
@@ -181,6 +186,8 @@ const RACE_ASSETS = Object.fromEntries(
     {
       ...a,
       prod: a.glb,
+      toonRts: a.toonRts,
+      metaverse: a.metaverse,
       fbx: a.fbx,
       folder: a.folder,
       texture: a.texture,
@@ -188,33 +195,10 @@ const RACE_ASSETS = Object.fromEntries(
   ]),
 );
 
-/**
- * Match after race prefix strip (WK_/BRB_/…).
- * WK/UD/ELF…: Units_Body_A · BRB (and some packs): body_A (no Units_).
- */
-const SLOT_DEFS = [
-  { slot: 'body', re: /^(?:Units_)?Body_([A-Z])$/i, group: 'armor' },
-  { slot: 'arms', re: /^(?:Units_)?Arms_([A-Z])$/i, group: 'armor' },
-  { slot: 'legs', re: /^(?:Units_)?Legs_([A-Z])$/i, group: 'armor' },
-  { slot: 'head', re: /^(?:Units_)?(?:Head|Haed)_([A-Z])$/i, group: 'armor' },
-  { slot: 'shoulders', re: /^(?:Units_)?Shoulderpads_([A-Z])$/i, group: 'armor' },
-  { slot: 'axe', re: /^(?:Units_|weapon_|Weapon_)?[Aa]xe(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'hammer', re: /^(?:Units_|weapon_|Weapon_)?[Hh]ammer(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'mace', re: /^(?:Units_|weapon_|Weapon_)?[Mm]ace(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'sword', re: /^(?:Units_|weapon_|Weapon_)?[Ss]word(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'dagger', re: /^(?:Units_|weapon_|Weapon_)?[Dd]agger(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'pick', re: /^(?:Units_|weapon_|Weapon_)?[Pp]ick(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'spear', re: /^(?:Units_|weapon_|Weapon_)?[Ss]pear(?:_([A-Z]))?$/i, group: 'weapon_r' },
-  { slot: 'bow', re: /^(?:Units_|weapon_|Weapon_)?[Bb]ow$/i, group: 'weapon_l', noVariant: true },
-  { slot: 'staff', re: /^(?:Units_|weapon_|Weapon_)?[Ss]taff_([A-Z])$/i, group: 'weapon_l' },
-  { slot: 'shield', re: /^(?:Units_)?[Ss]hield_([A-Z])$/i, group: 'shield' },
-  { slot: 'bag', re: /^(?:Xtra_|Units_)?[Bb]ag$/i, group: 'utility', noVariant: true },
-  { slot: 'wood', re: /^(?:Xtra_|Units_)?[Ww]ood$/i, group: 'utility', noVariant: true },
-  { slot: 'quiver', re: /^(?:Xtra_|Units_)?[Qq]uiver$/i, group: 'utility', noVariant: true },
-];
-
-const WEAPON_R = new Set(['axe', 'hammer', 'mace', 'sword', 'dagger', 'pick', 'spear']);
-const WEAPON_L = new Set(['bow', 'staff']);
+/** Slot regex SSOT from grudge6-kit (do not fork). */
+const SLOT_DEFS = KIT_SLOT_DEFS;
+const WEAPON_R = KIT_WEAPON_R;
+const WEAPON_L = KIT_WEAPON_L;
 const UTILITY = new Set(['bag', 'wood', 'quiver']);
 
 const BONE_ALIASES = {
@@ -228,137 +212,16 @@ const BONE_ALIASES = {
 let catalog = null;
 let extendedCatalog = null;
 let activeRace = null;
-/** Prefer working GLBs; fbx is author-only. */
-let activeSource = 'prod'; // prod | toonRts | metaverse | fbx
+/** GOLDEN default = Toon RTS pack. Never force-atlas GLBs. */
+let activeSource = 'toonRts'; // toonRts | prod | metaverse | fbx
 let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
-let equip = null; // EquipmentManager instance
+let equip = null; // KitEquipmentManager instance
 let labWeaponRoot = null; // external tier weapon attach (not in race GLB)
 const texLoader = new THREE.TextureLoader();
 const texCache = new Map();
 
-class EquipmentManager {
-  constructor(prefix) {
-    this.prefix = prefix.endsWith('_') ? prefix : `${prefix}_`;
-    this.slots = {};
-    this.equipped = {};
-    this.allMeshes = [];
-    this.root = null;
-  }
-
-  catalog(root) {
-    this.root = root;
-    this.slots = {};
-    this.allMeshes = [];
-    this.equipped = {};
-
-    root.traverse((child) => {
-      if (!child.isMesh && !child.isSkinnedMesh) return;
-      const stripped = child.name.startsWith(this.prefix)
-        ? child.name.slice(this.prefix.length)
-        : child.name;
-
-      for (const def of SLOT_DEFS) {
-        const match = stripped.match(def.re);
-        if (!match) continue;
-        const variant = def.noVariant
-          ? '_default'
-          : (match[1] || '_default').toUpperCase();
-        if (!this.slots[def.slot]) this.slots[def.slot] = {};
-        this.slots[def.slot][variant] = child;
-        child.userData.equipSlot = def.slot;
-        child.userData.equipVariant = variant;
-        child.userData.equipGroup = def.group;
-        this.allMeshes.push(child);
-        child.visible = false;
-        break;
-      }
-    });
-    return this.summary();
-  }
-
-  summary() {
-    const out = {};
-    for (const [slot, variants] of Object.entries(this.slots)) {
-      out[slot] = Object.keys(variants).sort();
-    }
-    return out;
-  }
-
-  equip(slot, variant) {
-    const variants = this.slots[slot];
-    if (!variants) return false;
-    for (const [v, mesh] of Object.entries(variants)) {
-      mesh.visible = v === variant;
-    }
-    this.equipped[slot] = variant;
-    return true;
-  }
-
-  equipWeapon(slot, variant = '_default') {
-    const def = SLOT_DEFS.find((d) => d.slot === slot);
-    if (!def) return false;
-    for (const mesh of this.allMeshes) {
-      if (mesh.userData.equipGroup === def.group) {
-        mesh.visible = false;
-        delete this.equipped[mesh.userData.equipSlot];
-      }
-    }
-    return this.equip(slot, variant);
-  }
-
-  unequip(slot) {
-    const variants = this.slots[slot];
-    if (!variants) return;
-    for (const mesh of Object.values(variants)) mesh.visible = false;
-    delete this.equipped[slot];
-  }
-
-  hideGroup(group) {
-    for (const mesh of this.allMeshes) {
-      if (mesh.userData.equipGroup === group) {
-        mesh.visible = false;
-        delete this.equipped[mesh.userData.equipSlot];
-      }
-    }
-  }
-
-  applyDefaultLoadout() {
-    // Armor: first available variant per slot
-    for (const slot of ['body', 'arms', 'legs', 'head', 'shoulders']) {
-      const variants = this.slots[slot];
-      if (!variants) continue;
-      const keys = Object.keys(variants).sort();
-      const pick = keys.includes('A') ? 'A' : keys[0];
-      if (pick) this.equip(slot, pick);
-    }
-    // Prefer sword_A then any right-hand weapon
-    if (this.slots.sword) {
-      const v = this.slots.sword.A ? 'A' : Object.keys(this.slots.sword).sort()[0];
-      this.equipWeapon('sword', v);
-    } else {
-      for (const slot of WEAPON_R) {
-        if (this.slots[slot]) {
-          const v = Object.keys(this.slots[slot]).sort()[0];
-          this.equipWeapon(slot, v);
-          break;
-        }
-      }
-    }
-  }
-
-  listAllMeshes() {
-    return this.allMeshes
-      .map((m) => ({
-        name: m.name,
-        slot: m.userData.equipSlot,
-        variant: m.userData.equipVariant,
-        group: m.userData.equipGroup,
-        visible: m.visible,
-        mesh: m,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }
-}
+/** Alias — always use kit SSOT EquipmentManager (SLOT_DEFS + hardenVisibility). */
+const EquipmentManager = KitEquipmentManager;
 
 async function loadCatalog() {
   for (const url of [LOCAL_SSOT, `${API}/grudge6-characters.json`]) {
@@ -389,11 +252,11 @@ function textureUrlForRace(raceId) {
 
 /**
  * Atlas rebind via grudge6-kit (ClampToEdge, sRGB, flipY=false).
- * FBX path ALWAYS rebinds — Unity TGA embeds 404 on CDN.
- * Metaverse / some GLBs ship 1×1 stubs — rebind those too.
+ * GOLDEN rule: never force-rebind toonRts / prod / metaverse when embeds are good.
+ * FBX always rebinds. Stub maps (1×1) soft-rebind. force=true only when caller opts in.
  */
 async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {}) {
-  const must = force || source === 'fbx' || source === 'prod';
+  const must = force || source === 'fbx';
   const tex = await kitLoadRaceTexture(THREE, raceId, 'default');
   if (!tex) {
     // fallback local loader
@@ -417,7 +280,7 @@ async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {})
     return { n, url, mode: 'atlas-fallback' };
   }
   if (!must) {
-    // Still rebind if maps look stubby
+    // Soft rebind only when maps look stubby — keep good Toon RTS / prod embeds
     let stubs = 0;
     let mats = 0;
     root.traverse((obj) => {
@@ -432,7 +295,7 @@ async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {})
       }
     });
     if (stubs === 0 && mats > 0) {
-      return { n: 0, url: textureUrlForRace(raceId), mode: 'embedded-kept' };
+      return { n: mats, url: textureUrlForRace(raceId), mode: 'embedded-kept' };
     }
   }
   const n = bindRaceAtlas(THREE, root, tex);
@@ -503,11 +366,16 @@ function discoverBones(root) {
 
 function resolveModelUrl(race, source) {
   const a = RACE_ASSETS[race.id];
+  // Prefer kit SSOT URLs; catalog models.* only as override
+  if (source === 'toonRts') {
+    return race.models?.toonRts || a?.toonRts || a?.prod;
+  }
+  if (source === 'metaverse') {
+    return race.models?.metaverse || a?.metaverse || a?.toonRts || a?.prod;
+  }
   if (source === 'prod' && a?.prod) return a.prod;
   if (source === 'fbx' && a?.fbx) return a.fbx;
-  if (source === 'toonRts') return race.models?.toonRts || race.models?.metaverse || a?.prod;
-  if (source === 'metaverse') return race.models?.metaverse || race.models?.toonRts || a?.prod;
-  return a?.prod || race.models?.toonRts || race.models?.metaverse || a?.fbx;
+  return a?.toonRts || a?.prod || race.models?.toonRts || a?.fbx;
 }
 
 async function loadModel(url) {
@@ -522,8 +390,10 @@ async function loadModel(url) {
 }
 
 /**
- * Prod + FBX: use loadRaceKit (force atlas on FBX, bone SI).
- * Toon RTS / Metaverse: direct GLB load (already look correct) + light atlas check.
+ * GOLDEN load path (all GLB sources):
+ *   load GLB URL → soft atlas (keep embeds; rebind only stubs) → catalog equip → default loadout → bone SI
+ * FBX only: force atlas rebind (author TGA 404 on web).
+ * Never forceAtlas on toonRts / prod / metaverse — that scrambled materials.
  */
 async function loadRace(race, source = activeSource) {
   activeRace = race;
@@ -554,35 +424,31 @@ async function loadRace(race, source = activeSource) {
     let texNote = '';
     let ground;
 
-    if (source === 'prod' || source === 'fbx') {
-      // Fleet kit path — FBX always forceAtlas (Unity TGA paths 404 on web)
+    if (source === 'fbx') {
       const kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race.id, {
-        source: source === 'fbx' ? 'fbx' : 'glb',
+        source: 'fbx',
         ground: false,
         skipDefaultLoadout: true,
-        forceAtlas: source === 'fbx' || source === 'prod',
+        forceAtlas: true,
         invertUvV: false,
       });
       root = kit.root;
       animations = kit.animations || [];
-      equip = kit.equip;
       texNote =
-        source === 'fbx'
-          ? `<span class="ok">FBX author path</span> · atlas force-rebind · <code>${kit.materialMode}</code> · <code>${textureUrlForRace(race.id)}</code>`
-          : `<span class="ok">Prod GLB</span> · <code>${kit.materialMode}</code> · mats×${kit.matCount} · <code>${textureUrlForRace(race.id)}</code>`;
-      if (source === 'fbx') {
-        texNote +=
-          `<br/><span class="err">Prefer Prod GLB / Toon RTS for play</span> — FBX is author-only (broken embed textures on CDN).`;
-      }
+        `<span class="ok">FBX author path</span> · atlas force-rebind · <code>${kit.materialMode}</code> · <code>${textureUrlForRace(race.id)}</code>` +
+        `<br/><span class="err">Prefer Toon RTS GLB ★</span> — FBX is author-only (broken embed textures on CDN).`;
     } else {
+      // Same path for toonRts ★ / prod / metaverse — no forceAtlas
       const loaded = await loadModel(url);
       root = loaded.scene;
       animations = loaded.animations || [];
       const atlas = await applyRaceAtlas(root, race.id, { force: false, source });
+      const label =
+        source === 'toonRts' ? 'Toon RTS ★' : source === 'prod' ? 'Prod races bake' : 'Metaverse';
       texNote =
         atlas.mode === 'fail'
           ? `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`
-          : `<span class="ok">${atlas.mode}</span> · mats×${atlas.n} · <code>${atlas.url || '—'}</code>`;
+          : `<span class="ok">${label}</span> · <code>${atlas.mode}</code> · mats×${atlas.n} · <code>${atlas.url || '—'}</code>`;
     }
 
     currentRoot = root;
@@ -600,13 +466,12 @@ async function loadRace(race, source = activeSource) {
     currentRoot.rotation.y = Math.PI; // face camera
     const bones = discoverBones(currentRoot);
 
-    if (!equip) {
-      const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
-      equip = new EquipmentManager(prefix);
-      equip.catalog(currentRoot);
-    }
-    equip.applyDefaultLoadout?.();
-    if (typeof equip.hardenVisibility === 'function') equip.hardenVisibility();
+    // Always re-catalog on this root (kit SSOT EquipmentManager)
+    const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
+    equip = new EquipmentManager(prefix);
+    equip.catalog(currentRoot);
+    equip.applyDefaultLoadout();
+    equip.hardenVisibility?.();
     const summary = equip.summary();
     renderEquipUI(summary);
     renderMeshList();
@@ -624,19 +489,21 @@ async function loadRace(race, source = activeSource) {
         '<span class="sub">No embedded clips — use Race Scenes / anim packs (Bip001 baked)</span>';
     }
 
-    const meshCount = equip.allMeshes?.length ?? equip.meshCount ?? 0;
+    const slotCount = Object.keys(summary).length;
+    const meshCount = equip.allMeshes?.length ?? 0;
+    const armorOk = ['body', 'arms', 'legs', 'head'].filter((s) => summary[s]?.length).length;
     document.getElementById('hud').textContent =
-      `${race.name} · ${source} · equip ${meshCount} · bones ${bones.total} · h ${Number(ground.height).toFixed(2)} m · SI bone-fit`;
+      `${race.name} · ${source} · equip ${meshCount} meshes · ${slotCount} slots · armor ${armorOk}/4 · bones ${bones.total} · h ${Number(ground.height).toFixed(2)} m`;
     renderUrls(race, url, source, bones);
   } catch (err) {
     document.getElementById('hud').textContent = `Failed: ${err.message}`;
     document.getElementById('texStatus').innerHTML = `<span class="err">${err.message}</span>`;
     console.error('[GRUDGE6_Characters]', source, err);
-    // Fallback: never fall *to* FBX first — use working GLBs
-    if (source === 'prod') return loadRace(race, 'toonRts');
-    if (source === 'toonRts' && race.models?.metaverse) return loadRace(race, 'metaverse');
-    if (source === 'metaverse' && RACE_ASSETS[race.id]?.prod) return loadRace(race, 'prod');
-    // FBX last resort only
+    // Fallback toward golden Toon RTS first — never loop into forceAtlas prod
+    if (source === 'prod' || source === 'metaverse') return loadRace(race, 'toonRts');
+    if (source === 'toonRts' && (race.models?.metaverse || RACE_ASSETS[race.id]?.metaverse)) {
+      return loadRace(race, 'metaverse');
+    }
     if (source !== 'fbx' && RACE_ASSETS[race.id]?.fbx) return loadRace(race, 'fbx');
   }
 }
@@ -644,8 +511,8 @@ async function loadRace(race, source = activeSource) {
 function renderSourceToggle(race) {
   const el = document.getElementById('sourceToggle');
   const opts = [
-    { id: 'prod', label: 'Prod GLB ★' },
-    { id: 'toonRts', label: 'Toon RTS GLB' },
+    { id: 'toonRts', label: 'Toon RTS GLB ★' },
+    { id: 'prod', label: 'Prod races bake' },
     { id: 'metaverse', label: 'Metaverse GLB' },
     { id: 'fbx', label: 'Race FBX (author)' },
   ];

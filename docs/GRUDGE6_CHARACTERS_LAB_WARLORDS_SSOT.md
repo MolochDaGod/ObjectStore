@@ -11,7 +11,8 @@
 
 | Layer | Authority | Production host | Lab may… |
 |-------|-----------|-----------------|----------|
-| **Race kit binary** | R2 bake | `assets…/models/grudge6/races/{PREFIX}_Characters.glb` | **Load only** (Prod GLB ★) |
+| **Race kit binary (GOLDEN)** | R2 Toon RTS pack | `assets…/asset-packs/toon-rts-characters/glb/characters/{raceId}.glb` | **Load only** (Toon RTS GLB ★) |
+| **Race kit binary (compare)** | R2 races bake | `assets…/models/grudge6/races/{PREFIX}_Characters.glb` | Load only — never forceAtlas |
 | **Atlas** | R2 | `assets…/textures/grudge6/{folder}/*.webp` | Load / optional **rebind** (never overwrite R2 from lab) |
 | **Anim bakes** | Bake pipeline | `assets…/anims/baked/{pack}/*.json` (Bip001) | Preview if present; **never invent tracks** |
 | **Mesh inventory / defs** | ObjectStore | `info…/api/v1/*` | Propose JSON patches on `main` |
@@ -59,7 +60,7 @@ Barbarian exception (author pack): `BRB_body_A` (no `Units_`) — loaders must m
 
 | Action | Allowed? | How |
 |--------|----------|-----|
-| View Prod / Toon / Metaverse / author FBX | Yes | Source toggle; default **Prod GLB ★** |
+| View Toon / Prod races / Metaverse / author FBX | Yes | Source toggle; default **Toon RTS GLB ★** (never forceAtlas on GLB) |
 | Toggle armour / weapons | Yes | Exclusive `EquipmentManager` slots |
 | Preview atlas variant (if CDN 200) | Yes | `ATLAS_VARIANTS` + `bindRaceAtlas` |
 | Preview baked idle/attack | Yes | `anims/baked` only when URL 200 |

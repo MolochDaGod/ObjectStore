@@ -120,24 +120,37 @@ export class Grudge6RaceScene {
       this.mixer = null;
     }
 
+    // GOLDEN path = same as GRUDGE6_Characters Toon RTS ★
+    // Never forceAtlas on GLB (scrambles embeds). FBX last resort only.
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
-        source: 'glb',
+        source: 'toonRts',
         ground: false,
         skipDefaultLoadout: true,
         forceAtlas: false,
         invertUvV: false,
       });
     } catch (e) {
-      console.warn('[race-scene] GLB fail → FBX', e);
-      kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
-        source: 'fbx',
-        ground: false,
-        skipDefaultLoadout: true,
-        forceAtlas: true,
-        invertUvV: false,
-      });
+      console.warn('[race-scene] Toon RTS fail → races glb', e);
+      try {
+        kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
+          source: 'glb',
+          ground: false,
+          skipDefaultLoadout: true,
+          forceAtlas: false,
+          invertUvV: false,
+        });
+      } catch (e2) {
+        console.warn('[race-scene] races glb fail → FBX author', e2);
+        kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
+          source: 'fbx',
+          ground: false,
+          skipDefaultLoadout: true,
+          forceAtlas: true,
+          invertUvV: false,
+        });
+      }
     }
     if (this._disposed) return;
 

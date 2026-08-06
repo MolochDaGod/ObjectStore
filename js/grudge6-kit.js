@@ -110,7 +110,14 @@ export function toonRtsSiegeAnimBase(raceId) {
   return disk ? `/assets/${disk}/animations/` : null;
 }
 
-/** Canonical race kits — FBX is production paperdoll SSOT until GLB passes visual gate */
+/**
+ * Canonical race kits.
+ *
+ * Visual GOLDEN (Characters lab): `toonRts` — asset-packs/toon-rts-characters/glb/characters/{id}.glb
+ * Fleet races bake: `glb` — models/grudge6/races/{PREFIX}_Characters.glb (compare only until re-bake matches toon)
+ * Metaverse: alternate bake for diagnostics
+ * FBX: author-only (force atlas rebind — Unity TGA embeds 404 on web)
+ */
 export const RACE_ASSETS = {
   human: {
     id: 'human',
@@ -119,6 +126,8 @@ export const RACE_ASSETS = {
     texture: 'WK_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/WK_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/WK_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/human.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/human.glb`,
     toonDisk: 'human',
     mountTexture: 'WK_Horse_A.png',
   },
@@ -129,6 +138,8 @@ export const RACE_ASSETS = {
     texture: 'BRB_StandardUnits_texture.webp',
     fbx: `${CDN}/models/grudge6/races/BRB_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/BRB_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/barbarian.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/barbarian.glb`,
     toonDisk: 'barbarian',
   },
   orc: {
@@ -138,6 +149,8 @@ export const RACE_ASSETS = {
     texture: 'ORC_StandardUnits.webp',
     fbx: `${CDN}/models/grudge6/races/ORC_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/ORC_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/orc.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/orc.glb`,
     toonDisk: 'orc',
     mountTexture: 'ORC_Wolf_texture_A.png',
   },
@@ -148,6 +161,8 @@ export const RACE_ASSETS = {
     texture: 'ELF_HighElves_Texture.webp',
     fbx: `${CDN}/models/grudge6/races/ELF_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/ELF_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/elf.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/elf.glb`,
     toonDisk: 'elf',
   },
   undead: {
@@ -157,6 +172,8 @@ export const RACE_ASSETS = {
     texture: 'UD_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/UD_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/UD_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/undead.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/undead.glb`,
     toonDisk: 'undead',
   },
   dwarf: {
@@ -166,6 +183,8 @@ export const RACE_ASSETS = {
     texture: 'DWF_Standard_Units.webp',
     fbx: `${CDN}/models/grudge6/races/DWF_Characters.fbx`,
     glb: `${CDN}/models/grudge6/races/DWF_Characters.glb`,
+    toonRts: `${CDN}/asset-packs/toon-rts-characters/glb/characters/dwarf.glb`,
+    metaverse: `${CDN}/models/grudge6/metaverse/dwarf.glb`,
     toonDisk: 'dwarf',
   },
 };
@@ -274,12 +293,21 @@ export function atlasUrlLegacy(raceId, variant = 'default') {
   return `${CDN}/assets/${a.folder}/textures/${file}`;
 }
 
-/** Browser production = GLB. FBX only for convert/author (`source: 'fbx'`). */
-export function kitUrl(raceId, source = 'glb') {
+/**
+ * Kit URL by source.
+ * - `toonRts` / `toon` — GOLDEN visual pack (Characters lab default)
+ * - `glb` / `prod` / `races` — fleet races/*_Characters.glb bake
+ * - `metaverse` — diagnostic alternate bake
+ * - `fbx` — author only
+ */
+export function kitUrl(raceId, source = 'toonRts') {
   const a = RACE_ASSETS[raceId];
   if (!a) return null;
   if (source === 'fbx' || source === 'raceFbx') return a.fbx;
-  return a.glb;
+  if (source === 'toonRts' || source === 'toon') return a.toonRts || a.glb;
+  if (source === 'metaverse') return a.metaverse || a.toonRts || a.glb;
+  if (source === 'glb' || source === 'prod' || source === 'races') return a.glb;
+  return a.toonRts || a.glb;
 }
 
 /** Rewrite known-bad legacy paths to canonical race kit or mesh library */
@@ -929,9 +957,9 @@ export async function loadRaceTexture(THREE, raceId, variant = 'default') {
 export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   const race = RACE_ASSETS[raceId];
   if (!race) throw new Error(`Unknown race: ${raceId}`);
-  // Prefer production GLB for web (CDN SSOT); FBX = author / fallback
-  const source = opts.source || 'glb';
-  let url = kitUrl(raceId, source);
+  // GOLDEN default = toonRts pack. FBX = author. glb/prod = races bake compare.
+  const source = opts.source || 'toonRts';
+  let url = opts.url || kitUrl(raceId, source);
   url = resolveCanonicalAssetUrl(url);
 
   let root;
@@ -956,7 +984,8 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
 
   const atlasVariant = opts.atlasVariant || 'default';
   const hasUsable = kitHasUsableMaps(root);
-  // Rebind when: FBX (embeds often missing/wrong), stubs, team atlas, or forced
+  // NEVER force-rebind a good GLB bake (toonRts / prod / metaverse).
+  // Rebind only: FBX, stub maps, explicit forceAtlas, or non-default team atlas variant.
   const mustRebind =
     opts.forceAtlas === true ||
     isFbxUrl ||
@@ -977,7 +1006,7 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
       materialMode = 'embedded-fallback';
     }
   } else {
-    // Production GLB path: keep bake, do not invert, do not double-bind
+    // GLB golden path: keep bake, do not invert, do not double-bind
     matCount = normalizeEmbeddedMaps(THREE, root);
     materialMode = 'embedded';
     // Still resolve default atlas for callers that want the URL/handle
