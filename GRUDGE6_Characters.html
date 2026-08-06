@@ -68,9 +68,11 @@
   <div>
     <h1>grudge6 Characters</h1>
     <div class="sub">
-      Prefer <strong>Prod GLB</strong> / Toon RTS / Metaverse · Race FBX = author only (always rebind atlas + bone SI) · no stretch
+      Warlords · <strong>Prod GLB ★ ship path</strong> · mesh_ids equip · bone SI · lab never writes CDN ·
+      <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md" style="color:var(--gold)">intentional add process</a>
     </div>
   </div>
+  <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md" style="margin-right:12px">Add process</a>
   <a href="./grudge6-race-scenes.html" style="margin-right:12px">Race Scenes</a>
   <a href="https://imgur.com/a/sFHXx2X" target="_blank" rel="noopener" style="margin-right:12px">Sets gallery</a>
   <a href="./main-panel.html" style="margin-right:12px">Main Panel</a>
@@ -85,6 +87,15 @@
     <h2>Source</h2>
     <div class="src-toggle" id="sourceToggle"></div>
     <div id="texStatus" class="sub" style="margin-top:8px"></div>
+    <div class="sub" style="margin-top:10px;line-height:1.45;border:1px solid var(--border);border-radius:8px;padding:8px;background:#0c1118">
+      <strong style="color:var(--gold)">Intentional Warlords add</strong><br/>
+      Mesh/weapon/anim go: author Toon_RTS → bake → R2 CDN → api/v1 defs → this lab previews.<br/>
+      <code>mesh_id</code> = Object3D name on Prod GLB (e.g. <code>ELF_Units_Body_A</code>).<br/>
+      Do not overwrite prod GLB/atlas from browser. FBX = author diagnostics only.<br/>
+      <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md" style="color:var(--gold)">Full process SSOT</a>
+      · <a href="./docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md" style="color:var(--gold)">Deploy SSOT</a>
+      · <a href="./docs/API-AND-UUID-GUIDE.md" style="color:var(--gold)">UUID guide</a>
+    </div>
 
     <h2>Armor meshes</h2>
     <div id="armorSlots"></div>
