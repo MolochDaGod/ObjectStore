@@ -57,8 +57,8 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      "three": "https://esm.sh/three@0.185.0",
+      "three/addons/": "https://esm.sh/three@0.185.0/examples/jsm/"
     }
   }
   </script>
@@ -67,7 +67,9 @@
 <header>
   <div>
     <h1>grudge6 Characters</h1>
-    <div class="sub">Textures · mesh hide · weapon / offhand / armor variants · Bip001 Y-hip · verify Toon RTS builds</div>
+    <div class="sub">
+      Prefer <strong>Prod GLB</strong> / Toon RTS / Metaverse · Race FBX = author only (always rebind atlas + bone SI) · no stretch
+    </div>
   </div>
   <a href="./grudge6-race-scenes.html" style="margin-right:12px">Race Scenes</a>
   <a href="./main-panel.html" style="margin-right:12px">Main Panel</a>
@@ -125,50 +127,37 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import {
+  RACE_ASSETS as KIT_RACES,
+  loadRaceKit,
+  bindRaceAtlas,
+  loadRaceTexture as kitLoadRaceTexture,
+  fitRootUniformSi,
+  atlasUrl,
+} from './js/grudge6-kit.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
 const LOCAL_SSOT = './api/v1/grudge6-characters.json';
 const CDN = 'https://assets.grudge-studio.com';
 
-/** Race → modular model + atlas (metaverse GLBs ship a 1×1 stub map — always rebind atlas). */
-const RACE_ASSETS = {
-  human: {
-    prefix: 'WK_',
-    folder: 'western-kingdoms',
-    texture: 'WK_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/WK_Characters.fbx`,
-  },
-  barbarian: {
-    prefix: 'BRB_',
-    folder: 'barbarians',
-    texture: 'BRB_StandardUnits_texture.webp',
-    fbx: `${CDN}/models/grudge6/races/BRB_Characters.fbx`,
-  },
-  orc: {
-    prefix: 'ORC_',
-    folder: 'orcs',
-    texture: 'ORC_StandardUnits.webp',
-    fbx: `${CDN}/models/grudge6/races/ORC_Characters.fbx`,
-  },
-  elf: {
-    prefix: 'ELF_',
-    folder: 'elves',
-    texture: 'ELF_HighElves_Texture.webp',
-    fbx: `${CDN}/models/grudge6/races/ELF_Characters.fbx`,
-  },
-  undead: {
-    prefix: 'UD_',
-    folder: 'undead',
-    texture: 'UD_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/UD_Characters.fbx`,
-  },
-  dwarf: {
-    prefix: 'DWF_',
-    folder: 'dwarves',
-    texture: 'DWF_Standard_Units.webp',
-    fbx: `${CDN}/models/grudge6/races/DWF_Characters.fbx`,
-  },
-};
+/**
+ * Race assets for this lab.
+ * prod = fleet SSOT races/*_Characters.glb (same as race-scenes / main-panel)
+ * toonRts / metaverse = alternate GLBs that already look right in this lab
+ * fbx = author Unity export — broken relative TGA on web; always force CDN atlas
+ */
+const RACE_ASSETS = Object.fromEntries(
+  Object.entries(KIT_RACES).map(([id, a]) => [
+    id,
+    {
+      ...a,
+      prod: a.glb,
+      fbx: a.fbx,
+      folder: a.folder,
+      texture: a.texture,
+    },
+  ]),
+);
 
 const SLOT_DEFS = [
   { slot: 'body', re: /^Units_Body_([A-Z])$/i, group: 'armor' },
@@ -205,7 +194,8 @@ const BONE_ALIASES = {
 
 let catalog = null;
 let activeRace = null;
-let activeSource = 'toonRts'; // metaverse | toonRts | fbx
+/** Prefer working GLBs; fbx is author-only. */
+let activeSource = 'prod'; // prod | toonRts | metaverse | fbx
 let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
 let equip = null; // EquipmentManager instance
 const texLoader = new THREE.TextureLoader();
@@ -359,52 +349,67 @@ async function loadCatalog() {
 }
 
 function textureUrlForRace(raceId) {
-  const a = RACE_ASSETS[raceId];
-  if (!a) return null;
-  // Stone path first (grudge6-cdn-ssot)
-  return `${CDN}/textures/grudge6/${a.folder}/${a.texture}`;
+  return atlasUrl(raceId, 'default') || null;
 }
 
-async function loadRaceTexture(raceId) {
-  const url = textureUrlForRace(raceId);
-  if (!url) return null;
-  if (texCache.has(url)) return texCache.get(url);
-  const tex = await new Promise((resolve) => {
-    texLoader.load(
-      url,
-      (t) => {
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.flipY = false;
-        t.wrapS = t.wrapT = THREE.RepeatWrapping;
-        texCache.set(url, t);
-        resolve(t);
-      },
-      undefined,
-      () => resolve(null),
-    );
-  });
-  return tex;
-}
-
-function applyTexture(root, texture) {
-  if (!texture || !root) return 0;
-  let n = 0;
-  root.traverse((obj) => {
-    if (!obj.isMesh && !obj.isSkinnedMesh) return;
-    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-    for (const mat of mats) {
-      if (!mat) continue;
-      // Metaverse GLBs embed a 1×1 stub — always overwrite map
-      if (mat.map) {
-        try { mat.map.dispose?.(); } catch { /* */ }
+/**
+ * Atlas rebind via grudge6-kit (ClampToEdge, sRGB, flipY=false).
+ * FBX path ALWAYS rebinds — Unity TGA embeds 404 on CDN.
+ * Metaverse / some GLBs ship 1×1 stubs — rebind those too.
+ */
+async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {}) {
+  const must = force || source === 'fbx' || source === 'prod';
+  const tex = await kitLoadRaceTexture(THREE, raceId, 'default');
+  if (!tex) {
+    // fallback local loader
+    const url = textureUrlForRace(raceId);
+    if (!url) return { n: 0, url: null, mode: 'fail' };
+    const t = await new Promise((resolve) => {
+      texLoader.load(
+        url,
+        (tx) => {
+          tx.colorSpace = THREE.SRGBColorSpace;
+          tx.flipY = false;
+          tx.wrapS = tx.wrapT = THREE.ClampToEdgeWrapping;
+          resolve(tx);
+        },
+        undefined,
+        () => resolve(null),
+      );
+    });
+    if (!t) return { n: 0, url, mode: 'fail' };
+    const n = bindRaceAtlas(THREE, root, t);
+    return { n, url, mode: 'atlas-fallback' };
+  }
+  if (!must) {
+    // Still rebind if maps look stubby
+    let stubs = 0;
+    let mats = 0;
+    root.traverse((obj) => {
+      if (!obj.isMesh && !obj.isSkinnedMesh) return;
+      const list = Array.isArray(obj.material) ? obj.material : [obj.material];
+      for (const m of list) {
+        if (!m) continue;
+        mats++;
+        const img = m.map?.image;
+        const w = img?.naturalWidth || img?.width || 0;
+        if (!m.map || w <= 2) stubs++;
       }
-      mat.map = texture;
-      if (mat.color) mat.color.setHex(0xffffff);
-      mat.needsUpdate = true;
-      n++;
+    });
+    if (stubs === 0 && mats > 0) {
+      return { n: 0, url: textureUrlForRace(raceId), mode: 'embedded-kept' };
     }
+  }
+  const n = bindRaceAtlas(THREE, root, tex);
+  return { n, url: textureUrlForRace(raceId), mode: source === 'fbx' ? 'fbx-force-atlas' : 'atlas-rebind' };
+}
+
+/** SI plant — bone measure (never setFromObject on modular kits). */
+function applySiFit(root) {
+  return fitRootUniformSi(THREE, root, 1.8, {
+    characterType: 'infantry',
+    centerXZ: true,
   });
-  return n;
 }
 
 function initThree() {
@@ -461,45 +466,30 @@ function discoverBones(root) {
   return { found, total: bones.length };
 }
 
-function groundYHip(root) {
-  root.position.set(0, 0, 0);
-  root.scale.setScalar(1);
-  root.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(root);
-  const size = new THREE.Vector3();
-  box.getSize(size);
-  // Normalize tall packs to ~1.7m
-  const targetH = 1.7;
-  if (size.y > 0.01) {
-    const s = targetH / size.y;
-    root.scale.setScalar(s);
-    root.updateMatrixWorld(true);
-    box.setFromObject(root);
-  }
-  root.position.y = -box.min.y;
-  root.updateMatrixWorld(true);
-  box.setFromObject(root);
-  return { height: box.max.y - box.min.y };
-}
-
 function resolveModelUrl(race, source) {
   const a = RACE_ASSETS[race.id];
+  if (source === 'prod' && a?.prod) return a.prod;
   if (source === 'fbx' && a?.fbx) return a.fbx;
-  if (source === 'toonRts') return race.models?.toonRts || race.models?.metaverse;
-  if (source === 'metaverse') return race.models?.metaverse || race.models?.toonRts;
-  return race.models?.toonRts || race.models?.metaverse || a?.fbx;
+  if (source === 'toonRts') return race.models?.toonRts || race.models?.metaverse || a?.prod;
+  if (source === 'metaverse') return race.models?.metaverse || race.models?.toonRts || a?.prod;
+  return a?.prod || race.models?.toonRts || race.models?.metaverse || a?.fbx;
 }
 
 async function loadModel(url) {
   if (/\.fbx($|\?)/i.test(url)) {
     const loader = new FBXLoader();
-    return loader.loadAsync(url);
+    const fbx = await loader.loadAsync(url);
+    return { scene: fbx, animations: fbx.animations || [] };
   }
   const loader = new GLTFLoader();
   const gltf = await loader.loadAsync(url);
-  return gltf;
+  return { scene: gltf.scene || gltf, animations: gltf.animations || [] };
 }
 
+/**
+ * Prod + FBX: use loadRaceKit (force atlas on FBX, bone SI).
+ * Toon RTS / Metaverse: direct GLB load (already look correct) + light atlas check.
+ */
 async function loadRace(race, source = activeSource) {
   activeRace = race;
   activeSource = source;
@@ -524,9 +514,41 @@ async function loadRace(race, source = activeSource) {
   document.getElementById('texStatus').innerHTML = '';
 
   try {
-    const loaded = await loadModel(url);
-    const root = loaded.scene || loaded;
-    const animations = loaded.animations || [];
+    let root;
+    let animations = [];
+    let texNote = '';
+    let ground;
+
+    if (source === 'prod' || source === 'fbx') {
+      // Fleet kit path — FBX always forceAtlas (Unity TGA paths 404 on web)
+      const kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race.id, {
+        source: source === 'fbx' ? 'fbx' : 'glb',
+        ground: false,
+        skipDefaultLoadout: true,
+        forceAtlas: source === 'fbx' || source === 'prod',
+        invertUvV: false,
+      });
+      root = kit.root;
+      animations = kit.animations || [];
+      equip = kit.equip;
+      texNote =
+        source === 'fbx'
+          ? `<span class="ok">FBX author path</span> · atlas force-rebind · <code>${kit.materialMode}</code> · <code>${textureUrlForRace(race.id)}</code>`
+          : `<span class="ok">Prod GLB</span> · <code>${kit.materialMode}</code> · mats×${kit.matCount} · <code>${textureUrlForRace(race.id)}</code>`;
+      if (source === 'fbx') {
+        texNote +=
+          `<br/><span class="err">Prefer Prod GLB / Toon RTS for play</span> — FBX is author-only (broken embed textures on CDN).`;
+      }
+    } else {
+      const loaded = await loadModel(url);
+      root = loaded.scene;
+      animations = loaded.animations || [];
+      const atlas = await applyRaceAtlas(root, race.id, { force: false, source });
+      texNote =
+        atlas.mode === 'fail'
+          ? `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`
+          : `<span class="ok">${atlas.mode}</span> · mats×${atlas.n} · <code>${atlas.url || '—'}</code>`;
+    }
 
     currentRoot = root;
     currentRoot.traverse((n) => {
@@ -537,25 +559,20 @@ async function loadRace(race, source = activeSource) {
     });
     scene.add(currentRoot);
 
-    // Texture: replace 1×1 stub / missing maps with race atlas
-    const texUrl = textureUrlForRace(race.id);
-    const tex = await loadRaceTexture(race.id);
-    let texNote = '';
-    if (tex) {
-      const n = applyTexture(currentRoot, tex);
-      texNote = `<span class="ok">Atlas applied</span> · ${n} mats · <code>${texUrl}</code>`;
-    } else {
-      texNote = `<span class="err">Texture failed</span> · <code>${texUrl || '—'}</code>`;
-    }
     document.getElementById('texStatus').innerHTML = texNote;
 
-    const ground = groundYHip(currentRoot);
+    ground = applySiFit(currentRoot);
+    currentRoot.rotation.y = Math.PI; // face camera
     const bones = discoverBones(currentRoot);
 
-    const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
-    equip = new EquipmentManager(prefix);
-    const summary = equip.catalog(currentRoot);
-    equip.applyDefaultLoadout();
+    if (!equip) {
+      const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
+      equip = new EquipmentManager(prefix);
+      equip.catalog(currentRoot);
+    }
+    equip.applyDefaultLoadout?.();
+    if (typeof equip.hardenVisibility === 'function') equip.hardenVisibility();
+    const summary = equip.summary();
     renderEquipUI(summary);
     renderMeshList();
 
@@ -568,31 +585,37 @@ async function loadRace(race, source = activeSource) {
       if (idle) animActions[idle.name].reset().fadeIn(0.2).play();
       renderClips(Object.keys(animActions), idle?.name);
     } else {
-      document.getElementById('clips').innerHTML = '<span class="sub">No clips in this asset (use Mixamo retarget in game)</span>';
+      document.getElementById('clips').innerHTML =
+        '<span class="sub">No embedded clips — use Race Scenes / anim packs (Bip001 baked)</span>';
     }
 
-    const meshCount = equip.allMeshes.length;
+    const meshCount = equip.allMeshes?.length ?? equip.meshCount ?? 0;
     document.getElementById('hud').textContent =
-      `${race.name} · ${source} · equip meshes ${meshCount} · bones ${bones.total} · h ${ground.height.toFixed(2)} · Y-hip`;
+      `${race.name} · ${source} · equip ${meshCount} · bones ${bones.total} · h ${Number(ground.height).toFixed(2)} m · SI bone-fit`;
     renderUrls(race, url, source, bones);
   } catch (err) {
     document.getElementById('hud').textContent = `Failed: ${err.message}`;
     document.getElementById('texStatus').innerHTML = `<span class="err">${err.message}</span>`;
-    // Fallback chain
+    console.error('[GRUDGE6_Characters]', source, err);
+    // Fallback: never fall *to* FBX first — use working GLBs
+    if (source === 'prod') return loadRace(race, 'toonRts');
     if (source === 'toonRts' && race.models?.metaverse) return loadRace(race, 'metaverse');
-    if (source === 'metaverse' && RACE_ASSETS[race.id]?.fbx) return loadRace(race, 'fbx');
+    if (source === 'metaverse' && RACE_ASSETS[race.id]?.prod) return loadRace(race, 'prod');
+    // FBX last resort only
+    if (source !== 'fbx' && RACE_ASSETS[race.id]?.fbx) return loadRace(race, 'fbx');
   }
 }
 
 function renderSourceToggle(race) {
   const el = document.getElementById('sourceToggle');
   const opts = [
+    { id: 'prod', label: 'Prod GLB ★' },
     { id: 'toonRts', label: 'Toon RTS GLB' },
     { id: 'metaverse', label: 'Metaverse GLB' },
-    { id: 'fbx', label: 'Race FBX' },
+    { id: 'fbx', label: 'Race FBX (author)' },
   ];
   el.innerHTML = opts.map((o) =>
-    `<button type="button" class="tool ${activeSource === o.id ? 'on' : ''}" data-src="${o.id}">${o.label}</button>`
+    `<button type="button" class="tool ${activeSource === o.id ? 'on' : ''}" data-src="${o.id}" title="${o.id}">${o.label}</button>`
   ).join('');
   el.querySelectorAll('button').forEach((btn) => {
     btn.onclick = () => loadRace(race, btn.dataset.src);
