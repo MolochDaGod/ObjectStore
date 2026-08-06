@@ -530,16 +530,60 @@ export class EquipmentManager {
   }
 }
 
-/** 1×1 / empty maps = failed embed stubs (must rebind atlas). */
+/**
+ * 1×1 / empty maps = failed embed stubs (must rebind atlas).
+ *
+ * IMPORTANT: a Texture that exists but has not finished decoding
+ * (`image` null, or width/height still 0) is NOT a stub — keep the embed.
+ * Treating pending decode as stub caused races/* GLBs (BIN webp) to force
+ * atlas-rebind while Toon RTS data-URI PNGs (often sync-decoded) stayed
+ * embedded-kept. That made Prod look “rebound” and Toon look correct.
+ */
 export function isStubMap(map) {
   if (!map) return true;
-  const img = map.image;
-  if (!img) return true;
+
+  // Prefer resolved image; also check Texture.source (three r152+)
+  const img = map.image || map.source?.data || null;
+  if (!img) {
+    // Texture object is present but pixels not ready → keep embed
+    return false;
+  }
+
   const w = img.naturalWidth || img.width || img.videoWidth || 0;
   const h = img.naturalHeight || img.height || img.videoHeight || 0;
   if (w > 0 && h > 0) return w <= 2 || h <= 2;
-  if (img.data && typeof img.data.length === 'number') return img.data.length <= 16;
+
+  // Typed array image data (DataTexture / raw)
+  if (img.data && typeof img.data.length === 'number') {
+    return img.data.length <= 16;
+  }
+
+  // Incomplete HTMLImageElement / ImageBitmap still loading → keep embed
+  if (typeof img.complete === 'boolean' && !img.complete) return false;
   return false;
+}
+
+/** Sample first usable embed atlas size for lab status (e.g. 512×512). */
+export function sampleEmbedAtlasSize(root) {
+  let out = null;
+  if (!root) return out;
+  root.traverse((obj) => {
+    if (out) return;
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of mats) {
+      const map = m?.map;
+      if (!map || isStubMap(map)) continue;
+      const img = map.image || map.source?.data;
+      const w = img?.naturalWidth || img?.width || 0;
+      const h = img?.naturalHeight || img?.height || 0;
+      if (w > 2 && h > 2) {
+        out = { w, h };
+        return;
+      }
+    }
+  });
+  return out;
 }
 
 /** True when kit already has a real color map (production GLB bake). */

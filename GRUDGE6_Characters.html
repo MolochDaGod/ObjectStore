@@ -87,6 +87,13 @@
     <h2>Source</h2>
     <div class="src-toggle" id="sourceToggle"></div>
     <div id="texStatus" class="sub" style="margin-top:8px"></div>
+    <div class="sub" style="margin-top:8px;line-height:1.4">
+      <strong>Packs</strong> (same mesh names, different bake):<br/>
+      ★ <code>toonRts</code> — <code>asset-packs/toon-rts-characters/glb/characters/{id}.glb</code> · keep embeds<br/>
+      <code>prod</code> — <code>models/grudge6/races/{PREFIX}_Characters.glb</code> · keep embeds (no CDN swap)<br/>
+      <code>metaverse</code> — <code>models/grudge6/metaverse/{id}.glb</code><br/>
+      <code>fbx</code> — author only · force CDN atlas rebind
+    </div>
     <div class="sub" style="margin-top:10px;line-height:1.45;border:1px solid var(--border);border-radius:8px;padding:8px;background:#0c1118">
       <strong style="color:var(--gold)">Intentional Warlords add</strong><br/>
       Mesh/weapon/anim go: author Toon_RTS → bake → R2 CDN → api/v1 defs → this lab previews.<br/>
@@ -167,6 +174,10 @@ import {
   SLOT_DEFS as KIT_SLOT_DEFS,
   WEAPON_R as KIT_WEAPON_R,
   WEAPON_L as KIT_WEAPON_L,
+  isStubMap,
+  kitHasUsableMaps,
+  normalizeEmbeddedMaps,
+  sampleEmbedAtlasSize,
 } from './js/grudge6-kit.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
@@ -251,20 +262,65 @@ function textureUrlForRace(raceId) {
 }
 
 /**
- * Atlas rebind via grudge6-kit (ClampToEdge, sRGB, flipY=false).
- * GOLDEN rule: never force-rebind toonRts / prod / metaverse when embeds are good.
- * FBX always rebinds. Stub maps (1×1) soft-rebind. force=true only when caller opts in.
+ * Material path for lab sources.
+ *
+ * CDN packs (what you toggle):
+ *   toonRts  → asset-packs/toon-rts-characters/glb/characters/{id}.glb
+ *              (data-URI or embedded PNG atlas — GOLDEN look)
+ *   prod     → models/grudge6/races/{PREFIX}_Characters.glb
+ *              (BIN webp atlas bake — compare; keep embeds, do NOT rebind)
+ *   metaverse→ models/grudge6/metaverse/{id}.glb
+ *   fbx      → races/*.fbx — force CDN webp rebind (Unity TGA 404)
+ *
+ * GOLDEN rule: if the GLB already has a real color map, normalize only
+ * (sRGB / clamp). Never treat “image still decoding” as a 1×1 stub.
  */
 async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {}) {
+  const refUrl = textureUrlForRace(raceId);
   const must = force || source === 'fbx';
-  const tex = await kitLoadRaceTexture(THREE, raceId, 'default');
-  if (!tex) {
-    // fallback local loader
-    const url = textureUrlForRace(raceId);
-    if (!url) return { n: 0, url: null, mode: 'fail' };
-    const t = await new Promise((resolve) => {
+
+  // Count mesh materials (one shared atlas still → N mats)
+  let mats = 0;
+  let withMap = 0;
+  let stubs = 0;
+  root.traverse((obj) => {
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    const list = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of list) {
+      if (!m) continue;
+      mats++;
+      if (m.map) {
+        withMap++;
+        if (isStubMap(m.map)) stubs++;
+      } else {
+        stubs++;
+      }
+    }
+  });
+
+  const usable = kitHasUsableMaps(root) || (withMap > 0 && stubs === 0);
+  const embed = sampleEmbedAtlasSize(root);
+
+  if (!must && usable) {
+    // Keep bake — only normalize color space / wrap (no CDN swap)
+    const n = normalizeEmbeddedMaps(THREE, root);
+    return {
+      n: n || mats || withMap,
+      url: refUrl,
+      mode: 'embedded-kept',
+      embed,
+      mats,
+      withMap,
+      note: embed ? `embed ${embed.w}×${embed.h}` : 'embed map kept',
+    };
+  }
+
+  // FBX / true stubs / forced: bind CDN race atlas
+  let tex = await kitLoadRaceTexture(THREE, raceId, 'default');
+  if (!tex && refUrl) {
+    tex = await new Promise((resolve) => {
       texLoader.load(
-        url,
+        refUrl,
         (tx) => {
           tx.colorSpace = THREE.SRGBColorSpace;
           tx.flipY = false;
@@ -275,31 +331,19 @@ async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {})
         () => resolve(null),
       );
     });
-    if (!t) return { n: 0, url, mode: 'fail' };
-    const n = bindRaceAtlas(THREE, root, t);
-    return { n, url, mode: 'atlas-fallback' };
   }
-  if (!must) {
-    // Soft rebind only when maps look stubby — keep good Toon RTS / prod embeds
-    let stubs = 0;
-    let mats = 0;
-    root.traverse((obj) => {
-      if (!obj.isMesh && !obj.isSkinnedMesh) return;
-      const list = Array.isArray(obj.material) ? obj.material : [obj.material];
-      for (const m of list) {
-        if (!m) continue;
-        mats++;
-        const img = m.map?.image;
-        const w = img?.naturalWidth || img?.width || 0;
-        if (!m.map || w <= 2) stubs++;
-      }
-    });
-    if (stubs === 0 && mats > 0) {
-      return { n: mats, url: textureUrlForRace(raceId), mode: 'embedded-kept' };
-    }
+  if (!tex) {
+    return { n: 0, url: refUrl, mode: 'fail', mats, withMap, note: 'no CDN atlas' };
   }
   const n = bindRaceAtlas(THREE, root, tex);
-  return { n, url: textureUrlForRace(raceId), mode: source === 'fbx' ? 'fbx-force-atlas' : 'atlas-rebind' };
+  return {
+    n,
+    url: refUrl,
+    mode: source === 'fbx' ? 'fbx-force-atlas' : 'atlas-rebind',
+    mats,
+    withMap,
+    note: source === 'fbx' ? 'author FBX needs CDN atlas' : 'stub maps → CDN rebind',
+  };
 }
 
 /** SI plant — bone measure (never setFromObject on modular kits). */
@@ -438,17 +482,35 @@ async function loadRace(race, source = activeSource) {
         `<span class="ok">FBX author path</span> · atlas force-rebind · <code>${kit.materialMode}</code> · <code>${textureUrlForRace(race.id)}</code>` +
         `<br/><span class="err">Prefer Toon RTS GLB ★</span> — FBX is author-only (broken embed textures on CDN).`;
     } else {
-      // Same path for toonRts ★ / prod / metaverse — no forceAtlas
+      // Same path for toonRts ★ / prod / metaverse — keep embeds when present
       const loaded = await loadModel(url);
       root = loaded.scene;
       animations = loaded.animations || [];
       const atlas = await applyRaceAtlas(root, race.id, { force: false, source });
       const label =
         source === 'toonRts' ? 'Toon RTS ★' : source === 'prod' ? 'Prod races bake' : 'Metaverse';
-      texNote =
-        atlas.mode === 'fail'
-          ? `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`
-          : `<span class="ok">${label}</span> · <code>${atlas.mode}</code> · mats×${atlas.n} · <code>${atlas.url || '—'}</code>`;
+      const packHint =
+        source === 'toonRts'
+          ? 'pack: asset-packs/toon-rts-characters/…/characters/'
+          : source === 'prod'
+            ? 'pack: models/grudge6/races/*_Characters.glb'
+            : 'pack: models/grudge6/metaverse/';
+      if (atlas.mode === 'fail') {
+        texNote = `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`;
+      } else if (atlas.mode === 'embedded-kept') {
+        // Do not imply CDN atlas was applied — embeds are the truth for this pack
+        texNote =
+          `<span class="ok">${label}</span> · <code>embedded-kept</code> · mats×${atlas.n}` +
+          (atlas.note ? ` · ${atlas.note}` : '') +
+          `<br/><span class="sub">${packHint}</span>` +
+          `<br/><span class="sub">ref atlas (not applied): <code>${atlas.url || '—'}</code></span>`;
+      } else {
+        texNote =
+          `<span class="ok">${label}</span> · <code>${atlas.mode}</code> · mats×${atlas.n}` +
+          (atlas.note ? ` · ${atlas.note}` : '') +
+          ` · <code>${atlas.url || '—'}</code>` +
+          `<br/><span class="sub">${packHint}</span>`;
+      }
     }
 
     currentRoot = root;
