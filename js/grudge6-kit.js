@@ -270,11 +270,12 @@ export function atlasUrlLegacy(raceId, variant = 'default') {
   return `${CDN}/assets/${a.folder}/textures/${file}`;
 }
 
-export function kitUrl(raceId, source = 'fbx') {
+/** Browser production = GLB. FBX only for convert/author (`source: 'fbx'`). */
+export function kitUrl(raceId, source = 'glb') {
   const a = RACE_ASSETS[raceId];
   if (!a) return null;
-  if (source === 'glb' || source === 'raceGlb') return a.glb;
-  return a.fbx;
+  if (source === 'fbx' || source === 'raceFbx') return a.fbx;
+  return a.glb;
 }
 
 /** Rewrite known-bad legacy paths to canonical race kit or mesh library */
@@ -298,7 +299,8 @@ export function resolveCanonicalAssetUrl(urlOrKey) {
       dark_elf: 'elf',
     };
     const race = map[id];
-    if (race && RACE_ASSETS[race]) return RACE_ASSETS[race].fbx;
+    // Always rewrite legacy stubs to production GLB (not FBX)
+    if (race && RACE_ASSETS[race]) return RACE_ASSETS[race].glb;
   }
   // toon-rts separate equipment → prefer mesh library path (best-effort naming)
   const eq = key.match(
