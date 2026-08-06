@@ -188,26 +188,31 @@ import {
   hideKitWeaponsForLab,
   kindMeta,
 } from './js/grudge6-lab-weapons.js';
+import {
+  packForWeaponSlot,
+  clipUrlsFor,
+  loadBakedClip,
+  rematchClipBones,
+} from './js/grudge6-anim-packs.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
 const LOCAL_SSOT = './api/v1/grudge6-characters.json';
 const CDN = 'https://assets.grudge-studio.com';
 
 /**
- * Race assets for this lab (protect golden path).
- * toonRts = GOLDEN visual pack (default ★)
- * prod = races/*_Characters.glb compare bake (never forceAtlas)
- * metaverse = diagnostic alternate
- * fbx = author only — force CDN atlas
+ * Race assets for this lab.
+ * ONLY visual SSOT = Toon RTS ★ (toonRts). Do not break that path.
+ * Other source buttons still show in UI but viewport mesh = golden Toon RTS
+ * (prod/meta/fbx files were wrong; same pipeline + same mesh as ★).
  */
 const RACE_ASSETS = Object.fromEntries(
   Object.entries(KIT_RACES).map(([id, a]) => [
     id,
     {
       ...a,
-      // GOLDEN play = toonRts; prod button = racesBake compare only
-      prod: a.racesBake || a.glb,
       toonRts: a.toonRts || a.glb,
+      // legacy keys kept for URL panel / docs only
+      prod: a.racesBake || a.glb,
       metaverse: a.metaverse,
       fbx: a.fbx,
       folder: a.folder,
@@ -394,19 +399,29 @@ function discoverBones(root) {
   return { found, total: bones.length };
 }
 
-function resolveModelUrl(race, source) {
+/** GOLDEN mesh URL only — Toon RTS pack (Characters lab ★). */
+function goldenMeshUrl(race) {
   const a = RACE_ASSETS[race.id];
-  // Prefer kit SSOT URLs; catalog models.* only as override
-  if (source === 'toonRts') {
-    return race.models?.toonRts || a?.toonRts || a?.prod;
-  }
-  if (source === 'metaverse') {
-    return race.models?.metaverse || a?.metaverse || a?.toonRts || a?.prod;
-  }
-  // prod toggle = racesBake compare (not play default)
-  if (source === 'prod' && (a?.prod || a?.racesBake)) return a.prod || a.racesBake;
-  if (source === 'fbx' && a?.fbx) return a.fbx;
-  return a?.toonRts || a?.prod || race.models?.toonRts || a?.fbx;
+  return race.models?.toonRts || a?.toonRts || a?.glb || null;
+}
+
+/**
+ * Viewport mesh URL.
+ * toonRts → golden (unchanged).
+ * prod / metaverse / fbx → also golden (same mesh + same render as ★).
+ * Broken alternate bakes are listed in renderUrls only, not loaded for display.
+ */
+function resolveModelUrl(race, source) {
+  return goldenMeshUrl(race);
+}
+
+/** Non-play reference URL for the side panel (does not drive viewport). */
+function referenceSourceUrl(race, source) {
+  const a = RACE_ASSETS[race.id];
+  if (source === 'prod') return a?.prod || a?.racesBake || null;
+  if (source === 'metaverse') return a?.metaverse || race.models?.metaverse || null;
+  if (source === 'fbx') return a?.fbx || null;
+  return goldenMeshUrl(race);
 }
 
 async function loadModel(url) {
@@ -421,10 +436,11 @@ async function loadModel(url) {
 }
 
 /**
- * GOLDEN load path (all GLB sources):
- *   load GLB URL → soft atlas (keep embeds; rebind only stubs) → catalog equip → default loadout → bone SI
- * FBX only: force atlas rebind (author TGA 404 on web).
- * Never forceAtlas on toonRts / prod / metaverse — that scrambled materials.
+ * ONE golden load path (Toon RTS ★) — used for every source button.
+ * Mesh always: asset-packs/toon-rts-characters/…/{race}.glb
+ * Materials: keep embeds (no forceAtlas)
+ * Equip → bone SI → face +Z → Bip001 baked packs if no embedded clips
+ * Never cascade to metaverse/fbx on failure (those were the broken paths).
  */
 async function loadRace(race, source = activeSource) {
   activeRace = race;
@@ -446,42 +462,31 @@ async function loadRace(race, source = activeSource) {
   equip = null;
   clearLabWeapon('all');
 
-  const url = resolveModelUrl(race, source);
-  document.getElementById('hud').textContent = `Loading ${race.name} (${source})…`;
+  const url = resolveModelUrl(race, source); // always golden
+  const refUrl = referenceSourceUrl(race, source);
+  document.getElementById('hud').textContent = `Loading ${race.name}…`;
   document.getElementById('texStatus').innerHTML = '';
 
   try {
-    let root;
-    let animations = [];
-    let texNote = '';
-    let ground;
+    const loaded = await loadModel(url);
+    const root = loaded.scene;
+    const embeddedAnims = loaded.animations || [];
 
-    if (source === 'fbx') {
-      const kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race.id, {
-        source: 'fbx',
-        ground: false,
-        skipDefaultLoadout: true,
-        forceAtlas: true,
-        invertUvV: false,
-      });
-      root = kit.root;
-      animations = kit.animations || [];
-      texNote =
-        `<span class="ok">FBX author path</span> · atlas force-rebind · <code>${kit.materialMode}</code> · <code>${textureUrlForRace(race.id)}</code>` +
-        `<br/><span class="err">Prefer Toon RTS GLB ★</span> — FBX is author-only (broken embed textures on CDN).`;
-    } else {
-      // Same path for toonRts ★ / prod / metaverse — no forceAtlas
-      const loaded = await loadModel(url);
-      root = loaded.scene;
-      animations = loaded.animations || [];
-      const atlas = await applyRaceAtlas(root, race.id, { force: false, source });
-      const label =
-        source === 'toonRts' ? 'Toon RTS ★' : source === 'prod' ? 'Prod races bake' : 'Metaverse';
-      texNote =
-        atlas.mode === 'fail'
-          ? `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`
-          : `<span class="ok">${label}</span> · <code>${atlas.mode}</code> · mats×${atlas.n} · <code>${atlas.url || '—'}</code>`;
-    }
+    // Same atlas path as working Toon RTS ★ (embedded-kept when maps good)
+    const atlas = await applyRaceAtlas(root, race.id, { force: false, source: 'toonRts' });
+    const meshNote =
+      source === 'toonRts'
+        ? `<span class="ok">Toon RTS GLB ★</span>`
+        : `<span class="ok">Toon RTS mesh SSOT</span> · button was <code>${source}</code>`;
+    const texNote =
+      atlas.mode === 'fail'
+        ? `<span class="err">Texture failed</span> · <code>${atlas.url || '—'}</code>`
+        : `${meshNote} · <code>${atlas.mode}</code> · mats×${atlas.n}` +
+          (atlas.note ? ` · ${atlas.note}` : '') +
+          ` · <code>${atlas.url || textureUrlForRace(race.id) || '—'}</code>` +
+          (source !== 'toonRts' && refUrl
+            ? `<br/><span class="sub">Legacy ref (not loaded): <code>${refUrl}</code></span>`
+            : '');
 
     currentRoot = root;
     currentRoot.traverse((n) => {
@@ -494,12 +499,10 @@ async function loadRace(race, source = activeSource) {
 
     document.getElementById('texStatus').innerHTML = texNote;
 
-    ground = applySiFit(currentRoot);
-    // Art-forward +Z faces user (camera on +Z). Math.PI showed the back.
-    currentRoot.rotation.y = 0;
+    const ground = applySiFit(currentRoot);
+    currentRoot.rotation.y = 0; // art-forward +Z toward camera
     const bones = discoverBones(currentRoot);
 
-    // Always re-catalog on this root (kit SSOT EquipmentManager)
     const prefix = RACE_ASSETS[race.id]?.prefix || race.prefix || '';
     equip = new EquipmentManager(prefix);
     equip.catalog(currentRoot);
@@ -509,36 +512,82 @@ async function loadRace(race, source = activeSource) {
     renderEquipUI(summary);
     renderMeshList();
 
-    if (animations?.length) {
-      mixer = new THREE.AnimationMixer(currentRoot);
-      for (const clip of animations) {
-        animActions[clip.name] = mixer.clipAction(clip);
-      }
-      const idle = animations.find((c) => /idle|stand|breath/i.test(c.name)) || animations[0];
-      if (idle) animActions[idle.name].reset().fadeIn(0.2).play();
-      renderClips(Object.keys(animActions), idle?.name);
-    } else {
-      document.getElementById('clips').innerHTML =
-        '<span class="sub">No embedded clips — use Race Scenes / anim packs (Bip001 baked)</span>';
-    }
+    // Clips: embedded first; Toon RTS has none → Bip001 baked packs (CDN)
+    await setupAnimations(currentRoot, embeddedAnims, 'sword');
 
     const slotCount = Object.keys(summary).length;
     const meshCount = equip.allMeshes?.length ?? 0;
     const armorOk = ['body', 'arms', 'legs', 'head'].filter((s) => summary[s]?.length).length;
     document.getElementById('hud').textContent =
-      `${race.name} · ${source} · equip ${meshCount} meshes · ${slotCount} slots · armor ${armorOk}/4 · bones ${bones.total} · h ${Number(ground.height).toFixed(2)} m`;
+      `${race.name} · Toon RTS ★ · equip ${meshCount} · slots ${slotCount} · armor ${armorOk}/4 · bones ${bones.total} · h ${Number(ground.height).toFixed(2)} m`;
     renderUrls(race, url, source, bones);
   } catch (err) {
     document.getElementById('hud').textContent = `Failed: ${err.message}`;
     document.getElementById('texStatus').innerHTML = `<span class="err">${err.message}</span>`;
     console.error('[GRUDGE6_Characters]', source, err);
-    // Fallback toward golden Toon RTS first — never loop into forceAtlas prod
-    if (source === 'prod' || source === 'metaverse') return loadRace(race, 'toonRts');
-    if (source === 'toonRts' && (race.models?.metaverse || RACE_ASSETS[race.id]?.metaverse)) {
-      return loadRace(race, 'metaverse');
-    }
-    if (source !== 'fbx' && RACE_ASSETS[race.id]?.fbx) return loadRace(race, 'fbx');
+    // Do NOT fall back to metaverse / fbx / races bake
   }
+}
+
+/**
+ * Bip001 skeleton clips for Toon RTS (kit GLB has 0 embedded animations).
+ * CDN: assets…/anims/baked/{sword_shield|longbow|magic|…}/*.json
+ */
+async function setupAnimations(root, embeddedAnims, weaponSlot = 'sword') {
+  mixer = new THREE.AnimationMixer(root);
+  animActions = {};
+  let activeName = null;
+
+  if (embeddedAnims?.length) {
+    for (const clip of embeddedAnims) {
+      animActions[clip.name] = mixer.clipAction(clip);
+    }
+    const idle = embeddedAnims.find((c) => /idle|stand|breath/i.test(c.name)) || embeddedAnims[0];
+    if (idle) {
+      animActions[idle.name].reset().fadeIn(0.2).play();
+      activeName = idle.name;
+    }
+    renderClips(Object.keys(animActions), activeName);
+    return;
+  }
+
+  // Baked pack roles for lab clip buttons (Toon kit has 0 embedded clips)
+  const pack = packForWeaponSlot(weaponSlot);
+  const roles = ['idle', 'walk', 'run', 'attack'];
+  for (const role of roles) {
+    const urls = clipUrlsFor(pack, role);
+    let clip = await loadBakedClip(THREE, urls);
+    if (!clip) continue;
+    clip = rematchClipBones(THREE, root, clip) || clip;
+    const name = `${pack}/${role}`;
+    clip.name = name;
+    const action = mixer.clipAction(clip);
+    try {
+      if (role === 'idle' || role === 'walk' || role === 'run') {
+        action.setLoop(THREE.LoopRepeat, Infinity);
+      } else {
+        action.setLoop(THREE.LoopOnce, 1);
+        action.clampWhenFinished = true;
+      }
+    } catch {
+      /* ignore */
+    }
+    animActions[name] = action;
+  }
+
+  const idleKey = Object.keys(animActions).find((k) => k.endsWith('/idle')) || Object.keys(animActions)[0];
+  if (idleKey) {
+    animActions[idleKey].reset().fadeIn(0.15).play();
+    activeName = idleKey;
+    mixer.update(1 / 30);
+  }
+
+  if (!Object.keys(animActions).length) {
+    document.getElementById('clips').innerHTML =
+      '<span class="sub">No Bip001 packs on CDN (assets…/anims/baked/{pack}/*.json)</span>';
+    return;
+  }
+  renderClips(Object.keys(animActions), activeName);
 }
 
 function renderSourceToggle(race) {
@@ -550,7 +599,11 @@ function renderSourceToggle(race) {
     { id: 'fbx', label: 'Race FBX (author)' },
   ];
   el.innerHTML = opts.map((o) =>
-    `<button type="button" class="tool ${activeSource === o.id ? 'on' : ''}" data-src="${o.id}" title="${o.id}">${o.label}</button>`
+    `<button type="button" class="tool ${activeSource === o.id ? 'on' : ''}" data-src="${o.id}" title="${
+      o.id === 'toonRts'
+        ? 'GOLDEN mesh + materials'
+        : 'Viewport uses Toon RTS mesh SSOT (legacy file not loaded)'
+    }">${o.label}</button>`
   ).join('');
   el.querySelectorAll('button').forEach((btn) => {
     btn.onclick = () => loadRace(race, btn.dataset.src);
