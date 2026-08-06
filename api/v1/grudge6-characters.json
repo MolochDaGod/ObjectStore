@@ -1,191 +1,215 @@
 {
-  "version": "1.0.0",
-  "generated": "2026-07-09T22:20:00.000Z",
-  "description": "Working grudge6 hero races — Three.js runtime SSOT (skeleton, sockets, Mixamo aliases, rigid-body practices)",
+  "version": "2.0.0",
+  "generated": "2026-08-06T12:00:00.000Z",
+  "description": "Warlords / grudge6 race heroes — production SSOT only. Modular Toon RTS kits: one GLB per race, equip = child mesh visibility.",
   "canonical": true,
   "pipeline": "grudge6",
+  "era": "warlords",
+  "doc": "https://ui.grudge-studio.com/docs/WARLORDS_CHARACTER_LOAD.md",
   "cdn": {
     "assets": "https://assets.grudge-studio.com",
     "objectStoreApi": "https://objectstore.grudge-studio.com/api/v1",
-    "metaverseBase": "https://assets.grudge-studio.com/models/grudge6/metaverse",
-    "toonRtsBase": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters",
-    "raceFbxBase": "https://assets.grudge-studio.com/models/grudge6/races",
-    "note": "Metaverse GLBs embed a 1x1 stub texture map — rebind race atlas from assets/{folder}/textures/*.webp"
+    "raceKitPattern": "https://assets.grudge-studio.com/models/grudge6/races/{PREFIX}_Characters.glb",
+    "atlasPattern": "https://assets.grudge-studio.com/textures/grudge6/{folder}/{file}.webp",
+    "kitHelper": "https://assets.grudge-studio.com/js/grudge6-kit.js",
+    "gearPresets": "https://assets.grudge-studio.com/api/v1/grudge6-gear-presets.json"
   },
-  "textures": {
-    "human": "https://assets.grudge-studio.com/assets/western-kingdoms/textures/WK_Standard_Units.webp",
-    "barbarian": "https://assets.grudge-studio.com/assets/barbarians/textures/BRB_StandardUnits_texture.webp",
-    "orc": "https://assets.grudge-studio.com/assets/orcs/textures/ORC_StandardUnits.webp",
-    "elf": "https://assets.grudge-studio.com/assets/elves/textures/ELF_HighElves_Texture.webp",
-    "undead": "https://assets.grudge-studio.com/assets/undead/textures/UD_Standard_Units.webp",
-    "dwarf": "https://assets.grudge-studio.com/assets/dwarves/textures/DWF_Standard_Units.webp"
+  "purge": [
+    "models/grudge6/metaverse/* (stub maps)",
+    "models/characters/grudge6/*",
+    "models/grudge6/atlases/* (404)",
+    "assets/{folder}/textures as primary (use textures/grudge6/)",
+    "*_Characters_customizable.FBX in browser runtime",
+    "whole-body GLB swap for armor/weapons"
+  ],
+  "loadContract": {
+    "kit": "GLB monolith models/grudge6/races/{PREFIX}_Characters.glb",
+    "equip": "hide all equippable meshes → show mesh_ids only",
+    "fit": "bone structural AABB → 1.8 m human · feet ground · art-forward +π/2 once",
+    "atlas": "only rebind if embedded maps missing; textures/grudge6/{folder}/*.webp flipY=false",
+    "clone": "SkeletonUtils.clone — never plain scene.clone on SkinnedMesh",
+    "never": [
+      "load .bin alone",
+      "show all Body_A–E at once",
+      "pelvis-as-feet",
+      "Meshy/capsule heroes"
+    ]
   },
   "rig": {
     "primarySkeleton": "Bip001",
-    "rootBoneCandidates": ["Bip001", "Bip001 Pelvis", "mixamorig:Hips", "Hips", "Pelvis", "Root"],
-    "yHip": {
-      "rule": "Root / Hips bone defines world Y. After load, place feet on ground: position.y = -box.min.y (+ optional offset).",
-      "mixamo": "mixamorig:Hips is the animation root; do not parent-offset under a second root without baking.",
-      "bip001": "Bip001 or Bip001 Pelvis is root; containers hang off hand bones, not the mesh."
-    },
-    "mixamoNaming": {
-      "prefix": "mixamorig:",
-      "aliases": {
-        "hips": ["mixamorig:Hips", "Hips", "Pelvis", "Bip001 Pelvis", "Bip001"],
-        "spine": ["mixamorig:Spine", "mixamorig:Spine1", "mixamorig:Spine2", "Bip001 Spine", "Bip001 Spine1", "Bip001 Spine2"],
-        "head": ["mixamorig:Head", "Bip001 Head", "Head"],
-        "rightHand": ["mixamorig:RightHand", "Bip001 R Hand", "R_hand_container", "RightHand"],
-        "leftHand": ["mixamorig:LeftHand", "Bip001 L Hand", "L_hand_container", "LeftHand"],
-        "leftShield": ["L_shield_container", "mixamorig:LeftHand"]
-      },
-      "animationClipNames": "Normalize mixamo.com clip names; match idle/walk/run/attack/hit by substring."
-    },
+    "rootBoneCandidates": ["Bip001", "Bip001 Pelvis", "Pelvis"],
     "attachmentSockets": {
-      "main_hand": { "bone": "R_hand_container", "fallback": "mixamorig:RightHand", "profiles": ["main_hand"] },
-      "two_hand": { "bone": "R_hand_container", "fallback": "mixamorig:RightHand", "profiles": ["two_hand"] },
-      "ranged_2h": { "bone": "L_hand_container", "fallback": "mixamorig:LeftHand", "profiles": ["ranged_2h"] },
-      "off_hand": { "bone": "L_shield_container", "fallback": "mixamorig:LeftHand", "profiles": ["off_hand"] }
-    },
-    "rigidBody": {
-      "practice": "Capsule collider on character root (hips/Y); not per-mesh. Weapons are kinematic attachments unless projectile.",
-      "capsule": {
-        "align": "Y-up",
-        "radiusHint": "0.28–0.35 * model scale",
-        "heightHint": "from foot box.min.y to head approx",
-        "offset": "center at hips, not mesh geometric center"
-      },
-      "equipment": "Child meshes toggle visibility; do not spawn separate rigid bodies for worn armor on grudge6.",
-      "physicsEngine": "Cannon-ES or Rapier — body follows mixer-updated root bone each frame."
+      "main_hand": { "bone": "R_hand_container", "fallback": "Bip001 R Hand" },
+      "off_hand": { "bone": "L_hand_container", "fallback": "Bip001 L Hand" },
+      "shield": { "bone": "L_shield_container", "fallback": "Bip001 L Hand" },
+      "quiver": { "bone": "Quiver_container" },
+      "bag": { "bone": "Bone_bag" },
+      "wood": { "bone": "Bone_wood" }
     },
     "equipmentChildMeshes": {
-      "note": "Toon RTS / customizable FBX uses prefix + slot mesh names; metaverse bake may embed base mesh only.",
-      "prefixes": {
-        "human": "WK_",
-        "barbarian": "BRB_",
-        "elf": "ELF_",
-        "dwarf": "DWF_",
-        "orc": "ORC_",
-        "undead": "UD_"
-      },
-      "slots": ["Body", "Arms", "Legs", "head", "shoulderpads", "sword", "axe", "hammer", "spear", "Bow", "staff", "shield"]
+      "note": "Toon RTS modular kit — parts are sibling meshes in one GLB (see Imgur Toon RTS set sheets).",
+      "exclusiveGroups": {
+        "armor": ["body", "arms", "legs", "head", "shoulders"],
+        "weapon_r": ["sword", "axe", "hammer", "spear", "dagger", "pick", "mace"],
+        "weapon_l": ["bow", "staff"],
+        "shield": ["shield"],
+        "utility": ["bag", "wood", "quiver"]
+      }
     }
+  },
+  "textures": {
+    "human": "https://assets.grudge-studio.com/textures/grudge6/western-kingdoms/WK_Standard_Units.webp",
+    "barbarian": "https://assets.grudge-studio.com/textures/grudge6/barbarians/BRB_StandardUnits_texture.webp",
+    "orc": "https://assets.grudge-studio.com/textures/grudge6/orcs/ORC_StandardUnits.webp",
+    "elf": "https://assets.grudge-studio.com/textures/grudge6/elves/ELF_HighElves_Texture.webp",
+    "undead": "https://assets.grudge-studio.com/textures/grudge6/undead/UD_Standard_Units.webp",
+    "dwarf": "https://assets.grudge-studio.com/textures/grudge6/dwarves/DWF_Standard_Units.webp"
   },
   "races": [
     {
       "id": "human",
       "name": "Human",
       "prefix": "WK_",
+      "folder": "western-kingdoms",
       "faction": "crusade",
       "status": "live",
       "working": true,
       "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/human.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.fbx"
       },
-      "texture": "https://assets.grudge-studio.com/assets/western-kingdoms/textures/WK_Standard_Units.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "🧑"
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/western-kingdoms/WK_Standard_Units.webp",
+      "heightM": 1.83,
+      "classLoadouts": {
+        "warrior": ["WK_Units_head_D", "WK_Units_Body_C", "WK_Units_Arms_B", "WK_Units_Legs_B", "WK_Units_shoulderpads_A", "WK_weapon_sword_B", "WK_Shield_B"],
+        "mage": ["WK_Units_head_A", "WK_Units_Body_A", "WK_Units_Arms_A", "WK_Units_Legs_A", "WK_weapon_staff_C"],
+        "ranger": ["WK_Units_head_C", "WK_Units_Body_B", "WK_Units_Arms_B", "WK_Units_Legs_B", "WK_weapon_Bow", "WK_Xtra_quiver"],
+        "unarmed": ["WK_Units_head_A", "WK_Units_Body_B", "WK_Units_Arms_A", "WK_Units_Legs_A"]
+      }
     },
     {
       "id": "barbarian",
       "name": "Barbarian",
       "prefix": "BRB_",
+      "folder": "barbarians",
       "faction": "crusade",
       "status": "live",
       "working": true,
       "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/barbarian.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.fbx"
       },
-      "texture": "https://assets.grudge-studio.com/assets/barbarians/textures/BRB_StandardUnits_texture.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "🪓"
-    },
-    {
-      "id": "orc",
-      "name": "Orc",
-      "prefix": "ORC_",
-      "faction": "legion",
-      "status": "live",
-      "working": true,
-      "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/orc.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.fbx"
-      },
-      "texture": "https://assets.grudge-studio.com/assets/orcs/textures/ORC_StandardUnits.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "👹"
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/barbarians/BRB_StandardUnits_texture.webp",
+      "heightM": 1.9,
+      "classLoadouts": {
+        "warrior": ["BRB_head_B", "BRB_body_C", "BRB_arms_B", "BRB_legs_B", "BRB_shoulderpads_B", "BRB_weapon_sword_B", "BRB_Shield_B"],
+        "mage": ["BRB_head_A", "BRB_body_A", "BRB_arms_A", "BRB_legs_A", "BRB_weapon_staff_C"],
+        "ranger": ["BRB_head_C", "BRB_body_B", "BRB_arms_B", "BRB_legs_B", "BRB_shoulderpads_A", "BRB_weapon_Bow", "BRB_Xtra_quiver"],
+        "unarmed": ["BRB_head_A", "BRB_body_B", "BRB_arms_A", "BRB_legs_A"]
+      }
     },
     {
       "id": "elf",
       "name": "Elf",
       "prefix": "ELF_",
+      "folder": "elves",
       "faction": "fabled",
       "status": "live",
       "working": true,
       "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/elf.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.fbx"
       },
-      "texture": "https://assets.grudge-studio.com/assets/elves/textures/ELF_HighElves_Texture.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "🧝"
-    },
-    {
-      "id": "undead",
-      "name": "Undead",
-      "prefix": "UD_",
-      "faction": "legion",
-      "status": "live",
-      "working": true,
-      "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/undead.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.fbx"
-      },
-      "texture": "https://assets.grudge-studio.com/assets/undead/textures/UD_Standard_Units.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "💀"
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/elves/ELF_HighElves_Texture.webp",
+      "heightM": 1.85,
+      "classLoadouts": {
+        "warrior": ["ELF_Units_Head_D", "ELF_Units_Body_C", "ELF_Units_Arms_B", "ELF_Units_Legs_B", "ELF_Units_Shoulderpads_B", "ELF_weapon_sword_B", "ELF_shield_B"],
+        "mage": ["ELF_Units_Head_B", "ELF_Units_Body_A", "ELF_Units_Arms_A", "ELF_Units_Legs_A", "ELF_weapon_staff_C"],
+        "ranger": ["ELF_Units_Head_C", "ELF_Units_Body_B", "ELF_Units_Arms_B", "ELF_Units_Legs_B", "ELF_Units_Shoulderpads_A", "ELF_weapon_bow", "ELF_Xtra_quiver"],
+        "unarmed": ["ELF_Units_Head_A", "ELF_Units_Body_B", "ELF_Units_Arms_A", "ELF_Units_Legs_A"]
+      }
     },
     {
       "id": "dwarf",
       "name": "Dwarf",
       "prefix": "DWF_",
+      "folder": "dwarves",
       "faction": "fabled",
       "status": "live",
       "working": true,
       "models": {
-        "metaverse": "https://assets.grudge-studio.com/models/grudge6/metaverse/dwarf.glb",
-        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
-        "raceFbx": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.fbx"
       },
-      "texture": "https://assets.grudge-studio.com/assets/dwarves/textures/DWF_Standard_Units.webp",
-      "clips": ["idle", "walk", "run", "hit", "attack"],
-      "emoji": "⛏️"
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/dwarves/DWF_Standard_Units.webp",
+      "heightM": 1.55,
+      "classLoadouts": {
+        "warrior": ["DWF_Units_Head_G", "DWF_Units_Body_C", "DWF_Units_Arms_B", "DWF_Units_Legs_B", "DWF_Units_Shoulderpads_B", "DWF_Weapon_sword_B", "DWF_Shield_B"],
+        "mage": ["DWF_Units_Head_A", "DWF_Units_Body_A", "DWF_Units_Arms_A", "DWF_Units_Legs_A", "DWF_Weapon_staff_B"],
+        "ranger": ["DWF_Units_Head_C", "DWF_Units_Body_B", "DWF_Units_Arms_B", "DWF_Units_Legs_B", "DWF_Units_Shoulderpads_A", "DWF_Weapon_bow", "DWF_Xtra_quiver"],
+        "unarmed": ["DWF_Units_Head_A", "DWF_Units_Body_B", "DWF_Units_Arms_A", "DWF_Units_Legs_A"]
+      }
+    },
+    {
+      "id": "orc",
+      "name": "Orc",
+      "prefix": "ORC_",
+      "folder": "orcs",
+      "faction": "legion",
+      "status": "live",
+      "working": true,
+      "models": {
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.fbx"
+      },
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/orcs/ORC_StandardUnits.webp",
+      "heightM": 2.0,
+      "classLoadouts": {
+        "warrior": ["ORC_Units_Head_E", "ORC_Units_Body_C", "ORC_Units_Arms_B", "ORC_Units_Legs_B", "ORC_Units_Shoulderpads_C", "ORC_weapon_Axe_B", "ORC_Shield_C"],
+        "mage": ["ORC_Units_Head_A", "ORC_Units_Body_A", "ORC_Units_Arms_A", "ORC_Units_Legs_A", "ORC_weapon_staff_C"],
+        "ranger": ["ORC_Units_Head_B", "ORC_Units_Body_B", "ORC_Units_Arms_B", "ORC_Units_Legs_B", "ORC_Units_Shoulderpads_A", "ORC_weapon_Bow", "ORC_Xtra_quiver"],
+        "unarmed": ["ORC_Units_Head_A", "ORC_Units_Body_A", "ORC_Units_Arms_A", "ORC_Units_Legs_A"]
+      }
+    },
+    {
+      "id": "undead",
+      "name": "Undead",
+      "prefix": "UD_",
+      "folder": "undead",
+      "faction": "legion",
+      "status": "live",
+      "working": true,
+      "models": {
+        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.fbx"
+      },
+      "texture": "https://assets.grudge-studio.com/textures/grudge6/undead/UD_Standard_Units.webp",
+      "heightM": 1.8,
+      "classLoadouts": {
+        "warrior": ["UD_Units_head_G", "UD_Units_body_D", "UD_Units_arms_C", "UD_Units_legs_C", "UD_Units_shoulderpads_B", "UD_weapon_Sword_B", "UD_Shield_C"],
+        "mage": ["UD_Units_head_A", "UD_Units_body_G", "UD_Units_arms_B", "UD_Units_legs_B", "UD_weapon_staff_D"],
+        "ranger": ["UD_Units_head_C", "UD_Units_body_B", "UD_Units_arms_B", "UD_Units_legs_B", "UD_Units_shoulderpads_A", "UD_weapon_Bow", "UD_Xtra_Quiver"],
+        "unarmed": ["UD_Units_head_A", "UD_Units_body_B", "UD_Units_arms_A", "UD_Units_legs_A"]
+      }
     }
   ],
-  "weaponPrefabs": {
-    "authority": "master-weapon-prefabs.json",
-    "modelMap": "weapon-model-game-urls.json",
-    "rule": "Only equip items with attachmentProfile + gameReadyPath/modelUrl on grudge6 sockets",
-    "cdnRewrite": {
-      "from": "https://molochdagod.github.io/ObjectStore/",
-      "toAssets": "https://assets.grudge-studio.com/",
-      "note": "Prefer assets CDN; fall back to GitHub Pages until R2 mirror complete"
-    },
-    "profiles": ["main_hand", "two_hand", "ranged_2h", "off_hand"]
+  "ummorpgPaperdoll": {
+    "note": "uMMORPG equip slots map to modular mesh groups inside the race kit — not separate armor GLBs.",
+    "slots": {
+      "Head": "head",
+      "Chest": "body",
+      "Hands": "arms",
+      "Legs": "legs",
+      "Feet": "legs",
+      "Shoulders": "shoulders",
+      "MainHand": "weapon_r",
+      "OffHand": "shield | weapon_l",
+      "Back": "utility bag/quiver"
+    }
   },
-  "threejsLoadOrder": [
-    "GLTFLoader load metaverse GLB",
-    "find skeleton root (Bip001 / mixamorig:Hips)",
-    "ground feet: position.y = -bbox.min.y",
-    "discover sockets R_hand_container / L_hand_container / L_shield_container (or Mixamo hand bones)",
-    "attach weapon GLB to socket with attachmentProfile",
-    "AnimationMixer — idle/walk/run/hit/attack",
-    "Capsule rigid body on hips Y, sync each frame from root bone"
-  ]
+  "toonRtsSets": {
+    "reference": "Imgur modular kit sheets (6 races) — body variants, heads, weapons, shields, mounts",
+    "gallery": "https://imgur.com/gallery/sets-sFHXx2X",
+    "editableTree": "Asset-Rig-Editor character-customizer public/assets + api/v1/grudge6-toon-rts-ssot.json"
+  }
 }
