@@ -43,7 +43,34 @@ export const LAB_WEAPON_KIND = {
   // ranged / magic
   crossbow: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.95, animPack: 'longbow' },
   staff: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
-  wand: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
+  wand: { defaultSlot: 'staff', canOffhand: false, targetLenM: 0.55, animPack: 'magic' },
+  /** Off-hand grimoire/tome — L_hand_container; cast anim magic + events channel */
+  tome: {
+    defaultSlot: 'off_hand',
+    canOffhand: true,
+    targetLenM: 0.28,
+    animPack: 'magic',
+    meshCdn: [
+      'https://assets.grudge-studio.com/models/weapons/tome.glb',
+      'https://assets.grudge-studio.com/models/weapons/grimoire.glb',
+      'https://assets.grudge-studio.com/models/props/grimoire.glb',
+    ],
+    gripOffset: { x: 0.04, y: 0.02, z: 0.06 },
+    gripEuler: { x: -0.35, y: 0.15, z: 0.4 },
+  },
+  grimoire: {
+    defaultSlot: 'off_hand',
+    canOffhand: true,
+    targetLenM: 0.28,
+    animPack: 'magic',
+    meshCdn: [
+      'https://assets.grudge-studio.com/models/weapons/grimoire.glb',
+      'https://assets.grudge-studio.com/models/weapons/tome.glb',
+      'https://assets.grudge-studio.com/models/props/grimoire.glb',
+    ],
+    gripOffset: { x: 0.04, y: 0.02, z: 0.06 },
+    gripEuler: { x: -0.35, y: 0.15, z: 0.4 },
+  },
   bow: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.0, animPack: 'longbow' },
 };
 
@@ -136,25 +163,34 @@ export function applyLabWeaponToonMaterials(THREE, root) {
       }
       const map = mat.map || null;
       if (map) {
-        map.colorSpace = THREE.SRGBColorSpace;
+        // sRGB base color; flipY false matches glTF-embedded maps
+        if ('colorSpace' in map) map.colorSpace = THREE.SRGBColorSpace;
+        else if ('encoding' in map) map.encoding = THREE.sRGBEncoding;
         map.flipY = false;
         map.needsUpdate = true;
       }
       n++;
+      // Prefer texture-driven color (0xffffff) so cover/page art is not crushed
+      const baseColor = map ? 0xffffff : mat.color?.getHex?.() ?? 0xc4a574;
       if (Toon) {
         const t = new Toon({
           map,
-          color: map ? 0xffffff : mat.color?.getHex?.() ?? 0xcccccc,
+          color: baseColor,
           side: THREE.FrontSide,
         });
         if (mat.normalMap) t.normalMap = mat.normalMap;
+        if (mat.emissiveMap) {
+          t.emissiveMap = mat.emissiveMap;
+          t.emissive = new THREE.Color(0x222222);
+        }
         return t;
       }
-      const m = mat.clone?.() || mat;
-      if (m.color?.setHex) m.color.setHex(map ? 0xffffff : m.color.getHex?.() ?? 0xcccccc);
-      if ('metalness' in m) m.metalness = Math.min(m.metalness ?? 0.15, 0.2);
-      if ('roughness' in m) m.roughness = Math.max(m.roughness ?? 0.7, 0.55);
+      const m = mat.clone?.() || new THREE.MeshStandardMaterial();
+      if (m.color?.setHex) m.color.setHex(baseColor);
+      if ('metalness' in m) m.metalness = Math.min(Number(m.metalness) || 0.12, 0.18);
+      if ('roughness' in m) m.roughness = Math.max(Number(m.roughness) || 0.72, 0.6);
       m.map = map;
+      m.side = THREE.FrontSide;
       m.needsUpdate = true;
       return m;
     });
@@ -219,7 +255,20 @@ export function prepareLabWeaponRoot(THREE, root, entry) {
  * Attach prepared weapon under kit socket. Manages exclusive lab slots.
  * @param {{ main?: THREE.Object3D|null, off?: THREE.Object3D|null }} held
  */
-export function attachToSocket(kitRoot, weaponRoot, slot, held) {
+/**
+ * Apply grip offset so held props (esp. tome/grimoire) sit outside the palm
+ * and do not pierce the forearm/body mesh.
+ */
+export function applyGripTransform(weaponRoot, entry) {
+  if (!weaponRoot) return;
+  const meta = kindMeta(entry?.kind);
+  const off = entry?.gripOffset || meta.gripOffset || { x: 0, y: 0, z: 0 };
+  const eu = entry?.gripEuler || meta.gripEuler || { x: 0, y: 0, z: 0 };
+  weaponRoot.position.set(off.x || 0, off.y || 0, off.z || 0);
+  weaponRoot.rotation.set(eu.x || 0, eu.y || 0, eu.z || 0);
+}
+
+export function attachToSocket(kitRoot, weaponRoot, slot, held, entry) {
   const socket = findSocket(kitRoot, slot);
   if (!socket) return { ok: false, error: `no socket for ${slot}` };
   // Clear previous for this logical slot
@@ -233,8 +282,9 @@ export function attachToSocket(kitRoot, weaponRoot, slot, held) {
     held.main = weaponRoot;
   }
   socket.add(weaponRoot);
-  weaponRoot.position.set(0, 0, 0);
-  weaponRoot.rotation.set(0, 0, 0);
+  applyGripTransform(weaponRoot, entry);
+  weaponRoot.userData.labAttachSlot = slot;
+  weaponRoot.userData.projectileOrigin = true; // cast bolt/heal/aura from this mesh
   return { ok: true, socket: socket.name, slot };
 }
 

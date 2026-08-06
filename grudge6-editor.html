@@ -70,6 +70,11 @@
       display: flex; gap: 8px; align-items: center; text-align: left; width: 100%;
       padding: 5px 6px;
     }
+    .inv-item.on { border-color: var(--gold); background: rgba(212,168,75,.08); }
+    .loadout-row {
+      display: flex; gap: 6px; align-items: baseline; margin-bottom: 3px;
+      font-size: .65rem; font-family: ui-monospace, monospace;
+    }
     .inv-item img, .ico-ph {
       width: 28px; height: 28px; border-radius: 4px; background: #06080c;
       border: 1px solid var(--border); object-fit: cover; flex-shrink: 0;
@@ -137,12 +142,17 @@
       <div class="dim" id="selectedName">—</div>
       <div class="row">
         <button type="button" id="btnImport">Import GLB</button>
-        <button type="button" id="btnExport">Export GLB</button>
+        <button type="button" id="btnExport">Export selected</button>
+        <button type="button" id="btnExportSlot">Export slot mesh</button>
+        <button type="button" id="btnExportLoadout">Export loadout JSON</button>
       </div>
       <input type="file" id="fileInput" accept=".glb,.gltf,.fbx" hidden />
       <p class="dim" style="margin-top:6px;line-height:1.35">
-        Import attaches to main hand for mesh test. Export downloads selected node / lab weapon locally.
+        Import → main hand mesh test. Export .glb for gizmo-edited weapons / armour / off-hand.
+        Loadout JSON = UUID bind for deploy practice (no CDN write).
       </p>
+      <h2>Bound loadout</h2>
+      <div id="loadout" class="dim">empty</div>
     </aside>
 
     <main id="viewport">
@@ -198,9 +208,12 @@
       gizmoMode: document.getElementById('gizmoMode'),
       selectedName: document.getElementById('selectedName'),
       btnExport: document.getElementById('btnExport'),
+      btnExportSlot: document.getElementById('btnExportSlot'),
+      btnExportLoadout: document.getElementById('btnExportLoadout'),
       btnImport: document.getElementById('btnImport'),
       btnDefault: document.getElementById('btnDefault'),
       fileInput: document.getElementById('fileInput'),
+      loadout: document.getElementById('loadout'),
     });
     editor.init().catch((e) => {
       document.getElementById('status').textContent = `Init failed: ${e.message}`;

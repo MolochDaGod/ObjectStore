@@ -2,10 +2,13 @@
  * grudge6 anim packs — weapon → pack → baked Bip001 clips.
  *
  * Pack ids (combat-runtime SSOT):
- *   sword_shield | longbow | magic | 2h_melee | rifle | unarmed | locomotion | locomotion_8way
+ *   WEAPON: sword_shield | 2h_melee | polearm | longbow | pistol | rifle | magic | dagger
+ *   LOCO/EVENTS: locomotion_8way | traversal | unarmed | harvest | building
+ *                | gestures | emotes | events | block | reactions | extra
  *
- * 2h_melee = greatsword + samurai set (primary), also axe/hammer/spear when 2H.
- * Aliases: twohand, greatsword → 2h_melee
+ * Bake: scripts/bake-all-weapon-anim-packs.mjs (Mixamo→Bip001 → prod/anims/<pack>)
+ * Events = non-combat (channel, teleport, emote, tool, farm, build).
+ * Weapon skills = attack/heavy/skill1–4 + MM lunge + block/parry overlays.
  *
  * Locomotion (Warlords):
  *   Author: D:\Games\Models\_anim_packs\grudge6_incoming_2026-08-01\grudge-8-Way-Locomotion-Pack
@@ -45,9 +48,11 @@ export function bakedUrls(relNoJson) {
 export const WEAPON_TO_PACK = {
   // 1H + shield
   sword: 'sword_shield',
-  dagger: 'sword_shield',
   shield: 'sword_shield',
-  // 2H melee (greatsword = canonical 2h_melee + samurai)
+  // dagger dual / dual wield
+  dagger: 'dagger',
+  dual_dagger: 'dagger',
+  // 2H melee
   greatsword: '2h_melee',
   greataxe: '2h_melee',
   great_axe: '2h_melee',
@@ -57,18 +62,35 @@ export const WEAPON_TO_PACK = {
   axe: '2h_melee',
   hammer: '2h_melee',
   mace: '2h_melee',
-  spear: '2h_melee',
   pick: '2h_melee',
-  // ranged / magic
+  // spear / polearm
+  spear: 'polearm',
+  polearm: 'polearm',
+  lance: 'polearm',
+  // ranged
   bow: 'longbow',
-  crossbow: 'longbow',
-  staff: 'magic',
+  longbow: 'longbow',
+  // 1H sidearm family (pistol loco + fire overlays; also 1H xbow / tome)
+  crossbow: 'pistol',
+  hand_crossbow: 'pistol',
+  pistol: 'pistol',
+  handgun: 'pistol',
+  /** Tome/grimoire cast uses magic pack; loco can still fall back to 1H sidearm if needed */
+  tome: 'magic',
+  grimoire: 'magic',
+  book: 'magic',
   wand: 'magic',
+  // 2H gun
   rifle: 'rifle',
+  shotgun: 'rifle',
+  // casting 2H staff
+  staff: 'magic',
+  magic: 'magic',
   unarmed: 'unarmed',
-  // utility / unarmed gap-fill
   kick: 'unarmed',
   stomp: 'unarmed',
+  harvest: 'harvest',
+  hoe: 'harvest',
 };
 
 /** Pack aliases → canonical pack id */
@@ -79,7 +101,12 @@ export const PACK_ALIASES = {
   greataxe: '2h_melee',
   greatsword_samurai: '2h_melee',
   samurai: '2h_melee',
-  // extra stays pack id "extra" (mobility overlays) — do not alias to locomotion
+  spear: 'polearm',
+  crossbow: 'pistol',
+  tome: 'magic',
+  grimoire: 'magic',
+  book: 'magic',
+  shotgun: 'rifle',
 };
 
 /**
@@ -89,24 +116,41 @@ export const PACK_ALIASES = {
 export const PACK_CLIPS = {
   sword_shield: {
     idle: [
+      'prod:sword_shield/sword-and-shield-idle.json',
       'sword_shield/sword-and-shield-idle',
       'sword_shield/sword and shield idle',
       'locomotion/idle',
     ],
-    walk: ['locomotion/run_forward', 'magic/Standing Walk Forward'],
-    run: ['locomotion/run_forward'],
+    walk: [
+      'prod:sword_shield/sword-and-shield-run.json',
+      'locomotion/run_forward',
+      'magic/Standing Walk Forward',
+    ],
+    run: ['prod:sword_shield/sword-and-shield-run.json', 'locomotion/run_forward'],
     attack: [
-      // incoming animator-dist (after bake → prod/anims/sword_shield/)
+      'prod:sword_shield/sword-and-shield-attack.json',
+      'prod:sword_shield/sword-and-shield-attack-2.json',
       'prod:sword_shield/one-hand-sword-combo.glb',
       'prod:sword_shield/slash-advance.glb',
-      'prod:sword_shield/inward-slash.glb',
-      'prod:sword_shield/outward-slash.glb',
-      'prod:sword_shield/melee-downward.glb',
-      'prod:sword_shield/melee-horizontal.glb',
       'sword_shield/sword-and-shield-attack',
       'sword_shield/sword and shield attack',
     ],
-    draw: ['prod:sword_shield/draw-sword-1.glb'],
+    attack2: ['prod:sword_shield/sword-and-shield-attack-2.json'],
+    attack3: ['prod:sword_shield/sword-and-shield-attack-3.json'],
+    heavy: ['prod:sword_shield/sword-and-shield-attack-4.json'],
+    block: [
+      'prod:sword_shield/sword-and-shield-block.json',
+      'prod:sword_shield/sword-and-shield-block-idle.json',
+    ],
+    jumpAttack: [
+      'prod:sword_shield/jump-attack.json',
+      'prod:sword_shield/standing-melee-run-jump-attack.json',
+    ],
+    skill1: ['prod:sword_shield/gap-close-step.json'],
+    skill2: ['prod:sword_shield/jump-attack.json'],
+    skill3: ['prod:sword_shield/shield-throw.json'],
+    strafe: ['prod:sword_shield/sword-and-shield-strafe.json'],
+    draw: ['prod:sword_shield/draw-sword-1.json', 'prod:sword_shield/draw-sword-1.glb'],
     sheath: ['prod:sword_shield/sheath-sword-1.glb'],
   },
   /**
@@ -166,42 +210,240 @@ export const PACK_CLIPS = {
   },
   longbow: {
     idle: [
+      'prod:longbow/standing-idle-01.json',
       'prod:extra/aim-idle.glb',
       'longbow/idle',
       'longbow/standing idle 01',
       'locomotion/idle',
     ],
-    walk: ['longbow/standing walk forward', 'magic/Standing Walk Forward'],
-    run: ['longbow/standing run forward', 'locomotion/run_forward'],
+    walk: [
+      'prod:longbow/standing-walk-forward.json',
+      'longbow/standing walk forward',
+      'magic/Standing Walk Forward',
+    ],
+    run: [
+      'prod:longbow/standing-run-forward.json',
+      'longbow/standing run forward',
+      'locomotion/run_forward',
+    ],
     attack: [
+      'prod:longbow/standing-draw-arrow.json',
+      'prod:longbow/standing-aim-recoil.json',
       'longbow/standing-draw-arrow',
-      'longbow/standing aim recoil',
       'longbow/draw',
     ],
-    aim: ['prod:extra/aim-idle.glb'],
+    heavy: ['prod:longbow/standing-aim-overdraw.json'],
+    dodgeFwd: ['prod:longbow/standing-dodge-forward.json'],
+    dodgeBack: ['prod:longbow/standing-dodge-backward.json'],
+    dodgeL: ['prod:longbow/standing-dodge-left.json'],
+    dodgeR: ['prod:longbow/standing-dodge-right.json'],
+    aim: ['prod:longbow/standing-idle-01.json', 'prod:extra/aim-idle.glb'],
   },
   magic: {
-    idle: ['magic/standing idle', 'magic/idle', 'locomotion/idle'],
-    walk: ['magic/Standing Walk Forward'],
-    run: ['magic/Standing Run Forward', 'locomotion/run_forward'],
-    attack: ['magic/standing 1h cast spell 01', 'locomotion/idle'],
+    idle: [
+      'prod:magic/standing-idle.json',
+      'magic/standing idle',
+      'magic/idle',
+      'locomotion/idle',
+    ],
+    walk: ['prod:magic/standing-walk-forward.json', 'magic/Standing Walk Forward'],
+    run: [
+      'prod:magic/standing-run-forward.json',
+      'prod:magic/standing-sprint-forward.json',
+      'magic/Standing Run Forward',
+      'locomotion/run_forward',
+    ],
+    attack: [
+      'prod:magic/standing-1h-cast-spell-01.json',
+      'prod:magic/standing-1h-magic-attack-01.json',
+      'magic/standing 1h cast spell 01',
+    ],
+    cast: ['prod:magic/standing-1h-cast-spell-01.json', 'prod:magic/standing-2h-cast-spell-01.json'],
+    cast2h: ['prod:magic/standing-2h-cast-spell-01.json'],
+    heavy: [
+      'prod:magic/standing-2h-magic-attack-01.json',
+      'prod:magic/standing-2h-magic-area-attack-01.json',
+    ],
+    skill1: ['prod:magic/standing-1h-magic-attack-02.json'],
+    skill2: ['prod:magic/standing-2h-magic-attack-02.json'],
+    skill3: ['prod:magic/standing-2h-magic-area-attack-01.json'],
+    skill4: ['prod:magic/standing-2h-magic-area-attack-02.json'],
+  },
+  pistol: {
+    idle: ['prod:pistol/pistol-idle.json', 'prod:pistol/idle.json', 'locomotion/idle'],
+    walk: ['prod:pistol/pistol-walk.json', 'prod:pistol/walk-forward.json'],
+    run: ['prod:pistol/pistol-run.json', 'prod:pistol/run-forward.json'],
+    attack: [
+      'prod:pistol/gunplay.json',
+      'prod:pistol/bigpistol-gunplay.json',
+      'prod:pistol/shotgun-gunplay.json',
+    ],
+    heavy: ['prod:pistol/charged-pistol.json', 'prod:pistol/crouch-rapid-fire.json'],
+    skill1: ['prod:pistol/pistol-whip.json'],
+    whip: ['prod:pistol/pistol-whip.json'],
+    jump: ['prod:pistol/pistol-jump.json'],
+    block: ['prod:rifle/block.json'],
   },
   rifle: {
-    idle: ['prod:extra/aim-idle.glb', 'locomotion/idle'],
-    attack: [],
-    aim: ['prod:extra/aim-idle.glb'],
+    idle: [
+      'prod:rifle/idle.json',
+      'prod:rifle/idle-aiming.json',
+      'prod:extra/aim-idle.glb',
+      'locomotion/idle',
+    ],
+    walk: ['prod:rifle/run-forward.json', 'locomotion/run_forward'],
+    run: ['prod:rifle/run-forward.json'],
+    attack: [
+      'prod:rifle/shotgun-gunplay.json',
+      'prod:rifle/crouch-rapid-fire.json',
+      'prod:pistol/gunplay.json',
+    ],
+    block: ['prod:rifle/block.json', 'prod:rifle/block-with-rifle.json'],
+    sheath: ['prod:rifle/sheath.json', 'prod:rifle/put-back-rifle-behind-shoulder.json'],
+    aim: ['prod:rifle/idle-aiming.json', 'prod:extra/aim-idle.glb'],
+  },
+  polearm: {
+    idle: ['prod:locomotion_8way/idle.json', 'locomotion/idle'],
+    walk: ['prod:locomotion_8way/walk-forward.json'],
+    run: ['prod:locomotion_8way/run-forward.json'],
+    attack: ['prod:polearm/stab-spear.json', 'prod:polearm/stabspear.json'],
+    heavy: ['prod:polearm/spear-thrust-slash.json'],
+    skill1: ['prod:polearm/spear-thrust-slash.json'],
+    skill2: ['prod:polearm/upward-thrust.json'],
+    skill3: ['prod:polearm/gap-close-step.json'],
+    jumpAttack: ['prod:2h_melee/jump-attack.json'],
+  },
+  dagger: {
+    idle: ['prod:locomotion_8way/idle.json', 'locomotion/idle'],
+    walk: ['prod:locomotion_8way/walk-forward.json'],
+    run: ['prod:locomotion_8way/run-forward.json'],
+    attack: [
+      'prod:dagger/double-dagger-stab.json',
+      'prod:dagger/1-double-dagger-stab.json',
+    ],
+    attack2: ['prod:dagger/double-dagger-stab-2.json'],
+    heavy: ['prod:dagger/upward-thrust.json'],
+    skill1: ['prod:dagger/upward-thrust.json'],
+    skill2: ['prod:dagger/upward-thrust-2.json'],
+    skill3: ['prod:dagger/knee-punch-combo.json'],
   },
   unarmed: {
     idle: ['unarmed/fight_idle', 'locomotion/idle'],
     attack: [
+      'prod:unarmed/knee-punch-combo.json',
       'prod:extra/utility-kick.glb',
       'prod:extra/stomp.glb',
       'prod:extra/hurricane-kick.glb',
       'unarmed/punching',
     ],
-    skill1: ['prod:extra/stomp.glb'],
-    skill2: ['prod:extra/utility-kick.glb'],
-    skill3: ['prod:extra/hurricane-kick.glb'],
+    skill1: ['prod:unarmed/push.json', 'prod:extra/stomp.glb'],
+    skill2: ['prod:unarmed/grab-slam.json', 'prod:extra/utility-kick.glb'],
+    skill3: ['prod:unarmed/throw.json', 'prod:extra/hurricane-kick.glb'],
+  },
+  harvest: {
+    idle: ['prod:harvest/holding-idle.json', 'prod:harvest/kneeling-idle.json', 'locomotion/idle'],
+    walk: ['prod:harvest/holding-walk.json'],
+    attack: [
+      'prod:2h_melee/great-sword-slash.json',
+      'prod:2h_melee/great-sword-impact.json',
+    ],
+    harvest: ['prod:harvest/dig-and-plant-seeds.json'],
+    plant: ['prod:harvest/plant-tree.json', 'prod:harvest/plant-a-plant.json'],
+    water: ['prod:harvest/watering.json'],
+    gather: ['prod:harvest/pick-fruit.json'],
+    carryIdle: ['prod:harvest/holding-idle.json', 'prod:harvest/box-idle.json'],
+    carryWalk: ['prod:harvest/holding-walk.json', 'prod:harvest/box-walk-arc.json'],
+    mine: ['prod:2h_melee/great-sword-slash.json', 'prod:2h_melee/great-sword-impact.json'],
+    tool: ['prod:harvest/dig-and-plant-seeds.json', 'prod:harvest/watering.json'],
+  },
+  building: {
+    idle: ['prod:building/kneeling-idle.json', 'prod:harvest/kneeling-idle.json', 'locomotion/idle'],
+    build: [
+      'prod:building/dig-and-plant-seeds.json',
+      'prod:harvest/dig-and-plant-seeds.json',
+    ],
+    place: ['prod:building/plant-a-plant.json', 'prod:harvest/plant-a-plant.json'],
+    push: ['prod:building/push.json', 'prod:building/pushing.json', 'prod:extra/pushing.json'],
+    pull: ['prod:building/pull-heavy.json', 'prod:harvest/pull-heavy.json'],
+    hammer: ['prod:2h_melee/great-sword-impact.json'],
+  },
+  gestures: {
+    idle: ['prod:locomotion_8way/idle.json'],
+    gesture: ['prod:gestures/acknowledging.json', 'prod:gestures/happy-hand-gesture.json'],
+    acknowledge: ['prod:gestures/acknowledging.json'],
+    dismiss: ['prod:gestures/dismissing-gesture.json'],
+    wave: ['prod:gestures/happy-hand-gesture.json'],
+    think: ['prod:gestures/thoughtful-head-shake.json'],
+    sigh: ['prod:gestures/relieved-sigh.json'],
+    cocky: ['prod:gestures/being-cocky.json'],
+  },
+  emotes: {
+    idle: ['prod:locomotion_8way/idle.json'],
+    emote: [
+      'prod:emotes/hip-hop-dancing.json',
+      'prod:extra/hip-hop-dancing.json',
+      'prod:emotes/intoout.json',
+    ],
+    dance: ['prod:emotes/hip-hop-dancing.json', 'prod:extra/hip-hop-dancing.json'],
+    celebrate: ['prod:emotes/spinning.json', 'prod:emotes/butterfly-twirl.json'],
+  },
+  events: {
+    idle: ['prod:events/sitting-idle.json', 'prod:locomotion_8way/idle.json'],
+    /** Looping channel cast — overlay while mana ticks */
+    channel: [
+      'prod:events/casting-spell.json',
+      'prod:events/standing-2h-cast-spell-01.json',
+      'prod:magic/standing-2h-cast-spell-01.json',
+      'prod:magic/standing-1h-cast-spell-01.json',
+    ],
+    channelLoop: [
+      'prod:events/casting-spell.json',
+      'prod:magic/standing-2h-cast-spell-01.json',
+    ],
+    teleport: ['prod:events/intoout.json', 'prod:extra/intoout.json'],
+    teleportIn: ['prod:events/intoout.json', 'prod:extra/intoout.json'],
+    teleportOut: ['prod:events/jump-away.json', 'prod:extra/jump-away.json'],
+    sit: ['prod:events/sitting-idle.json', 'prod:events/sitting-pose.json'],
+    look: ['prod:events/look-around.json', 'prod:events/look-over-shoulder.json'],
+    torchIdle: ['prod:events/standing-torch-idle.json'],
+  },
+  block: {
+    idle: ['prod:block/standing-block-idle.json'],
+    block: [
+      'prod:block/standing-block-idle.json',
+      'prod:block/left-block.json',
+      'prod:sword_shield/sword-and-shield-block.json',
+    ],
+    blockL: ['prod:block/left-block.json'],
+    blockR: ['prod:block/right-block.json'],
+    blockHit: [
+      'prod:block/block-react-large.json',
+      'prod:block/standing-block-react-large.json',
+    ],
+    parry: ['prod:block/parry.json', 'prod:reactions/parry.json'],
+  },
+  traversal: {
+    idle: ['prod:locomotion_8way/idle.json'],
+    climb: [
+      'prod:traversal/tree-climbing.json',
+      'prod:traversal/climbing.json',
+      'prod:traversal/climbing-1.json',
+      'prod:traversal/freehang-climb.json',
+    ],
+    climbLadder: ['prod:traversal/climbing-ladder.json'],
+    mantle: ['prod:traversal/climbing-to-top.json'],
+    hang: ['prod:traversal/hanging-idle.json'],
+    wallRun: ['prod:traversal/wall-run.json'],
+    swim: ['prod:traversal/swimming.json', 'prod:traversal/swimming-1.json'],
+    swimFast: ['prod:traversal/swimming-2.json'],
+    treadWater: ['prod:traversal/treading-water.json', 'prod:traversal/treading-water-1.json'],
+    swimToEdge: ['prod:traversal/swimming-to-edge.json', 'prod:traversal/swimming-to-edge-1.json'],
+    jump: ['prod:traversal/running-jump.json', 'prod:locomotion_8way/jump-up.json'],
+    flip: ['prod:traversal/cross-jumps-rotation.json', 'prod:extra/front-flip.json'],
+    getUp: ['prod:traversal/get-up.json', 'prod:reactions/get-up.json'],
+    trip: ['prod:traversal/trip.json'],
+    dodge: ['prod:traversal/aerial-evade.json', 'prod:extra/running-slide.json'],
+    crawl: ['prod:traversal/crawl.json'],
   },
   /**
    * Hit reactions (animator-dist reactions/*).
@@ -357,12 +599,14 @@ PACK_CLIPS.evade = PACK_CLIPS.extra;
 /**
  * AnimationDirector / mixer role map (best practices).
  *
- * Gait (loop, DirLocoBlend): idle | walk | run | sprint
- * Overlay one-shots (requestOneShot, scale loco by 1-influence):
- *   attack, skill1–4, dodge, jump, air_evade, flip, land, hit, parry, throw
- * Never put flips/evades in gait bands.
+ * LAYER A — gait (loop, DirLocoBlend): idle | walk | run | sprint
+ * LAYER B — events (loop or one-shot, non-combat): channel, emote, gesture, tool, farm, build, sit
+ * LAYER C — combat overlay (requestOneShot, scale loco by 1-influence):
+ *   attack, heavy, skill1–4, jumpAttack, block, parry, dodge, hit
+ * LAYER D — MM (Maneuver Motion): physics lunge while skill overlay plays (useDash)
  *
- * Hotkeys (combat-runtime): Q E R F skills · V/G utility dodge · space jump
+ * Never put flips/evades/channel in gait bands.
+ * Hotkeys: Q E R F skills · C parry · X dodge · E/hold block · Space jump · RMB focus
  */
 export const MIXER_ROLE_USE = {
   locomotion: {
@@ -372,16 +616,41 @@ export const MIXER_ROLE_USE = {
     dodge: 'dodge',
     air_evade: 'air_evade',
   },
+  events: {
+    channel: 'channel',
+    channelLoop: 'channelLoop',
+    teleport: 'teleport',
+    emote: 'emote',
+    gesture: 'gesture',
+    sit: 'sit',
+    tool: 'tool',
+    harvest: 'harvest',
+    build: 'build',
+    place: 'place',
+  },
   weapon: {
     attack: 'attack',
+    attack2: 'attack2',
+    attack3: 'attack3',
     heavy: 'heavy',
+    combo: 'combo',
     skill1: 'skill1',
     skill2: 'skill2',
     skill3: 'skill3',
     skill4: 'skill4',
+    jumpAttack: 'jumpAttack',
+    cast: 'cast',
     draw: 'draw',
     sheath: 'sheath',
     aim: 'aim',
+    fire: 'fire',
+  },
+  defense: {
+    block: 'block',
+    blockL: 'blockL',
+    blockR: 'blockR',
+    blockHit: 'blockHit',
+    parry: 'parry',
   },
   reactions: {
     hit: 'hit',
@@ -397,10 +666,212 @@ export const MIXER_ROLE_USE = {
     flip: 'flip',
     dodge: 'dodge',
     slide: 'slide',
+    roll: 'roll',
     throw: 'throw',
     emote: 'emote',
   },
 };
+
+/**
+ * Weapon skill slot setup — which pack role + MM + defense defaults.
+ * Used by combat runtime / Q&A playtests (not a second skill system).
+ *
+ * MM (gap close): when focus locked and out of reach, apply lungeSpeed for lungeDuration
+ * while skill one-shot plays. Guns/bows: useDash false (no melee charge).
+ */
+export const WEAPON_SKILL_SETUP = {
+  sword_shield: {
+    primary: { role: 'attack', reach: 2.4, lungeSpeed: 3.5, lungeDuration: 0.22, useDash: true },
+    skills: [
+      { slot: 1, role: 'attack', reach: 2.4, lungeSpeed: 3.5, lungeDuration: 0.22, useDash: true },
+      { slot: 2, role: 'attack2', reach: 2.5, lungeSpeed: 4.0, lungeDuration: 0.28, useDash: true },
+      { slot: 3, role: 'heavy', reach: 2.8, lungeSpeed: 2.0, lungeDuration: 0.35, useDash: true },
+      { slot: 4, role: 'jumpAttack', reach: 3.0, lungeSpeed: 5.0, lungeDuration: 0.4, useDash: true },
+    ],
+    block: { pack: 'block', role: 'block', fallbackPack: 'sword_shield' },
+    parry: { pack: 'block', role: 'parry', fallbackPack: 'reactions' },
+  },
+  '2h_melee': {
+    primary: { role: 'attack', reach: 3.0, lungeSpeed: 5.0, lungeDuration: 0.28, useDash: true },
+    skills: [
+      { slot: 1, role: 'attack', reach: 3.0, lungeSpeed: 5.0, lungeDuration: 0.28, useDash: true },
+      { slot: 2, role: 'heavy', reach: 3.2, lungeSpeed: 4.0, lungeDuration: 0.35, useDash: true },
+      { slot: 3, role: 'slideAttack', reach: 3.5, lungeSpeed: 7.0, lungeDuration: 0.4, useDash: true },
+      { slot: 4, role: 'jumpAttack', reach: 3.2, lungeSpeed: 6.0, lungeDuration: 0.45, useDash: true },
+    ],
+    block: { pack: '2h_melee', role: 'block', fallbackPack: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  polearm: {
+    primary: { role: 'attack', reach: 3.6, lungeSpeed: 5.5, lungeDuration: 0.2, useDash: true },
+    skills: [
+      { slot: 1, role: 'attack', reach: 3.6, lungeSpeed: 5.5, lungeDuration: 0.2, useDash: true },
+      { slot: 2, role: 'heavy', reach: 3.8, lungeSpeed: 6.0, lungeDuration: 0.3, useDash: true },
+      { slot: 3, role: 'skill2', reach: 3.4, lungeSpeed: 4.0, lungeDuration: 0.25, useDash: true },
+      { slot: 4, role: 'skill3', reach: 4.0, lungeSpeed: 7.0, lungeDuration: 0.35, useDash: true },
+    ],
+    block: { pack: 'block', role: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  longbow: {
+    primary: { role: 'attack', reach: 24, lungeSpeed: 0, lungeDuration: 0, useDash: false },
+    skills: [
+      { slot: 1, role: 'attack', reach: 24, useDash: false },
+      { slot: 2, role: 'heavy', reach: 28, useDash: false },
+      { slot: 3, role: 'dodgeFwd', reach: 0, useDash: false },
+      { slot: 4, role: 'dodgeBack', reach: 0, useDash: false },
+    ],
+    block: { pack: 'longbow', role: 'block', fallbackPack: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  pistol: {
+    primary: { role: 'attack', reach: 22, useDash: false },
+    skills: [
+      { slot: 1, role: 'attack', reach: 22, useDash: false },
+      { slot: 2, role: 'heavy', reach: 18, useDash: false },
+      { slot: 3, role: 'whip', reach: 2.0, lungeSpeed: 3.0, lungeDuration: 0.15, useDash: true },
+      { slot: 4, role: 'fire', reach: 20, useDash: false },
+    ],
+    block: { pack: 'rifle', role: 'block', fallbackPack: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  rifle: {
+    primary: { role: 'attack', reach: 30, useDash: false },
+    skills: [
+      { slot: 1, role: 'attack', reach: 30, useDash: false },
+      { slot: 2, role: 'fire', reach: 28, useDash: false },
+      { slot: 3, role: 'block', reach: 0, useDash: false },
+      { slot: 4, role: 'sheath', reach: 0, useDash: false },
+    ],
+    block: { pack: 'rifle', role: 'block', fallbackPack: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  magic: {
+    primary: { role: 'cast', reach: 18, useDash: false },
+    skills: [
+      { slot: 1, role: 'cast', reach: 18, useDash: false },
+      { slot: 2, role: 'attack', reach: 16, useDash: false },
+      { slot: 3, role: 'heavy', reach: 14, useDash: false },
+      { slot: 4, role: 'areaCast', reach: 10, useDash: false },
+    ],
+    /** Hold skill / channel mode */
+    channel: { pack: 'events', role: 'channel', loop: true },
+    teleport: { pack: 'events', role: 'teleport', useDash: false },
+    block: { pack: 'block', role: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  dagger: {
+    primary: { role: 'attack', reach: 1.8, lungeSpeed: 6.0, lungeDuration: 0.15, useDash: true },
+    skills: [
+      { slot: 1, role: 'attack', reach: 1.8, lungeSpeed: 6.0, lungeDuration: 0.15, useDash: true },
+      { slot: 2, role: 'attack2', reach: 1.9, lungeSpeed: 5.5, lungeDuration: 0.18, useDash: true },
+      { slot: 3, role: 'heavy', reach: 2.0, lungeSpeed: 4.0, lungeDuration: 0.22, useDash: true },
+      { slot: 4, role: 'skill3', reach: 2.2, lungeSpeed: 5.0, lungeDuration: 0.25, useDash: true },
+    ],
+    block: { pack: 'block', role: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+  unarmed: {
+    primary: { role: 'attack', reach: 1.8, lungeSpeed: 4.0, lungeDuration: 0.15, useDash: true },
+    skills: [
+      { slot: 1, role: 'attack', reach: 1.8, lungeSpeed: 4.0, lungeDuration: 0.15, useDash: true },
+      { slot: 2, role: 'skill1', reach: 2.0, lungeSpeed: 3.5, lungeDuration: 0.2, useDash: true },
+      { slot: 3, role: 'skill2', reach: 2.2, lungeSpeed: 5.0, lungeDuration: 0.3, useDash: true },
+      { slot: 4, role: 'skill3', reach: 2.5, lungeSpeed: 4.0, lungeDuration: 0.25, useDash: true },
+    ],
+    block: { pack: 'block', role: 'block' },
+    parry: { pack: 'block', role: 'parry' },
+  },
+};
+
+/** Event pack ids (non-combat) for Q&A / UI routing */
+export const EVENT_PACK_IDS = [
+  'locomotion_8way',
+  'locomotion',
+  'traversal',
+  'unarmed',
+  'harvest',
+  'building',
+  'gestures',
+  'emotes',
+  'events',
+  'extra',
+  'reactions',
+  'block',
+];
+
+/** Resolve skill setup for a weapon slot */
+export function weaponSkillSetupFor(weaponSlot) {
+  const pack = packForWeaponSlot(weaponSlot);
+  return WEAPON_SKILL_SETUP[pack] || WEAPON_SKILL_SETUP.sword_shield;
+}
+
+/**
+ * URLs for a skill slot (1–4) or primary attack, with MM metadata.
+ */
+export function skillClipForWeapon(weaponSlot, slot = 1) {
+  const setup = weaponSkillSetupFor(weaponSlot);
+  const pack = packForWeaponSlot(weaponSlot);
+  const def =
+    slot === 0 || slot === 'primary'
+      ? setup.primary
+      : (setup.skills || []).find((s) => s.slot === slot) || setup.primary;
+  const role = def?.role || 'attack';
+  return {
+    pack,
+    role,
+    urls: clipUrlsFor(pack, role),
+    reach: def?.reach ?? 2.2,
+    lungeSpeed: def?.lungeSpeed ?? 0,
+    lungeDuration: def?.lungeDuration ?? 0,
+    useDash: !!def?.useDash,
+    focusGapClose: !!def?.useDash,
+  };
+}
+
+/** Block / parry URLs for equipped weapon (pack-aware). */
+export function defenseClipsForWeapon(weaponSlot) {
+  const setup = weaponSkillSetupFor(weaponSlot);
+  const blockPack = setup.block?.pack || 'block';
+  const parryPack = setup.parry?.pack || 'block';
+  return {
+    block: clipUrlsFor(blockPack, setup.block?.role || 'block').concat(
+      setup.block?.fallbackPack ? clipUrlsFor(setup.block.fallbackPack, 'block') : [],
+    ),
+    parry: clipUrlsFor(parryPack, setup.parry?.role || 'parry').concat(
+      clipUrlsFor('reactions', 'parry'),
+    ),
+    blockHit: clipUrlsFor('block', 'blockHit'),
+  };
+}
+
+/** Non-combat event clip resolver */
+export function eventClipUrls(kind) {
+  const map = {
+    channel: ['events', 'magic'],
+    teleport: ['events', 'extra'],
+    emote: ['emotes', 'extra', 'gestures'],
+    gesture: ['gestures', 'emotes'],
+    harvest: ['harvest'],
+    farm: ['harvest'],
+    tool: ['harvest', 'building'],
+    build: ['building', 'harvest'],
+    place: ['building', 'harvest'],
+    climb: ['traversal'],
+    swim: ['traversal'],
+    sit: ['events'],
+  };
+  const packs = map[kind] || ['events'];
+  const role =
+    kind === 'farm' ? 'harvest' : kind === 'tool' ? 'tool' : kind === 'place' ? 'place' : kind;
+  const urls = [];
+  for (const p of packs) {
+    if (!PACK_CLIPS[p]) continue;
+    urls.push(...clipUrlsFor(p, role));
+    if (role === 'channel') urls.push(...clipUrlsFor(p, 'channelLoop'));
+  }
+  return urls;
+}
 
 /**
  * Gap-fill: resolve best clip URLs for a combat role across packs.
@@ -409,7 +880,16 @@ export const MIXER_ROLE_USE = {
  */
 export function clipUrlsForCombatRole(weaponSlot, role) {
   const weaponPack = packForWeaponSlot(weaponSlot);
-  const order = [weaponPack, 'extra', 'locomotion', 'reactions', 'unarmed'];
+  const order = [
+    weaponPack,
+    'block',
+    'extra',
+    'locomotion',
+    'locomotion_8way',
+    'reactions',
+    'events',
+    'unarmed',
+  ];
   const seen = new Set();
   const urls = [];
   for (const p of order) {

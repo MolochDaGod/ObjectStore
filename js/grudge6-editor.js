@@ -13,6 +13,8 @@ import {
   loadRaceKit,
   fitRootUniformSi,
   SLOT_DEFS,
+  WEAPON_R,
+  WEAPON_L,
 } from './grudge6-kit.js';
 import {
   prepareLabWeaponRoot,
@@ -22,13 +24,16 @@ import {
   kindMeta,
 } from './grudge6-lab-weapons.js';
 import {
-  packForWeaponSlot,
   clipUrlsFor,
   loadBakedClip,
   rematchClipBones,
 } from './grudge6-anim-packs.js';
 
 const CDN = 'https://assets.grudge-studio.com';
+const ICON_CDN = `${CDN}/game-assets`;
+
+/** Kit weapon slots that appear under main-hand inventory */
+const KIT_MAIN_WEAPON_SLOTS = [...WEAPON_R, ...WEAPON_L];
 
 export const EDITOR_SLOTS = [
   { id: 'body', group: 'armor', label: 'Body', equipSlot: 'body' },
@@ -42,6 +47,55 @@ export const EDITOR_SLOTS = [
   { id: 'class_item', group: 'class', label: 'Class item', equipSlot: null },
   { id: 'form', group: 'form', label: 'Form / class loadout', equipSlot: null },
 ];
+
+/** Pure helpers (also used by smoke test via static import when available). */
+export function isT0T1Tier(raw) {
+  if (raw == null || raw === '') return true;
+  const s = String(raw).toUpperCase();
+  if (/^T?0$|^T?1$|STARTER|COMMON/.test(s)) return true;
+  const n = Number(String(raw).replace(/^T/i, ''));
+  if (Number.isFinite(n)) return n <= 1;
+  return /t0|t1|tier.?[01]\b/i.test(String(raw));
+}
+
+export function resolveIconUrl(entry, shards = {}) {
+  if (!entry) return null;
+  if (typeof entry === 'string') {
+    if (/^https?:\/\//i.test(entry)) return entry;
+    if (entry.startsWith('/')) return `${ICON_CDN}${entry}`;
+    return entry;
+  }
+  const direct = entry.icon || entry.iconUrl || entry.c || entry.url || entry.cdn || entry.path;
+  if (direct) {
+    if (/^https?:\/\//i.test(direct)) return direct;
+    if (String(direct).startsWith('/')) return `${ICON_CDN}${direct}`;
+    return direct;
+  }
+  const name = String(entry.name || entry.n || entry.id || entry.kind || '').toLowerCase();
+  if (!name) return null;
+  for (const key of ['iconsWeapon', 'iconsArmor', 'iconsSkill']) {
+    const icons = shards[key]?.icons;
+    if (!Array.isArray(icons)) continue;
+    const hit = icons.find((i) => {
+      const n = String(i.n || i.name || i.id || '').toLowerCase();
+      return n === name || n.includes(name) || name.includes(n);
+    });
+    if (hit?.c) return hit.c;
+    if (hit?.p) return `${ICON_CDN}${hit.p}`;
+  }
+  return null;
+}
+
+export function findWeaponSkillType(weaponSkillsApi, kind) {
+  const k = String(kind || 'SWORD').toUpperCase();
+  const wt = weaponSkillsApi?.weaponTypes || weaponSkillsApi?.types || {};
+  const arr = Array.isArray(wt) ? wt : Object.values(wt || {});
+  return (
+    arr.find((v) => String(v?.id || v?.type || v?.name || '').toUpperCase() === k) ||
+    arr.find((v) => String(v?.id || v?.type || v?.name || '').toUpperCase().includes(k)) ||
+    null
+  );
+}
 
 export class Grudge6Editor {
   constructor(host, ui) {
@@ -59,6 +113,9 @@ export class Grudge6Editor {
     this.selected = null;
     this.clock = new THREE.Clock();
     this._disposed = false;
+    /** Slot → bound item (UUID practice loadout for deploy games). */
+    this.bound = {};
+    this.editorSessionId = `g6ed-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
   status(msg) {
@@ -82,6 +139,7 @@ export class Grudge6Editor {
       t0Weapons: './api/v1/t0-weapons.json',
       t0t1: './api/v1/master-t0-t1-addendum.json',
       weaponSkills: './api/v1/master-weaponSkills.json',
+      skillTrees: './api/v1/master-skillTrees.json',
       t0Skills: './api/v1/_meta/t0-starter-slot-pattern.json',
       relics: './api/v1/master-relics.json',
       classRelics: './api/v1/master-classRelics.json',
@@ -197,6 +255,8 @@ export class Grudge6Editor {
       };
     }
     if (this.ui.btnExport) this.ui.btnExport.onclick = () => this.exportSelectedGlb();
+    if (this.ui.btnExportSlot) this.ui.btnExportSlot.onclick = () => this.exportActiveSlotGlb();
+    if (this.ui.btnExportLoadout) this.ui.btnExportLoadout.onclick = () => this.exportLoadoutJson();
     if (this.ui.btnImport) {
       this.ui.fileInput?.addEventListener('change', (e) => this.importFile(e.target.files?.[0]));
       this.ui.btnImport.onclick = () => this.ui.fileInput?.click();
@@ -205,8 +265,10 @@ export class Grudge6Editor {
       this.ui.btnDefault.onclick = () => {
         this.equip?.applyDefaultLoadout?.();
         this.equip?.hardenVisibility?.();
+        this.syncBoundFromEquip();
         this.refreshHierarchy();
         this.refreshInventory();
+        this.renderLoadoutPanel();
       };
     }
   }
@@ -237,10 +299,13 @@ export class Grudge6Editor {
       this.scene.add(this.root);
       this.mixer = new THREE.AnimationMixer(this.root);
       await this.playIdle();
+      this.bound = {};
       this.applyClassForm();
+      this.syncBoundFromEquip();
       this.refreshHierarchy();
       this.refreshInventory();
       this.refreshSkills();
+      this.renderLoadoutPanel();
       this.status(
         `${raceId} · Toon RTS ★ · ${kit.materialMode} · equip slots ${Object.keys(this.equip?.summary?.() || {}).length}`,
       );
@@ -304,16 +369,18 @@ export class Grudge6Editor {
 
   /**
    * Inventory for active slot — T0–T1 only from info APIs + kit mesh variants + lab weapons.
+   * Clicking a slot rebuilds this list so equip info / icons track that slot only.
    */
   itemsForActiveSlot() {
     const slot = this.activeSlot;
     const items = [];
     const push = (it) => {
       if (!it) return;
+      if (!it.icon) it.icon = resolveIconUrl(it, this.apis) || this.iconForKind(it.kind || it.name);
       items.push(it);
     };
 
-    // Kit mesh variants (armor / kit weapons)
+    // Kit armor mesh variants
     if (this.equip && ['body', 'arms', 'legs', 'head', 'shoulders'].includes(slot)) {
       const variants = Object.keys(this.equip.slots?.[slot] || {}).sort();
       for (const v of variants) {
@@ -324,30 +391,54 @@ export class Grudge6Editor {
           tier: 'T0',
           kind: 'kit_mesh',
           slot,
+          equipSlot: slot,
           meshId: mesh?.name,
           variant: v,
           uuid: mesh?.name || null,
-          icon: null,
+          icon: this.iconForKind(slot),
           source: 'kit',
         });
       }
     }
 
-    // Lab weapons T1 (external)
+    // Kit embedded weapons (main hand)
+    if (slot === 'main_hand' && this.equip) {
+      for (const wslot of KIT_MAIN_WEAPON_SLOTS) {
+        const variants = this.equip.slots?.[wslot];
+        if (!variants) continue;
+        for (const v of Object.keys(variants).sort()) {
+          const mesh = variants[v];
+          push({
+            id: `mesh:${wslot}_${v}`,
+            name: mesh?.name || `${wslot} ${v}`,
+            tier: 'T0',
+            kind: wslot,
+            slot: 'main_hand',
+            equipSlot: wslot,
+            meshId: mesh?.name,
+            variant: v,
+            uuid: mesh?.name,
+            icon: this.iconForKind(wslot),
+            source: 'kit',
+          });
+        }
+      }
+    }
+
+    // Lab weapons T0–T1 (external GLB)
     const weapons = this.apis.lab?.externalWeapons || [];
     if (slot === 'main_hand') {
-      for (const w of weapons.filter((x) => (x.tier || 1) <= 1 || String(x.id).includes('_t1') || String(x.id).includes('_t0'))) {
-        // t0 not present — include t1 and first of each kind
-        if (w.tier && w.tier > 1 && !/_t1$/i.test(w.id)) continue;
+      for (const w of weapons) {
+        if (!isT0T1Tier(w.tier) && !/_t[01]$/i.test(w.id)) continue;
         push({
           id: w.meshId || w.id,
           name: w.id,
-          tier: `T${w.tier || 1}`,
+          tier: `T${w.tier ?? 1}`,
           kind: w.kind,
           slot: 'main_hand',
           meshId: w.meshId,
           lab: w,
-          uuid: w.meshId,
+          uuid: w.meshId || w.id,
           icon: this.iconForKind(w.kind),
           source: 'lab_weapon',
         });
@@ -356,21 +447,20 @@ export class Grudge6Editor {
     if (slot === 'off_hand') {
       for (const w of weapons) {
         if (!(w.canOffhand || kindMeta(w.kind).canOffhand)) continue;
-        if (w.tier && w.tier > 1 && !/_t1$/i.test(w.id)) continue;
+        if (!isT0T1Tier(w.tier) && !/_t[01]$/i.test(w.id)) continue;
         push({
           id: w.meshId || w.id,
           name: w.id,
-          tier: `T${w.tier || 1}`,
+          tier: `T${w.tier ?? 1}`,
           kind: w.kind,
           slot: 'off_hand',
           meshId: w.meshId,
           lab: w,
-          uuid: w.meshId,
+          uuid: w.meshId || w.id,
           icon: this.iconForKind(w.kind),
           source: 'lab_weapon',
         });
       }
-      // kit shields
       for (const v of Object.keys(this.equip?.slots?.shield || {}).sort()) {
         const mesh = this.equip.slots.shield[v];
         push({
@@ -379,6 +469,7 @@ export class Grudge6Editor {
           tier: 'T0',
           kind: 'shield',
           slot: 'off_hand',
+          equipSlot: 'shield',
           meshId: mesh?.name,
           variant: v,
           uuid: mesh?.name,
@@ -388,55 +479,58 @@ export class Grudge6Editor {
       }
     }
 
-    // T0 weapons catalog
+    // T0 weapons + T0–T1 addendum catalogs
     if (slot === 'main_hand' || slot === 'off_hand') {
       const tw = this.apis.t0Weapons?.weapons || [];
       for (const w of tw) {
+        if (!isT0T1Tier(w.tier ?? 0)) continue;
         push({
           id: w.id || w.uuid || w.name,
           name: w.name || w.id,
           tier: 'T0',
-          kind: (w.type || w.category || 'weapon').toLowerCase(),
-          slot: slot,
+          kind: (w.subCategory || w.category || w.type || 'weapon').toLowerCase(),
+          slot,
           uuid: w.uuid || w.id,
-          icon: w.icon || w.iconUrl || this.iconForKind(w.type || w.category),
+          meshId: w.meshId || w.mesh_id || null,
+          icon: resolveIconUrl(w, this.apis) || this.iconForKind(w.category || w.name),
           meta: w,
           source: 't0-weapons',
         });
       }
-      const add = this.apis.t0t1?.items || [];
+      const add = this.apis.t0t1?.items || this.apis.t0t1?.weapons || [];
       for (const w of add) {
+        if (!isT0T1Tier(w.tier || w.itemTier || w.id)) continue;
         const tier = String(w.tier || w.itemTier || 'T1').toUpperCase();
-        if (tier !== 'T0' && tier !== 'T1' && !/t0|t1/i.test(String(w.id))) continue;
         push({
           id: w.id || w.uuid,
           name: w.name || w.id,
           tier: tier.startsWith('T') ? tier : `T${tier}`,
-          kind: (w.slot || w.type || 'item').toLowerCase(),
+          kind: (w.slot || w.type || w.category || 'item').toLowerCase(),
           slot,
           uuid: w.uuid || w.id,
-          icon: w.icon || w.iconUrl,
+          meshId: w.meshId || w.mesh_id || null,
+          icon: resolveIconUrl(w, this.apis),
           meta: w,
           source: 't0-t1-addendum',
         });
       }
     }
 
-    // Relics T0-T1
+    // Relics T0–T1
     if (slot === 'relic') {
       const relics = this.apis.relics?.relics || this.apis.relics?.items || [];
       const list = Array.isArray(relics) ? relics : Object.values(relics || {});
-      for (const r of list.slice(0, 80)) {
-        const tier = String(r.tier || r.minTier || 'T0');
-        if (/[2-9]|t[2-9]/i.test(tier) && !/t0|t1/i.test(String(r.id))) continue;
+      for (const r of list) {
+        if (!isT0T1Tier(r.tier ?? r.minTier ?? 1) && !/t0|t1/i.test(String(r.id))) continue;
+        const t = r.tier ?? 1;
         push({
           id: r.id || r.uuid,
           name: r.name || r.id,
-          tier: /t1/i.test(tier) ? 'T1' : 'T0',
+          tier: Number(t) <= 0 ? 'T0' : 'T1',
           kind: 'relic',
           slot: 'relic',
           uuid: r.uuid || r.id,
-          icon: r.icon,
+          icon: resolveIconUrl(r, this.apis),
           meta: r,
           source: 'master-relics',
         });
@@ -445,13 +539,17 @@ export class Grudge6Editor {
 
     // Class items
     if (slot === 'class_item') {
-      const cr = this.apis.classRelics?.classRelics || this.apis.classRelics || {};
-      const list = Array.isArray(cr) ? cr : Object.entries(cr).flatMap(([k, v]) => {
-        if (Array.isArray(v)) return v.map((x) => ({ ...x, classId: k }));
-        if (v && typeof v === 'object') return [{ ...v, classId: k, id: v.id || k }];
-        return [];
-      });
-      for (const r of list.slice(0, 60)) {
+      const cr = this.apis.classRelics?.classRelics || this.apis.classRelics?.items || this.apis.classRelics || {};
+      const list = Array.isArray(cr)
+        ? cr
+        : Object.entries(cr).flatMap(([k, v]) => {
+            if (k === 'version' || k === 'generated' || k === 'total') return [];
+            if (Array.isArray(v)) return v.map((x) => ({ ...x, classId: k }));
+            if (v && typeof v === 'object') return [{ ...v, classId: k, id: v.id || k }];
+            return [];
+          });
+      for (const r of list.slice(0, 80)) {
+        if (r.tier != null && !isT0T1Tier(r.tier)) continue;
         push({
           id: r.id || r.uuid || r.classId,
           name: r.name || r.id || r.classId,
@@ -459,14 +557,14 @@ export class Grudge6Editor {
           kind: 'class_item',
           slot: 'class_item',
           uuid: r.uuid || r.id,
-          icon: r.icon,
+          icon: resolveIconUrl(r, this.apis),
           meta: r,
           source: 'master-classRelics',
         });
       }
     }
 
-    // Forms = class loadouts
+    // Forms = class loadouts (mesh_ids SSOT)
     if (slot === 'form') {
       const race = (this.catalog?.races || []).find((r) => r.id === this.raceId);
       const forms = Object.keys(race?.classLoadouts || { warrior: 1, mage: 1, ranger: 1, unarmed: 1 });
@@ -489,14 +587,7 @@ export class Grudge6Editor {
   }
 
   iconForKind(kind) {
-    const k = String(kind || '').toLowerCase();
-    const shard = this.apis.iconsWeapon || this.apis.iconsArmor || {};
-    const icons = shard.icons || shard.items || shard;
-    if (Array.isArray(icons)) {
-      const hit = icons.find((i) => String(i.id || i.name || '').toLowerCase().includes(k));
-      return hit?.url || hit?.cdn || hit?.path || null;
-    }
-    return null;
+    return resolveIconUrl({ name: kind, kind }, this.apis);
   }
 
   refreshInventory() {
@@ -507,16 +598,19 @@ export class Grudge6Editor {
     if (this.ui.inventoryTitle) {
       this.ui.inventoryTitle.textContent = `${slot?.label || this.activeSlot} · T0–T1 (${items.length})`;
     }
+    const bound = this.bound[this.activeSlot];
     if (!items.length) {
       el.innerHTML = '<div class="dim">No T0–T1 entries for this slot</div>';
+      this.renderEquipInfo(bound || null);
       return;
     }
     el.innerHTML = items
       .map((it) => {
+        const on = bound && String(bound.id) === String(it.id) ? ' on' : '';
         const ic = it.icon
           ? `<img src="${it.icon}" alt="" loading="lazy" onerror="this.style.display='none'"/>`
           : `<span class="ico-ph">${(it.kind || '?')[0]}</span>`;
-        return `<button type="button" class="inv-item" data-id="${encodeURIComponent(it.id)}" title="${it.uuid || it.id}">
+        return `<button type="button" class="inv-item${on}" data-id="${encodeURIComponent(it.id)}" title="${it.uuid || it.id}">
           ${ic}
           <span class="inv-meta"><strong>${it.name}</strong>
           <span class="dim">${it.tier} · ${it.kind} · ${it.source}</span></span>
@@ -530,43 +624,124 @@ export class Grudge6Editor {
         if (it) this.applyItem(it);
       };
     });
-    this.renderEquipInfo(items[0]);
+    // Show bound item for this slot, else first inventory row — equip info always tracks slot click
+    this.renderEquipInfo(bound || items[0]);
+    this.renderLoadoutPanel();
   }
 
   renderEquipInfo(it) {
     const el = this.ui.equipInfo;
-    if (!el || !it) return;
+    if (!el) return;
+    if (!it) {
+      el.innerHTML = `<div class="dim">Click a slot, then an item — equip mesh or bind UUID</div>`;
+      return;
+    }
+    const metaBits = [];
+    if (it.meta?.description) metaBits.push(it.meta.description);
+    if (it.meta?.damage != null) metaBits.push(`dmg ${it.meta.damage}`);
+    if (it.meta?.element) metaBits.push(it.meta.element);
     el.innerHTML = `
-      <div><strong>${it.name}</strong> <span class="badge">${it.tier}</span></div>
+      <div><strong>${it.name}</strong> <span class="badge">${it.tier || 'T0'}</span></div>
       <div class="dim">slot <code>${it.slot}</code> · kind <code>${it.kind}</code></div>
       <div class="dim">uuid <code>${it.uuid || '—'}</code></div>
       <div class="dim">mesh_id <code>${it.meshId || '—'}</code></div>
       <div class="dim">source <code>${it.source}</code></div>
-      ${it.meshIds ? `<div class="dim">mesh_ids ${it.meshIds.length}</div>` : ''}
+      ${it.meshIds ? `<div class="dim">mesh_ids [${it.meshIds.slice(0, 6).join(', ')}${it.meshIds.length > 6 ? '…' : ''}]</div>` : ''}
+      ${metaBits.length ? `<div class="dim" style="margin-top:4px">${metaBits.join(' · ')}</div>` : ''}
     `;
+  }
+
+  bindSlot(it) {
+    if (!it?.slot) return;
+    this.bound[it.slot] = {
+      id: it.id,
+      name: it.name,
+      uuid: it.uuid || it.id,
+      meshId: it.meshId || null,
+      meshIds: it.meshIds || null,
+      kind: it.kind,
+      tier: it.tier,
+      source: it.source,
+      slot: it.slot,
+      formId: it.formId || null,
+    };
+    this.renderLoadoutPanel();
+  }
+
+  syncBoundFromEquip() {
+    if (!this.equip?.equipped) return;
+    for (const [slot, variant] of Object.entries(this.equip.equipped)) {
+      const mesh = this.equip.slots?.[slot]?.[variant];
+      const editorSlot = ['body', 'arms', 'legs', 'head', 'shoulders'].includes(slot)
+        ? slot
+        : slot === 'shield'
+          ? 'off_hand'
+          : KIT_MAIN_WEAPON_SLOTS.includes(slot)
+            ? 'main_hand'
+            : null;
+      if (!editorSlot || !mesh) continue;
+      this.bound[editorSlot] = {
+        id: `mesh:${slot}_${variant}`,
+        name: mesh.name,
+        uuid: mesh.name,
+        meshId: mesh.name,
+        kind: slot,
+        tier: 'T0',
+        source: 'kit',
+        slot: editorSlot,
+      };
+    }
+  }
+
+  renderLoadoutPanel() {
+    const el = this.ui.loadout;
+    if (!el) return;
+    const rows = EDITOR_SLOTS.map((s) => {
+      const b = this.bound[s.id];
+      return `<div class="loadout-row"><span class="slot-group">${s.id}</span> ${
+        b
+          ? `<code title="${b.uuid}">${b.name}</code> <span class="dim">${b.uuid?.slice?.(0, 18) || b.uuid || ''}</span>`
+          : '<span class="dim">—</span>'
+      }</div>`;
+    });
+    el.innerHTML = rows.join('') || '<div class="dim">empty loadout</div>';
   }
 
   async applyItem(it) {
     this.renderEquipInfo(it);
+    this.bindSlot(it);
     if (!this.equip || !this.root) return;
 
     if (it.kind === 'form' || it.formId) {
       this.classId = it.formId || it.name;
       if (this.ui.classSelect) this.ui.classSelect.value = this.classId;
       this.applyClassForm();
+      this.syncBoundFromEquip();
       this.refreshSkills();
+      this.refreshInventory();
       this.status(`Form ${this.classId}`);
       return;
     }
 
-    if (it.source === 'kit' && it.variant && it.slot) {
-      if (it.slot === 'off_hand' || it.kind === 'shield') {
+    if (it.source === 'kit' && it.variant != null) {
+      if (it.equipSlot === 'shield' || it.kind === 'shield') {
         this.equip.equip?.('shield', it.variant);
-      } else if (['body', 'arms', 'legs', 'head', 'shoulders'].includes(it.slot)) {
-        this.equip.equip?.(it.slot, it.variant);
+      } else if (KIT_MAIN_WEAPON_SLOTS.includes(it.equipSlot)) {
+        this.equip.equipWeapon?.(it.equipSlot, it.variant);
+        // clear lab main if kit weapon takes over
+        if (this.labHeld.main) {
+          this.labHeld.main.parent?.remove(this.labHeld.main);
+          this.labHeld.main = null;
+        }
+      } else if (['body', 'arms', 'legs', 'head', 'shoulders'].includes(it.equipSlot || it.slot)) {
+        this.equip.equip?.(it.equipSlot || it.slot, it.variant);
       }
       this.equip.hardenVisibility?.();
+      const mesh = this.equip.slots?.[it.equipSlot || it.slot]?.[it.variant];
+      if (mesh) this.selectObject(mesh);
       this.refreshHierarchy();
+      this.refreshInventory();
+      this.refreshSkills(it.kind);
       this.status(`Equipped kit ${it.meshId}`);
       return;
     }
@@ -575,17 +750,14 @@ export class Grudge6Editor {
       const role = it.slot === 'off_hand' ? 'off' : 'main';
       await this.attachLab(it.lab, role);
       this.refreshSkills(it.kind);
+      this.refreshInventory();
       return;
     }
 
-    // Catalog-only items (relics / class / t0 catalog): bind UUID in panel; mesh if meshId matches kit
-    if (it.meshId && this.equip.applyMeshIds) {
-      // try show that mesh among current loadout
-      const summary = this.equip.summary?.() || {};
-      // fuzzy: leave paperdoll, just report
-    }
-    this.status(`Bound ${it.name} (${it.uuid || it.id}) — catalog T0/T1`);
+    // Catalog UUID bind (relics / class / t0) — practice deploy contract
+    this.status(`Bound ${it.name} · uuid ${it.uuid || it.id}`);
     this.refreshSkills(it.kind);
+    this.refreshInventory();
   }
 
   async attachLab(entry, role = 'main') {
@@ -610,6 +782,8 @@ export class Grudge6Editor {
       return;
     }
     prepareLabWeaponRoot(THREE, root, entry);
+    root.userData.kind = entry.kind;
+    root.userData.meshId = entry.meshId || entry.id;
     hideKitWeaponsForLab(this.equip, slot);
     const res = attachToSocket(this.root, root, slot, this.labHeld);
     if (!res.ok) {
@@ -629,7 +803,7 @@ export class Grudge6Editor {
     const kind = String(kindHint || this.guessWeaponKind() || 'SWORD').toUpperCase();
     const lines = [];
 
-    // T0 starter pattern
+    // T0 starter pattern (slot 1/2/3)
     const t0type = t0?.types?.[kind] || t0?.types?.SWORD;
     if (t0type) {
       lines.push(`<h4>T0 starter · ${kind}</h4>`);
@@ -641,17 +815,39 @@ export class Grudge6Editor {
       }
     }
 
-    // master-weaponSkills tree snippet
-    const wt = ws?.weaponTypes || ws?.types || {};
-    const entry = wt[kind] || wt[kind.toLowerCase()] || Object.values(wt).find((v) =>
-      String(v?.type || v?.id || '').toUpperCase().includes(kind),
-    );
+    // master-weaponSkills — weaponTypes is an array of { id: "SWORD", slots: [...] }
+    const entry = findWeaponSkillType(ws, kind);
     if (entry) {
-      lines.push(`<h4>Weapon skills API · ${kind}</h4>`);
-      const skills = entry.skills || entry.skillTree || entry.abilities || [];
+      lines.push(`<h4>Weapon skills API · ${entry.id || kind}</h4>`);
+      const fromSlots = [];
+      for (const sl of entry.slots || []) {
+        for (const s of sl.skills || []) {
+          fromSlots.push({ ...s, _slotLabel: sl.label || sl.type || sl.unlockTier });
+        }
+      }
+      const skills = fromSlots.length
+        ? fromSlots
+        : entry.skills || entry.skillTree || entry.abilities || [];
       const arr = Array.isArray(skills) ? skills : Object.values(skills || {});
-      for (const s of arr.slice(0, 12)) {
-        lines.push(this.skillCard(s, s.slot || s.tier || '·'));
+      for (const s of arr.slice(0, 14)) {
+        lines.push(this.skillCard(s, s._slotLabel || s.slot || s.tier || '·'));
+      }
+    }
+
+    // Class skill tree (T0–T1 tiers only)
+    const trees = this.apis.skillTrees?.skillTrees || {};
+    const classKey = Object.keys(trees).find(
+      (k) => k.toLowerCase() === String(this.classId).toLowerCase(),
+    );
+    const tree = classKey ? trees[classKey] : null;
+    if (tree) {
+      lines.push(`<h4>Class skill tree · ${tree.className || classKey}</h4>`);
+      const tiers = (tree.tiers || []).filter((t) => (t.requiredLevel || 1) <= 10).slice(0, 2);
+      for (const tier of tiers) {
+        lines.push(`<div class="dim">${tier.name || `Lv ${tier.requiredLevel}`}</div>`);
+        for (const s of (tier.skills || []).slice(0, 6)) {
+          lines.push(this.skillCard(s, tier.requiredLevel || '·'));
+        }
       }
     }
 
@@ -665,28 +861,48 @@ export class Grudge6Editor {
   skillCard(s, slot) {
     if (!s) return '';
     const name = s.name || s.id || 'skill';
-    const id = s.id || name;
+    const id = s.id || s.uuid || name;
     const cd = s.cooldown != null ? `CD ${s.cooldown}s` : '';
     const dmg = s.damage != null ? `DMG ${s.damage}` : '';
-    return `<div class="skill-card"><span class="badge">${slot}</span> <strong>${name}</strong>
+    const icon = resolveIconUrl(s, this.apis);
+    const ic = icon
+      ? `<img src="${icon}" alt="" style="width:20px;height:20px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"/>`
+      : '';
+    return `<div class="skill-card">${ic}<span class="badge">${slot}</span> <strong>${name}</strong>
       <div class="dim"><code>${id}</code> ${dmg} ${cd}</div>
-      <div class="dim">${s.description || (s.effects || []).join(', ') || ''}</div></div>`;
+      <div class="dim">${s.description || (s.effects || []).join?.(', ') || ''}</div></div>`;
   }
 
   guessWeaponKind() {
+    const bound = this.bound.main_hand;
+    if (bound?.kind) {
+      const k = String(bound.kind).toUpperCase();
+      if (/SWORD|AXE|BOW|STAFF|HAMMER|SPEAR|DAGGER|MACE|WAND|CROSSBOW|GUN|TOME|SHIELD/.test(k)) {
+        return k.replace(/S$/, '') === 'SWORD' ? 'SWORD' : k.split(/[_\s]/)[0];
+      }
+      if (/sword/i.test(k)) return 'SWORD';
+      if (/axe/i.test(k)) return 'AXE';
+      if (/bow/i.test(k)) return 'BOW';
+      if (/staff/i.test(k)) return 'STAFF';
+      if (/hammer/i.test(k)) return 'HAMMER';
+      if (/spear/i.test(k)) return 'SPEAR';
+      if (/dagger/i.test(k)) return 'DAGGER';
+      if (/mace/i.test(k)) return 'MACE';
+      if (/wand/i.test(k)) return 'WAND';
+    }
     const eq = this.equip?.equipped || {};
-    if (eq.sword) return 'SWORD';
-    if (eq.axe) return 'AXE';
-    if (eq.staff) return 'STAFF';
-    if (eq.bow) return 'BOW';
-    if (eq.hammer) return 'HAMMER';
-    if (eq.spear) return 'SPEAR';
-    if (this.labHeld.main?.userData?.meshId) {
-      const m = String(this.labHeld.main.userData.meshId);
+    for (const key of ['sword', 'axe', 'staff', 'bow', 'hammer', 'spear', 'dagger', 'mace']) {
+      if (eq[key]) return key.toUpperCase();
+    }
+    if (this.labHeld.main?.userData?.meshId || this.labHeld.main?.userData?.kind) {
+      const m = String(this.labHeld.main.userData.kind || this.labHeld.main.userData.meshId || '');
       if (/sword/i.test(m)) return 'SWORD';
       if (/axe/i.test(m)) return 'AXE';
       if (/staff|wand/i.test(m)) return 'STAFF';
       if (/bow/i.test(m)) return 'BOW';
+      if (/hammer/i.test(m)) return 'HAMMER';
+      if (/spear/i.test(m)) return 'SPEAR';
+      if (/dagger/i.test(m)) return 'DAGGER';
     }
     return 'SWORD';
   }
@@ -766,6 +982,7 @@ export class Grudge6Editor {
     }
   }
 
+  /** Export selected node or lab weapon as local .glb (weapons / armour / relics mesh edits). */
   exportSelectedGlb() {
     const target =
       this.selected ||
@@ -773,9 +990,58 @@ export class Grudge6Editor {
       this.labHeld.off ||
       null;
     if (!target) {
-      this.status('Select a mesh / lab weapon to export');
+      this.status('Select a mesh / lab weapon to export (hierarchy or equip first)');
       return;
     }
+    this._exportObject(target, target.name || 'grudge6-export');
+  }
+
+  /** Export currently equipped mesh for the active editor slot (armor / kit weapon / lab). */
+  exportActiveSlotGlb() {
+    const slot = this.activeSlot;
+    let target = null;
+    let name = `slot_${slot}`;
+
+    if (slot === 'main_hand' && this.labHeld.main) {
+      target = this.labHeld.main;
+      name = this.labHeld.main.name || this.bound.main_hand?.meshId || 'main_hand';
+    } else if (slot === 'off_hand' && this.labHeld.off) {
+      target = this.labHeld.off;
+      name = this.labHeld.off.name || this.bound.off_hand?.meshId || 'off_hand';
+    } else if (this.equip) {
+      const bound = this.bound[slot];
+      if (bound?.meshId) {
+        this.root?.traverse((o) => {
+          if (!target && o.name === bound.meshId) target = o;
+        });
+        name = bound.meshId;
+      }
+      if (!target) {
+        const def = EDITOR_SLOTS.find((s) => s.id === slot);
+        const equipKey =
+          slot === 'off_hand'
+            ? 'shield'
+            : def?.equipSlot && this.equip.equipped?.[def.equipSlot]
+              ? def.equipSlot
+              : Object.keys(this.equip.equipped || {}).find((k) =>
+                  slot === 'main_hand' ? KIT_MAIN_WEAPON_SLOTS.includes(k) : k === slot,
+                );
+        if (equipKey && this.equip.equipped[equipKey] != null) {
+          target = this.equip.slots?.[equipKey]?.[this.equip.equipped[equipKey]];
+          name = target?.name || `${equipKey}_${this.equip.equipped[equipKey]}`;
+        }
+      }
+    }
+
+    if (!target) {
+      this.status(`No mesh for slot ${slot} — equip an item first`);
+      return;
+    }
+    this.selectObject(target);
+    this._exportObject(target, name);
+  }
+
+  _exportObject(target, baseName) {
     const exporter = new GLTFExporter();
     exporter.parse(
       target,
@@ -786,14 +1052,40 @@ export class Grudge6Editor {
             : new Blob([JSON.stringify(result)], { type: 'model/gltf+json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `${(target.name || 'grudge6-export').replace(/[^\w.-]+/g, '_')}.glb`;
+        a.download = `${String(baseName || 'grudge6-export').replace(/[^\w.-]+/g, '_')}.glb`;
         a.click();
         URL.revokeObjectURL(a.href);
-        this.status(`Exported ${a.download} (local download — does not write CDN)`);
+        this.status(`Exported ${a.download} (local — does not write CDN/R2)`);
       },
       (err) => this.status(`Export failed: ${err?.message || err}`),
       { binary: true },
     );
+  }
+
+  /**
+   * Deploy-practice loadout: race/class + per-slot UUID / mesh_id.
+   * Games should consume the same shape from Railway player bag later.
+   */
+  exportLoadoutJson() {
+    const payload = {
+      version: 1,
+      editorSessionId: this.editorSessionId,
+      generatedAt: new Date().toISOString(),
+      raceId: this.raceId,
+      classId: this.classId,
+      meshPlayKit: `asset-packs/toon-rts-characters/glb/characters/${this.raceId}.glb`,
+      slots: { ...this.bound },
+      equipSummary: this.equip?.summary?.() || {},
+      equipped: { ...(this.equip?.equipped || {}) },
+      note: 'T0–T1 practice loadout from grudge6 Editor SSOT. Local download only.',
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `grudge6-loadout-${this.raceId}-${this.classId}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    this.status(`Loadout JSON ${a.download}`);
   }
 
   dispose() {
