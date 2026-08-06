@@ -23,6 +23,7 @@ import {
   WEAPON_R,
   WEAPON_L,
   fitRootUniformSi,
+  measureStructuralBBox,
 } from './grudge6-kit.js';
 
 /**
@@ -271,8 +272,10 @@ async function tryLoadIdleClip(urls) {
 function reGroundFeet(root) {
   if (!root) return;
   root.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(root);
-  if (!Number.isFinite(box.min.y)) return;
+  // Bone/structural measure — never setFromObject on modular skinned kits
+  // (unskinned Units_* geo piles at origin and plants feet wrong).
+  const box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  if (!box || !Number.isFinite(box.min.y)) return;
   root.position.y -= box.min.y;
   root.updateMatrixWorld(true);
 }
@@ -423,7 +426,8 @@ export async function mountHeroViewport(host, opts) {
   };
 
   try {
-    // Production GLB primary (embedded atlas, no auto UV invert). FBX fallback.
+    // Paperdoll SSOT: GLB is fine once SI measure uses bones (see grudge6-kit
+    // measureBoneStructuralBBox). Prefer GLB for atlas embed; FBX fallback.
     // Never pass invertUvV here — that double-process scrambles production kits.
     let kit;
     try {
@@ -432,7 +436,6 @@ export async function mountHeroViewport(host, opts) {
         ground: false,
         skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
-        // forceAtlas only for non-default team colors (handled by setAtlas)
         forceAtlas: !!(opts.atlasVariant && opts.atlasVariant !== 'default'),
         invertUvV: opts.invertUvV === true,
       });
@@ -454,8 +457,11 @@ export async function mountHeroViewport(host, opts) {
 
     // Paperdoll loadout only (no default dump + panel double-apply ghosts)
     applyPanelEquip(equip, opts.equippedItems || {}, opts.findItem);
+    // Exclusive wardrobe — no stacked A–N variants looking like explode
+    equip.hardenVisibility?.();
 
-    const finalH = fitRootSi(root, targetH);
+    // SI fit AFTER equip visibility (bone measure ignores mesh visibility, OK)
+    let finalH = fitRootSi(root, targetH);
     scene.add(root);
     _state.root = root;
     _state.equip = equip;
@@ -475,11 +481,12 @@ export async function mountHeroViewport(host, opts) {
       try {
         const action = mixer.clipAction(idle);
         action.play();
-        // Sample one frame so skinned weapons leave bind-float, then re-ground
+        // Sample one frame so skinned weapons leave bind-float, then re-SI + re-ground
         mixer.update(1 / 30);
-        reGroundFeet(root);
+        finalH = fitRootSi(root, targetH);
       } catch (animErr) {
         console.warn('[main-panel hero] idle bind failed (skeleton mismatch?)', animErr);
+        reGroundFeet(root);
       }
     }
 

@@ -675,8 +675,85 @@ export function isStructuralMeshName(name, characterType = 'infantry') {
 }
 
 /**
- * World AABB of structural meshes only.
- * If onlyVisible=true (default), skip hidden meshes so equip loadout drives height.
+ * Find first named node (Bip001 space or underscore).
+ * @param {import('three').Object3D} root
+ * @param {string[]} names
+ */
+function findNamed(root, names) {
+  for (const n of names) {
+    const o = root.getObjectByName(n);
+    if (o) return o;
+  }
+  return null;
+}
+
+/**
+ * Bone-driven structural AABB for grudge6 skinned kits.
+ *
+ * CRITICAL: modular Units_* SkinnedMesh geometry is authored in *local bind*
+ * pieces near the origin. `geometry.boundingBox * matrixWorld` and
+ * `SkinnedMesh.computeBoundingBox()` are UNSKINNED — they measure a pile of
+ * parts at the root (~3–5 m) while the real skinned silhouette is ~20–25 m
+ * (Unity scale 2.54). SI fit then under-scales → paperdoll looks like
+ * exploded modular debris in frame.
+ *
+ * Bones follow the bind pose correctly; measure them (feet→head + hands).
+ *
+ * @param {typeof import('three')} THREE
+ * @param {import('three').Object3D} root
+ * @returns {import('three').Box3 | null}
+ */
+export function measureBoneStructuralBBox(THREE, root) {
+  if (!root || !THREE) return null;
+  root.updateMatrixWorld(true);
+  root.traverse((o) => {
+    if (o.isSkinnedMesh && o.skeleton) o.skeleton.update();
+  });
+
+  const groups = [
+    ['Bip001_Head', 'Bip001 Head', 'Head'],
+    ['Bip001_HeadNub', 'Bip001 HeadNub'],
+    ['Bip001_Pelvis', 'Bip001 Pelvis', 'Pelvis'],
+    ['Bip001_Spine', 'Bip001 Spine'],
+    ['Bip001_L_Foot', 'Bip001 L Foot'],
+    ['Bip001_R_Foot', 'Bip001 R Foot'],
+    ['Bip001_L_Toe0', 'Bip001 L Toe0'],
+    ['Bip001_R_Toe0', 'Bip001 R Toe0'],
+    ['Bip001_L_Hand', 'Bip001 L Hand'],
+    ['Bip001_R_Hand', 'Bip001 R Hand'],
+    ['Bip001_L_Calf', 'Bip001 L Calf'],
+    ['Bip001_R_Calf', 'Bip001 R Calf'],
+  ];
+
+  const box = new THREE.Box3();
+  let n = 0;
+  const p = new THREE.Vector3();
+  for (const names of groups) {
+    const bone = findNamed(root, names);
+    if (!bone) continue;
+    bone.getWorldPosition(p);
+    if (!Number.isFinite(p.x + p.y + p.z)) continue;
+    if (n === 0) box.min.copy(p), box.max.copy(p);
+    else box.expandByPoint(p);
+    n++;
+  }
+  if (n < 2) return null;
+
+  // Pad: ankles are not soles; skull bone is not crown. ~10% of bone height.
+  const h = Math.max(box.max.y - box.min.y, 1e-4);
+  const pad = Math.max(h * 0.1, h * 0.02);
+  box.min.y -= pad * 0.55;
+  box.max.y += pad * 0.45;
+  box.min.x -= pad * 0.35;
+  box.max.x += pad * 0.35;
+  box.min.z -= pad * 0.35;
+  box.max.z += pad * 0.35;
+  return box;
+}
+
+/**
+ * World AABB of structural body (skinned kits = bone measure first).
+ * If onlyVisible=true (default), mesh fallback skips hidden equip variants.
  * @param {typeof import('three')} THREE
  * @param {import('three').Object3D} root
  * @param {'infantry'|'cavalry'|'siege'} characterType
@@ -684,37 +761,52 @@ export function isStructuralMeshName(name, characterType = 'infantry') {
  */
 export function measureStructuralBBox(THREE, root, characterType = 'infantry', opts = {}) {
   const onlyVisible = opts.onlyVisible !== false;
-  const box = new THREE.Box3();
   root.updateMatrixWorld(true);
+
+  // Infantry / cavalry heroes: bone chain is the only reliable structural meter
+  // for modular skinned grudge6 kits (see measureBoneStructuralBBox docs).
+  if (characterType === 'infantry' || characterType === 'cavalry') {
+    const boneBox = measureBoneStructuralBBox(THREE, root);
+    if (boneBox && Number.isFinite(boneBox.min.y) && Number.isFinite(boneBox.max.y)) {
+      const bh = boneBox.max.y - boneBox.min.y;
+      // Reject degenerate bone chains (missing feet)
+      if (bh > 0.05) return boneBox;
+    }
+  }
+
+  const box = new THREE.Box3();
   let any = false;
   root.traverse((o) => {
     if (!o.isMesh && !o.isSkinnedMesh) return;
     if (onlyVisible && o.visible === false) return;
     if (!isStructuralMeshName(o.name, characterType)) return;
     if (!o.geometry) return;
-    // Prefer live skinned extent when available
-    if (o.isSkinnedMesh && typeof o.computeBoundingBox === 'function') {
+    // Skinned modular geo is local-bind — do NOT use geometry.boundingBox * matrixWorld
+    // (that reintroduces the explode / under-scale paperdoll bug).
+    if (o.isSkinnedMesh && o.skeleton) {
       try {
-        o.computeBoundingBox();
-        if (o.boundingBox && !o.boundingBox.isEmpty()) {
-          const mb = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
-          if (Number.isFinite(mb.min.y) && Number.isFinite(mb.max.y)) {
-            box.union(mb);
-            any = true;
-            return;
-          }
-        }
+        o.skeleton.update();
       } catch {
-        /* fall through */
+        /* ignore */
       }
     }
+    // setFromObject still uses unskinned geo for SkinnedMesh in three r185 —
+    // only useful for static siege/props. Prefer bone path above for heroes.
     const mb = new THREE.Box3().setFromObject(o);
-    if (Number.isFinite(mb.min.y) && Number.isFinite(mb.max.y)) {
-      box.union(mb);
-      any = true;
+    if (Number.isFinite(mb.min.y) && Number.isFinite(mb.max.y) && mb.max.y > mb.min.y) {
+      if (!any) {
+        box.copy(mb);
+        any = true;
+      } else {
+        box.union(mb);
+      }
     }
   });
-  if (!any) box.setFromObject(root);
+  if (!any) {
+    const fallback = measureBoneStructuralBBox(THREE, root);
+    if (fallback) return fallback;
+    box.setFromObject(root);
+  }
   return box;
 }
 
