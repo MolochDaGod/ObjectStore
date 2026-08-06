@@ -11,7 +11,7 @@
  * Usage:
  *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, bindRaceAtlas,
  *            toonRtsUnitUrl, TOON_RTS_HEIGHT_M } from './grudge6-kit.js';
- *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human', { source: 'fbx' });
+ *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human'); // GLB production default
  *
  * Race equip-resource scenes (SI + packs + mesh visibility):
  *   grudge6-race-scenes.html?race=human  ·  grudge6-race-{race}.html
