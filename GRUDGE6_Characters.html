@@ -131,10 +131,19 @@
     <div class="row" id="atlasColors"><span class="sub">Load race…</span></div>
 
     <h2>External weapons (tier GLB)</h2>
-    <p class="sub" style="margin-bottom:6px">From <code>_glb_weapons</code> · attach to hand · does not rewrite race kit</p>
+    <p class="sub" style="margin-bottom:6px;line-height:1.4">
+      From <code>_glb_weapons</code> · SI + toon mats + box colliders · does not rewrite race kit<br/>
+      <strong>Main:</strong> sword/axe/spear/dagger/mace/hammer/crossbow → <code>R_hand_container</code><br/>
+      <strong>Staff socket:</strong> staff + <strong>wand</strong> + bow → <code>L_hand_container</code> (same as kit staff)<br/>
+      <strong>Off-hand dual:</strong> dagger · mace · hammer only → <code>L_hand_container</code>
+    </p>
     <div class="row">
-      <label>Lab weapon</label>
+      <label>Lab main</label>
       <select id="labWeaponSelect"><option value="">— kit only —</option></select>
+    </div>
+    <div class="row">
+      <label>Lab off-hand</label>
+      <select id="labOffhandSelect"><option value="">— none —</option></select>
     </div>
     <div class="sub" id="labWeaponStatus"></div>
 
@@ -167,7 +176,18 @@ import {
   SLOT_DEFS as KIT_SLOT_DEFS,
   WEAPON_R as KIT_WEAPON_R,
   WEAPON_L as KIT_WEAPON_L,
+  isStubMap,
+  kitHasUsableMaps,
+  normalizeEmbeddedMaps,
+  sampleEmbedAtlasSize,
 } from './js/grudge6-kit.js';
+import {
+  resolveLabAttachSlot,
+  prepareLabWeaponRoot,
+  attachToSocket,
+  hideKitWeaponsForLab,
+  kindMeta,
+} from './js/grudge6-lab-weapons.js';
 
 const API = 'https://objectstore.grudge-studio.com/api/v1';
 const LOCAL_SSOT = './api/v1/grudge6-characters.json';
@@ -216,7 +236,8 @@ let activeRace = null;
 let activeSource = 'toonRts'; // toonRts | prod | metaverse | fbx
 let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
 let equip = null; // KitEquipmentManager instance
-let labWeaponRoot = null; // external tier weapon attach (not in race GLB)
+/** External tier weapons held on hand sockets (not race kit children). */
+const labHeld = { main: null, off: null };
 const texLoader = new THREE.TextureLoader();
 const texCache = new Map();
 
@@ -251,20 +272,44 @@ function textureUrlForRace(raceId) {
 }
 
 /**
- * Atlas rebind via grudge6-kit (ClampToEdge, sRGB, flipY=false).
- * GOLDEN rule: never force-rebind toonRts / prod / metaverse when embeds are good.
- * FBX always rebinds. Stub maps (1×1) soft-rebind. force=true only when caller opts in.
+ * GOLDEN rule: keep embeds when present (pending decode ≠ 1×1 stub).
+ * FBX / true stubs → CDN atlas rebind.
  */
 async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {}) {
+  const refUrl = textureUrlForRace(raceId);
   const must = force || source === 'fbx';
-  const tex = await kitLoadRaceTexture(THREE, raceId, 'default');
-  if (!tex) {
-    // fallback local loader
-    const url = textureUrlForRace(raceId);
-    if (!url) return { n: 0, url: null, mode: 'fail' };
-    const t = await new Promise((resolve) => {
+  let mats = 0;
+  let withMap = 0;
+  let stubs = 0;
+  root.traverse((obj) => {
+    if (!obj.isMesh && !obj.isSkinnedMesh) return;
+    const list = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of list) {
+      if (!m) continue;
+      mats++;
+      if (m.map) {
+        withMap++;
+        if (isStubMap(m.map)) stubs++;
+      } else stubs++;
+    }
+  });
+  const usable = kitHasUsableMaps(root) || (withMap > 0 && stubs === 0);
+  const embed = sampleEmbedAtlasSize(root);
+  if (!must && usable) {
+    const n = normalizeEmbeddedMaps(THREE, root);
+    return {
+      n: n || mats || withMap,
+      url: refUrl,
+      mode: 'embedded-kept',
+      embed,
+      note: embed ? `embed ${embed.w}×${embed.h}` : 'embed map kept',
+    };
+  }
+  let tex = await kitLoadRaceTexture(THREE, raceId, 'default');
+  if (!tex && refUrl) {
+    tex = await new Promise((resolve) => {
       texLoader.load(
-        url,
+        refUrl,
         (tx) => {
           tx.colorSpace = THREE.SRGBColorSpace;
           tx.flipY = false;
@@ -275,31 +320,15 @@ async function applyRaceAtlas(root, raceId, { force = false, source = '' } = {})
         () => resolve(null),
       );
     });
-    if (!t) return { n: 0, url, mode: 'fail' };
-    const n = bindRaceAtlas(THREE, root, t);
-    return { n, url, mode: 'atlas-fallback' };
   }
-  if (!must) {
-    // Soft rebind only when maps look stubby — keep good Toon RTS / prod embeds
-    let stubs = 0;
-    let mats = 0;
-    root.traverse((obj) => {
-      if (!obj.isMesh && !obj.isSkinnedMesh) return;
-      const list = Array.isArray(obj.material) ? obj.material : [obj.material];
-      for (const m of list) {
-        if (!m) continue;
-        mats++;
-        const img = m.map?.image;
-        const w = img?.naturalWidth || img?.width || 0;
-        if (!m.map || w <= 2) stubs++;
-      }
-    });
-    if (stubs === 0 && mats > 0) {
-      return { n: mats, url: textureUrlForRace(raceId), mode: 'embedded-kept' };
-    }
-  }
+  if (!tex) return { n: 0, url: refUrl, mode: 'fail', note: 'no CDN atlas' };
   const n = bindRaceAtlas(THREE, root, tex);
-  return { n, url: textureUrlForRace(raceId), mode: source === 'fbx' ? 'fbx-force-atlas' : 'atlas-rebind' };
+  return {
+    n,
+    url: refUrl,
+    mode: source === 'fbx' ? 'fbx-force-atlas' : 'atlas-rebind',
+    note: source === 'fbx' ? 'author FBX needs CDN atlas' : 'stub maps → CDN rebind',
+  };
 }
 
 /** SI plant — bone measure (never setFromObject on modular kits). */
@@ -413,6 +442,7 @@ async function loadRace(race, source = activeSource) {
   mixer = null;
   animActions = {};
   equip = null;
+  clearLabWeapon('all');
 
   const url = resolveModelUrl(race, source);
   document.getElementById('hud').textContent = `Loading ${race.name} (${source})…`;
@@ -686,27 +716,75 @@ async function loadExtendedCatalog() {
   return extendedCatalog;
 }
 
-function clearLabWeapon() {
-  if (labWeaponRoot && labWeaponRoot.parent) labWeaponRoot.parent.remove(labWeaponRoot);
-  labWeaponRoot = null;
+function clearLabWeapon(which = 'all') {
+  if (which === 'all' || which === 'main') {
+    if (labHeld.main?.parent) labHeld.main.parent.remove(labHeld.main);
+    labHeld.main = null;
+  }
+  if (which === 'all' || which === 'off') {
+    if (labHeld.off?.parent) labHeld.off.parent.remove(labHeld.off);
+    labHeld.off = null;
+  }
   const st = document.getElementById('labWeaponStatus');
-  if (st) st.textContent = '';
+  if (st && which === 'all') st.textContent = '';
 }
 
-async function attachLabWeapon(entry) {
-  clearLabWeapon();
-  if (!currentRoot || !entry) return;
-  const hand =
-    currentRoot.getObjectByName('R_hand_container') ||
-    currentRoot.getObjectByName('Bip001 R Hand') ||
-    currentRoot.getObjectByName('Bip001_R_Hand');
-  if (!hand) {
-    document.getElementById('labWeaponStatus').innerHTML =
-      '<span class="err">No hand socket — cannot attach external weapon</span>';
+function labStatusHtml() {
+  const parts = [];
+  if (labHeld.main) {
+    const d = labHeld.main.userData || {};
+    parts.push(
+      `main <code>${d.meshId || labHeld.main.name}</code> @ ${d.labSlot || '?'}` +
+        (d.labWeaponCollider ? ` · box ${d.labWeaponCollider.sizeM?.y?.toFixed?.(2) ?? '?'}m` : ''),
+    );
+  }
+  if (labHeld.off) {
+    const d = labHeld.off.userData || {};
+    parts.push(
+      `off <code>${d.meshId || labHeld.off.name}</code> @ ${d.labSlot || 'L_hand'}`,
+    );
+  }
+  if (!parts.length) return '<span class="sub">kit weapons only</span>';
+  return `<span class="ok">Lab attached</span> · ${parts.join(' · ')}`;
+}
+
+/**
+ * role: 'main' | 'off'
+ * — wand/staff/bow → L_hand_container (staff socket)
+ * — melee main → R_hand_container
+ * — off: dagger|mace|hammer only → L_hand_container
+ */
+async function attachLabWeapon(entry, role = 'main') {
+  if (!currentRoot) return;
+  if (!entry) {
+    clearLabWeapon(role === 'off' ? 'off' : 'main');
+    document.getElementById('labWeaponStatus').innerHTML = labStatusHtml();
     return;
   }
-  // Prefer lab same-origin, then CDN
-  const urls = [entry.labUrl, entry.cdnUrl].filter(Boolean);
+
+  const slot = resolveLabAttachSlot(entry, role);
+  if (!slot) {
+    document.getElementById('labWeaponStatus').innerHTML =
+      `<span class="err">${entry.kind} cannot equip off-hand</span> · only dagger / mace / hammer`;
+    return;
+  }
+
+  // Staff + off-hand share L_hand_container — exclusive
+  if (role === 'main' && slot === 'staff') {
+    clearLabWeapon('off');
+    const oh = document.getElementById('labOffhandSelect');
+    if (oh) oh.value = '';
+  }
+  if (role === 'off') {
+    // Drop staff-socket lab main if it holds L hand
+    if (labHeld.main?.userData?.labSlot === 'staff') {
+      clearLabWeapon('main');
+      const ms = document.getElementById('labWeaponSelect');
+      if (ms) ms.value = '';
+    }
+  }
+
+  const urls = [entry.cdnUrl, entry.labUrl].filter(Boolean);
   let root = null;
   let used = '';
   for (const u of urls) {
@@ -721,20 +799,95 @@ async function attachLabWeapon(entry) {
   }
   if (!root) {
     document.getElementById('labWeaponStatus').innerHTML =
-      `<span class="err">Not deployed yet</span> · <code>${entry.file}</code> · promote to <code>models/grudge6/lab-weapons/</code>`;
+      `<span class="err">Not loaded</span> · <code>${entry.file}</code> · try lab or CDN lab-weapons/`;
     return;
   }
-  // Hide kit weapons so external is clear
-  equip?.hideGroup?.('weapon_r');
-  equip?.hideGroup?.('weapon_l');
-  root.position.set(0, 0, 0);
-  root.rotation.set(0, 0, 0);
-  root.scale.setScalar(1);
-  hand.add(root);
-  labWeaponRoot = root;
+
+  const prep = prepareLabWeaponRoot(THREE, root, entry);
+  root.userData.labSlot = slot;
+  root.userData.labRole = role;
+  root.userData.labSource = used;
+
+  hideKitWeaponsForLab(equip, slot);
+  const res = attachToSocket(currentRoot, root, slot, labHeld);
+  if (!res.ok) {
+    document.getElementById('labWeaponStatus').innerHTML =
+      `<span class="err">${res.error}</span>`;
+    return;
+  }
+
   document.getElementById('labWeaponStatus').innerHTML =
-    `<span class="ok">Attached</span> · mesh_id <code>${entry.meshId}</code> · <code>${used}</code>`;
+    labStatusHtml() +
+    `<br/><span class="sub">socket <code>${res.socket}</code> · toon mats×${prep.mats}` +
+    ` · SI ${prep.fit.lengthM?.toFixed?.(2) ?? '?'}m · pack ${prep.meta.animPack}` +
+    ` · <code>${used}</code></span>`;
   renderMeshList();
+}
+
+function fillLabWeaponSelects(weapons) {
+  const mainSel = document.getElementById('labWeaponSelect');
+  const offSel = document.getElementById('labOffhandSelect');
+  if (!mainSel || !offSel) return;
+
+  const byKind = {};
+  for (const w of weapons) {
+    if (!byKind[w.kind]) byKind[w.kind] = [];
+    byKind[w.kind].push(w);
+  }
+  const kindOrder = Object.keys(byKind).sort();
+
+  mainSel.innerHTML =
+    `<option value="">— kit only —</option>` +
+    kindOrder
+      .map((kind) => {
+        const meta = kindMeta(kind);
+        const label =
+          meta.defaultSlot === 'staff'
+            ? `${kind} → staff (L)`
+            : `${kind} → main (R)`;
+        const opts = byKind[kind]
+          .map((w) => `<option value="${w.id}">${w.id}</option>`)
+          .join('');
+        return `<optgroup label="${label}">${opts}</optgroup>`;
+      })
+      .join('');
+
+  const dual = weapons.filter((w) => w.canOffhand || kindMeta(w.kind).canOffhand);
+  const dualBy = {};
+  for (const w of dual) {
+    if (!dualBy[w.kind]) dualBy[w.kind] = [];
+    dualBy[w.kind].push(w);
+  }
+  offSel.innerHTML =
+    `<option value="">— none —</option>` +
+    Object.keys(dualBy)
+      .sort()
+      .map((kind) => {
+        const opts = dualBy[kind]
+          .map((w) => `<option value="${w.id}">${w.id}</option>`)
+          .join('');
+        return `<optgroup label="${kind} off-hand (L)">${opts}</optgroup>`;
+      })
+      .join('');
+
+  mainSel.onchange = () => {
+    if (!mainSel.value) {
+      clearLabWeapon('main');
+      document.getElementById('labWeaponStatus').innerHTML = labStatusHtml();
+      return;
+    }
+    const entry = weapons.find((w) => w.id === mainSel.value);
+    attachLabWeapon(entry, 'main');
+  };
+  offSel.onchange = () => {
+    if (!offSel.value) {
+      clearLabWeapon('off');
+      document.getElementById('labWeaponStatus').innerHTML = labStatusHtml();
+      return;
+    }
+    const entry = weapons.find((w) => w.id === offSel.value);
+    attachLabWeapon(entry, 'off');
+  };
 }
 
 function renderExtendedPanels(race) {
@@ -765,33 +918,8 @@ function renderExtendedPanels(race) {
     };
   });
 
-  // External weapons
-  const wSel = document.getElementById('labWeaponSelect');
-  const weapons = extendedCatalog.externalWeapons || [];
-  const byKind = {};
-  for (const w of weapons) {
-    if (!byKind[w.kind]) byKind[w.kind] = [];
-    byKind[w.kind].push(w);
-  }
-  wSel.innerHTML =
-    `<option value="">— kit only —</option>` +
-    Object.keys(byKind)
-      .sort()
-      .map((kind) => {
-        const opts = byKind[kind]
-          .map((w) => `<option value="${w.id}">${w.id}</option>`)
-          .join('');
-        return `<optgroup label="${kind}">${opts}</optgroup>`;
-      })
-      .join('');
-  wSel.onchange = () => {
-    if (!wSel.value) {
-      clearLabWeapon();
-      return;
-    }
-    const entry = weapons.find((w) => w.id === wSel.value);
-    attachLabWeapon(entry);
-  };
+  // External weapons — main + dual-wield off-hand
+  fillLabWeaponSelects(extendedCatalog.externalWeapons || []);
 
   // Mounts / siege for this race
   const mounts = (extendedCatalog.mounts || []).filter((m) => m.raceId === raceId);

@@ -29,9 +29,13 @@
 | Kind | mesh_id style | Attach |
 |------|---------------|--------|
 | Kit child | `ELF_weapon_sword_A` | Visibility on Characters.glb |
-| Lab tier GLB | `lab_weapon:sword_t3` | Load GLB → `R_hand_container` (kit weapons hidden) |
+| Lab tier main | `lab_weapon:sword_t3` | `R_hand_container` (hide kit `weapon_r`) |
+| Lab tier staff/wand/bow | `lab_weapon:wand_t2` | `L_hand_container` — **same socket as kit staff** |
+| Lab tier off-hand dual | `lab_weapon:dagger_t1` | `L_hand_container` — **dagger · mace · hammer only** |
 
-Never bake tier weapons *into* race kit without a deliberate re-bake plan.
+Module: `js/grudge6-lab-weapons.js` — SI fit, MeshToonMaterial, box collider `userData` + `.collider.json` sidecars.
+
+Never bake tier weapons *into* race kit without a deliberate re-bake plan. Staff + off-hand share `L_hand_container` (exclusive).
 
 ---
 
