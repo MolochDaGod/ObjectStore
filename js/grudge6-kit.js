@@ -179,6 +179,10 @@ export const BLOCKED_ASSET_PREFIXES = [
 
 export const STUB_MAX_BYTES = 50_000; // known bad placeholder ~44089
 
+/**
+ * Match after race prefix strip (WK_/BRB_/UD_/…).
+ * Most races: Units_Body_A · Barbarian BRB pack: body_A (no Units_ token).
+ */
 export const SLOT_DEFS = [
   { slot: 'body', re: /^(?:Units_)?Body_([A-Z])$/i, group: 'armor' },
   { slot: 'arms', re: /^(?:Units_)?Arms_([A-Z])$/i, group: 'armor' },
