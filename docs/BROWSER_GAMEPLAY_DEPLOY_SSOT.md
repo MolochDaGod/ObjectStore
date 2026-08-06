@@ -31,7 +31,7 @@ Live skill: `grudge-live-servers` (L0 five-layer asset SSOT).
 
 | System | Author (local) | Production binary / data | Production UI / game |
 |--------|----------------|--------------------------|----------------------|
-| **grudge6 race kits** | Desktop `Toon_RTS\{Race}\` FBX + Materials | `assets…/models/grudge6/races/*_Characters.glb` + `textures/grudge6/…` | Main Panel, Open, Multiverse, Foundry |
+| **grudge6 race kits** | Desktop `Toon_RTS\{Race}\` FBX + Materials (author only) | `assets…/asset-packs/toon-rts-characters/glb/characters/{raceId}.glb` + `textures/grudge6/…` | Main Panel, Open, Multiverse, Foundry — **never browser FBX** |
 | **Mesh equip / paperdoll** | same kits + mesh_ids | CDN kits + `js/grudge6-kit.js` | `info…/main-panel.html`, `GRUDGE6_Characters.html` |
 | **Item icons** | Desktop `icons\icons` | `assets…/icons/pack/…` + master-items iconUrl | shops, HUD, inventory |
 | **Animations (Explorer)** | `public/anim/animations/**` | **shipped with app** or CDN if promoted | Animator / Open combat |
