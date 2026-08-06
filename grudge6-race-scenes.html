@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>grudge6 Race Scenes — Equip mesh resources · pack idle · SI 1.8 m</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --panel: #111821;
+      --border: rgba(212, 168, 75, 0.22);
+      --gold: #d4a84b;
+      --text: #e8e6e3;
+      --dim: #7a7877;
+      --ok: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 {
+      font-size: 1rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+    header .sub { font-size: 0.72rem; color: var(--dim); max-width: 48rem; }
+    header a { color: var(--gold); font-size: 0.78rem; text-decoration: none; }
+    .races {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #0c1118;
+    }
+    .races button {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--dim);
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .races button.active, .races button:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 168, 75, 0.1);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr minmax(280px, 340px);
+      height: calc(100vh - 120px);
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; height: auto; }
+    }
+    #viewport {
+      position: relative;
+      min-height: 420px;
+      background: #06080c;
+    }
+    .status {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      font-size: 0.68rem;
+      color: var(--dim);
+      background: rgba(0, 0, 0, 0.55);
+      padding: 6px 10px;
+      border-radius: 6px;
+      max-width: 92%;
+      z-index: 2;
+      font-family: ui-monospace, monospace;
+    }
+    .side {
+      overflow: auto;
+      border-left: 1px solid var(--border);
+      padding: 12px;
+      background: #0c1118;
+      font-size: 0.78rem;
+    }
+    .side h2 {
+      font-size: 0.72rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 12px 0 8px;
+    }
+    .side h2:first-child { margin-top: 0; }
+    .tools { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tools button, .res-list button.pick {
+      background: #1a2435;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .tools button:hover, .res-list button.pick:hover, .res-list button.pick.on {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .res-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 42vh;
+      overflow: auto;
+    }
+    .res-list button.pick {
+      text-align: left;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .res-list .kind {
+      font-size: 0.62rem;
+      color: var(--dim);
+      min-width: 72px;
+    }
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .thumbs figure {
+      margin: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #06080c;
+      cursor: pointer;
+    }
+    .thumbs img { width: 100%; display: block; aspect-ratio: 1; object-fit: cover; }
+    .thumbs figcaption {
+      font-size: 0.58rem;
+      color: var(--dim);
+      padding: 3px 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .note { color: var(--dim); font-size: 0.7rem; line-height: 1.4; }
+    .ok { color: var(--ok); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>grudge6 Race Scenes</h1>
+      <div class="sub">
+        One scene per race · equipment-based mesh resources · Bip001 + anim packs · SI 1.8 m ·
+        no stretch · no old body-swap systems
+      </div>
+    </div>
+    <a href="./main-panel.html">Main Panel</a>
+    <a href="./GRUDGE6_Characters.html">Mesh lab</a>
+    <a href="./docs/">Docs</a>
+  </header>
+
+  <div class="races" id="raceBar"></div>
+
+  <div class="layout">
+    <main id="viewport">
+      <div class="status" id="status">Select a race…</div>
+    </main>
+    <aside class="side">
+      <h2>Pipeline</h2>
+      <p class="note">
+        Kit (GLB) → equip mesh visibility → bone SI fit → pack idle from
+        <code>anims/baked</code>. Resource assets = exclusive paperdoll loadouts.
+      </p>
+
+      <h2>Actions</h2>
+      <div class="tools">
+        <button type="button" id="btnBake">Bake resource thumbs</button>
+        <button type="button" id="btnCartesian">+ Cartesian (cap 120)</button>
+        <button type="button" id="btnExport">Export catalog JSON</button>
+        <button type="button" id="btnBase">Base loadout</button>
+      </div>
+      <p class="note" id="bakeNote"></p>
+
+      <h2>Resources <span id="resCount" class="ok"></span></h2>
+      <div class="res-list" id="resList"></div>
+
+      <h2>Thumbs</h2>
+      <div class="thumbs" id="thumbs"></div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { RACE_ASSETS } from './js/grudge6-kit.js';
+    import { Grudge6RaceScene, raceIds } from './js/grudge6-race-scene.js';
+
+    const params = new URLSearchParams(location.search);
+    let raceId = params.get('race') || 'human';
+    if (!RACE_ASSETS[raceId]) raceId = 'human';
+
+    const raceBar = document.getElementById('raceBar');
+    const statusEl = document.getElementById('status');
+    const resList = document.getElementById('resList');
+    const resCount = document.getElementById('resCount');
+    const thumbs = document.getElementById('thumbs');
+    const bakeNote = document.getElementById('bakeNote');
+
+    for (const id of raceIds()) {
+      const cfg = RACE_ASSETS[id];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = id;
+      b.title = `${cfg.prefix} · ${cfg.glb || cfg.fbx}`;
+      if (id === raceId) b.classList.add('active');
+      b.onclick = () => {
+        const u = new URL(location.href);
+        u.searchParams.set('race', id);
+        location.href = u.toString();
+      };
+      raceBar.appendChild(b);
+    }
+
+    let scene = null;
+    let activeResId = null;
+
+    function setStatus(s) {
+      statusEl.textContent = s;
+    }
+
+    function paintResources(resources) {
+      resCount.textContent = `(${resources.length})`;
+      resList.innerHTML = '';
+      const show = resources.filter((r) => r.kind !== 'mesh_piece');
+      const pieces = resources.filter((r) => r.kind === 'mesh_piece');
+
+      for (const r of show) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pick' + (r.id === activeResId ? ' on' : '');
+        btn.innerHTML = `<span class="kind">${r.kind}</span><span>${r.label || r.id}</span>`;
+        btn.onclick = async () => {
+          activeResId = r.id;
+          paintResources(scene.resources);
+          await scene.applyResource(r, { playAnim: true });
+        };
+        resList.appendChild(btn);
+      }
+
+      if (pieces.length) {
+        const h = document.createElement('div');
+        h.className = 'note';
+        h.style.marginTop = '8px';
+        h.textContent = `Mesh piece index: ${pieces.length} (catalog only — export JSON)`;
+        resList.appendChild(h);
+      }
+    }
+
+    function paintThumbs(list) {
+      thumbs.innerHTML = '';
+      for (const t of list) {
+        const fig = document.createElement('figure');
+        fig.innerHTML = `<img src="${t.dataUrl}" alt="${t.id}" loading="lazy" /><figcaption title="${t.id}">${t.label || t.id}</figcaption>`;
+        fig.onclick = async () => {
+          const r = scene.resources.find((x) => x.id === t.id);
+          if (r) {
+            activeResId = r.id;
+            paintResources(scene.resources);
+            await scene.applyResource(r, { playAnim: true });
+          }
+        };
+        thumbs.appendChild(fig);
+      }
+    }
+
+    scene = new Grudge6RaceScene(document.getElementById('viewport'), raceId, {
+      onStatus: setStatus,
+      onResources: (resources) => paintResources(resources),
+    });
+    await scene.mount();
+
+    document.getElementById('btnBase').onclick = async () => {
+      const base = scene.resources.find((r) => r.kind === 'base');
+      if (base) {
+        activeResId = base.id;
+        paintResources(scene.resources);
+        await scene.applyResource(base, { playAnim: true });
+      }
+    };
+
+    document.getElementById('btnCartesian').onclick = () => {
+      const n = scene.addFullCartesian(120);
+      bakeNote.textContent = `Added ${n.length} full armor cartesian loadouts (capped).`;
+      paintResources(scene.resources);
+    };
+
+    document.getElementById('btnBake').onclick = async () => {
+      bakeNote.textContent = 'Baking…';
+      const list = await scene.bakeResourceThumbs({
+        max: 80,
+        size: 192,
+        onProgress: (i, n, id) => {
+          bakeNote.textContent = `Baking ${i}/${n} · ${id}`;
+        },
+      });
+      paintThumbs(list);
+      bakeNote.innerHTML = `<span class="ok">Baked ${list.length} resource thumbs</span> (equipment mesh variants).`;
+    };
+
+    document.getElementById('btnExport').onclick = () => {
+      const catalog = scene.exportCatalogJson();
+      // attach thumbs as data URLs when present (can be large)
+      catalog.thumbs = {};
+      for (const [id, url] of scene.thumbs) {
+        catalog.thumbs[id] = url;
+      }
+      const blob = new Blob([JSON.stringify(catalog, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `grudge6-race-${raceId}-equip-resources.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      bakeNote.textContent = `Exported catalog (${catalog.resourceCount} resources).`;
+    };
+  </script>
+</body>
+</html>

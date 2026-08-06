@@ -12,6 +12,12 @@
  *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, bindRaceAtlas,
  *            toonRtsUnitUrl, TOON_RTS_HEIGHT_M } from './grudge6-kit.js';
  *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human', { source: 'fbx' });
+ *
+ * Race equip-resource scenes (SI + packs + mesh visibility):
+ *   grudge6-race-scenes.html?race=human  ·  grudge6-race-{race}.html
+ *   js/grudge6-race-scene.js · js/grudge6-anim-packs.js · js/grudge6-equip-resources.js
+ *
+ * HARD: uniform root SI only — never non-uniform mesh/bone stretch.
  */
 export const CDN = 'https://assets.grudge-studio.com';
 
