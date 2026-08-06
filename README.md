@@ -7,29 +7,36 @@ The complete data backbone for all Grudge Studio projects — 45+ JSON API endpo
 
 ---
 
-## grudge6 Main Panel + modular mesh equip (live)
+## grudge6 Main Panel + Editor + modular mesh equip (live)
 
-Unity-style paperdoll and mesh-level kit editor for Toon RTS / grudge6 races. **Do not use local-only deploys** — open the live host after Vercel ships `main`.
+Unity-style paperdoll, **character/asset editor**, and mesh-level kit tools for Toon RTS / grudge6 races. **Do not use local-only deploys** — open the live host after Vercel ships.
 
 | Surface | Live URL |
 |---------|----------|
-| **Main Panel** (paperdoll + hero + mesh kit editor) | https://info.grudge-studio.com/main-panel.html |
+| **Main Panel** (paperdoll + hero + mesh kit) | https://info.grudge-studio.com/main-panel.html |
+| **grudge6 Editor SSOT** (T0–T1 equip, skills, gizmo, GLB export) | https://info.grudge-studio.com/grudge6-editor.html |
+| **Editor contract JSON** | https://info.grudge-studio.com/api/v1/grudge6-editor-ssot.json |
 | **Mesh lab** (full mesh hide/show, bones) | https://info.grudge-studio.com/GRUDGE6_Characters.html |
 | **Item database** | https://info.grudge-studio.com/GRUDGE_Item_Database.html |
 | **Author mesh catalog** | https://info.grudge-studio.com/api/v1/toon-rts-author-inventory.json |
 
 | Code | Role |
 |------|------|
-| `js/grudge6-kit.js` | `EquipmentManager`, `loadRaceKit`, atlas variants (`ATLAS_VARIANTS`), stone atlas URLs |
-| `js/main-panel-hero-viewport.js` | 3D hero, SI fit, paperdoll → mesh, `setHeroMeshSlot` / `setHeroAtlas` |
-| `main-panel.html` | Equipment tab + mesh kit editor UI |
-| `tools/toon-rts-inspect/` | Read Desktop Toon_RTS `.meta` / `.mat` (author SSOT) |
+| `js/grudge6-kit.js` | `EquipmentManager`, `loadRaceKit(toonRts)`, atlas variants, stone atlas URLs |
+| `js/grudge6-editor.js` | Slot-click T0–T1 inventory, hierarchy, TransformControls, import/export GLB |
+| `js/main-panel-hero-viewport.js` | 3D hero, SI fit, paperdoll → mesh |
+| `main-panel.html` / `grudge6-editor.html` | Deployed info faces |
+| `scripts/test-grudge6-editor-ssot.mjs` | Smoke test (`node scripts/test-grudge6-editor-ssot.mjs --live`) |
 
-**Runtime kits (CDN):** `https://assets.grudge-studio.com/models/grudge6/races/{WK\|BRB\|ELF\|DWF\|ORC\|UD}_Characters.glb`  
+**★ PLAY kits (CDN):**  
+`https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{human|elf|orc|undead|barbarian|dwarf}.glb`
+
 **Atlases:** `https://assets.grudge-studio.com/textures/grudge6/{folder}/*.webp`  
-**Author pack (machine):** `C:\Users\nugye\Desktop\grudgeproduction\Toon_RTS` (junction → extract; zip is not a folder path)
+**Legacy races bake (fallback only):** `models/grudge6/races/*_Characters.glb`  
+**Author pack (machine):** `C:\Users\nugye\Desktop\grudgeproduction\Toon_RTS`
 
-Equip rule: **one kit + child mesh visibility** (UMMORPG-style) — never whole-body GLB swap.
+Equip rule: **one kit + child mesh visibility** (UMMORPG-style) — never whole-body GLB swap.  
+Editor: T0–T1 only (armour / weapons / relics / class / forms / weapon-skill APIs); export is **local** (no CDN write from browser).
 
 Docs: [docs/ASSETS.md](docs/ASSETS.md) · [docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md](docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md) · skill `toon-rts-author` · skill `grudge6-modular-characters`
 
