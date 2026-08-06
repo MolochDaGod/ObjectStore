@@ -1,7 +1,7 @@
 {
-  "version": "2.0.0",
-  "generated": "2026-08-06T12:00:00.000Z",
-  "description": "Warlords / grudge6 race heroes — production SSOT only. Modular Toon RTS kits: one GLB per race, equip = child mesh visibility.",
+  "version": "2.1.0",
+  "generated": "2026-08-06T06:27:30.267Z",
+  "description": "Warlords grudge6 — GOLDEN kit = Toon RTS pack (same as GRUDGE6_Characters lab).",
   "canonical": true,
   "pipeline": "grudge6",
   "era": "warlords",
@@ -14,9 +14,14 @@
     "raceKitPattern": "https://assets.grudge-studio.com/models/grudge6/races/{PREFIX}_Characters.glb",
     "atlasPattern": "https://assets.grudge-studio.com/textures/grudge6/{folder}/{file}.webp",
     "kitHelper": "https://assets.grudge-studio.com/js/grudge6-kit.js",
-    "gearPresets": "https://assets.grudge-studio.com/api/v1/grudge6-gear-presets.json"
+    "gearPresets": "https://assets.grudge-studio.com/api/v1/grudge6-gear-presets.json",
+    "goldenKit": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
+    "compareBake": "https://assets.grudge-studio.com/models/grudge6/races/{PREFIX}_Characters.glb",
+    "lab": "https://info.grudge-studio.com/GRUDGE6_Characters.html",
+    "uiLab": "https://ui.grudge-studio.com/GRUDGE6_Characters"
   },
   "purge": [
+    "Using races/*_Characters.glb as play default when Toon RTS pack exists (wrong — lab GOLDEN is toonRts)",
     "models/grudge6/metaverse/* (stub maps)",
     "models/characters/grudge6/*",
     "models/grudge6/atlases/* (404)",
@@ -25,7 +30,7 @@
     "whole-body GLB swap for armor/weapons"
   ],
   "loadContract": {
-    "kit": "GLB monolith models/grudge6/races/{PREFIX}_Characters.glb",
+    "kit": "GOLDEN: asset-packs/toon-rts-characters/glb/characters/{raceId}.glb (keep embeds, no forceAtlas)",
     "equip": "hide all equippable meshes → show mesh_ids only",
     "fit": "bone structural AABB → 1.8 m human · feet ground · art-forward +π/2 once",
     "atlas": "only rebind if embedded maps missing; textures/grudge6/{folder}/*.webp flipY=false",
@@ -35,27 +40,70 @@
       "show all Body_A–E at once",
       "pelvis-as-feet",
       "Meshy/capsule heroes"
-    ]
+    ],
+    "compare": "models/grudge6/races/*_Characters.glb only for bake compare"
   },
   "rig": {
     "primarySkeleton": "Bip001",
-    "rootBoneCandidates": ["Bip001", "Bip001 Pelvis", "Pelvis"],
+    "rootBoneCandidates": [
+      "Bip001",
+      "Bip001 Pelvis",
+      "Pelvis"
+    ],
     "attachmentSockets": {
-      "main_hand": { "bone": "R_hand_container", "fallback": "Bip001 R Hand" },
-      "off_hand": { "bone": "L_hand_container", "fallback": "Bip001 L Hand" },
-      "shield": { "bone": "L_shield_container", "fallback": "Bip001 L Hand" },
-      "quiver": { "bone": "Quiver_container" },
-      "bag": { "bone": "Bone_bag" },
-      "wood": { "bone": "Bone_wood" }
+      "main_hand": {
+        "bone": "R_hand_container",
+        "fallback": "Bip001 R Hand"
+      },
+      "off_hand": {
+        "bone": "L_hand_container",
+        "fallback": "Bip001 L Hand"
+      },
+      "shield": {
+        "bone": "L_shield_container",
+        "fallback": "Bip001 L Hand"
+      },
+      "quiver": {
+        "bone": "Quiver_container"
+      },
+      "bag": {
+        "bone": "Bone_bag"
+      },
+      "wood": {
+        "bone": "Bone_wood"
+      }
     },
     "equipmentChildMeshes": {
       "note": "Toon RTS modular kit — parts are sibling meshes in one GLB (see Imgur Toon RTS set sheets).",
       "exclusiveGroups": {
-        "armor": ["body", "arms", "legs", "head", "shoulders"],
-        "weapon_r": ["sword", "axe", "hammer", "spear", "dagger", "pick", "mace"],
-        "weapon_l": ["bow", "staff"],
-        "shield": ["shield"],
-        "utility": ["bag", "wood", "quiver"]
+        "armor": [
+          "body",
+          "arms",
+          "legs",
+          "head",
+          "shoulders"
+        ],
+        "weapon_r": [
+          "sword",
+          "axe",
+          "hammer",
+          "spear",
+          "dagger",
+          "pick",
+          "mace"
+        ],
+        "weapon_l": [
+          "bow",
+          "staff"
+        ],
+        "shield": [
+          "shield"
+        ],
+        "utility": [
+          "bag",
+          "wood",
+          "quiver"
+        ]
       }
     }
   },
@@ -77,16 +125,44 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/western-kingdoms/WK_Standard_Units.webp",
       "heightM": 1.83,
       "classLoadouts": {
-        "warrior": ["WK_Units_head_D", "WK_Units_Body_C", "WK_Units_Arms_B", "WK_Units_Legs_B", "WK_Units_shoulderpads_A", "WK_weapon_sword_B", "WK_Shield_B"],
-        "mage": ["WK_Units_head_A", "WK_Units_Body_A", "WK_Units_Arms_A", "WK_Units_Legs_A", "WK_weapon_staff_C"],
-        "ranger": ["WK_Units_head_C", "WK_Units_Body_B", "WK_Units_Arms_B", "WK_Units_Legs_B", "WK_weapon_Bow", "WK_Xtra_quiver"],
-        "unarmed": ["WK_Units_head_A", "WK_Units_Body_B", "WK_Units_Arms_A", "WK_Units_Legs_A"]
+        "warrior": [
+          "WK_Units_head_D",
+          "WK_Units_Body_C",
+          "WK_Units_Arms_B",
+          "WK_Units_Legs_B",
+          "WK_Units_shoulderpads_A",
+          "WK_weapon_sword_B",
+          "WK_Shield_B"
+        ],
+        "mage": [
+          "WK_Units_head_A",
+          "WK_Units_Body_A",
+          "WK_Units_Arms_A",
+          "WK_Units_Legs_A",
+          "WK_weapon_staff_C"
+        ],
+        "ranger": [
+          "WK_Units_head_C",
+          "WK_Units_Body_B",
+          "WK_Units_Arms_B",
+          "WK_Units_Legs_B",
+          "WK_weapon_Bow",
+          "WK_Xtra_quiver"
+        ],
+        "unarmed": [
+          "WK_Units_head_A",
+          "WK_Units_Body_B",
+          "WK_Units_Arms_A",
+          "WK_Units_Legs_A"
+        ]
       }
     },
     {
@@ -98,16 +174,45 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/barbarians/BRB_StandardUnits_texture.webp",
       "heightM": 1.9,
       "classLoadouts": {
-        "warrior": ["BRB_head_B", "BRB_body_C", "BRB_arms_B", "BRB_legs_B", "BRB_shoulderpads_B", "BRB_weapon_sword_B", "BRB_Shield_B"],
-        "mage": ["BRB_head_A", "BRB_body_A", "BRB_arms_A", "BRB_legs_A", "BRB_weapon_staff_C"],
-        "ranger": ["BRB_head_C", "BRB_body_B", "BRB_arms_B", "BRB_legs_B", "BRB_shoulderpads_A", "BRB_weapon_Bow", "BRB_Xtra_quiver"],
-        "unarmed": ["BRB_head_A", "BRB_body_B", "BRB_arms_A", "BRB_legs_A"]
+        "warrior": [
+          "BRB_head_B",
+          "BRB_body_C",
+          "BRB_arms_B",
+          "BRB_legs_B",
+          "BRB_shoulderpads_B",
+          "BRB_weapon_sword_B",
+          "BRB_Shield_B"
+        ],
+        "mage": [
+          "BRB_head_A",
+          "BRB_body_A",
+          "BRB_arms_A",
+          "BRB_legs_A",
+          "BRB_weapon_staff_C"
+        ],
+        "ranger": [
+          "BRB_head_C",
+          "BRB_body_B",
+          "BRB_arms_B",
+          "BRB_legs_B",
+          "BRB_shoulderpads_A",
+          "BRB_weapon_Bow",
+          "BRB_Xtra_quiver"
+        ],
+        "unarmed": [
+          "BRB_head_A",
+          "BRB_body_B",
+          "BRB_arms_A",
+          "BRB_legs_A"
+        ]
       }
     },
     {
@@ -119,16 +224,45 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/elves/ELF_HighElves_Texture.webp",
       "heightM": 1.85,
       "classLoadouts": {
-        "warrior": ["ELF_Units_Head_D", "ELF_Units_Body_C", "ELF_Units_Arms_B", "ELF_Units_Legs_B", "ELF_Units_Shoulderpads_B", "ELF_weapon_sword_B", "ELF_shield_B"],
-        "mage": ["ELF_Units_Head_B", "ELF_Units_Body_A", "ELF_Units_Arms_A", "ELF_Units_Legs_A", "ELF_weapon_staff_C"],
-        "ranger": ["ELF_Units_Head_C", "ELF_Units_Body_B", "ELF_Units_Arms_B", "ELF_Units_Legs_B", "ELF_Units_Shoulderpads_A", "ELF_weapon_bow", "ELF_Xtra_quiver"],
-        "unarmed": ["ELF_Units_Head_A", "ELF_Units_Body_B", "ELF_Units_Arms_A", "ELF_Units_Legs_A"]
+        "warrior": [
+          "ELF_Units_Head_D",
+          "ELF_Units_Body_C",
+          "ELF_Units_Arms_B",
+          "ELF_Units_Legs_B",
+          "ELF_Units_Shoulderpads_B",
+          "ELF_weapon_sword_B",
+          "ELF_shield_B"
+        ],
+        "mage": [
+          "ELF_Units_Head_B",
+          "ELF_Units_Body_A",
+          "ELF_Units_Arms_A",
+          "ELF_Units_Legs_A",
+          "ELF_weapon_staff_C"
+        ],
+        "ranger": [
+          "ELF_Units_Head_C",
+          "ELF_Units_Body_B",
+          "ELF_Units_Arms_B",
+          "ELF_Units_Legs_B",
+          "ELF_Units_Shoulderpads_A",
+          "ELF_weapon_bow",
+          "ELF_Xtra_quiver"
+        ],
+        "unarmed": [
+          "ELF_Units_Head_A",
+          "ELF_Units_Body_B",
+          "ELF_Units_Arms_A",
+          "ELF_Units_Legs_A"
+        ]
       }
     },
     {
@@ -140,16 +274,45 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/dwarves/DWF_Standard_Units.webp",
       "heightM": 1.55,
       "classLoadouts": {
-        "warrior": ["DWF_Units_Head_G", "DWF_Units_Body_C", "DWF_Units_Arms_B", "DWF_Units_Legs_B", "DWF_Units_Shoulderpads_B", "DWF_Weapon_sword_B", "DWF_Shield_B"],
-        "mage": ["DWF_Units_Head_A", "DWF_Units_Body_A", "DWF_Units_Arms_A", "DWF_Units_Legs_A", "DWF_Weapon_staff_B"],
-        "ranger": ["DWF_Units_Head_C", "DWF_Units_Body_B", "DWF_Units_Arms_B", "DWF_Units_Legs_B", "DWF_Units_Shoulderpads_A", "DWF_Weapon_bow", "DWF_Xtra_quiver"],
-        "unarmed": ["DWF_Units_Head_A", "DWF_Units_Body_B", "DWF_Units_Arms_A", "DWF_Units_Legs_A"]
+        "warrior": [
+          "DWF_Units_Head_G",
+          "DWF_Units_Body_C",
+          "DWF_Units_Arms_B",
+          "DWF_Units_Legs_B",
+          "DWF_Units_Shoulderpads_B",
+          "DWF_Weapon_sword_B",
+          "DWF_Shield_B"
+        ],
+        "mage": [
+          "DWF_Units_Head_A",
+          "DWF_Units_Body_A",
+          "DWF_Units_Arms_A",
+          "DWF_Units_Legs_A",
+          "DWF_Weapon_staff_B"
+        ],
+        "ranger": [
+          "DWF_Units_Head_C",
+          "DWF_Units_Body_B",
+          "DWF_Units_Arms_B",
+          "DWF_Units_Legs_B",
+          "DWF_Units_Shoulderpads_A",
+          "DWF_Weapon_bow",
+          "DWF_Xtra_quiver"
+        ],
+        "unarmed": [
+          "DWF_Units_Head_A",
+          "DWF_Units_Body_B",
+          "DWF_Units_Arms_A",
+          "DWF_Units_Legs_A"
+        ]
       }
     },
     {
@@ -161,16 +324,45 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/orcs/ORC_StandardUnits.webp",
-      "heightM": 2.0,
+      "heightM": 2,
       "classLoadouts": {
-        "warrior": ["ORC_Units_Head_E", "ORC_Units_Body_C", "ORC_Units_Arms_B", "ORC_Units_Legs_B", "ORC_Units_Shoulderpads_C", "ORC_weapon_Axe_B", "ORC_Shield_C"],
-        "mage": ["ORC_Units_Head_A", "ORC_Units_Body_A", "ORC_Units_Arms_A", "ORC_Units_Legs_A", "ORC_weapon_staff_C"],
-        "ranger": ["ORC_Units_Head_B", "ORC_Units_Body_B", "ORC_Units_Arms_B", "ORC_Units_Legs_B", "ORC_Units_Shoulderpads_A", "ORC_weapon_Bow", "ORC_Xtra_quiver"],
-        "unarmed": ["ORC_Units_Head_A", "ORC_Units_Body_A", "ORC_Units_Arms_A", "ORC_Units_Legs_A"]
+        "warrior": [
+          "ORC_Units_Head_E",
+          "ORC_Units_Body_C",
+          "ORC_Units_Arms_B",
+          "ORC_Units_Legs_B",
+          "ORC_Units_Shoulderpads_C",
+          "ORC_weapon_Axe_B",
+          "ORC_Shield_C"
+        ],
+        "mage": [
+          "ORC_Units_Head_A",
+          "ORC_Units_Body_A",
+          "ORC_Units_Arms_A",
+          "ORC_Units_Legs_A",
+          "ORC_weapon_staff_C"
+        ],
+        "ranger": [
+          "ORC_Units_Head_B",
+          "ORC_Units_Body_B",
+          "ORC_Units_Arms_B",
+          "ORC_Units_Legs_B",
+          "ORC_Units_Shoulderpads_A",
+          "ORC_weapon_Bow",
+          "ORC_Xtra_quiver"
+        ],
+        "unarmed": [
+          "ORC_Units_Head_A",
+          "ORC_Units_Body_A",
+          "ORC_Units_Arms_A",
+          "ORC_Units_Legs_A"
+        ]
       }
     },
     {
@@ -182,16 +374,45 @@
       "status": "live",
       "working": true,
       "models": {
-        "kitGlb": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb",
-        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.fbx"
+        "kitGlb": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb",
+        "kitFbxAuthor": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.fbx",
+        "toonRts": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb",
+        "prodCompare": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb"
       },
       "texture": "https://assets.grudge-studio.com/textures/grudge6/undead/UD_Standard_Units.webp",
       "heightM": 1.8,
       "classLoadouts": {
-        "warrior": ["UD_Units_head_G", "UD_Units_body_D", "UD_Units_arms_C", "UD_Units_legs_C", "UD_Units_shoulderpads_B", "UD_weapon_Sword_B", "UD_Shield_C"],
-        "mage": ["UD_Units_head_A", "UD_Units_body_G", "UD_Units_arms_B", "UD_Units_legs_B", "UD_weapon_staff_D"],
-        "ranger": ["UD_Units_head_C", "UD_Units_body_B", "UD_Units_arms_B", "UD_Units_legs_B", "UD_Units_shoulderpads_A", "UD_weapon_Bow", "UD_Xtra_Quiver"],
-        "unarmed": ["UD_Units_head_A", "UD_Units_body_B", "UD_Units_arms_A", "UD_Units_legs_A"]
+        "warrior": [
+          "UD_Units_head_G",
+          "UD_Units_body_D",
+          "UD_Units_arms_C",
+          "UD_Units_legs_C",
+          "UD_Units_shoulderpads_B",
+          "UD_weapon_Sword_B",
+          "UD_Shield_C"
+        ],
+        "mage": [
+          "UD_Units_head_A",
+          "UD_Units_body_G",
+          "UD_Units_arms_B",
+          "UD_Units_legs_B",
+          "UD_weapon_staff_D"
+        ],
+        "ranger": [
+          "UD_Units_head_C",
+          "UD_Units_body_B",
+          "UD_Units_arms_B",
+          "UD_Units_legs_B",
+          "UD_Units_shoulderpads_A",
+          "UD_weapon_Bow",
+          "UD_Xtra_Quiver"
+        ],
+        "unarmed": [
+          "UD_Units_head_A",
+          "UD_Units_body_B",
+          "UD_Units_arms_A",
+          "UD_Units_legs_A"
+        ]
       }
     }
   ],
