@@ -189,6 +189,16 @@
         Kit (GLB) → equip mesh visibility → bone SI fit → pack idle from
         <code>anims/baked</code>. Resource assets = exclusive paperdoll loadouts.
       </p>
+      <h2>Sets gallery (author SSOT)</h2>
+      <p class="note">
+        Modular parts boards:
+        <a href="https://imgur.com/a/sFHXx2X" target="_blank" rel="noopener" style="color:var(--gold)">imgur.com/a/sFHXx2X</a>
+        · catalog <code>api/v1/toon-rts-sets-gallery.json</code>
+      </p>
+      <a id="boardLink" href="#" target="_blank" rel="noopener" style="display:block;margin:6px 0">
+        <img id="boardThumb" alt="race set board" style="width:100%;border-radius:8px;border:1px solid var(--border);display:none" />
+      </a>
+      <p class="note" id="boardGaps"></p>
 
       <h2>Actions</h2>
       <div class="tools">
@@ -287,6 +297,31 @@
         };
         thumbs.appendChild(fig);
       }
+    }
+
+    // Visual SSOT board for this race (meshes / armour / mount)
+    try {
+      const gal = await fetch('./api/v1/toon-rts-sets-gallery.json', { cache: 'no-cache' }).then((r) => r.json());
+      const board = (gal.boards || []).find((b) => b.raceId === raceId);
+      if (board) {
+        const thumb = document.getElementById('boardThumb');
+        const link = document.getElementById('boardLink');
+        const gaps = document.getElementById('boardGaps');
+        thumb.src = board.image;
+        thumb.style.display = 'block';
+        link.href = board.image;
+        const cdn = board.cdn || {};
+        const miss = Object.entries(cdn)
+          .filter(([, v]) => v === 404)
+          .map(([k]) => k);
+        gaps.innerHTML =
+          (board.notes ? board.notes + ' · ' : '') +
+          (miss.length
+            ? `<span class="err">CDN gaps: ${miss.join(', ')}</span>`
+            : '<span class="ok">Infantry kit live</span>');
+      }
+    } catch (e) {
+      console.warn('sets gallery', e);
     }
 
     scene = new Grudge6RaceScene(document.getElementById('viewport'), raceId, {

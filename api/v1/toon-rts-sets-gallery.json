@@ -1,0 +1,109 @@
+{
+  "id": "toon-rts-sets-gallery",
+  "version": 1,
+  "title": "Toon RTS modular sets — visual SSOT",
+  "album": "https://imgur.com/a/sFHXx2X",
+  "albumGallery": "https://imgur.com/gallery/sets-sFHXx2X",
+  "updated": "2026-08-06",
+  "purpose": "Review meshes, armour, weapons, heads, mounts against CDN kits; drive gap fixes and loaders.",
+  "boards": [
+    {
+      "order": 1,
+      "imgurId": "u4DZksB",
+      "image": "https://i.imgur.com/u4DZksB.png",
+      "raceId": "elf",
+      "prefix": "ELF_",
+      "mount": "horse_white",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb",
+      "authorCavalry": "Toon_RTS/Elves/models/ELF_Cavalry_customizable.FBX",
+      "atlasesAuthor": [
+        "ELF_HighElves_Texture.tga",
+        "ELF_DarkElves_Texture.tga",
+        "ELF_WoodElves_Texture.tga",
+        "ELF_DarkElves_Blue.tga",
+        "ELF_DarkElves_Green.tga",
+        "ELF_DarkElves_Red.tga",
+        "ELF_WoodElves_Brown.tga"
+      ],
+      "cdn": {
+        "infantryGlb": 200,
+        "atlasHigh": 200,
+        "atlasDark": 404,
+        "atlasWood": 404,
+        "cavalry": 404
+      },
+      "notes": "Board is High-elf gold palette. Dark/Wood need atlas upload. Lance not on this board."
+    },
+    {
+      "order": 2,
+      "imgurId": "ioxzFVS",
+      "image": "https://i.imgur.com/ioxzFVS.png",
+      "raceId": "human",
+      "prefix": "WK_",
+      "mount": "horse_chestnut",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb",
+      "cdn": { "infantryGlb": 200, "cavalry": 404 },
+      "notes": "Blue/gold crusade plate; pick + hammers on board."
+    },
+    {
+      "order": 3,
+      "imgurId": "ABVKI8a",
+      "image": "https://i.imgur.com/ABVKI8a.png",
+      "raceId": "barbarian",
+      "prefix": "BRB_",
+      "mount": "horse_brown",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb",
+      "meshNaming": "no Units_ token — body_A not Units_Body_A",
+      "cdn": { "infantryGlb": 200, "cavalry": 404 },
+      "notes": "Loader must match body_/arms_/legs_/head_/shoulderpads_ after BRB_ strip."
+    },
+    {
+      "order": 4,
+      "imgurId": "RdxDWV8",
+      "image": "https://i.imgur.com/RdxDWV8.png",
+      "raceId": "undead",
+      "prefix": "UD_",
+      "mount": "skeletal_horse",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb",
+      "cdn": { "infantryGlb": 200, "cavalry": 404 },
+      "gaps": ["UD_weapon_Lance labeled on board — verify extra_models / re-bake"],
+      "notes": "Skeleton + living undead heads; skeletal mount required for cavalry parity."
+    },
+    {
+      "order": 5,
+      "imgurId": "hDGMu2y",
+      "image": "https://i.imgur.com/hDGMu2y.png",
+      "raceId": "orc",
+      "prefix": "ORC_",
+      "mount": "wolf",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb",
+      "cdn": { "infantryGlb": 200, "cavalry": 404, "wolf": 404 },
+      "notes": "Wolf mount not horse; mace present on kit."
+    },
+    {
+      "order": 6,
+      "imgurId": "gH9DmY1",
+      "image": "https://i.imgur.com/gH9DmY1.png",
+      "raceId": "dwarf",
+      "prefix": "DWF_",
+      "mount": "boar",
+      "prodGlb": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb",
+      "cdn": { "infantryGlb": 200, "cavalry": 404, "boar": 404 },
+      "notes": "Boar/ram mount; heavy axes and pick on board."
+    }
+  ],
+  "loadingRules": {
+    "infantry": "models/grudge6/races/{PREFIX}_Characters.glb",
+    "equip": "visibility mesh_ids exclusive slots",
+    "si": "bone structural fit ~1.8m human",
+    "atlas": "textures/grudge6/{faction}/{file}.webp",
+    "fbxPlayDefault": false,
+    "mountsSeparateFromCharactersGlb": true
+  },
+  "cdnGapsPriority": [
+    "Upload elf Dark/Wood (+color) webp atlases",
+    "Bake+upload all race cavalry (horse/wolf/boar/skeletal)",
+    "Confirm undead lance mesh source",
+    "Optional siege boltthrower/catapult GLBs"
+  ]
+}
