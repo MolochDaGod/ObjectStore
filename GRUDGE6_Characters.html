@@ -127,6 +127,23 @@
     <h2>Clips</h2>
     <div class="clips" id="clips"></div>
 
+    <h2>Atlas / colors</h2>
+    <div class="row" id="atlasColors"><span class="sub">Load race…</span></div>
+
+    <h2>External weapons (tier GLB)</h2>
+    <p class="sub" style="margin-bottom:6px">From <code>_glb_weapons</code> · attach to hand · does not rewrite race kit</p>
+    <div class="row">
+      <label>Lab weapon</label>
+      <select id="labWeaponSelect"><option value="">— kit only —</option></select>
+    </div>
+    <div class="sub" id="labWeaponStatus"></div>
+
+    <h2>Mounts / siege (Toon RTS)</h2>
+    <div id="mountSiegeList" class="sub">—</div>
+
+    <h2>Unity prefab armour review</h2>
+    <div id="unityArmourReview" class="sub">—</div>
+
     <h2>Sockets / bones</h2>
     <ul id="sockets"></ul>
 
@@ -209,11 +226,13 @@ const BONE_ALIASES = {
 };
 
 let catalog = null;
+let extendedCatalog = null;
 let activeRace = null;
 /** Prefer working GLBs; fbx is author-only. */
 let activeSource = 'prod'; // prod | toonRts | metaverse | fbx
 let scene, camera, renderer, controls, mixer, clock, currentRoot, animActions = {};
 let equip = null; // EquipmentManager instance
+let labWeaponRoot = null; // external tier weapon attach (not in race GLB)
 const texLoader = new THREE.TextureLoader();
 const texCache = new Map();
 
@@ -780,6 +799,180 @@ function renderUrls(race, url, source, bones) {
     <div style="margin-top:8px"><strong>toon RTS</strong><br/><code>${race.models?.toonRts || '—'}</code></div>
     <div style="margin-top:8px"><strong>race FBX</strong><br/><code>${a?.fbx || '—'}</code></div>
   `;
+  renderExtendedPanels(race);
+}
+
+async function loadExtendedCatalog() {
+  for (const u of [
+    './api/v1/grudge6-lab-extended-catalog.json',
+    `${API}/grudge6-lab-extended-catalog.json`,
+  ]) {
+    try {
+      const r = await fetch(u, { cache: 'no-cache' });
+      if (r.ok) {
+        extendedCatalog = await r.json();
+        return extendedCatalog;
+      }
+    } catch { /* next */ }
+  }
+  extendedCatalog = { externalWeapons: [], mounts: [], siege: [], colors: {}, unityArmourByRace: {} };
+  return extendedCatalog;
+}
+
+function clearLabWeapon() {
+  if (labWeaponRoot && labWeaponRoot.parent) labWeaponRoot.parent.remove(labWeaponRoot);
+  labWeaponRoot = null;
+  const st = document.getElementById('labWeaponStatus');
+  if (st) st.textContent = '';
+}
+
+async function attachLabWeapon(entry) {
+  clearLabWeapon();
+  if (!currentRoot || !entry) return;
+  const hand =
+    currentRoot.getObjectByName('R_hand_container') ||
+    currentRoot.getObjectByName('Bip001 R Hand') ||
+    currentRoot.getObjectByName('Bip001_R_Hand');
+  if (!hand) {
+    document.getElementById('labWeaponStatus').innerHTML =
+      '<span class="err">No hand socket — cannot attach external weapon</span>';
+    return;
+  }
+  // Prefer lab same-origin, then CDN
+  const urls = [entry.labUrl, entry.cdnUrl].filter(Boolean);
+  let root = null;
+  let used = '';
+  for (const u of urls) {
+    try {
+      const loaded = await loadModel(u);
+      root = loaded.scene || loaded;
+      used = u;
+      break;
+    } catch {
+      /* try next */
+    }
+  }
+  if (!root) {
+    document.getElementById('labWeaponStatus').innerHTML =
+      `<span class="err">Not deployed yet</span> · <code>${entry.file}</code> · promote to <code>models/grudge6/lab-weapons/</code>`;
+    return;
+  }
+  // Hide kit weapons so external is clear
+  equip?.hideGroup?.('weapon_r');
+  equip?.hideGroup?.('weapon_l');
+  root.position.set(0, 0, 0);
+  root.rotation.set(0, 0, 0);
+  root.scale.setScalar(1);
+  hand.add(root);
+  labWeaponRoot = root;
+  document.getElementById('labWeaponStatus').innerHTML =
+    `<span class="ok">Attached</span> · mesh_id <code>${entry.meshId}</code> · <code>${used}</code>`;
+  renderMeshList();
+}
+
+function renderExtendedPanels(race) {
+  if (!race || !extendedCatalog) return;
+  const raceId = race.id;
+
+  // Colors / atlas
+  const colorEl = document.getElementById('atlasColors');
+  const variants = extendedCatalog.colors?.[raceId] || ['default'];
+  colorEl.innerHTML = variants
+    .map(
+      (v) =>
+        `<button type="button" class="tool" data-atlas="${v}">${v}</button>`,
+    )
+    .join('');
+  colorEl.querySelectorAll('button').forEach((btn) => {
+    btn.onclick = async () => {
+      if (!currentRoot) return;
+      const tex = await kitLoadRaceTexture(THREE, raceId, btn.dataset.atlas);
+      if (!tex) {
+        document.getElementById('texStatus').innerHTML =
+          `<span class="err">Atlas not on CDN</span> · <code>${btn.dataset.atlas}</code> (author TGA → webp → R2)`;
+        return;
+      }
+      const n = bindRaceAtlas(THREE, currentRoot, tex);
+      document.getElementById('texStatus').innerHTML =
+        `<span class="ok">Atlas ${btn.dataset.atlas}</span> · mats×${n}`;
+    };
+  });
+
+  // External weapons
+  const wSel = document.getElementById('labWeaponSelect');
+  const weapons = extendedCatalog.externalWeapons || [];
+  const byKind = {};
+  for (const w of weapons) {
+    if (!byKind[w.kind]) byKind[w.kind] = [];
+    byKind[w.kind].push(w);
+  }
+  wSel.innerHTML =
+    `<option value="">— kit only —</option>` +
+    Object.keys(byKind)
+      .sort()
+      .map((kind) => {
+        const opts = byKind[kind]
+          .map((w) => `<option value="${w.id}">${w.id}</option>`)
+          .join('');
+        return `<optgroup label="${kind}">${opts}</optgroup>`;
+      })
+      .join('');
+  wSel.onchange = () => {
+    if (!wSel.value) {
+      clearLabWeapon();
+      return;
+    }
+    const entry = weapons.find((w) => w.id === wSel.value);
+    attachLabWeapon(entry);
+  };
+
+  // Mounts / siege for this race
+  const mounts = (extendedCatalog.mounts || []).filter((m) => m.raceId === raceId);
+  const siege = (extendedCatalog.siege || []).filter((s) => s.raceId === raceId);
+  const ms = document.getElementById('mountSiegeList');
+  if (!mounts.length && !siege.length) {
+    ms.innerHTML = '<span class="sub">No author mount/siege rows for this race</span>';
+  } else {
+    ms.innerHTML = [
+      ...mounts.map(
+        (m) =>
+          `<div>· <strong>mount</strong> <code>${m.id}</code> · ${m.mountKind || m.kind} · ` +
+          `<span class="${m.authorExists ? 'ok' : 'err'}">${m.status}</span></div>`,
+      ),
+      ...siege.map(
+        (s) =>
+          `<div>· <strong>siege</strong> <code>${s.id}</code> · ${s.kind} · ` +
+          `<span class="${s.authorExists ? 'ok' : 'err'}">${s.status}</span></div>`,
+      ),
+      `<div class="sub" style="margin-top:6px">Bake → <code>models/grudge6/races/*.glb</code> before lab load. Not inside Characters.glb.</div>`,
+    ].join('');
+  }
+
+  // Unity armour review
+  const ua = extendedCatalog.unityArmourByRace?.[raceId];
+  const ur = document.getElementById('unityArmourReview');
+  if (!ua) {
+    ur.innerHTML = '<span class="sub">No Unity inventory row for this race</span>';
+  } else {
+    const live = equip?.allMeshes?.map((m) => m.name) || [];
+    const armour = ua.armourMeshIds || [];
+    const missingOnLive = armour.filter((id) => {
+      // compare after normalizing
+      return !live.some((n) => n === id || n.endsWith(id.replace(/^[A-Z]+_/, '')));
+    });
+    ur.innerHTML = `
+      <div>Author meshes: <strong>${ua.authorMeshCount}</strong> · armour rows: <strong>${armour.length}</strong></div>
+      <div class="sub">FBX: <code>${ua.characterFbx || '—'}</code></div>
+      <div style="margin-top:6px"><strong>Armour mesh_ids (Unity)</strong></div>
+      <div class="mesh-list" style="max-height:120px">${armour.map((id) => `<div><code>${id}</code></div>`).join('') || '—'}</div>
+      <div style="margin-top:6px"><strong>Weapon mesh_ids (Unity)</strong></div>
+      <div class="mesh-list" style="max-height:100px">${(ua.weaponMeshIds || []).map((id) => `<div><code>${id}</code></div>`).join('') || '—'}</div>
+      <div class="sub" style="margin-top:6px">
+        Live kit equip meshes: <strong>${live.length}</strong>
+        ${missingOnLive.length ? ` · <span class="err">name drift sample: ${missingOnLive.slice(0, 3).join(', ')}</span>` : ' · <span class="ok">names align with kit catalog</span>'}
+      </div>
+    `;
+  }
 }
 
 function renderRaceList() {
@@ -832,6 +1025,7 @@ document.getElementById('btnShowAllArmor').onclick = () => {
   initThree();
   try {
     catalog = await loadCatalog();
+    await loadExtendedCatalog();
   } catch (e) {
     document.getElementById('raceList').innerHTML = `<div class="err">${e.message}</div>`;
     return;

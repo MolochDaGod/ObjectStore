@@ -17,8 +17,20 @@
 | **Mesh inventory / defs** | ObjectStore | `info…/api/v1/*` | Propose JSON patches on `main` |
 | **Player heroes** | Railway | `api.grudge-studio.com` `char_*` | **Out of scope** for this lab |
 | **Author FBX / TGA** | Desktop Toon_RTS | — | Input for **offline bake only** |
+| **Tier weapons (external)** | `D:\Games\Models\_glb_weapons` | promote → `assets…/models/grudge6/lab-weapons/*.glb` | Catalog + hand attach preview |
+| **Mounts / siege** | Toon_RTS `*_Cavalry_customizable.FBX`, BoltThrower/Catapult | bake → `models/grudge6/races/*.glb` | List + status only until CDN |
+| **Sets boards** | Imgur `a/sFHXx2X` | — | Visual mesh/armour/mount review |
 
-**Forbidden in lab runtime:** Desktop paths, FBX as play default, whole-body GLB swap, non-uniform stretch, plain `scene.clone` on skinned kits, writing CDN from the browser.
+**Forbidden in lab runtime:** Desktop paths as production loaders, FBX as play default, whole-body GLB swap, non-uniform stretch, plain `scene.clone` on skinned kits, writing CDN from the browser.
+
+### External weapons vs kit weapons
+
+| Kind | mesh_id style | Attach |
+|------|---------------|--------|
+| Kit child | `ELF_weapon_sword_A` | Visibility on Characters.glb |
+| Lab tier GLB | `lab_weapon:sword_t3` | Load GLB → `R_hand_container` (kit weapons hidden) |
+
+Never bake tier weapons *into* race kit without a deliberate re-bake plan.
 
 ---
 
