@@ -89,34 +89,52 @@ export const PACK_CLIPS = {
     ],
   },
   /**
-   * 2H melee — greatsword + samurai (primary).
-   * Also used for kit hammer/axe/spear when treated as 2H.
+   * 2H melee / greatsword.
+   * Author FBX: D:\Games\Models\_anim_packs\_gap_fill_stage\2h_melee
+   * Prod bake:  assets…/prod/anims/2h_melee/*.glb
+   * Companion:  greatsword_samurai baked JSON (fleet-proven idle/combo)
    */
   '2h_melee': {
     idle: [
+      // prod gap-fill bake (when uploaded)
+      'prod:2h_melee/great-sword-idle.glb',
       'greatsword_samurai/gs_samurai_idle_sword',
       'greatsword/great sword idle',
       'locomotion/idle',
     ],
     walk: [
+      'prod:2h_melee/great-sword-walk.glb',
       'greatsword_samurai/gs_samurai_walk_sword',
       'magic/Standing Walk Forward',
       'locomotion/run_forward',
     ],
     run: [
+      'prod:2h_melee/great-sword-run.glb',
       'greatsword_samurai/gs_samurai_run_sword',
       'locomotion/run_forward',
     ],
     attack: [
+      'prod:2h_melee/great-sword-slash.glb',
+      'prod:2h_melee/great-sword-attack.glb',
       'greatsword_samurai/gs_samurai_combo_a',
       'greatsword_samurai/gs_samurai_combo_b',
       'greatsword/great sword attack',
       'greatsword/great sword slash',
     ],
-    skill1: ['greatsword_samurai/gs_samurai_combo_b'],
-    skill2: ['greatsword_samurai/gs_samurai_dash_opener'],
+    heavy: [
+      'prod:2h_melee/great-sword-high-spin-attack.glb',
+      'prod:2h_melee/great-sword-jump-attack.glb',
+      'greatsword_samurai/gs_samurai_combo_b',
+    ],
+    block: [
+      'prod:2h_melee/great-sword-blocking.glb',
+      'greatsword_samurai/gs_samurai_idle_sword',
+    ],
+    skill1: ['greatsword_samurai/gs_samurai_combo_b', 'prod:2h_melee/great-sword-slash-2.glb'],
+    skill2: ['greatsword_samurai/gs_samurai_dash_opener', 'prod:2h_melee/great-sword-slide-attack.glb'],
     skill3: ['greatsword_samurai/gs_samurai_teleport_strike'],
-    skill4: ['greatsword_samurai/gs_samurai_jump_sword'],
+    skill4: ['greatsword_samurai/gs_samurai_jump_sword', 'prod:2h_melee/great-sword-jump-attack.glb'],
+    authorSource: 'D:\\\\Games\\\\Models\\\\_anim_packs\\\\_gap_fill_stage\\\\2h_melee',
   },
   longbow: {
     idle: ['longbow/idle', 'longbow/standing idle 01', 'locomotion/idle'],
@@ -173,9 +191,18 @@ export function packForWeaponSlot(weaponSlot) {
 /** Flatten pack role → absolute URL list (CDN then Open). */
 export function clipUrlsFor(packId, role = 'idle') {
   const pack = normalizePackId(packId);
-  const rels = PACK_CLIPS[pack]?.[role] || PACK_CLIPS.locomotion.idle || [];
+  const rels = (PACK_CLIPS[pack]?.[role] || PACK_CLIPS.locomotion.idle || []).filter(
+    (r) => typeof r === 'string' && !r.startsWith('authorSource'),
+  );
   const urls = [];
   for (const rel of rels) {
+    if (typeof rel !== 'string') continue;
+    // prod:2h_melee/great-sword-idle.glb → assets…/prod/anims/2h_melee/…
+    if (rel.startsWith('prod:')) {
+      const rest = rel.slice('prod:'.length);
+      urls.push(`${CDN}/prod/anims/${rest}`);
+      continue;
+    }
     for (const u of bakedUrls(rel)) urls.push(u);
   }
   return urls;
