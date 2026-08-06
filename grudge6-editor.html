@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>grudge6 Editor — Character · Equip T0–T1 · Skills · Assets</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #0a0e14; --panel: #111821; --border: rgba(212,168,75,.22);
+      --gold: #d4a84b; --text: #e8e6e3; --dim: #7a7877; --ok: #22c55e; --err: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+    header {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--panel);
+    }
+    header h1 { font-size: .95rem; color: var(--gold); letter-spacing: .04em; }
+    header .sub { font-size: .7rem; color: var(--dim); max-width: 42rem; line-height: 1.35; }
+    header a { color: var(--gold); font-size: .75rem; text-decoration: none; }
+    .layout {
+      display: grid;
+      grid-template-columns: 200px 1fr 300px 280px;
+      height: calc(100vh - 52px);
+    }
+    @media (max-width: 1200px) {
+      .layout { grid-template-columns: 1fr; height: auto; overflow: auto; }
+      #viewport { min-height: 420px; }
+    }
+    .col {
+      overflow: auto; border-right: 1px solid var(--border);
+      padding: 10px; background: #0c1118; font-size: .75rem;
+    }
+    .col:last-child { border-right: none; }
+    #viewport { position: relative; background: #06080c; min-height: 360px; }
+    .hud {
+      position: absolute; left: 8px; bottom: 8px; z-index: 2;
+      font-size: .65rem; color: var(--dim); background: rgba(0,0,0,.55);
+      padding: 5px 8px; border-radius: 6px; max-width: 92%; font-family: ui-monospace, monospace;
+    }
+    h2 {
+      font-size: .68rem; color: var(--gold); text-transform: uppercase;
+      letter-spacing: .06em; margin: 12px 0 6px;
+    }
+    h2:first-child { margin-top: 0; }
+    h4 { font-size: .72rem; color: var(--gold); margin: 8px 0 4px; }
+    .dim { color: var(--dim); font-size: .68rem; }
+    .badge {
+      display: inline-block; font-size: .6rem; padding: 1px 5px; border-radius: 3px;
+      background: rgba(34,197,94,.12); color: var(--ok); border: 1px solid rgba(34,197,94,.35);
+    }
+    select, button, .tool {
+      background: #1a2435; border: 1px solid var(--border); color: var(--text);
+      padding: 5px 8px; border-radius: 6px; font-size: .72rem; cursor: pointer;
+    }
+    select { width: 100%; margin-bottom: 6px; }
+    button:hover, .tool:hover, .slot-btn.on, .inv-item:hover { border-color: var(--gold); color: var(--gold); }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+    .slots { display: flex; flex-direction: column; gap: 4px; }
+    .slot-btn {
+      text-align: left; display: flex; gap: 8px; align-items: center;
+      width: 100%;
+    }
+    .slot-group {
+      font-size: .58rem; color: var(--dim); min-width: 48px; text-transform: uppercase;
+    }
+    .inv-list { display: flex; flex-direction: column; gap: 4px; max-height: 36vh; overflow: auto; }
+    .inv-item {
+      display: flex; gap: 8px; align-items: center; text-align: left; width: 100%;
+      padding: 5px 6px;
+    }
+    .inv-item img, .ico-ph {
+      width: 28px; height: 28px; border-radius: 4px; background: #06080c;
+      border: 1px solid var(--border); object-fit: cover; flex-shrink: 0;
+    }
+    .ico-ph {
+      display: grid; place-items: center; font-size: .7rem; color: var(--gold); text-transform: uppercase;
+    }
+    .inv-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .inv-meta strong { font-size: .72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hier {
+      display: block; width: 100%; text-align: left; background: transparent;
+      border: none; color: var(--dim); padding: 2px 4px; font-size: .65rem;
+      font-family: ui-monospace, monospace; cursor: pointer;
+    }
+    .hier:hover, .hier.off { color: var(--text); }
+    .hier.off { opacity: .45; }
+    .hier .tag { color: var(--gold); font-size: .55rem; margin-right: 4px; }
+    .skill-card {
+      border: 1px solid var(--border); border-radius: 6px; padding: 6px; margin-bottom: 5px;
+      background: rgba(212,168,75,.04);
+    }
+    code { font-size: .62rem; color: #f0d890; word-break: break-all; }
+    .equip-info {
+      border: 1px solid var(--border); border-radius: 6px; padding: 8px;
+      background: #0a0e14; margin-bottom: 8px; line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>grudge6 Editor</h1>
+      <div class="sub">
+        SSOT · <strong>Toon RTS GLB ★</strong> · T0–T1 equip · skills API · hierarchy / gizmo · import/export GLB ·
+        no CDN write · no browser FBX play
+      </div>
+    </div>
+    <a href="./api/v1/grudge6-editor-ssot.json">Editor SSOT JSON</a>
+    <a href="./GRUDGE6_Characters.html">Characters lab</a>
+    <a href="./main-panel.html">Main Panel</a>
+    <a href="./WEAPON_SKILLS.html">Weapon skills</a>
+    <a href="./docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md">Lab process</a>
+  </header>
+
+  <div class="layout">
+    <aside class="col" id="left">
+      <h2>Race / class</h2>
+      <label class="dim">Race (Toon RTS ★)</label>
+      <select id="raceSelect"></select>
+      <label class="dim">Class / form</label>
+      <select id="classSelect"></select>
+      <div class="row">
+        <button type="button" id="btnDefault">Default loadout</button>
+      </div>
+
+      <h2>Slots (click)</h2>
+      <div class="slots" id="slots"></div>
+
+      <h2>Gizmo</h2>
+      <select id="gizmoMode">
+        <option value="translate">Translate</option>
+        <option value="rotate">Rotate</option>
+        <option value="scale">Scale</option>
+      </select>
+      <div class="dim" id="selectedName">—</div>
+      <div class="row">
+        <button type="button" id="btnImport">Import GLB</button>
+        <button type="button" id="btnExport">Export GLB</button>
+      </div>
+      <input type="file" id="fileInput" accept=".glb,.gltf,.fbx" hidden />
+      <p class="dim" style="margin-top:6px;line-height:1.35">
+        Import attaches to main hand for mesh test. Export downloads selected node / lab weapon locally.
+      </p>
+    </aside>
+
+    <main id="viewport">
+      <div class="hud" id="status">Boot…</div>
+    </main>
+
+    <aside class="col" id="mid">
+      <h2 id="inventoryTitle">Inventory T0–T1</h2>
+      <div class="equip-info" id="equipInfo">
+        <div class="dim">Click a slot, then an item — equip mesh or bind UUID</div>
+      </div>
+      <div class="inv-list" id="inventory"></div>
+
+      <h2>Weapon skills (API)</h2>
+      <div id="skills"><div class="dim">Select weapon slot / item</div></div>
+    </aside>
+
+    <aside class="col" id="right">
+      <h2>Hierarchy</h2>
+      <div id="hierarchy" class="dim">Load race…</div>
+
+      <h2>Systems</h2>
+      <ul class="dim" style="margin-left:1rem;line-height:1.45">
+        <li>Armour — kit mesh_ids body/arms/legs/head/shoulders</li>
+        <li>Weapons — kit + lab T1 + t0-weapons API</li>
+        <li>Relics — master-relics T0–T1</li>
+        <li>Class items — master-classRelics</li>
+        <li>Forms — classLoadouts on grudge6-characters</li>
+        <li>Skill tree — master-weaponSkills + t0 pattern</li>
+        <li>UUID — mesh_id / catalog uuid practice</li>
+      </ul>
+      <h2>Asset SSOT</h2>
+      <p class="dim" style="line-height:1.4">
+        Mesh: <code>asset-packs/toon-rts-characters/glb/characters/{id}.glb</code><br/>
+        Catalog: <code>api/v1/grudge6-editor-ssot.json</code>
+      </p>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { Grudge6Editor } from './js/grudge6-editor.js';
+
+    const editor = new Grudge6Editor(document.getElementById('viewport'), {
+      status: document.getElementById('status'),
+      raceSelect: document.getElementById('raceSelect'),
+      classSelect: document.getElementById('classSelect'),
+      slots: document.getElementById('slots'),
+      inventory: document.getElementById('inventory'),
+      inventoryTitle: document.getElementById('inventoryTitle'),
+      equipInfo: document.getElementById('equipInfo'),
+      skills: document.getElementById('skills'),
+      hierarchy: document.getElementById('hierarchy'),
+      gizmoMode: document.getElementById('gizmoMode'),
+      selectedName: document.getElementById('selectedName'),
+      btnExport: document.getElementById('btnExport'),
+      btnImport: document.getElementById('btnImport'),
+      btnDefault: document.getElementById('btnDefault'),
+      fileInput: document.getElementById('fileInput'),
+    });
+    editor.init().catch((e) => {
+      document.getElementById('status').textContent = `Init failed: ${e.message}`;
+      console.error(e);
+    });
+  </script>
+</body>
+</html>

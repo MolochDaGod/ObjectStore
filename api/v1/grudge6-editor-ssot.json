@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "id": "grudge6-editor",
+  "title": "grudge6 Character + Asset Editor (SSOT)",
+  "url": "https://info.grudge-studio.com/grudge6-editor.html",
+  "generatedAt": "2026-08-06T12:00:00.000Z",
+  "purpose": "One surface for Toon RTS ★ characters, T0–T1 equipment, skill trees, UUID/asset practice, hierarchy/gizmo, import/export GLB.",
+  "meshSsot": {
+    "playKit": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
+    "neverPlay": [
+      "models/grudge6/metaverse/*",
+      "models/grudge6/races/*_Characters.glb as default",
+      "browser FBX"
+    ],
+    "kitModule": "./js/grudge6-kit.js",
+    "labWeapons": "./js/grudge6-lab-weapons.js",
+    "animPacks": "./js/grudge6-anim-packs.js"
+  },
+  "tiers": ["T0", "T1"],
+  "slots": [
+    { "id": "body", "group": "armor", "label": "Body", "equipSlot": "body" },
+    { "id": "arms", "group": "armor", "label": "Arms", "equipSlot": "arms" },
+    { "id": "legs", "group": "armor", "label": "Legs", "equipSlot": "legs" },
+    { "id": "head", "group": "armor", "label": "Head", "equipSlot": "head" },
+    { "id": "shoulders", "group": "armor", "label": "Shoulders", "equipSlot": "shoulders" },
+    { "id": "main_hand", "group": "weapon", "label": "Main hand", "equipSlot": "sword", "attach": "R_hand_container" },
+    { "id": "off_hand", "group": "weapon", "label": "Off hand", "equipSlot": "shield", "attach": "L_hand_container", "dual": ["dagger", "mace", "hammer"] },
+    { "id": "relic", "group": "relic", "label": "Relic", "api": "master-relics" },
+    { "id": "class_item", "group": "class", "label": "Class item", "api": "master-classRelics" },
+    { "id": "form", "group": "form", "label": "Form", "note": "classLoadouts warrior/mage/ranger/unarmed" }
+  ],
+  "apis": {
+    "characters": "./api/v1/grudge6-characters.json",
+    "labCatalog": "./api/v1/grudge6-lab-extended-catalog.json",
+    "t0Weapons": "./api/v1/t0-weapons.json",
+    "t0t1Addendum": "./api/v1/master-t0-t1-addendum.json",
+    "weaponSkills": "./api/v1/master-weaponSkills.json",
+    "t0SkillPattern": "./api/v1/_meta/t0-starter-slot-pattern.json",
+    "skillTrees": "./api/v1/master-skillTrees.json",
+    "relics": "./api/v1/master-relics.json",
+    "classRelics": "./api/v1/master-classRelics.json",
+    "classes": "./api/v1/classes.json",
+    "iconsWeapon": "./api/v1/icon-shards/weapon.json",
+    "iconsArmor": "./api/v1/icon-shards/armor.json",
+    "iconsSkill": "./api/v1/icon-shards/skill.json"
+  },
+  "uuid": {
+    "meshId": "Object3D.name on Toon kit (e.g. WK_Units_Body_A, lab_weapon:sword_t1)",
+    "itemUuid": "HERO-/EQIP-/ITEM- from master catalogs when present",
+    "assetKey": "R2 key under assets.grudge-studio.com"
+  },
+  "export": {
+    "formats": ["glb"],
+    "targets": ["selected node", "lab main weapon", "lab off-hand"],
+    "note": "Client-side GLTFExporter download; does not write CDN"
+  }
+}
