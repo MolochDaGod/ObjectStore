@@ -25,13 +25,23 @@ export const LAB_SOCKETS = {
  * Wand → staff socket (same as kit staff/bow).
  */
 export const LAB_WEAPON_KIND = {
+  // 1H + shield pack
   sword: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.05, animPack: 'sword_shield' },
+  dagger: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 0.45, animPack: 'sword_shield' },
+  // 2H melee — greatsword is canonical 2h_melee (samurai clips)
+  greatsword: {
+    defaultSlot: 'main_hand',
+    canOffhand: false,
+    targetLenM: 1.55,
+    animPack: '2h_melee',
+  },
+  greataxe: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.35, animPack: '2h_melee' },
   axe: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.05, animPack: '2h_melee' },
   spear: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 2.0, animPack: '2h_melee' },
+  mace: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 1.0, animPack: '2h_melee' },
+  hammer: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.9, animPack: '2h_melee' },
+  // ranged / magic
   crossbow: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.95, animPack: 'longbow' },
-  dagger: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 0.45, animPack: 'sword_shield' },
-  mace: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 1.0, animPack: '2h_melee' },
-  hammer: { defaultSlot: 'main_hand', canOffhand: true, targetLenM: 0.9, animPack: '2h_melee' },
   staff: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
   wand: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
   bow: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.0, animPack: 'longbow' },

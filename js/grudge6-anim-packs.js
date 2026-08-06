@@ -1,70 +1,184 @@
 /**
- * grudge6 anim packs — SSOT bridge from disk `_anim_packs` / CDN baked Bip001.
+ * grudge6 anim packs — weapon → pack → baked Bip001 clips.
  *
- * Ideal ship path (no old systems, no stretch):
- *   weapon → pack id → baked JSON (rotation-first) → rematch Bip001 → mixer
+ * Pack ids (combat-runtime SSOT):
+ *   sword_shield | longbow | magic | 2h_melee | rifle | unarmed | locomotion
  *
- * Local author root (dev): D:\Games\Models\_anim_packs\{pack}\*.fbx
- * Production runtime: https://assets.grudge-studio.com/anims/baked/{pack}/…
+ * 2h_melee = greatsword + samurai set (primary), also axe/hammer/spear when 2H.
+ * Aliases: twohand, greatsword → 2h_melee
+ *
+ * Local author: D:\Games\Models\_anim_packs\{greatsword|sword_shield|…}\
+ * Runtime hosts (first hit wins):
+ *   assets.grudge-studio.com/anims/baked/
+ *   open.grudge-studio.com/anims/baked/
  */
 export const CDN = 'https://assets.grudge-studio.com';
+export const OPEN = 'https://open.grudge-studio.com';
 
-/** Weapon kit slot → anim pack id (grudge6-combat-runtime). */
+/** Absolute URL candidates for a baked clip relative path (no .json). */
+export function bakedUrls(relNoJson) {
+  const rel = String(relNoJson || '')
+    .replace(/^\//, '')
+    .replace(/\.json$/i, '');
+  const enc = rel
+    .split('/')
+    .map((s) => encodeURIComponent(s))
+    .join('/');
+  return [
+    `${CDN}/anims/baked/${enc}.json`,
+    `${OPEN}/anims/baked/${enc}.json`,
+  ];
+}
+
+/**
+ * Weapon kit slot / kind → anim pack id.
+ * greatsword is 2h_melee (samurai). 1H sword+shield stays sword_shield.
+ */
 export const WEAPON_TO_PACK = {
+  // 1H + shield
   sword: 'sword_shield',
-  axe: 'sword_shield',
-  hammer: 'sword_shield',
-  mace: 'sword_shield',
   dagger: 'sword_shield',
-  spear: 'sword_shield',
-  pick: 'sword_shield',
   shield: 'sword_shield',
+  // 2H melee (greatsword = canonical 2h_melee + samurai)
+  greatsword: '2h_melee',
+  greataxe: '2h_melee',
+  great_axe: '2h_melee',
+  twohand: '2h_melee',
+  '2h': '2h_melee',
+  '2h_melee': '2h_melee',
+  axe: '2h_melee',
+  hammer: '2h_melee',
+  mace: '2h_melee',
+  spear: '2h_melee',
+  pick: '2h_melee',
+  // ranged / magic
   bow: 'longbow',
+  crossbow: 'longbow',
   staff: 'magic',
+  wand: 'magic',
+  rifle: 'rifle',
+  unarmed: 'unarmed',
 };
 
-/** Preferred idle / attack clip URLs per pack (CDN verified where possible). */
+/** Pack aliases → canonical pack id */
+export const PACK_ALIASES = {
+  twohand: '2h_melee',
+  '2h': '2h_melee',
+  greatsword: '2h_melee',
+  greataxe: '2h_melee',
+  greatsword_samurai: '2h_melee',
+  samurai: '2h_melee',
+};
+
+/**
+ * Preferred idle / attack (and gait) clip paths per pack.
+ * Paths relative to /anims/baked — resolved via bakedUrls().
+ */
 export const PACK_CLIPS = {
   sword_shield: {
     idle: [
-      `${CDN}/anims/baked/sword_shield/sword-and-shield-idle.json`,
-      `${CDN}/anims/baked/locomotion/idle.json`,
+      'sword_shield/sword-and-shield-idle',
+      'sword_shield/sword and shield idle',
+      'locomotion/idle',
     ],
+    walk: ['locomotion/run_forward', 'magic/Standing Walk Forward'],
+    run: ['locomotion/run_forward'],
     attack: [
-      `${CDN}/anims/baked/sword_shield/sword-and-shield-attack.json`,
+      'sword_shield/sword-and-shield-attack',
+      'sword_shield/sword and shield attack',
     ],
   },
-  longbow: {
+  /**
+   * 2H melee — greatsword + samurai (primary).
+   * Also used for kit hammer/axe/spear when treated as 2H.
+   */
+  '2h_melee': {
     idle: [
-      `${CDN}/anims/baked/longbow/idle.json`,
-      `${CDN}/anims/baked/locomotion/idle.json`,
+      'greatsword_samurai/gs_samurai_idle_sword',
+      'greatsword/great sword idle',
+      'locomotion/idle',
+    ],
+    walk: [
+      'greatsword_samurai/gs_samurai_walk_sword',
+      'magic/Standing Walk Forward',
+      'locomotion/run_forward',
+    ],
+    run: [
+      'greatsword_samurai/gs_samurai_run_sword',
+      'locomotion/run_forward',
     ],
     attack: [
-      `${CDN}/anims/baked/longbow/standing-draw-arrow.json`,
-      `${CDN}/anims/baked/longbow/draw.json`,
+      'greatsword_samurai/gs_samurai_combo_a',
+      'greatsword_samurai/gs_samurai_combo_b',
+      'greatsword/great sword attack',
+      'greatsword/great sword slash',
+    ],
+    skill1: ['greatsword_samurai/gs_samurai_combo_b'],
+    skill2: ['greatsword_samurai/gs_samurai_dash_opener'],
+    skill3: ['greatsword_samurai/gs_samurai_teleport_strike'],
+    skill4: ['greatsword_samurai/gs_samurai_jump_sword'],
+  },
+  longbow: {
+    idle: ['longbow/idle', 'longbow/standing idle 01', 'locomotion/idle'],
+    walk: ['longbow/standing walk forward', 'magic/Standing Walk Forward'],
+    run: ['longbow/standing run forward', 'locomotion/run_forward'],
+    attack: [
+      'longbow/standing-draw-arrow',
+      'longbow/standing aim recoil',
+      'longbow/draw',
     ],
   },
   magic: {
-    idle: [
-      `${CDN}/anims/baked/locomotion/idle.json`,
-    ],
-    attack: [
-      `${CDN}/anims/baked/locomotion/idle.json`,
-    ],
+    idle: ['magic/standing idle', 'magic/idle', 'locomotion/idle'],
+    walk: ['magic/Standing Walk Forward'],
+    run: ['magic/Standing Run Forward', 'locomotion/run_forward'],
+    attack: ['magic/standing 1h cast spell 01', 'locomotion/idle'],
   },
   rifle: {
-    idle: [`${CDN}/anims/baked/locomotion/idle.json`],
+    idle: ['locomotion/idle'],
     attack: [],
   },
+  unarmed: {
+    idle: ['unarmed/fight_idle', 'locomotion/idle'],
+    attack: ['unarmed/punching'],
+  },
   locomotion: {
-    idle: [`${CDN}/anims/baked/locomotion/idle.json`],
+    idle: ['locomotion/idle'],
+    walk: ['magic/Standing Walk Forward', 'locomotion/run_forward'],
+    run: ['locomotion/run_forward'],
     attack: [],
   },
 };
 
+// Aliases share the same clip table
+PACK_CLIPS.twohand = PACK_CLIPS['2h_melee'];
+PACK_CLIPS.greatsword = PACK_CLIPS['2h_melee'];
+PACK_CLIPS.greatsword_samurai = PACK_CLIPS['2h_melee'];
+PACK_CLIPS.samurai = PACK_CLIPS['2h_melee'];
+
+export function normalizePackId(packOrSlot) {
+  const raw = String(packOrSlot || 'sword_shield').toLowerCase().trim();
+  if (PACK_ALIASES[raw]) return PACK_ALIASES[raw];
+  if (PACK_CLIPS[raw]) return raw;
+  if (WEAPON_TO_PACK[raw]) return WEAPON_TO_PACK[raw];
+  return 'sword_shield';
+}
+
+/** Resolve pack id from weapon kit slot / kind / pack alias. */
 export function packForWeaponSlot(weaponSlot) {
   if (!weaponSlot) return 'sword_shield';
-  return WEAPON_TO_PACK[weaponSlot] || 'sword_shield';
+  return normalizePackId(weaponSlot);
+}
+
+/** Flatten pack role → absolute URL list (CDN then Open). */
+export function clipUrlsFor(packId, role = 'idle') {
+  const pack = normalizePackId(packId);
+  const rels = PACK_CLIPS[pack]?.[role] || PACK_CLIPS.locomotion.idle || [];
+  const urls = [];
+  for (const rel of rels) {
+    for (const u of bakedUrls(rel)) urls.push(u);
+  }
+  return urls;
 }
 
 /**
@@ -123,15 +237,29 @@ export async function loadBakedClip(THREE, urls) {
   return null;
 }
 
-/** Load idle (and optional attack) for a weapon slot; bind to root mixer. */
+/** Load idle for a weapon slot or pack id; bind to root mixer. */
 export async function playPackIdle(THREE, root, mixer, weaponSlot = 'sword') {
   const pack = packForWeaponSlot(weaponSlot);
-  const urls = PACK_CLIPS[pack]?.idle || PACK_CLIPS.locomotion.idle;
+  const urls = clipUrlsFor(pack, 'idle');
   let clip = await loadBakedClip(THREE, urls);
   if (!clip) return { pack, action: null, clip: null };
   clip = rematchClipBones(THREE, root, clip) || clip;
   const action = mixer.clipAction(clip);
-  action.reset().play();
+  action.reset().fadeIn(0.15).play();
   mixer.update(1 / 30);
+  return { pack, action, clip };
+}
+
+/** One-shot attack (samurai combo for 2h_melee / greatsword). */
+export async function playPackAttack(THREE, root, mixer, weaponSlot = 'sword') {
+  const pack = packForWeaponSlot(weaponSlot);
+  const urls = clipUrlsFor(pack, 'attack');
+  let clip = await loadBakedClip(THREE, urls);
+  if (!clip) return { pack, action: null, clip: null };
+  clip = rematchClipBones(THREE, root, clip) || clip;
+  const action = mixer.clipAction(clip);
+  action.reset().setLoop(THREE.LoopOnce, 1);
+  action.clampWhenFinished = true;
+  action.fadeIn(0.08).play();
   return { pack, action, clip };
 }
