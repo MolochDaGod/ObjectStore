@@ -1,0 +1,130 @@
+{
+  "version": "2026-08-07.harden.1",
+  "title": "Where Warlords Toon RTS play path must be used",
+  "contract": "api/v1/grudge6-warlords-play-contract.json",
+  "codeSsot": "js/grudge6-kit.js#loadRaceKit",
+  "playMesh": "asset-packs/toon-rts-characters/glb/characters/{race}.glb",
+  "stampRequired": ["warlordsPlayContract", "grudge6Play", "importPipeline"],
+  "stampExpect": {
+    "warlordsPlayContract": "2026-08-07.harden.1",
+    "grudge6Play": true,
+    "importPipeline": "toon-rts-glb"
+  },
+  "surfaces": [
+    {
+      "id": "objectstore-kit",
+      "role": "ssot",
+      "repo": "ObjectStore",
+      "path": "js/grudge6-kit.js",
+      "live": "https://info.grudge-studio.com/js/grudge6-kit.js",
+      "status": "green",
+      "notes": "loadRaceKit + assertPlayKitUrl + contract stamp"
+    },
+    {
+      "id": "info-race-scenes",
+      "role": "lab_play_visual",
+      "repo": "ObjectStore",
+      "path": "js/grudge6-race-scene.js",
+      "live": "https://info.grudge-studio.com/grudge6-race-scenes.html",
+      "status": "green",
+      "notes": "Toon only fail-closed"
+    },
+    {
+      "id": "casting-lab",
+      "role": "warlords_ux_lab_reference_deploy",
+      "repo": "CastingAbilitiesThreeJS",
+      "path": "src/character/toonKitPlay.js",
+      "live": "https://casting-abilities-threejs.vercel.app/",
+      "status": "green",
+      "notes": "REFERENCE DEPLOY for Warlords Toon character + ability UX; fleet should match this path"
+    },
+    {
+      "id": "multiverse",
+      "role": "play_world",
+      "repo": "grudge-multiverse",
+      "path": "game/grudge6Loader.js",
+      "live": "https://grudge-multiverse.vercel.app/",
+      "status": "green",
+      "notes": "assertPlayKitUrl + integrity grades contract"
+    },
+    {
+      "id": "flare-select",
+      "role": "play_select",
+      "repo": "Flare-Boss-Arena",
+      "path": "artifacts/grudge-game/src/game/grudge6/Grudge6Character.ts",
+      "live": null,
+      "status": "yellow",
+      "notes": "bone SI + pose-widest; still needs warlordsPlayContract stamp on instance"
+    },
+    {
+      "id": "open-danger",
+      "role": "play_sandbox",
+      "repo": "gameopen",
+      "path": "artifacts/animator/src",
+      "live": "https://open.grudge-studio.com/danger",
+      "status": "yellow",
+      "notes": "fleetAnimSsot Toon docs; verify no FBX default on warlords hero boot"
+    },
+    {
+      "id": "warstrat",
+      "role": "play_rts",
+      "repo": "warlord-genesis / warstrat host",
+      "path": "src grudge6Character / deliverGrudge6Hero",
+      "live": "https://warstrat.grudge-studio.com/",
+      "status": "audit",
+      "notes": "must use Toon GLB + mesh_ids; no parallel kit system"
+    },
+    {
+      "id": "client-warlords",
+      "role": "play_client",
+      "repo": "GrudgeBuilder",
+      "path": "client character load",
+      "live": "https://client.grudge-studio.com/",
+      "status": "audit",
+      "notes": "Foundry handoff → Toon kit + Railway mesh_ids"
+    },
+    {
+      "id": "foundry",
+      "role": "create_only",
+      "repo": "grudge-foundry / character host",
+      "path": "foundry preview",
+      "live": "https://character.grudge-studio.com/",
+      "status": "audit",
+      "notes": "preview may use Toon; save mesh_ids not body GLB"
+    },
+    {
+      "id": "mine-loader",
+      "role": "not_warlords_body",
+      "repo": "Mine-Loader",
+      "path": "avatar / explorer",
+      "live": "https://mineloader.grudge-studio.com/",
+      "status": "n/a",
+      "notes": "explorer/voxel body — deliberately NOT grudge6 Toon play"
+    },
+    {
+      "id": "lab-10slot",
+      "role": "lab",
+      "repo": "character-customizer-10slot",
+      "path": "fleet-kit.js",
+      "live": "http://localhost:51/",
+      "status": "yellow",
+      "notes": "Toon URL; should stamp contract when fleet mode"
+    }
+  ],
+  "bannedPatterns": [
+    "skeleton.pose() on every SkinnedMesh",
+    "unifySkeletons multi-pose for play",
+    "setFromObject(SkinnedMesh) SI fit",
+    "facePlusZ true default on Toon play",
+    "forceAtlas on good Toon embeds",
+    "play default races bake / metaverse / FBX",
+    "silent fallback ladder Toon→races→metaverse→FBX",
+    "anim rematch to WK_Units_head_* meshes",
+    "whole-body GLB swap for equip"
+  ],
+  "auditCommands": [
+    "node scripts/audit-warlords-play-surfaces.mjs",
+    "node scripts/audit-warlords-play-surfaces.mjs --local-roots",
+    "cd grudge-multiverse && node scripts/smoke-character.mjs"
+  ]
+}

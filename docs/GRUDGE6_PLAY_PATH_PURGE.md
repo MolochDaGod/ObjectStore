@@ -62,3 +62,38 @@ await loadRaceKit(THREE, loaders, 'human', { source: 'racesBake', play: false })
 ## Agent rule
 
 If you load a Warlords hero and are not using `loadRaceKit` / ObjectStore parity — **stop**. Do not invent a second deploy helper.
+
+## How we know we are not missing surfaces
+
+1. **Registry (SSOT list of places):** `api/v1/grudge6-warlords-play-surfaces.json`  
+   Every Warlords-era play / lab / client that shows a grudge6 hero must appear here with `status`: green | yellow | audit | n/a.
+
+2. **Contract (SSOT of how):** `api/v1/grudge6-warlords-play-contract.json` + `loadRaceKit` stamp  
+   `root.userData.warlordsPlayContract === "2026-08-07.harden.1"`  
+   `grudge6Play === true` · `importPipeline === "toon-rts-glb"`
+
+3. **Audit command (repeatable):**
+   ```bash
+   cd ObjectStore
+   node scripts/audit-warlords-play-surfaces.mjs
+   node scripts/audit-warlords-play-surfaces.mjs --local-roots
+   ```
+   - Live: contract JSON + 6 Toon kits + green surface URLs HEAD  
+   - Local: scans repos for Toon/contract markers vs banned patterns  
+
+4. **Per-app smoke (already):** Multiverse `node scripts/smoke-character.mjs`  
+   Asserts CDN + contract + (optional) browser `__mvCharacterSource`.
+
+5. **Deploy gate rule:** any new Warlords play host PR must  
+   - add or update a row in `grudge6-warlords-play-surfaces.json`  
+   - stamp contract on the hero root  
+   - pass audit (no new banned pattern without lab-only label)
+
+### Status meaning
+
+| status | Meaning |
+|--------|---------|
+| **green** | On Toon play path + contract (or pure SSOT) |
+| **yellow** | Mostly correct; missing stamp or residual risk |
+| **audit** | Known Warlords surface — not yet proven on hardened path |
+| **n/a** | Intentionally different body (e.g. Mine-Loader explorer) |
