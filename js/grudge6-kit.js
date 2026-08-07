@@ -1,25 +1,52 @@
 /**
  * @grudge-studio/grudge6-kit (ObjectStore js/)
  *
- * Shared modular race kit loader + equipment for Grudge games / browse.
- *
- * TWO surfaces (do not invent a third):
- *  A) Production monolith kits on CDN — FBX/GLB Characters for paperdoll/cinema
- *  B) Editable Toon RTS split tree (infantry/cavalry/siege) — SSOT catalog:
- *     api/v1/grudge6-toon-rts-ssot.json  ← built from Asset-Rig-Editor public/assets
+ * HARDENED Warlords / grudge6 PLAY system — only this module for heroes.
+ * Doc: docs/GRUDGE6_PLAY_PATH_PURGE.md · api/v1/grudge6-warlords-play-contract.json
  *
  * Usage:
- *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, bindRaceAtlas,
- *            toonRtsUnitUrl, TOON_RTS_HEIGHT_M } from './grudge6-kit.js';
- *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human'); // GLB production default
- *
- * Race equip-resource scenes (SI + packs + mesh visibility):
- *   grudge6-race-scenes.html?race=human  ·  grudge6-race-{race}.html
- *   js/grudge6-race-scene.js · js/grudge6-anim-packs.js · js/grudge6-equip-resources.js
+ *   import { RACE_ASSETS, loadRaceKit, EquipmentManager, assertPlayKitUrl } from './grudge6-kit.js';
+ *   const { root, equip } = await loadRaceKit(THREE, loaders, 'human'); // Toon RTS ★ default
  *
  * HARD: uniform root SI only — never non-uniform mesh/bone stretch.
+ * HARD: never pose() every SkinnedMesh; never forceAtlas on good Toon embeds.
  */
 export const CDN = 'https://assets.grudge-studio.com';
+
+/** Contract version — stamp on every play kit root.userData */
+export const WARLORDS_PLAY_CONTRACT_VERSION = '2026-08-07.harden.1';
+
+/** PLAY mesh path fragment (Toon RTS ★). */
+export const WARLORDS_PLAY_KIT_PATH =
+  'asset-packs/toon-rts-characters/glb/characters/';
+
+/** Race ids accepted by loadRaceKit play path. */
+export const WARLORDS_PLAY_RACE_IDS = Object.freeze([
+  'human',
+  'barbarian',
+  'elf',
+  'dwarf',
+  'orc',
+  'undead',
+]);
+
+/**
+ * Anti-patterns for PLAY (agents + loaders). Do not reintroduce.
+ * Lab/author may use non-play sources only with explicit opts.source.
+ */
+export const WARLORDS_PLAY_BANNED = Object.freeze([
+  'skeleton.pose_on_every_skinned_mesh',
+  'unifySkeletons_multi_pose_play',
+  'setFromObject_skinned_si_fit',
+  'facePlusZ_default_true_toon_play',
+  'forceAtlas_on_good_toon_embeds',
+  'play_default_races_bake',
+  'play_default_metaverse',
+  'play_default_fbx',
+  'silent_fallback_toon_to_races_metaverse_fbx',
+  'anim_rematch_to_units_head_meshes',
+  'whole_body_glb_swap_for_equip',
+]);
 
 /** Fleet catalog of editable Toon RTS tree (regenerate via customizer script) */
 export const TOON_RTS_SSOT_URL = '/api/v1/grudge6-toon-rts-ssot.json';
@@ -308,7 +335,7 @@ export function atlasUrlLegacy(raceId, variant = 'default') {
  * Kit URL by source.
  * Play / heroes / Warlords / default: Toon RTS ★ (glb === toonRts).
  * Compare bake only: races | racesBake | compare | prodBake.
- * metaverse / fbx: diagnostics only.
+ * metaverse / fbx: diagnostics only — never play default.
  */
 export function kitUrl(raceId, source = 'toonRts') {
   const a = RACE_ASSETS[raceId];
@@ -325,6 +352,65 @@ export function kitUrl(raceId, source = 'toonRts') {
   }
   // toonRts | toon | glb | prod | default → GOLDEN
   return a.toonRts || a.glb;
+}
+
+/** True if URL is Warlords PLAY Toon RTS kit. */
+export function isToonRtsPlayUrl(url) {
+  return new RegExp(
+    `${WARLORDS_PLAY_KIT_PATH.replace(/\//g, '\\/')}[a-z]+\\.glb`,
+    'i',
+  ).test(String(url || ''));
+}
+
+/**
+ * Fail closed: PLAY kits must be Toon RTS GLB on assets CDN.
+ * @param {string} url
+ * @param {{ allowNonPlay?: boolean }} [opts] — lab only when true
+ * @returns {string} url
+ */
+export function assertPlayKitUrl(url, opts = {}) {
+  const u = String(url || '');
+  if (!u) throw new Error('[grudge6-kit] empty kit URL');
+  if (opts.allowNonPlay === true) return u;
+  if (!isToonRtsPlayUrl(u)) {
+    throw new Error(
+      `[grudge6-kit] PLAY refuse non-Toon kit URL: ${u} ` +
+        `(need …/${WARLORDS_PLAY_KIT_PATH}{race}.glb)`,
+    );
+  }
+  if (/metaverse|meshy|capsule/i.test(u)) {
+    throw new Error(`[grudge6-kit] PLAY refuse banned host/path: ${u}`);
+  }
+  return u;
+}
+
+/**
+ * Safe skeleton update after load/clone.
+ * NEVER pose every SkinnedMesh (1-joint head skins → head-at-feet).
+ * Optional: pose widest body skeleton once only.
+ */
+export function safeSkeletonUpdate(root, opts = {}) {
+  if (!root) return;
+  if (opts.poseWidestOnce === true) {
+    let widest = null;
+    root.traverse((o) => {
+      if (o.isSkinnedMesh && o.skeleton) {
+        if (!widest || o.skeleton.bones.length > widest.bones.length) widest = o.skeleton;
+      }
+    });
+    if (widest) {
+      widest.pose();
+      widest.update();
+    }
+  }
+  root.traverse((o) => {
+    if (o.isSkinnedMesh && o.skeleton) {
+      o.skeleton.update();
+      o.frustumCulled = false;
+      o.castShadow = true;
+      o.receiveShadow = true;
+    }
+  });
 }
 
 /** Rewrite known-bad legacy paths to canonical race kit or mesh library */
@@ -1031,45 +1117,72 @@ export async function loadRaceTexture(THREE, raceId, variant = 'default') {
 }
 
 /**
- * Load race kit + catalog equipment + materials.
+ * Load race kit + catalog equipment + materials (HARDENED Warlords play).
  *
- * Texture SSOT (do not double-process):
- *  - Production GLB: already has atlas baked → keep embedded maps (normalize only).
+ * Default source = **toonRts** (PLAY). Non-play sources require explicit opts.source
+ * and set root.userData.grudge6Play = false.
+ *
+ * Texture SSOT:
+ *  - Toon play GLB: keep embeds (normalize only). forceAtlas on play needs allowForceAtlas.
  *  - FBX / stub maps / team atlas variant: rebind CDN atlas, flipY=false.
- *  - invert UV V: OPT-IN only (`opts.invertUvV === true`) for Blender exports that need it.
- *    Never auto-invert production CDN race kits.
+ *  - invert UV V: OPT-IN only (`opts.invertUvV === true`).
  *
  * @param {object} loaders { FBXLoader, GLTFLoader } classes
  * @param {string} raceId
- * @param {{ source?: 'fbx'|'glb', meshIds?: string[], ground?: boolean,
- *           atlasVariant?: string, forceAtlas?: boolean, invertUvV?: boolean,
- *           skipDefaultLoadout?: boolean, targetHeight?: number,
- *           characterType?: string, centerXZ?: boolean }} opts
+ * @param {{ source?: string, url?: string, meshIds?: string[], ground?: boolean,
+ *           atlasVariant?: string, forceAtlas?: boolean, allowForceAtlas?: boolean,
+ *           invertUvV?: boolean, skipDefaultLoadout?: boolean, targetHeight?: number,
+ *           characterType?: string, centerXZ?: boolean, play?: boolean }} opts
  */
 export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   const race = RACE_ASSETS[raceId];
   if (!race) throw new Error(`Unknown race: ${raceId}`);
-  // GOLDEN default = toonRts. Never use races bake / metaverse as implicit default.
+
+  // GOLDEN default = toonRts. Never races bake / metaverse as implicit default.
   const source = opts.source || 'toonRts';
+  const nonPlaySources = new Set([
+    'fbx',
+    'raceFbx',
+    'races',
+    'racesBake',
+    'compare',
+    'prodBake',
+    'metaverse',
+  ]);
+  const isPlay =
+    opts.play !== false && !nonPlaySources.has(source) && source !== 'fbx';
+
   let url = opts.url || kitUrl(raceId, source);
   // Only rewrite legacy play paths to golden; leave explicit racesBake / fbx alone
-  if (source !== 'fbx' && source !== 'races' && source !== 'racesBake' && source !== 'compare' && source !== 'prodBake') {
+  if (!nonPlaySources.has(source)) {
     url = resolveCanonicalAssetUrl(url);
+  }
+
+  if (isPlay) {
+    assertPlayKitUrl(url, { allowNonPlay: false });
   }
 
   let root;
   let animations = [];
   const isFbxUrl = /\.fbx($|\?)/i.test(url);
   if (isFbxUrl) {
+    if (isPlay) {
+      throw new Error('[grudge6-kit] PLAY refuse FBX — use Toon RTS GLB');
+    }
+    if (!loaders.FBXLoader) throw new Error('[grudge6-kit] FBXLoader required for fbx source');
     const loader = new loaders.FBXLoader();
     root = await loader.loadAsync(url);
     animations = root.animations || [];
   } else {
+    if (!loaders.GLTFLoader) throw new Error('[grudge6-kit] GLTFLoader required');
     const loader = new loaders.GLTFLoader();
     const gltf = await loader.loadAsync(url);
     root = gltf.scene || gltf;
     animations = gltf.animations || [];
   }
+
+  // Bind pose as loaded — do not multi-pose (head-at-feet)
+  safeSkeletonUpdate(root, { poseWidestOnce: false });
 
   // Opt-in UV V flip only (Blender export mismatch). Idempotent.
   let uvInverted = false;
@@ -1079,10 +1192,18 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
 
   const atlasVariant = opts.atlasVariant || 'default';
   const hasUsable = kitHasUsableMaps(root);
-  // NEVER force-rebind a good GLB bake (toonRts / prod / metaverse).
-  // Rebind only: FBX, stub maps, explicit forceAtlas, or non-default team atlas variant.
+
+  // PLAY Toon: never forceAtlas unless allowForceAtlas (lab emergency only)
+  let forceAtlas = opts.forceAtlas === true;
+  if (isPlay && forceAtlas && opts.allowForceAtlas !== true) {
+    console.warn(
+      '[grudge6-kit] PLAY ignored forceAtlas (set allowForceAtlas:true only for lab emergencies)',
+    );
+    forceAtlas = false;
+  }
+
   const mustRebind =
-    opts.forceAtlas === true ||
+    forceAtlas ||
     isFbxUrl ||
     !hasUsable ||
     (atlasVariant && atlasVariant !== 'default');
@@ -1101,15 +1222,18 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
       materialMode = 'embedded-fallback';
     }
   } else {
-    // GLB golden path: keep bake, do not invert, do not double-bind
     matCount = normalizeEmbeddedMaps(THREE, root);
     materialMode = 'embedded';
-    // Still resolve default atlas for callers that want the URL/handle
     tex = await loadRaceTexture(THREE, raceId, atlasVariant);
   }
 
   root.userData.grudge6MaterialMode = materialMode;
   root.userData.grudge6UvVInverted = !!root.userData.grudge6UvVInverted;
+  root.userData.grudge6Play = isPlay;
+  root.userData.grudge6Source = isFbxUrl ? 'fbx' : source;
+  root.userData.grudge6KitUrl = url;
+  root.userData.warlordsPlayContract = WARLORDS_PLAY_CONTRACT_VERSION;
+  root.userData.importPipeline = isPlay ? 'toon-rts-glb' : source;
 
   const equip = new EquipmentManager(race.prefix);
   equip.catalog(root);
@@ -1119,12 +1243,24 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
     // Leave all equippable hidden — caller applies paperdoll loadout
   } else equip.applyDefaultLoadout();
 
+  // Harden exclusive visibility after equip
+  if (typeof equip.hardenVisibility === 'function' && !opts.skipDefaultLoadout) {
+    equip.hardenVisibility();
+  }
+
   let ground = null;
   if (opts.ground !== false) {
+    // Bone structural SI — not setFromObject(SkinnedMesh)
     ground = fitRootUniformSi(THREE, root, opts.targetHeight ?? 1.8, {
       characterType: opts.characterType || 'infantry',
       centerXZ: opts.centerXZ !== false,
     });
+    // Toon play faces camera with yaw 0 (never π/2 by default)
+    if (isPlay && opts.facePlusZ !== true) {
+      faceRootTowardCamera(root, { artFacesPlusX: false });
+    } else if (opts.facePlusZ === true) {
+      faceRootTowardCamera(root, { artFacesPlusX: true });
+    }
   }
 
   return {
@@ -1134,11 +1270,32 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
     race,
     url,
     source: isFbxUrl ? 'fbx' : source,
+    play: isPlay,
+    contract: WARLORDS_PLAY_CONTRACT_VERSION,
     atlas: tex,
     matCount,
     materialMode,
     uvInverted,
     equipResult,
     ground,
+  };
+}
+
+/** Machine-readable contract blob for API / agents. */
+export function warlordsPlayContract() {
+  return {
+    version: WARLORDS_PLAY_CONTRACT_VERSION,
+    cdn: CDN,
+    playKitPath: WARLORDS_PLAY_KIT_PATH,
+    raceIds: [...WARLORDS_PLAY_RACE_IDS],
+    kitUrlTemplate: `${CDN}/${WARLORDS_PLAY_KIT_PATH}{raceId}.glb`,
+    code: 'ObjectStore/js/grudge6-kit.js#loadRaceKit',
+    banned: [...WARLORDS_PLAY_BANNED],
+    siHumanM: 1.8,
+    faceCameraYawPlay: GRUDGE6_FACE_CAMERA_YAW,
+    materialsPlay: 'embedded-normalize',
+    equip: 'mesh_ids_visibility',
+    skeleton: 'Bip001_no_multi_pose',
+    measure: 'bone_structural_bbox',
   };
 }

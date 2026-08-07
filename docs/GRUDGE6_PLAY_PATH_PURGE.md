@@ -1,7 +1,33 @@
-# grudge6 / Warlords play path — purge list
+# grudge6 / Warlords play path — HARDENED contract + purge list
 
 **Right source:** `js/grudge6-kit.js` → `loadRaceKit` · lab: `grudge6-race-scenes.html`  
-**Play mesh only:** `asset-packs/toon-rts-characters/glb/characters/{race}.glb`
+**Machine JSON:** `api/v1/grudge6-warlords-play-contract.json`  
+**Play mesh only:** `asset-packs/toon-rts-characters/glb/characters/{race}.glb`  
+**Contract version:** stamped on every play kit as `root.userData.warlordsPlayContract`
+
+## Hardened play API
+
+```js
+import { loadRaceKit, assertPlayKitUrl, warlordsPlayContract, safeSkeletonUpdate } from './grudge6-kit.js';
+
+// PLAY (default) — Toon RTS only, fail-closed
+const { root, equip, play, contract } = await loadRaceKit(THREE, { GLTFLoader }, 'human');
+// root.userData.grudge6Play === true
+// root.userData.importPipeline === 'toon-rts-glb'
+
+// Lab compare only — explicit non-play source
+await loadRaceKit(THREE, loaders, 'human', { source: 'racesBake', play: false });
+```
+
+| Guard | Behavior |
+|-------|----------|
+| `assertPlayKitUrl` | Throws if URL is not Toon RTS play GLB |
+| Default `source` | `toonRts` — never metaverse/races/fbx implicit |
+| `forceAtlas` on play | Ignored unless `allowForceAtlas: true` (lab emergency) |
+| SI fit | `fitRootUniformSi` + **bone** structural box |
+| Face | Yaw **0** for play (`facePlusZ: true` only for +X FBX art) |
+| Skeleton | `safeSkeletonUpdate` — no multi-pose |
+| Equip | `EquipmentManager` + hardenVisibility |
 
 ## Banned on PLAY deploy (remove / hard-fail)
 

@@ -1,0 +1,46 @@
+{
+  "version": "2026-08-07.harden.1",
+  "title": "Warlords / grudge6 character PLAY contract",
+  "code": "ObjectStore/js/grudge6-kit.js#loadRaceKit",
+  "docs": [
+    "docs/GRUDGE6_PLAY_PATH_PURGE.md",
+    "docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md"
+  ],
+  "cdn": "https://assets.grudge-studio.com",
+  "play": {
+    "meshPath": "asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
+    "raceIds": ["human", "barbarian", "elf", "dwarf", "orc", "undead"],
+    "materials": "embedded-normalize",
+    "forceAtlas": false,
+    "faceCameraYaw": 0,
+    "siHumanM": 1.8,
+    "measure": "bone_structural_bbox",
+    "equip": "mesh_ids_visibility_SLOT_DEFS",
+    "skeleton": "Bip001",
+    "mixer": "one_on_kit_root",
+    "animPacks": "Bip001_baked_rotation_only"
+  },
+  "notPlayDefault": {
+    "racesBake": "models/grudge6/races/{PREFIX}_Characters.glb",
+    "fbx": "models/grudge6/races/{PREFIX}_Characters.fbx",
+    "metaverse": "models/grudge6/metaverse/{race}.glb"
+  },
+  "banned": [
+    "skeleton.pose_on_every_skinned_mesh",
+    "unifySkeletons_multi_pose_play",
+    "setFromObject_skinned_si_fit",
+    "facePlusZ_default_true_toon_play",
+    "forceAtlas_on_good_toon_embeds",
+    "play_default_races_bake",
+    "play_default_metaverse",
+    "play_default_fbx",
+    "silent_fallback_toon_to_races_metaverse_fbx",
+    "anim_rematch_to_units_head_meshes",
+    "whole_body_glb_swap_for_equip"
+  ],
+  "playerSave": "Railway Postgres mesh_ids / gear — not a second body GLB",
+  "verify": {
+    "console": "root.userData.warlordsPlayContract + grudge6Play===true + importPipeline===toon-rts-glb",
+    "lab": "https://info.grudge-studio.com/grudge6-race-scenes.html"
+  }
+}
