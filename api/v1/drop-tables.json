@@ -1,0 +1,329 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-07",
+  "id": "grudge-drop-tables",
+  "description": "Fleet drop / tier rate SSOT. Max drop tier is 5 — T6/T7/T8 never drop from loot. T0 is valid for materials, potions, foods, thrown. Difficulty and player level shape rates.",
+  "hardRules": {
+    "maxDropTier": 5,
+    "bannedDropTiers": [6, 7, 8],
+    "bannedDropTierReason": "T6–T8 are craft/endgame/economy only — never world, mob, chest, or boss loot rolls",
+    "t0AllowedCategories": [
+      "materials",
+      "potions",
+      "foods",
+      "thrown",
+      "consumables",
+      "tools_starter",
+      "weapons_t0",
+      "junk"
+    ],
+    "t0MustAppearIn": [
+      "mob_trash",
+      "mob_normal",
+      "chest_common",
+      "harvest_node",
+      "vendor_trash_pool"
+    ]
+  },
+  "tierLabels": {
+    "0": "T0 Starter / crude",
+    "1": "T1 Common",
+    "2": "T2 Uncommon",
+    "3": "T3 Rare",
+    "4": "T4 Epic",
+    "5": "T5 Legendary (drop cap)",
+    "6": "T6 Mythic — NO DROP",
+    "7": "T7 Ancient — NO DROP",
+    "8": "T8 Divine — NO DROP"
+  },
+  "playerLevelToMaxTier": [
+    { "minLevel": 1, "maxLevel": 9, "maxTier": 1, "notes": "T0–T1 dominant" },
+    { "minLevel": 10, "maxLevel": 19, "maxTier": 2, "notes": "T0–T2" },
+    { "minLevel": 20, "maxLevel": 29, "maxTier": 3, "notes": "T0–T3" },
+    { "minLevel": 30, "maxLevel": 39, "maxTier": 4, "notes": "T0–T4" },
+    { "minLevel": 40, "maxLevel": 999, "maxTier": 5, "notes": "T0–T5 only; still never T6+" }
+  ],
+  "difficulty": {
+    "scale": [
+      {
+        "id": "trivial",
+        "label": "Trivial",
+        "levelBias": -8,
+        "qtyMul": 0.7,
+        "rareMul": 0.35,
+        "t0WeightMul": 1.6
+      },
+      {
+        "id": "easy",
+        "label": "Easy",
+        "levelBias": -4,
+        "qtyMul": 0.85,
+        "rareMul": 0.6,
+        "t0WeightMul": 1.3
+      },
+      {
+        "id": "normal",
+        "label": "Normal",
+        "levelBias": 0,
+        "qtyMul": 1.0,
+        "rareMul": 1.0,
+        "t0WeightMul": 1.0
+      },
+      {
+        "id": "hard",
+        "label": "Hard",
+        "levelBias": 6,
+        "qtyMul": 1.15,
+        "rareMul": 1.45,
+        "t0WeightMul": 0.85
+      },
+      {
+        "id": "elite",
+        "label": "Elite",
+        "levelBias": 12,
+        "qtyMul": 1.35,
+        "rareMul": 1.9,
+        "t0WeightMul": 0.7
+      },
+      {
+        "id": "boss",
+        "label": "Boss",
+        "levelBias": 18,
+        "qtyMul": 1.6,
+        "rareMul": 2.4,
+        "t0WeightMul": 0.55
+      },
+      {
+        "id": "raid",
+        "label": "Raid / World Boss",
+        "levelBias": 24,
+        "qtyMul": 2.0,
+        "rareMul": 3.0,
+        "t0WeightMul": 0.4
+      }
+    ],
+    "notes": "effectiveLevel = clamp(playerLevel + levelBias, 1, 70). Still cap maxTier at 5."
+  },
+  "tierWeightCurve": {
+    "description": "Relative weights for tiers 0..maxTier after level+difficulty. Higher tiers rarer; T0 always nonzero for allowed categories.",
+    "baseWeights": {
+      "0": 40,
+      "1": 28,
+      "2": 16,
+      "3": 9,
+      "4": 5,
+      "5": 2
+    },
+    "softTarget": {
+      "description": "Peak weight near recommended tier for effective level",
+      "byMaxTier": {
+        "1": { "0": 55, "1": 45 },
+        "2": { "0": 35, "1": 40, "2": 25 },
+        "3": { "0": 25, "1": 32, "2": 28, "3": 15 },
+        "4": { "0": 18, "1": 26, "2": 28, "3": 18, "4": 10 },
+        "5": { "0": 14, "1": 22, "2": 26, "3": 20, "4": 12, "5": 6 }
+      }
+    },
+    "distancePenalty": {
+      "description": "Per tier step away from targetTier (floor of effective progression), multiply weight by decay^distance",
+      "decay": 0.55
+    }
+  },
+  "categoryRules": {
+    "materials": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": true,
+      "t0FloorWeight": 0.2,
+      "sources": ["harvest_node", "mob_trash", "mob_normal", "chest_common"]
+    },
+    "potions": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": true,
+      "t0FloorWeight": 0.25,
+      "sources": ["mob_normal", "chest_common", "chest_uncommon", "vendor"]
+    },
+    "foods": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": true,
+      "t0FloorWeight": 0.3,
+      "sources": ["mob_trash", "mob_normal", "chest_common", "harvest_node"]
+    },
+    "thrown": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": true,
+      "t0FloorWeight": 0.22,
+      "sources": ["mob_normal", "chest_common", "chest_uncommon"]
+    },
+    "weapons": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": false,
+      "t0FloorWeight": 0.08,
+      "sources": ["mob_normal", "mob_elite", "chest_uncommon", "boss", "raid"],
+      "notes": "T0 training blades allowed but rare on high difficulty"
+    },
+    "armor": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": false,
+      "t0FloorWeight": 0.08,
+      "sources": ["mob_normal", "mob_elite", "chest_uncommon", "boss", "raid"]
+    },
+    "junk": {
+      "allowTiers": [0, 1],
+      "preferT0": true,
+      "t0FloorWeight": 0.5,
+      "sources": ["mob_trash", "mob_normal"]
+    }
+  },
+  "sources": {
+    "mob_trash": {
+      "label": "Trash mob",
+      "rolls": { "min": 0, "max": 2 },
+      "emptyChance": 0.35,
+      "categoryWeights": {
+        "junk": 35,
+        "materials": 30,
+        "foods": 15,
+        "potions": 10,
+        "thrown": 8,
+        "weapons": 1,
+        "armor": 1
+      },
+      "defaultDifficulty": "easy"
+    },
+    "mob_normal": {
+      "label": "Normal mob",
+      "rolls": { "min": 1, "max": 3 },
+      "emptyChance": 0.15,
+      "categoryWeights": {
+        "materials": 28,
+        "foods": 16,
+        "potions": 14,
+        "thrown": 12,
+        "junk": 12,
+        "weapons": 10,
+        "armor": 8
+      },
+      "defaultDifficulty": "normal"
+    },
+    "mob_elite": {
+      "label": "Elite mob",
+      "rolls": { "min": 2, "max": 4 },
+      "emptyChance": 0.05,
+      "categoryWeights": {
+        "materials": 20,
+        "potions": 16,
+        "thrown": 12,
+        "foods": 10,
+        "weapons": 22,
+        "armor": 18,
+        "junk": 2
+      },
+      "defaultDifficulty": "elite"
+    },
+    "chest_common": {
+      "label": "Common chest",
+      "rolls": { "min": 2, "max": 4 },
+      "emptyChance": 0,
+      "categoryWeights": {
+        "materials": 25,
+        "foods": 20,
+        "potions": 20,
+        "thrown": 15,
+        "weapons": 10,
+        "armor": 8,
+        "junk": 2
+      },
+      "defaultDifficulty": "normal"
+    },
+    "chest_uncommon": {
+      "label": "Uncommon / rare chest",
+      "rolls": { "min": 3, "max": 5 },
+      "emptyChance": 0,
+      "categoryWeights": {
+        "materials": 18,
+        "potions": 18,
+        "foods": 12,
+        "thrown": 12,
+        "weapons": 20,
+        "armor": 18,
+        "junk": 2
+      },
+      "defaultDifficulty": "hard"
+    },
+    "boss": {
+      "label": "Boss kill",
+      "rolls": { "min": 3, "max": 6 },
+      "emptyChance": 0,
+      "categoryWeights": {
+        "weapons": 28,
+        "armor": 24,
+        "materials": 16,
+        "potions": 14,
+        "thrown": 10,
+        "foods": 6,
+        "junk": 2
+      },
+      "defaultDifficulty": "boss",
+      "guaranteed": [
+        { "category": "materials", "tier": 0, "qty": [2, 5], "notes": "Always some T0 mats" },
+        { "category": "potions", "tier": 0, "qty": [1, 3], "notes": "Always some T0 potions" }
+      ]
+    },
+    "raid": {
+      "label": "Raid / world boss",
+      "rolls": { "min": 5, "max": 8 },
+      "emptyChance": 0,
+      "categoryWeights": {
+        "weapons": 30,
+        "armor": 28,
+        "materials": 14,
+        "potions": 12,
+        "thrown": 8,
+        "foods": 6,
+        "junk": 2
+      },
+      "defaultDifficulty": "raid",
+      "guaranteed": [
+        { "category": "materials", "tier": 0, "qty": [4, 10] },
+        { "category": "foods", "tier": 0, "qty": [2, 6] },
+        { "category": "potions", "tier": 0, "qty": [2, 5] }
+      ]
+    },
+    "harvest_node": {
+      "label": "Harvest / gather node",
+      "rolls": { "min": 1, "max": 3 },
+      "emptyChance": 0,
+      "categoryWeights": {
+        "materials": 85,
+        "foods": 10,
+        "junk": 5
+      },
+      "defaultDifficulty": "normal",
+      "t0Boost": 1.5
+    }
+  },
+  "formulas": {
+    "effectiveLevel": "clamp(playerLevel + difficulty.levelBias, 1, 70)",
+    "maxTierFromLevel": "from playerLevelToMaxTier table using effectiveLevel",
+    "maxTierFinal": "min(5, maxTierFromLevel)  // hard ban 6–8",
+    "targetTier": "min(maxTierFinal, floor((effectiveLevel - 1) / 10))",
+    "tierWeight": "softTarget[maxTier][t] * (decay ^ abs(t - targetTier)) * (t===0 ? difficulty.t0WeightMul * category.t0FloorWeight factor : difficulty.rareMul for t>=3)",
+    "rollCount": "randomInt(source.rolls.min, source.rolls.max) * difficulty.qtyMul (rounded)",
+    "never": "if tier >= 6 return reject; if tier not in category.allowTiers reject"
+  },
+  "catalogRefs": {
+    "weapons": "master-weapon-prefabs.json · filter tier <= maxTier",
+    "skills": "master-weaponSkills.json",
+    "materials": "materials.json",
+    "consumables": "consumables.json · potions + foods",
+    "thrown": "consumables / engineer items or weapons with thrown tag",
+    "docs": "docs/DROP_TABLES_SSOT.md"
+  },
+  "agentChecklist": [
+    "Never roll or award tier 6, 7, or 8 from any drop source",
+    "Always allow T0 for materials, potions, foods, thrown",
+    "Pass playerLevel and difficulty into every rollLoot call",
+    "Boss/raid guarantee T0 mats/pots even on high difficulty",
+    "Resolve item UUIDs from ObjectStore catalogs after tier/category pick"
+  ]
+}
