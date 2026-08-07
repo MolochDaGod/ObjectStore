@@ -121,8 +121,9 @@ export class Grudge6RaceScene {
       this.mixer = null;
     }
 
-    // GOLDEN path = same as GRUDGE6_Characters Toon RTS ★
-    // Never forceAtlas on GLB (scrambles embeds). FBX last resort only.
+    // PLAY path = Toon RTS ★ only (ObjectStore loadRaceKit).
+    // PURGED silent racesBake/FBX fallback (hid broken Toon behind wrong kits).
+    // Lab compare of other sources: pass opts.source explicitly from UI if needed.
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
@@ -133,26 +134,9 @@ export class Grudge6RaceScene {
         invertUvV: false,
       });
     } catch (e) {
-      console.warn('[race-scene] Toon RTS fail → races glb', e);
-      try {
-        // Explicit compare bake only if golden pack missing — not play default
-        kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
-          source: 'racesBake',
-          ground: false,
-          skipDefaultLoadout: true,
-          forceAtlas: false,
-          invertUvV: false,
-        });
-      } catch (e2) {
-        console.warn('[race-scene] racesBake fail → FBX author', e2);
-        kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, raceId, {
-          source: 'fbx',
-          ground: false,
-          skipDefaultLoadout: true,
-          forceAtlas: true,
-          invertUvV: false,
-        });
-      }
+      console.error('[race-scene] Toon RTS fail-closed (no races/FBX fallback)', e);
+      this.status(`FAIL: Toon RTS kit ${raceId} — ${e?.message || e}`);
+      throw e;
     }
     if (this._disposed) return;
 
