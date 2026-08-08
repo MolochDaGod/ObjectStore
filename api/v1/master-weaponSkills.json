@@ -5383,23 +5383,49 @@
               "icon": "/icons/pack/misc/fire_05.png",
               "tier": 1,
               "damage": 50,
-              "cooldown": 0,
-              "castTime": null,
-              "range": null,
+              "cooldown": 1.1,
+              "castTime": 0.85,
+              "range": 16,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "fire",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "Builds Burn Stack"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staffFire",
+                "vfxRef": "fireball",
+                "impactRef": "inferno",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "fire_hand",
+                "travelEffectId": "fireball",
+                "impactEffectId": "inferno",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_fire_bolt",
+                  "abilityClass": "FireAbility",
+                  "pathMode": "stream",
+                  "element": "fire",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "fire_hand",
+                  "travelEffectId": "fireball",
+                  "impactEffectId": "inferno",
+                  "staffWeaponId": "staffFire",
+                  "learnFrom": "FireAbility.js · VolumetricFireMaterial · settings.fire",
+                  "assets": [
+                    "src/abilities/FireAbility.js",
+                    "src/materials/VolumetricFireMaterial.js",
+                    "src/config/settings.js#fire",
+                    "vfx:fire_hand|fireball|inferno"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5417,6 +5443,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "primary"
+              },
+              "castingSpellId": "casting_fire_bolt",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "fire",
+                "abilityClass": "FireAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -5427,23 +5462,48 @@
               "icon": "/icons/pack/misc/frozen.png",
               "tier": 2,
               "damage": 45,
-              "cooldown": 0,
-              "castTime": null,
-              "range": null,
+              "cooldown": 1.2,
+              "castTime": 0.9,
+              "range": 14,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "frost",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "Slow 30%"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staffIce",
+                "vfxRef": "moon_beam",
+                "impactRef": "frost_wave",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "moon_beam",
+                "impactEffectId": "frost_wave",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_frost_bolt",
+                  "abilityClass": "WaterAbility",
+                  "pathMode": "stream",
+                  "element": "water",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "moon_beam",
+                  "impactEffectId": "frost_wave",
+                  "staffWeaponId": "staffIce",
+                  "learnFrom": "WaterAbility.js · settings.water spray/foam",
+                  "assets": [
+                    "src/abilities/WaterAbility.js",
+                    "src/config/settings.js#water",
+                    "vfx:moon_beam|frost_wave"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5463,6 +5523,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "primary"
+              },
+              "castingSpellId": "casting_frost_bolt",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "water",
+                "abilityClass": "WaterAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -5474,22 +5543,46 @@
               "tier": 3,
               "damage": -60,
               "cooldown": 2,
-              "castTime": null,
-              "range": null,
+              "castTime": 0.9,
+              "range": 14,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "holy",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "Heal Ally"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staff",
+                "vfxRef": "moon_beam",
+                "impactRef": "moon_beam",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "moon_beam",
+                "impactEffectId": "moon_beam",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_holy_light",
+                  "abilityClass": "arcane",
+                  "pathMode": "stream",
+                  "element": "arcane",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "moon_beam",
+                  "impactEffectId": "moon_beam",
+                  "staffWeaponId": "staff",
+                  "learnFrom": "arcane phase VFX · moon_beam (sandbox B)",
+                  "assets": [
+                    "src/combat/elementWeaponSkills.js#arcane",
+                    "vfx:arcane_swirl|moon_beam"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5510,6 +5603,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "primary"
+              },
+              "castingSpellId": "casting_holy_light",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "arcane",
+                "abilityClass": "arcane",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             }
           ]
@@ -5528,23 +5630,48 @@
               "tier": 1,
               "damage": 60,
               "cooldown": 8,
-              "castTime": null,
-              "range": null,
+              "castTime": 0.9,
+              "range": 10,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "fire",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "Cone",
                 "Burn 4s"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staffFire",
+                "vfxRef": "fireball",
+                "impactRef": "inferno",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "fire_hand",
+                "travelEffectId": "fireball",
+                "impactEffectId": "inferno",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_flame_wave",
+                  "abilityClass": "FireAbility",
+                  "pathMode": "aoe",
+                  "element": "fire",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "fire_hand",
+                  "travelEffectId": "fireball",
+                  "impactEffectId": "inferno",
+                  "staffWeaponId": "staffFire",
+                  "learnFrom": "pathCastClassify aoe · deployElementImpact fire",
+                  "assets": [
+                    "src/combat/pathCastClassify.js",
+                    "src/config/settings.js#staffCast",
+                    "vfx:inferno|fire_aura"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5563,6 +5690,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "secondary"
+              },
+              "castingSpellId": "casting_flame_wave",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "aoe",
+                "element": "fire",
+                "abilityClass": "FireAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -5574,23 +5710,47 @@
               "tier": 2,
               "damage": 55,
               "cooldown": 10,
-              "castTime": null,
-              "range": null,
+              "castTime": 0.95,
+              "range": 12,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "frost",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "AoE 6m",
                 "Slow 50%"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staffIce",
+                "vfxRef": "moon_beam",
+                "impactRef": "frost_wave",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "moon_beam",
+                "impactEffectId": "frost_wave",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_ice_nova",
+                  "abilityClass": "WaterAbility",
+                  "pathMode": "spikes",
+                  "element": "water",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "moon_beam",
+                  "impactEffectId": "frost_wave",
+                  "staffWeaponId": "staffIce",
+                  "learnFrom": "staffCast spikesElement water · frost_wave",
+                  "assets": [
+                    "src/config/settings.js#staffCast.spikes",
+                    "vfx:frost_wave|ice_lightning_burst"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5611,6 +5771,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "secondary"
+              },
+              "castingSpellId": "casting_ice_nova",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "spikes",
+                "element": "water",
+                "abilityClass": "WaterAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -5768,23 +5937,49 @@
               "tier": 3,
               "damage": 150,
               "cooldown": 18,
-              "castTime": null,
-              "range": null,
+              "castTime": 1.2,
+              "range": 20,
               "projectile": null,
-              "damageType": "physical",
-              "animation": null,
+              "damageType": "fire",
+              "animation": "magic/standing 1h cast spell 01",
               "physics": null,
               "effects": [
                 "Delay 1.5s",
                 "AoE 5m"
               ],
               "prefab": {
-                "modelRef": null,
-                "vfxRef": null,
-                "impactRef": null,
-                "animationClip": null,
+                "modelRef": "staffFire",
+                "vfxRef": "fireball",
+                "impactRef": "inferno",
+                "animationClip": "magic/standing 1h cast spell 01",
                 "soundRef": null,
-                "cameraShake": null
+                "cameraShake": null,
+                "castEffectId": "fire_hand",
+                "travelEffectId": "fireball",
+                "impactEffectId": "inferno",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_meteor_strike",
+                  "abilityClass": "FireAbility",
+                  "pathMode": "stream",
+                  "element": "fire",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "fire_hand",
+                  "travelEffectId": "fireball",
+                  "impactEffectId": "inferno",
+                  "staffWeaponId": "staffFire",
+                  "learnFrom": "FireAbility full path · intensity knobs settings.effect",
+                  "assets": [
+                    "src/abilities/FireAbility.js",
+                    "src/vfx/effectPrefab.js",
+                    "vfx:fireball|inferno",
+                    "settings.effect intensity/aoe/speed/size"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
               },
               "resourceCost": {
                 "mana": 5,
@@ -5803,6 +5998,15 @@
                 ],
                 "damageType": "physical",
                 "slotRole": "ability"
+              },
+              "castingSpellId": "casting_meteor_strike",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "fire",
+                "abilityClass": "FireAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -6153,9 +6357,9 @@
               "damage": 150,
               "cooldown": 45,
               "castTime": 1,
-              "range": null,
+              "range": 14,
               "projectile": null,
-              "damageType": "arcane",
+              "damageType": "lightning",
               "effects": [
                 "Signature"
               ],
@@ -6177,6 +6381,48 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "ultimate"
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "staffStorm",
+                "vfxRef": "chain_lightning",
+                "impactRef": "ice_lightning_burst",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "chain_lightning",
+                "impactEffectId": "ice_lightning_burst",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_wind_tempest",
+                  "abilityClass": "WindAbility",
+                  "pathMode": "stream",
+                  "element": "wind",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "chain_lightning",
+                  "impactEffectId": "ice_lightning_burst",
+                  "staffWeaponId": "staffStorm",
+                  "learnFrom": "WindAbility.js · wind residual afterimage palette",
+                  "assets": [
+                    "src/abilities/WindAbility.js",
+                    "src/config/settings.js#wind",
+                    "src/vfx/DodgeAfterimage.js",
+                    "vfx:chain_lightning|ice_lightning_burst"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
+              },
+              "castingSpellId": "casting_wind_tempest",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "wind",
+                "abilityClass": "WindAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -6189,9 +6435,9 @@
               "damage": 150,
               "cooldown": 45,
               "castTime": 1,
-              "range": null,
+              "range": 10,
               "projectile": null,
-              "damageType": "arcane",
+              "damageType": "lightning",
               "effects": [
                 "Signature"
               ],
@@ -6213,6 +6459,46 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "ultimate"
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "staffStorm",
+                "vfxRef": "chain_lightning",
+                "impactRef": "ice_lightning_burst",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "chain_lightning",
+                "impactEffectId": "ice_lightning_burst",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_gale_nova",
+                  "abilityClass": "WindAbility",
+                  "pathMode": "aoe",
+                  "element": "wind",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "chain_lightning",
+                  "impactEffectId": "ice_lightning_burst",
+                  "staffWeaponId": "staffStorm",
+                  "learnFrom": "Wind aoe place · ice_lightning_burst sandbox V",
+                  "assets": [
+                    "vfx:ice_lightning_burst|chain_lightning",
+                    "src/vfx/vfxCatalog.js"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
+              },
+              "castingSpellId": "casting_gale_nova",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "aoe",
+                "element": "wind",
+                "abilityClass": "WindAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -6513,9 +6799,9 @@
               "damage": 150,
               "cooldown": 45,
               "castTime": 1,
-              "range": null,
+              "range": 12,
               "projectile": null,
-              "damageType": "arcane",
+              "damageType": "nature",
               "effects": [
                 "Signature"
               ],
@@ -6537,6 +6823,48 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "ultimate"
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "staffNature",
+                "vfxRef": "earth_surge",
+                "impactRef": "earth_surge",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "earth_surge",
+                "travelEffectId": "earth_surge",
+                "impactEffectId": "earth_surge",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_earth_spike",
+                  "abilityClass": "EarthAbility",
+                  "pathMode": "spikes",
+                  "element": "earth",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "earth_surge",
+                  "travelEffectId": "earth_surge",
+                  "impactEffectId": "earth_surge",
+                  "staffWeaponId": "staffNature",
+                  "learnFrom": "EarthAbility.js · settings.earth · nature staff",
+                  "assets": [
+                    "src/abilities/EarthAbility.js",
+                    "src/config/settings.js#earth",
+                    "vfx:earth_surge",
+                    "catalog:t0_staff_vine_lash"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
+              },
+              "castingSpellId": "casting_earth_spike",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "spikes",
+                "element": "earth",
+                "abilityClass": "EarthAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -6909,9 +7237,9 @@
               "damage": 150,
               "cooldown": 45,
               "castTime": 1,
-              "range": null,
+              "range": 14,
               "projectile": null,
-              "damageType": "arcane",
+              "damageType": "nature",
               "effects": [
                 "Signature"
               ],
@@ -6933,6 +7261,47 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "ultimate"
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "staffNature",
+                "vfxRef": "earth_surge",
+                "impactRef": "earth_surge",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "earth_surge",
+                "travelEffectId": "earth_surge",
+                "impactEffectId": "earth_surge",
+                "castingLab": {
+                  "castingLab": true,
+                  "castingSpellId": "casting_stone_wall",
+                  "abilityClass": "EarthAbility",
+                  "pathMode": "wall",
+                  "element": "earth",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "castEffectId": "earth_surge",
+                  "travelEffectId": "earth_surge",
+                  "impactEffectId": "earth_surge",
+                  "staffWeaponId": "staffNature",
+                  "learnFrom": "staffCast wallMinLength · wallHoldSec",
+                  "assets": [
+                    "src/combat/pathCastClassify.js",
+                    "src/config/settings.js#staffCast.wall",
+                    "vfx:earth_surge"
+                  ],
+                  "source": "CastingAbilitiesThreeJS",
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/"
+                }
+              },
+              "castingSpellId": "casting_stone_wall",
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "wall",
+                "element": "earth",
+                "abilityClass": "EarthAbility",
+                "liveLab": "https://casting-abilities-threejs.vercel.app/"
               }
             },
             {
@@ -17051,9 +17420,9 @@
               "icon": "/icons/pack/weapons/staff_34.png",
               "tier": 0,
               "damage": 14,
-              "cooldown": 0,
+              "cooldown": 0.45,
               "castTime": 0.5,
-              "range": null,
+              "range": 12,
               "projectile": null,
               "damageType": "arcane",
               "effects": [
@@ -17076,7 +17445,45 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "primary"
-              }
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "t0-wand",
+                "vfxRef": "chain_lightning",
+                "impactRef": "arcane_swirl",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "chain_lightning",
+                "impactEffectId": "arcane_swirl",
+                "castingLab": {
+                  "castingLab": true,
+                  "t0": true,
+                  "weaponId": "t0-wand",
+                  "weaponName": "Apprentice Wand",
+                  "skillId": "t0_wand_practice_bolt",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "pathMode": "stream",
+                  "element": "arcane",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "chain_lightning",
+                  "impactEffectId": "arcane_swirl",
+                  "isFocus": false,
+                  "focusDurationSec": null,
+                  "focusDamageMul": null,
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/",
+                  "source": "CastingAbilitiesThreeJS/t0ApprenticeWand"
+                }
+              },
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "arcane",
+                "t0": true
+              },
+              "castingSpellId": "t0_wand_practice_bolt"
             }
           ]
         },
@@ -17097,7 +17504,7 @@
               "damage": 0,
               "cooldown": 5,
               "castTime": 0.3,
-              "range": null,
+              "range": 0,
               "projectile": null,
               "damageType": "arcane",
               "effects": [
@@ -17122,7 +17529,45 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "secondary"
-              }
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "t0-wand",
+                "vfxRef": "arcane_swirl",
+                "impactRef": null,
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": null,
+                "impactEffectId": null,
+                "castingLab": {
+                  "castingLab": true,
+                  "t0": true,
+                  "weaponId": "t0-wand",
+                  "weaponName": "Apprentice Wand",
+                  "skillId": "t0_wand_focus",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "pathMode": null,
+                  "element": "arcane",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": null,
+                  "impactEffectId": null,
+                  "isFocus": true,
+                  "focusDurationSec": 3,
+                  "focusDamageMul": 1.35,
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/",
+                  "source": "CastingAbilitiesThreeJS/t0ApprenticeWand"
+                }
+              },
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": null,
+                "element": "arcane",
+                "t0": true
+              },
+              "castingSpellId": "t0_wand_focus"
             }
           ]
         },
@@ -17145,7 +17590,7 @@
               "damage": 12,
               "cooldown": 4,
               "castTime": 0.6,
-              "range": null,
+              "range": 11,
               "projectile": null,
               "damageType": "frost",
               "effects": [
@@ -17171,7 +17616,45 @@
                 ],
                 "damageType": "frost",
                 "slotRole": "ability"
-              }
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "t0-wand",
+                "vfxRef": "moon_beam",
+                "impactRef": "frost_wave",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "moon_beam",
+                "impactEffectId": "frost_wave",
+                "castingLab": {
+                  "castingLab": true,
+                  "t0": true,
+                  "weaponId": "t0-wand",
+                  "weaponName": "Apprentice Wand",
+                  "skillId": "t0_wand_frost_spark",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "pathMode": "stream",
+                  "element": "frost",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "moon_beam",
+                  "impactEffectId": "frost_wave",
+                  "isFocus": false,
+                  "focusDurationSec": null,
+                  "focusDamageMul": null,
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/",
+                  "source": "CastingAbilitiesThreeJS/t0ApprenticeWand"
+                }
+              },
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "stream",
+                "element": "frost",
+                "t0": true
+              },
+              "castingSpellId": "t0_wand_frost_spark"
             },
             {
               "uuid": "SKIL-T0-CE49A4-AFCDCF",
@@ -17183,7 +17666,7 @@
               "damage": 10,
               "cooldown": 3,
               "castTime": 0.4,
-              "range": null,
+              "range": 8,
               "projectile": null,
               "damageType": "arcane",
               "effects": [
@@ -17209,7 +17692,45 @@
                 ],
                 "damageType": "arcane",
                 "slotRole": "ability"
-              }
+              },
+              "animation": "magic/standing 1h cast spell 01",
+              "prefab": {
+                "modelRef": "t0-wand",
+                "vfxRef": "arcane_swirl",
+                "impactRef": "arcane_swirl",
+                "animationClip": "magic/standing 1h cast spell 01",
+                "castEffectId": "arcane_swirl",
+                "travelEffectId": "arcane_swirl",
+                "impactEffectId": "arcane_swirl",
+                "castingLab": {
+                  "castingLab": true,
+                  "t0": true,
+                  "weaponId": "t0-wand",
+                  "weaponName": "Apprentice Wand",
+                  "skillId": "t0_wand_arcane_ping",
+                  "animPack": "magic",
+                  "animationClip": "magic/standing 1h cast spell 01",
+                  "animRole": "cast",
+                  "pathMode": "aoe",
+                  "element": "arcane",
+                  "castEffectId": "arcane_swirl",
+                  "travelEffectId": "arcane_swirl",
+                  "impactEffectId": "arcane_swirl",
+                  "isFocus": false,
+                  "focusDurationSec": null,
+                  "focusDamageMul": null,
+                  "liveLab": "https://casting-abilities-threejs.vercel.app/",
+                  "source": "CastingAbilitiesThreeJS/t0ApprenticeWand"
+                }
+              },
+              "lab": {
+                "animPack": "magic",
+                "animRole": "cast",
+                "pathMode": "aoe",
+                "element": "arcane",
+                "t0": true
+              },
+              "castingSpellId": "t0_wand_arcane_ping"
             }
           ]
         }
@@ -18694,7 +19215,7 @@
     }
   },
   "enriched": "2026-07-01T00:33:15.971Z",
-  "enrichmentNote": "UUIDs + resourceCost added by enrich-weapon-skills.mjs",
+  "enrichmentNote": "UUIDs + resourceCost added by enrich-weapon-skills.mjs | casting-spell-kit v1 10 spells bound to STAFF",
   "t0StarterPattern": "three-slot-starter",
   "t0StarterEnriched": "2026-07-01T05:24:24.764Z",
   "variantSignaturesEnriched": "2026-07-01T05:24:25.425Z",
@@ -18709,5 +19230,10 @@
     "attributes": "master-attributes.json",
     "primaryStatMap": "_meta/ability-aliases.json → primaryStatToAttribute",
     "attributeCount": 8
-  }
+  },
+  "castingSpellKitEnriched": true,
+  "castingSpellKitVersion": "1.0.0",
+  "castingSpellKitUrl": "api/v1/casting-spell-kit.json",
+  "t0ApprenticeWandEnriched": true,
+  "t0ApprenticeWandUrl": "api/v1/t0-apprentice-wand-skills.json"
 }
