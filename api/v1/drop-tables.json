@@ -311,6 +311,22 @@
     "rollCount": "randomInt(source.rolls.min, source.rolls.max) * difficulty.qtyMul (rounded)",
     "never": "if tier >= 6 return reject; if tier not in category.allowTiers reject"
   },
+  "worldPresentation": {
+    "docs": "docs/WORLD_DROP_PRESENTATION.md",
+    "prefabCatalog": "master-weapon-prefabs.json",
+    "layers": {
+      "icon": "assets.iconUrl — bag + ground billboard sprite",
+      "model": "modelUrl / prodGltfUrl — equip or mini world mesh",
+      "dropPrefab": "assets.dropPrefabR2Key — optional loot GLB",
+      "lootVfx": "assets.worldDropVfxR2Key — optional ground FX",
+      "borderGlow": "tier 0–5 colors; bloom-friendly additive disc + ring"
+    },
+    "state": "world | bag | equipped — drops are never equipped until equip action",
+    "interaction": {
+      "pickup": "proximity + interact",
+      "throw": "inventory drag-drop to world aim"
+    }
+  },
   "catalogRefs": {
     "weapons": "master-weapon-prefabs.json · filter tier <= maxTier",
     "skills": "master-weaponSkills.json",
