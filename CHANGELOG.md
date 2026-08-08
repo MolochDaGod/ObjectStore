@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-08-06
-### Added
-- feat(info): grudge6 editor SSOT harden + main-panel deploy face (2122fc0)
+## 2026-08-08
+### Fixed
+- fix(assets): T0 wand + Sapling Staff modelUrl to R2 prod/gltf (65e583f)
 
