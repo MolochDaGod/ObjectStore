@@ -24,13 +24,17 @@
 
 | Rule | Value |
 |------|--------|
-| Design width | **1600px** stage (`#mpStageInner`) scaled to viewport |
-| Scale range | 0.55–1.12 (`--mp-ui-scale`) |
+| Design width | **1440px** stage (`#mpStageInner`) **contain-fit** to viewport |
+| Scale range | 0.42–1.25 (`--mp-ui-scale`) — full UI always fits screen |
 | Scroll usage | **One** World Map scroll opens on boot; tab change = `snapOpen` + content fade only |
-| Content scroll | `#contentArea` + `.inv-grid` + `.left-col` independent, `overscroll-behavior: contain` |
+| Interior well | **Dark** panels (`main-panel-readable.css`) — parchment is frame only |
+| Text | High-contrast `--text` `#f3ece0` / `--muted` `#c9bda8` / gold titles |
+| Borders | Hard 2px gold edges on tabs, cards, slots, columns |
+| Content scroll | `#contentArea` + `.inv-grid` + `.left-col` independent |
 | 2D canvas | `#mp2dCanvas` — item drag ghost + click pulse (not Three.js) |
 | Hero 3D | `#hero-viewport` remains WebGL (separate) |
 | Debug scale chip | `?scaleChip=1` or `localStorage grudge.mp.showScale=1` |
+| Readability CSS | `css/main-panel-readable.css` (must load after main-panel-2d.css) |
 
 ## npm / 2D best practices
 

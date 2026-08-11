@@ -14,11 +14,14 @@
 (function (global) {
   "use strict";
 
-  /** Design space (HYDRA-compatible width). Height is fluid but width-locked. */
-  var DESIGN_W = 1600;
-  var DESIGN_MIN_H = 820;
-  var MAX_SCALE = 1.12;
-  var MIN_SCALE = 0.55;
+  /**
+   * Design width for layout density. We scale to **contain** in the stage so
+   * the full panel always fits the provided screen (no page scroll / crop).
+   */
+  var DESIGN_W = 1440;
+  var DESIGN_MIN_H = 780;
+  var MAX_SCALE = 1.25;
+  var MIN_SCALE = 0.42;
 
   var _stage = null;
   var _inner = null;
@@ -80,33 +83,64 @@
 
   function fitScale() {
     if (!_stage || !_inner) return 1;
-    var rw = _stage.clientWidth || window.innerWidth;
-    var rh = _stage.clientHeight || Math.max(400, window.innerHeight - 56);
-    // Height of design = max(content min, stage height / scale) — use width-primary fit
+
+    // Stage fills app under top-bar (flex child)
+    var topBar = document.querySelector(".app > .top-bar");
+    var topH = topBar ? topBar.getBoundingClientRect().height : 48;
+    var vw = window.innerWidth || document.documentElement.clientWidth;
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var rw = _stage.clientWidth || vw;
+    var rh = Math.max(280, _stage.clientHeight || vh - topH);
+
+    // Force stage to use remaining viewport
+    _stage.style.flex = "1 1 auto";
+    _stage.style.minHeight = "0";
+    _stage.style.width = "100%";
+    _stage.style.height = rh + "px";
+    _stage.style.overflow = "hidden";
+
+    // Design box
+    _inner.style.width = DESIGN_W + "px";
+    _inner.style.minHeight = DESIGN_MIN_H + "px";
+    _inner.style.height = "auto";
+    _inner.style.transform = "none"; // measure unscaled first
+    _inner.style.transformOrigin = "top center";
+    _inner.style.marginLeft = "auto";
+    _inner.style.marginRight = "auto";
+
+    // Natural content height (scroll shell + hotbar)
+    var naturalH = Math.max(
+      DESIGN_MIN_H,
+      _inner.scrollHeight || DESIGN_MIN_H,
+      _inner.offsetHeight || DESIGN_MIN_H
+    );
+
+    // Contain fit: entire UI visible in stage
     var sW = rw / DESIGN_W;
-    var sH = rh / DESIGN_MIN_H;
+    var sH = rh / naturalH;
     var s = Math.min(sW, sH, MAX_SCALE);
     s = Math.max(MIN_SCALE, s);
+    // Prefer filling width when height allows a bit of letterbox bottom
+    if (sW <= sH && sW <= MAX_SCALE) {
+      s = Math.max(MIN_SCALE, Math.min(sW, MAX_SCALE));
+    }
     _scale = s;
 
     _inner.style.transform = "scale(" + s + ")";
-    _inner.style.transformOrigin = "top center";
-    // Layout space for flex parent (scaled element still occupies unscaled box unless we set height)
-    var contentH = Math.max(
-      DESIGN_MIN_H,
-      Math.ceil((_inner.scrollHeight || DESIGN_MIN_H) )
-    );
-    // Prefer measured inner height after layout
-    var measured = _inner.getBoundingClientRect().height / (s || 1);
-    if (measured > 100) contentH = measured;
-    _stage.style.height = Math.min(rh, contentH * s) + "px";
-    // Center horizontally when letterboxed
-    _inner.style.marginLeft = "auto";
-    _inner.style.marginRight = "auto";
+    // Reserve layout space for the scaled box so flex doesn't collapse
+    var scaledH = naturalH * s;
+    _stage.style.height = Math.max(rh, Math.min(rh, scaledH)) + "px";
+    // Center vertically if letterboxed
+    if (scaledH < rh - 4) {
+      _inner.style.marginTop = Math.floor((rh - scaledH) / 2) + "px";
+    } else {
+      _inner.style.marginTop = "0px";
+    }
 
     resizeCanvas();
     document.documentElement.style.setProperty("--mp-ui-scale", String(s));
     document.documentElement.style.setProperty("--mp-design-w", DESIGN_W + "px");
+    document.documentElement.style.setProperty("--mp-stage-h", rh + "px");
     return s;
   }
 

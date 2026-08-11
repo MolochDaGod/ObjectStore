@@ -1,0 +1,376 @@
+/**
+ * Main Panel READABILITY + fit chrome — info.grudge-studio.com/main-panel.html
+ *
+ * Problem: World Map parchment sets dark ink on light wash, while WCS UI
+ * expects light text on dark panels → unreadable gold-on-tan / dim-on-dim.
+ *
+ * Fix: force a dark fantasy game UI *inside* the scroll frame (parchment
+ * stays as outer rods/frame only). High-contrast text, hard borders, clear slots.
+ */
+
+/* ── High-contrast tokens (override weak theme greys) ─────────────── */
+body.scroll-theme.mp2d-ready {
+  --text: #f3ece0;
+  --muted: #c9bda8;
+  --dim: #a89880;
+  --gold: #e8c547;
+  --gold-light: #ffe48a;
+  --gold-dark: #b8860b;
+  --border: #c9a227;
+  --panel-bg: rgba(10, 14, 22, 0.94);
+  --panel-bg-2: rgba(16, 20, 30, 0.96);
+  --panel-edge: rgba(212, 175, 55, 0.55);
+  --panel-edge-soft: rgba(212, 175, 55, 0.28);
+  --slot-bg: #141018;
+  --slot-edge: #6a5428;
+  color: var(--text);
+}
+
+/* ── Outer scroll: keep parchment frame, dark interior well ───────── */
+#mainScroll.scroll-shell > .scroll-content,
+.scroll-shell.main-canvas-scroll > .scroll-content {
+  /* Kill light parchment wash that fights UI */
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.97) 0%, rgba(12, 16, 24, 0.98) 50%, rgba(8, 10, 16, 0.97) 100%) !important;
+  color: var(--text) !important;
+  margin: 2.2% 3% 2% !important;
+  border-radius: 6px !important;
+  box-shadow:
+    inset 0 0 0 2px var(--panel-edge),
+    inset 0 0 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.5) !important;
+  padding: 10px 12px !important;
+}
+
+/* Reset scroll-theme ink overrides on children */
+#mainScroll .scroll-content,
+#mainScroll .scroll-content p,
+#mainScroll .scroll-content label,
+#mainScroll .scroll-content span,
+#mainScroll .scroll-content div {
+  color: inherit;
+}
+
+#mainScroll .scroll-content h1,
+#mainScroll .scroll-content h2,
+#mainScroll .scroll-content h3,
+#mainScroll .scroll-content .section-title,
+#mainScroll .scroll-content .inv-header h3 {
+  color: var(--gold-light) !important;
+  text-shadow: 0 1px 2px #000, 0 0 12px rgba(232, 197, 71, 0.25) !important;
+  font-family: var(--font-heading, Cinzel, serif) !important;
+}
+
+#mainScroll .scroll-content .muted,
+#mainScroll .scroll-content .scroll-muted,
+#mainScroll .scroll-content .bag-scope,
+#mainScroll .scroll-content .inv-count,
+#mainScroll .scroll-content .prof-name,
+#mainScroll .scroll-content .stat-row .k {
+  color: var(--muted) !important;
+  text-shadow: none;
+}
+
+#mainScroll .scroll-content .stat-row .v,
+#mainScroll .scroll-content .prof-lv,
+#mainScroll .scroll-content .eq-sum-val,
+#mainScroll .scroll-content .mono {
+  color: var(--text) !important;
+  font-weight: 600;
+}
+
+/* ── Columns as hard-bordered panels ──────────────────────────────── */
+#mainScroll .left-col,
+#mainScroll .right-col,
+#mainScroll .center-col {
+  background: transparent;
+}
+
+#mainScroll .left-col {
+  border-right: 2px solid var(--panel-edge) !important;
+  padding: 10px 12px !important;
+  background:
+    linear-gradient(180deg, rgba(14, 18, 28, 0.55) 0%, rgba(8, 10, 16, 0.35) 100%) !important;
+}
+
+#mainScroll .right-col {
+  border-left: 2px solid var(--panel-edge) !important;
+  background:
+    linear-gradient(180deg, rgba(14, 18, 28, 0.55) 0%, rgba(8, 10, 16, 0.35) 100%) !important;
+}
+
+/* ── Tabs: hard bottom border + readable inactive ─────────────────── */
+#mainScroll .tab-strip {
+  background: linear-gradient(180deg, #1a140c 0%, #0e0c08 100%) !important;
+  border-bottom: 2px solid var(--gold) !important;
+  gap: 0;
+}
+
+#mainScroll .tab-btn {
+  color: #b8a890 !important;
+  border: 1px solid transparent !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -2px;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+  padding: 12px 16px !important;
+  text-shadow: 0 1px 2px #000;
+}
+
+#mainScroll .tab-btn:hover {
+  color: #fff8e8 !important;
+  background: rgba(232, 197, 71, 0.08) !important;
+  border-color: var(--panel-edge-soft) !important;
+}
+
+#mainScroll .tab-btn.active {
+  color: var(--gold-light) !important;
+  background: rgba(232, 197, 71, 0.12) !important;
+  border: 1px solid var(--panel-edge) !important;
+  border-bottom-color: #0e0c08 !important;
+  text-shadow: 0 0 10px rgba(232, 197, 71, 0.35);
+}
+
+#mainScroll .tab-indicator {
+  height: 3px !important;
+  background: var(--gold) !important;
+  box-shadow: 0 0 12px rgba(232, 197, 71, 0.6) !important;
+}
+
+/* ── Content area panels / cards / stats ──────────────────────────── */
+#mainScroll .content-area {
+  color: var(--text) !important;
+  padding: 14px 16px !important;
+}
+
+#mainScroll .section-title {
+  color: var(--gold-light) !important;
+  border-left: 3px solid var(--gold) !important;
+  margin: 14px 0 10px !important;
+  padding-left: 10px !important;
+}
+
+#mainScroll .attr-card,
+#mainScroll .fantasy-panel,
+#mainScroll .eq-panel,
+#mainScroll .wst-header,
+#mainScroll .mp-attr-row,
+#mainScroll .tree-node,
+#mainScroll .mp-skill-chip,
+#mainScroll .craft-embed-wrap,
+#mainScroll .unit-context-banner,
+#mainScroll .mp-status,
+#mainScroll .error-banner {
+  background: var(--panel-bg) !important;
+  border: 2px solid var(--panel-edge) !important;
+  border-radius: 6px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 230, 160, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  color: var(--text) !important;
+}
+
+#mainScroll .attr-card:hover,
+#mainScroll .tree-node:hover,
+#mainScroll .mp-skill-chip.can-invest:hover {
+  border-color: var(--gold-light) !important;
+  background: var(--panel-bg-2) !important;
+}
+
+#mainScroll .stat-row {
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15) !important;
+  padding: 6px 2px !important;
+  font-size: 13px !important;
+}
+
+#mainScroll .stat-row .v.positive {
+  color: #6dff8a !important;
+}
+
+/* ── Equipment slots — hard borders + craftpix slot art ───────────── */
+#mainScroll .eq-slot,
+#mainScroll .inv-cell,
+#mainScroll .hb-slot {
+  background-color: var(--slot-bg) !important;
+  background-image: var(--mp2d-slot-bg, none) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  border: 2px solid var(--slot-edge) !important;
+  border-radius: 6px !important;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.55) !important;
+  color: var(--muted) !important;
+}
+
+#mainScroll .eq-slot:hover,
+#mainScroll .inv-cell:hover,
+#mainScroll .hb-slot:hover {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 12px rgba(232, 197, 71, 0.35), inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  color: var(--text) !important;
+}
+
+#mainScroll .eq-slot.equipped,
+#mainScroll .inv-cell.has-item {
+  border-color: rgba(232, 197, 71, 0.65) !important;
+}
+
+#mainScroll .eq-slot .slot-label,
+#mainScroll .eq-slot .empty-label {
+  color: var(--muted) !important;
+  font-size: 9px !important;
+  text-shadow: 0 1px 2px #000;
+}
+
+/* ── Inventory header / bag ───────────────────────────────────────── */
+#mainScroll .inv-header {
+  border-bottom: 2px solid var(--panel-edge) !important;
+  background: linear-gradient(180deg, rgba(30, 24, 14, 0.85), rgba(12, 14, 20, 0.4)) !important;
+  padding: 10px 12px !important;
+}
+
+#mainScroll .inv-header h3 {
+  color: var(--gold-light) !important;
+  font-size: 13px !important;
+}
+
+#mainScroll .bag-scope {
+  color: var(--muted) !important;
+  font-size: 10px !important;
+}
+
+#mainScroll .inv-count,
+#mainScroll #goldDisplay {
+  color: var(--gold-light) !important;
+  font-weight: 700 !important;
+}
+
+#mainScroll .inv-grid {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px !important;
+  gap: 5px !important;
+}
+
+/* ── Hotbar ───────────────────────────────────────────────────────── */
+#mainScroll ~ .hotbar,
+.mp-stage-inner .hotbar,
+.app > .hotbar {
+  background: linear-gradient(180deg, #16120c, #0a0806) !important;
+  border-top: 2px solid var(--gold) !important;
+}
+
+/* When hotbar is inside stage-inner */
+.mp-stage-inner > .hotbar {
+  background: linear-gradient(180deg, #16120c, #0a0806) !important;
+  border-top: 2px solid var(--gold) !important;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────────── */
+.mp2d-ready .top-bar {
+  background: linear-gradient(180deg, #221810 0%, #100c08 100%) !important;
+  border-bottom: 2px solid var(--gold) !important;
+  color: var(--text);
+}
+
+.mp2d-ready .top-bar .player-info,
+.mp2d-ready .top-bar .player-info span {
+  color: var(--muted) !important;
+}
+
+.mp2d-ready .top-bar .player-info .name {
+  color: var(--gold-light) !important;
+}
+
+.mp2d-ready .mp2d-lang label {
+  color: var(--muted) !important;
+}
+
+.mp2d-ready .mp2d-lang select {
+  color: var(--gold-light) !important;
+  background: #12100c !important;
+  border: 1px solid var(--panel-edge) !important;
+}
+
+/* ── Hero viewport frame ──────────────────────────────────────────── */
+#mainScroll .hero-viewport {
+  border: 2px solid var(--panel-edge) !important;
+  background: #06080c !important;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.7),
+    0 0 0 1px #000,
+    0 0 20px rgba(232, 197, 71, 0.12) !important;
+}
+
+/* ── Tooltips ─────────────────────────────────────────────────────── */
+.eq-tooltip,
+.mp-node-tooltip {
+  background: rgba(8, 10, 16, 0.97) !important;
+  border: 2px solid var(--gold) !important;
+  color: var(--text) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.65) !important;
+}
+
+.eq-tooltip .tt-name,
+.mp-node-tooltip .tt-name {
+  color: var(--gold-light) !important;
+}
+
+.eq-tooltip .tt-desc,
+.mp-node-tooltip .tt-desc {
+  color: var(--muted) !important;
+}
+
+/* ── Unit banner / errors ─────────────────────────────────────────── */
+#mainScroll .unit-context-banner {
+  color: var(--text) !important;
+  border: 1px solid var(--panel-edge) !important;
+  background: rgba(12, 16, 24, 0.9) !important;
+}
+
+#mainScroll .error-banner {
+  color: #ffb0b0 !important;
+  border-color: #c44 !important;
+}
+
+/* ── Profession bars ──────────────────────────────────────────────── */
+#mainScroll .prof-row .prof-bar {
+  background: #1a1410 !important;
+  border: 1px solid var(--panel-edge-soft) !important;
+}
+
+/* ── Fit stage: fill remaining viewport under top bar ─────────────── */
+body.scroll-theme .app {
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100dvh;
+  overflow: hidden !important;
+}
+
+.mp-stage {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100%;
+}
+
+.mp-stage-inner {
+  /* JS still sets transform; allow full width fill */
+  max-width: 100%;
+}
+
+/* When scale applied, ensure no horizontal page scroll */
+html,
+body.scroll-theme {
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+/* Links remain gold but readable */
+#mainScroll a {
+  color: var(--gold-light) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+#mainScroll a:hover {
+  color: #fff3c0 !important;
+}

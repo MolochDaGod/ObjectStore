@@ -200,6 +200,23 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Default light parchment is overridden by main-panel-readable.css for #mainScroll */
+}
+
+/**
+ * Main panel (#mainScroll): dark readable well — parchment rods stay on .scroll-shell bg.
+ * Do not force scroll-ink (dark brown) here; UI uses --text light on dark panels.
+ */
+#mainScroll.scroll-shell > .scroll-content {
+  color: #f3ece0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 12, 18, 0.97) 0%,
+    rgba(12, 16, 24, 0.98) 50%,
+    rgba(8, 10, 16, 0.97) 100%
+  );
+  margin: 2.2% 3% 2%;
+  box-shadow: inset 0 0 0 2px rgba(212, 175, 55, 0.5);
 }
 
 /* Full app chrome still dark; only scroll shells get parchment */
