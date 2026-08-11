@@ -13,7 +13,7 @@
 | 2D chrome | `css/main-panel-2d.css` |
 | Theme tokens | `css/grudge-theme.css` |
 | Scroll containers | `css/ui-scroll-container.css` + `ui/scroll/*` + `#mainScroll` **one** parchment |
-| Design scale + 2D canvas | `js/main-panel-canvas-2d.js` (HYDRA-width stage · drag ghost) |
+| Fluid canvas + 2D overlay | `js/main-panel-canvas-2d.js` (viewport fill · drag ghost · scroll open) |
 | i18n pack | `api/v1/main-panel-locales.json` |
 | i18n runtime | `js/main-panel-i18n.js` |
 | 2D bootstrap | `js/main-panel-2d.js` |
@@ -25,9 +25,9 @@
 
 | Rule | Value |
 |------|--------|
-| Design width | **1440px** stage (`#mpStageInner`) **contain-fit** to viewport |
-| Scale range | 0.42–1.25 (`--mp-ui-scale`) — full UI always fits screen |
-| Scroll usage | **One** World Map scroll opens on boot; tab change = `snapOpen` + content fade only |
+| Stage fit | **Fluid 100%** under top bar — **no** `transform:scale` (scale was clipping mid-panel) |
+| Scale token | `--mp-ui-scale: 1` (flex-fill layout) |
+| Scroll usage | **One** World Map scroll **autoOpen + snapOpen**; tab change = content fade only |
 | Interior well | **Dark** panels (`main-panel-readable.css`) — parchment is frame only |
 | Text | High-contrast `--text` `#f3ece0` / `--muted` `#c9bda8` / gold titles |
 | Borders | Hard 2px gold edges on tabs, cards, slots, columns |
@@ -80,11 +80,37 @@ Systems matrix: `api/v1/fleet-systems-matrix.json`
 Production uses **existing** CraftPix + gold pack textures + CSS radial mist (no generative images in the request path).  
 Decorative motion: equip glow, tab underline, content fade-up, viewport idle rim.
 
+## Deploy + dependencies (redeploy checklist)
+
+| Dep | Role |
+|-----|------|
+| `js/ui-scroll-container.js` + `/ui/scroll/*` | Parchment open/close |
+| `js/main-panel-canvas-2d.js` | Fluid stage + 2D drag canvas + force open |
+| `css/main-panel-readable.css` | Dark readable wells + hard borders |
+| CraftPix slots | `ui.grudge-studio.com/assets/craftpix/**` |
+| grudge6 kits | `assets.grudge-studio.com/asset-packs/toon-rts-characters/**` |
+| Catalogs | `info…/api/v1` |
+
+```bash
+cd F:\GitHub\ObjectStore
+git push origin main
+# After Vercel:
+curl.exe -sI https://info.grudge-studio.com/main-panel.html
+curl.exe -sI https://info.grudge-studio.com/js/main-panel-canvas-2d.js
+curl.exe -sI https://info.grudge-studio.com/css/main-panel-readable.css
+curl.exe -sI https://info.grudge-studio.com/ui/scroll/open.png
+# Browser hard-refresh: https://info.grudge-studio.com/main-panel.html
+# Expect: full viewport panel, #mainScroll.is-open, no mid cut
+```
+
 ## Anti-patterns
 
 - ❌ Google Fonts runtime on production game UI  
 - ❌ Iframe `grudgewarlords.com/craft` (X-Frame-Options)  
 - ❌ Emoji as production item art when ObjectStore icons exist  
+- ❌ Design-width `transform:scale()` on main chrome (clips mid-screen)  
+- ❌ Leaving scroll closed (`content` opacity 0) after mount  
+
 - ❌ New second main-panel SPA  
 - ❌ Nested scroll-shell parchment inside left/right columns (one canvas only)  
 - ❌ Re-playing Appear animation on every tab switch  
