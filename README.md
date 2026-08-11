@@ -50,11 +50,11 @@ Production Main Panel is the **ObjectStore / info** host (not a second SPA). Rel
 
 | Concern | Behavior |
 |---------|----------|
-| **Fit screen** | Design stage (~1440px) **contain-scaled** into the viewport (`js/main-panel-canvas-2d.js`) |
+| **Fit screen** | **Fluid 100%** viewport under top bar (`js/main-panel-canvas-2d.js`) — no mid-panel crop |
 | **Readability** | Dark interior panels + high-contrast text (`css/main-panel-readable.css`) — parchment is **outer frame only** |
 | **Containers** | Hard gold borders on tabs, columns, cards, stats, inventory |
 | **Slots** | CraftPix slot art + dark fill + gold hover/equipped |
-| **Scroll** | **One** World Map parchment shell (`#mainScroll`); open once on boot; tabs use `snapOpen` + content fade (no re-Appear) |
+| **Scroll** | **One** World Map parchment (`#mainScroll`) **autoOpen + snapOpen** (content visible even if appear frames fail) |
 | **2D canvas** | `#mp2dCanvas` drag ghost / click pulse (not Three.js) |
 | **3D hero** | `#hero-viewport` WebGL paperdoll (separate layer) |
 
