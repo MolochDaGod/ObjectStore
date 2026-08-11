@@ -41,6 +41,54 @@
     Worge: 'worge',
   };
 
+  /** Race / class base bonuses (character-builder SSOT) */
+  const CLASS_ATTR_BONUSES = {
+    warrior: { strength: 2, vitality: 1, endurance: 1, tactics: 1 },
+    mage: { intellect: 3, wisdom: 2 },
+    ranger: { dexterity: 2, agility: 2, tactics: 1 },
+    worge: { strength: 1, vitality: 2, endurance: 1, agility: 1 },
+  };
+  const RACE_ATTR_BONUSES = {
+    human: { strength: 2, vitality: 2, intellect: 1 },
+    elf: { intellect: 2, dexterity: 1, wisdom: 2 },
+    dwarf: { vitality: 2, endurance: 2, wisdom: 1 },
+    orc: { strength: 2, vitality: 1, endurance: 2 },
+    barbarian: { strength: 2, vitality: 2, endurance: 1 },
+    undead: { intellect: 2, wisdom: 3 },
+  };
+
+  /** Fallback equip rules if class-equipment-rules.json not loaded */
+  const CLASS_EQUIP_FALLBACK = {
+    warrior: {
+      dualWield: true,
+      armorTypes: ['plate', 'mail'],
+      weaponTypes: ['shields', 'swords', 'greatswords', 'axes1h', 'greataxes', 'hammers1h', 'hammers2h'],
+      animPacks: { sword_shield: true, dual_wield: true, two_handed: true },
+      defaultLoadout: { main: 'swords', off: 'shields', style: 'sword_shield' },
+    },
+    mage: {
+      dualWield: false,
+      armorTypes: ['cloth'],
+      weaponTypes: ['fireStaves', 'frostStaves', 'holyStaves', 'lightningStaves', 'arcaneStaves', 'natureStaves'],
+      animPacks: { magic_spell: true },
+      defaultLoadout: { main: 'arcaneStaves', off: 'tomes', style: 'magic_spell' },
+    },
+    ranger: {
+      dualWield: false,
+      armorTypes: ['leather', 'mail'],
+      weaponTypes: ['bows', 'crossbows', 'guns', 'daggers', 'greatswords', 'spears'],
+      animPacks: { longbow: true, rifle: true, two_handed: true },
+      defaultLoadout: { main: 'bows', off: null, style: 'longbow' },
+    },
+    worge: {
+      dualWield: false,
+      armorTypes: ['leather'],
+      weaponTypes: ['fireStaves', 'natureStaves', 'spears', 'daggers', 'bows', 'hammers1h'],
+      animPacks: { sword_shield: true, magic_spell: true, longbow: true },
+      defaultLoadout: { main: 'hammers1h', off: null, style: 'sword_shield' },
+    },
+  };
+
   function esc(s) {
     return String(s ?? '')
       .replace(/&/g, '&amp;')
@@ -67,51 +115,287 @@
     return 25 + 12.5 + (raw - 50) * 0.25;
   }
 
-  // ── Attributes (character-owned + spend available points) ───────────
+  function normalizeRaceKey(race) {
+    return String(race || 'human')
+      .toLowerCase()
+      .replace(/\s+/g, '');
+  }
+
+  function getClassEquipRules(classKey, rulesDoc) {
+    const key = (classKey || 'warrior').toLowerCase();
+    const fromDoc = rulesDoc?.classes?.[key];
+    if (fromDoc) return fromDoc;
+    return Object.assign({ id: key, name: key }, CLASS_EQUIP_FALLBACK[key] || CLASS_EQUIP_FALLBACK.warrior);
+  }
+
+  function getAttrTotal(char, attrId, classKey, raceKey) {
+    const spent = char.attrs[attrId] | 0;
+    const cb = CLASS_ATTR_BONUSES[classKey] || {};
+    const rb = RACE_ATTR_BONUSES[normalizeRaceKey(raceKey)] || {};
+    return spent + (cb[attrId] | 0) + (rb[attrId] | 0);
+  }
+
+  function calculateDerivedStats(char, attributes, classKey, raceKey) {
+    const stats = {
+      health: 250,
+      mana: 100,
+      stamina: 100,
+      damage: 0,
+      defense: 0,
+      block: 0,
+      blockEffect: 0,
+      evasion: 0,
+      accuracy: 0,
+      criticalChance: 0,
+      criticalDamage: 0,
+      attackSpeed: 0,
+      movementSpeed: 0,
+      resistance: 0,
+      manaRegen: 0,
+      healthRegen: 0,
+      cooldownReduction: 0,
+      stagger: 0,
+      armor: 0,
+      damageReduction: 0,
+      dodge: 0,
+    };
+    const ck = (classKey || char.classKey || 'warrior').toLowerCase();
+    const rk = raceKey || char.raceKey || 'human';
+    (attributes || []).forEach((a) => {
+      const raw = getAttrTotal(char, a.id, ck, rk);
+      const eff = effectivePoints(raw);
+      if (eff <= 0 || !a.gains) return;
+      Object.entries(a.gains).forEach(([key, g]) => {
+        if (stats[key] === undefined) return;
+        const flatGain = g.flat !== undefined ? g.flat : g.value || 0;
+        stats[key] += flatGain * eff;
+      });
+    });
+    const tacticsEff = effectivePoints(getAttrTotal(char, 'tactics', ck, rk));
+    if (tacticsEff > 0) {
+      const bonus = tacticsEff * 0.5;
+      Object.keys(stats).forEach((k) => {
+        if (k === 'health' || k === 'mana' || k === 'stamina') return;
+        if (typeof stats[k] === 'number') stats[k] *= 1 + bonus / 100;
+      });
+    }
+    // Class skill bonuses from invested tree nodes
+    return stats;
+  }
+
+  function applySkillTreeStatBonuses(stats, char, skillTrees, classLabel) {
+    const resolved = resolveClassTree(skillTrees, char.classKey, classLabel);
+    if (!resolved?.tree) return stats;
+    (resolved.tree.tiers || []).forEach((tier) => {
+      (tier.skills || []).forEach((sk) => {
+        const pts = char.classSkills[sk.id] | 0;
+        if (pts <= 0 || !sk.bonuses) return;
+        Object.entries(sk.bonuses).forEach(([k, v]) => {
+          if (typeof stats[k] === 'number') stats[k] += Number(v) * pts;
+        });
+      });
+    });
+    return stats;
+  }
+
+  /** Hero score — same formula as character-builder combat power */
+  function calculateCombatPower(stats) {
+    const ehp = stats.health * (1 + stats.defense / 100) * (1 + (stats.resistance || 0) / 100);
+    const dps =
+      (stats.damage + 10) *
+      (1 + (stats.criticalChance / 100) * ((stats.criticalDamage || 50) / 100)) *
+      (1 + (stats.attackSpeed || 0) / 100);
+    const utility =
+      (stats.cooldownReduction || 0) * 2 + (stats.manaRegen || 0) * 10 + (stats.movementSpeed || 0) * 2;
+    return Math.floor(ehp * 0.4 + dps * 2.5 + utility * 5);
+  }
+
+  function getBuildRating(cp) {
+    if (cp > 5000) return { rating: 'S+', color: '#fbbf24', label: 'Legendary' };
+    if (cp > 4500) return { rating: 'S', color: '#fbbf24', label: 'Elite' };
+    if (cp > 3800) return { rating: 'A', color: '#a855f7', label: 'Strong' };
+    if (cp > 3000) return { rating: 'B', color: '#e8eaf6', label: 'Solid' };
+    if (cp > 2000) return { rating: 'C', color: '#94a3b8', label: 'Developing' };
+    return { rating: 'D', color: '#9ca3af', label: 'Novice' };
+  }
+
+  function spiderAxes(stats) {
+    const maxHP = 3000,
+      maxDmg = 500,
+      maxDef = 500;
+    return {
+      labels: ['Survivability', 'Damage', 'Utility', 'Mobility', 'Control', 'Magic'],
+      data: [
+        Math.min(100, (stats.health / maxHP) * 100 + (stats.defense / maxDef) * 50),
+        Math.min(100, (stats.damage / maxDmg) * 100 + (stats.criticalChance || 0)),
+        Math.min(100, (stats.cooldownReduction || 0) * 2 + (stats.manaRegen || 0) * 5),
+        Math.min(100, (stats.movementSpeed || 0) * 5 + (stats.evasion || 0)),
+        Math.min(100, (stats.block || 0) + (stats.stagger || 0) * 2),
+        Math.min(100, (stats.resistance || 0) + stats.mana / 20),
+      ],
+    };
+  }
+
+  let _attrChart = null;
+
+  function paintAttributeRadar(stats) {
+    const canvas = document.getElementById('mpAttrSpider');
+    if (!canvas || typeof global.Chart === 'undefined') return;
+    const axes = spiderAxes(stats);
+    if (_attrChart) {
+      _attrChart.data.datasets[0].data = axes.data;
+      _attrChart.update('none');
+      return;
+    }
+    _attrChart = new global.Chart(canvas, {
+      type: 'radar',
+      data: {
+        labels: axes.labels,
+        datasets: [
+          {
+            label: 'Hero',
+            data: axes.data,
+            fill: true,
+            backgroundColor: 'rgba(212, 175, 55, 0.16)',
+            borderColor: '#d4af37',
+            pointBackgroundColor: '#d4af37',
+            pointBorderColor: '#1a1208',
+            pointRadius: 3,
+          },
+          {
+            label: 'Reference',
+            data: [55, 55, 48, 48, 40, 42],
+            fill: true,
+            backgroundColor: 'rgba(165, 180, 208, 0.06)',
+            borderColor: 'rgba(165,180,208,0.55)',
+            borderDash: [4, 4],
+            pointRadius: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: {
+            labels: { color: '#a09070', font: { size: 10 }, boxWidth: 10 },
+          },
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            ticks: { display: false, backdropColor: 'transparent' },
+            angleLines: { color: 'rgba(212,175,55,0.12)' },
+            grid: { color: 'rgba(212,175,55,0.12)' },
+            pointLabels: { color: '#c8b890', font: { size: 10, family: 'Cinzel, serif' } },
+          },
+        },
+      },
+    });
+  }
+
+  function destroyAttributeRadar() {
+    if (_attrChart) {
+      try {
+        _attrChart.destroy();
+      } catch (e) { /* ok */ }
+      _attrChart = null;
+    }
+  }
+
+  // ── Attributes tab: left score/spider/attrs · right class tree ──────
   function renderAttributesPanel(ctx) {
-    const { char, attributes } = ctx;
+    const { char, attributes, skillTrees, equipRules, classCatalog } = ctx;
     if (!attributes?.length) {
       return '<div class="section-title">Attributes</div><p style="color:var(--muted)">Attribute data not loaded.</p>';
     }
+    const ck = (char.classKey || CLASS_KEY_FROM_NAME[ctx.classLabel] || 'warrior').toLowerCase();
+    const rk = char.raceKey || ctx.raceLabel || 'human';
+    let stats = calculateDerivedStats(char, attributes, ck, rk);
+    stats = applySkillTreeStatBonuses(stats, char, skillTrees, ctx.classLabel);
+    const cp = calculateCombatPower(stats);
+    const br = getBuildRating(cp);
     const avail = char.attrPointsAvailable | 0;
-    let html = `<div class="section-title">Character Attributes</div>
-      <div class="mp-char-meta">Lv ${char.level} · ${esc(ctx.classLabel || char.classKey)} · ${esc(ctx.raceLabel || char.raceKey)}</div>
-      <div class="attr-points-bar">
-        <span class="pts-label">Unspent points:</span>
-        <span class="pts-val" id="mpAttrAvail">${avail}</span>
-        <span class="pts-label" style="margin-left:12px">Only your hero’s spent values shown — spend when you have points.</span>
-      </div>
-      <div class="mp-attr-grid">`;
+    const rules = getClassEquipRules(ck, equipRules);
 
-    attributes.forEach((a) => {
-      const spent = char.attrs[a.id] | 0;
-      const icon = attrIcon(a);
-      const canPlus = avail > 0;
-      const canMinus = spent > 0;
-      const eff = effectivePoints(spent);
-      html += `<div class="mp-attr-row" style="border-left-color:${a.color || 'var(--gold)'}">
+    const leftAttrs = attributes
+      .map((a) => {
+        const spent = char.attrs[a.id] | 0;
+        const total = getAttrTotal(char, a.id, ck, rk);
+        const icon = attrIcon(a);
+        const canPlus = avail > 0;
+        const canMinus = spent > 0;
+        const eff = effectivePoints(total);
+        return `<div class="mp-attr-row mp-attr-row--compact" style="border-left-color:${a.color || 'var(--gold)'}">
         <div class="mp-attr-head">
           <img src="${esc(icon)}" alt="" class="mp-attr-icon" onerror="this.style.display='none'">
-          <div>
-            <div class="mp-attr-name" style="color:${a.color || 'var(--gold)'}">${esc(a.name)}</div>
-            <div class="mp-attr-role">${esc(a.role || '')}</div>
+          <div class="mp-attr-titles">
+            <div class="mp-attr-name" style="color:${a.color || 'var(--gold)'}">${esc(a.abbrev || a.name)}</div>
+            <div class="mp-attr-role">${esc(a.name)}</div>
           </div>
-          <div class="mp-attr-val">${spent}<span class="mp-attr-eff">eff ${eff.toFixed(1)}</span></div>
+          <div class="mp-attr-val">${total}<span class="mp-attr-eff">spent ${spent} · eff ${eff.toFixed(0)}</span></div>
         </div>
-        <div class="mp-attr-desc">${esc(a.description || '')}</div>
         <div class="mp-attr-controls">
           <button type="button" class="mp-btn-sm" data-attr-minus="${esc(a.id)}" ${canMinus ? '' : 'disabled'}>−</button>
-          <div class="mp-attr-bar"><div class="mp-attr-fill" style="width:${Math.min(100, spent)}%;background:${a.color || 'var(--gold)'}"></div></div>
+          <div class="mp-attr-bar"><div class="mp-attr-fill" style="width:${Math.min(100, total)}%;background:${a.color || 'var(--gold)'}"></div></div>
           <button type="button" class="mp-btn-sm gold" data-attr-plus="${esc(a.id)}" ${canPlus ? '' : 'disabled'}>+</button>
         </div>
       </div>`;
-    });
-    html += `</div>
-      <div style="margin-top:10px;font-size:10px;color:var(--dim)">Icons &amp; formulas from character-builder · diminishing returns after 25 / 50 points</div>`;
-    return html;
+      })
+      .join('');
+
+    const rightTree = renderClassSkillTree(
+      Object.assign({}, ctx, {
+        compact: true,
+        equipRules,
+        classCatalog,
+        embedInAttributes: true,
+      }),
+    );
+
+    return `<div class="mp-attr-split" data-mp-attr-split="1">
+      <div class="mp-attr-left">
+        <div class="mp-attr-hero-score">
+          <div class="mp-score-block">
+            <div class="mp-score-label">Hero score</div>
+            <div class="mp-score-val" style="color:#fbbf24">${cp.toLocaleString()}</div>
+            <div class="mp-score-sub">Combat power</div>
+          </div>
+          <div class="mp-score-block">
+            <div class="mp-score-label">Build rating</div>
+            <div class="mp-score-val" style="color:${br.color}">${br.rating}</div>
+            <div class="mp-score-sub">${esc(br.label)}</div>
+          </div>
+          <div class="mp-score-meta">
+            <div>Lv <strong>${char.level}</strong></div>
+            <div>${esc(ctx.classLabel || rules.name || ck)}</div>
+            <div>${esc(ctx.raceLabel || rk)}</div>
+            <div class="mp-pts">Points <strong id="mpAttrAvail">${avail}</strong></div>
+          </div>
+        </div>
+        <div class="mp-spider-wrap">
+          <canvas id="mpAttrSpider" width="320" height="260" aria-label="Attribute spider graph"></canvas>
+        </div>
+        <div class="mp-attr-stat-pills">
+          <span title="Health">HP ${Math.floor(stats.health)}</span>
+          <span title="Damage">DMG ${Math.floor(stats.damage)}</span>
+          <span title="Defense">DEF ${Math.floor(stats.defense)}</span>
+          <span title="Crit">CRIT ${(stats.criticalChance || 0).toFixed(1)}%</span>
+          <span title="Mana">MP ${Math.floor(stats.mana)}</span>
+        </div>
+        <div class="section-title mp-attr-sec">Attributes</div>
+        <div class="mp-attr-grid mp-attr-grid--compact">${leftAttrs}</div>
+        <div class="mp-attr-footnote">Diminishing returns after 25 / 50 · class+race bonuses included · same score as character-builder</div>
+      </div>
+      <div class="mp-attr-right">
+        ${rightTree}
+      </div>
+    </div>`;
   }
 
-  function attachAttributeHandlers(root, char, onChange) {
+  function attachAttributeHandlers(root, char, onChange, extra) {
     root.querySelectorAll('[data-attr-plus]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-attr-plus');
@@ -130,6 +414,17 @@
         onChange();
       });
     });
+    // Class skills live on the right half of Attributes tab
+    if (extra?.skillTrees) {
+      attachClassSkillHandlers(root, char, extra.skillTrees, extra.classLabel, onChange);
+    }
+    // Radar after paint
+    requestAnimationFrame(() => {
+      if (!extra?.attributes) return;
+      let stats = calculateDerivedStats(char, extra.attributes, char.classKey, char.raceKey);
+      stats = applySkillTreeStatBonuses(stats, char, extra.skillTrees, extra.classLabel);
+      paintAttributeRadar(stats);
+    });
   }
 
   // ── Class skill tree (interactive, this class only) ─────────────────
@@ -138,7 +433,6 @@
     const trees = skillTrees.skillTrees || skillTrees;
     const key = (classKey || CLASS_KEY_FROM_NAME[className] || 'warrior').toLowerCase();
     if (trees[key]) return { key, tree: trees[key] };
-    // match by className
     for (const [k, t] of Object.entries(trees)) {
       if (String(t.className || '').toLowerCase() === String(className || '').toLowerCase()) {
         return { key: k, tree: t };
@@ -148,20 +442,54 @@
     return first ? { key: first, tree: trees[first] } : null;
   }
 
+  function renderEquipRulesStrip(rules) {
+    if (!rules) return '';
+    const dual = rules.dualWield
+      ? `<span class="mp-rule-pill mp-rule-ok">Dual wield ✓</span>`
+      : `<span class="mp-rule-pill mp-rule-no">No dual wield</span>`;
+    const weapons = (rules.weaponTypes || []).slice(0, 8).map((w) => esc(w)).join(' · ');
+    const armor = (rules.armorTypes || []).map((a) => esc(a)).join(' · ');
+    const packs = rules.animPacks
+      ? Object.keys(rules.animPacks)
+          .map((p) => esc(p))
+          .join(' · ')
+      : '';
+    const load = rules.defaultLoadout
+      ? `${esc(rules.defaultLoadout.main || '—')}${rules.defaultLoadout.off ? ' + ' + esc(rules.defaultLoadout.off) : ''} → ${esc(rules.defaultLoadout.style || '')}`
+      : '';
+    return `<div class="mp-equip-rules">
+      <div class="mp-equip-rules-title">Class equipment · mesh rules</div>
+      <div class="mp-equip-rules-row">${dual}
+        <span class="mp-rule-pill">Armor: ${armor || '—'}</span>
+      </div>
+      <div class="mp-equip-rules-detail"><strong>Weapons</strong> ${weapons || '—'}</div>
+      <div class="mp-equip-rules-detail"><strong>Anim packs</strong> ${packs || '—'}</div>
+      <div class="mp-equip-rules-detail"><strong>Default loadout</strong> ${load || '—'}</div>
+      <div class="mp-equip-rules-note">Only Warrior dual-wields 1H. 2H clears off-hand. Mage off-hand = tome/orb. Wire via class-equipment-rules.json.</div>
+    </div>`;
+  }
+
   function renderClassSkillTree(ctx) {
-    const { char, skillTrees } = ctx;
+    const { char, skillTrees, equipRules, classCatalog } = ctx;
     const resolved = resolveClassTree(skillTrees, char.classKey, ctx.classLabel);
     if (!resolved?.tree) {
       return `<div class="section-title">Class Skills</div><p style="color:var(--muted)">No class skill tree loaded.</p>`;
     }
-    const { tree } = resolved;
+    const { tree, key } = resolved;
     const color = tree.color || 'var(--gold)';
     const avail = char.classSkillPointsAvailable | 0;
     const level = char.level | 0;
+    const rules = getClassEquipRules(key, equipRules);
+    const classAbilities =
+      classCatalog?.classes?.[key]?.abilities ||
+      classCatalog?.[key]?.abilities ||
+      [];
 
-    let html = `<div class="section-title">Class Skill Tree — ${esc(tree.className || resolved.key)}</div>
-      <div class="mp-char-meta">Hero level ${level} · Unspent skill points: <strong style="color:var(--gold)">${avail}</strong>
-        · Only your class · click a skill to invest when unlocked</div>
+    let html = `<div class="section-title">${ctx.embedInAttributes ? 'Class tree & passives' : 'Class Skill Tree'} — ${esc(tree.className || key)}</div>
+      <div class="mp-char-meta">Hero Lv ${level} · Skill pts <strong style="color:var(--gold)">${avail}</strong>
+        · Prefab pack: <code>${esc(rules.prefabPack || key)}</code>
+        · Passives &amp; granted abilities from master-skillTrees</div>
+      ${renderEquipRulesStrip(rules)}
       <div class="mp-class-tree">`;
 
     (tree.tiers || []).forEach((tier) => {
@@ -180,23 +508,63 @@
         const canInvest = unlocked && reqOk && avail > 0 && pts < max;
         const has = pts > 0;
         const icon = skillIcon(sk.iconUrl || sk.icon);
-        html += `<button type="button" class="mp-skill-chip ${has ? 'owned' : ''} ${canInvest ? 'can-invest' : ''} ${!unlocked || !reqOk ? 'locked' : ''}"
-          data-class-skill="${esc(sk.id)}" ${canInvest ? '' : has && pts > 0 ? '' : 'data-locked="1"'}
+        const isPassive = !!sk.passive;
+        const hasGrant = !!sk.grantedAbility;
+        const hasProc = !!sk.procEffect;
+        const tags = [
+          isPassive ? '<span class="mp-sk-tag passive">Passive</span>' : '<span class="mp-sk-tag active">Active</span>',
+          hasGrant ? '<span class="mp-sk-tag grant">Ability</span>' : '',
+          hasProc ? '<span class="mp-sk-tag proc">Proc</span>' : '',
+        ]
+          .filter(Boolean)
+          .join('');
+        const effectBits = [];
+        if (sk.effect) effectBits.push(sk.effect);
+        if (sk.grantedAbility?.name) effectBits.push(`Cast: ${sk.grantedAbility.name}`);
+        if (sk.procEffect?.type) effectBits.push(`Proc ${sk.procEffect.type}`);
+        if (sk.bonuses) {
+          effectBits.push(
+            Object.entries(sk.bonuses)
+              .map(([k, v]) => `+${v} ${k}/pt`)
+              .join(', '),
+          );
+        }
+        html += `<button type="button" class="mp-skill-chip ${has ? 'owned' : ''} ${canInvest ? 'can-invest' : ''} ${!unlocked || !reqOk ? 'locked' : ''} ${isPassive ? 'is-passive' : ''}"
+          data-class-skill="${esc(sk.id)}"
           title="${esc(sk.name)}: ${esc(sk.description || sk.effect || '')}">
           ${icon ? `<img src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
           <div class="mp-sc-body">
             <div class="mp-sc-name">${esc(sk.name)} ${has ? `<span class="mp-sc-pts">${pts}/${max}</span>` : ''}</div>
-            <div class="mp-sc-desc">${esc(sk.effect || sk.description || '')}</div>
+            <div class="mp-sc-tags">${tags}</div>
+            <div class="mp-sc-desc">${esc(effectBits.join(' · ') || sk.description || '')}</div>
             ${sk.requires ? `<div class="mp-sc-req">Requires: ${esc(sk.requires)}</div>` : ''}
             ${!unlocked ? `<div class="mp-sc-req">Requires character Lv ${tier.requiredLevel}</div>` : ''}
-            ${canInvest ? `<div class="mp-sc-act">+ invest point</div>` : has ? `<div class="mp-sc-act owned-tag">Owned</div>` : ''}
+            ${canInvest ? `<div class="mp-sc-act">+ invest</div>` : has ? `<div class="mp-sc-act owned-tag">Owned</div>` : ''}
           </div>
         </button>`;
       });
       html += `</div></div>`;
     });
+
+    if (classAbilities.length) {
+      html += `<div class="mp-class-prefabs">
+        <div class="mp-equip-rules-title">Class ability prefabs (classes.json · ready to wire)</div>
+        <div class="mp-prefab-chips">`;
+      classAbilities.slice(0, 12).forEach((ab) => {
+        const ico = skillIcon(ab.iconUrl || ab.icon);
+        html += `<div class="mp-prefab-chip" title="${esc(ab.description || '')}">
+          ${ico ? `<img src="${esc(ico)}" alt="" onerror="this.remove()">` : ''}
+          <div>
+            <div class="mp-sc-name">${esc(ab.name)}</div>
+            <div class="mp-sc-desc">${esc(ab.type || '')} · CD ${ab.cooldown ?? '—'} · ${ab.staminaCost ? 'STA ' + ab.staminaCost : ab.manaCost ? 'MP ' + ab.manaCost : 'free'}</div>
+          </div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+
     html += `</div>
-      <div style="margin-top:8px;font-size:10px;color:var(--dim)">Data: master-skillTrees.json · full browser: <a href="./profession-trees.html#classes" style="color:var(--gold)">profession-trees.html</a></div>`;
+      <div style="margin-top:8px;font-size:10px;color:var(--dim)">SSOT: master-skillTrees.json · classes.json · class-equipment-rules.json · <a href="./profession-trees.html#classes" style="color:var(--gold)">full trees</a></div>`;
     return html;
   }
 
@@ -225,6 +593,28 @@
         onChange();
       });
     });
+  }
+
+  /** Equip gate used by inventory / mesh equip wiring */
+  function canEquipWeapon(classKey, weaponFamily, hand, rulesDoc) {
+    const rules = getClassEquipRules(classKey, rulesDoc);
+    const fam = String(weaponFamily || '').toLowerCase();
+    const types = (rules.weaponTypes || []).map((t) => String(t).toLowerCase());
+    if (types.includes(fam)) {
+      if (hand === 'off' && !rules.dualWield) {
+        // shields / focus off-hand ok without dual
+        const offOk = (rules.offHandAllowed || []).some((f) => fam.includes(String(f).replace(/_/g, '')) || String(f) === fam);
+        if (fam.includes('shield') || fam.includes('tome') || fam.includes('orb') || fam.includes('focus')) return true;
+        if (!offOk && fam.match(/sword|axe|hammer|dagger|mace/)) return false;
+      }
+      if (hand === 'off' && rules.dualWield === false && fam.match(/sword|axe|hammer|dagger/)) return false;
+      return true;
+    }
+    return false;
+  }
+
+  function canDualWield(classKey, rulesDoc) {
+    return !!getClassEquipRules(classKey, rulesDoc).dualWield;
   }
 
   // ── Profession trees (SVG, character levels / unlocks) ──────────────
@@ -423,6 +813,9 @@
     CDN,
     defaultCharState,
     CLASS_KEY_FROM_NAME,
+    CLASS_ATTR_BONUSES,
+    RACE_ATTR_BONUSES,
+    CLASS_EQUIP_FALLBACK,
     renderAttributesPanel,
     attachAttributeHandlers,
     renderClassSkillTree,
@@ -432,8 +825,18 @@
     attachProfessionHandlers,
     renderSkillsShell,
     resolveClassTree,
+    getClassEquipRules,
+    canEquipWeapon,
+    canDualWield,
+    calculateDerivedStats,
+    calculateCombatPower,
+    getBuildRating,
+    paintAttributeRadar,
+    destroyAttributeRadar,
+    applySkillTreeStatBonuses,
     attrIcon,
     skillIcon,
     esc,
+    effectivePoints,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-08-11",
+  "canonical": true,
+  "source": "Warlords era class mesh + anim pack SSOT",
+  "description": "Mesh-level equipment gates by class. Wire equip UI / grudge6-kit / main-panel off-hand from this file only.",
+  "notes": [
+    "Only Warrior may dual-wield 1H weapons in off-hand.",
+    "2H weapons clear off-hand for all classes.",
+    "Mage off-hand is orb / tome / focus — never second staff dual.",
+    "Anim packs follow grudge6 combat runtime (sword_shield, dual_wield, two_handed, longbow, magic_spell, rifle)."
+  ],
+  "slotDefs": {
+    "mainHand": { "slot": "main_hand", "mesh": "R_hand_container" },
+    "offHand": { "slot": "off_hand", "mesh": "L_hand_container" },
+    "twoHand": { "slot": "main_hand", "mesh": "R_hand_container", "blocksOffHand": true }
+  },
+  "weaponFamilies": {
+    "1h_melee": ["swords", "axes1h", "hammers1h", "daggers", "maces"],
+    "2h_melee": ["greatswords", "greataxes", "hammers2h", "spears"],
+    "shield": ["shields"],
+    "bow": ["bows", "crossbows"],
+    "gun": ["guns", "rifles", "pistols"],
+    "staff": ["fireStaves", "frostStaves", "holyStaves", "lightningStaves", "arcaneStaves", "natureStaves", "staves"],
+    "focus": ["orbs", "tomes", "foci", "wands"]
+  },
+  "classes": {
+    "warrior": {
+      "id": "warrior",
+      "name": "Warrior",
+      "color": "#ef4444",
+      "armorTypes": ["plate", "mail"],
+      "weaponTypes": ["shields", "swords", "greatswords", "axes1h", "greataxes", "hammers1h", "hammers2h"],
+      "dualWield": true,
+      "dualWieldFamilies": ["1h_melee"],
+      "offHandAllowed": ["shield", "1h_melee"],
+      "mainHandAllowed": ["1h_melee", "2h_melee"],
+      "blocked": ["bow", "gun", "staff"],
+      "defaultLoadout": { "main": "swords", "off": "shields", "style": "sword_shield" },
+      "animPacks": {
+        "sword_shield": { "when": "1h_melee+shield" },
+        "dual_wield": { "when": "1h_melee+1h_melee", "requiresDualWield": true },
+        "two_handed": { "when": "2h_melee" }
+      },
+      "skillTreeKey": "warrior",
+      "prefabPack": "barbarian",
+      "startingAttributes": {
+        "strength": 5,
+        "vitality": 3,
+        "endurance": 2,
+        "dexterity": 1,
+        "agility": 1,
+        "intellect": 0,
+        "wisdom": 0,
+        "tactics": 0
+      }
+    },
+    "mage": {
+      "id": "mage",
+      "name": "Mage Priest",
+      "color": "#8b5cf6",
+      "armorTypes": ["cloth"],
+      "weaponTypes": ["fireStaves", "frostStaves", "holyStaves", "lightningStaves", "arcaneStaves", "natureStaves"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["staff", "focus"],
+      "blocked": ["1h_melee", "2h_melee", "bow", "gun", "shield"],
+      "defaultLoadout": { "main": "arcaneStaves", "off": "tomes", "style": "magic_spell" },
+      "animPacks": {
+        "magic_spell": { "when": "staff|focus" }
+      },
+      "skillTreeKey": "mage",
+      "prefabPack": "firemage",
+      "startingAttributes": {
+        "strength": 0,
+        "vitality": 1,
+        "endurance": 1,
+        "dexterity": 0,
+        "agility": 0,
+        "intellect": 5,
+        "wisdom": 4,
+        "tactics": 1
+      }
+    },
+    "ranger": {
+      "id": "ranger",
+      "name": "Ranger",
+      "color": "#22c55e",
+      "armorTypes": ["leather", "mail"],
+      "weaponTypes": ["bows", "crossbows", "guns", "daggers", "greatswords", "spears"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": [],
+      "mainHandAllowed": ["bow", "gun", "2h_melee", "1h_melee"],
+      "blocked": ["staff", "shield"],
+      "defaultLoadout": { "main": "bows", "off": null, "style": "longbow" },
+      "animPacks": {
+        "longbow": { "when": "bow" },
+        "rifle": { "when": "gun" },
+        "two_handed": { "when": "2h_melee" },
+        "sword_shield": { "when": "1h_melee", "note": "melee fallback without dual" }
+      },
+      "skillTreeKey": "ranger",
+      "prefabPack": "hunter",
+      "startingAttributes": {
+        "strength": 1,
+        "vitality": 1,
+        "endurance": 1,
+        "dexterity": 4,
+        "agility": 3,
+        "intellect": 1,
+        "wisdom": 0,
+        "tactics": 1
+      }
+    },
+    "worge": {
+      "id": "worge",
+      "name": "Worge",
+      "color": "#d97706",
+      "armorTypes": ["leather"],
+      "weaponTypes": ["fireStaves", "natureStaves", "spears", "daggers", "bows", "hammers1h"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["1h_melee", "2h_melee", "staff", "bow"],
+      "blocked": ["shield", "gun", "2h_melee_heavy"],
+      "defaultLoadout": { "main": "hammers1h", "off": null, "style": "sword_shield" },
+      "animPacks": {
+        "sword_shield": { "when": "1h_melee" },
+        "magic_spell": { "when": "staff" },
+        "longbow": { "when": "bow" },
+        "two_handed": { "when": "spears" }
+      },
+      "skillTreeKey": "worge",
+      "prefabPack": "necromancer",
+      "startingAttributes": {
+        "strength": 2,
+        "vitality": 2,
+        "endurance": 1,
+        "dexterity": 2,
+        "agility": 2,
+        "intellect": 2,
+        "wisdom": 1,
+        "tactics": 0
+      }
+    }
+  },
+  "equipChecks": {
+    "canDualWield": "class.dualWield === true && both hands are 1h_melee families listed in dualWieldFamilies",
+    "canEquipOffHand": "family in offHandAllowed; if dual weapon, requires dualWield",
+    "twoHandClearsOff": true,
+    "meshLevel": "After prefix strip, SLOT_DEFS + mesh_ids; arms include hands"
+  }
+}
