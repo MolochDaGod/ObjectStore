@@ -675,7 +675,12 @@
 
   // All weapon categories — no class restrictions, any class can use any weapon
   const ALL_WEAPON_CATS = ['swords','axes1h','daggers','greatswords','greataxes','hammers1h','hammers2h','spears','maces','bows','crossbows','guns','fireStaves','frostStaves','holyStaves','lightningStaves','natureStaves','tools'];
-  const ALL_OFFHAND_CATS = ['shields','tomes','offhand-tome','daggers'];
+  /** Off-hand accepts same 1H families as main + shield + tome */
+  const ALL_OFFHAND_CATS = [
+    'shields', 'tomes', 'offhand-tome', 'daggers', 'dagger', 'knife', 'knives',
+    'swords', 'sword', 'mace', 'maces', 'hammer', 'hammers', 'axe', 'axes',
+    '1h', 'onehand', 'sidearm',
+  ];
 
   // Equipped items (slot → item UUID). Connect to Grudge backend for real data.
   const equippedItems = {};
@@ -1470,15 +1475,22 @@ function showError(msg) {
       const mapped = alias[raw] || (ALL_SLOTS.includes(item.slotType) ? item.slotType : null);
       if (mapped && ALL_SLOTS.includes(mapped)) return mapped;
     }
-    // Weapon items
+    // Weapon items — 1H same reception main OR off; shield/tome prefer off
     if (item.type === 'weapon' || item.type === 'tool' || item.type === 'offhand-tome' || item.type === 'shield') {
-      const cat = String(item.category || item.type || '').toLowerCase();
-      const offhandCats = ['shields', 'tomes', 'offhand-tome', 'shield'];
-      const pref = offhandCats.some((c) => cat.includes(c)) || item.type === 'shield' ? 'Offhand' : 'Mainhand';
-      if (!equippedItems[pref]) return pref;
-      const alt = pref === 'Mainhand' ? 'Offhand' : 'Mainhand';
-      if (!equippedItems[alt]) return alt;
-      return pref;
+      const cat = String(item.category || item.type || item.name || '').toLowerCase();
+      const offOnly = ['shields', 'tomes', 'offhand-tome', 'shield', 'tome', 'grimoire'].some((c) => cat.includes(c))
+        || item.type === 'shield' || item.type === 'offhand-tome';
+      const oneH = /sword|dagger|knife|mace|hammer|axe|1h|sidearm|blade/i.test(cat);
+      if (offOnly) {
+        if (!equippedItems['Offhand']) return 'Offhand';
+        if (!equippedItems['Mainhand'] && oneH) return 'Mainhand';
+        return 'Offhand';
+      }
+      // Main first, then same 1H can fill Offhand (dual wield)
+      if (!equippedItems['Mainhand']) return 'Mainhand';
+      if (oneH && !equippedItems['Offhand']) return 'Offhand';
+      if (!equippedItems['Offhand']) return 'Offhand';
+      return 'Mainhand';
     }
     return null;
   }
