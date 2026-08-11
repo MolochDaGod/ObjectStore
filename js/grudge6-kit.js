@@ -263,6 +263,36 @@ export const SLOT_DEFS = [
 
 export const WEAPON_R = new Set(['axe', 'hammer', 'mace', 'sword', 'dagger', 'pick', 'spear']);
 export const WEAPON_L = new Set(['bow', 'staff']);
+/**
+ * 1H weapons that use the same kit mesh on main OR off hand.
+ * Off-hand clones the R mesh onto L_hand_container (same variant letter).
+ * 2H (spear, pick, greataxe/greatsword as kinds) stay main-only.
+ */
+export const WEAPON_1H = new Set(['sword', 'dagger', 'mace', 'hammer', 'axe']);
+
+/** Left-hand socket candidates for dual-wield / off-hand 1H (Toon RTS). */
+export const L_HAND_SOCKETS = [
+  'L_hand_container',
+  'Bip001 L Hand',
+  'Bip001_L_Hand',
+  'mixamorig:LeftHand',
+  'mixamorigLeftHand',
+];
+
+export function findLHandSocket(root) {
+  if (!root) return null;
+  for (const n of L_HAND_SOCKETS) {
+    const o = root.getObjectByName(n);
+    if (o) return o;
+  }
+  let hit = null;
+  root.traverse((o) => {
+    if (hit) return;
+    const nm = String(o.name || '');
+    if (/L_hand_container|Bip001.?L.?Hand|LeftHand/i.test(nm)) hit = o;
+  });
+  return hit;
+}
 
 /**
  * Stone atlas paths (grudge6-cdn-ssot): textures/grudge6/{folder}/{file}
@@ -489,6 +519,10 @@ export class EquipmentManager {
     this.prefix = prefix.endsWith('_') ? prefix : `${prefix}_`;
     this.slots = {};
     this.equipped = {};
+    /** @type {{ slot: string, variant: string }|null} */
+    this.equippedOffhand = null;
+    /** @type {import('three').Object3D|null} clone on L_hand */
+    this._offhandClone = null;
     this.allMeshes = [];
     this.root = null;
   }
@@ -498,6 +532,7 @@ export class EquipmentManager {
     this.slots = {};
     this.allMeshes = [];
     this.equipped = {};
+    this.clearOffhandClone();
     root.traverse((child) => {
       if (!child.isMesh && !child.isSkinnedMesh) return;
       child.visible = false;
@@ -550,6 +585,60 @@ export class EquipmentManager {
       }
     }
     return this.equip(slot, variant);
+  }
+
+  /**
+   * Off-hand 1H: same kit weapon family as main, mirrored on L_hand_container.
+   * Clones the main-hand mesh so both can show at once (kit only has R variants).
+   */
+  equipWeaponOffhand(slot, variant = '_default') {
+    if (!WEAPON_1H.has(slot)) return false;
+    const src = this.slots[slot]?.[variant] || this.slots[slot]?._default;
+    if (!src || !this.root) return false;
+    this.clearOffhandClone();
+    const socket = findLHandSocket(this.root);
+    if (!socket) return false;
+
+    const clone = src.clone(true);
+    clone.name = (src.name || slot) + '_offhand';
+    clone.visible = true;
+    clone.userData.equipSlot = slot;
+    clone.userData.equipVariant = variant;
+    clone.userData.equipGroup = 'weapon_l_offhand';
+    clone.userData.isOffhandClone = true;
+    // Drop skinning issues: bind to same skeleton if skinned
+    clone.traverse((o) => {
+      if (o.isSkinnedMesh && src.isSkinnedMesh && src.skeleton) {
+        try {
+          o.bind(src.skeleton, o.bindMatrix || src.bindMatrix);
+        } catch {
+          /* keep unbound mesh under socket */
+        }
+      }
+      o.frustumCulled = false;
+      o.castShadow = true;
+    });
+    // Local identity in hand socket (same reception as main grip)
+    clone.position.set(0, 0, 0);
+    clone.rotation.set(0, 0, 0);
+    clone.scale.set(1, 1, 1);
+    socket.add(clone);
+    this._offhandClone = clone;
+    this.equippedOffhand = { slot, variant };
+    return true;
+  }
+
+  clearOffhandClone() {
+    if (this._offhandClone) {
+      if (this._offhandClone.parent) this._offhandClone.parent.remove(this._offhandClone);
+      this._offhandClone.traverse((o) => {
+        if (o.geometry && o.userData?.isOffhandClone) {
+          /* leave geometry shared with source — do not dispose */
+        }
+      });
+      this._offhandClone = null;
+    }
+    this.equippedOffhand = null;
   }
 
   /** UI helper: all meshes with equip metadata */
@@ -636,6 +725,13 @@ export class EquipmentManager {
     }
     for (const m of this.allMeshes) {
       m.visible = keep.has(m.uuid);
+    }
+    // Off-hand dual clone is not in allMeshes / equipped — keep visible
+    if (this._offhandClone) {
+      this._offhandClone.visible = true;
+      this._offhandClone.traverse((o) => {
+        if (o.isMesh || o.isSkinnedMesh) o.visible = true;
+      });
     }
     return keep.size;
   }

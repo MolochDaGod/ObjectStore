@@ -40,12 +40,13 @@ blender -b -P F:\GitHub\ObjectStore\_staging\book_set\fix_si_tomes.py
 # then wrangler r2 object put grudge-assets/models/weapons/tomes/...
 ```
 
-## Off-hand weapons roadmap (same viewport)
+## Off-hand weapons (same viewport)
 
 | Kind | Attach | Status |
 |------|--------|--------|
-| Tome / grimoire | shoulder rest → L hand cast | **This pack** |
-| Dagger / knife | `L_hand` kit dual | lab canOffhand |
-| Mace / hammer | `L_hand` dual | lab canOffhand |
-| 1H sword off | dual when catalog allows | wire next |
+| Tome / grimoire | shoulder rest → L hand cast | **book_set pack** |
+| **1H sword / dagger / knife / mace / hammer / axe** | **Same kit mesh as main**, clone → `L_hand_container` | **`WEAPON_1H` + `equipWeaponOffhand`** |
 | Shield | `L_shield_container` | kit shield variants |
+| Staff / bow / spear / 2H | main / L staff only | not dual |
+
+SSOT: `WEAPON_1H` + `EquipmentManager.equipWeaponOffhand` in `js/grudge6-kit.js`.

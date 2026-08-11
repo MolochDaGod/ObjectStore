@@ -22,6 +22,7 @@ import {
   bindRaceAtlas,
   WEAPON_R,
   WEAPON_L,
+  WEAPON_1H,
   fitRootUniformSi,
   measureStructuralBBox,
 } from './grudge6-kit.js';
@@ -126,6 +127,11 @@ function weaponSlotFromItem(item) {
   return null;
 }
 
+/** True if kit 1H weapon can equip main or off (same bone reception). */
+function isOneHandWeaponSlot(slot) {
+  return slot && WEAPON_1H.has(slot);
+}
+
 function pickVariant(slotMap, preferred) {
   if (!slotMap) return null;
   const keys = Object.keys(slotMap);
@@ -159,13 +165,14 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
   equip.hideGroup('weapon_l');
   equip.hideGroup('shield');
   equip.hideGroup('utility');
+  equip.clearOffhandClone?.();
 
   const main = equippedItems?.Mainhand && findItem ? findItem(equippedItems.Mainhand) : null;
   const off = equippedItems?.Offhand && findItem ? findItem(equippedItems.Offhand) : null;
 
   if (main) {
     const slot = weaponSlotFromItem(main);
-    if (slot && slot !== 'shield') {
+    if (slot && slot !== 'shield' && slot !== 'tome') {
       const letter = armorLetterFromItem(main);
       if (WEAPON_R.has(slot) || WEAPON_L.has(slot)) {
         const v =
@@ -185,28 +192,32 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     }
   }
 
+  // Off-hand: same 1H weapons as main (clone → L_hand), OR shield, OR tome
+  equip._pendingTomeOffhand = null;
   if (off) {
     const slot = weaponSlotFromItem(off);
     if (slot === 'shield' || /shield/i.test(String(off.category || off.type || ''))) {
       const v = pickVariant(equip.slots.shield, armorLetterFromItem(off));
       if (v) equip.equip('shield', v);
     } else if (isTomeItem(off) || slot === 'tome') {
-      // External tome mesh via grudge6-tome-offhand (not kit child) — host applies async
       equip._pendingTomeOffhand = off;
-    } else if (slot && (WEAPON_L.has(slot) || /dagger|mace|hammer|knife|sword/i.test(String(off.category || off.type || off.name || '')))) {
-      // Off-hand sidearm: dagger / mace / knife / short sword → L_hand kit group
+    } else if (isOneHandWeaponSlot(slot) || isOneHandWeaponSlot(weaponSlotFromItem({ ...off, category: off.type }))) {
+      // Same reception as main: sword/dagger/mace/hammer/axe on L_hand_container
+      const kind = isOneHandWeaponSlot(slot) ? slot : 'sword';
       const letter = armorLetterFromItem(off);
-      const offSlot = slot === 'staff' ? 'dagger' : slot;
-      if (WEAPON_L.has(offSlot) || equip.slots[offSlot] || equip.slots.dagger) {
-        const key = equip.slots[offSlot] ? offSlot : 'dagger';
-        const v =
-          pickVariant(equip.slots[key], letter) ||
-          pickVariant(equip.slots[key], '_default');
-        if (v) equip.equipWeapon(key, v);
+      const v =
+        pickVariant(equip.slots[kind], letter) ||
+        pickVariant(equip.slots[kind], '_default') ||
+        pickVariant(equip.slots.sword, letter) ||
+        pickVariant(equip.slots.dagger, '_default');
+      const useSlot = equip.slots[kind] && v ? kind : equip.slots.dagger ? 'dagger' : equip.slots.sword ? 'sword' : null;
+      const useVar = useSlot
+        ? pickVariant(equip.slots[useSlot], letter) || pickVariant(equip.slots[useSlot], '_default')
+        : null;
+      if (useSlot && useVar && typeof equip.equipWeaponOffhand === 'function') {
+        equip.equipWeaponOffhand(useSlot, useVar);
       }
     }
-  } else {
-    equip._pendingTomeOffhand = null;
   }
 
   // Utility always off on paperdoll
