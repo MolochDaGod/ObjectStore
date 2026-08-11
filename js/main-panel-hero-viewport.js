@@ -594,7 +594,7 @@ export async function mountHeroViewport(host, opts) {
 
     const vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
     const matMode = kit.materialMode || root.userData.grudge6MaterialMode || '?';
-    status.textContent = `${race} · ${kit.source} · ${matMode} · mats×${kit.matCount || 0} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
+    status.textContent = `${race} · ${kit.source} · faceYaw=${(root.rotation.y).toFixed(2)} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
     console.info('[main-panel hero]', {
       race,
       url: kit.url,
@@ -606,6 +606,7 @@ export async function mountHeroViewport(host, opts) {
       visible: vis,
       visibleNames: equip.allMeshes?.filter((m) => m.visible).map((m) => m.name),
       slots: equip.summary?.() || equip.summary(),
+      faceCameraYawSSOT: FACE_CAMERA_YAW,
       yaw: root.rotation.y,
     });
     setTimeout(() => {
