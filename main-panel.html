@@ -18,7 +18,90 @@
   <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
-    .app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
+    /* App shell — stage scale handled by main-panel-canvas-2d + main-panel-2d.css */
+    .app { display: flex; height: 100vh; height: 100dvh; flex-direction: column; overflow: hidden; }
+    /* ONE World Map scroll = entire main canvas (not dual center+inv shells) */
+    #mainScroll.scroll-shell,
+    #mainScroll.main-canvas-host {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    #mainScroll > .scroll-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #mainScroll .main-body {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+    }
+    #mainScroll .right-col {
+      background: transparent;
+      border-left: 1px solid rgba(90, 64, 40, 0.25);
+    }
+    #mainScroll .left-col {
+      background: transparent;
+      border-right: 1px solid rgba(90, 64, 40, 0.25);
+    }
+    #mainScroll .tab-strip {
+      background: rgba(20, 16, 10, 0.45);
+      border-bottom: 2px solid rgba(212, 168, 67, 0.55);
+      position: relative;
+    }
+    #mainScroll .tab-btn {
+      position: relative;
+      transition: color 0.22s ease, background 0.22s ease, transform 0.18s ease;
+    }
+    #mainScroll .tab-btn:hover { transform: translateY(-1px); }
+    #mainScroll .tab-btn.active {
+      color: var(--gold);
+      background: rgba(255, 215, 0, 0.1);
+    }
+    #mainScroll .tab-indicator {
+      position: absolute;
+      bottom: 0;
+      height: 3px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.55);
+      transition: left 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    #contentArea.is-tab-enter {
+      animation: mpTabEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes mpTabEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #contentArea.is-tab-enter { animation: none; }
+      #mainScroll .tab-indicator { transition: none; }
+      #mainScroll .tab-btn { transition: none; }
+    }
+    .right-col .inv-grid { flex: 1; min-height: 0; }
+    .inv-uuid-chip {
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-size: 8px;
+      color: var(--dim);
+      letter-spacing: 0.02em;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .inv-header .bag-scope {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
     /* Scroll shells fill flex children */
     .center-col .scroll-shell { flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .right-col.scroll-shell { flex: 1; min-height: 0; }
@@ -35,7 +118,7 @@
     .center-col { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
     .right-col { width: 280px; flex-shrink: 0; background: #1a120c; border-left: 2px solid #3a2a1a; display: flex; flex-direction: column; }
     .tab-strip { display: flex; background: #14100a; border-bottom: 2px solid var(--gold); flex-shrink: 0; overflow-x: auto; }
-    .tab-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
+    .tab-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.22s ease, background 0.22s ease, border-color 0.22s ease, transform 0.18s ease; }
     .tab-btn:hover { color: var(--text); background: rgba(255,215,0,0.05); }
     .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(255,215,0,0.08); }
     .content-area { flex: 1; overflow-y: auto; padding: 16px; }
@@ -70,15 +153,80 @@
     .prof-row .prof-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
     .prof-row .prof-lv { font-family: monospace; font-size: 10px; color: var(--gold); width: 20px; text-align: right; }
 
-    /* ===== Equipment Panel Layout ===== */
-    .eq-panel { display: flex; align-items: stretch; gap: 0; width: 100%; min-height: 560px; }
-    .eq-col { display: flex; flex-direction: column; gap: 6px; justify-content: center; padding: 8px 6px; width: 86px; flex-shrink: 0; }
-    .eq-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; background: radial-gradient(ellipse at center, rgba(212,175,55,0.04) 0%, transparent 70%); border-left: 1px solid rgba(212,175,55,0.1); border-right: 1px solid rgba(212,175,55,0.1); min-width: 280px; padding: 8px 12px 12px; }
+    /* ===== Equipment Panel — canonical paperdoll containers (parent/child scale) =====
+       Layout SSOT: grudge-ui-editor equipment-paperdoll (left 5 · center hero · right 5 · bottom ring/add)
+       --eq-slot scales children with panel width
+    */
+    .eq-panel {
+      --eq-slot: clamp(56px, 7.2vw, 72px);
+      --eq-gap: clamp(4px, 0.6vw, 8px);
+      --eq-col-w: calc(var(--eq-slot) + 16px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      min-height: 0;
+      container-type: inline-size;
+      container-name: eq-panel;
+    }
+    .eq-body {
+      display: grid;
+      grid-template-columns: var(--eq-col-w) minmax(0, 1fr) var(--eq-col-w);
+      grid-template-rows: auto;
+      gap: var(--eq-gap);
+      align-items: stretch;
+      width: 100%;
+      min-height: min(560px, 70vh);
+    }
+    .eq-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--eq-gap);
+      justify-content: center;
+      align-items: center;
+      padding: 6px 4px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .eq-col.left { grid-column: 1; }
+    .eq-col.right { grid-column: 3; }
+    .eq-center {
+      grid-column: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      min-width: 0;
+      padding: 8px 10px 12px;
+      background: radial-gradient(ellipse at center, rgba(212,175,55,0.05) 0%, transparent 72%);
+      border: 1px solid rgba(212,175,55,0.12);
+      border-radius: 12px;
+    }
+    .eq-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--eq-gap) * 2);
+      padding: 4px 0 2px;
+      width: 100%;
+    }
+    .eq-bottom-rule {
+      width: min(48px, 8vw);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.45), transparent);
+      border-radius: 1px;
+    }
     .eq-center .silhouette { width: 130px; height: 240px; background: linear-gradient(180deg, rgba(30,20,12,0.9) 0%, rgba(20,14,8,0.7) 100%); border: 2px solid rgba(212,175,55,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 60px; text-shadow: 0 0 20px rgba(212,175,55,0.2); }
-    /* Large 3D hero viewport — grudge6 modular equip mesh */
+    /* Large 3D hero viewport — child of .eq-center; scales with panel */
     .hero-viewport {
-      width: min(100%, 340px);
-      height: 420px;
+      width: min(100%, 360px);
+      height: clamp(300px, 48vh, 460px);
       margin: 0 auto;
       border-radius: 10px;
       overflow: hidden;
@@ -86,17 +234,43 @@
       background: linear-gradient(180deg, #1a120c 0%, #0e0a06 100%);
       box-shadow: inset 0 0 40px rgba(0,0,0,0.55), 0 0 18px rgba(212,175,55,0.08);
       position: relative;
+      flex: 0 0 auto;
     }
     @media (min-width: 1100px) {
-      .hero-viewport { width: 380px; height: 460px; }
+      .hero-viewport { width: min(100%, 400px); height: clamp(360px, 52vh, 480px); }
     }
-    .eq-slot { width: 68px; height: 68px; border: 2px solid var(--gold-dim); border-radius: 8px; background: linear-gradient(180deg, #2e1f14 0%, #221710 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; font-size: 8px; color: var(--muted); text-transform: uppercase; position: relative; transition: all 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); }
+    .eq-slot {
+      width: var(--eq-slot);
+      height: var(--eq-slot);
+      border: 2px solid var(--gold-dim);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #2e1f14 0%, #221710 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 8px;
+      color: var(--muted);
+      text-transform: uppercase;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
     .eq-slot:hover { border-color: var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.3), inset 0 2px 4px rgba(0,0,0,0.4); transform: scale(1.05); z-index: 2; }
     .eq-slot.equipped { border-color: var(--gold); background: linear-gradient(180deg, #3a2a1a 0%, #2e1f14 100%); }
-    .eq-slot .slot-icon { width: 44px; height: 44px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); }
-    .eq-slot .slot-label { font-size: 7px; margin-top: 1px; letter-spacing: 1px; color: var(--dim); }
+    .eq-slot .slot-icon { width: calc(var(--eq-slot) * 0.62); height: calc(var(--eq-slot) * 0.62); object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); }
+    .eq-slot .slot-label { font-size: 7px; margin-top: 1px; letter-spacing: 1px; color: var(--dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
     .eq-slot .slot-tier { position: absolute; top: 2px; right: 3px; font-size: 7px; font-weight: 700; padding: 1px 4px; border-radius: 3px; }
     .eq-slot .slot-placeholder { font-size: 8px; opacity: 0.45; margin-bottom: 2px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dim); }
+    @media (max-width: 720px) {
+      .eq-body { grid-template-columns: 1fr; grid-template-rows: auto auto auto; min-height: 0; }
+      .eq-col.left { grid-column: 1; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .eq-center { grid-column: 1; }
+      .eq-col.right { grid-column: 1; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    }
     .mp-status {
       font-size: 10px; color: var(--gold); padding: 6px 12px; margin: 0;
       background: rgba(212,175,55,0.08); border-bottom: 1px solid rgba(212,175,55,0.15);
@@ -284,7 +458,11 @@
     .wst-banner-tome { border:1px solid hsl(270 40% 35%); background:hsl(270 30% 12%); }
 
     @media(max-width:1000px) { .left-col, .right-col { display: none; } }
-    @media(max-width:700px) { .eq-col { width: 70px; } .eq-slot { width: 58px; height: 58px; } .eq-slot .slot-icon { width: 36px; height: 36px; } }
+    @media(max-width:700px) {
+      .eq-panel { --eq-slot: 56px; }
+      .eq-slot { width: var(--eq-slot); height: var(--eq-slot); }
+      .eq-slot .slot-icon { width: calc(var(--eq-slot) * 0.6); height: calc(var(--eq-slot) * 0.6); }
+    }
 
     /* ── Character systems (professions / class / attributes) ── */
     .mp-char-meta { font-size:11px; color:var(--muted); margin:-4px 0 12px; line-height:1.4; }
@@ -359,6 +537,8 @@
       <div id="mp2dLangHost"></div>
     </div>
   </header>
+    <!-- ONE World Map scroll = full main panel canvas (left · tabs/content · inventory) -->
+  <div id="mainScroll" class="main-canvas-host" aria-label="Main panel canvas">
   <div class="main-body">
     <aside class="left-col" id="leftCol"></aside>
     <main class="center-col">
@@ -369,15 +549,17 @@
       </div>
       <div class="mp-status" id="mpStatus" role="status" aria-live="polite"></div>
       <div class="error-banner" id="errorBanner"></div>
-      <nav class="tab-strip" id="tabStrip"></nav>
-      <!-- World Map Scroll shell — Appear/Disappear UX (ui-scroll-container) -->
-      <div id="contentScroll" class="content-scroll-host" style="flex:1;min-height:0;display:flex;flex-direction:column;">
-        <div class="content-area" id="contentArea"></div>
-      </div>
+      <nav class="tab-strip" id="tabStrip" role="tablist" aria-label="Main panel tabs">
+        <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
+      </nav>
+      <div class="content-area" id="contentArea" role="tabpanel"></div>
     </main>
-    <aside class="right-col" id="invScroll">
+    <aside class="right-col" id="invPanel">
       <div class="inv-header">
-        <h3 data-i18n="app.inventory">Inventory</h3>
+        <div>
+          <h3 data-i18n="app.inventory">Inventory</h3>
+          <div class="bag-scope" id="bagScope">Account bag · UUID stacks</div>
+        </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <span class="inv-count" id="invCount">0/42</span>
           <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold)" id="goldDisplay">250 Gold</span>
@@ -385,6 +567,7 @@
       </div>
       <div class="inv-grid" id="invGrid"></div>
     </aside>
+  </div>
   </div>
   <footer class="hotbar" id="hotbar"></footer>
 </div>
@@ -396,6 +579,7 @@
 <script src="./js/main-panel-systems.js"></script>
 <script src="./js/main-panel-i18n.js"></script>
 <script src="./js/main-panel-2d.js"></script>
+<script src="./js/main-panel-canvas-2d.js"></script>
 <script>
   const CDN = 'https://assets.grudge-studio.com';
   const PAGE_BASE = (() => {
@@ -451,21 +635,33 @@
   // Classes exist but players don't switch class — it's set at character creation
   // Class only affects armor material type for the demo display
 
-  // Equipment slot definitions — Unity-style paperdoll (body mesh + weapons).
-  // Only MESH gear is auto-equipped / listed as "equipped meshes" (not bag junk).
-  const ARMOR_SLOTS = ['Helm','Shoulder','Chest','Hands','Feet','Relic'];
-  const WEAPON_SLOTS = ['Mainhand','Offhand'];
-  const JEWELRY_SLOTS = ['Ring','Necklace'];
-  const LEFT_SLOTS  = ARMOR_SLOTS;
-  const RIGHT_SLOTS = [...WEAPON_SLOTS, ...JEWELRY_SLOTS];
-  const ALL_SLOTS = [...LEFT_SLOTS, ...RIGHT_SLOTS];
-  /** Slots that drive character mesh visuals (Unity character equipment). */
-  const MESH_SLOTS = ['Helm','Shoulder','Chest','Hands','Feet','Mainhand','Offhand'];
+  /**
+   * Canonical Warlords equipment layout (equipment-paperdoll SSOT):
+   *   LEFT 5: Helm · Chest · Hands · Legs · Feet
+   *   RIGHT 5: Mainhand · Offhand · Necklace · Relic · Cloak/Shoulder
+   *   BOTTOM: Ring · Add (bag shortcut)
+   * Parent .eq-panel / .eq-body; children .eq-col / .eq-center / .eq-slot scale via --eq-slot.
+   */
+  const LEFT_SLOTS  = ['Helm', 'Chest', 'Hands', 'Legs', 'Feet'];
+  const RIGHT_SLOTS = ['Mainhand', 'Offhand', 'Necklace', 'Relic', 'Shoulder'];
+  const BOTTOM_SLOTS = ['Ring', 'Cloak'];
+  const ALL_SLOTS = [...LEFT_SLOTS, ...RIGHT_SLOTS, ...BOTTOM_SLOTS];
+  /** Slots that drive character mesh visuals (grudge6 kit). */
+  const MESH_SLOTS = ['Helm', 'Shoulder', 'Cloak', 'Chest', 'Hands', 'Legs', 'Feet', 'Mainhand', 'Offhand'];
 
-  // Empty-slot labels (no emoji placeholders — real icons only when item equipped)
   const SLOT_LABELS = {
-    Helm:'Helm', Shoulder:'Shoulder', Chest:'Chest', Hands:'Hands', Feet:'Feet', Relic:'Relic',
-    Mainhand:'Main', Offhand:'Off', Ring:'Ring', Necklace:'Neck'
+    Helm: 'Helm',
+    Chest: 'Chest',
+    Hands: 'Gloves',
+    Legs: 'Legs',
+    Feet: 'Boots',
+    Mainhand: 'Main',
+    Offhand: 'Off',
+    Necklace: 'Amulet',
+    Relic: 'Belt',
+    Shoulder: 'Shoulder',
+    Cloak: 'Cloak',
+    Ring: 'Ring',
   };
 
   // Class → armor material type
@@ -482,6 +678,70 @@
 
   // Inventory items (array of {uuid, stack})
   let inventoryItems = [];
+  /** Bag slot: { uuid, stack, source? } — GRUDGE UUID is SSOT key (never name-only). */
+  const BAG_SLOTS = 42;
+  function isGrudgeUuid(v) {
+    return typeof v === 'string' && /^(ITEM|MAT|RELC|SKIL|ICON|HERO|ATTR)-/i.test(v);
+  }
+  function normalizeItemUuid(itemOrUuid) {
+    if (!itemOrUuid) return null;
+    if (typeof itemOrUuid === 'string') return itemOrUuid;
+    return itemOrUuid.uuid || itemOrUuid.grudgeUuid || itemOrUuid.id || null;
+  }
+  function bagStackByUuid(uuid) {
+    if (!uuid) return 0;
+    let n = 0;
+    for (const inv of inventoryItems) {
+      if (inv && inv.uuid === uuid) n += inv.stack || 1;
+    }
+    return n;
+  }
+  function bagStackByNameOrId(nameOrId) {
+    const key = String(nameOrId || '').toLowerCase().replace(/_/g, ' ').trim();
+    if (!key) return 0;
+    let n = 0;
+    for (const inv of inventoryItems) {
+      if (!inv?.uuid) continue;
+      const item = findAnyItem(inv.uuid);
+      if (!item) continue;
+      const id = String(item.id || item.uuid || '').toLowerCase();
+      const name = String(item.name || '').toLowerCase();
+      if (id === key || name === key || id.includes(key) || name.includes(key) || key.includes(name)) {
+        n += inv.stack || 1;
+      }
+    }
+    return n;
+  }
+  /** Craft / spend check: prefer UUID, fall back to catalog name match against bag. */
+  function bagQty(idOrUuidOrName) {
+    const raw = String(idOrUuidOrName || '');
+    if (isGrudgeUuid(raw) || raw.startsWith('ITEM-') || raw.startsWith('MAT-')) return bagStackByUuid(raw);
+    // resolve catalog id → uuid then stack
+    const hit =
+      allItems.find((i) => String(i.id) === raw || String(i.uuid) === raw) ||
+      allMaterials.find((m) => String(m.id) === raw || String(m.uuid) === raw || String(m.name) === raw);
+    if (hit?.uuid) return bagStackByUuid(hit.uuid);
+    return bagStackByNameOrId(raw);
+  }
+  function shortUuid(uuid) {
+    if (!uuid) return '—';
+    const s = String(uuid);
+    if (s.length <= 18) return s;
+    return s.slice(0, 10) + '…' + s.slice(-6);
+  }
+  function pushBag(uuid, stack = 1, source = 'bag') {
+    const u = normalizeItemUuid(uuid);
+    if (!u) return false;
+    const existing = inventoryItems.find((x) => x.uuid === u);
+    if (existing) {
+      existing.stack = (existing.stack || 1) + stack;
+      return true;
+    }
+    if (inventoryItems.length >= BAG_SLOTS) return false;
+    inventoryItems.push({ uuid: u, stack, source });
+    return true;
+  }
+
 
   // All armor items (loaded separately from master-armor.json)
   let allArmor = [];
@@ -594,10 +854,16 @@
     // Tab strip (data-tab for i18n-safe active state)
     function rebuildTabStrip() {
       const i18n = window.MainPanelI18n;
-      document.getElementById('tabStrip').innerHTML = TABS.map(t => {
-        const label = i18n?.tabLabel?.(t) || t;
-        return `<button type="button" class="tab-btn ${t===activeTab?'active':''}" data-tab="${t}" onclick="switchTab('${t}')">${label}</button>`;
-      }).join('');
+      const strip = document.getElementById('tabStrip');
+      const indHtml = '<span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>';
+      strip.innerHTML =
+        indHtml +
+        TABS.map((t) => {
+          const label = i18n?.tabLabel?.(t) || t;
+          const on = t === activeTab;
+          return `<button type="button" role="tab" class="tab-btn ${on ? 'active' : ''}" data-tab="${t}" aria-selected="${on ? 'true' : 'false'}" onclick="switchTab('${t}')">${label}</button>`;
+        }).join('');
+      requestAnimationFrame(() => typeof updateTabIndicator === 'function' && updateTabIndicator());
     }
     window.rebuildTabStrip = rebuildTabStrip;
     rebuildTabStrip();
@@ -711,7 +977,7 @@
       } else if (command.action === 'trade') {
         showMpStatus(`${unit.name}: Trade — open their bag from Inventory (session only)`);
         // focus inventory rail
-        document.getElementById('invScroll')?.scrollIntoView?.({ block: 'nearest' });
+        document.getElementById('invPanel')?.scrollIntoView?.({ block: 'nearest' });
       } else {
         showMpStatus(`${unit.name}: ${command.label}`);
       }
@@ -830,38 +1096,67 @@
     }
   }
 
-  /** Mount parchment scroll containers (center content + inventory rail). */
-  let _contentScrollApi = null;
-  let _invScrollApi = null;
+  /** Mount ONE World Map scroll for the entire main panel canvas. */
+  let _mainScrollApi = null;
   async function initScrollShells() {
     const mod = await import('./js/ui-scroll-container.js');
     await mod.preloadScrollFrames();
-    const centerHost = document.getElementById('contentScroll');
-    const invHost = document.getElementById('invScroll');
-    if (centerHost && centerHost.dataset.scrollMounted !== '1') {
-      _contentScrollApi = mod.mountScrollContainer(centerHost, {
-        autoOpen: true,
-        fps: 14,
-        contentRevealAt: 0.65,
-      });
-    } else if (centerHost?._scrollApi) {
-      _contentScrollApi = centerHost._scrollApi;
-      _contentScrollApi.snapOpen();
+    const host = document.getElementById('mainScroll');
+    if (!host) {
+      console.warn('[main-panel] #mainScroll missing');
+      return;
     }
-    if (invHost && invHost.dataset.scrollMounted !== '1') {
-      _invScrollApi = mod.mountScrollContainer(invHost, {
-        autoOpen: true,
-        compact: true,
-        fps: 14,
-        contentRevealAt: 0.7,
+    // Prefer reduced-motion: skip appear frames, snap open
+    let reduced = false;
+    try {
+      reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch { /* */ }
+    if (host.dataset.scrollMounted !== '1') {
+      _mainScrollApi = mod.mountScrollContainer(host, {
+        autoOpen: !reduced,
+        fps: reduced ? 60 : 16,
+        contentRevealAt: reduced ? 0 : 0.58,
+        className: 'main-canvas-scroll',
       });
-    } else if (invHost?._scrollApi) {
-      _invScrollApi = invHost._scrollApi;
-      _invScrollApi.snapOpen();
+      if (reduced) _mainScrollApi?.snapOpen?.();
+    } else {
+      _mainScrollApi = host._scrollApi;
+      _mainScrollApi?.snapOpen?.();
     }
+    // legacy aliases (party/unit code)
+    window._contentScrollApi = _mainScrollApi;
+    window._mainScrollApi = _mainScrollApi;
+    requestAnimationFrame(() => {
+      updateTabIndicator();
+      try {
+        window.MainPanelCanvas2D?.fitScale?.();
+      } catch { /* */ }
+    });
+    // After open animation completes, reflow design-scale stage
+    setTimeout(() => {
+      try {
+        window.MainPanelCanvas2D?.fitScale?.();
+        updateTabIndicator();
+      } catch { /* */ }
+    }, reduced ? 50 : 1100);
   }
 
-  function showError(msg) {
+  function updateTabIndicator() {
+    const strip = document.getElementById('tabStrip');
+    const ind = document.getElementById('tabIndicator');
+    if (!strip || !ind) return;
+    const active = strip.querySelector('.tab-btn.active');
+    if (!active) {
+      ind.style.width = '0';
+      return;
+    }
+    const sr = strip.getBoundingClientRect();
+    const ar = active.getBoundingClientRect();
+    ind.style.left = Math.max(0, ar.left - sr.left + strip.scrollLeft) + 'px';
+    ind.style.width = ar.width + 'px';
+  }
+
+function showError(msg) {
     const el = document.getElementById('errorBanner');
     el.textContent = msg;
     el.classList.add('visible');
@@ -883,7 +1178,7 @@
     if (t === 'weapon' || t === 'tool' || t === 'offhand-tome' || t === 'shield') return true;
     if (t === 'armor' || item.slotType) {
       // Armor / jewelry with a body slot — mesh or attachment
-      const meshSlots = new Set(['Helm','Shoulder','Chest','Hands','Feet','Mainhand','Offhand','Relic','Ring','Necklace']);
+      const meshSlots = new Set(['Helm','Shoulder','Cloak','Chest','Hands','Legs','Feet','Mainhand','Offhand','Relic','Ring','Necklace']);
       if (item.slotType && meshSlots.has(item.slotType)) return true;
     }
     // Explicit 3D path from catalog
@@ -902,11 +1197,31 @@
     const allowedWpns = getClassWeapons();
     const allowedOff = getClassOffhands();
 
-    // Body mesh armor only (Helm/Shoulder/Chest/Hands/Feet) — skip Relic unless mesh
-    ['Helm','Shoulder','Chest','Hands','Feet'].forEach(slot => {
-      const piece = allArmor.find(i =>
-        i.slotType === slot && i.material === mat && i.tier === 1 && isMeshEquipmentItem(i)
-      ) || allArmor.find(i => i.slotType === slot && i.tier === 1 && isMeshEquipmentItem(i));
+    // Body mesh armor — Helm/Chest/Hands/Legs/Feet (+ optional Shoulder)
+    ['Helm', 'Chest', 'Hands', 'Legs', 'Feet', 'Shoulder'].forEach((slot) => {
+      const aliases = {
+        Helm: ['Helm', 'Head', 'Helmet'],
+        Chest: ['Chest', 'Body', 'Torso'],
+        Hands: ['Hands', 'Gloves', 'Arms'],
+        Legs: ['Legs', 'Pants'],
+        Feet: ['Feet', 'Boots'],
+        Shoulder: ['Shoulder', 'Shoulders', 'Cape', 'Cloak'],
+      };
+      const names = aliases[slot] || [slot];
+      const piece =
+        allArmor.find(
+          (i) =>
+            names.some((n) => String(i.slotType || i.slot || '') === n) &&
+            i.material === mat &&
+            i.tier === 1 &&
+            isMeshEquipmentItem(i),
+        ) ||
+        allArmor.find(
+          (i) =>
+            names.some((n) => String(i.slotType || i.slot || '') === n) &&
+            i.tier === 1 &&
+            isMeshEquipmentItem(i),
+        );
       if (piece) equippedItems[slot] = piece.uuid;
     });
 
@@ -931,22 +1246,30 @@
     inventoryItems = [];
     const allowedWpns = getClassWeapons();
 
-    // Add class-appropriate weapons (T1 and T2 samples)
-    allowedWpns.slice(0, 4).forEach(cat => {
-      const wpns = allItems.filter(i => i.type === 'weapon' && i.category === cat && i.tier <= 2);
-      wpns.slice(0, 2).forEach(w => inventoryItems.push({ uuid: w.uuid, stack: 1 }));
+    // Weapons / armor keyed by GRUDGE UUID only
+    allowedWpns.slice(0, 4).forEach((cat) => {
+      const wpns = allItems.filter((i) => i.type === 'weapon' && i.category === cat && i.tier <= 2 && i.uuid);
+      wpns.slice(0, 2).forEach((w) => pushBag(w.uuid, 1, 'demo-weapon'));
     });
 
-    // Add some armor from a different set (for swapping)
     const mat = getClassArmorMaterial();
-    const altArmor = allArmor.filter(i => i.material === mat && i.tier === 2);
-    altArmor.slice(0, 4).forEach(a => inventoryItems.push({ uuid: a.uuid, stack: 1 }));
+    const altArmor = allArmor.filter((i) => i.material === mat && i.tier === 2 && i.uuid);
+    altArmor.slice(0, 4).forEach((a) => pushBag(a.uuid, 1, 'demo-armor'));
 
-    // Food and potions — fixed stacks (deterministic; not random demo noise)
-    allItems.filter(i => i.type === 'food').slice(0, 4).forEach((i, n) =>
-      inventoryItems.push({ uuid: i.uuid, stack: 3 + (n % 4) }));
-    allItems.filter(i => i.type === 'potion').slice(0, 3).forEach((i, n) =>
-      inventoryItems.push({ uuid: i.uuid, stack: 2 + (n % 3) }));
+    allItems.filter((i) => i.type === 'food' && i.uuid).slice(0, 4).forEach((i, n) =>
+      pushBag(i.uuid, 3 + (n % 4), 'demo-food'));
+    allItems.filter((i) => i.type === 'potion' && i.uuid).slice(0, 3).forEach((i, n) =>
+      pushBag(i.uuid, 2 + (n % 3), 'demo-potion'));
+
+    // Crafting materials as UUID stacks (wires craft grid to bag)
+    const mats = (allMaterials || []).filter((m) => m.uuid);
+    mats.slice(0, 10).forEach((m, n) => pushBag(m.uuid, 6 + (n % 5), 'demo-mat'));
+    if (!mats.length) {
+      allItems
+        .filter((i) => /ore|wood|leather|cloth|ingot|plank|herb/i.test(String(i.name || i.category || '')) && i.uuid)
+        .slice(0, 8)
+        .forEach((i, n) => pushBag(i.uuid, 5 + (n % 4), 'demo-mat-item'));
+    }
   }
 
   // ── Left Column: Stats + Professions ────────────────────────────────
@@ -1060,16 +1383,20 @@
           if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`;
           html += `<span class="inv-tier" style="background:${tc};color:#000;">T${tier}</span>`;
           if (inv.stack > 1) html += `<span class="inv-stack">${inv.stack}</span>`;
+          html += `<span class="inv-uuid-chip" title="${esc(inv.uuid)}">${esc(shortUuid(inv.uuid))}</span>`;
           html += `</div>`;
         } else {
-          html += `<div class="inv-cell"></div>`;
+          // orphan stack without catalog — still show UUID for debug
+          html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${esc(inv.uuid)}" title="${esc(inv.uuid)}"><span class="inv-uuid-chip">${esc(shortUuid(inv.uuid))}</span></div>`;
         }
       } else {
         html += `<div class="inv-cell"></div>`;
       }
     }
     grid.innerHTML = html;
-    document.getElementById('invCount').textContent = `${inventoryItems.length}/${totalSlots}`;
+    document.getElementById('invCount').textContent = `${inventoryItems.filter(Boolean).length}/${BAG_SLOTS || totalSlots}`;
+    const scope = document.getElementById('bagScope');
+    if (scope) scope.textContent = 'Account bag · UUID stacks';
     attachInventoryListeners();
   }
 
@@ -1097,24 +1424,35 @@
   // onInvClick moved above into findBestSlot section
 
   function findBestSlot(item) {
-    // Armor items go to their slotType
-    if (item.type === 'armor' && item.slotType) {
-      const slot = item.slotType;
-      // Map armor slotType to panel slots
-      if (ALL_SLOTS.includes(slot)) return slot;
-      if (slot === 'Offhand') return 'Offhand';
-      return null;
+    // Armor / jewelry → canonical panel slot (aliases from catalog slotType)
+    const raw = String(item.slotType || item.slot || item.type || '').toLowerCase();
+    const alias = {
+      helm: 'Helm', helmet: 'Helm', head: 'Helm',
+      chest: 'Chest', body: 'Chest', torso: 'Chest', armor: 'Chest',
+      hands: 'Hands', hand: 'Hands', gloves: 'Hands', arms: 'Hands',
+      legs: 'Legs', pants: 'Legs', leg: 'Legs',
+      feet: 'Feet', foot: 'Feet', boots: 'Feet', boot: 'Feet',
+      shoulder: 'Shoulder', shoulders: 'Shoulder',
+      cloak: 'Cloak', cape: 'Cloak', back: 'Cloak',
+      relic: 'Relic', belt: 'Relic', waist: 'Relic',
+      necklace: 'Necklace', amulet: 'Necklace', neck: 'Necklace', accessory: 'Necklace',
+      ring: 'Ring', ring1: 'Ring',
+      mainhand: 'Mainhand', main_hand: 'Mainhand', weapon: 'Mainhand',
+      offhand: 'Offhand', off_hand: 'Offhand', shield: 'Offhand',
+    };
+    if (item.type === 'armor' || item.slotType || /helm|chest|glove|leg|boot|shoulder|cape|cloak|belt|relic|ring|neck/i.test(raw)) {
+      const mapped = alias[raw] || (ALL_SLOTS.includes(item.slotType) ? item.slotType : null);
+      if (mapped && ALL_SLOTS.includes(mapped)) return mapped;
     }
     // Weapon items
-    if (item.type === 'weapon' || item.type === 'tool' || item.type === 'offhand-tome') {
-      const cat = item.category || item.type;
-      const offhandCats = ['shields','tomes','offhand-tome'];
-      const pref = offhandCats.includes(cat) ? 'Offhand' : 'Mainhand';
+    if (item.type === 'weapon' || item.type === 'tool' || item.type === 'offhand-tome' || item.type === 'shield') {
+      const cat = String(item.category || item.type || '').toLowerCase();
+      const offhandCats = ['shields', 'tomes', 'offhand-tome', 'shield'];
+      const pref = offhandCats.some((c) => cat.includes(c)) || item.type === 'shield' ? 'Offhand' : 'Mainhand';
       if (!equippedItems[pref]) return pref;
-      // Try the other weapon slot
       const alt = pref === 'Mainhand' ? 'Offhand' : 'Mainhand';
       if (!equippedItems[alt]) return alt;
-      return pref; // swap
+      return pref;
     }
     return null;
   }
@@ -1196,17 +1534,26 @@
     renderLeftCol();
     renderInventory();
     renderHotbar();
-    if (['Equipment', 'Skills', 'Attributes', 'Professions'].includes(activeTab)) renderTab();
+    if (['Equipment', 'Skills', 'Attributes', 'Professions', 'Crafting'].includes(activeTab)) renderTab();
   }
 
   function switchTab(t) {
     activeTab = t;
-    document.querySelectorAll('.tab-btn').forEach(b =>
-      b.classList.toggle('active', (b.getAttribute('data-tab') || b.textContent) === t),
-    );
-    // Keep scroll open without replaying Appear every tab
-    _contentScrollApi?.snapOpen?.();
+    document.querySelectorAll('.tab-btn').forEach((b) => {
+      const on = (b.getAttribute('data-tab') || b.textContent) === t;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    // ONE canvas scroll stays open — never re-play Appear on tab change
+    _mainScrollApi?.snapOpen?.();
     renderTab();
+    const area = document.getElementById('contentArea');
+    if (area) {
+      area.classList.remove('is-tab-enter');
+      void area.offsetWidth;
+      area.classList.add('is-tab-enter');
+    }
+    requestAnimationFrame(() => typeof updateTabIndicator === 'function' && updateTabIndicator());
     try {
       window.MainPanel2D?.animateContentEnter?.();
     } catch { /* */ }
@@ -1444,15 +1791,25 @@
       <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;">${racePills}</div>
       <div class="section-title" style="text-align:center;border-left:0;padding-left:0;">Grudge Warlord</div>
       <div style="text-align:center;font-family:var(--font-display);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">${rm.name} &bull; ${selectedClass}</div>
-      <div class="eq-panel">
-        <div class="eq-col">
-          ${LEFT_SLOTS.map(s => renderSlot(s)).join('')}
+      <div class="eq-panel" data-layout="canonical-paperdoll">
+        <div class="eq-body">
+          <div class="eq-col left" data-role="armor-column">
+            ${LEFT_SLOTS.map((s) => renderSlot(s)).join('')}
+          </div>
+          <div class="eq-center" data-role="hero-stage">
+            ${centerHtml}
+          </div>
+          <div class="eq-col right" data-role="weapon-column">
+            ${RIGHT_SLOTS.map((s) => renderSlot(s)).join('')}
+          </div>
         </div>
-        <div class="eq-center">
-          ${centerHtml}
-        </div>
-        <div class="eq-col">
-          ${RIGHT_SLOTS.map(s => renderSlot(s)).join('')}
+        <div class="eq-bottom" data-role="jewelry-row">
+          ${BOTTOM_SLOTS.map((s) => renderSlot(s)).join('')}
+          <div class="eq-bottom-rule" aria-hidden="true"></div>
+          <div class="eq-slot" data-slot="Add" title="Open bag / inventory" onclick="document.getElementById('invPanel')?.scrollIntoView?.({behavior:'smooth',block:'nearest'})">
+            <span class="slot-placeholder">+</span>
+            <span class="slot-label">Bag</span>
+          </div>
         </div>
       </div>
       <div class="eq-summary">
@@ -1479,7 +1836,7 @@
         </div>
         <div id="meshKitVisible" style="margin-top:8px;font-size:9px;color:var(--dim);font-family:monospace;max-height:72px;overflow:auto;"></div>
       </div>
-      <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--dim);">Unity-style paperdoll: only worn weapons &amp; armor · bag is on the right · click slot to unequip · <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" target="_blank" rel="noopener" style="font-size:10px;">Item Database &#8599;</a></div>
+      <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--dim);">Canonical paperdoll (12 slots) · face-user hero · bag on right · click slot to unequip · <a href="https://info.grudge-studio.com/GRUDGE_Item_Database.html" target="_blank" rel="noopener" style="font-size:10px;">Item Database &#8599;</a></div>
     `;
   }
 
@@ -1502,7 +1859,7 @@
     return `<div class="eq-slot ${isEquipped ? 'equipped' : ''}" data-slot="${slotName}" data-uuid="${item ? uuid : ''}" style="${isEquipped ? 'border-color:'+tierColor : ''}" title="${isEquipped ? esc(item.name) : slotName + ' (empty)'}">
       ${tierBadge}
       ${iconHtml}
-      <span class="slot-label">${slotName}</span>
+      <span class="slot-label">${SLOT_LABELS[slotName] || slotName}</span>
     </div>`;
   }
 
@@ -1589,7 +1946,7 @@
     const u = new URL(CRAFTING_SUITE_URL);
     u.searchParams.set('era', 'warlords');
     u.searchParams.set('from', 'info-main-panel');
-    if (embed !== false) u.searchParams.set('embed', '1');
+    if (embed === true) u.searchParams.set('embed', '1'); // optional; suite may block iframe
     try {
       const token =
         localStorage.getItem('grudge_auth_token') ||
@@ -1671,10 +2028,13 @@
   }
 
   function bagQtyDemo(idOrName) {
+    // Prefer real bag UUID stacks (demo fills materials by UUID in populateInventoryDemo)
+    const q = typeof bagQty === 'function' ? bagQty(idOrName) : 0;
+    if (q > 0) return q;
     const key = String(idOrName || '').toLowerCase();
     if (!key) return 0;
-    if (/iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 8;
-    return 2;
+    if (!inventoryItems.length && /iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 4;
+    return 0;
   }
 
   function renderCraftingTab() {
@@ -1719,6 +2079,8 @@
             (ok ? 'can-craft' : 'no-craft') +
             '" data-craft-id="' +
             esc(r.id) +
+            '" data-recipe-key="' +
+            esc(r.id) +
             '" title="' +
             esc(r.name) +
             '"><h4>' +
@@ -1739,24 +2101,37 @@
         })
         .join('') || '<p class="craft-log">No recipes loaded — open full suite.</p>';
 
-    const matPreview = ['Iron Ore', 'Pine Wood', 'Leather Scraps', 'Cloth Scraps', 'Copper Ore']
+    const bagMats = inventoryItems
+      .map((inv) => {
+        const it = findAnyItem(inv.uuid);
+        return it ? { uuid: inv.uuid, name: it.name || inv.uuid, qty: inv.stack || 1, icon: it.iconUrl } : null;
+      })
+      .filter(Boolean)
+      .slice(0, 12);
+    const matPreview = (bagMats.length
+      ? bagMats
+      : ['Iron Ore', 'Pine Wood', 'Leather Scraps'].map((n) => ({ uuid: null, name: n, qty: bagQty(n) }))
+    )
       .map(
-        (n) =>
-          '<div class="craft-mat"><span class="mat-name">' +
-          esc(n) +
+        (m) =>
+          '<div class="craft-mat" data-uuid="' +
+          esc(m.uuid || '') +
+          '" title="' +
+          esc(m.uuid || m.name) +
+          '"><span class="mat-name">' +
+          esc(m.name) +
           '</span><span class="mat-qty">×' +
-          bagQtyDemo(n) +
+          (m.qty || 0) +
           '</span></div>',
       )
       .join('');
 
     queueMicrotask(() => wireCraftChromeNative());
 
-    const suiteEmbed = craftSuiteAuthedUrl(true);
     const suitePop = craftSuiteAuthedUrl(false);
     return (
       '<div class="craft-shell">' +
-      '<div class="craft-ssot-banner"><strong>Wired craft</strong> — production suite ' +
+      '<div class="craft-ssot-banner"><strong>Native craft</strong> — production suite ' +
       '<a href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">grudgewarlords.com/craft</a> · panel SSOT ' +
@@ -1769,18 +2144,14 @@
       '<div class="craft-toolbar"><div><h3>Warlords Craft</h3>' +
       '<span class="craft-auth-pill ok" id="craft-auth-status">' +
       esc(catalogHint) +
-      ' · suite embed</span></div>' +
+      ' · bag UUID</span></div>' +
       '<div class="craft-toolbar-right">' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-reload">↻ Reload</button>' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-popout">↗ Full suite</button>' +
       '<a class="mp-btn primary" href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">Open suite</a></div></div>' +
-      '<p class="craft-sub">Railway <strong>account bag</strong> · XP on active character · suite is SSOT</p>' +
-      '<div class="craft-frame-wrap" style="position:relative;min-height:420px;border:1px solid rgba(201,149,10,.35);border-radius:12px;overflow:hidden">' +
-      '<iframe id="craft-suite-frame" title="Warlords Crafting Suite" src="' +
-      esc(suiteEmbed) +
-      '" style="width:100%;height:min(58vh,560px);min-height:420px;border:0;display:block;background:#0a0a10" loading="lazy"></iframe></div>' +
+      '<p class="craft-sub">Shared <strong>account bag</strong> (UUID stacks) · XP on active character · native craft · suite pop-out</p>' +
       '<div class="craft-layout" style="margin-top:10px"><div class="craft-main">' +
       '<div class="craft-filter" id="craft-filter">' +
       profs
@@ -1797,8 +2168,8 @@
         .join('') +
       '</div><div class="craft-grid" id="craft-host">' +
       cards +
-      '</div><p class="craft-log" id="craft-log">Quick catalog · full spend/XP in suite above</p></div>' +
-      '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">demo</span></div>' +
+      '</div><p class="craft-log" id="craft-log">Native craft · bag UUID stacks · Full suite for Railway spend/XP</p></div>' +
+      '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">UUID bag</span></div>' +
       '<div class="craft-mat-grid">' +
       matPreview +
       '</div><a class="craft-suite-link" href="' +
@@ -1808,20 +2179,11 @@
   }
 
   function wireCraftChromeNative() {
-    const frame = document.getElementById('craft-suite-frame');
-    if (frame) {
-      frame.onload = () => {
-        postCraftAuthToFrame(frame);
-        setTimeout(() => postCraftAuthToFrame(frame), 800);
-      };
-      setTimeout(() => postCraftAuthToFrame(frame), 400);
-    }
     document.getElementById('btn-craft-popout')?.addEventListener('click', () => {
       window.open(craftSuiteAuthedUrl(false), '_blank', 'noopener');
     });
     document.getElementById('btn-craft-reload')?.addEventListener('click', () => {
-      if (frame) frame.src = craftSuiteAuthedUrl(true);
-      else switchTab('Crafting');
+      switchTab('Crafting');
     });
     document.querySelectorAll('#craft-filter [data-cf]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -1833,12 +2195,11 @@
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-craft-id');
         const log = document.getElementById('craft-log');
-        if (log) log.textContent = 'Recipe ' + id + ' — use suite above for Railway craft + profession XP';
+        if (log) {
+          log.textContent =
+            'Recipe ' + id + ' · bag check via UUID · open Full suite for Railway spend + profession XP';
+        }
       });
-    });
-    window.addEventListener('message', (e) => {
-      if (!e.origin || e.origin.indexOf('grudgewarlords.com') === -1) return;
-      if (e.data?.type === 'GRUDGE_READY') postCraftAuthToFrame(frame);
     });
   }
 

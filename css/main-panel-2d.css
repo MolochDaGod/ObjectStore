@@ -369,3 +369,198 @@ body.scroll-theme.mp2d-ready .app {
     padding: 6px 24px 6px 8px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+ * Design-scale stage + interactive 2D canvas
+ * ═══════════════════════════════════════════════════════════════ */
+
+.mp-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* Container query root for density */
+  container-type: size;
+  container-name: mp-stage;
+}
+
+.mp-stage-inner {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Width set in JS (DESIGN_W); height from content */
+  will-change: transform;
+}
+
+/* ONE parchment scroll fills design width */
+.mp-stage-inner #mainScroll.scroll-shell,
+.mp-stage-inner #mainScroll.main-canvas-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-stage-inner #mainScroll > .scroll-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Readable parchment well — keep UI contrast */
+  padding: 1.5% 2.2% 1.2%;
+}
+
+.mp-stage-inner .main-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  max-height: 100%;
+}
+
+/* Columns: clean containers, independent scroll */
+.mp-stage-inner .left-col {
+  width: 240px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  background: transparent;
+}
+
+.mp-stage-inner .right-col {
+  width: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: transparent;
+}
+
+.mp-stage-inner .center-col {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mp-stage-inner .content-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  /* Smooth momentum on supported engines */
+  -webkit-overflow-scrolling: touch;
+  content-visibility: auto;
+}
+
+.mp-stage-inner .inv-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  align-content: start;
+}
+
+.mp-stage-inner .hotbar {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* Interactive canvas overlay (drag ghost / pulse) */
+.mp2d-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 40;
+  touch-action: none;
+}
+
+/* Source slot dim while canvas drag ghost active */
+.inv-cell.is-dragging-src,
+.eq-slot.is-dragging-src,
+.hb-slot.is-dragging-src {
+  opacity: 0.45;
+  filter: saturate(0.6);
+}
+
+/* Scroll shell open polish inside stage */
+.mp-stage-inner .scroll-shell.main-canvas-scroll {
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(232, 200, 120, 0.12);
+}
+
+/* Container density: when stage is short, tighten padding */
+@container mp-stage (max-height: 700px) {
+  .mp-stage-inner .content-area {
+    padding: 10px 12px;
+  }
+  .mp-stage-inner .left-col {
+    padding: 8px;
+  }
+}
+
+/* Legacy dual-scroll leftovers (no nested parchment inside columns) */
+.mp-stage-inner .center-col > .scroll-shell:not(#mainScroll),
+.mp-stage-inner .right-col.scroll-shell {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* App shell: top bar fixed, stage fills rest */
+body.scroll-theme .app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.scroll-theme .app > .top-bar {
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+/* Scale badge (dev / accessibility) — hidden by default */
+.mp-scale-chip {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 50;
+  font: 10px/1.2 var(--font-mono, monospace);
+  color: rgba(212, 164, 0, 0.75);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(201, 149, 10, 0.35);
+  border-radius: 6px;
+  padding: 4px 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+body.mp-canvas-2d.show-scale-chip .mp-scale-chip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-stage-inner {
+    will-change: auto;
+  }
+  .mp-stage-inner .content-area,
+  .mp-stage-inner .inv-grid,
+  .mp-stage-inner .left-col {
+    scroll-behavior: auto;
+  }
+}

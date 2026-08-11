@@ -6,7 +6,7 @@
  *  2. EquipmentManager: hide all → exclusive body/weapon variants only
  *  3. hardenVisibility() — no ghost layers
  *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
- *  5. Face camera: yaw = π (kit shows back at yaw 0 with camera on +Z)
+ *  5. Face camera: yaw = π (Toon kit back at yaw 0; camera on +Z → faces look at user)
  *  6. Idle from CDN baked pack when kit has no embedded clips
  *  7. Never auto invert UV V on production kits (opts.invertUvV opt-in only)
  */
@@ -32,14 +32,31 @@ import {
  */
 const PAPERDOLL_HEIGHT_M = 1.8;
 
-/** Panel armor slot → kit equip slot */
+/** Panel armor slot → kit equip slot (canonical paperdoll → grudge6 kit) */
 const PANEL_TO_BODY = {
   Helm: 'head',
   Chest: 'body',
   Hands: 'arms',
-  Feet: 'legs',
+  Legs: 'legs',
+  Feet: 'legs', // Toon kits fold boots into legs mesh
   Shoulder: 'shoulders',
+  Cloak: 'shoulders',
 };
+
+/**
+ * Paperdoll face-user yaw.
+ * Camera is at +Z looking toward origin. Production Toon kits present their
+ * BACK at yaw 0 in this viewport — π turns the face toward the player.
+ * Re-applied every frame so idle tracks cannot undo it.
+ */
+export const FACE_CAMERA_YAW = Math.PI;
+
+export function applyFaceCamera(root, yaw = FACE_CAMERA_YAW) {
+  if (!root) return;
+  root.rotation.order = 'YXZ';
+  root.rotation.y = yaw;
+  root.userData.paperdollFaceYaw = yaw;
+}
 
 /**
  * Race → baked idle clip on assets CDN (verified HEAD 200).
@@ -128,7 +145,7 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     else equip.unequip?.(kitSlot);
   }
 
-  if (!equippedItems?.Shoulder && equip.slots.shoulders) {
+  if (!equippedItems?.Shoulder && !equippedItems?.Cloak && equip.slots.shoulders) {
     equip.unequip('shoulders');
   }
 
@@ -202,8 +219,7 @@ function fitRootSi(root, targetH) {
     characterType: 'infantry',
     centerXZ: true,
   });
-  // Face camera (see screenshot 2026-08-04: yaw 0 showed back)
-  root.rotation.y = Math.PI;
+  applyFaceCamera(root, FACE_CAMERA_YAW);
   root.updateMatrixWorld(true);
   return result.height;
 }
@@ -346,6 +362,8 @@ export async function mountHeroViewport(host, opts) {
     if (disposed) return;
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
+    // Lock face-user yaw after mixer (anim may write root rotation tracks)
+    if (root) applyFaceCamera(root, FACE_CAMERA_YAW);
     controls.update();
     renderer.render(scene, camera);
     raf = requestAnimationFrame(tick);

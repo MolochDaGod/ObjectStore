@@ -41,7 +41,7 @@ Do **not** invent a second panel open/close chrome. Extend this pack + module.
 | `js/ui-scroll-container.js` | mount / open / close / preload |
 | `css/ui-scroll-container.css` | parchment tokens, fonts, shell |
 | `ui/scroll/manifest.json` | frame list + paths |
-| `main-panel.html` | first consumer (center + inventory) |
+| `main-panel.html` | **one** canvas scroll (`#mainScroll`) for left · tabs · content · inventory |
 
 ### Minimal embed (any game)
 
@@ -112,12 +112,24 @@ Loaded via Google Fonts CDN (same pattern as existing `grudge-theme.css`).
 1. Frames live in repo under `ui/scroll/` (Pages).  
 2. Promote binaries to R2: `assets.grudge-studio.com/ui/scroll/{appear,disappear,open,closed}.png`.  
 3. Cross-app games set `base: SCROLL_BASE_CDN` when not on info.*.  
-4. Smoke: open main-panel → center + inventory play appear once; tab switch uses `snapOpen` or soft re-open.
+4. Smoke: open main-panel → **one** Appear for full canvas; tab switch uses `snapOpen` + content enter animation (never dual scrolls).
 
 ---
+
+## Main panel canvas contract (2026-08)
+
+| Rule | Detail |
+|------|--------|
+| Scroll count | **1** — `#mainScroll` wraps left + center (tabs/content) + inventory |
+| Tab change | `snapOpen()` + `#contentArea.is-tab-enter` — **no** second Appear |
+| Tab chrome | `.tab-indicator` slides under active tab |
+| Bag | Inventory stacks keyed by **GRUDGE UUID** (`ITEM-` / `MAT-` …) |
+| Craft | Native grid reads `bagQty(uuid\|name)` from that bag; suite = pop-out only |
+| Forbidden | Dual `contentScroll` + `invScroll` shells; iframe suite into tab |
 
 ## Related
 
 - Skill `craftpix-rpg-mmo-ui` — MMO HUD textures  
 - `css/grudge-theme.css` — fleet gold/obsidian tokens  
 - Character paperdoll: `js/main-panel-hero-viewport.js` (inside scroll content)
+- Craft consolidation: `docs/CRAFT_WCS_CONSOLIDATION_SSOT.md`

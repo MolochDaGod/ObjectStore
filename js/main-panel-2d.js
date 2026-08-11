@@ -92,9 +92,21 @@
     var area = document.getElementById("contentArea");
     if (!area) return;
     area.classList.remove("mp2d-enter");
+    area.classList.remove("is-tab-enter");
     // force reflow for re-trigger
     void area.offsetWidth;
     area.classList.add("mp2d-enter");
+    area.classList.add("is-tab-enter");
+    // Keep scroll position top on tab paint (clean container usage)
+    try {
+      area.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (_) {
+      area.scrollTop = 0;
+    }
+    // Refit design-scale stage after DOM paint
+    try {
+      global.MainPanelCanvas2D && global.MainPanelCanvas2D.fitScale && global.MainPanelCanvas2D.fitScale();
+    } catch (_) {}
   }
 
   function patchSwitchTab() {
@@ -107,7 +119,38 @@
         b.classList.toggle("active", b.getAttribute("data-tab") === t);
       });
       animateContentEnter();
+      // Keep parchment OPEN — never re-play Appear on tab change
+      try {
+        if (global._mainScrollApi && global._mainScrollApi.snapOpen) {
+          global._mainScrollApi.snapOpen();
+        }
+      } catch (_) {}
     };
+  }
+
+  function wireScaleChip() {
+    if (document.getElementById("mpScaleChip")) return;
+    var chip = document.createElement("div");
+    chip.id = "mpScaleChip";
+    chip.className = "mp-scale-chip";
+    chip.textContent = "ui scale";
+    document.body.appendChild(chip);
+    function refresh() {
+      var s =
+        (global.MainPanelCanvas2D && global.MainPanelCanvas2D.getScale && global.MainPanelCanvas2D.getScale()) ||
+        1;
+      chip.textContent = "UI ×" + (Math.round(s * 100) / 100).toFixed(2);
+    }
+    document.addEventListener("grudge:main-panel:canvas-2d-ready", refresh);
+    window.addEventListener("resize", refresh, { passive: true });
+    // ?scaleChip=1 or localStorage debug
+    try {
+      var q = new URLSearchParams(location.search);
+      if (q.get("scaleChip") === "1" || localStorage.getItem("grudge.mp.showScale") === "1") {
+        document.body.classList.add("show-scale-chip");
+      }
+    } catch (_) {}
+    setTimeout(refresh, 200);
   }
 
   async function boot() {
@@ -132,6 +175,14 @@
 
     patchSwitchTab();
     animateContentEnter();
+    wireScaleChip();
+
+    // After scroll open, refit design canvas
+    setTimeout(function () {
+      try {
+        global.MainPanelCanvas2D && global.MainPanelCanvas2D.fitScale && global.MainPanelCanvas2D.fitScale();
+      } catch (_) {}
+    }, 1000);
 
     document.dispatchEvent(new CustomEvent("grudge:main-panel:2d-ready"));
   }
@@ -145,5 +196,6 @@
   global.MainPanel2D = {
     animateContentEnter: animateContentEnter,
     preloadImages: preloadImages,
+    wireScaleChip: wireScaleChip,
   };
 })(typeof window !== "undefined" ? window : globalThis);

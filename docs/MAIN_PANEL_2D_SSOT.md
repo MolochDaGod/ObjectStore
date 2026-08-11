@@ -11,13 +11,26 @@
 | Fonts | `css/grudge-game-fonts.css` (fontsource woff2, no Google Fonts) |
 | 2D chrome | `css/main-panel-2d.css` |
 | Theme tokens | `css/grudge-theme.css` |
-| Scroll containers | `css/ui-scroll-container.css` + `ui/scroll/*` |
+| Scroll containers | `css/ui-scroll-container.css` + `ui/scroll/*` + `#mainScroll` **one** parchment |
+| Design scale + 2D canvas | `js/main-panel-canvas-2d.js` (HYDRA-width stage · drag ghost) |
 | i18n pack | `api/v1/main-panel-locales.json` |
 | i18n runtime | `js/main-panel-i18n.js` |
 | 2D bootstrap | `js/main-panel-2d.js` |
 | Menu / slots art | CraftPix via `ui.grudge-studio.com/assets/craftpix/**` |
 | Local panel art | `ui/packs/gold/panels.png` |
 | RPG CSS skin | `assets.grudge-studio.com/ui/craftpix-rpg/craftpix-rpg-ui.css` |
+
+## Containers · scale · canvas (2026-08)
+
+| Rule | Value |
+|------|--------|
+| Design width | **1600px** stage (`#mpStageInner`) scaled to viewport |
+| Scale range | 0.55–1.12 (`--mp-ui-scale`) |
+| Scroll usage | **One** World Map scroll opens on boot; tab change = `snapOpen` + content fade only |
+| Content scroll | `#contentArea` + `.inv-grid` + `.left-col` independent, `overscroll-behavior: contain` |
+| 2D canvas | `#mp2dCanvas` — item drag ghost + click pulse (not Three.js) |
+| Hero 3D | `#hero-viewport` remains WebGL (separate) |
+| Debug scale chip | `?scaleChip=1` or `localStorage grudge.mp.showScale=1` |
 
 ## npm / 2D best practices
 
@@ -56,3 +69,13 @@ Decorative motion: equip glow, tab underline, content fade-up, viewport idle rim
 - ❌ Iframe `grudgewarlords.com/craft` (X-Frame-Options)  
 - ❌ Emoji as production item art when ObjectStore icons exist  
 - ❌ New second main-panel SPA  
+- ❌ Nested scroll-shell parchment inside left/right columns (one canvas only)  
+- ❌ Re-playing Appear animation on every tab switch  
+
+## Deploy
+
+```bash
+cd F:\GitHub\ObjectStore
+# git commit + push → Vercel info.grudge-studio.com
+# Smoke: https://info.grudge-studio.com/main-panel.html?scaleChip=1
+```
