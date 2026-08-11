@@ -136,36 +136,7 @@
     .inv-cell.has-item { border-color: #3a2a1a; }
     .inv-cell img { width: 100%; height: 100%; object-fit: contain; padding: 4px; image-rendering: pixelated; }
     .inv-cell .inv-tier { position: absolute; top: 1px; right: 2px; font-size: 6px; font-weight: 700; padding: 0 3px; border-radius: 2px; }
-    /* Stack count badge — harvest / craft mats / consumables (max 100) */
-    .inv-cell .inv-stack {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      z-index: 3;
-      min-width: 1.15em;
-      padding: 1px 4px;
-      border-radius: 3px;
-      font-family: var(--font-mono, "JetBrains Mono", ui-monospace, Consolas, monospace);
-      font-size: 11px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0;
-      line-height: 1.2;
-      color: #fff;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.72);
-      border: 1px solid rgba(212, 168, 67, 0.35);
-      text-shadow: 0 1px 2px #000;
-      pointer-events: none;
-    }
-    .inv-cell .inv-stack.is-full {
-      color: #ffd66b;
-      border-color: rgba(255, 214, 107, 0.65);
-      box-shadow: 0 0 6px rgba(212, 164, 0, 0.35);
-    }
-    .inv-cell .inv-stack.is-one {
-      opacity: 0.9;
-    }
+    .inv-cell .inv-stack { position: absolute; bottom: 1px; right: 2px; font-size: 7px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px #000; }
     .inv-header { padding: 10px 12px; border-bottom: 1px solid #3a2a1a; display: flex; justify-content: space-between; align-items: center; }
     .inv-header h3 { font-family: var(--font-display); font-size: 12px; color: var(--gold); text-transform: uppercase; }
     .inv-count { font-size: 10px; color: var(--dim); }
@@ -829,8 +800,6 @@
   let inventoryItems = [];
   /** Bag slot: { uuid, stack, source? } — GRUDGE UUID is SSOT key (never name-only). */
   const BAG_SLOTS = 42;
-  /** Harvest / craft mats / consumables stack ceiling (user SSOT). Gear = 1. */
-  const STACK_MAX = 100;
   function isGrudgeUuid(v) {
     return typeof v === 'string' && /^(ITEM|MAT|RELC|SKIL|ICON|HERO|ATTR)-/i.test(v);
   }
@@ -838,40 +807,6 @@
     if (!itemOrUuid) return null;
     if (typeof itemOrUuid === 'string') return itemOrUuid;
     return itemOrUuid.uuid || itemOrUuid.grudgeUuid || itemOrUuid.id || null;
-  }
-  /**
-   * Stackable bag kinds: materials, harvest loot, food, potions, reagents.
-   * Equippable weapons/armor/jewelry never stack (max 1).
-   */
-  function isStackableItem(item) {
-    if (!item) return true;
-    if (item.maxStack === 1 || item.stackable === false) return false;
-    if (item.maxStack > 1 || item.stackable === true) return true;
-    const t = String(item.type || item.category || item.kind || item.slotType || '').toLowerCase();
-    const id = String(item.id || item.uuid || item.name || '').toLowerCase();
-    const blob = t + ' ' + id;
-    if (/weapon|armor|armour|helm|helmet|chest|glove|boot|shield|equip|relic|ring|amulet|necklace|cloak|cape|tome|staff|sword|axe|bow|gun|dagger|spear|hammer|tool(?!ing)/.test(blob)) {
-      if (/material|mat-|ore|wood|plank|herb|food|potion|scrap|ingot|fiber|hide|leather|stone|coal|dust|reagent|consumable|harvest/.test(blob)) {
-        return true;
-      }
-      return false;
-    }
-    if (/material|mat|ore|wood|plank|herb|food|potion|scrap|ingot|fiber|hide|leather|stone|coal|dust|reagent|consumable|harvest|misc|resource|loot/.test(blob)) {
-      return true;
-    }
-    // UUID MAT-* always stackable
-    if (/^mat-/i.test(String(item.uuid || item.id || ''))) return true;
-    return true;
-  }
-  function maxStackForItem(item) {
-    if (item && Number.isFinite(item.maxStack) && item.maxStack > 0) {
-      return Math.min(STACK_MAX, Math.max(1, Math.floor(item.maxStack)));
-    }
-    return isStackableItem(item) ? STACK_MAX : 1;
-  }
-  function formatStackCount(n) {
-    const v = Math.max(0, Math.min(STACK_MAX, Math.floor(Number(n) || 0)));
-    return String(v);
   }
   function bagStackByUuid(uuid) {
     if (!uuid) return 0;
@@ -914,46 +849,17 @@
     if (s.length <= 18) return s;
     return s.slice(0, 10) + '…' + s.slice(-6);
   }
-  /**
-   * Add to bag with stack merge + max stack 100 for harvest/craft mats.
-   * Overflow creates additional stacks of the same UUID (up to BAG_SLOTS).
-   * @returns {boolean} true if any amount was stored
-   */
   function pushBag(uuid, stack = 1, source = 'bag') {
     const u = normalizeItemUuid(uuid);
     if (!u) return false;
-    let remaining = Math.max(1, Math.floor(Number(stack) || 1));
-    const item = typeof findAnyItem === 'function' ? findAnyItem(u) : null;
-    const max = maxStackForItem(item);
-    let stored = false;
-
-    // Prefer filling existing incomplete stacks of this UUID
-    for (const row of inventoryItems) {
-      if (!row || row.uuid !== u) continue;
-      if (max <= 1) {
-        // Unique gear: never merge
-        break;
-      }
-      const cur = row.stack || 1;
-      if (cur >= max) continue;
-      const room = max - cur;
-      const add = Math.min(room, remaining);
-      row.stack = cur + add;
-      remaining -= add;
-      stored = true;
-      if (remaining <= 0) return true;
+    const existing = inventoryItems.find((x) => x.uuid === u);
+    if (existing) {
+      existing.stack = (existing.stack || 1) + stack;
+      return true;
     }
-
-    // New stack slots
-    while (remaining > 0) {
-      if (inventoryItems.length >= BAG_SLOTS) return stored;
-      const put = Math.min(max, remaining);
-      inventoryItems.push({ uuid: u, stack: put, source });
-      remaining -= put;
-      stored = true;
-      if (max <= 1) break;
-    }
-    return stored;
+    if (inventoryItems.length >= BAG_SLOTS) return false;
+    inventoryItems.push({ uuid: u, stack, source });
+    return true;
   }
 
 
@@ -1497,21 +1403,18 @@ function showError(msg) {
     altArmor.slice(0, 4).forEach((a) => pushBag(a.uuid, 1, 'demo-armor'));
 
     allItems.filter((i) => i.type === 'food' && i.uuid).slice(0, 4).forEach((i, n) =>
-      pushBag(i.uuid, 12 + n * 7, 'demo-food'));
+      pushBag(i.uuid, 3 + (n % 4), 'demo-food'));
     allItems.filter((i) => i.type === 'potion' && i.uuid).slice(0, 3).forEach((i, n) =>
-      pushBag(i.uuid, 8 + n * 5, 'demo-potion'));
+      pushBag(i.uuid, 2 + (n % 3), 'demo-potion'));
 
-    // Crafting / harvest materials as UUID stacks (max 100; numbers on icons)
+    // Crafting materials as UUID stacks (wires craft grid to bag)
     const mats = (allMaterials || []).filter((m) => m.uuid);
-    mats.slice(0, 10).forEach((m, n) =>
-      pushBag(m.uuid, Math.min(STACK_MAX, 18 + n * 9), 'demo-mat'));
-    // One full stack demo for visibility
-    if (mats[0]?.uuid) pushBag(mats[0].uuid, STACK_MAX, 'demo-mat-full');
+    mats.slice(0, 10).forEach((m, n) => pushBag(m.uuid, 6 + (n % 5), 'demo-mat'));
     if (!mats.length) {
       allItems
         .filter((i) => /ore|wood|leather|cloth|ingot|plank|herb/i.test(String(i.name || i.category || '')) && i.uuid)
         .slice(0, 8)
-        .forEach((i, n) => pushBag(i.uuid, Math.min(STACK_MAX, 20 + n * 10), 'demo-mat-item'));
+        .forEach((i, n) => pushBag(i.uuid, 5 + (n % 4), 'demo-mat-item'));
     }
   }
 
@@ -1612,7 +1515,7 @@ function showError(msg) {
   // ── Inventory ──────────────────────────────────────────────────────
   function renderInventory() {
     const grid = document.getElementById('invGrid');
-    const totalSlots = BAG_SLOTS || 42;
+    const totalSlots = 42;
     let html = '';
     for (let i = 0; i < totalSlots; i++) {
       const inv = inventoryItems[i];
@@ -1622,27 +1525,15 @@ function showError(msg) {
           const tier = item.tier || 1;
           const tc = TIER_COLORS[tier] || '#3a2a1a';
           const icon = item.iconUrl || '';
-          const st = Math.max(1, Math.min(STACK_MAX, Math.floor(inv.stack || 1)));
-          const max = maxStackForItem(item);
-          const stackable = max > 1;
-          // Font numbers on icons: always show for stackable mats/harvest/craft;
-          // gear only when somehow >1
-          const showStack = stackable || st > 1;
-          const fullCls = st >= max ? ' is-full' : st === 1 ? ' is-one' : '';
-          html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${inv.uuid}" data-stack="${st}" style="border-color:${tc};" title="${esc(item.name || '')} · x${st}${stackable ? '/' + max : ''}">`;
+          html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${inv.uuid}" style="border-color:${tc};">`;
           if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`;
           html += `<span class="inv-tier" style="background:${tc};color:#000;">T${tier}</span>`;
-          if (showStack) {
-            html += `<span class="inv-stack${fullCls}" aria-label="Stack ${st}">${formatStackCount(st)}</span>`;
-          }
+          if (inv.stack > 1) html += `<span class="inv-stack">${inv.stack}</span>`;
           html += `<span class="inv-uuid-chip" title="${esc(inv.uuid)}">${esc(shortUuid(inv.uuid))}</span>`;
           html += `</div>`;
         } else {
-          // orphan stack without catalog — still show UUID + stack count
-          const st = Math.max(1, Math.min(STACK_MAX, Math.floor(inv.stack || 1)));
-          html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${esc(inv.uuid)}" data-stack="${st}" title="${esc(inv.uuid)} · x${st}">`;
-          html += `<span class="inv-stack${st >= STACK_MAX ? ' is-full' : ''}">${formatStackCount(st)}</span>`;
-          html += `<span class="inv-uuid-chip">${esc(shortUuid(inv.uuid))}</span></div>`;
+          // orphan stack without catalog — still show UUID for debug
+          html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${esc(inv.uuid)}" title="${esc(inv.uuid)}"><span class="inv-uuid-chip">${esc(shortUuid(inv.uuid))}</span></div>`;
         }
       } else {
         html += `<div class="inv-cell"></div>`;
@@ -1651,7 +1542,7 @@ function showError(msg) {
     grid.innerHTML = html;
     document.getElementById('invCount').textContent = `${inventoryItems.filter(Boolean).length}/${BAG_SLOTS || totalSlots}`;
     const scope = document.getElementById('bagScope');
-    if (scope) scope.textContent = `Account bag · UUID stacks · max ${STACK_MAX}`;
+    if (scope) scope.textContent = 'Account bag · UUID stacks';
     attachInventoryListeners();
   }
 
