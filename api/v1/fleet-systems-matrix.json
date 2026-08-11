@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "title": "Fleet deploy · API · assets · runtime systems",
+  "doc": "https://github.com/MolochDaGod/Grudge-Builder/blob/main/docs/FLEET_DEPLOY_API_ASSETS_SYSTEMS_SSOT.md",
+  "layers": {
+    "playerState": {
+      "authority": "Railway Postgres",
+      "api": "https://grudge-api-production-0d46.up.railway.app",
+      "browser": "same-origin /api/* rewrites",
+      "not": ["D1", "Puter KV alone", "localStorage-only production"]
+    },
+    "binaries": {
+      "authority": "R2 grudge-assets",
+      "cdn": "https://assets.grudge-studio.com",
+      "client": "assetUrl()"
+    },
+    "definitions": {
+      "authority": "ObjectStore JSON",
+      "url": "https://objectstore.grudge-studio.com/api/v1"
+    },
+    "assetIndex": {
+      "authority": "Cloudflare D1 asset_registry",
+      "not": "player characters"
+    },
+    "auth": {
+      "authority": "id.grudge-studio.com",
+      "deprecated": "api.grudge-studio.com"
+    }
+  },
+  "products": {
+    "craftSuite": "https://grudgewarlords.com/craft/",
+    "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=warlords",
+    "infoMainPanel": "https://info.grudge-studio.com/main-panel.html"
+  },
+  "runtimePins": {
+    "three": "^0.185.1",
+    "rapierCompat": "^0.19.3",
+    "meshBvh": "^0.9.10",
+    "pathfinding": "^1.3.0",
+    "colyseusJs": "^0.16.22"
+  },
+  "raycast": {
+    "ground": "down ray or BVH sample — same height field as feet",
+    "pick": "setFromCamera + pick layer meshes only",
+    "combat": "center aim / soft-lock — grudge-combat-targeting",
+    "directionalAi": "pathfinding waypoint + yawTowardHorizontal"
+  },
+  "assetPrefixes": {
+    "grudge6": "models/grudge6/",
+    "toonRts": "asset-packs/toon-rts-characters/",
+    "nature": "models/nature/",
+    "icons": "icons/",
+    "craftpix": "ui/craftpix/",
+    "fleetJs": "js/"
+  },
+  "probes": [
+    "npm run probe:stack",
+    "npm run probe:auth",
+    "npm run probe:deployments",
+    "npm run check:best-practices"
+  ]
+}
