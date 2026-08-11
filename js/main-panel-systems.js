@@ -57,36 +57,110 @@
     undead: { intellect: 2, wisdom: 3 },
   };
 
-  /** Fallback equip rules if class-equipment-rules.json not loaded */
+  /**
+   * Soft effectiveness only — equip is never blocked.
+   * mult > 1 = class passive boost; mult < 1 = reduced effectiveness.
+   */
   const CLASS_EQUIP_FALLBACK = {
     warrior: {
-      dualWield: true,
-      armorTypes: ['plate', 'mail'],
-      weaponTypes: ['shields', 'swords', 'greatswords', 'axes1h', 'greataxes', 'hammers1h', 'hammers2h'],
+      dualWieldEfficient: true,
+      preferredArmor: ['plate', 'mail'],
+      preferredWeapons: ['shields', 'swords', 'greatswords', 'axes1h', 'greataxes', 'hammers1h', 'hammers2h'],
+      weaponEffectiveness: { '1h_melee': 1.15, '2h_melee': 1.12, shield: 1.18, bow: 0.72, gun: 0.7, staff: 0.68, focus: 0.75 },
+      armorEffectiveness: { plate: 1.2, mail: 1.1, leather: 0.88, cloth: 0.72 },
+      dualWieldEffectiveness: 1.08,
       animPacks: { sword_shield: true, dual_wield: true, two_handed: true },
       defaultLoadout: { main: 'swords', off: 'shields', style: 'sword_shield' },
+      passives: [
+        { id: 'w_plate_training', name: 'Plate Training', kind: 'armor', description: 'Plate/mail strong; cloth weak.' },
+        { id: 'w_weapon_mastery', name: 'Weapon Mastery', kind: 'weapon', description: 'Melee + shields strong; bows/staves weak.' },
+        { id: 'w_dual_blades', name: 'Twin Blades', kind: 'dual', description: 'Efficient dual-wield (+8%).' },
+      ],
     },
     mage: {
-      dualWield: false,
-      armorTypes: ['cloth'],
-      weaponTypes: ['fireStaves', 'frostStaves', 'holyStaves', 'lightningStaves', 'arcaneStaves', 'natureStaves'],
+      dualWieldEfficient: false,
+      preferredArmor: ['cloth'],
+      preferredWeapons: ['fireStaves', 'arcaneStaves', 'orbs', 'tomes'],
+      weaponEffectiveness: { staff: 1.22, focus: 1.18, '1h_melee': 0.7, '2h_melee': 0.65, shield: 0.72, bow: 0.75, gun: 0.7 },
+      armorEffectiveness: { cloth: 1.25, leather: 0.9, mail: 0.7, plate: 0.55 },
+      dualWieldEffectiveness: 0.72,
       animPacks: { magic_spell: true },
       defaultLoadout: { main: 'arcaneStaves', off: 'tomes', style: 'magic_spell' },
+      passives: [
+        { id: 'm_arcane_vestments', name: 'Arcane Vestments', kind: 'armor', description: 'Cloth amplifies; plate chokes mana.' },
+        { id: 'm_focus_channel', name: 'Focus Channel', kind: 'weapon', description: 'Staves/tomes strong; steel weak.' },
+        { id: 'm_no_twin_steel', name: 'Single Focus', kind: 'dual', description: 'Dual melee inefficient (−28%).' },
+      ],
     },
     ranger: {
-      dualWield: false,
-      armorTypes: ['leather', 'mail'],
-      weaponTypes: ['bows', 'crossbows', 'guns', 'daggers', 'greatswords', 'spears'],
+      dualWieldEfficient: false,
+      preferredArmor: ['leather', 'mail'],
+      preferredWeapons: ['bows', 'crossbows', 'guns', 'daggers', 'spears'],
+      weaponEffectiveness: { bow: 1.22, gun: 1.15, '1h_melee': 1.0, '2h_melee': 1.05, shield: 0.78, staff: 0.72, focus: 0.8 },
+      armorEffectiveness: { leather: 1.18, mail: 1.08, cloth: 0.85, plate: 0.68 },
+      dualWieldEffectiveness: 0.88,
       animPacks: { longbow: true, rifle: true, two_handed: true },
       defaultLoadout: { main: 'bows', off: null, style: 'longbow' },
+      passives: [
+        { id: 'r_trail_gear', name: 'Trail Gear', kind: 'armor', description: 'Leather/mail preferred; plate slows.' },
+        { id: 'r_marksman', name: 'Marksman', kind: 'weapon', description: 'Bows/guns excel; staves weak.' },
+        { id: 'r_offhand_burden', name: 'Off-Hand Burden', kind: 'dual', description: 'Dual allowed but −12%.' },
+      ],
     },
     worge: {
-      dualWield: false,
-      armorTypes: ['leather'],
-      weaponTypes: ['fireStaves', 'natureStaves', 'spears', 'daggers', 'bows', 'hammers1h'],
+      dualWieldEfficient: false,
+      preferredArmor: ['leather'],
+      preferredWeapons: ['hammers1h', 'spears', 'natureStaves', 'bows', 'daggers'],
+      weaponEffectiveness: { '1h_melee': 1.1, '2h_melee': 1.05, staff: 1.12, bow: 1.05, focus: 1.0, shield: 0.8, gun: 0.75 },
+      armorEffectiveness: { leather: 1.2, mail: 0.92, cloth: 0.95, plate: 0.65 },
+      dualWieldEffectiveness: 0.85,
       animPacks: { sword_shield: true, magic_spell: true, longbow: true },
       defaultLoadout: { main: 'hammers1h', off: null, style: 'sword_shield' },
+      passives: [
+        { id: 'o_hidebound', name: 'Hidebound', kind: 'armor', description: 'Leather for the shift; plate resists.' },
+        { id: 'o_primal_tools', name: 'Primal Tools', kind: 'weapon', description: 'Hybrid mace/staff/bow; guns weak.' },
+        { id: 'o_wild_grip', name: 'Wild Grip', kind: 'dual', description: 'Dual possible at −15%.' },
+      ],
     },
+  };
+
+  const WEAPON_FAMILY_MAP = {
+    swords: '1h_melee',
+    axes1h: '1h_melee',
+    hammers1h: '1h_melee',
+    daggers: '1h_melee',
+    maces: '1h_melee',
+    greatswords: '2h_melee',
+    greataxes: '2h_melee',
+    hammers2h: '2h_melee',
+    spears: '2h_melee',
+    shields: 'shield',
+    bows: 'bow',
+    crossbows: 'bow',
+    guns: 'gun',
+    rifles: 'gun',
+    pistols: 'gun',
+    fireStaves: 'staff',
+    frostStaves: 'staff',
+    holyStaves: 'staff',
+    lightningStaves: 'staff',
+    arcaneStaves: 'staff',
+    natureStaves: 'staff',
+    staves: 'staff',
+    orbs: 'focus',
+    tomes: 'focus',
+    foci: 'focus',
+    wands: 'focus',
+  };
+
+  const ARMOR_FAMILY_MAP = {
+    cloth: 'cloth',
+    robe: 'cloth',
+    leather: 'leather',
+    mail: 'mail',
+    chain: 'mail',
+    plate: 'plate',
+    heavy: 'plate',
   };
 
   function esc(s) {
@@ -442,13 +516,102 @@
     return first ? { key: first, tree: trees[first] } : null;
   }
 
-  function renderEquipRulesStrip(rules) {
+  function resolveWeaponFamily(typeOrFamily, rulesDoc) {
+    const raw = String(typeOrFamily || '').toLowerCase().replace(/\s+/g, '');
+    if (!raw) return null;
+    if (['1h_melee', '2h_melee', 'shield', 'bow', 'gun', 'staff', 'focus'].includes(raw)) return raw;
+    if (WEAPON_FAMILY_MAP[raw]) return WEAPON_FAMILY_MAP[raw];
+    const families = rulesDoc?.weaponFamilies || {};
+    for (const [fam, list] of Object.entries(families)) {
+      if ((list || []).some((t) => String(t).toLowerCase() === raw)) return fam;
+    }
+    return raw;
+  }
+
+  function resolveArmorFamily(typeOrFamily, rulesDoc) {
+    const raw = String(typeOrFamily || '').toLowerCase().replace(/\s+/g, '');
+    if (!raw) return null;
+    if (['cloth', 'leather', 'mail', 'plate'].includes(raw)) return raw;
+    if (ARMOR_FAMILY_MAP[raw]) return ARMOR_FAMILY_MAP[raw];
+    const families = rulesDoc?.armorFamilies || {};
+    for (const [fam, list] of Object.entries(families)) {
+      if ((list || []).some((t) => String(t).toLowerCase() === raw)) return fam;
+    }
+    return raw;
+  }
+
+  /** Soft mult only — never blocks equip. Defaults from policy if missing. */
+  function getWeaponEffectiveness(classKey, weaponTypeOrFamily, rulesDoc) {
+    const rules = getClassEquipRules(classKey, rulesDoc);
+    const fam = resolveWeaponFamily(weaponTypeOrFamily, rulesDoc);
+    const table = rules.weaponEffectiveness || {};
+    if (fam && table[fam] != null) return Number(table[fam]);
+    const def = rulesDoc?.policy?.defaultWeaponMult;
+    return def != null ? Number(def) : 0.78;
+  }
+
+  function getArmorEffectiveness(classKey, armorTypeOrFamily, rulesDoc) {
+    const rules = getClassEquipRules(classKey, rulesDoc);
+    const fam = resolveArmorFamily(armorTypeOrFamily, rulesDoc);
+    const table = rules.armorEffectiveness || {};
+    if (fam && table[fam] != null) return Number(table[fam]);
+    const def = rulesDoc?.policy?.defaultArmorMult;
+    return def != null ? Number(def) : 0.82;
+  }
+
+  function getDualWieldEffectiveness(classKey, rulesDoc) {
+    const rules = getClassEquipRules(classKey, rulesDoc);
+    if (rules.dualWieldEffectiveness != null) return Number(rules.dualWieldEffectiveness);
+    return rules.dualWieldEfficient ? 1.08 : 0.85;
+  }
+
+  function formatMult(m) {
+    const n = Number(m);
+    if (!Number.isFinite(n)) return '—';
+    const pct = Math.round((n - 1) * 100);
+    if (pct > 0) return `+${pct}%`;
+    if (pct < 0) return `${pct}%`;
+    return '±0%';
+  }
+
+  function renderEffectivenessGrid(table, label) {
+    if (!table || !Object.keys(table).length) return '';
+    const cells = Object.entries(table)
+      .map(([k, v]) => {
+        const n = Number(v);
+        const cls = n > 1.01 ? 'mp-eff-up' : n < 0.99 ? 'mp-eff-down' : 'mp-eff-flat';
+        return `<span class="mp-eff-chip ${cls}" title="${esc(label)} ${esc(k)}">${esc(k)} <strong>${formatMult(n)}</strong></span>`;
+      })
+      .join('');
+    return `<div class="mp-eff-row"><span class="mp-eff-label">${esc(label)}</span>${cells}</div>`;
+  }
+
+  function renderClassPassivesStrip(rules) {
+    const passives = rules.passives || [];
+    if (!passives.length) return '';
+    return `<div class="mp-class-passives">
+      <div class="mp-equip-rules-title">Class passives (soft — no equip bans)</div>
+      ${passives
+        .map(
+          (p) => `<div class="mp-class-passive" data-kind="${esc(p.kind || '')}">
+          <span class="mp-sk-tag ${p.kind === 'armor' ? 'passive' : p.kind === 'weapon' ? 'active' : 'grant'}">${esc(p.kind || 'passive')}</span>
+          <strong>${esc(p.name)}</strong>
+          <span class="mp-passive-desc">${esc(p.description || '')}</span>
+        </div>`,
+        )
+        .join('')}
+    </div>`;
+  }
+
+  function renderEquipRulesStrip(rules, rulesDoc) {
     if (!rules) return '';
-    const dual = rules.dualWield
-      ? `<span class="mp-rule-pill mp-rule-ok">Dual wield ✓</span>`
-      : `<span class="mp-rule-pill mp-rule-no">No dual wield</span>`;
-    const weapons = (rules.weaponTypes || []).slice(0, 8).map((w) => esc(w)).join(' · ');
-    const armor = (rules.armorTypes || []).map((a) => esc(a)).join(' · ');
+    const dualEff = getDualWieldEffectiveness(rules.id || 'warrior', { classes: { [rules.id]: rules }, policy: rulesDoc?.policy });
+    const dualPill =
+      dualEff >= 1
+        ? `<span class="mp-rule-pill mp-rule-ok">Dual style ${formatMult(dualEff)}</span>`
+        : `<span class="mp-rule-pill mp-rule-soft">Dual style ${formatMult(dualEff)} (allowed)</span>`;
+    const prefW = (rules.preferredWeapons || rules.weaponTypes || []).slice(0, 6).map((w) => esc(w)).join(' · ');
+    const prefA = (rules.preferredArmor || rules.armorTypes || []).map((a) => esc(a)).join(' · ');
     const packs = rules.animPacks
       ? Object.keys(rules.animPacks)
           .map((p) => esc(p))
@@ -458,14 +621,19 @@
       ? `${esc(rules.defaultLoadout.main || '—')}${rules.defaultLoadout.off ? ' + ' + esc(rules.defaultLoadout.off) : ''} → ${esc(rules.defaultLoadout.style || '')}`
       : '';
     return `<div class="mp-equip-rules">
-      <div class="mp-equip-rules-title">Class equipment · mesh rules</div>
-      <div class="mp-equip-rules-row">${dual}
-        <span class="mp-rule-pill">Armor: ${armor || '—'}</span>
+      <div class="mp-equip-rules-title">Class equipment · soft effectiveness</div>
+      <div class="mp-equip-rules-row">
+        <span class="mp-rule-pill mp-rule-ok">Equip anything</span>
+        ${dualPill}
+        <span class="mp-rule-pill">Pref armor: ${prefA || '—'}</span>
       </div>
-      <div class="mp-equip-rules-detail"><strong>Weapons</strong> ${weapons || '—'}</div>
+      ${renderEffectivenessGrid(rules.armorEffectiveness, 'Armor')}
+      ${renderEffectivenessGrid(rules.weaponEffectiveness, 'Weapon')}
+      <div class="mp-equip-rules-detail"><strong>Preferred weapons</strong> ${prefW || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Anim packs</strong> ${packs || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Default loadout</strong> ${load || '—'}</div>
-      <div class="mp-equip-rules-note">Only Warrior dual-wields 1H. 2H clears off-hand. Mage off-hand = tome/orb. Wire via class-equipment-rules.json.</div>
+      ${renderClassPassivesStrip(rules)}
+      <div class="mp-equip-rules-note">Passives raise preferred gear and lower off-type stats — never lock slots. SSOT: class-equipment-rules.json</div>
     </div>`;
   }
 
@@ -489,7 +657,7 @@
       <div class="mp-char-meta">Hero Lv ${level} · Skill pts <strong style="color:var(--gold)">${avail}</strong>
         · Prefab pack: <code>${esc(rules.prefabPack || key)}</code>
         · Passives &amp; granted abilities from master-skillTrees</div>
-      ${renderEquipRulesStrip(rules)}
+      ${renderEquipRulesStrip(rules, equipRules)}
       <div class="mp-class-tree">`;
 
     (tree.tiers || []).forEach((tier) => {
@@ -595,26 +763,46 @@
     });
   }
 
-  /** Equip gate used by inventory / mesh equip wiring */
-  function canEquipWeapon(classKey, weaponFamily, hand, rulesDoc) {
-    const rules = getClassEquipRules(classKey, rulesDoc);
-    const fam = String(weaponFamily || '').toLowerCase();
-    const types = (rules.weaponTypes || []).map((t) => String(t).toLowerCase());
-    if (types.includes(fam)) {
-      if (hand === 'off' && !rules.dualWield) {
-        // shields / focus off-hand ok without dual
-        const offOk = (rules.offHandAllowed || []).some((f) => fam.includes(String(f).replace(/_/g, '')) || String(f) === fam);
-        if (fam.includes('shield') || fam.includes('tome') || fam.includes('orb') || fam.includes('focus')) return true;
-        if (!offOk && fam.match(/sword|axe|hammer|dagger|mace/)) return false;
-      }
-      if (hand === 'off' && rules.dualWield === false && fam.match(/sword|axe|hammer|dagger/)) return false;
-      return true;
-    }
-    return false;
+  /**
+   * Soft policy: never hard-block equip. Always true.
+   * Use getWeaponEffectiveness / getArmorEffectiveness for combat contribution.
+   */
+  function canEquipWeapon(_classKey, _weaponFamily, _hand, _rulesDoc) {
+    return true;
   }
 
-  function canDualWield(classKey, rulesDoc) {
-    return !!getClassEquipRules(classKey, rulesDoc).dualWield;
+  function canEquipArmor(_classKey, _armorFamily, _rulesDoc) {
+    return true;
+  }
+
+  /** Dual style is always allowed; contribution uses getDualWieldEffectiveness. */
+  function canDualWield(_classKey, _rulesDoc) {
+    return true;
+  }
+
+  function isDualWieldEfficient(classKey, rulesDoc) {
+    return !!getClassEquipRules(classKey, rulesDoc).dualWieldEfficient;
+  }
+
+  /**
+   * Apply class soft mults to a gear piece's combat stats.
+   * @param {'weapon'|'armor'} kind
+   * @param {string} typeOrFamily category string (e.g. swords, plate)
+   * @param {Record<string, number>} stats flat stats from item
+   */
+  function applyClassGearEffectiveness(classKey, kind, typeOrFamily, stats, rulesDoc) {
+    const mult =
+      kind === 'armor'
+        ? getArmorEffectiveness(classKey, typeOrFamily, rulesDoc)
+        : getWeaponEffectiveness(classKey, typeOrFamily, rulesDoc);
+    const out = {};
+    Object.entries(stats || {}).forEach(([k, v]) => {
+      out[k] = typeof v === 'number' ? v * mult : v;
+    });
+    out._classEffectiveness = mult;
+    out._classKey = classKey;
+    out._gearFamily = kind === 'armor' ? resolveArmorFamily(typeOrFamily, rulesDoc) : resolveWeaponFamily(typeOrFamily, rulesDoc);
+    return out;
   }
 
   // ── Profession trees (SVG, character levels / unlocks) ──────────────
@@ -827,7 +1015,15 @@
     resolveClassTree,
     getClassEquipRules,
     canEquipWeapon,
+    canEquipArmor,
     canDualWield,
+    isDualWieldEfficient,
+    getWeaponEffectiveness,
+    getArmorEffectiveness,
+    getDualWieldEffectiveness,
+    applyClassGearEffectiveness,
+    resolveWeaponFamily,
+    resolveArmorFamily,
     calculateDerivedStats,
     calculateCombatPower,
     getBuildRating,
