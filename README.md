@@ -40,6 +40,45 @@ Editor: T0–T1 only (armour / weapons / relics / class / forms / weapon-skill A
 
 Docs: [docs/ASSETS.md](docs/ASSETS.md) · [docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md](docs/BROWSER_GAMEPLAY_DEPLOY_SSOT.md) · skill `toon-rts-author` · skill `grudge6-modular-characters`
 
+### Main Panel 2D UI (readable · fit-to-screen · one canvas)
+
+**Live:** https://info.grudge-studio.com/main-panel.html  
+**Debug scale chip:** `?scaleChip=1`  
+**SSOT doc:** [docs/MAIN_PANEL_2D_SSOT.md](docs/MAIN_PANEL_2D_SSOT.md)
+
+Production Main Panel is the **ObjectStore / info** host (not a second SPA). Related craft/era surface: [ui.grudge-studio.com/main-panel](https://ui.grudge-studio.com/main-panel.html?era=warlords).
+
+| Concern | Behavior |
+|---------|----------|
+| **Fit screen** | Design stage (~1440px) **contain-scaled** into the viewport (`js/main-panel-canvas-2d.js`) |
+| **Readability** | Dark interior panels + high-contrast text (`css/main-panel-readable.css`) — parchment is **outer frame only** |
+| **Containers** | Hard gold borders on tabs, columns, cards, stats, inventory |
+| **Slots** | CraftPix slot art + dark fill + gold hover/equipped |
+| **Scroll** | **One** World Map parchment shell (`#mainScroll`); open once on boot; tabs use `snapOpen` + content fade (no re-Appear) |
+| **2D canvas** | `#mp2dCanvas` drag ghost / click pulse (not Three.js) |
+| **3D hero** | `#hero-viewport` WebGL paperdoll (separate layer) |
+
+| File | Role |
+|------|------|
+| `main-panel.html` | Shell + tabs + inventory + systems |
+| `css/main-panel-2d.css` | CraftPix chrome, atmosphere, tab motion |
+| `css/main-panel-readable.css` | **Contrast + dark wells + hard edges** (load after 2d) |
+| `css/ui-scroll-container.css` · `js/ui-scroll-container.js` | Parchment open/close pack |
+| `js/main-panel-2d.js` | Fonts/i18n/tab enter bootstrap |
+| `js/main-panel-canvas-2d.js` | Viewport fit scale + interactive 2D canvas |
+| `js/main-panel-hero-viewport.js` | grudge6 3D equip viewport |
+| `js/main-panel-i18n.js` · `api/v1/main-panel-locales.json` | Locale packs |
+
+**npm exports:** `@grudge-studio/objectstore/ui/2d` · `./ui/canvas-2d` · `./ui/main-panel-2d.css` · `./ui/fonts.css`
+
+**Smoke after deploy:**
+
+```bash
+curl.exe -sI https://info.grudge-studio.com/main-panel.html
+curl.exe -sI https://info.grudge-studio.com/css/main-panel-readable.css
+# Browser hard-refresh (Ctrl+F5) — open main-panel, confirm readable gold tabs + dark panels
+```
+
 ### Deployment-wide rule (browser gameplay assets)
 
 Systems that need **web-ready playable** assets (characters, equip, icons, anims, catalogs) must ship **fleet-wide**:
