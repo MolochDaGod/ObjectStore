@@ -1,0 +1,113 @@
+/**
+ * Grudge game fonts — self-hosted via jsDelivr fontsource (no fonts.googleapis.com).
+ * Production main-panel / info hub / scroll containers.
+ *
+ * Display: Cinzel Decorative + Cinzel
+ * Body:    Crimson Text (readable RPG body; IM Fell as optional italic accent)
+ * Mono:    JetBrains Mono
+ *
+ * Best practices: font-display:swap · woff2 only · unicode-range latin · preload optional
+ */
+@font-face {
+  font-family: "Cinzel Decorative";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/cinzel-decorative@5.2.5/latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Cinzel Decorative";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/cinzel-decorative@5.2.5/latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Crimson Text";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Crimson Text";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Crimson Text";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IM Fell English";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/im-fell-english@5.2.5/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IM Fell English";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/im-fell-english@5.2.5/latin-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@5.2.5/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@5.2.5/latin-700-normal.woff2") format("woff2");
+}
+
+:root {
+  --font-display: "Cinzel Decorative", "Cinzel", "Palatino Linotype", serif;
+  --font-heading: "Cinzel", "Palatino Linotype", serif;
+  --font-body: "Crimson Text", "IM Fell English", Georgia, "Segoe UI", serif;
+  --font-ui: "Cinzel", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --font-fantasy-display: var(--font-display);
+  --font-fantasy-heading: var(--font-heading);
+  --font-fantasy-body: var(--font-body);
+  --font-fantasy-ui: var(--font-ui);
+  --font-fantasy-mono: var(--font-mono);
+}

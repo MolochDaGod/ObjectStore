@@ -7,12 +7,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <title>Grudge Warlords — Main Panel</title>
+  <!-- Game fonts (self-hosted fontsource — no Google Fonts) + 2D craftpix chrome -->
+  <link rel="stylesheet" href="css/grudge-game-fonts.css">
   <link rel="stylesheet" href="css/grudge-theme.css">
-  <!-- Fantasy RPG type + World Map Scroll container (Humble Appear/Disappear) -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/ui-scroll-container.css">
   <link rel="stylesheet" href="css/ui-cursor.css">
   <link rel="stylesheet" href="css/ui-party.css">
+  <link rel="stylesheet" href="css/main-panel-2d.css">
+  <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
     .app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
@@ -318,11 +321,12 @@
 <body class="scroll-theme">
 <div class="app">
   <header class="top-bar">
-    <div class="logo"><a href="index.html" style="color:var(--gold)">← Hub</a> <h1 style="display:inline;margin-left:12px" class="gold-text">Grudge Warlords</h1></div>
+    <div class="logo"><a href="index.html" style="color:var(--gold)" data-i18n="app.hub">← Hub</a> <h1 style="display:inline;margin-left:12px" class="gold-text" data-i18n="app.brand">Grudge Warlords</h1></div>
     <div class="player-info">
       <span class="name" id="playerName">Guest</span>
       <span style="color:var(--muted);font-size:11px" id="playerClass">Lv.1 Warrior</span>
       <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+      <div id="mp2dLangHost"></div>
     </div>
   </header>
   <div class="main-body">
@@ -343,10 +347,10 @@
     </main>
     <aside class="right-col" id="invScroll">
       <div class="inv-header">
-        <h3>Inventory</h3>
+        <h3 data-i18n="app.inventory">Inventory</h3>
         <div style="display:flex;align-items:center;gap:10px;">
           <span class="inv-count" id="invCount">0/42</span>
-          <span style="font-family:monospace;font-size:12px;color:var(--gold)" id="goldDisplay">250 Gold</span>
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold)" id="goldDisplay">250 Gold</span>
         </div>
       </div>
       <div class="inv-grid" id="invGrid"></div>
@@ -360,6 +364,8 @@
 
 <script src="./js/weapon-skill-tree.js"></script>
 <script src="./js/main-panel-systems.js"></script>
+<script src="./js/main-panel-i18n.js"></script>
+<script src="./js/main-panel-2d.js"></script>
 <script>
   const CDN = 'https://assets.grudge-studio.com';
   const PAGE_BASE = (() => {
@@ -546,10 +552,16 @@
     autoEquipDemo();
     populateInventoryDemo();
 
-    // Tab strip
-    document.getElementById('tabStrip').innerHTML = TABS.map(t =>
-      `<button class="tab-btn ${t===activeTab?'active':''}" onclick="switchTab('${t}')">${t}</button>`
-    ).join('');
+    // Tab strip (data-tab for i18n-safe active state)
+    function rebuildTabStrip() {
+      const i18n = window.MainPanelI18n;
+      document.getElementById('tabStrip').innerHTML = TABS.map(t => {
+        const label = i18n?.tabLabel?.(t) || t;
+        return `<button type="button" class="tab-btn ${t===activeTab?'active':''}" data-tab="${t}" onclick="switchTab('${t}')">${label}</button>`;
+      }).join('');
+    }
+    window.rebuildTabStrip = rebuildTabStrip;
+    rebuildTabStrip();
 
     // Deep-link ?tab=professions|attributes|skills|crafting
     try {
@@ -1150,10 +1162,15 @@
 
   function switchTab(t) {
     activeTab = t;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === t));
+    document.querySelectorAll('.tab-btn').forEach(b =>
+      b.classList.toggle('active', (b.getAttribute('data-tab') || b.textContent) === t),
+    );
     // Keep scroll open without replaying Appear every tab
     _contentScrollApi?.snapOpen?.();
     renderTab();
+    try {
+      window.MainPanel2D?.animateContentEnter?.();
+    } catch { /* */ }
   }
   // Expose for party radial / deep-links (must be on window for ES module callers)
   window.switchTab = switchTab;

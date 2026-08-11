@@ -26,7 +26,29 @@
     },
     "./mcp": {
       "import": "./mcp/objectstore-server.js"
-    }
+    },
+    "./ui/2d": {
+      "import": "./js/main-panel-2d.js",
+      "default": "./js/main-panel-2d.js"
+    },
+    "./ui/i18n": {
+      "import": "./js/main-panel-i18n.js",
+      "default": "./js/main-panel-i18n.js"
+    },
+    "./ui/fonts.css": "./css/grudge-game-fonts.css",
+    "./ui/main-panel-2d.css": "./css/main-panel-2d.css",
+    "./locales/main-panel": "./api/v1/main-panel-locales.json"
+  },
+  "grudgeUi2d": {
+    "mainPanel": "/main-panel.html",
+    "fonts": "/css/grudge-game-fonts.css",
+    "chrome": "/css/main-panel-2d.css",
+    "i18n": "/js/main-panel-i18n.js",
+    "locales": "/api/v1/main-panel-locales.json",
+    "craftpix": "https://ui.grudge-studio.com/assets/craftpix/",
+    "craftpixRpgCss": "https://assets.grudge-studio.com/ui/craftpix-rpg/craftpix-rpg-ui.css",
+    "localPacks": "/ui/packs/",
+    "scroll": "/ui/scroll/"
   },
   "files": [
     "integrations/",
@@ -41,6 +63,7 @@
     "video/",
     "heroes/",
     "branding/",
+    "ui/",
     "openapi.yaml",
     "README.md",
     "LICENSE"
@@ -188,6 +211,8 @@
     "packages:prod": "node ./scripts/build-prod-gltf-packages.mjs",
     "packages:prod:upload": "node ./scripts/build-prod-gltf-packages.mjs --upload --remote",
     "wire:prod-gltf-weapons": "node ./scripts/wire-prod-gltf-weapon-prefabs.mjs",
+    "wire:skill-prefab-anims": "node ./scripts/wire-skill-prefab-anims.mjs",
+    "test:grudge6-editor": "node ./scripts/test-grudge6-editor-ssot.mjs",
     "packages:anims": "node ./scripts/build-prod-anim-packages.mjs",
     "packages:anims:upload": "node ./scripts/build-prod-anim-packages.mjs --upload --remote"
   },

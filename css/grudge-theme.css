@@ -1,5 +1,7 @@
-/* Grudge Game Data Hub — WCS (Warlord Crafting Suite) Theme */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=Spectral+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+/* Grudge Game Data Hub — WCS (Warlord Crafting Suite) Theme
+ * Fonts: load css/grudge-game-fonts.css first (self-hosted fontsource).
+ * No Google Fonts @import — production game UI uses local/CDN woff2.
+ */
 
 :root {
   /* WCS Core Palette */
@@ -23,10 +25,10 @@
   --purple: #aa44ff; --orange: #ff8844; --cyan: #44ddff;
   --miner: hsl(43 96% 56%); --forester: hsl(142 71% 29%);
   --mystic: hsl(271 91% 65%); --chef: hsl(32 95% 44%); --engineer: hsl(24 94% 50%);
-  /* Fantasy RPG type stack (pair with ui-scroll-container parchment) */
+  /* Fantasy RPG type — overridden by grudge-game-fonts.css when loaded first */
   --font-display: 'Cinzel Decorative', 'Cinzel', serif;
   --font-heading: 'Cinzel', serif;
-  --font-body: 'IM Fell English', 'Spectral SC', Georgia, 'Segoe UI', serif;
+  --font-body: 'Crimson Text', 'IM Fell English', Georgia, 'Segoe UI', serif;
   --font-mono: 'JetBrains Mono', Consolas, monospace;
   /* Parchment tokens (World Map Scroll pack) */
   --scroll-parchment: #c4ad7e;
