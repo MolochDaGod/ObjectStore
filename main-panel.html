@@ -1098,49 +1098,63 @@
     }
   }
 
-  /** Mount ONE World Map scroll for the entire main panel canvas. */
+  /** Mount ONE World Map scroll = full main panel canvas (must open + fill stage). */
   let _mainScrollApi = null;
   async function initScrollShells() {
     const mod = await import('./js/ui-scroll-container.js');
-    await mod.preloadScrollFrames();
+    // Preload frames (non-blocking failure OK)
+    try {
+      await mod.preloadScrollFrames();
+    } catch (e) {
+      console.warn('[main-panel] scroll frame preload', e);
+    }
     const host = document.getElementById('mainScroll');
     if (!host) {
       console.warn('[main-panel] #mainScroll missing');
       return;
     }
-    // Prefer reduced-motion: skip appear frames, snap open
     let reduced = false;
     try {
       reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     } catch { /* */ }
+
     if (host.dataset.scrollMounted !== '1') {
       _mainScrollApi = mod.mountScrollContainer(host, {
-        autoOpen: !reduced,
-        fps: reduced ? 60 : 16,
-        contentRevealAt: reduced ? 0 : 0.58,
+        // Always open — canvas is unusable while closed (content opacity 0)
+        autoOpen: true,
+        fps: reduced ? 24 : 16,
+        // Reveal UI early so panel is usable mid-appear
+        contentRevealAt: reduced ? 0 : 0.35,
         className: 'main-canvas-scroll',
       });
-      if (reduced) _mainScrollApi?.snapOpen?.();
     } else {
       _mainScrollApi = host._scrollApi;
-      _mainScrollApi?.snapOpen?.();
     }
-    // legacy aliases (party/unit code)
+
+    // Hard guarantee: open + visible content (appear frames may 404)
+    _mainScrollApi?.snapOpen?.();
+    host.classList.add('is-open');
+    host.classList.remove('is-closed', 'is-animating');
+
     window._contentScrollApi = _mainScrollApi;
     window._mainScrollApi = _mainScrollApi;
-    requestAnimationFrame(() => {
-      updateTabIndicator();
+
+    const reflow = () => {
       try {
+        window.MainPanelCanvas2D?.ensureScrollOpen?.();
         window.MainPanelCanvas2D?.fitScale?.();
       } catch { /* */ }
-    });
-    // After open animation completes, reflow design-scale stage
-    setTimeout(() => {
       try {
-        window.MainPanelCanvas2D?.fitScale?.();
         updateTabIndicator();
       } catch { /* */ }
-    }, reduced ? 50 : 1100);
+    };
+    requestAnimationFrame(reflow);
+    // After appear (~0.8s) and late paint
+    setTimeout(reflow, reduced ? 50 : 400);
+    setTimeout(reflow, reduced ? 100 : 1000);
+    setTimeout(reflow, 1800);
+
+    host.addEventListener('scroll:open', reflow, { once: false });
   }
 
   function updateTabIndicator() {

@@ -89,10 +89,34 @@ Decorative motion: equip glow, tab underline, content fade-up, viewport idle rim
 - ❌ Nested scroll-shell parchment inside left/right columns (one canvas only)  
 - ❌ Re-playing Appear animation on every tab switch  
 
-## Deploy
+## Deploy + dependencies
+
+| Dep | Role | Host |
+|-----|------|------|
+| `ui-scroll-container.js` | Parchment appear/open | same-origin `/js` + `/ui/scroll/*` |
+| `main-panel-canvas-2d.js` | Fluid stage + 2D drag canvas | same-origin |
+| `main-panel-readable.css` | Dark readable wells | same-origin |
+| CraftPix slot PNGs | Slot chrome | `ui.grudge-studio.com/assets/craftpix/**` |
+| CraftPix RPG CSS | Optional skin | `assets.grudge-studio.com/ui/craftpix-rpg/**` |
+| grudge6 kits | Hero viewport | `assets.grudge-studio.com/asset-packs/toon-rts-characters/**` |
+| Catalogs | Items / gear | `info…/api/v1` + objectstore mirror |
+
+**Hard rules for redeploy**
+
+1. Push `ObjectStore` `main` → Vercel project for **info.grudge-studio.com**.  
+2. Smoke **live** (not localhost): open + hard refresh.  
+3. Confirm `#mainScroll.is-open` and content fills viewport (no mid cut).  
+4. Scroll frames under `/ui/scroll/` must ship with Pages (404 → snapOpen still shows UI).  
 
 ```bash
 cd F:\GitHub\ObjectStore
-# git commit + push → Vercel info.grudge-studio.com
-# Smoke: https://info.grudge-studio.com/main-panel.html?scaleChip=1
+git push origin main
+# After Vercel:
+curl.exe -sI https://info.grudge-studio.com/main-panel.html
+curl.exe -sI https://info.grudge-studio.com/js/main-panel-canvas-2d.js
+curl.exe -sI https://info.grudge-studio.com/css/main-panel-readable.css
+curl.exe -sI https://info.grudge-studio.com/ui/scroll/open.png
+# Browser: https://info.grudge-studio.com/main-panel.html  (Ctrl+F5)
 ```
+
+**Anti-pattern fixed (2026-08):** design-width `transform: scale()` on `#mpStageInner` kept full layout box → `overflow:hidden` **cut the panel mid-screen**. Fluid flex fill is SSOT now.
