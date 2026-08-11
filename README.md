@@ -24,9 +24,32 @@ Unity-style paperdoll, **character/asset editor**, and mesh-level kit tools for 
 |------|------|
 | `js/grudge6-kit.js` | `EquipmentManager`, `loadRaceKit(toonRts)`, atlas variants, stone atlas URLs |
 | `js/grudge6-editor.js` | Slot-click T0–T1 inventory, hierarchy, TransformControls, import/export GLB |
-| `js/main-panel-hero-viewport.js` | 3D hero, SI fit, paperdoll → mesh |
+| `js/main-panel-hero-viewport.js` | 3D hero, SI fit, paperdoll → mesh · post-mixer hold pose |
+| `js/grudge6-weapon-hold-pose.js` | **Hold residual SSOT** — `applyWeaponHoldPose(mixer, gait, kind)` |
+| `js/grudge6-lab-weapons.js` | Lab attach + gripOffset · re-exports hold pose SSOT |
 | `main-panel.html` / `grudge6-editor.html` | Deployed info faces |
 | `scripts/test-grudge6-editor-ssot.mjs` | Smoke test (`node scripts/test-grudge6-editor-ssot.mjs --live`) |
+
+### Weapon hold pose (post-mixer residual)
+
+**One SSOT — do not invent a second hold stack.** Static grip stays on attach (`applyGripTransform` / sockets); gait residual runs **after** `mixer.update`.
+
+```js
+import { applyWeaponHoldPose, resolveHoldKindFromEquip } from './js/grudge6-weapon-hold-pose.js';
+
+mixer.update(dt);
+applyWeaponHoldPose(mixer, gait, kind, { THREE, root, hand: 'both', offKind });
+// gait: 'idle'|'walk'|'run'|'sprint' or 0|1|2
+// kind: sword|dagger|axe|mace|hammer|spear|staff|bow|pistol|tome|…
+```
+
+| Call site | Gait | Kind |
+|-----------|------|------|
+| Main Panel hero viewport | `idle` | `resolveHoldKindFromEquip(equip)` |
+| Casting play equip | `CharacterController._gait` | `weaponHoldKind` from equip |
+| player-and-grass `/play` | Idle/Walk/Run anim name | `equipment.equipped` slot |
+
+Stack order: **attach → static grip → `applyWeaponHoldPose` → optional 2H IK**. Dual off-hand reuses the same table (mirrored).
 
 **★ PLAY kits (CDN):**  
 `https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{human|elf|orc|undead|barbarian|dwarf}.glb`

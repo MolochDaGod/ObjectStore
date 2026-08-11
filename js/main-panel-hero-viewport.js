@@ -33,6 +33,10 @@ import {
   isTomeItem,
   resolveTomeVariant,
 } from './grudge6-tome-offhand.js';
+import {
+  applyWeaponHoldPose,
+  resolveHoldKindFromEquip,
+} from './grudge6-weapon-hold-pose.js';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -403,6 +407,17 @@ export async function mountHeroViewport(host, opts) {
     if (disposed) return;
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
+    // Post-mixer hold residual (SSOT: grudge6-weapon-hold-pose) — paperdoll idle gait
+    if (mixer && equip) {
+      const kind = resolveHoldKindFromEquip(equip);
+      const offKind = equip.equippedOffhand?.slot || null;
+      applyWeaponHoldPose(mixer, 'idle', kind, {
+        THREE,
+        hand: 'both',
+        offKind,
+        root,
+      });
+    }
     if (tomeCtrl) tomeCtrl.update(dt);
     // Lock face-user yaw after mixer (anim may write root rotation tracks)
     if (root) applyFaceCamera(root, FACE_CAMERA_YAW);

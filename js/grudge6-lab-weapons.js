@@ -283,6 +283,12 @@ export function applyGripTransform(weaponRoot, entry) {
   weaponRoot.rotation.set(eu.x || 0, eu.y || 0, eu.z || 0);
 }
 
+/**
+ * Post-mixer hold residual — re-export SSOT (no parallel stack).
+ * @see ./grudge6-weapon-hold-pose.js applyWeaponHoldPose(mixer, gait, kind)
+ */
+export { applyWeaponHoldPose, normalizeHoldGait, normalizeHoldKind, resolveHoldKindFromEquip, getHoldPose, WEAPON_HOLD_POSE } from './grudge6-weapon-hold-pose.js';
+
 export function attachToSocket(kitRoot, weaponRoot, slot, held, entry) {
   const socket = findSocket(kitRoot, slot);
   if (!socket) return { ok: false, error: `no socket for ${slot}` };
