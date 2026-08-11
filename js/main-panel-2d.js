@@ -183,10 +183,22 @@
     animateContentEnter();
     wireScaleChip();
 
+    // Side panels (left stats / right bag) — resize + slide to edge tabs
+    try {
+      if (global.MainPanelSidePanels && global.MainPanelSidePanels.boot) {
+        global.MainPanelSidePanels.boot();
+      }
+    } catch (e) {
+      console.warn("[mp2d] side panels", e);
+    }
+
     // After scroll open, refit design canvas
     setTimeout(function () {
       try {
         global.MainPanelCanvas2D && global.MainPanelCanvas2D.fitScale && global.MainPanelCanvas2D.fitScale();
+      } catch (_) {}
+      try {
+        global.MainPanelCanvas2D && global.MainPanelCanvas2D.fitFluid && global.MainPanelCanvas2D.fitFluid();
       } catch (_) {}
     }, 1000);
 

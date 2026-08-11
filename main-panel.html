@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="css/ui-scroll-container.css">
   <link rel="stylesheet" href="css/ui-cursor.css?v=kenney1">
   <link rel="stylesheet" href="css/ui-party.css">
-  <link rel="stylesheet" href="css/main-panel-2d.css?v=fluid4">
+  <link rel="stylesheet" href="css/main-panel-2d.css?v=sidepanels1">
   <!-- Readability: dark panels + high-contrast text over parchment frame -->
-  <link rel="stylesheet" href="css/main-panel-readable.css?v=fluid4">
+  <link rel="stylesheet" href="css/main-panel-readable.css?v=sidepanels1">
   <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
@@ -117,10 +117,147 @@
     .player-info .name { color: var(--gold); font-family: var(--font-display); font-weight: 700; }
     .player-info .xp-bar { width: 120px; height: 6px; background: #2a1e14; border-radius: 3px; overflow: hidden; border: 1px solid #3a2a1a; }
     .player-info .xp-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); border-radius: 3px; transition: width 0.3s; }
-    .main-body { display: flex; flex: 1; min-height: 0; }
-    .left-col { width: 260px; flex-shrink: 0; background: #1a120c; border-right: 2px solid #3a2a1a; overflow-y: auto; padding: 12px; }
+    .main-body { display: flex; flex: 1; min-height: 0; position: relative; }
+    /* Side panels: resizable + slide-collapse to edge tabs (see css/main-panel-2d.css + js/main-panel-side-panels.js) */
+    .left-col, .right-col {
+      --mp-side-w: 260px;
+      position: relative;
+      flex: 0 0 var(--mp-side-w);
+      width: var(--mp-side-w);
+      max-width: min(48vw, 520px);
+      background: #1a120c;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      transition: flex-basis 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .left-col { --mp-side-w: 260px; border-right: 2px solid #3a2a1a; }
+    .right-col { --mp-side-w: 280px; border-left: 2px solid #3a2a1a; }
+    .left-col.is-resizing, .right-col.is-resizing { transition: none; }
+    .left-col.is-collapsed, .right-col.is-collapsed {
+      --mp-side-w: 36px;
+      flex-basis: 36px;
+      width: 36px;
+      min-width: 36px;
+    }
+    .mp-side-inner {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+    .left-col .mp-side-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 12px;
+      overscroll-behavior: contain;
+    }
+    .right-col .mp-side-inner > .inv-header { flex-shrink: 0; }
+    .right-col .mp-side-inner > .inv-grid { flex: 1 1 auto; min-height: 0; }
+    .left-col.is-collapsed .mp-side-inner,
+    .right-col.is-collapsed .mp-side-inner {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      inset: 0 0 0 36px;
+      width: 0;
+      overflow: hidden;
+    }
+    .mp-side-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px 0;
+      flex-shrink: 0;
+    }
+    .left-col .mp-side-toolbar { justify-content: flex-end; }
+    .right-col .mp-side-toolbar { justify-content: flex-start; }
+    .mp-side-min {
+      border: 1px solid #3a2a1a;
+      background: #221710;
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      width: 26px;
+      height: 22px;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .mp-side-min:hover { border-color: var(--gold); background: rgba(212,175,55,0.12); }
+    /* Edge tab when minimized */
+    .mp-side-rail {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      border: 0;
+      margin: 0;
+      padding: 10px 4px;
+      background: linear-gradient(180deg, #221710, #1a120c);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      align-items: center;
+      justify-content: center;
+    }
+    .left-col .mp-side-rail { transform: rotate(180deg); border-right: 2px solid rgba(212,168,67,0.45); }
+    .right-col .mp-side-rail { border-left: 2px solid rgba(212,168,67,0.45); }
+    .mp-side-rail:hover { background: rgba(212,175,55,0.12); color: #ffe08a; }
+    .left-col.is-collapsed .mp-side-rail,
+    .right-col.is-collapsed .mp-side-rail { display: flex; }
+    .left-col.is-collapsed .mp-side-resizer,
+    .right-col.is-collapsed .mp-side-resizer,
+    .left-col.is-collapsed .mp-side-toolbar,
+    .right-col.is-collapsed .mp-side-toolbar { display: none; }
+    /* Drag handle between center and side */
+    .mp-side-resizer {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 7px;
+      z-index: 6;
+      cursor: col-resize;
+      touch-action: none;
+      background: transparent;
+    }
+    .left-col .mp-side-resizer { right: -3px; }
+    .right-col .mp-side-resizer { left: -3px; }
+    .mp-side-resizer::after {
+      content: "";
+      position: absolute;
+      top: 20%;
+      bottom: 20%;
+      left: 2px;
+      width: 3px;
+      border-radius: 2px;
+      background: rgba(212, 168, 67, 0.22);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .mp-side-resizer:hover::after,
+    .left-col.is-resizing .mp-side-resizer::after,
+    .right-col.is-resizing .mp-side-resizer::after { opacity: 1; background: rgba(212, 168, 67, 0.65); }
     .center-col { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-    .right-col { width: 280px; flex-shrink: 0; background: #1a120c; border-left: 2px solid #3a2a1a; display: flex; flex-direction: column; }
+    @media (prefers-reduced-motion: reduce) {
+      .left-col, .right-col, .mp-side-inner { transition: none; }
+    }
     .tab-strip { display: flex; background: #14100a; border-bottom: 2px solid var(--gold); flex-shrink: 0; overflow-x: auto; }
     .tab-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.22s ease, background 0.22s ease, border-color 0.22s ease, transform 0.18s ease; }
     .tab-btn:hover { color: var(--text); background: rgba(255,215,0,0.05); }
@@ -490,7 +627,12 @@
     .wst-banner-shield { border:1px solid hsl(210 50% 35%); background:hsl(210 40% 12%); }
     .wst-banner-tome { border:1px solid hsl(270 40% 35%); background:hsl(270 30% 12%); }
 
-    @media(max-width:1000px) { .left-col, .right-col { display: none; } }
+    /* Narrow: keep edge rails (JS may auto-collapse); never hard-hide panels */
+    @media(max-width:1000px) {
+      .left-col:not(.is-collapsed), .right-col:not(.is-collapsed) {
+        max-width: min(42vw, 320px);
+      }
+    }
     @media(max-width:700px) {
       .eq-panel { --eq-slot: 56px; }
       .eq-slot { width: var(--eq-slot); height: var(--eq-slot); }
@@ -681,8 +823,17 @@
   </header>
     <!-- ONE World Map scroll = full main panel canvas (left · tabs/content · inventory) -->
   <div id="mainScroll" class="main-canvas-host" aria-label="Main panel canvas">
-  <div class="main-body">
-    <aside class="left-col" id="leftCol"></aside>
+  <div class="main-body" id="mainBody">
+    <aside class="left-col mp-side" id="leftPanel" data-side="left" aria-label="Character stats panel">
+      <button type="button" class="mp-side-rail" data-side="left" data-mp-expand="left" aria-expanded="true" title="Expand stats panel">Stats</button>
+      <div class="mp-side-inner">
+        <div class="mp-side-toolbar">
+          <button type="button" class="mp-side-min" data-mp-collapse="left" title="Minimize to side tab" aria-label="Minimize left panel">«</button>
+        </div>
+        <div class="mp-side-body" id="leftCol"></div>
+      </div>
+      <div class="mp-side-resizer" data-side="left" role="separator" aria-orientation="vertical" aria-label="Resize left panel" title="Drag to resize · double-click to minimize"></div>
+    </aside>
     <main class="center-col">
       <div class="unit-context-banner" id="unitContextBanner" aria-live="polite">
         <span class="uc-kind" id="ucKind">Unit</span>
@@ -696,18 +847,25 @@
       </nav>
       <div class="content-area" id="contentArea" role="tabpanel"></div>
     </main>
-    <aside class="right-col" id="invPanel">
-      <div class="inv-header">
-        <div>
-          <h3 data-i18n="app.inventory">Inventory</h3>
-          <div class="bag-scope" id="bagScope">Account bag · UUID stacks</div>
+    <aside class="right-col mp-side" id="invPanel" data-side="right" aria-label="Inventory panel">
+      <div class="mp-side-resizer" data-side="right" role="separator" aria-orientation="vertical" aria-label="Resize inventory panel" title="Drag to resize · double-click to minimize"></div>
+      <button type="button" class="mp-side-rail" data-side="right" data-mp-expand="right" aria-expanded="true" title="Expand inventory">Bag</button>
+      <div class="mp-side-inner">
+        <div class="mp-side-toolbar">
+          <button type="button" class="mp-side-min" data-mp-collapse="right" title="Minimize to side tab" aria-label="Minimize inventory panel">»</button>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="inv-count" id="invCount">0/42</span>
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold)" id="goldDisplay">250 Gold</span>
+        <div class="inv-header">
+          <div>
+            <h3 data-i18n="app.inventory">Inventory</h3>
+            <div class="bag-scope" id="bagScope">Account bag · UUID stacks</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="inv-count" id="invCount">0/42</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold)" id="goldDisplay">250 Gold</span>
+          </div>
         </div>
+        <div class="inv-grid" id="invGrid"></div>
       </div>
-      <div class="inv-grid" id="invGrid"></div>
     </aside>
   </div>
   </div>
@@ -721,8 +879,9 @@
 <script src="./js/weapon-skill-tree.js?v=fluid4"></script>
 <script src="./js/main-panel-systems.js?v=spellbook-passives1"></script>
 <script src="./js/main-panel-i18n.js?v=fluid4"></script>
-<script src="./js/main-panel-2d.js?v=fluid4"></script>
-<script src="./js/main-panel-canvas-2d.js?v=fluid4"></script>
+<script src="./js/main-panel-2d.js?v=sidepanels1"></script>
+<script src="./js/main-panel-side-panels.js?v=sidepanels1"></script>
+<script src="./js/main-panel-canvas-2d.js?v=sidepanels1"></script>
 <script>
   const CDN = 'https://assets.grudge-studio.com';
   const PAGE_BASE = (() => {
@@ -1203,6 +1362,7 @@
       } else if (command.action === 'trade') {
         showMpStatus(`${unit.name}: Trade — open their bag from Inventory (session only)`);
         // focus inventory rail
+        try { window.MainPanelSidePanels?.expand?.('right'); } catch (_) {}
         document.getElementById('invPanel')?.scrollIntoView?.({ block: 'nearest' });
       } else {
         showMpStatus(`${unit.name}: ${command.label}`);
@@ -2068,7 +2228,7 @@ function showError(msg) {
         <div class="eq-bottom" data-role="jewelry-row">
           ${BOTTOM_SLOTS.map((s) => renderSlot(s)).join('')}
           <div class="eq-bottom-rule" aria-hidden="true"></div>
-          <div class="eq-slot" data-slot="Add" title="Open bag / inventory" onclick="document.getElementById('invPanel')?.scrollIntoView?.({behavior:'smooth',block:'nearest'})">
+          <div class="eq-slot" data-slot="Add" title="Open bag / inventory" onclick="try{window.MainPanelSidePanels&&MainPanelSidePanels.expand('right')}catch(e){}document.getElementById('invPanel')?.scrollIntoView?.({behavior:'smooth',block:'nearest'})">
             <span class="slot-placeholder">+</span>
             <span class="slot-label">Bag</span>
           </div>

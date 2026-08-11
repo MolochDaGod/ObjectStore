@@ -469,19 +469,47 @@ body.mp-fluid-fit #mainScroll .content-area {
   -webkit-overflow-scrolling: touch;
 }
 
-body.mp-fluid-fit #mainScroll .left-col {
+/* Side panels: width from --mp-side-w (slide / resize / edge tabs) */
+body.mp-fluid-fit #mainScroll .left-col,
+body.mp-fluid-fit #mainScroll .right-col {
+  flex: 0 0 var(--mp-side-w, 260px) !important;
+  width: var(--mp-side-w, 260px) !important;
+  min-width: 0;
+  min-height: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+body.mp-fluid-fit #mainScroll .left-col .mp-side-body {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
-body.mp-fluid-fit #mainScroll .right-col {
-  flex-shrink: 0;
+body.mp-fluid-fit #mainScroll .right-col .mp-side-inner {
   min-height: 0;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+body.mp-fluid-fit #mainScroll .left-col.is-collapsed,
+body.mp-fluid-fit #mainScroll .right-col.is-collapsed {
+  flex-basis: 36px !important;
+  width: 36px !important;
+  min-width: 36px !important;
+}
+
+/* Rail / resizer above canvas drag layer */
+body.mp-fluid-fit #mainScroll .mp-side-rail,
+body.mp-fluid-fit #mainScroll .mp-side-resizer,
+body.mp-fluid-fit #mainScroll .mp-side-min {
+  z-index: 45;
 }
 
 body.mp-fluid-fit #mainScroll .inv-grid {
