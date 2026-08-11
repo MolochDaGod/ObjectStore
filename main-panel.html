@@ -212,14 +212,44 @@
     .wst-action-bar-compact .slot-num { display:none !important; }
     .wst-action-bar-compact .slot-label { display:none !important; }
 
-    /* Crafting tab — full Puter suite embed */
-    .craft-embed-wrap { display:flex; flex-direction:column; gap:8px; height:calc(100vh - 180px); min-height:520px; }
-    .craft-embed-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:11px; color:var(--muted); }
-    .craft-embed-bar a { color:var(--gold); }
-    .craft-embed {
-      flex:1; width:100%; min-height:480px; border:2px solid #3a2a1a; border-radius:8px;
-      background:#0a0a10;
-    }
+    /* Crafting tab — native (no iframe; suite = pop-out only) */
+    .craft-shell { display:flex; flex-direction:column; gap:10px; min-height:420px; }
+    .craft-toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; }
+    .craft-toolbar h3 { margin:0; font-family:var(--font-display); font-size:13px; color:var(--gold); letter-spacing:1px; text-transform:uppercase; }
+    .craft-toolbar-right { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .craft-auth-pill { font-size:10px; padding:3px 8px; border-radius:999px; border:1px solid #3a2a1a; color:var(--muted); background:#14100a; }
+    .craft-auth-pill.warn { color:#eab308; border-color:rgba(234,179,8,.35); }
+    .craft-sub { font-size:11px; color:var(--muted); line-height:1.4; margin:0; }
+    .craft-layout { display:grid; grid-template-columns:1fr minmax(160px,220px); gap:12px; align-items:start; }
+    @media (max-width:900px) { .craft-layout { grid-template-columns:1fr; } }
+    .craft-filter { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .craft-filter-btn { border:1px solid #3a2a1a; background:#1a120c; color:var(--muted); padding:5px 10px; border-radius:6px; cursor:pointer; font-size:10px; text-transform:uppercase; }
+    .craft-filter-btn.active, .craft-filter-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .craft-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:8px; }
+    .craft-card { text-align:left; border:1px solid #3a2a1a; border-radius:8px; padding:10px; background:#1a120c; cursor:pointer; color:var(--text); min-height:96px; }
+    .craft-card:hover { border-color:var(--gold); }
+    .craft-card.can-craft { border-color:rgba(34,197,94,.35); }
+    .craft-card.no-craft { opacity:.72; }
+    .craft-card h4 { margin:0 0 4px; font-size:12px; color:var(--gold); display:flex; align-items:center; gap:6px; }
+    .craft-card .craft-icon { width:22px; height:22px; object-fit:contain; image-rendering:pixelated; }
+    .craft-card p { margin:2px 0; font-size:10px; color:var(--muted); line-height:1.35; }
+    .craft-card .out { color:var(--text); }
+    .craft-side { border:1px solid #3a2a1a; border-radius:8px; padding:10px; background:#14100a; }
+    .craft-side-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+    .craft-side-head h4 { margin:0; font-size:11px; color:var(--gold); text-transform:uppercase; }
+    .craft-bag-meta { font-size:9px; color:var(--dim); }
+    .craft-mat-grid { display:grid; gap:4px; max-height:42vh; overflow:auto; }
+    .craft-mat { display:flex; align-items:center; gap:6px; font-size:10px; padding:4px 6px; border-radius:4px; background:#1a120c; border:1px solid #2a1e14; }
+    .craft-mat .mat-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .craft-mat .mat-qty { font-family:monospace; color:var(--gold); }
+    .craft-suite-link { display:inline-block; margin-top:10px; font-size:11px; color:var(--gold); }
+    .craft-log { font-size:10px; color:var(--muted); min-height:1.2em; }
+    .craft-ssot-banner { font-size:10px; padding:8px 10px; border-radius:6px; border:1px solid rgba(212,168,67,.25); background:rgba(212,168,67,.06); color:var(--muted); line-height:1.4; }
+    .craft-ssot-banner a { color:var(--gold); }
+    .mp-btn { border:1px solid #3a2a1a; background:#221710; color:var(--text); padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; text-decoration:none; display:inline-block; }
+    .mp-btn.primary { border-color:#a67c12; color:#1a0f00; background:var(--gold); font-weight:700; }
+    .mp-btn.ghost:hover { border-color:var(--gold); color:var(--gold); }
+
 
     /* Equipped mesh strip (Unity paperdoll: only worn gear) */
     .eq-mesh-strip {
@@ -384,10 +414,19 @@
     'https://assets.grudge-studio.com/api/v1',
     './api/v1',  // local ObjectStore JSON fallback
   ];
-  /** Production Puter crafting suite (migrated into this panel as embed). */
-  const CRAFTING_SUITE_URL = 'https://grudge-crafting.puter.site/';
+  /**
+   * Craft consolidation SSOT (wired deploy):
+   *  Full suite = grudgewarlords.com/craft/  (embed + pop-out + Railway bag)
+   *  HUD panel  = ui.grudge-studio.com/main-panel.html?era=warlords&tab=craft
+   *  Brand hub  = wcs.grudge-studio.com
+   */
+  const CRAFTING_SUITE_URL = 'https://grudgewarlords.com/craft/';
+  const CRAFTING_PANEL_SSOT = 'https://ui.grudge-studio.com/main-panel.html?era=warlords&tab=craft';
+  const WCS_HUB_URL = 'https://wcs.grudge-studio.com/';
+  const CRAFTING_LEGACY_PUTER = 'https://grudge-crafting.puter.site/';
   const TABS = ['Equipment','Attributes','Skills','Professions','Crafting','Quests'];
   let activeTab = 'Equipment';
+  let craftProfFilter = 'all';
   let skillsSubTab = 'weapon'; // weapon | class
   let allItems = [], allRecipes = [], allAttributes = [], allMaterials = [];
   let allProfessions = [], allSkillTrees = [], allWeaponSkills = [], allArtifacts = [];
@@ -1545,38 +1584,265 @@
     };
     MainPanelSystems.attachProfessionHandlers(area, ctx);
   }
-
-  // ── Crafting Tab (migrated Puter suite) ────────────────────────────
-  function renderCraftingTab() {
-    const catalogHint = allRecipes.length
-      ? `${allRecipes.length} recipes in ObjectStore catalog`
-      : 'loading catalog…';
-    // Full production crafting UI (Grudge ID · Railway bag · master recipes)
-    // hosted at grudge-crafting.puter.site — embedded here as the SSOT craft surface.
-    return `<div class="craft-embed-wrap">
-      <div class="craft-embed-bar">
-        <div>
-          <div class="section-title" style="margin:0 0 4px;border-left:3px solid var(--gold);padding-left:10px;">Crafting &amp; Professions</div>
-          <div style="font-size:10px;color:var(--dim);">${esc(catalogHint)} · account bag + per-character XP (Railway)</div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <a href="${CRAFTING_SUITE_URL}" target="_blank" rel="noopener">Open full window ↗</a>
-          <a href="https://docs.grudge-studio.com/crafting" target="_blank" rel="noopener">Docs</a>
-        </div>
-      </div>
-      <iframe
-        class="craft-embed"
-        title="Grudge Crafting Suite"
-        src="${CRAFTING_SUITE_URL}"
-        allow="clipboard-read; clipboard-write"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
-    </div>`;
+// Crafting Tab (native — suite pop-out only; no iframe)
+  function craftSuiteAuthedUrl(embed) {
+    const u = new URL(CRAFTING_SUITE_URL);
+    u.searchParams.set('era', 'warlords');
+    u.searchParams.set('from', 'info-main-panel');
+    if (embed !== false) u.searchParams.set('embed', '1');
+    try {
+      const token =
+        localStorage.getItem('grudge_auth_token') ||
+        localStorage.getItem('grudge.open.token') ||
+        localStorage.getItem('sso_token') ||
+        localStorage.getItem('grudge_token');
+      if (token) {
+        u.searchParams.set('sso_token', token);
+        u.searchParams.set('grudge_token', token);
+      }
+    } catch (_) {}
+    const cid = new URLSearchParams(location.search).get('characterId');
+    if (cid) u.searchParams.set('characterId', cid);
+    u.searchParams.set('returnTo', location.href);
+    return u.toString();
   }
 
-  // ── Slot Interactions ──────────────────────────────────────────────
-  function attachSlotListeners() {
+  function postCraftAuthToFrame(frame) {
+    try {
+      const token =
+        localStorage.getItem('grudge_auth_token') ||
+        localStorage.getItem('grudge.open.token') ||
+        localStorage.getItem('sso_token') ||
+        localStorage.getItem('grudge_token');
+      if (!token || !frame?.contentWindow) return;
+      const cid = new URLSearchParams(location.search).get('characterId');
+      frame.contentWindow.postMessage(
+        {
+          type: 'GRUDGE_AUTH',
+          sso_token: token,
+          grudge_token: token,
+          token,
+          characterId: cid,
+          source: 'info-main-panel',
+        },
+        'https://grudgewarlords.com',
+      );
+    } catch (_) {}
+  }
+
+  function craftRecipeList() {
+    const list = Array.isArray(allRecipes) ? allRecipes : [];
+    const out = [];
+    for (const r of list.slice(0, 120)) {
+      const id = r.id || r.uuid || r.key || r.name;
+      if (!id) continue;
+      const mats = r.materials || r.ingredients || r.inputs || r.requires || {};
+      let inputs = [];
+      if (Array.isArray(mats)) {
+        inputs = mats.map((m) => ({
+          id: m.id || m.materialId || m.name,
+          name: m.name || m.id,
+          qty: m.qty || m.quantity || 1,
+        }));
+      } else if (mats && typeof mats === 'object') {
+        inputs = Object.entries(mats).map(([name, qty]) => ({
+          id: String(name).toLowerCase().replace(/\s+/g, '_'),
+          name,
+          qty: Number(qty) || 1,
+        }));
+      }
+      out.push({
+        id: String(id),
+        name: r.name || r.title || String(id),
+        profession: (r.profession || r.craftedBy || r.station || 'craft').toString().toLowerCase(),
+        tier: r.tier ?? r.itemTier ?? null,
+        type: r.type || r.category || '',
+        inputs,
+        output: {
+          id: r.resultItemId || r.outputId || id,
+          name: r.resultName || r.outputName || r.name || id,
+          qty: r.outputQty || 1,
+        },
+        icon: r.icon || r.iconUrl || null,
+        desc: r.description || r.desc || '',
+      });
+    }
+    return out;
+  }
+
+  function bagQtyDemo(idOrName) {
+    const key = String(idOrName || '').toLowerCase();
+    if (!key) return 0;
+    if (/iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 8;
+    return 2;
+  }
+
+  function renderCraftingTab() {
+    const recipes = craftRecipeList();
+    const catalogHint = recipes.length
+      ? recipes.length + ' recipes from ObjectStore'
+      : 'loading catalog…';
+    const suiteUrl = craftSuiteAuthedUrl();
+    const panelSsot = typeof CRAFTING_PANEL_SSOT !== 'undefined' ? CRAFTING_PANEL_SSOT : 'https://ui.grudge-studio.com/main-panel.html?era=warlords&tab=craft';
+    const wcsHub = typeof WCS_HUB_URL !== 'undefined' ? WCS_HUB_URL : 'https://wcs.grudge-studio.com/';
+    const profs = ['all', ...new Set(recipes.map((r) => r.profession).filter(Boolean))].slice(0, 12);
+    let filtered = recipes;
+    if (craftProfFilter && craftProfFilter !== 'all') {
+      filtered = recipes.filter((r) => r.profession === craftProfFilter);
+    }
+    const cards =
+      filtered
+        .slice(0, 48)
+        .map((r) => {
+          const ok =
+            !r.inputs.length ||
+            r.inputs.every((i) => bagQtyDemo(i.id) >= i.qty || bagQtyDemo(i.name) >= i.qty);
+          const matsLine = r.inputs.length
+            ? r.inputs
+                .map((i) => esc(i.name) + ' ' + (bagQtyDemo(i.id) || bagQtyDemo(i.name)) + '/' + i.qty)
+                .join(' · ')
+            : esc(r.desc || r.type || '');
+          let ic = '⚙';
+          if (r.icon) {
+            const src = String(r.icon).startsWith('http')
+              ? r.icon
+              : String(r.icon).startsWith('/')
+                ? 'https://assets.grudge-studio.com' + r.icon
+                : r.icon;
+            ic =
+              '<img class="craft-icon" src="' +
+              esc(src) +
+              '" alt="" loading="lazy" onerror="this.style.display=\'none\'"/>';
+          }
+          return (
+            '<button type="button" class="craft-card ' +
+            (ok ? 'can-craft' : 'no-craft') +
+            '" data-craft-id="' +
+            esc(r.id) +
+            '" title="' +
+            esc(r.name) +
+            '"><h4>' +
+            ic +
+            ' ' +
+            esc(r.name) +
+            '</h4><p>' +
+            esc(r.profession) +
+            (r.tier != null ? ' · T' + r.tier : '') +
+            '</p><p>' +
+            matsLine +
+            '</p><p class="out">→ ' +
+            esc(r.output?.name || r.name) +
+            ' ×' +
+            (r.output?.qty || 1) +
+            '</p></button>'
+          );
+        })
+        .join('') || '<p class="craft-log">No recipes loaded — open full suite.</p>';
+
+    const matPreview = ['Iron Ore', 'Pine Wood', 'Leather Scraps', 'Cloth Scraps', 'Copper Ore']
+      .map(
+        (n) =>
+          '<div class="craft-mat"><span class="mat-name">' +
+          esc(n) +
+          '</span><span class="mat-qty">×' +
+          bagQtyDemo(n) +
+          '</span></div>',
+      )
+      .join('');
+
+    queueMicrotask(() => wireCraftChromeNative());
+
+    const suiteEmbed = craftSuiteAuthedUrl(true);
+    const suitePop = craftSuiteAuthedUrl(false);
+    return (
+      '<div class="craft-shell">' +
+      '<div class="craft-ssot-banner"><strong>Wired craft</strong> — production suite ' +
+      '<a href="' +
+      esc(suitePop) +
+      '" target="_blank" rel="noopener">grudgewarlords.com/craft</a> · panel SSOT ' +
+      '<a href="' +
+      esc(panelSsot) +
+      '" target="_blank" rel="noopener">ui main-panel</a> · hub ' +
+      '<a href="' +
+      esc(wcsHub) +
+      '" target="_blank" rel="noopener">wcs.grudge-studio.com</a></div>' +
+      '<div class="craft-toolbar"><div><h3>Warlords Craft</h3>' +
+      '<span class="craft-auth-pill ok" id="craft-auth-status">' +
+      esc(catalogHint) +
+      ' · suite embed</span></div>' +
+      '<div class="craft-toolbar-right">' +
+      '<button type="button" class="mp-btn ghost" id="btn-craft-reload">↻ Reload</button>' +
+      '<button type="button" class="mp-btn ghost" id="btn-craft-popout">↗ Full suite</button>' +
+      '<a class="mp-btn primary" href="' +
+      esc(suitePop) +
+      '" target="_blank" rel="noopener">Open suite</a></div></div>' +
+      '<p class="craft-sub">Railway <strong>account bag</strong> · XP on active character · suite is SSOT</p>' +
+      '<div class="craft-frame-wrap" style="position:relative;min-height:420px;border:1px solid rgba(201,149,10,.35);border-radius:12px;overflow:hidden">' +
+      '<iframe id="craft-suite-frame" title="Warlords Crafting Suite" src="' +
+      esc(suiteEmbed) +
+      '" style="width:100%;height:min(58vh,560px);min-height:420px;border:0;display:block;background:#0a0a10" loading="lazy"></iframe></div>' +
+      '<div class="craft-layout" style="margin-top:10px"><div class="craft-main">' +
+      '<div class="craft-filter" id="craft-filter">' +
+      profs
+        .map(
+          (p) =>
+            '<button type="button" class="craft-filter-btn ' +
+            (craftProfFilter === p ? 'active' : '') +
+            '" data-cf="' +
+            esc(p) +
+            '">' +
+            esc(p) +
+            '</button>',
+        )
+        .join('') +
+      '</div><div class="craft-grid" id="craft-host">' +
+      cards +
+      '</div><p class="craft-log" id="craft-log">Quick catalog · full spend/XP in suite above</p></div>' +
+      '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">demo</span></div>' +
+      '<div class="craft-mat-grid">' +
+      matPreview +
+      '</div><a class="craft-suite-link" href="' +
+      esc(suitePop) +
+      '" target="_blank" rel="noopener">Stations · benches · full WCS ↗</a></aside></div></div>'
+    );
+  }
+
+  function wireCraftChromeNative() {
+    const frame = document.getElementById('craft-suite-frame');
+    if (frame) {
+      frame.onload = () => {
+        postCraftAuthToFrame(frame);
+        setTimeout(() => postCraftAuthToFrame(frame), 800);
+      };
+      setTimeout(() => postCraftAuthToFrame(frame), 400);
+    }
+    document.getElementById('btn-craft-popout')?.addEventListener('click', () => {
+      window.open(craftSuiteAuthedUrl(false), '_blank', 'noopener');
+    });
+    document.getElementById('btn-craft-reload')?.addEventListener('click', () => {
+      if (frame) frame.src = craftSuiteAuthedUrl(true);
+      else switchTab('Crafting');
+    });
+    document.querySelectorAll('#craft-filter [data-cf]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        craftProfFilter = btn.getAttribute('data-cf') || 'all';
+        switchTab('Crafting');
+      });
+    });
+    document.querySelectorAll('#craft-host [data-craft-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-craft-id');
+        const log = document.getElementById('craft-log');
+        if (log) log.textContent = 'Recipe ' + id + ' — use suite above for Railway craft + profession XP';
+      });
+    });
+    window.addEventListener('message', (e) => {
+      if (!e.origin || e.origin.indexOf('grudgewarlords.com') === -1) return;
+      if (e.data?.type === 'GRUDGE_READY') postCraftAuthToFrame(frame);
+    });
+  }
+
+function attachSlotListeners() {
     document.querySelectorAll('.eq-slot').forEach(el => {
       el.addEventListener('mouseenter', onSlotHover);
       el.addEventListener('mousemove', onSlotMove);
