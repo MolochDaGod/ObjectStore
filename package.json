@@ -218,7 +218,17 @@
     "wire:skill-prefab-anims": "node ./scripts/wire-skill-prefab-anims.mjs",
     "test:grudge6-editor": "node ./scripts/test-grudge6-editor-ssot.mjs",
     "packages:anims": "node ./scripts/build-prod-anim-packages.mjs",
-    "packages:anims:upload": "node ./scripts/build-prod-anim-packages.mjs --upload --remote"
+    "packages:anims:upload": "node ./scripts/build-prod-anim-packages.mjs --upload --remote",
+    "helper": "node ./scripts/helpers/index.mjs",
+    "helper:doctor": "node ./scripts/helpers/index.mjs doctor",
+    "helper:node": "node ./scripts/helpers/index.mjs node",
+    "helper:deps": "node ./scripts/helpers/index.mjs deps",
+    "helper:package": "node ./scripts/helpers/index.mjs package",
+    "helper:deploy": "node ./scripts/helpers/index.mjs deploy list",
+    "helper:ai": "node ./scripts/helpers/index.mjs ai list",
+    "deploy:helper": "node ./scripts/helpers/deploy-helper.mjs list",
+    "deploy:smoke": "node ./scripts/helpers/index.mjs deploy smoke",
+    "ai:workers": "node ./scripts/helpers/index.mjs ai list"
   },
   "repository": {
     "type": "git",
