@@ -342,6 +342,15 @@
             started = true;
             beginDrag(img, ev.clientX, ev.clientY);
             cell.classList.add("is-dragging-src");
+            try {
+              if (global._cursorMod && global._cursorMod.setCursorIntent) {
+                global._cursorMod.setCursorIntent(
+                  cell.closest && cell.closest(".hero-viewport")
+                    ? "orbit_drag"
+                    : "bag_drag"
+                );
+              }
+            } catch (_) {}
           }
           if (started) moveDrag(ev.clientX, ev.clientY);
         }
@@ -352,6 +361,11 @@
             endDrag();
             cell.classList.remove("is-dragging-src");
             pulseAt(ev.clientX, ev.clientY, 20);
+            try {
+              if (global._cursorMod && global._cursorMod.setCursorIntent) {
+                global._cursorMod.setCursorIntent("default");
+              }
+            } catch (_) {}
           } else pulseAt(ev.clientX, ev.clientY, 14);
         }
         window.addEventListener("pointermove", onMove);

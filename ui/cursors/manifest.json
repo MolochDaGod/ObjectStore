@@ -1,93 +1,114 @@
-﻿{
-    "id":  "kenney-cursor-pack-1.1",
-    "label":  "Kenney Cursor Pack",
-    "license":  "CC0 (public domain)",
-    "author":  "Kenney (kenney.nl)",
-    "sourceZip":  "D:/Games/Models/kenney_cursor-pack.zip",
-    "shipped":  "/ui/cursors",
-    "cdnTarget":  "https://assets.grudge-studio.com/ui/cursors",
-    "variants":  {
-                     "basic":  "basic/",
-                     "outline":  "outline/"
-                 },
-    "hotspotDefault":  {
-                           "x":  0,
-                           "y":  0
-                       },
-    "hotspotPointer":  {
-                           "x":  4,
-                           "y":  2
-                       },
-    "intents":  {
-                    "default":  "pointer_b",
-                    "pointer":  "pointer_b",
-                    "pointer_toon":  "pointer_toon_a",
-                    "pointer_scifi":  "pointer_scifi_a",
-                    "hand_open":  "hand_open",
-                    "hand_closed":  "hand_closed",
-                    "hand_point":  "hand_point",
-                    "gauntlet":  "gauntlet_default",
-                    "busy":  "busy_hourglass",
-                    "busy_spin":  "busy_circle",
-                    "disabled":  "cursor_disabled",
-                    "help":  "cursor_help",
-                    "menu":  "cursor_menu",
-                    "target":  "target_a",
-                    "target_round":  "target_round_a",
-                    "look":  "look_a",
-                    "talk":  "message_round",
-                    "attack":  "tool_sword_a",
-                    "harvest":  "tool_axe",
-                    "mine":  "tool_pickaxe",
-                    "build":  "tool_hammer",
-                    "magic":  "tool_wand",
-                    "bow":  "tool_bow",
-                    "inspect":  "zoom",
-                    "zoom_in":  "zoom_in",
-                    "zoom_out":  "zoom_out",
-                    "move":  "navigation_n",
-                    "door":  "door_enter",
-                    "lock":  "lock",
-                    "unlock":  "lock_unlocked",
-                    "copy":  "cursor_copy",
-                    "alias":  "cursor_alias",
-                    "resize_h":  "resize_horizontal",
-                    "resize_v":  "resize_vertical",
-                    "rotate":  "rotate_cw",
-                    "crosshair":  "cross_small",
-                    "party_select":  "pointer_c",
-                    "command":  "cursor_menu",
-                    "none":  "cursor_none"
-                },
-    "gameContexts":  {
-                         "world_default":  "default",
-                         "hover_npc":  "talk",
-                         "hover_enemy":  "attack",
-                         "hover_resource":  "harvest",
-                         "hover_ore":  "mine",
-                         "hover_door":  "door",
-                         "combat_aim":  "target",
-                         "ui_busy":  "busy",
-                         "ui_disabled":  "disabled",
-                         "party_member":  "party_select",
-                         "radial_open":  "command",
-                         "equipment_drag":  "hand_closed",
-                         "paperdoll_orbit":  "hand_open"
-                     },
-    "code":  [
-                 "js/ui-cursor.js",
-                 "css/ui-cursor.css"
-             ],
-    "notes":  [
-                  "CSS cursor: url(...) x y, auto â€” hotspot per intent",
-                  "Prefer outline/ on dark UIs, basic/ on light parchment",
-                  "Do not invent a second cursor pack"
-              ],
-    "relatedPacks":  [
-                         {
-                             "catalog":  "/ui/kenney-skyrim/catalog.json",
-                             "id":  "kenney-skyrim-mods",
-                             "role":  "fantasy cursor STYLE reference (CC-BY); not runtime SWF"
-                         }
-                     ]
+{
+  "id": "kenney-cursor-pack-1.1",
+  "label": "Kenney Cursor Pack",
+  "license": "CC0 (public domain)",
+  "author": "Kenney (kenney.nl)",
+  "sourceZip": "D:/Games/Models/kenney_cursor-pack.zip",
+  "shipped": "/ui/cursors",
+  "cdnTarget": "https://assets.grudge-studio.com/ui/cursors",
+  "variants": {
+    "basic": "basic/",
+    "outline": "outline/"
+  },
+  "hotspotDefault": {
+    "x": 0,
+    "y": 0
+  },
+  "hotspotPointer": {
+    "x": 4,
+    "y": 2
+  },
+  "intents": {
+    "default": "pointer_b",
+    "pointer": "pointer_b",
+    "pointer_toon": "pointer_toon_a",
+    "pointer_scifi": "pointer_scifi_a",
+    "hand_open": "hand_open",
+    "hand_closed": "hand_closed",
+    "hand_point": "hand_point",
+    "gauntlet": "gauntlet_default",
+    "busy": "busy_hourglass",
+    "busy_spin": "busy_circle",
+    "disabled": "cursor_disabled",
+    "help": "cursor_help",
+    "menu": "cursor_menu",
+    "target": "target_a",
+    "target_round": "target_round_a",
+    "look": "look_a",
+    "talk": "message_round",
+    "attack": "tool_sword_a",
+    "harvest": "tool_axe",
+    "mine": "tool_pickaxe",
+    "build": "tool_hammer",
+    "magic": "tool_wand",
+    "bow": "tool_bow",
+    "inspect": "zoom",
+    "zoom_in": "zoom_in",
+    "zoom_out": "zoom_out",
+    "move": "navigation_n",
+    "door": "door_enter",
+    "lock": "lock",
+    "unlock": "lock_unlocked",
+    "copy": "cursor_copy",
+    "alias": "cursor_alias",
+    "resize_h": "resize_horizontal",
+    "resize_v": "resize_vertical",
+    "rotate": "rotate_cw",
+    "crosshair": "cross_small",
+    "party_select": "pointer_c",
+    "command": "cursor_menu",
+    "none": "cursor_none"
+  },
+  "gameContexts": {
+    "world_default": "default",
+    "hover_npc": "talk",
+    "hover_enemy": "attack",
+    "hover_resource": "harvest",
+    "hover_ore": "mine",
+    "hover_door": "door",
+    "combat_aim": "target",
+    "ui_busy": "busy",
+    "ui_disabled": "disabled",
+    "party_member": "party_select",
+    "radial_open": "command",
+    "equipment_drag": "hand_closed",
+    "paperdoll_orbit": "hand_open"
+  },
+  "code": [
+    "js/ui-cursor.js",
+    "css/ui-cursor.css"
+  ],
+  "notes": [
+    "CSS cursor: url(...) x y, auto — hotspot per intent",
+    "Main Panel uses outline/ (dark wells); basic/ = Kenney Basic/Default for light UI",
+    "Do not invent a second cursor pack",
+    "SSOT: docs/KENNEY_CURSORS_SSOT.md · js/ui-cursor.js resolveMainPanelCursor"
+  ],
+  "relatedPacks": [
+    {
+      "catalog": "/ui/kenney-skyrim/catalog.json",
+      "id": "kenney-skyrim-mods",
+      "role": "fantasy cursor STYLE reference (CC-BY); not runtime SWF"
+    }
+  ],
+  "sourceAuthor": "C:/Users/nugye/Desktop/grudgeproduction/icons/sloticons/kenney_cursor-pack (1)/PNG/Basic/Default",
+  "variantPolicy": {
+    "darkUi": "outline",
+    "lightParchment": "basic",
+    "mainPanel": "outline"
+  },
+  "mainPanelIntents": {
+    "bag_item": "hand_point",
+    "bag_empty": "hand_open",
+    "bag_drag": "hand_closed",
+    "equip_filled": "gauntlet_point",
+    "equip_empty": "gauntlet_open",
+    "tab": "cursor_menu",
+    "craft": "tool_wrench",
+    "orbit": "hand_open",
+    "orbit_drag": "hand_closed",
+    "deposit": "cursor_copy",
+    "alias": "cursor_alias",
+    "busy": "busy_hourglass"
+  }
 }

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/grudge-game-fonts.css">
   <link rel="stylesheet" href="css/grudge-theme.css">
   <link rel="stylesheet" href="css/ui-scroll-container.css">
-  <link rel="stylesheet" href="css/ui-cursor.css">
+  <link rel="stylesheet" href="css/ui-cursor.css?v=kenney1">
   <link rel="stylesheet" href="css/ui-party.css">
   <link rel="stylesheet" href="css/main-panel-2d.css?v=fluid4">
   <!-- Readability: dark panels + high-contrast text over parchment frame -->
@@ -952,16 +952,24 @@
 
   async function initCursorAndParty() {
     const [cursorMod, partyMod] = await Promise.all([
-      import('./js/ui-cursor.js'),
-      import('./js/ui-party-radial.js'),
+      import('./js/ui-cursor.js?v=kenney1'),
+      import('./js/ui-party-radial.js?v=kenney1'),
     ]);
     window._partyMod = partyMod;
+    window._cursorMod = cursorMod;
+    // Dark Main Panel wells → Kenney Outline (Basic/Default files, outline variant)
+    // basic/ = light parchment only — see docs/KENNEY_CURSORS_SSOT.md
     cursorMod.configureCursors({ variant: 'outline' });
     await cursorMod.preloadCursors([
-      'default', 'attack', 'harvest', 'talk', 'busy', 'party_select', 'command',
-      'inspect', 'gauntlet', 'magic', 'hand_open', 'hand_closed', 'target',
+      'default', 'pointer', 'tab', 'menu',
+      'bag_item', 'bag_empty', 'bag_drag',
+      'equip_filled', 'equip_empty', 'gauntlet', 'gauntlet_point', 'gauntlet_open',
+      'hand_open', 'hand_closed', 'hand_point',
+      'busy', 'disabled', 'help', 'inspect', 'alias', 'deposit',
+      'craft', 'recipe', 'mine', 'harvest', 'magic', 'attack',
+      'party_select', 'command', 'orbit', 'orbit_drag', 'target', 'talk',
     ]);
-    cursorMod.bindCursorContext(document.body);
+    cursorMod.bindCursorContext(document.body, cursorMod.resolveMainPanelCursor);
 
     const onCommand = ({ unit, command }) => {
       partyMod.setActiveUnit(unit);

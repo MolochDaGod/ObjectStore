@@ -1,17 +1,30 @@
 /**
- * Kenney Cursor Pack — optional helper classes
- * Prefer js/ui-cursor.js setCursorIntent / data-cursor attributes.
+ * Kenney Cursor Pack — CSS helpers
+ * Source: PNG/Basic/Default → /ui/cursors/basic/
+ *         PNG/Outline/Default → /ui/cursors/outline/ (default for dark Main Panel)
+ * Prefer js/ui-cursor.js setCursorIntent + resolveMainPanelCursor.
  */
 
 :root {
   --cursor-base: /ui/cursors;
-  --cursor-variant: outline; /* outline | basic */
+  /* outline reads on dark navy panels; basic on light parchment */
+  --cursor-variant: outline;
 }
 
-/* Static helpers when JS not loaded */
+/* Intent helpers */
 .cursor-default { cursor: url('/ui/cursors/outline/pointer_b.png') 4 2, auto; }
+.cursor-pointer { cursor: url('/ui/cursors/outline/pointer_b.png') 4 2, pointer; }
+.cursor-tab { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
+.cursor-bag-item { cursor: url('/ui/cursors/outline/hand_point.png') 8 2, pointer; }
+.cursor-bag-empty { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
+.cursor-bag-drag { cursor: url('/ui/cursors/outline/hand_closed.png') 12 4, grabbing; }
+.cursor-equip { cursor: url('/ui/cursors/outline/gauntlet_point.png') 8 2, pointer; }
+.cursor-equip-empty { cursor: url('/ui/cursors/outline/gauntlet_open.png') 8 2, pointer; }
 .cursor-attack { cursor: url('/ui/cursors/outline/tool_sword_a.png') 8 8, crosshair; }
 .cursor-harvest { cursor: url('/ui/cursors/outline/tool_axe.png') 8 8, pointer; }
+.cursor-mine { cursor: url('/ui/cursors/outline/tool_pickaxe.png') 8 8, pointer; }
+.cursor-craft { cursor: url('/ui/cursors/outline/tool_wrench.png') 8 8, pointer; }
+.cursor-magic { cursor: url('/ui/cursors/outline/tool_wand.png') 8 8, pointer; }
 .cursor-talk { cursor: url('/ui/cursors/outline/message_round.png') 4 2, pointer; }
 .cursor-busy { cursor: url('/ui/cursors/outline/busy_hourglass.png') 16 16, wait; }
 .cursor-target { cursor: url('/ui/cursors/outline/target_a.png') 16 16, crosshair; }
@@ -20,11 +33,38 @@
 .cursor-inspect { cursor: url('/ui/cursors/outline/zoom.png') 8 8, zoom-in; }
 .cursor-hand { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
 .cursor-grabbing { cursor: url('/ui/cursors/outline/hand_closed.png') 12 4, grabbing; }
+.cursor-disabled { cursor: url('/ui/cursors/outline/cursor_disabled.png') 4 2, not-allowed; }
+.cursor-alias { cursor: url('/ui/cursors/outline/cursor_alias.png') 4 2, alias; }
+.cursor-deposit { cursor: url('/ui/cursors/outline/cursor_copy.png') 4 2, copy; }
+.cursor-help { cursor: url('/ui/cursors/outline/cursor_help.png') 4 2, help; }
+.cursor-orbit { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
 
+/* data-cursor attribute map (Main Panel + fleet) */
+[data-cursor='default'] { cursor: url('/ui/cursors/outline/pointer_b.png') 4 2, auto; }
+[data-cursor='pointer'] { cursor: url('/ui/cursors/outline/pointer_b.png') 4 2, pointer; }
+[data-cursor='tab'] { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
+[data-cursor='menu'] { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
+[data-cursor='bag_item'] { cursor: url('/ui/cursors/outline/hand_point.png') 8 2, pointer; }
+[data-cursor='bag_empty'] { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
+[data-cursor='bag_drag'] { cursor: url('/ui/cursors/outline/hand_closed.png') 12 4, grabbing; }
+[data-cursor='equip_filled'] { cursor: url('/ui/cursors/outline/gauntlet_point.png') 8 2, pointer; }
+[data-cursor='equip_empty'] { cursor: url('/ui/cursors/outline/gauntlet_open.png') 8 2, pointer; }
+[data-cursor='gauntlet'] { cursor: url('/ui/cursors/outline/gauntlet_default.png') 8 2, pointer; }
 [data-cursor='attack'] { cursor: url('/ui/cursors/outline/tool_sword_a.png') 8 8, crosshair; }
 [data-cursor='talk'] { cursor: url('/ui/cursors/outline/message_round.png') 4 2, pointer; }
 [data-cursor='harvest'] { cursor: url('/ui/cursors/outline/tool_axe.png') 8 8, pointer; }
+[data-cursor='mine'] { cursor: url('/ui/cursors/outline/tool_pickaxe.png') 8 8, pointer; }
+[data-cursor='craft'] { cursor: url('/ui/cursors/outline/tool_wrench.png') 8 8, pointer; }
+[data-cursor='recipe'] { cursor: url('/ui/cursors/outline/tool_wrench.png') 8 8, pointer; }
+[data-cursor='magic'] { cursor: url('/ui/cursors/outline/tool_wand.png') 8 8, pointer; }
 [data-cursor='party_select'] { cursor: url('/ui/cursors/outline/pointer_c.png') 4 2, pointer; }
 [data-cursor='command'] { cursor: url('/ui/cursors/outline/cursor_menu.png') 4 2, pointer; }
 [data-cursor='inspect'] { cursor: url('/ui/cursors/outline/zoom.png') 8 8, zoom-in; }
 [data-cursor='disabled'] { cursor: url('/ui/cursors/outline/cursor_disabled.png') 4 2, not-allowed; }
+[data-cursor='forbidden'] { cursor: url('/ui/cursors/outline/disabled.png') 4 2, not-allowed; }
+[data-cursor='busy'] { cursor: url('/ui/cursors/outline/busy_hourglass.png') 16 16, wait; }
+[data-cursor='orbit'] { cursor: url('/ui/cursors/outline/hand_open.png') 12 4, grab; }
+[data-cursor='orbit_drag'] { cursor: url('/ui/cursors/outline/hand_closed.png') 12 4, grabbing; }
+[data-cursor='deposit'] { cursor: url('/ui/cursors/outline/cursor_copy.png') 4 2, copy; }
+[data-cursor='alias'] { cursor: url('/ui/cursors/outline/cursor_alias.png') 4 2, alias; }
+[data-cursor='help'] { cursor: url('/ui/cursors/outline/cursor_help.png') 4 2, help; }
