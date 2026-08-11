@@ -1,7 +1,8 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "updated": "2026-08-11",
   "title": "Fleet deploy · API · assets · runtime systems",
-  "doc": "https://github.com/MolochDaGod/Grudge-Builder/blob/main/docs/FLEET_DEPLOY_API_ASSETS_SYSTEMS_SSOT.md",
+  "doc": "https://github.com/MolochDaGod/Grudge-Builder/blob/fix/react-activity-circular-chunk/docs/FLEET_DEPLOY_API_ASSETS_SYSTEMS_SSOT.md",
   "layers": {
     "playerState": {
       "authority": "Railway Postgres",
@@ -28,9 +29,25 @@
     }
   },
   "products": {
-    "craftSuite": "https://grudgewarlords.com/craft/",
+    "craftSuite": {
+      "url": "https://grudgewarlords.com/craft/",
+      "version": "5.14.0",
+      "sourceFile": "client/public/grudge-crafting.html",
+      "sync": "npm run sync:craft",
+      "embed": true,
+      "header": "X-Grudge-Craft-Embed: 1"
+    },
     "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=warlords",
-    "infoMainPanel": "https://info.grudge-studio.com/main-panel.html"
+    "infoMainPanel": "https://info.grudge-studio.com/main-panel.html",
+    "wcsHub": "https://wcs.grudge-studio.com/",
+    "craftPuterLegacy": "https://grudge-crafting.puter.site"
+  },
+  "wiring": {
+    "harvestToBag": "client/src/lib/craftSsot.ts depositHarvestType → /api/account/resources/batch",
+    "harvestCallSites": ["home-island.tsx", "play.tsx", "island-3d.tsx"],
+    "craftOpen": ["ModePlayHUD", "crafting.tsx", "App /craft route", "gameNav.navigateToCraftSuite"],
+    "directionalAi": "shared/fleet/runtimeSystems.ts yawTowardHorizontal → AllyController",
+    "pathfinding": "three-pathfinding in TerrainNavMesh / MeshSceneNavMesh"
   },
   "runtimePins": {
     "three": "^0.185.1",

@@ -2,7 +2,8 @@
 
 **Live:** https://info.grudge-studio.com/main-panel.html  
 **Repo:** `MolochDaGod/ObjectStore`  
-**Related host:** `ui.grudge-studio.com/main-panel.html` (era paperdoll + craft SSOT)
+**Related host:** `ui.grudge-studio.com/main-panel.html` (era paperdoll + craft **embed** SSOT)  
+**Craft product:** https://grudgewarlords.com/craft/ (Railway bag — never Puter KV alone)
 
 ## Stack (do not invent parallel UI)
 
@@ -35,6 +36,18 @@
 | Hero 3D | `#hero-viewport` remains WebGL (separate) |
 | Debug scale chip | `?scaleChip=1` or `localStorage grudge.mp.showScale=1` |
 | Readability CSS | `css/main-panel-readable.css` (must load after main-panel-2d.css) |
+
+## Craft tab wire (must match ui host)
+
+| Rule | Value |
+|------|--------|
+| Suite URL | `https://grudgewarlords.com/craft/?embed=1&from=info-main-panel` |
+| SSO | query `sso_token` + `postMessage` `GRUDGE_AUTH` |
+| Pop-out | always available |
+| Bag | Railway account (suite authority) |
+| Not SSOT | Puter craft host, local demo bag for production claims |
+
+Systems matrix: `api/v1/fleet-systems-matrix.json`
 
 ## npm / 2D best practices
 
