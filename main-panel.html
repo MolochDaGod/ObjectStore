@@ -525,6 +525,61 @@
     .mp-class-passive { font-size:10px; margin:5px 0; line-height:1.35; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; }
     .mp-class-passive strong { color:#e8d5a3; }
     .mp-passive-desc { flex:1 1 100%; font-size:9px; color:var(--dim); }
+    /* WoW spellbook passives row */
+    .mp-spellbook-passives {
+      margin:0 0 14px; padding:12px 14px 14px;
+      background:linear-gradient(180deg,#1c140c 0%,#120c08 100%);
+      border:1px solid #5a4220; border-radius:8px;
+      box-shadow:inset 0 0 24px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.35);
+    }
+    .mp-sb-header { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 14px; margin-bottom:10px; }
+    .mp-sb-title { font-family:var(--font-display); font-size:13px; color:var(--gold); text-transform:uppercase; letter-spacing:.1em; }
+    .mp-sb-sub { font-size:10px; color:var(--dim); }
+    .mp-sb-icon-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .mp-sb-passive {
+      width:52px; height:52px; padding:0; border:none; background:transparent; cursor:default;
+      position:relative; flex-shrink:0;
+    }
+    .mp-sb-passive:focus-visible { outline:2px solid var(--gold); outline-offset:2px; border-radius:6px; }
+    .mp-sb-frame {
+      display:block; width:52px; height:52px; border-radius:6px; overflow:hidden;
+      border:2px solid #8a6a28; background:#0a0806;
+      box-shadow:inset 0 0 0 1px #2a1c0c, 0 0 0 1px #1a1208, 0 2px 6px rgba(0,0,0,.5);
+      position:relative;
+    }
+    .mp-sb-passive:hover .mp-sb-frame {
+      border-color:#e8c060; box-shadow:inset 0 0 0 1px #3a2a10, 0 0 12px rgba(232,192,96,.35);
+    }
+    .mp-sb-frame img {
+      width:100%; height:100%; object-fit:cover; image-rendering:pixelated;
+      display:block; filter:saturate(1.05);
+    }
+    .mp-sb-frame img.mp-sb-ico-missing { opacity:0; }
+    .mp-sb-ico-fallback {
+      display:flex; align-items:center; justify-content:center; width:100%; height:100%;
+      color:var(--gold); font-size:18px; background:#1a120c;
+    }
+    .mp-sb-corner {
+      position:absolute; right:2px; bottom:2px; width:10px; height:10px;
+      border-right:2px solid rgba(232,192,96,.55); border-bottom:2px solid rgba(232,192,96,.55);
+      pointer-events:none;
+    }
+    .mp-sb-tooltip {
+      position:fixed; z-index:10050; width:min(300px,92vw); pointer-events:none;
+      padding:10px 12px; border-radius:6px;
+      background:linear-gradient(180deg,rgba(18,12,6,.97),rgba(8,6,4,.98));
+      border:1px solid #c9a227; box-shadow:0 8px 28px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.4);
+      color:#e8dcc0; font-size:12px; line-height:1.4;
+    }
+    .mp-sb-tooltip[hidden] { display:none !important; }
+    .mp-sb-tip-name { font-family:var(--font-display); font-size:14px; color:#ffd76a; margin-bottom:2px; }
+    .mp-sb-tip-rank { font-size:11px; color:#7ec8ff; margin-bottom:8px; }
+    .mp-sb-tip-desc { font-size:11px; color:#c8bca0; margin-bottom:8px; line-height:1.45; }
+    .mp-sb-tip-effects { border-top:1px solid rgba(201,162,39,.25); padding-top:6px; margin-bottom:6px; }
+    .mp-sb-tip-line { font-size:11px; font-family:ui-monospace,Consolas,monospace; color:#a8d4a0; margin:2px 0; }
+    .mp-sb-tip-line.up { color:#4ade80; }
+    .mp-sb-tip-line.down { color:#f87171; }
+    .mp-sb-tip-foot { font-size:9px; color:#6a6050; border-top:1px solid rgba(255,255,255,.06); padding-top:6px; }
     .mp-equip-rules-detail { font-size:10px; color:var(--muted); margin:2px 0; line-height:1.35; }
     .mp-equip-rules-detail strong { color:#c8b890; }
     .mp-equip-rules-note { font-size:9px; color:var(--dim); margin-top:6px; line-height:1.35; }
@@ -635,7 +690,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="./js/weapon-skill-tree.js?v=fluid4"></script>
-<script src="./js/main-panel-systems.js?v=soft-eff1"></script>
+<script src="./js/main-panel-systems.js?v=spellbook-passives1"></script>
 <script src="./js/main-panel-i18n.js?v=fluid4"></script>
 <script src="./js/main-panel-2d.js?v=fluid4"></script>
 <script src="./js/main-panel-canvas-2d.js?v=fluid4"></script>
@@ -2025,6 +2080,10 @@ function showError(msg) {
         classLabel: selectedClass,
       },
     );
+    // WoW passives tooltips on right half of Attributes tab
+    if (typeof MainPanelSystems.attachSpellbookTooltips === 'function') {
+      MainPanelSystems.attachSpellbookTooltips(area);
+    }
   }
 
   // ── Professions Tab (profession-trees interactive) ─────────────────
@@ -2059,7 +2118,11 @@ function showError(msg) {
     const u = new URL(CRAFTING_SUITE_URL);
     u.searchParams.set('era', 'warlords');
     u.searchParams.set('from', 'info-main-panel');
+<<<<<<< Updated upstream
     if (embed === true) u.searchParams.set('embed', '1'); // optional; suite may block iframe
+=======
+    if (embed !== false) u.searchParams.set('embed', '1');
+>>>>>>> Stashed changes
     try {
       const token =
         localStorage.getItem('grudge_auth_token') ||
@@ -2141,6 +2204,7 @@ function showError(msg) {
   }
 
   function bagQtyDemo(idOrName) {
+<<<<<<< Updated upstream
     // Prefer real bag UUID stacks (demo fills materials by UUID in populateInventoryDemo)
     const q = typeof bagQty === 'function' ? bagQty(idOrName) : 0;
     if (q > 0) return q;
@@ -2148,6 +2212,12 @@ function showError(msg) {
     if (!key) return 0;
     if (!inventoryItems.length && /iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 4;
     return 0;
+=======
+    const key = String(idOrName || '').toLowerCase();
+    if (!key) return 0;
+    if (/iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 8;
+    return 2;
+>>>>>>> Stashed changes
   }
 
   function renderCraftingTab() {
@@ -2192,8 +2262,11 @@ function showError(msg) {
             (ok ? 'can-craft' : 'no-craft') +
             '" data-craft-id="' +
             esc(r.id) +
+<<<<<<< Updated upstream
             '" data-recipe-key="' +
             esc(r.id) +
+=======
+>>>>>>> Stashed changes
             '" title="' +
             esc(r.name) +
             '"><h4>' +
@@ -2214,6 +2287,7 @@ function showError(msg) {
         })
         .join('') || '<p class="craft-log">No recipes loaded — open full suite.</p>';
 
+<<<<<<< Updated upstream
     const bagMats = inventoryItems
       .map((inv) => {
         const it = findAnyItem(inv.uuid);
@@ -2235,16 +2309,33 @@ function showError(msg) {
           esc(m.name) +
           '</span><span class="mat-qty">×' +
           (m.qty || 0) +
+=======
+    const matPreview = ['Iron Ore', 'Pine Wood', 'Leather Scraps', 'Cloth Scraps', 'Copper Ore']
+      .map(
+        (n) =>
+          '<div class="craft-mat"><span class="mat-name">' +
+          esc(n) +
+          '</span><span class="mat-qty">×' +
+          bagQtyDemo(n) +
+>>>>>>> Stashed changes
           '</span></div>',
       )
       .join('');
 
     queueMicrotask(() => wireCraftChromeNative());
 
+<<<<<<< Updated upstream
     const suitePop = craftSuiteAuthedUrl(false);
     return (
       '<div class="craft-shell">' +
       '<div class="craft-ssot-banner"><strong>Native craft</strong> — production suite ' +
+=======
+    const suiteEmbed = craftSuiteAuthedUrl(true);
+    const suitePop = craftSuiteAuthedUrl(false);
+    return (
+      '<div class="craft-shell">' +
+      '<div class="craft-ssot-banner"><strong>Wired craft</strong> — production suite ' +
+>>>>>>> Stashed changes
       '<a href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">grudgewarlords.com/craft</a> · panel SSOT ' +
@@ -2257,14 +2348,26 @@ function showError(msg) {
       '<div class="craft-toolbar"><div><h3>Warlords Craft</h3>' +
       '<span class="craft-auth-pill ok" id="craft-auth-status">' +
       esc(catalogHint) +
+<<<<<<< Updated upstream
       ' · bag UUID</span></div>' +
+=======
+      ' · suite embed</span></div>' +
+>>>>>>> Stashed changes
       '<div class="craft-toolbar-right">' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-reload">↻ Reload</button>' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-popout">↗ Full suite</button>' +
       '<a class="mp-btn primary" href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">Open suite</a></div></div>' +
+<<<<<<< Updated upstream
       '<p class="craft-sub">Shared <strong>account bag</strong> (UUID stacks) · XP on active character · native craft · suite pop-out</p>' +
+=======
+      '<p class="craft-sub">Railway <strong>account bag</strong> · XP on active character · suite is SSOT</p>' +
+      '<div class="craft-frame-wrap" style="position:relative;min-height:420px;border:1px solid rgba(201,149,10,.35);border-radius:12px;overflow:hidden">' +
+      '<iframe id="craft-suite-frame" title="Warlords Crafting Suite" src="' +
+      esc(suiteEmbed) +
+      '" style="width:100%;height:min(58vh,560px);min-height:420px;border:0;display:block;background:#0a0a10" loading="lazy"></iframe></div>' +
+>>>>>>> Stashed changes
       '<div class="craft-layout" style="margin-top:10px"><div class="craft-main">' +
       '<div class="craft-filter" id="craft-filter">' +
       profs
@@ -2281,8 +2384,13 @@ function showError(msg) {
         .join('') +
       '</div><div class="craft-grid" id="craft-host">' +
       cards +
+<<<<<<< Updated upstream
       '</div><p class="craft-log" id="craft-log">Native craft · bag UUID stacks · Full suite for Railway spend/XP</p></div>' +
       '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">UUID bag</span></div>' +
+=======
+      '</div><p class="craft-log" id="craft-log">Quick catalog · full spend/XP in suite above</p></div>' +
+      '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">demo</span></div>' +
+>>>>>>> Stashed changes
       '<div class="craft-mat-grid">' +
       matPreview +
       '</div><a class="craft-suite-link" href="' +
@@ -2292,11 +2400,27 @@ function showError(msg) {
   }
 
   function wireCraftChromeNative() {
+<<<<<<< Updated upstream
+=======
+    const frame = document.getElementById('craft-suite-frame');
+    if (frame) {
+      frame.onload = () => {
+        postCraftAuthToFrame(frame);
+        setTimeout(() => postCraftAuthToFrame(frame), 800);
+      };
+      setTimeout(() => postCraftAuthToFrame(frame), 400);
+    }
+>>>>>>> Stashed changes
     document.getElementById('btn-craft-popout')?.addEventListener('click', () => {
       window.open(craftSuiteAuthedUrl(false), '_blank', 'noopener');
     });
     document.getElementById('btn-craft-reload')?.addEventListener('click', () => {
+<<<<<<< Updated upstream
       switchTab('Crafting');
+=======
+      if (frame) frame.src = craftSuiteAuthedUrl(true);
+      else switchTab('Crafting');
+>>>>>>> Stashed changes
     });
     document.querySelectorAll('#craft-filter [data-cf]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -2308,12 +2432,22 @@ function showError(msg) {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-craft-id');
         const log = document.getElementById('craft-log');
+<<<<<<< Updated upstream
         if (log) {
           log.textContent =
             'Recipe ' + id + ' · bag check via UUID · open Full suite for Railway spend + profession XP';
         }
       });
     });
+=======
+        if (log) log.textContent = 'Recipe ' + id + ' — use suite above for Railway craft + profession XP';
+      });
+    });
+    window.addEventListener('message', (e) => {
+      if (!e.origin || e.origin.indexOf('grudgewarlords.com') === -1) return;
+      if (e.data?.type === 'GRUDGE_READY') postCraftAuthToFrame(frame);
+    });
+>>>>>>> Stashed changes
   }
 
 function attachSlotListeners() {

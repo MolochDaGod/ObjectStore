@@ -586,21 +586,196 @@
     return `<div class="mp-eff-row"><span class="mp-eff-label">${esc(label)}</span>${cells}</div>`;
   }
 
-  function renderClassPassivesStrip(rules) {
-    const passives = rules.passives || [];
+  /** Default icons when SSOT passive lacks iconUrl (class · kind). */
+  const PASSIVE_ICON_FALLBACK = {
+    warrior: {
+      armor: '/icons/skills/class/barbarian/barbarian_05.png',
+      weapon: '/icons/skills/class/barbarian/barbarian_01.png',
+      dual: '/icons/skills/class/barbarian/barbarian_06.png',
+      tree: '/icons/skills/class/barbarian/barbarian_03.png',
+    },
+    mage: {
+      armor: '/icons/skills/class/firemage/firemage_05.png',
+      weapon: '/icons/skills/class/firemage/firemage_01.png',
+      dual: '/icons/skills/class/firemage/firemage_03.png',
+      tree: '/icons/skills/class/firemage/firemage_02.png',
+    },
+    ranger: {
+      armor: '/icons/skills/class/hunter/hunter_05.png',
+      weapon: '/icons/skills/class/hunter/hunter_01.png',
+      dual: '/icons/skills/class/hunter/hunter_03.png',
+      tree: '/icons/skills/class/hunter/hunter_02.png',
+    },
+    worge: {
+      armor: '/icons/skills/class/necromancer/necromancer_05.png',
+      weapon: '/icons/skills/class/necromancer/necromancer_01.png',
+      dual: '/icons/skills/class/necromancer/necromancer_03.png',
+      tree: '/icons/skills/class/necromancer/necromancer_02.png',
+    },
+  };
+
+  function passiveIconFor(classKey, passive) {
+    if (passive.iconUrl || passive.icon) return skillIcon(passive.iconUrl || passive.icon);
+    const ck = (classKey || 'warrior').toLowerCase();
+    const kind = passive.kind || (passive.treePassive ? 'tree' : 'armor');
+    const path =
+      (PASSIVE_ICON_FALLBACK[ck] && PASSIVE_ICON_FALLBACK[ck][kind]) ||
+      PASSIVE_ICON_FALLBACK.warrior.armor;
+    return skillIcon(path);
+  }
+
+  function buildPassiveTooltipLines(p) {
+    if (Array.isArray(p.tooltipLines) && p.tooltipLines.length) return p.tooltipLines.slice();
+    const lines = [];
+    const eff = p.effect || {};
+    if (eff.armor) {
+      Object.entries(eff.armor).forEach(([t, m]) => {
+        lines.push(`${formatMult(m)} armor effectiveness (${t})`);
+      });
+    }
+    if (eff.weapon) {
+      Object.entries(eff.weapon).forEach(([t, m]) => {
+        lines.push(`${formatMult(m)} weapon effectiveness (${t})`);
+      });
+    }
+    if (eff.dualWield != null) lines.push(`${formatMult(eff.dualWield)} dual-wield contribution`);
+    if (p.effect && typeof p.effect === 'string') lines.push(p.effect);
+    if (p.bonuses) {
+      Object.entries(p.bonuses).forEach(([k, v]) => lines.push(`+${v} ${k} per rank`));
+    }
+    if (p.procEffect?.type) {
+      lines.push(`Proc: ${p.procEffect.type}${p.procEffect.duration ? ` (${p.procEffect.duration}s)` : ''}`);
+    }
+    return lines;
+  }
+
+  /**
+   * WoW spellbook-style passive row: icon grid + rich hover tooltip.
+   * Includes class gear passives (soft mults) + tree skills flagged passive:true.
+   */
+  function collectSpellbookPassives(rules, tree, classKey) {
+    const list = [];
+    (rules.passives || []).forEach((p) => {
+      list.push({
+        id: p.id,
+        name: p.name,
+        kind: p.kind || 'armor',
+        description: p.description || '',
+        rank: p.rank || 'Passive',
+        alwaysOn: p.alwaysOn !== false,
+        iconUrl: p.iconUrl || p.icon,
+        effect: p.effect,
+        tooltipLines: p.tooltipLines,
+        source: 'class',
+      });
+    });
+    (tree?.tiers || []).forEach((tier) => {
+      (tier.skills || []).forEach((sk) => {
+        if (!sk.passive) return;
+        list.push({
+          id: sk.id,
+          name: sk.name,
+          kind: 'tree',
+          description: sk.description || sk.effect || '',
+          rank: `Passive · Lv ${tier.requiredLevel | 0}`,
+          alwaysOn: true,
+          iconUrl: sk.iconUrl || sk.icon,
+          effect: sk.effect,
+          bonuses: sk.bonuses,
+          procEffect: sk.procEffect,
+          treePassive: true,
+          requires: sk.requires,
+          source: 'tree',
+        });
+      });
+    });
+    return list;
+  }
+
+  function renderSpellbookPassives(rules, tree, classKey) {
+    const passives = collectSpellbookPassives(rules, tree, classKey);
     if (!passives.length) return '';
-    return `<div class="mp-class-passives">
-      <div class="mp-equip-rules-title">Class passives (soft — no equip bans)</div>
-      ${passives
-        .map(
-          (p) => `<div class="mp-class-passive" data-kind="${esc(p.kind || '')}">
-          <span class="mp-sk-tag ${p.kind === 'armor' ? 'passive' : p.kind === 'weapon' ? 'active' : 'grant'}">${esc(p.kind || 'passive')}</span>
-          <strong>${esc(p.name)}</strong>
-          <span class="mp-passive-desc">${esc(p.description || '')}</span>
-        </div>`,
-        )
-        .join('')}
+    const icons = passives
+      .map((p, i) => {
+        const ico = passiveIconFor(classKey, p);
+        const tipPayload = {
+          name: p.name,
+          rank: p.rank || 'Passive',
+          desc: p.description || '',
+          lines: buildPassiveTooltipLines(p),
+          kind: p.kind || 'passive',
+          alwaysOn: !!p.alwaysOn,
+          source: p.source || 'class',
+        };
+        return `<button type="button" class="mp-sb-passive" data-sb-passive="${i}"
+          data-sb-tip="${esc(JSON.stringify(tipPayload))}"
+          aria-label="${esc(p.name)}">
+          <span class="mp-sb-frame">
+            ${ico ? `<img src="${esc(ico)}" alt="" draggable="false" onerror="this.classList.add('mp-sb-ico-missing')">` : '<span class="mp-sb-ico-fallback">◆</span>'}
+            <span class="mp-sb-corner" aria-hidden="true"></span>
+          </span>
+        </button>`;
+      })
+      .join('');
+    return `<div class="mp-spellbook-passives" data-class-key="${esc(classKey || '')}">
+      <div class="mp-sb-header">
+        <span class="mp-sb-title">Passives</span>
+        <span class="mp-sb-sub">Always on · hover for details · soft gear mults (no equip bans)</span>
+      </div>
+      <div class="mp-sb-icon-row">${icons}</div>
+      <div class="mp-sb-tooltip" id="mpSpellbookTip" role="tooltip" hidden></div>
     </div>`;
+  }
+
+  function attachSpellbookTooltips(root) {
+    const tip = root.querySelector('#mpSpellbookTip') || document.getElementById('mpSpellbookTip');
+    if (!tip) return;
+    const show = (btn, e) => {
+      let data;
+      try {
+        data = JSON.parse(btn.getAttribute('data-sb-tip') || '{}');
+      } catch {
+        return;
+      }
+      const lines = (data.lines || [])
+        .map((ln) => {
+          const s = String(ln);
+          const up = s.startsWith('+');
+          const down = s.startsWith('-');
+          return `<div class="mp-sb-tip-line ${up ? 'up' : down ? 'down' : ''}">${esc(s)}</div>`;
+        })
+        .join('');
+      tip.innerHTML = `
+        <div class="mp-sb-tip-name">${esc(data.name || 'Passive')}</div>
+        <div class="mp-sb-tip-rank">${esc(data.rank || 'Passive')}${data.alwaysOn ? ' · Always active' : ''}</div>
+        <div class="mp-sb-tip-desc">${esc(data.desc || '')}</div>
+        ${lines ? `<div class="mp-sb-tip-effects">${lines}</div>` : ''}
+        <div class="mp-sb-tip-foot">${data.source === 'tree' ? 'Class skill tree' : 'Class training'} · does not restrict equip</div>`;
+      tip.hidden = false;
+      tip.style.display = 'block';
+      const pad = 12;
+      let x = e.clientX + pad;
+      let y = e.clientY + pad;
+      tip.style.left = '0px';
+      tip.style.top = '0px';
+      const tw = tip.offsetWidth || 280;
+      const th = tip.offsetHeight || 120;
+      if (x + tw > window.innerWidth - 8) x = e.clientX - tw - pad;
+      if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
+      tip.style.left = Math.max(8, x) + 'px';
+      tip.style.top = Math.max(8, y) + 'px';
+    };
+    const hide = () => {
+      tip.hidden = true;
+      tip.style.display = 'none';
+    };
+    root.querySelectorAll('.mp-sb-passive').forEach((btn) => {
+      btn.addEventListener('mouseenter', (e) => show(btn, e));
+      btn.addEventListener('mousemove', (e) => show(btn, e));
+      btn.addEventListener('mouseleave', hide);
+      btn.addEventListener('focus', (e) => show(btn, e));
+      btn.addEventListener('blur', hide);
+    });
   }
 
   function renderEquipRulesStrip(rules, rulesDoc) {
@@ -621,7 +796,7 @@
       ? `${esc(rules.defaultLoadout.main || '—')}${rules.defaultLoadout.off ? ' + ' + esc(rules.defaultLoadout.off) : ''} → ${esc(rules.defaultLoadout.style || '')}`
       : '';
     return `<div class="mp-equip-rules">
-      <div class="mp-equip-rules-title">Class equipment · soft effectiveness</div>
+      <div class="mp-equip-rules-title">Gear effectiveness (reference)</div>
       <div class="mp-equip-rules-row">
         <span class="mp-rule-pill mp-rule-ok">Equip anything</span>
         ${dualPill}
@@ -632,8 +807,7 @@
       <div class="mp-equip-rules-detail"><strong>Preferred weapons</strong> ${prefW || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Anim packs</strong> ${packs || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Default loadout</strong> ${load || '—'}</div>
-      ${renderClassPassivesStrip(rules)}
-      <div class="mp-equip-rules-note">Passives raise preferred gear and lower off-type stats — never lock slots. SSOT: class-equipment-rules.json</div>
+      <div class="mp-equip-rules-note">Passives at top apply these mults in combat — never lock slots. SSOT: class-equipment-rules.json</div>
     </div>`;
   }
 
@@ -653,12 +827,17 @@
       classCatalog?.[key]?.abilities ||
       [];
 
-    let html = `<div class="section-title">${ctx.embedInAttributes ? 'Class tree & passives' : 'Class Skill Tree'} — ${esc(tree.className || key)}</div>
+    // Actives only in tier grid (passives already in spellbook row at top)
+    const showTreePassiveInGrid = !!ctx.showTreePassivesInGrid;
+
+    let html = `<div class="section-title">${ctx.embedInAttributes ? 'Class skills' : 'Class Skill Tree'} — ${esc(tree.className || key)}</div>
       <div class="mp-char-meta">Hero Lv ${level} · Skill pts <strong style="color:var(--gold)">${avail}</strong>
-        · Prefab pack: <code>${esc(rules.prefabPack || key)}</code>
-        · Passives &amp; granted abilities from master-skillTrees</div>
+        · Prefab: <code>${esc(rules.prefabPack || key)}</code>
+        · Soft gear passives · tree from master-skillTrees</div>
+      ${renderSpellbookPassives(rules, tree, key)}
       ${renderEquipRulesStrip(rules, equipRules)}
-      <div class="mp-class-tree">`;
+      <div class="mp-class-tree">
+      <div class="mp-equip-rules-title" style="margin:4px 0 8px">Skill tree</div>`;
 
     (tree.tiers || []).forEach((tier) => {
       const unlocked = level >= (tier.requiredLevel | 0);
@@ -670,6 +849,8 @@
         <div class="mp-skill-chips">`;
 
       (tier.skills || []).forEach((sk) => {
+        // Passives live in spellbook row at top (WoW-style)
+        if (sk.passive && !showTreePassiveInGrid) return;
         const pts = char.classSkills[sk.id] | 0;
         const max = sk.maxPoints | 0 || 1;
         const reqOk = !sk.requires || (char.classSkills[sk.requires] | 0) > 0;
@@ -737,6 +918,7 @@
   }
 
   function attachClassSkillHandlers(root, char, skillTrees, classLabel, onChange) {
+    attachSpellbookTooltips(root);
     const resolved = resolveClassTree(skillTrees, char.classKey, classLabel);
     if (!resolved?.tree) return;
     const skillMap = {};
@@ -1024,6 +1206,9 @@
     applyClassGearEffectiveness,
     resolveWeaponFamily,
     resolveArmorFamily,
+    collectSpellbookPassives,
+    renderSpellbookPassives,
+    attachSpellbookTooltips,
     calculateDerivedStats,
     calculateCombatPower,
     getBuildRating,
