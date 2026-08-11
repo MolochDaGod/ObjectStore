@@ -225,6 +225,35 @@ body.scroll-theme.mp2d-ready .app {
   }
 }
 
+/* Stack qty badge on bag icons (harvest / craft mats / consumables, max 100) */
+.inv-cell .inv-stack,
+.mp2d-ready .inv-cell .inv-stack {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  z-index: 3;
+  min-width: 1.15em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: var(--font-mono, "JetBrains Mono", ui-monospace, Consolas, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: #fff;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(212, 168, 67, 0.35);
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+.inv-cell .inv-stack.is-full,
+.mp2d-ready .inv-cell .inv-stack.is-full {
+  color: #ffd66b;
+  border-color: rgba(255, 214, 107, 0.65);
+  box-shadow: 0 0 6px rgba(212, 164, 0, 0.35);
+}
+
 /* ── Inventory / equip slots with CraftPix slot art ── */
 .mp2d-ready .inv-cell,
 .mp2d-ready .eq-slot,
@@ -267,33 +296,6 @@ body.scroll-theme.mp2d-ready .app {
 .mp2d-ready .attr-card-head img {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-}
-
-/* Stack count on bag icons (harvest / craft mats · max 100) */
-.mp2d-ready .inv-cell .inv-stack {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  z-index: 3;
-  min-width: 1.15em;
-  padding: 1px 4px;
-  border-radius: 3px;
-  font-family: var(--font-mono, "JetBrains Mono", ui-monospace, Consolas, monospace);
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.2;
-  color: #fff;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.72);
-  border: 1px solid rgba(212, 168, 67, 0.35);
-  text-shadow: 0 1px 2px #000;
-  pointer-events: none;
-}
-.mp2d-ready .inv-cell .inv-stack.is-full {
-  color: #ffd66b;
-  border-color: rgba(255, 214, 107, 0.65);
-  box-shadow: 0 0 6px rgba(212, 164, 0, 0.35);
 }
 
 /* Hotbar footer as action-bar strip */
