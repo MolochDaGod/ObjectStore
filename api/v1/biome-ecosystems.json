@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "updated": "2026-07-09",
+  "version": "1.2.0",
+  "updated": "2026-08-11",
   "characterReferenceHeightM": 2,
   "mountainPeakHeightM": 20,
   "harvestRegenHours": 4,
@@ -27,7 +27,7 @@
       "foundationId": "driftwood_bay",
       "animals": [
         "deer",
-        "rabbit",
+        "pug",
         "crab",
         "boar",
         "buffalo"
@@ -47,7 +47,7 @@
       "animals": [
         "deer",
         "boar",
-        "rabbit",
+        "pug",
         "buffalo",
         "crab"
       ],
@@ -68,7 +68,7 @@
         "boar",
         "wolf",
         "bear",
-        "rabbit"
+        "pug"
       ],
       "treePolicy": "pine_stylized",
       "snowCanopy": false,
@@ -83,10 +83,10 @@
       "label": "Plains",
       "foundationId": "driftwood_bay",
       "animals": [
-        "buffalo",
-        "deer",
-        "rabbit",
-        "boar",
+        "cow",
+        "sheep",
+        "pig",
+        "horse",
         "wolf"
       ],
       "treePolicy": "pine_stylized",
@@ -104,7 +104,7 @@
       "animals": [
         "wolf",
         "deer",
-        "rabbit",
+        "pug",
         "bear",
         "buffalo"
       ],
@@ -124,7 +124,7 @@
         "wolf",
         "bear",
         "deer",
-        "rabbit",
+        "pug",
         "buffalo"
       ],
       "treePolicy": "snow_pine",
@@ -140,7 +140,7 @@
       "label": "Desert",
       "foundationId": "driftwood_bay",
       "animals": [
-        "rabbit",
+        "pug",
         "boar",
         "buffalo",
         "wolf",
@@ -182,7 +182,7 @@
         "wolf",
         "deer",
         "crab",
-        "rabbit"
+        "pug"
       ],
       "treePolicy": "pine_stylized",
       "snowCanopy": false,
@@ -198,7 +198,7 @@
       "foundationId": "ironfang_spire",
       "animals": [
         "deer",
-        "rabbit",
+        "pug",
         "wolf",
         "buffalo",
         "boar"
@@ -282,5 +282,30 @@
     "Bush_Common",
     "nature-megakit",
     "/models/lowpoly/"
-  ]
+  ],
+  "fishNodeSpecies": [
+    "fish1",
+    "fish2",
+    "fish3",
+    "goldfish",
+    "catfish",
+    "butterflyfish",
+    "dolphin",
+    "manta_ray",
+    "shark",
+    "whale"
+  ],
+  "creatureAliases": {
+    "rabbit": "pug",
+    "hare": "pug",
+    "boar": "cotw_boar",
+    "bear": "cotw_bear",
+    "minnow": "goldfish"
+  },
+  "quaternius": {
+    "farm": "models/creatures/land/{cow,horse,llama,pig,pug,sheep,zebra}.glb",
+    "fish": "models/creatures/fish/{fish1,fish2,fish3,dolphin,manta_ray,whale}.glb",
+    "predator": "models/creatures/predator/shark.glb",
+    "source": "Documents Farm Animals Animated + Fish Pack Animated by Quaternius"
+  }
 }
