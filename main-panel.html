@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="css/ui-scroll-container.css">
   <link rel="stylesheet" href="css/ui-cursor.css">
   <link rel="stylesheet" href="css/ui-party.css">
-  <link rel="stylesheet" href="css/main-panel-2d.css">
+  <link rel="stylesheet" href="css/main-panel-2d.css?v=fluid4">
   <!-- Readability: dark panels + high-contrast text over parchment frame -->
-  <link rel="stylesheet" href="css/main-panel-readable.css">
+  <link rel="stylesheet" href="css/main-panel-readable.css?v=fluid4">
   <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@5.2.5/latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="https://cdn.jsdelivr.net/fontsource/fonts/crimson-text@5.2.5/latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Three.js hero viewport (equip mesh visibility) loaded as module below -->
   <style>
-    /* App shell — stage scale handled by main-panel-canvas-2d + main-panel-2d.css */
+    /* App shell — fluid fit: #mainScroll is canvas (main-panel-canvas-2d.js) */
     .app { display: flex; height: 100vh; height: 100dvh; flex-direction: column; overflow: hidden; }
     /* ONE World Map scroll = entire main canvas (not dual center+inv shells) */
     #mainScroll.scroll-shell,
@@ -104,11 +104,13 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
-    /* Scroll shells fill flex children */
-    .center-col .scroll-shell { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-    .right-col.scroll-shell { flex: 1; min-height: 0; }
-    .right-col .scroll-content { display: flex; flex-direction: column; min-height: 0; }
+    /* ONE canvas only — purge nested column scroll-shells */
+    .center-col .scroll-shell:not(#mainScroll),
+    .right-col.scroll-shell { background: transparent !important; box-shadow: none !important; }
     .right-col .inv-grid { flex: 1; min-height: 0; }
+    /* Canvas fills under top-bar */
+    #mainScroll.main-canvas-host { flex: 1 1 auto; min-height: 0; }
+    #mainScroll.is-open > .scroll-content { opacity: 1 !important; pointer-events: auto !important; }
     .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: linear-gradient(90deg,#1a100a,#221710,#1a100a); border-bottom: 2px solid var(--gold); flex-shrink: 0; }
     .logo h1 { font-family: var(--font-display); font-size: 15px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
     .player-info { display: flex; align-items: center; gap: 14px; font-size: 12px; }
@@ -577,11 +579,11 @@
 <!-- Item Hover Tooltip -->
 <div class="eq-tooltip" id="eqTooltip"></div>
 
-<script src="./js/weapon-skill-tree.js"></script>
-<script src="./js/main-panel-systems.js"></script>
-<script src="./js/main-panel-i18n.js"></script>
-<script src="./js/main-panel-2d.js"></script>
-<script src="./js/main-panel-canvas-2d.js"></script>
+<script src="./js/weapon-skill-tree.js?v=fluid4"></script>
+<script src="./js/main-panel-systems.js?v=fluid4"></script>
+<script src="./js/main-panel-i18n.js?v=fluid4"></script>
+<script src="./js/main-panel-2d.js?v=fluid4"></script>
+<script src="./js/main-panel-canvas-2d.js?v=fluid4"></script>
 <script>
   const CDN = 'https://assets.grudge-studio.com';
   const PAGE_BASE = (() => {
@@ -2420,9 +2422,4 @@ function attachSlotListeners() {
         () => renderTab(),
       );
     }
-  }
-
-  init();
-</script>
-</body>
-</html>
+  

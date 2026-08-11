@@ -103,9 +103,15 @@
     } catch (_) {
       area.scrollTop = 0;
     }
-    // Refit design-scale stage after DOM paint
+    // Refit fluid canvas after DOM paint
     try {
-      global.MainPanelCanvas2D && global.MainPanelCanvas2D.fitScale && global.MainPanelCanvas2D.fitScale();
+      var c = global.MainPanelCanvas2D;
+      if (c) {
+        if (c.purgeWrongStage) c.purgeWrongStage();
+        if (c.ensureScrollOpen) c.ensureScrollOpen();
+        if (c.fitFluid) c.fitFluid();
+        else if (c.fitScale) c.fitScale();
+      }
     } catch (_) {}
   }
 

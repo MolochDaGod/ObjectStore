@@ -1,28 +1,28 @@
 /**
  * Main Panel canvas host — info.grudge-studio.com/main-panel.html
  *
- * Goals:
- *  1. #mainScroll is the interactive canvas (fills remaining viewport under top bar)
- *  2. Scroll shell opens (World Map parchment) and stays open for content
- *  3. Fit-to-screen: fluid 100% layout — no transform-scale crop mid-panel
- *  4. HTMLCanvas2D overlay for drag ghost / click pulse only
+ * RIGHT:
+ *  - #mainScroll is the full interactive canvas under .top-bar
+ *  - Scroll shell stays OPEN (content visible)
+ *  - Fluid flex fit to viewport — no transform:scale
  *
- * Best practice: do NOT use CSS transform:scale on the main chrome for fit —
- * scaled elements keep their layout box and overflow:hidden clips the middle.
+ * WRONG (purged):
+ *  - DESIGN_W + transform:scale on a wrapper (clips mid-panel)
+ *  - Nested letterbox stage that shrinks chrome off-screen
+ *  - Leaving scroll closed (opacity 0 on .scroll-content)
  *
  * @see docs/MAIN_PANEL_2D_SSOT.md
  */
 (function (global) {
   "use strict";
 
-  var _stage = null;
-  var _inner = null;
   var _canvas = null;
   var _ctx = null;
   var _raf = 0;
   var _drag = null;
   var _pulse = null;
   var _reduced = false;
+  var _host = null; // #mainScroll — the canvas
 
   function prefersReduced() {
     try {
@@ -33,173 +33,221 @@
   }
 
   /**
-   * Wrap #mainScroll + hotbar so they fill .app under the top bar.
+   * Undo any leftover scale-stage wrap from older deploys.
+   * Moves #mainScroll + #hotbar back under .app if they were reparented.
    */
-  function ensureStage() {
-    if (document.getElementById("mpStage")) {
-      _stage = document.getElementById("mpStage");
-      _inner = document.getElementById("mpStageInner");
-      _canvas = document.getElementById("mp2dCanvas");
-      if (_canvas) _ctx = _canvas.getContext("2d", { alpha: true });
-      return;
-    }
+  function purgeWrongStage() {
+    var stage = document.getElementById("mpStage");
     var app = document.querySelector(".app");
+    if (!app) return;
+
+    if (stage) {
+      var mainScroll = document.getElementById("mainScroll");
+      var hotbar = document.getElementById("hotbar");
+      var topBar = app.querySelector(":scope > .top-bar");
+      // Re-parent children out of stage before removing it
+      if (mainScroll && mainScroll.closest("#mpStage")) {
+        if (topBar && topBar.nextSibling) {
+          app.insertBefore(mainScroll, topBar.nextSibling);
+        } else {
+          app.appendChild(mainScroll);
+        }
+      }
+      if (hotbar && hotbar.closest("#mpStage")) {
+        app.appendChild(hotbar);
+      }
+      // Drop empty stage + inner
+      try {
+        stage.remove();
+      } catch (_) {
+        if (stage.parentNode) stage.parentNode.removeChild(stage);
+      }
+    }
+
+    // Clear any inline transform scale left on elements
+    ["mpStageInner", "mainScroll"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el || !el.style) return;
+      el.style.transform = "";
+      el.style.marginTop = "";
+      el.style.width = "";
+      el.style.minHeight = "";
+    });
+  }
+
+  /**
+   * Layout: app column → top-bar | mainScroll (flex 1) | hotbar
+   */
+  function fitFluid() {
+    var app = document.querySelector(".app");
+    var topBar = document.querySelector(".app > .top-bar");
     var mainScroll = document.getElementById("mainScroll");
     var hotbar = document.getElementById("hotbar");
     if (!app || !mainScroll) return;
 
-    _stage = document.createElement("div");
-    _stage.id = "mpStage";
-    _stage.className = "mp-stage mp-stage--fluid";
-    _stage.setAttribute("data-mp-stage", "1");
+    _host = mainScroll;
 
-    _inner = document.createElement("div");
-    _inner.id = "mpStageInner";
-    _inner.className = "mp-stage-inner mp-stage-inner--fluid";
-
-    app.insertBefore(_stage, mainScroll);
-    _inner.appendChild(mainScroll);
-    if (hotbar) _inner.appendChild(hotbar);
-    _stage.appendChild(_inner);
-
-    _canvas = document.createElement("canvas");
-    _canvas.id = "mp2dCanvas";
-    _canvas.className = "mp2d-canvas";
-    _canvas.setAttribute("aria-hidden", "true");
-    _stage.appendChild(_canvas);
-    _ctx = _canvas.getContext("2d", { alpha: true });
-  }
-
-  /**
-   * Fit stage to remaining viewport — fluid, no transform crop.
-   */
-  function fitScale() {
-    if (!_stage || !_inner) return 1;
-
-    var app = document.querySelector(".app");
-    var topBar = document.querySelector(".app > .top-bar");
-    var topH = topBar ? topBar.getBoundingClientRect().height : 48;
     var vh = window.innerHeight || document.documentElement.clientHeight || 800;
-    var vw = window.innerWidth || document.documentElement.clientWidth || 1200;
-    var rh = Math.max(240, vh - topH);
+    var topH = topBar ? topBar.getBoundingClientRect().height : 48;
+    var hotH = hotbar ? hotbar.getBoundingClientRect().height : 56;
+    var canvasH = Math.max(200, vh - topH - hotH);
 
-    if (app) {
-      app.style.height = vh + "px";
-      app.style.maxHeight = vh + "px";
-      app.style.overflow = "hidden";
-      app.style.display = "flex";
-      app.style.flexDirection = "column";
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.height = vh + "px";
+    document.body.style.maxHeight = vh + "px";
+
+    app.style.display = "flex";
+    app.style.flexDirection = "column";
+    app.style.height = vh + "px";
+    app.style.maxHeight = vh + "px";
+    app.style.overflow = "hidden";
+    app.style.minHeight = "0";
+
+    if (topBar) {
+      topBar.style.flexShrink = "0";
     }
-
-    // Stage = full remaining viewport
-    _stage.style.flex = "1 1 auto";
-    _stage.style.minHeight = "0";
-    _stage.style.width = "100%";
-    _stage.style.height = rh + "px";
-    _stage.style.maxHeight = rh + "px";
-    _stage.style.overflow = "hidden";
-    _stage.style.display = "flex";
-    _stage.style.flexDirection = "column";
-
-    // Inner fills stage — NO transform:scale (that was clipping mid-panel)
-    _inner.style.width = "100%";
-    _inner.style.height = "100%";
-    _inner.style.maxHeight = "100%";
-    _inner.style.minHeight = "0";
-    _inner.style.flex = "1 1 auto";
-    _inner.style.display = "flex";
-    _inner.style.flexDirection = "column";
-    _inner.style.transform = "none";
-    _inner.style.margin = "0";
-    _inner.style.overflow = "hidden";
-
-    var mainScroll = document.getElementById("mainScroll");
-    if (mainScroll) {
-      mainScroll.style.flex = "1 1 auto";
-      mainScroll.style.minHeight = "0";
-      mainScroll.style.height = "100%";
-      mainScroll.style.maxHeight = "100%";
-      mainScroll.style.width = "100%";
-      mainScroll.style.display = "flex";
-      mainScroll.style.flexDirection = "column";
-      mainScroll.style.overflow = "hidden";
-
-      // scroll-content well from mountScrollContainer
-      var sc = mainScroll.querySelector(":scope > .scroll-content");
-      if (sc) {
-        sc.style.flex = "1 1 auto";
-        sc.style.minHeight = "0";
-        sc.style.height = "100%";
-        sc.style.display = "flex";
-        sc.style.flexDirection = "column";
-        sc.style.overflow = "hidden";
-      }
-      var body = mainScroll.querySelector(".main-body");
-      if (body) {
-        body.style.flex = "1 1 auto";
-        body.style.minHeight = "0";
-        body.style.height = "100%";
-        body.style.display = "flex";
-        body.style.overflow = "hidden";
-      }
-    }
-
-    var hotbar = document.getElementById("hotbar");
     if (hotbar) {
+      // Ensure hotbar is direct child of app after mainScroll
+      if (hotbar.parentElement !== app) app.appendChild(hotbar);
+      if (mainScroll.nextSibling !== hotbar) {
+        app.insertBefore(hotbar, mainScroll.nextSibling);
+      }
       hotbar.style.flexShrink = "0";
       hotbar.style.width = "100%";
     }
 
-    // Ensure scroll shell is OPEN so content is visible
-    ensureScrollOpen();
+    // #mainScroll = canvas fills remaining height
+    if (mainScroll.parentElement !== app) {
+      if (topBar && topBar.nextSibling) app.insertBefore(mainScroll, topBar.nextSibling);
+      else app.insertBefore(mainScroll, hotbar || null);
+    }
+    mainScroll.style.flex = "1 1 auto";
+    mainScroll.style.minHeight = "0";
+    mainScroll.style.height = canvasH + "px";
+    mainScroll.style.maxHeight = canvasH + "px";
+    mainScroll.style.width = "100%";
+    mainScroll.style.display = "flex";
+    mainScroll.style.flexDirection = "column";
+    mainScroll.style.overflow = "hidden";
+    mainScroll.style.transform = "none";
 
+    var sc = mainScroll.querySelector(":scope > .scroll-content");
+    if (sc) {
+      sc.style.flex = "1 1 auto";
+      sc.style.minHeight = "0";
+      sc.style.height = "100%";
+      sc.style.display = "flex";
+      sc.style.flexDirection = "column";
+      sc.style.overflow = "hidden";
+      sc.style.opacity = "1";
+      sc.style.pointerEvents = "auto";
+    }
+
+    var body = mainScroll.querySelector(".main-body");
+    if (body) {
+      body.style.flex = "1 1 auto";
+      body.style.minHeight = "0";
+      body.style.height = "100%";
+      body.style.display = "flex";
+      body.style.overflow = "hidden";
+    }
+
+    var center = mainScroll.querySelector(".center-col");
+    if (center) {
+      center.style.flex = "1 1 auto";
+      center.style.minWidth = "0";
+      center.style.minHeight = "0";
+      center.style.display = "flex";
+      center.style.flexDirection = "column";
+      center.style.overflow = "hidden";
+    }
+
+    var content = document.getElementById("contentArea");
+    if (content) {
+      content.style.flex = "1 1 auto";
+      content.style.minHeight = "0";
+      content.style.overflowY = "auto";
+      content.style.overflowX = "hidden";
+    }
+
+    ensureScrollOpen();
+    placeCanvasOverlay();
     resizeCanvas();
+
     document.documentElement.style.setProperty("--mp-ui-scale", "1");
-    document.documentElement.style.setProperty("--mp-stage-h", rh + "px");
-    document.documentElement.style.setProperty("--mp-stage-w", vw + "px");
-    document.documentElement.style.setProperty("--mp-design-w", "100%");
-    return 1;
+    document.documentElement.style.setProperty("--mp-canvas-h", canvasH + "px");
   }
 
-  /**
-   * Scroll must be open for the canvas to show UI (content opacity gated by .is-open).
-   */
+  /** Scroll must be open or content stays opacity 0 */
   function ensureScrollOpen() {
     var host = document.getElementById("mainScroll");
     if (!host) return;
-    host.classList.remove("is-animating", "is-closed");
     host.classList.add("is-open");
+    host.classList.remove("is-closed", "is-animating");
     host.dataset.scrollState = "open";
     try {
-      if (global._mainScrollApi && typeof global._mainScrollApi.snapOpen === "function") {
+      if (global._mainScrollApi && global._mainScrollApi.snapOpen) {
         global._mainScrollApi.snapOpen();
       }
     } catch (_) {}
+    var sc = host.querySelector(":scope > .scroll-content");
+    if (sc) {
+      sc.style.opacity = "1";
+      sc.style.pointerEvents = "auto";
+    }
+  }
+
+  function placeCanvasOverlay() {
+    var host = document.getElementById("mainScroll");
+    if (!host) return;
+    if (!_canvas) {
+      _canvas = document.createElement("canvas");
+      _canvas.id = "mp2dCanvas";
+      _canvas.className = "mp2d-canvas";
+      _canvas.setAttribute("aria-hidden", "true");
+      _ctx = _canvas.getContext("2d", { alpha: true });
+    }
+    // Sit on top of the scroll canvas, not a separate stage
+    if (_canvas.parentElement !== host) {
+      host.style.position = host.style.position || "relative";
+      host.appendChild(_canvas);
+    }
+    _canvas.style.position = "absolute";
+    _canvas.style.inset = "0";
+    _canvas.style.width = "100%";
+    _canvas.style.height = "100%";
+    _canvas.style.pointerEvents = "none";
+    _canvas.style.zIndex = "40";
   }
 
   function resizeCanvas() {
-    if (!_canvas || !_stage || !_ctx) return;
+    if (!_canvas || !_ctx) return;
+    var host = document.getElementById("mainScroll") || _host;
+    if (!host) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var w = _stage.clientWidth;
-    var h = _stage.clientHeight;
+    var w = host.clientWidth;
+    var h = host.clientHeight;
     if (w < 2 || h < 2) return;
     _canvas.width = Math.floor(w * dpr);
     _canvas.height = Math.floor(h * dpr);
-    _canvas.style.width = w + "px";
-    _canvas.style.height = h + "px";
+    _canvas.style.width = "100%";
+    _canvas.style.height = "100%";
     _ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   function paint() {
     _raf = 0;
-    if (!_ctx || !_canvas || !_stage) return;
-    var w = _stage.clientWidth;
-    var h = _stage.clientHeight;
+    if (!_ctx || !_canvas) return;
+    var host = document.getElementById("mainScroll");
+    if (!host) return;
+    var w = host.clientWidth;
+    var h = host.clientHeight;
     _ctx.clearRect(0, 0, w, h);
 
     if (_drag && _drag.img) {
       _ctx.save();
-      _ctx.globalAlpha = _drag.alpha != null ? _drag.alpha : 0.92;
+      _ctx.globalAlpha = 0.92;
       var sz = _drag.w || 48;
       _ctx.shadowColor = "rgba(212,164,0,0.55)";
       _ctx.shadowBlur = 16;
@@ -233,14 +281,15 @@
     _raf = requestAnimationFrame(paint);
   }
 
-  function stagePoint(clientX, clientY) {
-    if (!_stage) return { x: clientX, y: clientY };
-    var r = _stage.getBoundingClientRect();
+  function hostPoint(clientX, clientY) {
+    var host = document.getElementById("mainScroll");
+    if (!host) return { x: clientX, y: clientY };
+    var r = host.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
   }
 
   function beginDrag(source, clientX, clientY) {
-    var p = stagePoint(clientX, clientY);
+    var p = hostPoint(clientX, clientY);
     var img = null;
     if (source && source.tagName === "IMG") img = source;
     else if (typeof source === "string" && source) {
@@ -248,13 +297,13 @@
       img.decoding = "async";
       img.src = source;
     }
-    _drag = { img: img, x: p.x, y: p.y, w: 52, alpha: 0.92 };
+    _drag = { img: img, x: p.x, y: p.y, w: 52 };
     schedule();
   }
 
   function moveDrag(clientX, clientY) {
     if (!_drag) return;
-    var p = stagePoint(clientX, clientY);
+    var p = hostPoint(clientX, clientY);
     _drag.x = p.x;
     _drag.y = p.y;
     schedule();
@@ -267,13 +316,13 @@
 
   function pulseAt(clientX, clientY, r) {
     if (_reduced) return;
-    var p = stagePoint(clientX, clientY);
+    var p = hostPoint(clientX, clientY);
     _pulse = { x: p.x, y: p.y, r: r || 16, t0: performance.now() };
     schedule();
   }
 
   function wireSlotInteractions() {
-    var root = document.getElementById("mpStageInner") || document.body;
+    var root = document.getElementById("mainScroll") || document.body;
     root.addEventListener(
       "pointerdown",
       function (e) {
@@ -303,9 +352,7 @@
             endDrag();
             cell.classList.remove("is-dragging-src");
             pulseAt(ev.clientX, ev.clientY, 20);
-          } else {
-            pulseAt(ev.clientX, ev.clientY, 14);
-          }
+          } else pulseAt(ev.clientX, ev.clientY, 14);
         }
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onUp);
@@ -314,55 +361,54 @@
     );
   }
 
-  function onScrollLifecycle() {
-    // After parchment open animation, reflow fluid canvas
-    document.addEventListener(
-      "scroll:open",
-      function () {
-        ensureScrollOpen();
-        fitScale();
-      },
-      true
-    );
+  function fitScale() {
+    // Alias for older call sites
+    fitFluid();
   }
 
   function boot() {
     _reduced = prefersReduced();
-    ensureStage();
-    if (!_stage) {
-      console.warn("[mp-canvas-2d] no stage host");
-      return;
-    }
     document.body.classList.add("mp-canvas-2d", "mp-fluid-fit");
-    fitScale();
+    purgeWrongStage();
+    fitFluid();
     ensureScrollOpen();
     wireSlotInteractions();
-    onScrollLifecycle();
+
+    document.addEventListener(
+      "scroll:open",
+      function () {
+        ensureScrollOpen();
+        fitFluid();
+      },
+      true
+    );
 
     if (typeof ResizeObserver !== "undefined") {
       var ro = new ResizeObserver(function () {
-        fitScale();
+        fitFluid();
       });
-      ro.observe(_stage);
-      if (document.querySelector(".app")) ro.observe(document.querySelector(".app"));
-      if (document.documentElement) ro.observe(document.documentElement);
+      var app = document.querySelector(".app");
+      if (app) ro.observe(app);
+      ro.observe(document.documentElement);
     }
-    window.addEventListener("resize", fitScale, { passive: true });
+    window.addEventListener("resize", fitFluid, { passive: true });
     window.addEventListener("orientationchange", function () {
-      setTimeout(fitScale, 100);
+      setTimeout(fitFluid, 120);
     });
 
-    // After scroll appear (~0.8–1.2s) and late layout (images)
-    [200, 600, 1200, 2000].forEach(function (ms) {
+    [100, 400, 900, 1600, 2500].forEach(function (ms) {
       setTimeout(function () {
+        purgeWrongStage();
         ensureScrollOpen();
-        fitScale();
+        fitFluid();
       }, ms);
     });
 
     global.MainPanelCanvas2D = {
       fitScale: fitScale,
+      fitFluid: fitFluid,
       ensureScrollOpen: ensureScrollOpen,
+      purgeWrongStage: purgeWrongStage,
       beginDrag: beginDrag,
       moveDrag: moveDrag,
       endDrag: endDrag,
@@ -375,7 +421,7 @@
 
     document.dispatchEvent(
       new CustomEvent("grudge:main-panel:canvas-2d-ready", {
-        detail: { scale: 1, fluid: true },
+        detail: { scale: 1, fluid: true, purgedStage: true },
       })
     );
   }
