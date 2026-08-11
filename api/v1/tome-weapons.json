@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-08-11",
+  "source": "C:/Users/nugye/Documents/book_set.glb",
+  "split": "ObjectStore/_staging/book_set/export_tomes.py",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "si": {
+    "targetLenM": 0.28,
+    "unit": "meters",
+    "note": "Each tome longest axis fitted to 0.28 m (hand prop SSOT)"
+  },
+  "attach": {
+    "rest": {
+      "socket": "Bip001 L Clavicle | Bip001 L UpperArm",
+      "offset": { "x": -0.06, "y": 0.12, "z": -0.14 },
+      "behavior": "hover behind left shoulder"
+    },
+    "cast": {
+      "socket": "L_hand_container | L_shield_container | Bip001 L Hand",
+      "offset": { "x": 0.05, "y": 0.04, "z": 0.08 },
+      "behavior": "lerp to off-hand / shield-adjacent; play spell NLA"
+    }
+  },
+  "runtime": "js/grudge6-tome-offhand.js",
+  "mainPanel": "js/main-panel-hero-viewport.js applyEquip → createTomeOffhand",
+  "tomes": [
+    {
+      "id": "tome_arcanist",
+      "name": "Arcanist Tome",
+      "mesh": "models/weapons/tomes/tome_arcanist.glb",
+      "castMesh": "models/weapons/tomes/tome_arcanist_cast.glb",
+      "castClips": ["Spells_ArcanistSpell", "Spells_ArcanistSpell.001"],
+      "type": "offhand-tome",
+      "category": "tomes",
+      "slot": "Offhand"
+    },
+    {
+      "id": "tome_blacksmith",
+      "name": "Blacksmith Tome",
+      "mesh": "models/weapons/tomes/tome_blacksmith.glb",
+      "castMesh": "models/weapons/tomes/tome_blacksmith_cast.glb",
+      "castClips": ["Spells_BlacksmithSpell", "Spells_BlacksmithSpell.001"],
+      "type": "offhand-tome",
+      "category": "tomes",
+      "slot": "Offhand"
+    },
+    {
+      "id": "tome_knight",
+      "name": "Knight Tome",
+      "mesh": "models/weapons/tomes/tome_knight.glb",
+      "castMesh": "models/weapons/tomes/tome_knight_cast.glb",
+      "castClips": ["Spells_KnightSpell", "Spells_KnightSpell.001"],
+      "type": "offhand-tome",
+      "category": "tomes",
+      "slot": "Offhand"
+    },
+    {
+      "id": "tome_warlock",
+      "name": "Warlock Tome",
+      "mesh": "models/weapons/tomes/tome_warlock.glb",
+      "castMesh": "models/weapons/tomes/tome_warlock_cast.glb",
+      "castClips": ["Spells_WarlockSpell", "Spells_WarlockSpell.001"],
+      "type": "offhand-tome",
+      "category": "tomes",
+      "slot": "Offhand"
+    }
+  ],
+  "offhandWeaponsNext": [
+    "knives / daggers → L_hand kit + canOffhand",
+    "swords 1H off → dual only when catalog canOffhand",
+    "mace → LAB_WEAPON_KIND.mace canOffhand already"
+  ]
+}

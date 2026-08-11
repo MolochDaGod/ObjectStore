@@ -44,19 +44,29 @@ export const LAB_WEAPON_KIND = {
   crossbow: { defaultSlot: 'main_hand', canOffhand: false, targetLenM: 0.95, animPack: 'longbow' },
   staff: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.85, animPack: 'magic' },
   wand: { defaultSlot: 'staff', canOffhand: false, targetLenM: 0.55, animPack: 'magic' },
-  /** Off-hand grimoire/tome — L_hand_container; cast anim magic + events channel */
+  /**
+   * Off-hand grimoire/tome — rest: left shoulder hover; cast: L_hand / shield zone.
+   * Prefab runtime: js/grudge6-tome-offhand.js (book_set.glb split).
+   * Mesh SSOT: models/weapons/tomes/tome_{arcanist|blacksmith|knight|warlock}[_cast].glb
+   */
   tome: {
     defaultSlot: 'off_hand',
     canOffhand: true,
     targetLenM: 0.28,
     animPack: 'magic',
     meshCdn: [
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_arcanist.glb',
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_warlock.glb',
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_knight.glb',
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_blacksmith.glb',
       'https://assets.grudge-studio.com/models/weapons/tome.glb',
       'https://assets.grudge-studio.com/models/weapons/grimoire.glb',
-      'https://assets.grudge-studio.com/models/props/grimoire.glb',
     ],
     gripOffset: { x: 0.04, y: 0.02, z: 0.06 },
     gripEuler: { x: -0.35, y: 0.15, z: 0.4 },
+    restSocket: 'shoulder_l',
+    castSocket: 'L_hand_container',
+    behavior: 'tome_shoulder_hover_cast',
   },
   grimoire: {
     defaultSlot: 'off_hand',
@@ -64,12 +74,16 @@ export const LAB_WEAPON_KIND = {
     targetLenM: 0.28,
     animPack: 'magic',
     meshCdn: [
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_warlock.glb',
+      'https://assets.grudge-studio.com/models/weapons/tomes/tome_arcanist.glb',
       'https://assets.grudge-studio.com/models/weapons/grimoire.glb',
       'https://assets.grudge-studio.com/models/weapons/tome.glb',
-      'https://assets.grudge-studio.com/models/props/grimoire.glb',
     ],
     gripOffset: { x: 0.04, y: 0.02, z: 0.06 },
     gripEuler: { x: -0.35, y: 0.15, z: 0.4 },
+    restSocket: 'shoulder_l',
+    castSocket: 'L_hand_container',
+    behavior: 'tome_shoulder_hover_cast',
   },
   bow: { defaultSlot: 'staff', canOffhand: false, targetLenM: 1.0, animPack: 'longbow' },
 };

@@ -25,6 +25,11 @@ import {
   fitRootUniformSi,
   measureStructuralBBox,
 } from './grudge6-kit.js';
+import {
+  createTomeOffhand,
+  isTomeItem,
+  resolveTomeVariant,
+} from './grudge6-tome-offhand.js';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -115,7 +120,8 @@ function weaponSlotFromItem(item) {
   if (/spear|lance|pole/.test(cat)) return 'spear';
   if (/pick/.test(cat)) return 'pick';
   if (/bow|longbow|crossbow/.test(cat)) return 'bow';
-  if (/staff|stave|wand|tome|book/.test(cat)) return 'staff';
+  if (/tome|grimoire|spellbook|offhand-tome|codex/.test(cat)) return 'tome';
+  if (/staff|stave|wand/.test(cat)) return 'staff';
   if (/gun|rifle|pistol/.test(cat)) return 'sword';
   return null;
 }
@@ -184,7 +190,23 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     if (slot === 'shield' || /shield/i.test(String(off.category || off.type || ''))) {
       const v = pickVariant(equip.slots.shield, armorLetterFromItem(off));
       if (v) equip.equip('shield', v);
+    } else if (isTomeItem(off) || slot === 'tome') {
+      // External tome mesh via grudge6-tome-offhand (not kit child) — host applies async
+      equip._pendingTomeOffhand = off;
+    } else if (slot && (WEAPON_L.has(slot) || /dagger|mace|hammer|knife|sword/i.test(String(off.category || off.type || off.name || '')))) {
+      // Off-hand sidearm: dagger / mace / knife / short sword → L_hand kit group
+      const letter = armorLetterFromItem(off);
+      const offSlot = slot === 'staff' ? 'dagger' : slot;
+      if (WEAPON_L.has(offSlot) || equip.slots[offSlot] || equip.slots.dagger) {
+        const key = equip.slots[offSlot] ? offSlot : 'dagger';
+        const v =
+          pickVariant(equip.slots[key], letter) ||
+          pickVariant(equip.slots[key], '_default');
+        if (v) equip.equipWeapon(key, v);
+      }
     }
+  } else {
+    equip._pendingTomeOffhand = null;
   }
 
   // Utility always off on paperdoll
@@ -356,12 +378,15 @@ export async function mountHeroViewport(host, opts) {
   let mixer = null;
   let raf = 0;
   let disposed = false;
+  /** @type {Awaited<ReturnType<typeof createTomeOffhand>>|null} */
+  let tomeCtrl = null;
   const clock = new THREE.Clock();
 
   const tick = () => {
     if (disposed) return;
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
+    if (tomeCtrl) tomeCtrl.update(dt);
     // Lock face-user yaw after mixer (anim may write root rotation tracks)
     if (root) applyFaceCamera(root, FACE_CAMERA_YAW);
     controls.update();
@@ -388,6 +413,10 @@ export async function mountHeroViewport(host, opts) {
       window.removeEventListener('resize', onResize);
       controls.dispose();
       renderer.dispose();
+      if (tomeCtrl) {
+        try { tomeCtrl.dispose(); } catch { /* ok */ }
+        tomeCtrl = null;
+      }
       if (root) scene.remove(root);
       mixer = null;
       equip = null;
@@ -397,6 +426,43 @@ export async function mountHeroViewport(host, opts) {
     applyEquip(equippedItems, findItem) {
       if (!equip) return;
       applyPanelEquip(equip, equippedItems || {}, findItem);
+      // Async external tome (book_set split) — shoulder rest → cast on L hand
+      const pending = equip._pendingTomeOffhand;
+      void (async () => {
+        if (tomeCtrl) {
+          try { tomeCtrl.dispose(); } catch { /* ok */ }
+          tomeCtrl = null;
+        }
+        if (!pending || !root || disposed) return;
+        try {
+          const variant = resolveTomeVariant(pending);
+          tomeCtrl = await createTomeOffhand(THREE, { GLTFLoader }, root, {
+            variant,
+            useCastMesh: true,
+          });
+          // Demo cast loop for paperdoll preview (gentle)
+          let castT = 0;
+          const prevUpdate = tomeCtrl.update.bind(tomeCtrl);
+          tomeCtrl.update = (dt) => {
+            castT += dt;
+            if (castT > 4.5) {
+              castT = 0;
+              tomeCtrl.beginCast();
+              setTimeout(() => { try { tomeCtrl?.endCast(); } catch { /* ok */ } }, 1600);
+            }
+            prevUpdate(dt);
+          };
+        } catch (e) {
+          console.warn('[main-panel] tome offhand', e);
+        }
+      })();
+    },
+    /** Trigger tome cast pose (skills / hotkeys) */
+    castTome() {
+      tomeCtrl?.beginCast();
+    },
+    endTomeCast() {
+      tomeCtrl?.endCast();
     },
     setSlot(slot, variant) {
       if (!equip) return false;
