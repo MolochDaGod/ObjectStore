@@ -6,7 +6,7 @@
  *  2. EquipmentManager: hide all → exclusive body/weapon variants only
  *  3. hardenVisibility() — no ghost layers
  *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
- *  5. Face camera: yaw = π (Toon kit back at yaw 0; camera on +Z → faces look at user)
+ *  5. Face camera: yaw = 0 (Toon art-forward +Z; camera on +Z → faces user). Never π.
  *  6. Idle from CDN baked pack when kit has no embedded clips
  *  7. Never auto invert UV V on production kits (opts.invertUvV opt-in only)
  */
@@ -25,6 +25,8 @@ import {
   WEAPON_1H,
   fitRootUniformSi,
   measureStructuralBBox,
+  faceRootTowardCamera,
+  GRUDGE6_FACE_CAMERA_YAW,
 } from './grudge6-kit.js';
 import {
   createTomeOffhand,
@@ -50,18 +52,23 @@ const PANEL_TO_BODY = {
 };
 
 /**
- * Paperdoll face-user yaw.
- * Camera is at +Z looking toward origin. Production Toon kits present their
- * BACK at yaw 0 in this viewport — π turns the face toward the player.
+ * Paperdoll face-user yaw (SSOT: grudge6-kit GRUDGE6_FACE_CAMERA_YAW = 0).
+ * Camera sits on +Z looking at origin. Toon kits are art-forward +Z at yaw 0
+ * so they face the user. Math.PI shows the BACK — that was the bug.
  * Re-applied every frame so idle tracks cannot undo it.
  */
-export const FACE_CAMERA_YAW = Math.PI;
+export const FACE_CAMERA_YAW = GRUDGE6_FACE_CAMERA_YAW; // 0 — not Math.PI
 
 export function applyFaceCamera(root, yaw = FACE_CAMERA_YAW) {
   if (!root) return;
-  root.rotation.order = 'YXZ';
-  root.rotation.y = yaw;
-  root.userData.paperdollFaceYaw = yaw;
+  // Kit helper: full rotation clean plant; yaw 0 faces +Z camera
+  if (typeof faceRootTowardCamera === 'function' && Math.abs(yaw) < 1e-6) {
+    faceRootTowardCamera(root, { artFacesPlusX: false });
+  } else {
+    root.rotation.order = 'YXZ';
+    root.rotation.y = yaw;
+  }
+  root.userData.paperdollFaceYaw = root.rotation.y;
 }
 
 /**
@@ -244,8 +251,7 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
 
 /**
  * Paperdoll SI fit + face camera.
- * Camera sits at +Z looking at origin. Production kits present their BACK at yaw=0
- * in this viewport, so yaw = π faces the player.
+ * Camera on +Z → Toon face user at yaw 0 (grudge6-kit SSOT). Not π.
  */
 function fitRootSi(root, targetH) {
   const result = fitRootUniformSi(THREE, root, targetH, {
