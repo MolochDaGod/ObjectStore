@@ -1,14 +1,13 @@
 /**
- * model-browser.js — Grudge Pipeline Model Browser v2.1
- * 337 real GLBs served from GitHub Pages · R2 primary when uploaded
- * Characters: soldier.glb (4 anims), male_base.glb (1 anim), female_base.glb (1 anim)
+ * model-browser.js — Grudge Pipeline Model Browser v2.2
+ * Catalog renders without Three.js. Viewer lazy-loads three@0.178 from the importmap.
  */
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { TGALoader } from 'three/addons/loaders/TGALoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+let THREE;
+let OrbitControls;
+let GLTFLoader;
+let DRACOLoader;
+let TGALoader;
+let RoomEnvironment;
 
 // ── CDN priority order ─────────────────────────────────
 const R2_CDN_URL   = 'https://assets.grudge-studio.com';
@@ -86,11 +85,53 @@ let currentClipGltf = null;
 let previewUnitOptions = [];
 let activePreviewUnitUrl = null;
 
-const _loadingManager = new THREE.LoadingManager();
-_loadingManager.addHandler(/\.tga$/i, new TGALoader());
+let _loadingManager = null;
+let _dracoLoader = null;
+let _threeReady = null;
 
-const _dracoLoader = new DRACOLoader(_loadingManager);
-_dracoLoader.setDecoderPath(DRACO_PATH);
+async function ensureThree() {
+  if (THREE) return;
+  if (_threeReady) return _threeReady;
+  _threeReady = (async () => {
+    const [threeMod, controlsMod, gltfMod, dracoMod, tgaMod, roomMod] = await Promise.all([
+      import('three'),
+      import('three/addons/controls/OrbitControls.js'),
+      import('three/addons/loaders/GLTFLoader.js'),
+      import('three/addons/loaders/DRACOLoader.js'),
+      import('three/addons/loaders/TGALoader.js'),
+      import('three/addons/environments/RoomEnvironment.js'),
+    ]);
+    THREE = threeMod;
+    OrbitControls = controlsMod.OrbitControls;
+    GLTFLoader = gltfMod.GLTFLoader;
+    DRACOLoader = dracoMod.DRACOLoader;
+    TGALoader = tgaMod.TGALoader;
+    RoomEnvironment = roomMod.RoomEnvironment;
+    _loadingManager = new THREE.LoadingManager();
+    _loadingManager.addHandler(/\.tga$/i, new TGALoader());
+    _dracoLoader = new DRACOLoader(_loadingManager);
+    _dracoLoader.setDecoderPath(DRACO_PATH);
+  })();
+  try {
+    await _threeReady;
+  } catch (err) {
+    _threeReady = null;
+    throw err;
+  }
+}
+
+async function fetchJsonFirst(urls, ms = 8000) {
+  for (const url of urls) {
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(ms) });
+      if (!r.ok) continue;
+      return await r.json();
+    } catch {
+      /* next */
+    }
+  }
+  return null;
+}
 
 function urlDir(url) {
   if (!url || url.startsWith('blob:')) return '';
@@ -244,7 +285,7 @@ async function checkR2() {
   const el = document.getElementById('r2Status');
   if (!el) return;
   try {
-    const r = await fetch(`${R2_CDN_URL}/branding/favicons/grudge-icon-32x32.png`,
+    const r = await fetch(`${R2_CDN_URL}/favicon.svg`,
       { method: 'HEAD', signal: AbortSignal.timeout(4000) });
     if (r.ok) { r2Available = true; el.className = 'r2-status online'; el.innerHTML = '<span class="r2-dot"></span> R2 Online'; return; }
   } catch {}
@@ -253,18 +294,11 @@ async function checkR2() {
 
 // ── Load Registry ──────────────────────────────────────
 async function loadUuidMap() {
-  for (const url of UUID_URLS) {
-    try {
-      const r = await fetch(url);
-      if (r.ok) {
-        const data = await r.json();
-        uuidMap = data.uuids || {};
-        console.log(`Loaded ${Object.keys(uuidMap).length} model UUIDs from ${url}`);
-        return;
-      }
-    } catch {}
+  const data = await fetchJsonFirst(UUID_URLS);
+  uuidMap = data?.uuids || {};
+  if (Object.keys(uuidMap).length) {
+    console.log(`Loaded ${Object.keys(uuidMap).length} model UUIDs`);
   }
-  uuidMap = {};
 }
 
 function resolveModelUuid(m) {
@@ -280,17 +314,11 @@ function attachUuids(models) {
 }
 
 async function loadGameManifest() {
-  for (const url of GAME_MANIFEST_URLS) {
-    try {
-      const r = await fetch(url);
-      if (!r.ok) continue;
-      const data = await r.json();
-      const byPath = new Map((data.models || []).map((m) => [m.sourcePath || m.path, m]));
-      console.log(`Loaded game manifest (${byPath.size} entries) from ${url}`);
-      return byPath;
-    } catch {}
-  }
-  return null;
+  const data = await fetchJsonFirst(GAME_MANIFEST_URLS);
+  if (!data) return null;
+  const byPath = new Map((data.models || []).map((m) => [m.sourcePath || m.path, m]));
+  console.log(`Loaded game manifest (${byPath.size} entries)`);
+  return byPath;
 }
 
 function mergeGameManifest(models, gameByPath) {
@@ -316,20 +344,20 @@ function mergeGameManifest(models, gameByPath) {
 }
 
 async function loadRegistry() {
-  await loadUuidMap();
-  const gameByPath = await loadGameManifest();
-  for (const url of REGISTRY_URLS) {
-    try {
-      const r = await fetch(url);
-      if (r.ok) {
-        registry = await r.json();
-        allModels = mergeGameManifest(attachUuids(registry.models || []), gameByPath);
-        console.log(`Loaded ${allModels.length} models from ${url}`);
-        return;
-      }
-    } catch {}
+  const [uuidData, gameByPath, data] = await Promise.all([
+    fetchJsonFirst(UUID_URLS),
+    loadGameManifest(),
+    fetchJsonFirst(REGISTRY_URLS),
+  ]);
+  uuidMap = uuidData?.uuids || {};
+  if (!data) {
+    registry = null;
+    allModels = [];
+    return;
   }
-  allModels = [];
+  registry = data;
+  allModels = mergeGameManifest(attachUuids(registry.models || []), gameByPath);
+  console.log(`Loaded ${allModels.length} models`);
 }
 
 // ── Stats ──────────────────────────────────────────────
@@ -367,7 +395,16 @@ function renderFeatured() {
 window._loadFeatured = async (f) => {
   currentViewerModel = f;
   currentViewerUrl = f.url;
-  if (!renderer) initViewer();
+  try {
+    await initViewer();
+  } catch (err) {
+    const le0 = document.getElementById('viewerLoading');
+    if (le0) {
+      le0.innerHTML = `<div style="text-align:center;padding:40px"><p style="color:#ef4444">3D engine failed to load</p><p style="color:#8888a0;font-size:.8rem">${esc(err.message || String(err))}</p></div>`;
+      le0.style.display = 'block';
+    }
+    return;
+  }
   document.getElementById('viewerOverlay').classList.add('active');
   document.getElementById('viewerTitle').textContent = f.name;
   document.getElementById('viewerInfo').textContent = `${f.sizeKB} KB · ${f.category}`;
@@ -413,7 +450,17 @@ function renderPage() {
   const ld = document.getElementById('loadingState'); if (ld) ld.style.display = 'none';
   const em = document.getElementById('emptyState');
   const ra = document.getElementById('resultsArea');
-  if (!filteredModels.length) { if (ra) ra.style.display = 'none'; if (em) em.style.display = 'block'; return; }
+  if (!filteredModels.length) {
+    if (ra) ra.style.display = 'none';
+    if (em) {
+      em.style.display = 'block';
+      const hint = em.querySelector('p');
+      if (hint && !allModels.length) {
+        hint.textContent = 'Catalog did not load. Check /api/v1/models3d.json';
+      }
+    }
+    return;
+  }
   if (em) em.style.display = 'none'; if (ra) ra.style.display = 'block';
   const rc = document.getElementById('resultsCount');
   if (rc) rc.textContent = `${filteredModels.length} models`;
@@ -478,7 +525,8 @@ function renderPagination() {
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
 // ── Three.js Viewer ────────────────────────────────────
-function initViewer() {
+async function initViewer() {
+  await ensureThree();
   const w = document.getElementById('viewerCanvasWrap'); if (!w || w.querySelector('canvas')) return;
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0d0d1a);
@@ -696,7 +744,6 @@ function updateViewerUuid(m) {
 }
 
 async function openAndLoad(m) {
-  if (!renderer) initViewer();
   currentViewerModel = m;
   currentViewerUrl = null;
   document.getElementById('viewerOverlay').classList.add('active');
@@ -705,7 +752,16 @@ async function openAndLoad(m) {
   updateViewerUuid(m);
   document.body.style.overflow = 'hidden';
   const le = document.getElementById('viewerLoading');
-  if (le) { le.innerHTML = '<div class="spinner"></div><p>Resolving model…</p>'; le.style.display = 'block'; }
+  if (le) { le.innerHTML = '<div class="spinner"></div><p>Loading 3D engine…</p>'; le.style.display = 'block'; }
+  try {
+    await initViewer();
+  } catch (err) {
+    if (le) {
+      le.innerHTML = `<div style="text-align:center;padding:40px"><p style="color:#ef4444">3D engine failed to load</p><p style="color:#8888a0;font-size:.8rem">${esc(err.message || String(err))}</p></div>`;
+    }
+    return;
+  }
+  if (le) le.innerHTML = '<div class="spinner"></div><p>Resolving model…</p>';
   setTimeout(() => { if (renderer) { const w = document.getElementById('viewerCanvasWrap'); renderer.setSize(w.clientWidth, w.clientHeight); } }, 50);
   const url = await resolveModelUrl(m);
   currentViewerUrl = url;
@@ -723,10 +779,15 @@ function setupDragDrop() {
   if (fi) fi.addEventListener('change', () => { if (fi.files[0]) loadLocal(fi.files[0]); });
 }
 
-function loadLocal(file) {
+async function loadLocal(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext !== 'glb' && ext !== 'gltf') { alert('Only GLB/GLTF can be previewed. Run scripts/fbx2glb.mjs to convert ' + ext.toUpperCase() + ' files.'); return; }
-  if (!renderer) initViewer();
+  try {
+    await initViewer();
+  } catch (err) {
+    alert('3D engine failed to load: ' + (err.message || err));
+    return;
+  }
   const localModel = {
     name: file.name,
     format: ext.toUpperCase(),
@@ -835,7 +896,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') window.close
 // ── Init ───────────────────────────────────────────────
 async function init() {
   const r2p = checkR2();
-  await loadRegistry();
+  try {
+    await loadRegistry();
+  } catch (err) {
+    console.error('[model-browser] catalog', err);
+    allModels = [];
+  }
   updateStats(); renderCategoryFilters(); applyFilters(); renderFeatured(); setupDragDrop();
   document.getElementById('searchBox')?.addEventListener('input', () => applyFilters());
   await r2p;

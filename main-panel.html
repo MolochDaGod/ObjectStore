@@ -2387,11 +2387,7 @@ function showError(msg) {
     const u = new URL(CRAFTING_SUITE_URL);
     u.searchParams.set('era', 'warlords');
     u.searchParams.set('from', 'info-main-panel');
-<<<<<<< Updated upstream
     if (embed === true) u.searchParams.set('embed', '1'); // optional; suite may block iframe
-=======
-    if (embed !== false) u.searchParams.set('embed', '1');
->>>>>>> Stashed changes
     try {
       const token =
         localStorage.getItem('grudge_auth_token') ||
@@ -2473,7 +2469,6 @@ function showError(msg) {
   }
 
   function bagQtyDemo(idOrName) {
-<<<<<<< Updated upstream
     // Prefer real bag UUID stacks (demo fills materials by UUID in populateInventoryDemo)
     const q = typeof bagQty === 'function' ? bagQty(idOrName) : 0;
     if (q > 0) return q;
@@ -2481,12 +2476,6 @@ function showError(msg) {
     if (!key) return 0;
     if (!inventoryItems.length && /iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 4;
     return 0;
-=======
-    const key = String(idOrName || '').toLowerCase();
-    if (!key) return 0;
-    if (/iron|ore|wood|plank|leather|cloth|herb|water|copper|pine/.test(key)) return 8;
-    return 2;
->>>>>>> Stashed changes
   }
 
   function renderCraftingTab() {
@@ -2531,11 +2520,9 @@ function showError(msg) {
             (ok ? 'can-craft' : 'no-craft') +
             '" data-craft-id="' +
             esc(r.id) +
-<<<<<<< Updated upstream
             '" data-recipe-key="' +
             esc(r.id) +
-=======
->>>>>>> Stashed changes
+
             '" title="' +
             esc(r.name) +
             '"><h4>' +
@@ -2556,7 +2543,6 @@ function showError(msg) {
         })
         .join('') || '<p class="craft-log">No recipes loaded — open full suite.</p>';
 
-<<<<<<< Updated upstream
     const bagMats = inventoryItems
       .map((inv) => {
         const it = findAnyItem(inv.uuid);
@@ -2578,33 +2564,18 @@ function showError(msg) {
           esc(m.name) +
           '</span><span class="mat-qty">×' +
           (m.qty || 0) +
-=======
-    const matPreview = ['Iron Ore', 'Pine Wood', 'Leather Scraps', 'Cloth Scraps', 'Copper Ore']
-      .map(
-        (n) =>
-          '<div class="craft-mat"><span class="mat-name">' +
-          esc(n) +
-          '</span><span class="mat-qty">×' +
-          bagQtyDemo(n) +
->>>>>>> Stashed changes
+
           '</span></div>',
       )
       .join('');
 
     queueMicrotask(() => wireCraftChromeNative());
 
-<<<<<<< Updated upstream
     const suitePop = craftSuiteAuthedUrl(false);
     return (
       '<div class="craft-shell">' +
       '<div class="craft-ssot-banner"><strong>Native craft</strong> — production suite ' +
-=======
-    const suiteEmbed = craftSuiteAuthedUrl(true);
-    const suitePop = craftSuiteAuthedUrl(false);
-    return (
-      '<div class="craft-shell">' +
-      '<div class="craft-ssot-banner"><strong>Wired craft</strong> — production suite ' +
->>>>>>> Stashed changes
+
       '<a href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">grudgewarlords.com/craft</a> · panel SSOT ' +
@@ -2617,26 +2588,16 @@ function showError(msg) {
       '<div class="craft-toolbar"><div><h3>Warlords Craft</h3>' +
       '<span class="craft-auth-pill ok" id="craft-auth-status">' +
       esc(catalogHint) +
-<<<<<<< Updated upstream
       ' · bag UUID</span></div>' +
-=======
-      ' · suite embed</span></div>' +
->>>>>>> Stashed changes
+
       '<div class="craft-toolbar-right">' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-reload">↻ Reload</button>' +
       '<button type="button" class="mp-btn ghost" id="btn-craft-popout">↗ Full suite</button>' +
       '<a class="mp-btn primary" href="' +
       esc(suitePop) +
       '" target="_blank" rel="noopener">Open suite</a></div></div>' +
-<<<<<<< Updated upstream
       '<p class="craft-sub">Shared <strong>account bag</strong> (UUID stacks) · XP on active character · native craft · suite pop-out</p>' +
-=======
-      '<p class="craft-sub">Railway <strong>account bag</strong> · XP on active character · suite is SSOT</p>' +
-      '<div class="craft-frame-wrap" style="position:relative;min-height:420px;border:1px solid rgba(201,149,10,.35);border-radius:12px;overflow:hidden">' +
-      '<iframe id="craft-suite-frame" title="Warlords Crafting Suite" src="' +
-      esc(suiteEmbed) +
-      '" style="width:100%;height:min(58vh,560px);min-height:420px;border:0;display:block;background:#0a0a10" loading="lazy"></iframe></div>' +
->>>>>>> Stashed changes
+
       '<div class="craft-layout" style="margin-top:10px"><div class="craft-main">' +
       '<div class="craft-filter" id="craft-filter">' +
       profs
@@ -2653,13 +2614,9 @@ function showError(msg) {
         .join('') +
       '</div><div class="craft-grid" id="craft-host">' +
       cards +
-<<<<<<< Updated upstream
       '</div><p class="craft-log" id="craft-log">Native craft · bag UUID stacks · Full suite for Railway spend/XP</p></div>' +
       '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">UUID bag</span></div>' +
-=======
-      '</div><p class="craft-log" id="craft-log">Quick catalog · full spend/XP in suite above</p></div>' +
-      '<aside class="craft-side"><div class="craft-side-head"><h4>Materials</h4><span class="craft-bag-meta">demo</span></div>' +
->>>>>>> Stashed changes
+
       '<div class="craft-mat-grid">' +
       matPreview +
       '</div><a class="craft-suite-link" href="' +
@@ -2669,27 +2626,11 @@ function showError(msg) {
   }
 
   function wireCraftChromeNative() {
-<<<<<<< Updated upstream
-=======
-    const frame = document.getElementById('craft-suite-frame');
-    if (frame) {
-      frame.onload = () => {
-        postCraftAuthToFrame(frame);
-        setTimeout(() => postCraftAuthToFrame(frame), 800);
-      };
-      setTimeout(() => postCraftAuthToFrame(frame), 400);
-    }
->>>>>>> Stashed changes
     document.getElementById('btn-craft-popout')?.addEventListener('click', () => {
       window.open(craftSuiteAuthedUrl(false), '_blank', 'noopener');
     });
     document.getElementById('btn-craft-reload')?.addEventListener('click', () => {
-<<<<<<< Updated upstream
       switchTab('Crafting');
-=======
-      if (frame) frame.src = craftSuiteAuthedUrl(true);
-      else switchTab('Crafting');
->>>>>>> Stashed changes
     });
     document.querySelectorAll('#craft-filter [data-cf]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -2701,22 +2642,12 @@ function showError(msg) {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-craft-id');
         const log = document.getElementById('craft-log');
-<<<<<<< Updated upstream
         if (log) {
           log.textContent =
             'Recipe ' + id + ' · bag check via UUID · open Full suite for Railway spend + profession XP';
         }
       });
     });
-=======
-        if (log) log.textContent = 'Recipe ' + id + ' — use suite above for Railway craft + profession XP';
-      });
-    });
-    window.addEventListener('message', (e) => {
-      if (!e.origin || e.origin.indexOf('grudgewarlords.com') === -1) return;
-      if (e.data?.type === 'GRUDGE_READY') postCraftAuthToFrame(frame);
-    });
->>>>>>> Stashed changes
   }
 
 function attachSlotListeners() {
