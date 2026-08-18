@@ -94,7 +94,7 @@ export default {
       if (url.pathname === '/api/v1/catalog' && method === 'GET') {
         return corsResponse(env, await serveStaticJson('catalog', env), origin);
       }
-      const staticJsonMatch = url.pathname.match(/^\/api\/v1\/(.+)\.json$/);
+      const staticJsonMatch = url.pathname.match(/^\/(?:api\/objectstore\/v1|api\/v1)\/(.+)\.json$/);
       if (staticJsonMatch && (method === 'GET' || method === 'HEAD')) {
         const body = await serveStaticJson(staticJsonMatch[1], env);
         if (method === 'HEAD') {

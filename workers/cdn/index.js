@@ -160,6 +160,22 @@ export default {
     const url = new URL(request.url);
     const origin = request.headers.get('Origin') || '';
 
+    // Open/fleet joiners sometimes prefix an already-absolute CDN URL:
+    //   /https://assets.grudge-studio.com/asset-packs/...
+    //   /https:/assets.grudge-studio.com/asset-packs/...
+    const doubled = String(url.pathname).match(/^\/(https?:)\/+([^/]+)(\/.*)?$/i);
+    if (doubled) {
+      try {
+        const abs = new URL(`${doubled[1]}//${doubled[2]}${doubled[3] || ''}`);
+        if (abs.hostname === url.hostname) {
+          url.pathname = abs.pathname;
+          url.search = abs.search || url.search;
+        } else if (/(^|\.)grudge-studio\.com$/i.test(abs.hostname)) {
+          return Response.redirect(abs.toString(), 302);
+        }
+      } catch { /* fall through */ }
+    }
+
     if (request.method === 'OPTIONS') {
       return cors(origin, new Response(null, { status: 204 }));
     }
