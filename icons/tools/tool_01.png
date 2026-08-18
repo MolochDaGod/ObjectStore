@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Warlords — Game Info Hub | Items, Skills, Assets & 3D Models</title>
+  <meta name="description" content="The single source of truth for Grudge Warlords — items, weapon skills, skill trees, 3D models, sprites, VFX, and the full T1–T8 tier system.">
+  <meta name="theme-color" content="#0f1419">
+  <link rel="canonical" href="https://info.grudge-studio.com/docs">
+  <meta http-equiv="refresh" content="0; url=/docs">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --bg-elevated: #111821;
+      --card: #151d2b;
+      --card-hover: #1a2435;
+      --gold: #d4a84b;
+      --gold-light: #f0d890;
+      --gold-dim: rgba(212,168,75,0.15);
+      --accent: #22c55e;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
+      --accent-red: #ef4444;
+      --accent-orange: #f97316;
+      --text: #e8e6e3;
+      --text-dim: #7a7877;
+      --text-muted: #4a4847;
+      --border: #1e2a3a;
+      --border-light: #2a3a4e;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Hero Section ── */
+    .hero {
+      position: relative;
+      padding: 80px 24px 60px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(212,168,75,0.06) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(59,130,246,0.04) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.04) 0%, transparent 50%);
+      animation: hero-glow 12s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes hero-glow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-2%, 2%) scale(1.05); }
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(212,168,75,0.25);
+      color: var(--gold);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes shimmer { to { background-position: 200% center; } }
+    .hero p {
+      color: var(--text-dim);
+      font-size: 1.15rem;
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), #c49a3d);
+      color: #0a0e14;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,168,75,0.3); }
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      border-color: var(--border-light);
+    }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto 60px;
+    }
+    .stat-item {
+      background: var(--bg-elevated);
+      padding: 20px 12px;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .stat-item:hover { background: var(--card); }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+
+    /* ── Section Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { margin-bottom: 64px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .section-icon.gold { background: var(--gold-dim); }
+    .section-icon.blue { background: rgba(59,130,246,0.12); }
+    .section-icon.purple { background: rgba(168,85,247,0.12); }
+    .section-icon.green { background: rgba(34,197,94,0.12); }
+    .section-icon.orange { background: rgba(249,115,22,0.12); }
+    .section-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
+
+    /* ── Endpoint Groups ── */
+    .endpoint-group { margin-bottom: 24px; }
+    .group-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+    .endpoint-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 8px;
+    }
+    .ep {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .ep:hover { border-color: var(--gold); background: var(--card); transform: translateX(2px); }
+    .ep-method {
+      background: var(--accent);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ep-path {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--gold-light);
+      white-space: nowrap;
+    }
+    .ep-desc {
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      margin-left: auto;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+
+    /* ── Asset Preview Cards ── */
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .asset-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .asset-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .asset-preview {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 16px;
+      overflow: hidden;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .asset-preview img {
+      max-height: 50px;
+      max-width: 50px;
+      image-rendering: pixelated;
+      transition: transform 0.2s;
+    }
+    .asset-card:hover .asset-preview img { transform: scale(1.1); }
+    .asset-preview-gradient {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(transparent, var(--card));
+    }
+    .asset-info { padding: 14px 16px; border-top: 1px solid var(--border); }
+    .asset-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+    .asset-meta { font-size: 0.75rem; color: var(--text-dim); display: flex; gap: 12px; }
+
+    /* ── Code Block ── */
+    .code-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .code-header .lang-badge {
+      background: var(--gold-dim);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .code-block pre {
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+    }
+    .code-block code { color: var(--text); }
+    .code-block .kw { color: #c678dd; }
+    .code-block .fn { color: #61afef; }
+    .code-block .str { color: #98c379; }
+    .code-block .cm { color: #5c6370; font-style: italic; }
+
+    /* ── Tool Cards ── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .tool-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 0 0 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text);
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .tool-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .tool-card .tool-thumb {
+      width: 100%;
+      height: 90px;
+      background-size: cover;
+      background-position: center;
+      border-radius: var(--radius) var(--radius) 0 0;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tool-card .tool-thumb::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(transparent, var(--card));
+    }
+    .tool-card .tool-name { font-weight: 700; font-size: 0.88rem; padding: 0 12px; }
+    .tool-card .tool-desc { font-size: 0.75rem; color: var(--text-dim); padding: 0 12px 4px; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero { padding: 50px 16px 40px; }
+      .endpoint-grid { grid-template-columns: 1fr; }
+      .ep-desc { display: none; }
+      .asset-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .tool-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-bar { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .hero-actions { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Auth SDK -->
+  <script src="https://grudachain.grudge-studio.com/grudge-fleet-sdk.js"></script>
+  <script>GrudgeFleet.init({ sso: false }).catch(function(){});</script>
+  <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> Grudge Studio — Single Source of Truth</div>
+      <h1>Grudge Warlords — Game Info Hub</h1>
+      <p>The canonical data hub for Grudge Warlords — items, weapon skills, skill trees, 3D models, 10,000+ sprites, VFX, and the full T1–T8 tier system.</p>
+      <div class="hero-actions">
+        <a href="https://github.com/MolochDaGod/ObjectStore" class="btn btn-primary">&#9889; View on GitHub</a>
+        <a href="./docs/" class="btn btn-secondary">&#128214; API Docs</a>
+        <a href="./sdk/grudge-sdk.js" class="btn btn-secondary">&#128230; Download SDK</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num" data-count="58">58+</div><div class="stat-label">API Endpoints</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="7324">7,324</div><div class="stat-label">2D Sprites</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="5653">5,653</div><div class="stat-label">Icons</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="471">471</div><div class="stat-label">3D Models</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="450">450</div><div class="stat-label">Audio SFX</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="816">816+</div><div class="stat-label">Weapons</div></div>
+      <div class="stat-item"><div class="stat-num" data-count="167">167</div><div class="stat-label">Backgrounds</div></div>
+    </div>
+
+    <!-- Browsing Tools -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon green">&#129520;</div>
+        <h2>Browse & Explore</h2>
+      </div>
+      <div class="tool-grid">
+        <a href="./GRUDGE_Item_Database.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/camp_shop.png')"></div>
+          <span class="tool-name">Item Database</span>
+          <span class="tool-desc">Full searchable item database</span>
+        </a>
+        <a href="./SPRITE_DATABASE.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/arena.png')"></div>
+          <span class="tool-name">Sprite Database</span>
+          <span class="tool-desc">Visual icon & sprite browser</span>
+        </a>
+        <a href="./2D_MODELS.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/character_create.png')"></div>
+          <span class="tool-name">2D Models</span>
+          <span class="tool-desc">Animated sprite browser — 7,324</span>
+        </a>
+        <a href="./3D_MODELS.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/crystal_caves.png')"></div>
+          <span class="tool-name">3D Models</span>
+          <span class="tool-desc">471 models — Three.js viewer</span>
+        </a>
+        <a href="./VFX_BROWSER.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/magic_portal.jpg')"></div>
+          <span class="tool-name">VFX Browser</span>
+          <span class="tool-desc">Animated effect previews</span>
+        </a>
+
+        <a href="./tools/icon-generator.html" class="tool-card">
+          <div class="tool-thumb" style="background-image:url('./backgrounds/enchanted_stones.jpg')"></div>
+          <span class="tool-name">Icon Generator</span>
+          <span class="tool-desc">Puter AI icon creation</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Game Guides & Tools (merged from grudge-game-data-hub) -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon gold">&#128220;</div>
+        <h2>Game Guides & Tools</h2>
+      </div>
+      <p class="section-desc">In-depth guides, character builder, crafting system, profession skill trees — everything a player or developer needs.</p>
+      <div class="tool-grid">
+        <a href="./grudge-guide.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1510,#0d1520)"></div>
+          <span class="tool-name">Complete Guide</span>
+          <span class="tool-desc">Professions, weapons, tiers, infusions, recipes</span>
+        </a>
+        <a href="./stats-guide.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#151a28,#0d1020)"></div>
+          <span class="tool-name">Stats & Attributes</span>
+          <span class="tool-desc">8 attributes, 37 derived stats, combat math</span>
+        </a>
+        <a href="./professions.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1020,#101a15)"></div>
+          <span class="tool-name">Professions & Skills</span>
+          <span class="tool-desc">6 gathering + 5 crafting, 148 skill nodes</span>
+        </a>
+        <a href="./crafting.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1510,#15100d)"></div>
+          <span class="tool-name">Crafting System</span>
+          <span class="tool-desc">Recipes, materials, profession requirements</span>
+        </a>
+        <a href="./character-builder.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#101a20,#0d1520)"></div>
+          <span class="tool-name">Character Builder</span>
+          <span class="tool-desc">8 attributes, 4 classes, 6 races</span>
+        </a>
+        <a href="./main-panel.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1028,#0d1520)"></div>
+          <span class="tool-name">Main Panel</span>
+          <span class="tool-desc">Full equipment, inventory, skill tree UI</span>
+        </a>
+        <a href="./profession-trees.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#10201a,#0d1520)"></div>
+          <span class="tool-name">Skill Trees & Arsenal</span>
+          <span class="tool-desc">5 crafting trees, 17 weapon skill loadouts</span>
+        </a>
+        <a href="./items-guide.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#201a10,#15100d)"></div>
+          <span class="tool-name">Items & System Guide</span>
+          <span class="tool-desc">Tiers T1–T8, categories, naming rules</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Asset Previews -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon purple">&#128193;</div>
+        <h2>Asset Library</h2>
+      </div>
+      <p class="section-desc">10,000+ production-ready assets collected from GrudgeWars, Warlord-Crafting-Suite, and grudgedot-launcher.</p>
+      <div class="asset-grid">
+        <a href="./2D_MODELS.html" class="asset-card">
+          <div class="asset-preview" style="background: url('./backgrounds/arena_battle.png') center/cover, linear-gradient(135deg, #1a1028, #0d1520);" id="sprite-preview">
+            <div class="asset-preview-gradient"></div>
+          </div>
+          <div class="asset-info">
+            <div class="asset-title">2D Sprites</div>
+            <div class="asset-meta"><span>108 directories</span><span>7,324 files</span></div>
+          </div>
+        </a>
+        <a href="./SPRITE_DATABASE.html" class="asset-card">
+          <div class="asset-preview" style="background: url('./backgrounds/tavern_bg.png') center/cover, linear-gradient(135deg, #1a1510, #101820);" id="icon-preview">
+            <div class="asset-preview-gradient"></div>
+          </div>
+          <div class="asset-info">
+            <div class="asset-title">Icon Collection</div>
+            <div class="asset-meta"><span>5 categories</span><span>5,653 PNGs</span></div>
+          </div>
+        </a>
+        <a href="./AUDIO_BROWSER.html" class="asset-card">
+          <div class="asset-preview" style="background: url('./backgrounds/shadow_citadel.png') center/cover, linear-gradient(135deg, #0d1a15, #101520);">
+            <div class="asset-preview-gradient"></div>
+          </div>
+          <div class="asset-info">
+            <div class="asset-title">Audio SFX</div>
+            <div class="asset-meta"><span>wav/mp3/ogg/flac</span><span>450 files</span></div>
+          </div>
+        </a>
+        <a href="./3D_MODELS.html" class="asset-card">
+          <div class="asset-preview" style="background: url('./backgrounds/dragon_peaks.png') center/cover, linear-gradient(135deg, #1a1020, #0d1520);">
+            <div class="asset-preview-gradient"></div>
+          </div>
+          <div class="asset-info">
+            <div class="asset-title">3D Models</div>
+            <div class="asset-meta"><span>GLB/GLTF/FBX/OBJ</span><span>471 models</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- API Endpoints -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon gold">&#9889;</div>
+        <h2>API Endpoints</h2>
+      </div>
+      <p class="section-desc">All endpoints return JSON. No authentication required. Base URL: <code style="color:var(--gold-light);font-size:0.85rem;">https://objectstore.grudge-studio.com</code></p>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#9876;&#65039; Core Game Data</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/weapons.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/weapons.json</span><span class="ep-desc">816+ weapons</span></a>
+          <a class="ep" href="./api/v1/armor.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/armor.json</span><span class="ep-desc">150 armor items</span></a>
+          <a class="ep" href="./api/v1/materials.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/materials.json</span><span class="ep-desc">112 materials</span></a>
+          <a class="ep" href="./api/v1/consumables.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/consumables.json</span><span class="ep-desc">132 consumables</span></a>
+          <a class="ep" href="./api/v1/equipment.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/equipment.json</span><span class="ep-desc">Weapon types + skills</span></a>
+          <a class="ep" href="./api/v1/skills.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/skills.json</span><span class="ep-desc">47 class-pack skills (legacy)</span></a>
+          <a class="ep" href="./api/v1/skillTrees.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/skillTrees.json</span><span class="ep-desc">4 class trees</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128100; Races, Classes & Factions</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/races.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/races.json</span><span class="ep-desc">6 playable races</span></a>
+          <a class="ep" href="./api/v1/classes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/classes.json</span><span class="ep-desc">4 classes</span></a>
+          <a class="ep" href="./api/v1/factions.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/factions.json</span><span class="ep-desc">3 factions</span></a>
+          <a class="ep" href="./api/v1/professions.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/professions.json</span><span class="ep-desc">11 professions</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128506;&#65039; World & Story</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/quests.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/quests.json</span><span class="ep-desc">28 zones, 112 quests</span></a>
+          <a class="ep" href="./api/v1/missions.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/missions.json</span><span class="ep-desc">Story + arena</span></a>
+          <a class="ep" href="./api/v1/worldMap.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/worldMap.json</span><span class="ep-desc">33 locations, 79 paths</span></a>
+          <a class="ep" href="./api/v1/regions.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/regions.json</span><span class="ep-desc">5 world regions</span></a>
+          <a class="ep" href="./api/v1/warlords-zones.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/warlords-zones.json</span><span class="ep-desc">Warlords ERA 9 macro sectors (not home-block)</span></a>
+          <a class="ep" href="./api/v1/warlords-catalog.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/warlords-catalog.json</span><span class="ep-desc">Wildlife, camps, freeform ARPG truth</span></a>
+          <a class="ep" href="./api/v1/map-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/map-registry.json</span><span class="ep-desc">All map families (2× nine-cell + lobby/arena/pvp)</span></a>
+          <a class="ep" href="./api/v1/dialogue.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/dialogue.json</span><span class="ep-desc">NPC dialogue</span></a>
+          <a class="ep" href="./api/v1/cutscenes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/cutscenes.json</span><span class="ep-desc">Zone cinematics</span></a>
+          <a class="ep" href="./api/v1/lore.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/lore.json</span><span class="ep-desc">Gods & hero lore</span></a>
+          <a class="ep" href="./api/v1/randomEvents.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/randomEvents.json</span><span class="ep-desc">8 event templates</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128126; Enemies & Combat</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/enemies.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/enemies.json</span><span class="ep-desc">38 enemies</span></a>
+          <a class="ep" href="./api/v1/bosses.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/bosses.json</span><span class="ep-desc">12 bosses</span></a>
+          <a class="ep" href="./api/v1/enemyTemplates.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/enemyTemplates.json</span><span class="ep-desc">20+ templates</span></a>
+          <a class="ep" href="./api/v1/battleFormations.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/battleFormations.json</span><span class="ep-desc">Row formations</span></a>
+          <a class="ep" href="./api/v1/abilityEffects.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/abilityEffects.json</span><span class="ep-desc">209 abilities</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#127912; Sprites & Media</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/sprites2d.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/sprites2d.json</span><span class="ep-desc">7,324 sprites</span></a>
+          <a class="ep" href="./api/v1/sprites.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/sprites.json</span><span class="ep-desc">500+ icon paths</span></a>
+          <a class="ep" href="./api/v1/effectSprites.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/effectSprites.json</span><span class="ep-desc">147 VFX sprites</span></a>
+          <a class="ep" href="./api/v1/heroes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/heroes.json</span><span class="ep-desc">36 hero portraits</span></a>
+          <a class="ep" href="./api/v1/audio.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/audio.json</span><span class="ep-desc">450 SFX</span></a>
+          <a class="ep" href="./api/v1/video.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/video.json</span><span class="ep-desc">6 cinematics</span></a>
+          <a class="ep" href="./api/v1/models3d.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/models3d.json</span><span class="ep-desc">471 3D models</span></a>
+          <a class="ep" href="./api/v1/spriteMaps.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/spriteMaps.json</span><span class="ep-desc">246 sprite maps</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128230; Items &amp; Registries</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/games-library.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/games-library.json</span><span class="ep-desc">Warlords runtime index (start here)</span></a>
+          <a class="ep" href="./api/v1/canonical-items-manifest.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/canonical-items-manifest.json</span><span class="ep-desc">All item categories + authorities</span></a>
+          <a class="ep" href="./api/v1/master-items.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/master-items.json</span><span class="ep-desc">2,347 item catalog (prefabs + armor + consumables)</span></a>
+          <a class="ep" href="./api/v1/master-weapon-prefabs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/master-weapon-prefabs.json</span><span class="ep-desc">871 runtime weapon + tool prefabs</span></a>
+          <a class="ep" href="./api/v1/t0-weapons.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/t0-weapons.json</span><span class="ep-desc">15 T0 starters</span></a>
+          <a class="ep" href="./api/v1/master-items.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/master-items.json</span><span class="ep-desc">Unified item catalog</span></a>
+          <a class="ep" href="./api/v1/sprite-characters.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/sprite-characters.json</span><span class="ep-desc">275 animated chars</span></a>
+          <a class="ep" href="./api/v1/asset-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/asset-registry.json</span><span class="ep-desc">Master asset registry</span></a>
+          <a class="ep" href="./api/v1/voxelAssets.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/voxelAssets.json</span><span class="ep-desc">Voxel model assets</span></a>
+          <a class="ep" href="./api/v1/backgrounds-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/backgrounds-registry.json</span><span class="ep-desc">Background images</span></a>
+          <a class="ep" href="./api/v1/effects-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/effects-registry.json</span><span class="ep-desc">VFX effects registry</span></a>
+          <a class="ep" href="./api/v1/3dfx-registry.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/3dfx-registry.json</span><span class="ep-desc">3D FX shaders</span></a>
+          <a class="ep" href="./api/v1/3dfx-examples.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/3dfx-examples.json</span><span class="ep-desc">3DFX downloadable starter examples</span></a>
+          <a class="ep" href="./api/v1/ui-packs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ui-packs.json</span><span class="ep-desc">UI pack assets</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128202; Stats, Skills &amp; Combat</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/weapon-stat-bridge.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/weapon-stat-bridge.json</span><span class="ep-desc">Stats ↔ attributes ↔ SKIL-* graph</span></a>
+          <a class="ep" href="./api/v1/master-attributes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/master-attributes.json</span><span class="ep-desc">8 attributes + 37 derived stats</span></a>
+          <a class="ep" href="./api/v1/master-weaponSkills.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/master-weaponSkills.json</span><span class="ep-desc">268 canonical SKIL-* skills</span></a>
+          <a class="ep" href="./api/v1/_meta/weapon-stats-attributes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/_meta/weapon-stats-attributes.json</span><span class="ep-desc">Connection pattern meta</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#128451; Archived (superseded)</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/archive/manifest.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/archive/manifest.json</span><span class="ep-desc">Legacy endpoint index + replacements</span></a>
+        </div>
+      </div>
+
+      <div class="endpoint-group">
+        <div class="group-label">&#127918; Game Engine &amp; Studio</div>
+        <div class="endpoint-grid">
+          <a class="ep" href="./api/v1/factionUnits.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/factionUnits.json</span><span class="ep-desc">19 RTS units</span></a>
+          <a class="ep" href="./api/v1/nodeUpgrades.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/nodeUpgrades.json</span><span class="ep-desc">Unit upgrades</span></a>
+          <a class="ep" href="./api/v1/rtsModels.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/rtsModels.json</span><span class="ep-desc">RTS model registry</span></a>
+          <a class="ep" href="./api/v1/tileMaps.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/tileMaps.json</span><span class="ep-desc">2 RTS maps</span></a>
+          <a class="ep" href="./api/v1/animations.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/animations.json</span><span class="ep-desc">18 animations</span></a>
+          <a class="ep" href="./api/v1/rendering.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/rendering.json</span><span class="ep-desc">Materials + FX</span></a>
+          <a class="ep" href="./api/v1/controllers.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/controllers.json</span><span class="ep-desc">Camera presets</span></a>
+          <a class="ep" href="./api/v1/terrain.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/terrain.json</span><span class="ep-desc">5 biome presets</span></a>
+          <a class="ep" href="./api/v1/ai.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ai.json</span><span class="ep-desc">AI behavior trees</span></a>
+          <a class="ep" href="./api/v1/ecs.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/ecs.json</span><span class="ep-desc">ECS components</span></a>
+          <a class="ep" href="./api/v1/grudgedot-assets.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/grudgedot-assets.json</span><span class="ep-desc">grudgeDot assets</span></a>
+          <a class="ep" href="./api/v1/grudgedot-hero-aliases.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/grudgedot-hero-aliases.json</span><span class="ep-desc">25 hero aliases</span></a>
+          <a class="ep" href="./api/v1/worlds.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/worlds.json</span><span class="ep-desc">World definitions</span></a>
+          <a class="ep" href="./api/v1/studio.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/studio.json</span><span class="ep-desc">Studio config</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SDK -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon blue">&#128230;</div>
+        <h2>SDK Quick Start</h2>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang-badge">JavaScript</span>
+          <span>grudge-sdk.js v5.0 — static data + backend services</span>
+        </div>
+        <pre><code><span class="kw">import</span> { GrudgeSDK } <span class="kw">from</span> <span class="str">'./sdk/grudge-sdk.js'</span>;
+
+<span class="kw">const</span> sdk = <span class="kw">new</span> <span class="fn">GrudgeSDK</span>({ token: <span class="str">'&lt;JWT&gt;'</span> });
+
+<span class="cm">// ── Static game data (ObjectStore) ──</span>
+<span class="kw">const</span> weapons = <span class="kw">await</span> sdk.<span class="fn">getWeapons</span>();
+<span class="kw">const</span> swords  = <span class="kw">await</span> sdk.<span class="fn">getWeaponsByCategory</span>(<span class="str">'swords'</span>);
+<span class="kw">const</span> items   = <span class="kw">await</span> sdk.<span class="fn">getItemsDatabase</span>();
+<span class="kw">const</span> results = <span class="kw">await</span> sdk.<span class="fn">search</span>(<span class="str">'iron'</span>);
+
+<span class="cm">// ── Auth (id.grudge-studio.com) ──</span>
+<span class="kw">const</span> res = <span class="kw">await</span> sdk.auth.<span class="fn">login</span>(<span class="str">'user'</span>, <span class="str">'pass'</span>);
+<span class="kw">const</span> me  = <span class="kw">await</span> sdk.auth.<span class="fn">getMe</span>();
+
+<span class="cm">// ── Game API (api.grudge-studio.com) ──</span>
+<span class="kw">const</span> chars   = <span class="kw">await</span> sdk.game.<span class="fn">listCharacters</span>();
+<span class="kw">await</span> sdk.game.<span class="fn">startCraft</span>({ char_id: <span class="str">1</span>, recipe_key: <span class="str">'iron-sword'</span> });
+
+<span class="cm">// ── Account &amp; Assets ──</span>
+<span class="kw">const</span> profile = <span class="kw">await</span> sdk.account.<span class="fn">getProfile</span>(grudgeId);
+<span class="kw">const</span> assets  = <span class="kw">await</span> sdk.assets.<span class="fn">listAssets</span>({ prefix: <span class="str">'models/'</span> });
+
+<span class="cm">// ── Tier colors ──</span>
+<span class="kw">const</span> t5 = GrudgeSDK.<span class="fn">getTierColor</span>(<span class="str">5</span>); <span class="cm">// { name: 'Red', hex: '#ff4d4d' }</span></code></pre>
+      </div>
+    </section>
+
+    <!-- AI / MCP -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon orange">&#129302;</div>
+        <h2>For AI Agents</h2>
+      </div>
+      <p class="section-desc">Use ObjectStore as a data source in your AI agents. MCP server included for direct tool integration.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang-badge">JavaScript</span>
+          <span>No auth required — fetch any endpoint directly</span>
+        </div>
+        <pre><code><span class="cm">// Direct fetch — works in any AI agent or script</span>
+<span class="kw">const</span> base = <span class="str">'https://objectstore.grudge-studio.com'</span>;
+
+<span class="kw">const</span> [weapons, quests, enemies] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  <span class="fn">fetch</span>(<span class="str">`${base}/api/v1/weapons.json`</span>).then(r =&gt; r.<span class="fn">json</span>()),
+  <span class="fn">fetch</span>(<span class="str">`${base}/api/v1/quests.json`</span>).then(r =&gt; r.<span class="fn">json</span>()),
+  <span class="fn">fetch</span>(<span class="str">`${base}/api/v1/enemyTemplates.json`</span>).then(r =&gt; r.<span class="fn">json</span>()),
+]);
+
+<span class="cm">// MCP tool: configure in your agent's MCP config</span>
+<span class="cm">// See mcp/ directory for full server implementation</span></code></pre>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://grudgewarlords.com">&#127918; Grudge Warlords</a>
+      <a href="https://github.com/MolochDaGod/ObjectStore">&#128187; GitHub</a>
+      <a href="https://github.com/MolochDaGod/ObjectStore/wiki">&#128218; Wiki</a>
+      <a href="./docs/">&#128214; API Docs</a>
+      <a href="./openapi.yaml">&#128203; OpenAPI Spec</a>
+      <a href="./AGENT-CONTEXT.md">&#129302; Agent Context</a>
+    </div>
+    <p>&copy; 2026 Grudge Studio &middot; ObjectStore v5.0.0</p>
+  </footer>
+
+  <script src="./js/nav.js"></script>
+  <script>
+    // Lazy-load preview images for asset cards
+    (function() {
+      var spritePreviews = [
+        'sprites/Barbarian/Walk.png', 'sprites/Crusade_Warrior/Idle.png',
+        'sprites/Dragon/Attack.png', 'sprites/Elf_Ranger/Walk.png',
+        'sprites/Goblin/Attack.png', 'sprites/Orc/Idle.png',
+        'sprites/Skeleton/Walk.png', 'sprites/Fire_Mage/Attack.png'
+      ];
+      var iconPreviews = [
+        'icons/weapons/Sword_01.png', 'icons/weapons/Axe_01.png',
+        'icons/weapons/Staff_01.png', 'icons/weapons/Bow_01.png',
+        'icons/armor/Helm_01.png', 'icons/armor/Chest_01.png',
+        'icons/weapons/Gun_01.png', 'icons/weapons/Dagger_01.png'
+      ];
+      function loadPreviews(containerId, paths) {
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        paths.forEach(function(p) {
+          var img = new Image();
+          img.src = p;
+          img.alt = '';
+          img.loading = 'lazy';
+          img.onerror = function() { this.style.display = 'none'; };
+          el.insertBefore(img, el.querySelector('.asset-preview-gradient'));
+        });
+      }
+      loadPreviews('sprite-preview', spritePreviews);
+      loadPreviews('icon-preview', iconPreviews);
+    })();
+
+    // Animate stat numbers on scroll
+    (function() {
+      var animated = false;
+      function animateStats() {
+        if (animated) return;
+        var stats = document.querySelectorAll('.stat-num[data-count]');
+        var rect = stats[0] && stats[0].getBoundingClientRect();
+        if (!rect || rect.top > window.innerHeight) return;
+        animated = true;
+        stats.forEach(function(el) {
+          var target = parseInt(el.dataset.count);
+          var suffix = el.textContent.includes('+') ? '+' : '';
+          var dur = 1200;
+          var start = performance.now();
+          function tick(now) {
+            var t = Math.min((now - start) / dur, 1);
+            t = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.floor(target * t).toLocaleString() + suffix;
+            if (t < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      }
+      window.addEventListener('scroll', animateStats);
+      animateStats();
+    })();
+  </script>
+</body>
+</html>
