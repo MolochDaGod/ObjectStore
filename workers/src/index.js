@@ -20,7 +20,7 @@
  *   GET    /api/v1/:name.json     Static game data JSON (R2 cache → info.grudge-studio.com)
  */
 
-const API_VERSION = '3.2.0';
+const API_VERSION = '3.3.0';
 /** Canonical static JSON upstream — never self-proxy via objectstore (circular). */
 const STATIC_JSON_BASE = 'https://info.grudge-studio.com/api/v1';
 
@@ -51,6 +51,7 @@ export default {
             health: 'GET /health',
             catalog: 'GET /api/v1/catalog',
             staticJson: 'GET /api/v1/:name.json',
+            search: 'GET /api/search?q=',
             assets: 'GET /v1/assets',
             models: 'GET /v1/models',
             gameData: 'GET /v1/game-data',
@@ -71,6 +72,14 @@ export default {
 
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
         return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: API_VERSION, timestamp: new Date().toISOString() }), origin);
+      }
+
+      // Unified catalog + D1 search (Dev Tool `>query` + browser MMO same-origin rewrite)
+      if (
+        (url.pathname === '/api/search' || url.pathname === '/search') &&
+        method === 'GET'
+      ) {
+        return corsResponse(env, await handleFleetSearch(url, env), origin);
       }
 
       // ── Compat: root-level design JSON → /api/v1/* (legacy clients) ──
@@ -1099,6 +1108,135 @@ function requireAuth(request, env) {
   return null;
 }
 
+/**
+ * GET /api/search?q= — catalog JSON + D1 asset filename hits.
+ * Browser MMO / Dev Tool use this instead of client…/api/objectstore/search (404).
+ */
+async function handleFleetSearch(url, env) {
+  const q = (url.searchParams.get('q') || '').trim().toLowerCase();
+  const limit = parsePositiveInt(url.searchParams.get('limit'), 40, { min: 1, max: 80 });
+  if (q.length < 2) {
+    return json({ error: 'q must be at least 2 characters', q }, 400);
+  }
+
+  const results = [];
+  const sources = [];
+
+  const push = (row) => {
+    if (results.length >= limit) return;
+    results.push(row);
+  };
+
+  if (env.DB) {
+    try {
+      const listUrl = new URL('https://objectstore.grudge-studio.com/v1/assets');
+      listUrl.searchParams.set('q', q);
+      listUrl.searchParams.set('limit', String(Math.min(20, limit)));
+      const res = await handleList(listUrl, env);
+      const data = await res.json();
+      sources.push('d1-assets');
+      for (const it of data.items || []) {
+        push({
+          type: 'asset',
+          id: it.id,
+          name: it.filename,
+          key: it.key,
+          mime: it.mime,
+          url: it.key ? `https://assets.grudge-studio.com/${it.key}` : undefined,
+          source: 'd1-assets',
+        });
+      }
+    } catch {
+      /* D1 optional */
+    }
+  }
+
+  const catalogs = [
+    ['weapons', 'weapon'],
+    ['armor', 'armor'],
+    ['materials', 'material'],
+    ['skills', 'skill'],
+    ['master-items', 'item'],
+  ];
+  for (const [name, type] of catalogs) {
+    if (results.length >= limit) break;
+    const data = await fetchStaticJsonParsed(name, env);
+    if (!data) continue;
+    sources.push(name);
+    collectCatalogHits(data, q, type, push);
+  }
+
+  return json({
+    q,
+    total: results.length,
+    limit,
+    results,
+    sources,
+  });
+}
+
+async function fetchStaticJsonParsed(name, env) {
+  const cacheKey = `static-json/${name}.json`;
+  try {
+    const cached = await env.BUCKET?.get(cacheKey);
+    if (cached) return JSON.parse(await cached.text());
+  } catch {
+    /* fall through */
+  }
+  const base = (env.STATIC_JSON_BASE || STATIC_JSON_BASE).replace(/\/$/, '');
+  try {
+    const resp = await fetch(`${base}/${name}.json`);
+    if (resp.ok) return await resp.json();
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+function collectCatalogHits(data, q, type, push) {
+  const hit = (id, name, extra) => {
+    const blob = `${id || ''} ${name || ''} ${extra || ''}`.toLowerCase();
+    if (!blob.includes(q)) return;
+    push({ type, id: id || name, name: name || id, source: type });
+  };
+
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      if (item && typeof item === 'object') {
+        hit(item.id, item.name, item.lore || item.category);
+      }
+    }
+    return;
+  }
+  if (!data || typeof data !== 'object') return;
+
+  if (Array.isArray(data.items)) {
+    for (const item of data.items) hit(item.id, item.name, item.lore);
+  }
+  if (Array.isArray(data.materials)) {
+    for (const item of data.materials) hit(item.id, item.name, item.category);
+  }
+  if (Array.isArray(data.skills)) {
+    for (const item of data.skills) hit(item.id, item.name, item.blurb);
+  }
+  if (data.categories && typeof data.categories === 'object') {
+    for (const cat of Object.values(data.categories)) {
+      const items = Array.isArray(cat) ? cat : cat?.items;
+      if (!Array.isArray(items)) continue;
+      for (const item of items) hit(item.id, item.name, item.lore);
+    }
+  }
+  if (data.slots && typeof data.slots === 'object') {
+    for (const slot of Object.values(data.slots)) {
+      if (!slot || typeof slot !== 'object') continue;
+      for (const items of Object.values(slot)) {
+        if (!Array.isArray(items)) continue;
+        for (const item of items) hit(item.id, item.name);
+      }
+    }
+  }
+}
+
 /** Match a request Origin against an allow-list entry.
  * Supports:
  *   - exact origin: "https://foo.example.com"
@@ -1143,12 +1281,10 @@ function corsResponse(env, response, requestOrigin = '') {
     origin = requestOrigin;
   }
 
-  if (origin) {
-    headers.set('Access-Control-Allow-Origin', origin);
-    headers.set('Vary', 'Origin');
-    // Allow credentials only for explicit (non-wildcard) origin echoes
-    if (origin !== '*') headers.set('Access-Control-Allow-Credentials', 'true');
-  }
+  if (!origin) origin = '*';
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Vary', 'Origin');
+  if (origin !== '*') headers.set('Access-Control-Allow-Credentials', 'true');
   headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility, Authorization');
   headers.set('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Type, X-Source');
