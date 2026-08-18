@@ -95,8 +95,28 @@ export default {
         return corsResponse(env, await serveStaticJson('catalog', env), origin);
       }
       const staticJsonMatch = url.pathname.match(/^\/api\/v1\/(.+)\.json$/);
-      if (staticJsonMatch && method === 'GET') {
-        return corsResponse(env, await serveStaticJson(staticJsonMatch[1], env), origin);
+      if (staticJsonMatch && (method === 'GET' || method === 'HEAD')) {
+        const body = await serveStaticJson(staticJsonMatch[1], env);
+        if (method === 'HEAD') {
+          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+        }
+        return corsResponse(env, body, origin);
+      }
+
+      if ((url.pathname === '/api/ssot' || url.pathname === '/api/ssot.json') && (method === 'GET' || method === 'HEAD')) {
+        const body = await serveStaticJson('ssot', env);
+        if (method === 'HEAD') {
+          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+        }
+        return corsResponse(env, body, origin);
+      }
+      const contentJson = url.pathname.match(/^\/content\/(.+)\.json$/);
+      if (contentJson && (method === 'GET' || method === 'HEAD')) {
+        const body = await serveStaticJson(contentJson[1], env);
+        if (method === 'HEAD') {
+          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+        }
+        return corsResponse(env, body, origin);
       }
 
       if (url.pathname === '/docs' || url.pathname.startsWith('/docs/')) {

@@ -59,6 +59,8 @@
     { "source": "/api/search", "destination": "/api/search.js" },
     { "source": "/api/stats", "destination": "/api/stats.js" },
     { "source": "/api/export", "destination": "/api/export.js" },
+    { "source": "/api/ssot", "destination": "/api/v1/ssot.json" },
+    { "source": "/content/:file", "destination": "/api/v1/:file" },
     { "source": "/health", "destination": "https://grudgeassets.grudge.workers.dev/health" },
     { "source": "/v1/:path*", "destination": "https://grudgeassets.grudge.workers.dev/v1/:path*" },
     { "source": "/api/v1/:file", "destination": "/api/v1/:file" }
