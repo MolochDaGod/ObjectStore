@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-08-08
+## 2026-08-18
 ### Fixed
-- fix(assets): T0 wand + Sapling Staff modelUrl to R2 prod/gltf (65e583f)
+- fix(api): class-skill-bridges, /api/ssot, /content rewrite, HEAD JSON (2ec65c2)
 
