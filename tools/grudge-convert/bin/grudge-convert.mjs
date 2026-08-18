@@ -119,6 +119,52 @@ async function cmdDoctor() {
   }
 }
 
+function inspectBounds(doc) {
+  const extras = doc.getRoot().listScenes()[0]?.getExtras() || {};
+  const fromCol = extras.grudgeColliders?.[0];
+  if (fromCol?.min && fromCol?.max && fromCol?.size) {
+    return {
+      min: fromCol.min,
+      max: fromCol.max,
+      size: fromCol.size,
+      heightM: Number(Number(fromCol.size[1]).toFixed(4)),
+      longestM: Number(Math.max(...fromCol.size).toFixed(4)),
+      feetOnGround: Math.abs(fromCol.min[1]) < 0.02,
+      source: "grudgeColliders",
+    };
+  }
+  let min = [Infinity, Infinity, Infinity];
+  let max = [-Infinity, -Infinity, -Infinity];
+  const el = [0, 0, 0];
+  for (const mesh of doc.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      const acc = prim.getAttribute("POSITION");
+      if (!acc) continue;
+      const n = acc.getCount();
+      for (let i = 0; i < n; i++) {
+        acc.getElement(i, el);
+        min[0] = Math.min(min[0], el[0]);
+        min[1] = Math.min(min[1], el[1]);
+        min[2] = Math.min(min[2], el[2]);
+        max[0] = Math.max(max[0], el[0]);
+        max[1] = Math.max(max[1], el[1]);
+        max[2] = Math.max(max[2], el[2]);
+      }
+    }
+  }
+  if (!Number.isFinite(min[0])) return null;
+  const size = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
+  return {
+    min: min.map((n) => Number(n.toFixed(5))),
+    max: max.map((n) => Number(n.toFixed(5))),
+    size: size.map((n) => Number(n.toFixed(5))),
+    heightM: Number(size[1].toFixed(4)),
+    longestM: Number(Math.max(...size).toFixed(4)),
+    feetOnGround: Math.abs(min[1]) < 0.02,
+    source: "getElement",
+  };
+}
+
 async function cmdInspect(file) {
   const { NodeIO } = await import("@gltf-transform/core");
   const { ALL_EXTENSIONS } = await import("@gltf-transform/extensions");
@@ -138,6 +184,7 @@ async function cmdInspect(file) {
         nodes: root.listNodes().length,
         scenes: root.listScenes().length,
         extras: root.listScenes()[0]?.getExtras() || null,
+        bounds: inspectBounds(doc),
       },
       null,
       2,
@@ -212,6 +259,21 @@ async function main() {
     return;
   }
 
+  if (argv[0] === "check-vox") {
+    const { checkVoxAssets } = await import("../lib/vox.mjs");
+    const dir = argv[1];
+    const outDir = arg("-o", null) || arg("--out", dir);
+    if (!dir) {
+      console.error("check-vox requires <voxDir> [-o outDir]");
+      process.exit(1);
+    }
+    const report = await checkVoxAssets(resolve(dir), resolve(outDir));
+    console.log(JSON.stringify(report, null, 2));
+    const bad = report.filter((r) => r.status !== "ok");
+    process.exitCode = bad.length ? 2 : 0;
+    return;
+  }
+
   if (argv[0] === "inspect") {
     const f = argv[1];
     if (!f) {
@@ -243,7 +305,7 @@ async function main() {
       console.error("batch requires <inputDir> -o <outputDir>");
       process.exit(1);
     }
-    const exts = new Set([".fbx", ".obj", ".glb", ".gltf", ".blend", ".dae", ".stl", ".ply"]);
+    const exts = new Set([".fbx", ".obj", ".glb", ".gltf", ".blend", ".dae", ".stl", ".ply", ".vox"]);
     const entries = await fs.readdir(inputDir);
     const files = entries.filter((f) => exts.has(extname(f).toLowerCase()));
     await fs.mkdir(out, { recursive: true });

@@ -200,9 +200,19 @@ export async function convertToGlb(inputPath, workDir, opts = {}) {
     return { ok: false, error: b.error, warnings };
   }
 
+  if (ext === ".vox") {
+    const { voxToGlb } = await import("./vox.mjs");
+    try {
+      const r = await voxToGlb(inputPath, outGlb);
+      return { ok: true, path: r.path, backend: r.backend, warnings, stats: r.stats };
+    } catch (e) {
+      return { ok: false, error: String(e.message || e), warnings };
+    }
+  }
+
   return {
     ok: false,
-    error: `Unsupported input extension: ${ext}. Supported: .fbx .obj .glb .gltf .blend .dae .stl .ply`,
+    error: `Unsupported input extension: ${ext}. Supported: .fbx .obj .glb .gltf .blend .dae .stl .ply .vox`,
     warnings,
   };
 }
@@ -345,6 +355,7 @@ export const NAMED_PIPELINES = {
   obj2fbx: { in: [".obj"], out: "fbx", desc: "OBJ → FBX via Blender" },
   glb2fbx: { in: [".glb", ".gltf"], out: "fbx", desc: "GLB/glTF → FBX via Blender" },
   blend2glb: { in: [".blend"], out: "glb", desc: "Blender scene → production GLB" },
+  vox2glb: { in: [".vox"], out: "glb", desc: "MagicaVoxel .vox → production GLB (mesh + palette)" },
 };
 
 export { glbToGltf, gltfToGlb, optimizeGlb, blenderToGlb, blenderToFbx, fbx2gltfToGlb };
