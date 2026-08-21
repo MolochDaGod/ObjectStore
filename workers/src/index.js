@@ -1321,6 +1321,8 @@ async function handleFleetSearch(url, env) {
     ['materials', 'material'],
     ['skills', 'skill'],
     ['master-items', 'item'],
+    ['mesh-showcase-index', 'mesh'],
+    ['toon-rts-named-sockets', 'socket'],
   ];
   for (const [name, type] of catalogs) {
     if (results.length >= limit) break;
@@ -1388,6 +1390,15 @@ function collectCatalogHits(data, q, type, push) {
       const items = Array.isArray(cat) ? cat : cat?.items;
       if (!Array.isArray(items)) continue;
       for (const item of items) hit(item.id, item.name, item.lore);
+    }
+  }
+  if (data.races && typeof data.races === 'object') {
+    for (const [race, rec] of Object.entries(data.races)) {
+      const items = rec?.items;
+      if (!Array.isArray(items)) continue;
+      for (const item of items) {
+        hit(item.meshId || item.id, item.name, `${item.defUuid || ''} ${race} ${item.group || ''} ${item.kind || ''}`);
+      }
     }
   }
   if (data.slots && typeof data.slots === 'object') {
