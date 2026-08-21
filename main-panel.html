@@ -2087,7 +2087,7 @@ function showError(msg) {
       attachSlotListeners();
       // Mount Three.js hero after DOM paint (equip mesh filter + mesh kit editor)
       requestAnimationFrame(() => {
-        import('./js/main-panel-hero-viewport.js?v=face0')
+        import('./js/main-panel-hero-viewport.js?v=holdspin2')
           .then(async (mod) => {
             const host = document.getElementById('hero-viewport');
             if (!host) return;
@@ -2097,7 +2097,7 @@ function showError(msg) {
               findItem: (uuid) => findEquippedItem(uuid) || findItemByUuid(uuid),
               // Production GLB primary (CDN SSOT) — kit keeps embedded atlas (no UV invert double-bind)
               // FBX fallback inside viewport if GLB fails
-              source: 'glb',
+              source: 'toonRts',
             });
             wireMeshKitEditor(mod);
           })

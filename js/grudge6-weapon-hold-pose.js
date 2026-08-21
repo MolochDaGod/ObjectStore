@@ -278,8 +278,29 @@ function mirrorMain(main) {
 }
 
 /**
+ * Restore hand local TRS to last mixer snapshot (strip previous residual).
+ * Idle clips often omit hand_container tracks — without this, quaternion.multiply
+ * accumulates every frame and weapons spin.
+ */
+function restoreHandFromMixerSnapshot(hand) {
+  if (!hand?.userData?._holdMixerQ) return;
+  hand.quaternion.copy(hand.userData._holdMixerQ);
+  if (hand.userData._holdMixerP) hand.position.copy(hand.userData._holdMixerP);
+}
+
+function snapshotHandMixerPose(hand, THREE) {
+  if (!hand || !THREE) return;
+  if (!hand.userData._holdMixerQ) {
+    hand.userData._holdMixerQ = new THREE.Quaternion();
+    hand.userData._holdMixerP = new THREE.Vector3();
+  }
+  hand.userData._holdMixerQ.copy(hand.quaternion);
+  hand.userData._holdMixerP.copy(hand.position);
+}
+
+/**
  * Apply one side residual onto a hand bone/container (post-mixer).
- * Mixer rewrites bone locals each frame — residual is additive after update.
+ * Always SET from this frame's mixer snapshot × residual — never accumulate.
  *
  * @param {import('three').Object3D|null} hand
  * @param {HoldSidePose|null|undefined} pose
@@ -287,17 +308,29 @@ function mirrorMain(main) {
  */
 function applySideResidual(hand, pose, THREE) {
   if (!hand || !pose || !THREE) return;
+  // If mixer omitted this bone, locals still hold last residual — strip it.
+  if (hand.userData._holdAppliedQ && hand.quaternion.angleTo(hand.userData._holdAppliedQ) < 1e-4) {
+    restoreHandFromMixerSnapshot(hand);
+  }
+  snapshotHandMixerPose(hand, THREE);
   const e = pose.euler || [0, 0, 0];
   const p = pose.pos || [0, 0, 0];
   if (e[0] || e[1] || e[2]) {
     const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(e[0] || 0, e[1] || 0, e[2] || 0, 'XYZ'));
-    hand.quaternion.multiply(q);
+    hand.quaternion.copy(hand.userData._holdMixerQ).multiply(q);
+  } else {
+    hand.quaternion.copy(hand.userData._holdMixerQ);
   }
   if (p[0] || p[1] || p[2]) {
+    hand.position.copy(hand.userData._holdMixerP);
     hand.position.x += p[0] || 0;
     hand.position.y += p[1] || 0;
     hand.position.z += p[2] || 0;
+  } else {
+    hand.position.copy(hand.userData._holdMixerP);
   }
+  if (!hand.userData._holdAppliedQ) hand.userData._holdAppliedQ = new THREE.Quaternion();
+  hand.userData._holdAppliedQ.copy(hand.quaternion);
 }
 
 /**
@@ -341,8 +374,10 @@ export function applyWeaponHoldPose(mixer, gait, kind, opts = {}) {
   const handMode = opts.hand || 'both';
   let applied = false;
 
+  const rHand = findNamed(root, R_HAND_NAMES);
+  const lHand = findNamed(root, L_HAND_NAMES);
+
   if (handMode === 'main' || handMode === 'both') {
-    const rHand = findNamed(root, R_HAND_NAMES);
     if (rHand && pose.main) {
       applySideResidual(rHand, pose.main, THREE);
       applied = true;
@@ -350,7 +385,6 @@ export function applyWeaponHoldPose(mixer, gait, kind, opts = {}) {
   }
 
   if (handMode === 'off' || handMode === 'both') {
-    const lHand = findNamed(root, L_HAND_NAMES);
     if (lHand) {
       const offKind = opts.offKind != null ? opts.offKind : kind;
       // Prefer offKind table when dual different weapons; else same kind off / mirror

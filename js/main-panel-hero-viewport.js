@@ -36,7 +36,7 @@ import {
 import {
   applyWeaponHoldPose,
   resolveHoldKindFromEquip,
-} from './grudge6-weapon-hold-pose.js';
+} from './grudge6-weapon-hold-pose.js?v=holdspin2';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -282,6 +282,12 @@ function rematchClipBones(root, clip) {
   for (const track of clip.tracks) {
     // Skip hip/root position — prevents float after SI ground
     if (/\.position$/.test(track.name)) continue;
+    // Never drive wardrobe weapon/shield meshes from clip tracks — that spins
+    // held props around bind origin. Hands/Bip bones stay.
+    if (/(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(node)
+      && !/hand|bip|mixamo|container/i.test(node)) {
+      continue;
+    }
     const dot = track.name.indexOf('.');
     if (dot < 0) {
       resolved.push(track);
@@ -592,8 +598,11 @@ export async function mountHeroViewport(host, opts) {
     }
     if (clips.length) {
       mixer = new THREE.AnimationMixer(root);
+      const notSpin = (c) => !/spin|whirl|cyclone|attack|slash|death|hit|cast/i.test(c.name || '');
       let idle =
-        clips.find((c) => /idle|stand|wait/i.test(c.name || '')) || clips[0];
+        clips.find((c) => /idle|stand|wait/i.test(c.name || '')) ||
+        clips.find(notSpin) ||
+        clips[0];
       idle = rematchClipBones(root, idle) || idle;
       try {
         const action = mixer.clipAction(idle);
