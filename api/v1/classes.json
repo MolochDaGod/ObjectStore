@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-08-11",
-  "total": 4,
+  "version": "1.1.0",
+  "updated": "2026-08-21",
+  "total": 8,
   "grudgeType": "hero",
   "classes": {
     "warrior": {
@@ -35,11 +35,8 @@
         "mail"
       ],
       "dualWield": true,
-      "dualWieldEfficient": true,
-      "equipRestrict": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.warrior",
       "animPacks": ["sword_shield", "dual_wield", "two_handed"],
-      "gearPolicy": "soft_effectiveness",
       "abilities": [
         {
           "id": "slash",
@@ -185,7 +182,7 @@
     },
     "mage": {
       "id": "mage",
-      "name": "Mage Priest",
+      "name": "Mage",
       "icon": "/icons/warlords/classes/mage.png",
       "color": "#8b5cf6",
       "description": "Master of arcane magic and divine healing arts.",
@@ -212,11 +209,8 @@
         "cloth"
       ],
       "dualWield": false,
-      "dualWieldEfficient": false,
-      "equipRestrict": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.mage",
       "animPacks": ["magic_spell"],
-      "gearPolicy": "soft_effectiveness",
       "abilities": [
         {
           "id": "arcane_bolt",
@@ -346,11 +340,8 @@
         "leather"
       ],
       "dualWield": false,
-      "dualWieldEfficient": false,
-      "equipRestrict": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.worge",
       "animPacks": ["sword_shield", "magic_spell", "longbow"],
-      "gearPolicy": "soft_effectiveness",
       "abilities": [
         {
           "id": "mace_strike",
@@ -454,7 +445,24 @@
           "cooldown": 6,
           "target": "self",
           "iconUrl": "/icons/skills/class/firemage/firemage_06.png",
-          "sourcePack": "firemage"
+          "sourcePack": "firemage",
+          "modelUrl": "https://assets.grudge-studio.com/models/creatures/totem/fire_totem.glb"
+        },
+        {
+          "id": "summon_air_totem",
+          "name": "Air Totem",
+          "grudgeType": "ability",
+          "icon": "storm",
+          "description": "Summon an air totem that pulses wind when you act",
+          "type": "summon_totem",
+          "totemType": "air_totem",
+          "manaCost": 25,
+          "staminaCost": 8,
+          "cooldown": 6,
+          "target": "self",
+          "iconUrl": "/icons/skills/class/firemage/firemage_06.png",
+          "sourcePack": "stormmage",
+          "modelUrl": "https://assets.grudge-studio.com/models/creatures/totem/air_totem.glb"
         },
         {
           "id": "summon_fear_totem",
@@ -576,11 +584,8 @@
         "mail"
       ],
       "dualWield": false,
-      "dualWieldEfficient": false,
-      "equipRestrict": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.ranger",
       "animPacks": ["longbow", "rifle", "two_handed"],
-      "gearPolicy": "soft_effectiveness",
       "abilities": [
         {
           "id": "quick_shot",
@@ -690,6 +695,94 @@
       "emoji": "🏹",
       "iconUrl": "https://assets.grudge-studio.com/icons/warlords/classes/ranger.png",
       "sourcePack": "hunter"
+    },
+    "priest": {
+      "id": "priest",
+      "family": "mage",
+      "name": "Priest",
+      "icon": "/icons/warlords/classes/priest.jpg",
+      "color": "#fde68a",
+      "description": "Discipline healer — Atonement from damage, shields, mass dispel, pain reflect.",
+      "lore": "Priests bind an ally and turn every holy bolt into a heal. They strip hexes, plant barriers before slams, and reflect pain back as light.",
+      "startingAttributes": { "Strength": 0, "Vitality": 1, "Endurance": 1, "Dexterity": 0, "Agility": 0, "Intellect": 2, "Wisdom": 5, "Tactics": 1 },
+      "weaponTypes": ["holyStaves", "arcaneStaves", "tomes", "orbs"],
+      "armorTypes": ["cloth"],
+      "dualWield": false,
+      "equipmentRulesRef": "class-equipment-rules.json#classes.priest",
+      "animPacks": ["magic_spell"],
+      "abilities": [
+        { "id": "smite", "name": "Smite", "description": "Holy bolt that feeds Atonement", "type": "holy", "damage": 0.9, "manaCost": 8, "cooldown": 0 },
+        { "id": "word_shield", "name": "Word Shield", "description": "Absorb shield; Atonement ticks through it", "type": "holy", "manaCost": 18, "cooldown": 8 }
+      ],
+      "emoji": "✚",
+      "iconUrl": "/icons/warlords/classes/priest.jpg",
+      "sourcePack": "firemage"
+    },
+    "raider": {
+      "id": "raider",
+      "family": "warrior",
+      "name": "Raider",
+      "icon": "/icons/warlords/classes/raider.jpg",
+      "color": "#b91c1c",
+      "description": "Two-hand parry tank and execute DPS. Timing is the armor.",
+      "lore": "Raiders dropped the shield. Every swing opens a parry window; a catch becomes Overpower. They offtank slams and cut healing in the arena.",
+      "startingAttributes": { "Strength": 5, "Vitality": 2, "Endurance": 2, "Dexterity": 2, "Agility": 1, "Intellect": 0, "Wisdom": 0, "Tactics": 0 },
+      "weaponTypes": ["greatswords", "greataxes", "hammers2h"],
+      "armorTypes": ["plate", "mail"],
+      "dualWield": false,
+      "equipmentRulesRef": "class-equipment-rules.json#classes.raider",
+      "animPacks": ["two_handed"],
+      "abilities": [
+        { "id": "riposte", "name": "Riposte Stance", "description": "Parry window on every 2H swing", "type": "physical", "passive": true },
+        { "id": "mortal_strike", "name": "Mortal Strike", "description": "Cut incoming heals on the target", "type": "physical", "damage": 1.4, "staminaCost": 15, "cooldown": 10 }
+      ],
+      "emoji": "⚔",
+      "iconUrl": "/icons/warlords/classes/raider.jpg",
+      "sourcePack": "barbarian"
+    },
+    "thief": {
+      "id": "thief",
+      "family": "ranger",
+      "name": "Thief",
+      "icon": "/icons/warlords/classes/thief.jpg",
+      "color": "#ca8a04",
+      "description": "Outlaw rogue — combo, pistol interrupt, blade flurry, smoke bomb peel.",
+      "lore": "Thieves fight dirty and close. A pistol shot stops a cast; a smoke bomb covers the healer; Between the Eyes spends the combo.",
+      "startingAttributes": { "Strength": 1, "Vitality": 1, "Endurance": 1, "Dexterity": 4, "Agility": 4, "Intellect": 0, "Wisdom": 0, "Tactics": 1 },
+      "weaponTypes": ["daggers", "swords", "pistols"],
+      "armorTypes": ["leather"],
+      "dualWield": true,
+      "equipmentRulesRef": "class-equipment-rules.json#classes.thief",
+      "animPacks": ["dual_wield", "rifle"],
+      "abilities": [
+        { "id": "sinister", "name": "Sinister Strike", "description": "Combo builder", "type": "physical", "damage": 0.9, "staminaCost": 4 },
+        { "id": "pistol_shot", "name": "Pistol Shot", "description": "Ranged interrupt", "type": "physical", "damage": 0.7, "staminaCost": 8, "cooldown": 6 }
+      ],
+      "emoji": "🗡",
+      "iconUrl": "/icons/warlords/classes/thief.jpg",
+      "sourcePack": "hunter"
+    },
+    "verduror": {
+      "id": "verduror",
+      "family": "worge",
+      "name": "Verduror",
+      "icon": "/icons/warlords/classes/verduror.jpg",
+      "color": "#86efac",
+      "description": "Mistweaver — jade mist, crane kicks that heal, detox, celestial forms.",
+      "lore": "Verduror walk in mist. They heal while they move, kick like a crane, and call a jade serpent to soothe the tank.",
+      "startingAttributes": { "Strength": 1, "Vitality": 2, "Endurance": 1, "Dexterity": 1, "Agility": 2, "Intellect": 1, "Wisdom": 3, "Tactics": 0 },
+      "weaponTypes": ["natureStaves", "hammers1h"],
+      "armorTypes": ["leather", "cloth"],
+      "dualWield": false,
+      "equipmentRulesRef": "class-equipment-rules.json#classes.verduror",
+      "animPacks": ["magic_spell", "sword_shield"],
+      "abilities": [
+        { "id": "soothing_mist", "name": "Soothing Mist", "description": "Channeled single heal", "type": "nature", "manaCost": 6 },
+        { "id": "crane_kick", "name": "Crane Kick", "description": "Melee kick that splashes heal", "type": "nature", "damage": 0.8, "manaCost": 8 }
+      ],
+      "emoji": "🌿",
+      "iconUrl": "/icons/warlords/classes/verduror.jpg",
+      "sourcePack": "necromancer"
     }
   },
   "tiers": [

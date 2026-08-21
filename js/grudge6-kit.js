@@ -14,7 +14,7 @@
 export const CDN = 'https://assets.grudge-studio.com';
 
 /** Contract version — stamp on every play kit root.userData */
-export const WARLORDS_PLAY_CONTRACT_VERSION = '2026-08-07.harden.1';
+export const WARLORDS_PLAY_CONTRACT_VERSION = '2026-08-21.feet-terrain.2';
 
 /** PLAY mesh path fragment (Toon RTS ★). */
 export const WARLORDS_PLAY_KIT_PATH =
@@ -1330,6 +1330,12 @@ export async function loadRaceKit(THREE, loaders, raceId, opts = {}) {
   root.userData.grudge6KitUrl = url;
   root.userData.warlordsPlayContract = WARLORDS_PLAY_CONTRACT_VERSION;
   root.userData.importPipeline = isPlay ? 'toon-rts-glb' : source;
+  root.userData.footIk = {
+    enabled: !!isPlay,
+    module: 'js/grudge6-foot-ik.js',
+    order: 'beginFrame → mixer.update → apply',
+    sampler: 'same-height-field',
+  };
 
   const equip = new EquipmentManager(race.prefix);
   equip.catalog(root);
@@ -1393,5 +1399,37 @@ export function warlordsPlayContract() {
     equip: 'mesh_ids_visibility',
     skeleton: 'Bip001_no_multi_pose',
     measure: 'bone_structural_bbox',
+    footIk: {
+      module: 'ObjectStore/js/grudge6-foot-ik.js',
+      order: 'beginFrame → mixer.update → apply',
+      sampler: 'same MapSurface height field as Rapier CCT / body Y',
+      place: 'placeRootFeetAt Vector3/Matrix4 — never root.y = terrainY',
+      bones: 'Bip001 L/R Thigh+Calf+Foot + Pelvis (never L Hip as pelvis)',
+    },
+    tps: {
+      camera: 'combat TPS owns camera — no OrbitControls.update in combat',
+      mixer: 'one AnimationMixer on kit root',
+      loco: 'weight blend idle/walk/run then one-shot overlay',
+      generate: 'bake Mixamo → Bip001 rotation-only packs; never mixamorig on play kit',
+    },
+    rapier: {
+      package: '@dimforge/rapier3d-compat ^0.19',
+      player: 'kinematic CCT capsule, fixed 1/60, SI metres',
+    },
+    playClasses: {
+      product: ['warrior', 'raider', 'mage', 'priest', 'ranger', 'thief', 'worge', 'verduror'],
+      collider: ['cct', 'heightfield', 'convex', 'trimesh', 'followConvex', 'sensor', 'hurtbox'],
+      travel: ['melee', 'bullet', 'linear', 'bend'],
+    },
+    gltfPlay: {
+      xyz: { up: '+Y', ground: 'XZ', forward: '+Z', right: '+X', unit: '1=1m' },
+      colliders: {
+        player: 'cct',
+        terrain: 'heightfield',
+        staticGltf: 'convex|trimesh-fixed',
+        weapon: 'followConvex',
+      },
+      ray: 'Raycaster firstHitOnly + three-mesh-bvh + Rapier.castRay',
+    },
   };
 }

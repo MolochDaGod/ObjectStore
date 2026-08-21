@@ -244,7 +244,7 @@ const {
   setAssetBasePath,
   clearAssetCache,
   SHADER_KEYS,
-  EarthWave, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
+  EarthWave, NatureWhip, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
   FrostWave, EarthWall, Roots, FireCast, Shockwave, FlameBody, ShaderEffect,
   FireAura, Impact, FireBurst, IceLightningImpact, FlameBolt,
 } = SpellLib;
@@ -253,7 +253,7 @@ const {
 setAssetBasePath(`${ASSET_FALLBACK}/skillswrite/assets/`);
 
 const CLASS_MAP = {
-  EarthWave, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
+  EarthWave, NatureWhip, Blizzard, MeteorShower, Dragon, Turret, IceSnake, MoonBeam,
   FrostWave, EarthWall, Roots, FireCast, Shockwave, FlameBody, ShaderEffect,
   FireAura, Impact, FireBurst, IceLightningImpact, FlameBolt,
 };
@@ -269,6 +269,7 @@ const SKILLS = [
   { id: "MoonBeam", name: "Moon Beam", key: "B", cat: "holy", color: "#d0e8ff", uuid: "GRDG-3DFX-SKILL-MOONBEAM" },
   { id: "Shockwave", name: "Shockwave", key: "D", cat: "earth", color: "#ffb24d", uuid: "GRDG-3DFX-SKILL-SHOCKWAVE" },
   { id: "EarthWave", name: "Earth Wave", key: "T", cat: "earth", color: "#c4a574", uuid: "GRDG-3DFX-SKILL-EARTHWAVE" },
+  { id: "NatureWhip", name: "Nature Whip", key: "U", cat: "nature", color: "#6bbf4a", uuid: "GRDG-3DFX-SKILL-NATUREWHIP" },
   { id: "EarthWall", name: "Earth Wall", key: "Y", cat: "earth", color: "#b8956a", uuid: "GRDG-3DFX-SKILL-EARTHWALL" },
   { id: "MeteorShower", name: "Meteor Shower", key: "O", cat: "fire", color: "#ff8a3d", uuid: "GRDG-3DFX-SKILL-METEOR" },
   { id: "Dragon", name: "Fire Dragon", key: "J", cat: "fire", color: "#ff5a1f", uuid: "GRDG-3DFX-SKILL-DRAGON" },
@@ -603,6 +604,18 @@ function buildSkillOpts(id, data) {
   if (id === "EarthWave" || id === "EarthWall" || id === "Roots") {
     return { origin: a.caster, target: a.targetGround };
   }
+  if (id === "NatureWhip") {
+    return { origin: a.hand, target: a.targetGround, maxLength: 15 };
+  }
+  if (id === "FrostWave") {
+    return { pos: a.targetGround, targets: [a.targetChest, [1.2, 1.05, -4.4], [-1.1, 1.1, -5.8]] };
+  }
+  if (id === "FireCast") {
+    return { origin: a.hand, target: a.targetChest, targets: [a.targetChest] };
+  }
+  if (id === "MoonBeam") {
+    return { pos: a.targetGround, casterPos: a.caster, impactPos: a.targetGround, duration: 0.55 };
+  }
   return base;
 }
 
@@ -872,6 +885,14 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "Space") { e.preventDefault(); document.getElementById("btnReplay").click(); }
   if (e.code === "KeyP") document.getElementById("btnPause").click();
   if (e.code === "KeyG") document.getElementById("btnGrid").click();
+  if (e.code === "KeyU") {
+    const row = SKILLS.find((s) => s.id === "NatureWhip");
+    if (row) selectItem({ kind: "skill", data: row });
+  }
+  if (e.code === "KeyT") {
+    const row = SKILLS.find((s) => s.id === "EarthWave");
+    if (row) selectItem({ kind: "skill", data: row });
+  }
 });
 
 try { await import("./js/nav.js"); } catch {}

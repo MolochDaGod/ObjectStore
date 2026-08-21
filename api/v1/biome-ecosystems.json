@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "updated": "2026-08-11",
+  "version": "1.1.0",
+  "updated": "2026-08-18",
   "characterReferenceHeightM": 2,
   "mountainPeakHeightM": 20,
   "harvestRegenHours": 4,
@@ -9,16 +9,22 @@
   "storage": {
     "seeds": "Railway Postgres home_islands (NOT D1)",
     "gltf": "R2 grudge-assets → assets.grudge-studio.com",
-    "nature": "/models/nature/realistic/trees|rocks|groundcover (CommonTree/Twisted/Pine_* BANNED)",
-    "environment": "/models/environment/island_tree.glb, island_rock.glb, gem_cluster.glb (interim only)",
-    "mountains": "/models/evil_rock_mountain_peak_0|1|2.glb",
-    "textures": "/textures/pbr/ground/ground_1..10",
-    "reviewGlbs": "/models/biomes/review/{biome}.glb",
+    "nature": "/models/nature/* battle Kenney pack + stylized multipacks (see natureAssetCatalog WARLORDS_SURFACE_ASSETS)",
+    "land": "/models/nature/CommonTree_* Pine_* Rock_* Grass_* + stylized/biome/*",
+    "coast": "/models/environment/palm-tree.glb (isolate M_Palm_P2_*) + tropical_plants.glb + realistic palms",
+    "water": "/models/nature/stylized/harvest/pond_pack.glb + /models/creatures/fish/*",
+    "environment": "/models/environment/harvest_*.glb, gem_cluster.glb, palm-tree.glb",
+    "mountains": "/models/evil_rock_mountain_peak_0|1|2.glb + triad",
+    "textures": "/textures/pbr/ground/Ground_1..10_BaseColor.png (+ Normal/Roughness/AO)",
+    "reviewGlbs": "/models/biomes/review/{biome}.glb (12 biomes)",
+    "creatures": "/models/creatures/land/cotw/* + fish/* + predator/shark + animals/{alpaca,bull,cow,deer,donkey,fox,horse,horse-white,husky,shibainu,stag,wolf}.glb",
     "catalogs": [
       "home-island-contract.json",
       "biome-ecosystems.json",
-      "map-registry.json"
-    ]
+      "map-registry.json",
+      "uaa-animals.json"
+    ],
+    "audit": "node scripts/audit-biome-assets.mjs"
   },
   "biomes": [
     {
@@ -27,12 +33,19 @@
       "foundationId": "driftwood_bay",
       "animals": [
         "deer",
-        "pug",
+        "creature_crab",
         "crab",
         "boar",
-        "buffalo"
+        "free_reptile"
       ],
       "treePolicy": "palm",
+      "treePack": "/models/environment/palm-tree.glb",
+      "treeVariants": [
+        "M_Palm_P2_1",
+        "M_Palm_P2_5",
+        "M_Palm_P2_13",
+        "M_Palm_P2_23"
+      ],
       "snowCanopy": false,
       "mountainPeakHeightM": 20,
       "harvestRegenHours": 4,
@@ -47,11 +60,18 @@
       "animals": [
         "deer",
         "boar",
-        "pug",
-        "buffalo",
+        "creature_crab",
+        "free_reptile",
         "crab"
       ],
       "treePolicy": "palm",
+      "treePack": "/models/environment/palm-tree.glb",
+      "treeVariants": [
+        "M_Palm_P2_1",
+        "M_Palm_P2_5",
+        "M_Palm_P2_13",
+        "palm2_13"
+      ],
       "snowCanopy": false,
       "mountainPeakHeightM": 20,
       "harvestRegenHours": 4,
@@ -65,10 +85,10 @@
       "foundationId": "ironfang_spire",
       "animals": [
         "deer",
-        "boar",
         "wolf",
-        "bear",
-        "pug"
+        "fox",
+        "stag",
+        "husky"
       ],
       "treePolicy": "pine_stylized",
       "snowCanopy": false,
@@ -83,11 +103,11 @@
       "label": "Plains",
       "foundationId": "driftwood_bay",
       "animals": [
-        "cow",
-        "sheep",
-        "pig",
         "horse",
-        "wolf"
+        "cow",
+        "bull",
+        "donkey",
+        "alpaca"
       ],
       "treePolicy": "pine_stylized",
       "snowCanopy": false,
@@ -102,11 +122,11 @@
       "label": "Winter Snow",
       "foundationId": "ironfang_spire",
       "animals": [
+        "husky",
         "wolf",
         "deer",
-        "pug",
-        "bear",
-        "buffalo"
+        "fox",
+        "horse-white"
       ],
       "treePolicy": "snow_pine",
       "snowCanopy": true,
@@ -124,7 +144,7 @@
         "wolf",
         "bear",
         "deer",
-        "pug",
+        "rabbit",
         "buffalo"
       ],
       "treePolicy": "snow_pine",
@@ -140,11 +160,11 @@
       "label": "Desert",
       "foundationId": "driftwood_bay",
       "animals": [
-        "pug",
-        "boar",
-        "buffalo",
-        "wolf",
-        "deer"
+        "horned_lizard",
+        "fire_beetle",
+        "free_reptile",
+        "drake",
+        "boar"
       ],
       "treePolicy": "palm_stylized",
       "snowCanopy": false,
@@ -159,11 +179,11 @@
       "label": "Volcanic",
       "foundationId": "ironfang_spire",
       "animals": [
-        "boar",
-        "wolf",
-        "bear",
-        "buffalo",
-        "deer"
+        "fire_beetle",
+        "lava_golem",
+        "ifrit",
+        "drake",
+        "horned_lizard"
       ],
       "treePolicy": "stylized_pine",
       "snowCanopy": false,
@@ -180,9 +200,9 @@
       "animals": [
         "boar",
         "wolf",
-        "deer",
+        "creature_crab",
         "crab",
-        "pug"
+        "free_reptile"
       ],
       "treePolicy": "pine_stylized",
       "snowCanopy": false,
@@ -198,9 +218,9 @@
       "foundationId": "ironfang_spire",
       "animals": [
         "deer",
-        "pug",
+        "monsters_x",
         "wolf",
-        "buffalo",
+        "free_reptile",
         "boar"
       ],
       "treePolicy": "stylized_pine",
@@ -217,10 +237,10 @@
       "foundationId": "ironfang_spire",
       "animals": [
         "wolf",
-        "bear",
+        "monsters_x",
         "boar",
-        "crab",
-        "deer"
+        "creature_crab",
+        "drake"
       ],
       "treePolicy": "stylized_pine",
       "snowCanopy": false,
@@ -282,30 +302,5 @@
     "Bush_Common",
     "nature-megakit",
     "/models/lowpoly/"
-  ],
-  "fishNodeSpecies": [
-    "fish1",
-    "fish2",
-    "fish3",
-    "goldfish",
-    "catfish",
-    "butterflyfish",
-    "dolphin",
-    "manta_ray",
-    "shark",
-    "whale"
-  ],
-  "creatureAliases": {
-    "rabbit": "pug",
-    "hare": "pug",
-    "boar": "cotw_boar",
-    "bear": "cotw_bear",
-    "minnow": "goldfish"
-  },
-  "quaternius": {
-    "farm": "models/creatures/land/{cow,horse,llama,pig,pug,sheep,zebra}.glb",
-    "fish": "models/creatures/fish/{fish1,fish2,fish3,dolphin,manta_ray,whale}.glb",
-    "predator": "models/creatures/predator/shark.glb",
-    "source": "Documents Farm Animals Animated + Fish Pack Animated by Quaternius"
-  }
+  ]
 }

@@ -35,18 +35,40 @@
 
   const CLASS_KEY_FROM_NAME = {
     Warrior: 'warrior',
-    'Mage Priest': 'mage',
+    Raider: 'raider',
     Mage: 'mage',
+    Priest: 'priest',
+    'Mage Priest': 'mage',
     Ranger: 'ranger',
+    Thief: 'thief',
     Worge: 'worge',
+    Verduror: 'verduror',
+  };
+
+  const FAMILY_OF = {
+    warrior: 'warrior', raider: 'warrior',
+    mage: 'mage', priest: 'mage',
+    ranger: 'ranger', thief: 'ranger',
+    worge: 'worge', verduror: 'worge',
+  };
+
+  const FAMILY_SPECS = {
+    warrior: ['warrior', 'raider'],
+    mage: ['mage', 'priest'],
+    ranger: ['ranger', 'thief'],
+    worge: ['worge', 'verduror'],
   };
 
   /** Race / class base bonuses (character-builder SSOT) */
   const CLASS_ATTR_BONUSES = {
     warrior: { strength: 2, vitality: 1, endurance: 1, tactics: 1 },
+    raider: { strength: 3, endurance: 1, dexterity: 1 },
     mage: { intellect: 3, wisdom: 2 },
+    priest: { wisdom: 3, intellect: 1, tactics: 1 },
     ranger: { dexterity: 2, agility: 2, tactics: 1 },
+    thief: { agility: 3, dexterity: 2 },
     worge: { strength: 1, vitality: 2, endurance: 1, agility: 1 },
+    verduror: { wisdom: 2, vitality: 1, agility: 1 },
   };
   const RACE_ATTR_BONUSES = {
     human: { strength: 2, vitality: 2, intellect: 1 },
@@ -57,110 +79,64 @@
     undead: { intellect: 2, wisdom: 3 },
   };
 
-  /**
-   * Soft effectiveness only — equip is never blocked.
-   * mult > 1 = class passive boost; mult < 1 = reduced effectiveness.
-   */
+  /** Fallback equip rules if class-equipment-rules.json not loaded */
   const CLASS_EQUIP_FALLBACK = {
     warrior: {
-      dualWieldEfficient: true,
-      preferredArmor: ['plate', 'mail'],
-      preferredWeapons: ['shields', 'swords', 'greatswords', 'axes1h', 'greataxes', 'hammers1h', 'hammers2h'],
-      weaponEffectiveness: { '1h_melee': 1.15, '2h_melee': 1.12, shield: 1.18, bow: 0.72, gun: 0.7, staff: 0.68, focus: 0.75 },
-      armorEffectiveness: { plate: 1.2, mail: 1.1, leather: 0.88, cloth: 0.72 },
-      dualWieldEffectiveness: 1.08,
+      dualWield: true,
+      armorTypes: ['plate', 'mail'],
+      weaponTypes: ['shields', 'swords', 'greatswords', 'axes1h', 'greataxes', 'hammers1h', 'hammers2h'],
       animPacks: { sword_shield: true, dual_wield: true, two_handed: true },
       defaultLoadout: { main: 'swords', off: 'shields', style: 'sword_shield' },
-      passives: [
-        { id: 'w_plate_training', name: 'Plate Training', kind: 'armor', description: 'Plate/mail strong; cloth weak.' },
-        { id: 'w_weapon_mastery', name: 'Weapon Mastery', kind: 'weapon', description: 'Melee + shields strong; bows/staves weak.' },
-        { id: 'w_dual_blades', name: 'Twin Blades', kind: 'dual', description: 'Efficient dual-wield (+8%).' },
-      ],
     },
     mage: {
-      dualWieldEfficient: false,
-      preferredArmor: ['cloth'],
-      preferredWeapons: ['fireStaves', 'arcaneStaves', 'orbs', 'tomes'],
-      weaponEffectiveness: { staff: 1.22, focus: 1.18, '1h_melee': 0.7, '2h_melee': 0.65, shield: 0.72, bow: 0.75, gun: 0.7 },
-      armorEffectiveness: { cloth: 1.25, leather: 0.9, mail: 0.7, plate: 0.55 },
-      dualWieldEffectiveness: 0.72,
+      dualWield: false,
+      armorTypes: ['cloth'],
+      weaponTypes: ['fireStaves', 'frostStaves', 'holyStaves', 'lightningStaves', 'arcaneStaves', 'natureStaves'],
       animPacks: { magic_spell: true },
       defaultLoadout: { main: 'arcaneStaves', off: 'tomes', style: 'magic_spell' },
-      passives: [
-        { id: 'm_arcane_vestments', name: 'Arcane Vestments', kind: 'armor', description: 'Cloth amplifies; plate chokes mana.' },
-        { id: 'm_focus_channel', name: 'Focus Channel', kind: 'weapon', description: 'Staves/tomes strong; steel weak.' },
-        { id: 'm_no_twin_steel', name: 'Single Focus', kind: 'dual', description: 'Dual melee inefficient (−28%).' },
-      ],
     },
     ranger: {
-      dualWieldEfficient: false,
-      preferredArmor: ['leather', 'mail'],
-      preferredWeapons: ['bows', 'crossbows', 'guns', 'daggers', 'spears'],
-      weaponEffectiveness: { bow: 1.22, gun: 1.15, '1h_melee': 1.0, '2h_melee': 1.05, shield: 0.78, staff: 0.72, focus: 0.8 },
-      armorEffectiveness: { leather: 1.18, mail: 1.08, cloth: 0.85, plate: 0.68 },
-      dualWieldEffectiveness: 0.88,
+      dualWield: false,
+      armorTypes: ['leather', 'mail'],
+      weaponTypes: ['bows', 'crossbows', 'guns', 'daggers', 'greatswords', 'spears'],
       animPacks: { longbow: true, rifle: true, two_handed: true },
       defaultLoadout: { main: 'bows', off: null, style: 'longbow' },
-      passives: [
-        { id: 'r_trail_gear', name: 'Trail Gear', kind: 'armor', description: 'Leather/mail preferred; plate slows.' },
-        { id: 'r_marksman', name: 'Marksman', kind: 'weapon', description: 'Bows/guns excel; staves weak.' },
-        { id: 'r_offhand_burden', name: 'Off-Hand Burden', kind: 'dual', description: 'Dual allowed but −12%.' },
-      ],
     },
     worge: {
-      dualWieldEfficient: false,
-      preferredArmor: ['leather'],
-      preferredWeapons: ['hammers1h', 'spears', 'natureStaves', 'bows', 'daggers'],
-      weaponEffectiveness: { '1h_melee': 1.1, '2h_melee': 1.05, staff: 1.12, bow: 1.05, focus: 1.0, shield: 0.8, gun: 0.75 },
-      armorEffectiveness: { leather: 1.2, mail: 0.92, cloth: 0.95, plate: 0.65 },
-      dualWieldEffectiveness: 0.85,
+      dualWield: false,
+      armorTypes: ['leather'],
+      weaponTypes: ['fireStaves', 'natureStaves', 'spears', 'daggers', 'bows', 'hammers1h'],
       animPacks: { sword_shield: true, magic_spell: true, longbow: true },
       defaultLoadout: { main: 'hammers1h', off: null, style: 'sword_shield' },
-      passives: [
-        { id: 'o_hidebound', name: 'Hidebound', kind: 'armor', description: 'Leather for the shift; plate resists.' },
-        { id: 'o_primal_tools', name: 'Primal Tools', kind: 'weapon', description: 'Hybrid mace/staff/bow; guns weak.' },
-        { id: 'o_wild_grip', name: 'Wild Grip', kind: 'dual', description: 'Dual possible at −15%.' },
-      ],
     },
-  };
-
-  const WEAPON_FAMILY_MAP = {
-    swords: '1h_melee',
-    axes1h: '1h_melee',
-    hammers1h: '1h_melee',
-    daggers: '1h_melee',
-    maces: '1h_melee',
-    greatswords: '2h_melee',
-    greataxes: '2h_melee',
-    hammers2h: '2h_melee',
-    spears: '2h_melee',
-    shields: 'shield',
-    bows: 'bow',
-    crossbows: 'bow',
-    guns: 'gun',
-    rifles: 'gun',
-    pistols: 'gun',
-    fireStaves: 'staff',
-    frostStaves: 'staff',
-    holyStaves: 'staff',
-    lightningStaves: 'staff',
-    arcaneStaves: 'staff',
-    natureStaves: 'staff',
-    staves: 'staff',
-    orbs: 'focus',
-    tomes: 'focus',
-    foci: 'focus',
-    wands: 'focus',
-  };
-
-  const ARMOR_FAMILY_MAP = {
-    cloth: 'cloth',
-    robe: 'cloth',
-    leather: 'leather',
-    mail: 'mail',
-    chain: 'mail',
-    plate: 'plate',
-    heavy: 'plate',
+    raider: {
+      dualWield: false,
+      armorTypes: ['plate', 'mail'],
+      weaponTypes: ['greatswords', 'greataxes', 'hammers2h'],
+      animPacks: { two_handed: true },
+      defaultLoadout: { main: 'greatswords', off: null, style: 'two_handed' },
+    },
+    priest: {
+      dualWield: false,
+      armorTypes: ['cloth'],
+      weaponTypes: ['holyStaves', 'arcaneStaves', 'tomes'],
+      animPacks: { magic_spell: true },
+      defaultLoadout: { main: 'holyStaves', off: 'tomes', style: 'magic_spell' },
+    },
+    thief: {
+      dualWield: true,
+      armorTypes: ['leather'],
+      weaponTypes: ['daggers', 'swords', 'pistols'],
+      animPacks: { dual_wield: true, rifle: true },
+      defaultLoadout: { main: 'daggers', off: 'pistols', style: 'dual_wield' },
+    },
+    verduror: {
+      dualWield: false,
+      armorTypes: ['leather', 'cloth'],
+      weaponTypes: ['natureStaves', 'hammers1h'],
+      animPacks: { magic_spell: true, sword_shield: true },
+      defaultLoadout: { main: 'natureStaves', off: null, style: 'magic_spell' },
+    },
   };
 
   function esc(s) {
@@ -516,277 +492,13 @@
     return first ? { key: first, tree: trees[first] } : null;
   }
 
-  function resolveWeaponFamily(typeOrFamily, rulesDoc) {
-    const raw = String(typeOrFamily || '').toLowerCase().replace(/\s+/g, '');
-    if (!raw) return null;
-    if (['1h_melee', '2h_melee', 'shield', 'bow', 'gun', 'staff', 'focus'].includes(raw)) return raw;
-    if (WEAPON_FAMILY_MAP[raw]) return WEAPON_FAMILY_MAP[raw];
-    const families = rulesDoc?.weaponFamilies || {};
-    for (const [fam, list] of Object.entries(families)) {
-      if ((list || []).some((t) => String(t).toLowerCase() === raw)) return fam;
-    }
-    return raw;
-  }
-
-  function resolveArmorFamily(typeOrFamily, rulesDoc) {
-    const raw = String(typeOrFamily || '').toLowerCase().replace(/\s+/g, '');
-    if (!raw) return null;
-    if (['cloth', 'leather', 'mail', 'plate'].includes(raw)) return raw;
-    if (ARMOR_FAMILY_MAP[raw]) return ARMOR_FAMILY_MAP[raw];
-    const families = rulesDoc?.armorFamilies || {};
-    for (const [fam, list] of Object.entries(families)) {
-      if ((list || []).some((t) => String(t).toLowerCase() === raw)) return fam;
-    }
-    return raw;
-  }
-
-  /** Soft mult only — never blocks equip. Defaults from policy if missing. */
-  function getWeaponEffectiveness(classKey, weaponTypeOrFamily, rulesDoc) {
-    const rules = getClassEquipRules(classKey, rulesDoc);
-    const fam = resolveWeaponFamily(weaponTypeOrFamily, rulesDoc);
-    const table = rules.weaponEffectiveness || {};
-    if (fam && table[fam] != null) return Number(table[fam]);
-    const def = rulesDoc?.policy?.defaultWeaponMult;
-    return def != null ? Number(def) : 0.78;
-  }
-
-  function getArmorEffectiveness(classKey, armorTypeOrFamily, rulesDoc) {
-    const rules = getClassEquipRules(classKey, rulesDoc);
-    const fam = resolveArmorFamily(armorTypeOrFamily, rulesDoc);
-    const table = rules.armorEffectiveness || {};
-    if (fam && table[fam] != null) return Number(table[fam]);
-    const def = rulesDoc?.policy?.defaultArmorMult;
-    return def != null ? Number(def) : 0.82;
-  }
-
-  function getDualWieldEffectiveness(classKey, rulesDoc) {
-    const rules = getClassEquipRules(classKey, rulesDoc);
-    if (rules.dualWieldEffectiveness != null) return Number(rules.dualWieldEffectiveness);
-    return rules.dualWieldEfficient ? 1.08 : 0.85;
-  }
-
-  function formatMult(m) {
-    const n = Number(m);
-    if (!Number.isFinite(n)) return '—';
-    const pct = Math.round((n - 1) * 100);
-    if (pct > 0) return `+${pct}%`;
-    if (pct < 0) return `${pct}%`;
-    return '±0%';
-  }
-
-  function renderEffectivenessGrid(table, label) {
-    if (!table || !Object.keys(table).length) return '';
-    const cells = Object.entries(table)
-      .map(([k, v]) => {
-        const n = Number(v);
-        const cls = n > 1.01 ? 'mp-eff-up' : n < 0.99 ? 'mp-eff-down' : 'mp-eff-flat';
-        return `<span class="mp-eff-chip ${cls}" title="${esc(label)} ${esc(k)}">${esc(k)} <strong>${formatMult(n)}</strong></span>`;
-      })
-      .join('');
-    return `<div class="mp-eff-row"><span class="mp-eff-label">${esc(label)}</span>${cells}</div>`;
-  }
-
-  /** Default icons when SSOT passive lacks iconUrl (class · kind). */
-  const PASSIVE_ICON_FALLBACK = {
-    warrior: {
-      armor: '/icons/skills/class/barbarian/barbarian_05.png',
-      weapon: '/icons/skills/class/barbarian/barbarian_01.png',
-      dual: '/icons/skills/class/barbarian/barbarian_06.png',
-      tree: '/icons/skills/class/barbarian/barbarian_03.png',
-    },
-    mage: {
-      armor: '/icons/skills/class/firemage/firemage_05.png',
-      weapon: '/icons/skills/class/firemage/firemage_01.png',
-      dual: '/icons/skills/class/firemage/firemage_03.png',
-      tree: '/icons/skills/class/firemage/firemage_02.png',
-    },
-    ranger: {
-      armor: '/icons/skills/class/hunter/hunter_05.png',
-      weapon: '/icons/skills/class/hunter/hunter_01.png',
-      dual: '/icons/skills/class/hunter/hunter_03.png',
-      tree: '/icons/skills/class/hunter/hunter_02.png',
-    },
-    worge: {
-      armor: '/icons/skills/class/necromancer/necromancer_05.png',
-      weapon: '/icons/skills/class/necromancer/necromancer_01.png',
-      dual: '/icons/skills/class/necromancer/necromancer_03.png',
-      tree: '/icons/skills/class/necromancer/necromancer_02.png',
-    },
-  };
-
-  function passiveIconFor(classKey, passive) {
-    if (passive.iconUrl || passive.icon) return skillIcon(passive.iconUrl || passive.icon);
-    const ck = (classKey || 'warrior').toLowerCase();
-    const kind = passive.kind || (passive.treePassive ? 'tree' : 'armor');
-    const path =
-      (PASSIVE_ICON_FALLBACK[ck] && PASSIVE_ICON_FALLBACK[ck][kind]) ||
-      PASSIVE_ICON_FALLBACK.warrior.armor;
-    return skillIcon(path);
-  }
-
-  function buildPassiveTooltipLines(p) {
-    if (Array.isArray(p.tooltipLines) && p.tooltipLines.length) return p.tooltipLines.slice();
-    const lines = [];
-    const eff = p.effect || {};
-    if (eff.armor) {
-      Object.entries(eff.armor).forEach(([t, m]) => {
-        lines.push(`${formatMult(m)} armor effectiveness (${t})`);
-      });
-    }
-    if (eff.weapon) {
-      Object.entries(eff.weapon).forEach(([t, m]) => {
-        lines.push(`${formatMult(m)} weapon effectiveness (${t})`);
-      });
-    }
-    if (eff.dualWield != null) lines.push(`${formatMult(eff.dualWield)} dual-wield contribution`);
-    if (p.effect && typeof p.effect === 'string') lines.push(p.effect);
-    if (p.bonuses) {
-      Object.entries(p.bonuses).forEach(([k, v]) => lines.push(`+${v} ${k} per rank`));
-    }
-    if (p.procEffect?.type) {
-      lines.push(`Proc: ${p.procEffect.type}${p.procEffect.duration ? ` (${p.procEffect.duration}s)` : ''}`);
-    }
-    return lines;
-  }
-
-  /**
-   * WoW spellbook-style passive row: icon grid + rich hover tooltip.
-   * Includes class gear passives (soft mults) + tree skills flagged passive:true.
-   */
-  function collectSpellbookPassives(rules, tree, classKey) {
-    const list = [];
-    (rules.passives || []).forEach((p) => {
-      list.push({
-        id: p.id,
-        name: p.name,
-        kind: p.kind || 'armor',
-        description: p.description || '',
-        rank: p.rank || 'Passive',
-        alwaysOn: p.alwaysOn !== false,
-        iconUrl: p.iconUrl || p.icon,
-        effect: p.effect,
-        tooltipLines: p.tooltipLines,
-        source: 'class',
-      });
-    });
-    (tree?.tiers || []).forEach((tier) => {
-      (tier.skills || []).forEach((sk) => {
-        if (!sk.passive) return;
-        list.push({
-          id: sk.id,
-          name: sk.name,
-          kind: 'tree',
-          description: sk.description || sk.effect || '',
-          rank: `Passive · Lv ${tier.requiredLevel | 0}`,
-          alwaysOn: true,
-          iconUrl: sk.iconUrl || sk.icon,
-          effect: sk.effect,
-          bonuses: sk.bonuses,
-          procEffect: sk.procEffect,
-          treePassive: true,
-          requires: sk.requires,
-          source: 'tree',
-        });
-      });
-    });
-    return list;
-  }
-
-  function renderSpellbookPassives(rules, tree, classKey) {
-    const passives = collectSpellbookPassives(rules, tree, classKey);
-    if (!passives.length) return '';
-    const icons = passives
-      .map((p, i) => {
-        const ico = passiveIconFor(classKey, p);
-        const tipPayload = {
-          name: p.name,
-          rank: p.rank || 'Passive',
-          desc: p.description || '',
-          lines: buildPassiveTooltipLines(p),
-          kind: p.kind || 'passive',
-          alwaysOn: !!p.alwaysOn,
-          source: p.source || 'class',
-        };
-        return `<button type="button" class="mp-sb-passive" data-sb-passive="${i}"
-          data-sb-tip="${esc(JSON.stringify(tipPayload))}"
-          aria-label="${esc(p.name)}">
-          <span class="mp-sb-frame">
-            ${ico ? `<img src="${esc(ico)}" alt="" draggable="false" onerror="this.classList.add('mp-sb-ico-missing')">` : '<span class="mp-sb-ico-fallback">◆</span>'}
-            <span class="mp-sb-corner" aria-hidden="true"></span>
-          </span>
-        </button>`;
-      })
-      .join('');
-    return `<div class="mp-spellbook-passives" data-class-key="${esc(classKey || '')}">
-      <div class="mp-sb-header">
-        <span class="mp-sb-title">Passives</span>
-        <span class="mp-sb-sub">Always on · hover for details · soft gear mults (no equip bans)</span>
-      </div>
-      <div class="mp-sb-icon-row">${icons}</div>
-      <div class="mp-sb-tooltip" id="mpSpellbookTip" role="tooltip" hidden></div>
-    </div>`;
-  }
-
-  function attachSpellbookTooltips(root) {
-    const tip = root.querySelector('#mpSpellbookTip') || document.getElementById('mpSpellbookTip');
-    if (!tip) return;
-    const show = (btn, e) => {
-      let data;
-      try {
-        data = JSON.parse(btn.getAttribute('data-sb-tip') || '{}');
-      } catch {
-        return;
-      }
-      const lines = (data.lines || [])
-        .map((ln) => {
-          const s = String(ln);
-          const up = s.startsWith('+');
-          const down = s.startsWith('-');
-          return `<div class="mp-sb-tip-line ${up ? 'up' : down ? 'down' : ''}">${esc(s)}</div>`;
-        })
-        .join('');
-      tip.innerHTML = `
-        <div class="mp-sb-tip-name">${esc(data.name || 'Passive')}</div>
-        <div class="mp-sb-tip-rank">${esc(data.rank || 'Passive')}${data.alwaysOn ? ' · Always active' : ''}</div>
-        <div class="mp-sb-tip-desc">${esc(data.desc || '')}</div>
-        ${lines ? `<div class="mp-sb-tip-effects">${lines}</div>` : ''}
-        <div class="mp-sb-tip-foot">${data.source === 'tree' ? 'Class skill tree' : 'Class training'} · does not restrict equip</div>`;
-      tip.hidden = false;
-      tip.style.display = 'block';
-      const pad = 12;
-      let x = e.clientX + pad;
-      let y = e.clientY + pad;
-      tip.style.left = '0px';
-      tip.style.top = '0px';
-      const tw = tip.offsetWidth || 280;
-      const th = tip.offsetHeight || 120;
-      if (x + tw > window.innerWidth - 8) x = e.clientX - tw - pad;
-      if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
-      tip.style.left = Math.max(8, x) + 'px';
-      tip.style.top = Math.max(8, y) + 'px';
-    };
-    const hide = () => {
-      tip.hidden = true;
-      tip.style.display = 'none';
-    };
-    root.querySelectorAll('.mp-sb-passive').forEach((btn) => {
-      btn.addEventListener('mouseenter', (e) => show(btn, e));
-      btn.addEventListener('mousemove', (e) => show(btn, e));
-      btn.addEventListener('mouseleave', hide);
-      btn.addEventListener('focus', (e) => show(btn, e));
-      btn.addEventListener('blur', hide);
-    });
-  }
-
-  function renderEquipRulesStrip(rules, rulesDoc) {
+  function renderEquipRulesStrip(rules) {
     if (!rules) return '';
-    const dualEff = getDualWieldEffectiveness(rules.id || 'warrior', { classes: { [rules.id]: rules }, policy: rulesDoc?.policy });
-    const dualPill =
-      dualEff >= 1
-        ? `<span class="mp-rule-pill mp-rule-ok">Dual style ${formatMult(dualEff)}</span>`
-        : `<span class="mp-rule-pill mp-rule-soft">Dual style ${formatMult(dualEff)} (allowed)</span>`;
-    const prefW = (rules.preferredWeapons || rules.weaponTypes || []).slice(0, 6).map((w) => esc(w)).join(' · ');
-    const prefA = (rules.preferredArmor || rules.armorTypes || []).map((a) => esc(a)).join(' · ');
+    const dual = rules.dualWield
+      ? `<span class="mp-rule-pill mp-rule-ok">Dual wield ✓</span>`
+      : `<span class="mp-rule-pill mp-rule-no">No dual wield</span>`;
+    const weapons = (rules.weaponTypes || []).slice(0, 8).map((w) => esc(w)).join(' · ');
+    const armor = (rules.armorTypes || []).map((a) => esc(a)).join(' · ');
     const packs = rules.animPacks
       ? Object.keys(rules.animPacks)
           .map((p) => esc(p))
@@ -796,18 +508,14 @@
       ? `${esc(rules.defaultLoadout.main || '—')}${rules.defaultLoadout.off ? ' + ' + esc(rules.defaultLoadout.off) : ''} → ${esc(rules.defaultLoadout.style || '')}`
       : '';
     return `<div class="mp-equip-rules">
-      <div class="mp-equip-rules-title">Gear effectiveness (reference)</div>
-      <div class="mp-equip-rules-row">
-        <span class="mp-rule-pill mp-rule-ok">Equip anything</span>
-        ${dualPill}
-        <span class="mp-rule-pill">Pref armor: ${prefA || '—'}</span>
+      <div class="mp-equip-rules-title">Class equipment · mesh rules</div>
+      <div class="mp-equip-rules-row">${dual}
+        <span class="mp-rule-pill">Armor: ${armor || '—'}</span>
       </div>
-      ${renderEffectivenessGrid(rules.armorEffectiveness, 'Armor')}
-      ${renderEffectivenessGrid(rules.weaponEffectiveness, 'Weapon')}
-      <div class="mp-equip-rules-detail"><strong>Preferred weapons</strong> ${prefW || '—'}</div>
+      <div class="mp-equip-rules-detail"><strong>Weapons</strong> ${weapons || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Anim packs</strong> ${packs || '—'}</div>
       <div class="mp-equip-rules-detail"><strong>Default loadout</strong> ${load || '—'}</div>
-      <div class="mp-equip-rules-note">Passives at top apply these mults in combat — never lock slots. SSOT: class-equipment-rules.json</div>
+      <div class="mp-equip-rules-note">Warrior and Thief dual-wield 1H. Raider is 2H only. Mage/Priest off-hand = tome/orb. Wire via class-equipment-rules.json.</div>
     </div>`;
   }
 
@@ -827,17 +535,29 @@
       classCatalog?.[key]?.abilities ||
       [];
 
-    // Actives only in tier grid (passives already in spellbook row at top)
-    const showTreePassiveInGrid = !!ctx.showTreePassivesInGrid;
+    const family = FAMILY_OF[key] || key;
+    const specs = FAMILY_SPECS[family] || [key];
+    const identity = tree.specIdentity;
+    const specBtns = specs
+      .map((s) => {
+        const on = s === key;
+        return `<button type="button" class="mp-spec-btn ${on ? 'on' : ''}" data-spec-swap="${esc(s)}">${esc(s)}</button>`;
+      })
+      .join('');
 
-    let html = `<div class="section-title">${ctx.embedInAttributes ? 'Class skills' : 'Class Skill Tree'} — ${esc(tree.className || key)}</div>
+    let html = `<div class="section-title">${ctx.embedInAttributes ? 'Class tree & passives' : 'Class Skill Tree'} — ${esc(tree.className || key)}</div>
       <div class="mp-char-meta">Hero Lv ${level} · Skill pts <strong style="color:var(--gold)">${avail}</strong>
-        · Prefab: <code>${esc(rules.prefabPack || key)}</code>
-        · Soft gear passives · tree from master-skillTrees</div>
-      ${renderSpellbookPassives(rules, tree, key)}
-      ${renderEquipRulesStrip(rules, equipRules)}
-      <div class="mp-class-tree">
-      <div class="mp-equip-rules-title" style="margin:4px 0 8px">Skill tree</div>`;
+        · Family <code>${esc(family)}</code>
+        · L0 identity: <strong>${esc(identity?.name || '—')}</strong>
+        · Prefab pack: <code>${esc(rules.prefabPack || key)}</code></div>
+      <div class="mp-spec-row">
+        <span class="mp-spec-lab">Spec</span>${specBtns}
+        <button type="button" class="mp-spec-btn reset" data-class-reset="1">Reset points</button>
+      </div>
+      <p class="mp-spec-note">Swap connected specs by resetting points and picking a different L0. Rewrite the same spec by reset + same L0.</p>
+      ${renderEquipRulesStrip(rules)}
+      ${tree.graph?.nodes ? `<div class="mp-tree-container mp-class-graph" id="mpClassGraph" data-class-graph="${esc(key)}"></div>` : ''}
+      <div class="mp-class-tree">`;
 
     (tree.tiers || []).forEach((tier) => {
       const unlocked = level >= (tier.requiredLevel | 0);
@@ -849,8 +569,6 @@
         <div class="mp-skill-chips">`;
 
       (tier.skills || []).forEach((sk) => {
-        // Passives live in spellbook row at top (WoW-style)
-        if (sk.passive && !showTreePassiveInGrid) return;
         const pts = char.classSkills[sk.id] | 0;
         const max = sk.maxPoints | 0 || 1;
         const reqOk = !sk.requires || (char.classSkills[sk.requires] | 0) > 0;
@@ -918,7 +636,6 @@
   }
 
   function attachClassSkillHandlers(root, char, skillTrees, classLabel, onChange) {
-    attachSpellbookTooltips(root);
     const resolved = resolveClassTree(skillTrees, char.classKey, classLabel);
     if (!resolved?.tree) return;
     const skillMap = {};
@@ -943,48 +660,98 @@
         onChange();
       });
     });
-  }
-
-  /**
-   * Soft policy: never hard-block equip. Always true.
-   * Use getWeaponEffectiveness / getArmorEffectiveness for combat contribution.
-   */
-  function canEquipWeapon(_classKey, _weaponFamily, _hand, _rulesDoc) {
-    return true;
-  }
-
-  function canEquipArmor(_classKey, _armorFamily, _rulesDoc) {
-    return true;
-  }
-
-  /** Dual style is always allowed; contribution uses getDualWieldEffectiveness. */
-  function canDualWield(_classKey, _rulesDoc) {
-    return true;
-  }
-
-  function isDualWieldEfficient(classKey, rulesDoc) {
-    return !!getClassEquipRules(classKey, rulesDoc).dualWieldEfficient;
-  }
-
-  /**
-   * Apply class soft mults to a gear piece's combat stats.
-   * @param {'weapon'|'armor'} kind
-   * @param {string} typeOrFamily category string (e.g. swords, plate)
-   * @param {Record<string, number>} stats flat stats from item
-   */
-  function applyClassGearEffectiveness(classKey, kind, typeOrFamily, stats, rulesDoc) {
-    const mult =
-      kind === 'armor'
-        ? getArmorEffectiveness(classKey, typeOrFamily, rulesDoc)
-        : getWeaponEffectiveness(classKey, typeOrFamily, rulesDoc);
-    const out = {};
-    Object.entries(stats || {}).forEach(([k, v]) => {
-      out[k] = typeof v === 'number' ? v * mult : v;
+    root.querySelectorAll('[data-class-reset]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const spent = Object.values(char.classSkills || {}).reduce((a, n) => a + (n | 0), 0);
+        char.classSkillPointsAvailable = (char.classSkillPointsAvailable | 0) + spent;
+        char.classSkills = {};
+        onChange();
+      });
     });
-    out._classEffectiveness = mult;
-    out._classKey = classKey;
-    out._gearFamily = kind === 'armor' ? resolveArmorFamily(typeOrFamily, rulesDoc) : resolveWeaponFamily(typeOrFamily, rulesDoc);
-    return out;
+    root.querySelectorAll('[data-spec-swap]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const spec = btn.getAttribute('data-spec-swap');
+        const fam = FAMILY_OF[char.classKey] || char.classKey;
+        if (!(FAMILY_SPECS[fam] || []).includes(spec)) return;
+        const spent = Object.values(char.classSkills || {}).reduce((a, n) => a + (n | 0), 0);
+        char.classSkillPointsAvailable = (char.classSkillPointsAvailable | 0) + spent;
+        char.classSkills = {};
+        char.classKey = spec;
+        const next = resolveClassTree(skillTrees, spec, spec);
+        const l0 = next?.tree?.specIdentity?.skillId || next?.tree?.tiers?.[0]?.skills?.[0]?.id;
+        if (l0) {
+          char.classSkills[l0] = 1;
+          if ((char.classSkillPointsAvailable | 0) > 0) char.classSkillPointsAvailable -= 1;
+        }
+        onChange();
+      });
+    });
+    requestAnimationFrame(() => paintClassGraph(resolved.tree, char));
+  }
+
+  function paintClassGraph(tree, char) {
+    const host = document.getElementById('mpClassGraph');
+    if (!host || !tree?.graph?.nodes) return;
+    const nodes = tree.graph.nodes;
+    const W = host.clientWidth || 720;
+    const H = Math.max(host.clientHeight || 0, 380);
+    host.style.minHeight = '380px';
+    const PAD = 28;
+    const mapX = (x) => PAD + (x / 100) * (W - PAD * 2);
+    const mapY = (y) => PAD + ((100 - y) / 100) * (H - PAD * 2);
+    const owned = char.classSkills || {};
+    let svg = `<svg class="mp-tree-svg" width="100%" height="${H}" viewBox="0 0 ${W} ${H}">`;
+    for (const node of nodes) {
+      if (node.parent != null) {
+        const parent = nodes.find((n) => n.id === node.parent);
+        if (parent) {
+          const color = node.branchColor?.stroke || '#555';
+          svg += `<line x1="${mapX(parent.x)}" y1="${mapY(parent.y)}" x2="${mapX(node.x)}" y2="${mapY(node.y)}" stroke="${color}" stroke-width="2" stroke-opacity="0.45"/>`;
+        }
+      }
+    }
+    for (const node of nodes) {
+      const cx = mapX(node.x);
+      const cy = mapY(node.y);
+      const color = node.branchColor?.stroke || tree.color || '#d4a84b';
+      const fill = node.branchColor?.fill || 'rgba(212,168,75,0.15)';
+      const r = node.path ? 10 : 14;
+      const has = node.skillId ? (owned[node.skillId] | 0) > 0 : node.path && (char.level | 0) >= (node.reqLevel | 0);
+      const opacity = has ? 1 : 0.55;
+      if (node.nodeType === 'effect') {
+        svg += `<polygon points="${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}" fill="${fill}" stroke="${color}" stroke-width="${has ? 3 : 2}" opacity="${opacity}"/>`;
+      } else if (node.path) {
+        svg += `<rect x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" rx="3" fill="${fill}" stroke="${color}" stroke-width="2" opacity="${opacity}"/>`;
+      } else {
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${color}" stroke-width="${has ? 3 : 2}" opacity="${opacity}"/>`;
+      }
+      const label = (node.name || '').length > 14 ? node.name.slice(0, 12) + '…' : node.name;
+      svg += `<text x="${cx}" y="${cy + r + 11}" text-anchor="middle" fill="${color}" font-size="8">${esc(label)}</text>`;
+    }
+    svg += '</svg>';
+    host.innerHTML = svg;
+  }
+
+  /** Equip gate used by inventory / mesh equip wiring */
+  function canEquipWeapon(classKey, weaponFamily, hand, rulesDoc) {
+    const rules = getClassEquipRules(classKey, rulesDoc);
+    const fam = String(weaponFamily || '').toLowerCase();
+    const types = (rules.weaponTypes || []).map((t) => String(t).toLowerCase());
+    if (types.includes(fam)) {
+      if (hand === 'off' && !rules.dualWield) {
+        // shields / focus off-hand ok without dual
+        const offOk = (rules.offHandAllowed || []).some((f) => fam.includes(String(f).replace(/_/g, '')) || String(f) === fam);
+        if (fam.includes('shield') || fam.includes('tome') || fam.includes('orb') || fam.includes('focus')) return true;
+        if (!offOk && fam.match(/sword|axe|hammer|dagger|mace/)) return false;
+      }
+      if (hand === 'off' && rules.dualWield === false && fam.match(/sword|axe|hammer|dagger/)) return false;
+      return true;
+    }
+    return false;
+  }
+
+  function canDualWield(classKey, rulesDoc) {
+    return !!getClassEquipRules(classKey, rulesDoc).dualWield;
   }
 
   // ── Profession trees (SVG, character levels / unlocks) ──────────────
@@ -1183,6 +950,8 @@
     CDN,
     defaultCharState,
     CLASS_KEY_FROM_NAME,
+    FAMILY_OF,
+    FAMILY_SPECS,
     CLASS_ATTR_BONUSES,
     RACE_ATTR_BONUSES,
     CLASS_EQUIP_FALLBACK,
@@ -1190,6 +959,7 @@
     attachAttributeHandlers,
     renderClassSkillTree,
     attachClassSkillHandlers,
+    paintClassGraph,
     renderProfessionsPanel,
     paintProfessionTree,
     attachProfessionHandlers,
@@ -1197,18 +967,7 @@
     resolveClassTree,
     getClassEquipRules,
     canEquipWeapon,
-    canEquipArmor,
     canDualWield,
-    isDualWieldEfficient,
-    getWeaponEffectiveness,
-    getArmorEffectiveness,
-    getDualWieldEffectiveness,
-    applyClassGearEffectiveness,
-    resolveWeaponFamily,
-    resolveArmorFamily,
-    collectSpellbookPassives,
-    renderSpellbookPassives,
-    attachSpellbookTooltips,
     calculateDerivedStats,
     calculateCombatPower,
     getBuildRating,

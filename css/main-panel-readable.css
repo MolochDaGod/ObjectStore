@@ -407,3 +407,15 @@ body.mp-fluid-fit .app {
 #mainScroll a:hover {
   color: #fff3c0 !important;
 }
+
+/* Spec swap + class graph (profession-style) */
+.mp-spec-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0 10px; }
+.mp-spec-lab { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.mp-spec-btn {
+  background:rgba(20,16,10,.7); border:1px solid var(--panel-edge-soft); color:var(--muted);
+  padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px; font-family:inherit;
+}
+.mp-spec-btn.on, .mp-spec-btn:hover { border-color:var(--gold); color:var(--gold); }
+.mp-spec-btn.reset { margin-left:auto; }
+.mp-spec-note { font-size:11px; color:var(--muted); margin:0 0 10px; line-height:1.4; }
+.mp-class-graph { position:relative; width:100%; min-height:380px; border:1px solid var(--panel-edge-soft); border-radius:8px; margin-bottom:12px; background:rgba(8,10,16,.6); }

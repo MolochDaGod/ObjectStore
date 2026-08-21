@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "generated": "2026-08-07",
+  "version": "1.2.0",
+  "generated": "2026-08-19",
   "id": "grudge-drop-tables",
   "description": "Fleet drop SSOT. Prefabs T0–T8 full systems. Natural loot max T5. T6–T8 only special: player_death, special_chest, dungeon, raid_mythic. T0 for mats/pots/foods/thrown. Difficulty + player level shape rates.",
   "hardRules": {
@@ -277,9 +277,40 @@
         "mob_elite",
         "chest_uncommon",
         "boss",
-        "raid"
+        "raid",
+        "harvest_node"
       ],
-      "notes": "T0 training blades allowed but rare on high difficulty"
+      "notes": "T0 training blades allowed but rare on high difficulty. Harvest may drop T1 named prefabs (hammers/bows/axes)."
+    },
+    "gold": {
+      "allowTiers": [0, 1, 2, 3, 4, 5],
+      "preferT0": true,
+      "t0FloorWeight": 0.4,
+      "sources": [
+        "harvest_node",
+        "mob_trash",
+        "mob_normal",
+        "chest_common"
+      ],
+      "itemId": "gold",
+      "wallet": "GBUX",
+      "amountByDifficulty": {
+        "normal": [2, 8],
+        "hard": [6, 18],
+        "elite": [12, 36],
+        "boss": [24, 80]
+      },
+      "notes": "Money drop. Credit account wallet, not a second bag currency."
+    },
+    "recipes": {
+      "allowTiers": [1, 2, 3, 4, 5],
+      "preferT0": false,
+      "sources": [
+        "harvest_node",
+        "chest_uncommon",
+        "mob_elite"
+      ],
+      "notes": "Recipe unlocks for existing master-recipes (Craft Skullsunder, etc.). Not a second recipe DB."
     },
     "armor": {
       "allowTiers": [
@@ -297,8 +328,10 @@
         "mob_elite",
         "chest_uncommon",
         "boss",
-        "raid"
-      ]
+        "raid",
+        "harvest_node"
+      ],
+      "notes": "T1 helm/hands/ring/necklace/chest droppable as sprite (iconUrl) + 3D drop prefab when stamped."
     },
     "junk": {
       "allowTiers": [
@@ -508,10 +541,15 @@
       },
       "emptyChance": 0,
       "categoryWeights": {
-        "materials": 85,
-        "foods": 10,
-        "junk": 5
+        "materials": 62,
+        "gold": 12,
+        "foods": 8,
+        "junk": 5,
+        "weapons": 5,
+        "armor": 4,
+        "recipes": 4
       },
+      "notes": "T1 named weapons/armor/recipes can drop. Gold = wallet coin. T6–T8 still banned.",
       "defaultDifficulty": "normal",
       "t0Boost": 1.5,
       "allowMythic": false,

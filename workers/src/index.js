@@ -18,9 +18,10 @@
  *   GET    /health                Health check
  *   GET    /api/v1/catalog        Fleet catalog index (SSOT for game data endpoints)
  *   GET    /api/v1/:name.json     Static game data JSON (R2 cache → info.grudge-studio.com)
+ *   GET/PUT /api/v1/fleet-colliders.json  Fleet editor overlay (R2, no-store)
  */
 
-const API_VERSION = '3.3.0';
+const API_VERSION = '3.4.0';
 /** Canonical static JSON upstream — never self-proxy via objectstore (circular). */
 const STATIC_JSON_BASE = 'https://info.grudge-studio.com/api/v1';
 
@@ -65,6 +66,7 @@ export default {
             animationsGltf: 'GET /v1/game-data/animations-gltf',
             upload: 'POST /v1/assets (API key required)',
             convert: 'POST /v1/convert (API key required)',
+            fleetColliders: 'GET/PUT /api/v1/fleet-colliders.json',
           },
           docs: 'https://info.grudge-studio.com/docs',
         }), origin);
@@ -102,6 +104,16 @@ export default {
       // ── Static JSON catalog (/api/v1/*) — fleet games consume these ──
       if (url.pathname === '/api/v1/catalog' && method === 'GET') {
         return corsResponse(env, await serveStaticJson('catalog', env), origin);
+      }
+      if (url.pathname === '/api/v1/fleet-colliders.json') {
+        if (method === 'GET') {
+          return corsResponse(env, await serveFleetColliders(env), origin);
+        }
+        if (method === 'PUT') {
+          const authErr = requireFleetColliderWrite(request, env);
+          if (authErr) return corsResponse(env, authErr, origin);
+          return corsResponse(env, await putFleetColliders(request, env), origin);
+        }
       }
       const staticJsonMatch = url.pathname.match(/^\/(?:api\/objectstore\/v1|api\/v1)\/(.+)\.json$/);
       if (staticJsonMatch && (method === 'GET' || method === 'HEAD')) {
@@ -565,6 +577,158 @@ async function handleGameDataRoutes(url, method, env) {
   }
 
   return json({ error: 'Not found' }, 404);
+}
+
+const FLEET_COLLIDERS_R2_KEY = 'static-json/fleet-colliders.json';
+const FLEET_COLLIDERS_GAMEDATA_KEY = 'fleet/colliders.json';
+
+function requireFleetColliderWrite(request, env) {
+  const token =
+    request.headers.get('x-api-key') ||
+    request.headers.get('x-admin-token') ||
+    request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ||
+    '';
+  if (env.FLEET_COLLIDER_TOKEN && token === env.FLEET_COLLIDER_TOKEN) return null;
+  if (env.API_KEY && token === env.API_KEY) return null;
+  if (!env.FLEET_COLLIDER_TOKEN && !env.API_KEY) return null;
+  return json({ error: 'Unauthorized — provide X-API-Key or X-Admin-Token' }, 401);
+}
+
+function isFleetBake(v) {
+  if (!v || typeof v !== 'object') return false;
+  return (
+    Array.isArray(v.half) &&
+    v.half.length === 3 &&
+    v.half.every((n) => Number.isFinite(n) && n > 0 && n < 80) &&
+    Array.isArray(v.offset) &&
+    v.offset.length === 3 &&
+    v.offset.every((n) => Number.isFinite(n) && Math.abs(n) < 80)
+  );
+}
+
+function clampFleetN(n, max) {
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(-max, Math.min(max, n));
+}
+
+function sanitizeFleetPart(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const out = {};
+  if (Array.isArray(raw.pos) && raw.pos.length === 3) {
+    out.pos = [clampFleetN(raw.pos[0], 4), clampFleetN(raw.pos[1], 4), clampFleetN(raw.pos[2], 4)];
+  }
+  if (Array.isArray(raw.rot) && raw.rot.length === 3) {
+    out.rot = [clampFleetN(raw.rot[0], Math.PI), clampFleetN(raw.rot[1], Math.PI), clampFleetN(raw.rot[2], Math.PI)];
+  }
+  if (Array.isArray(raw.scl) && raw.scl.length === 3) {
+    out.scl = [
+      Math.max(0.5, Math.min(1.5, Number(raw.scl[0]) || 1)),
+      Math.max(0.5, Math.min(1.5, Number(raw.scl[1]) || 1)),
+      Math.max(0.5, Math.min(1.5, Number(raw.scl[2]) || 1)),
+    ];
+  }
+  if (typeof raw.tint === 'string' && /^#[0-9a-fA-F]{6}$/.test(raw.tint)) out.tint = raw.tint;
+  return Object.keys(out).length ? out : null;
+}
+
+function sanitizeFleetOverlay(raw) {
+  const out = { schema: 1, updatedAt: new Date().toISOString(), boxes: {} };
+  if (!raw || typeof raw !== 'object') return out;
+  if (typeof raw.updatedAt === 'string') out.updatedAt = raw.updatedAt;
+  const boxes = raw.boxes && typeof raw.boxes === 'object' ? raw.boxes : {};
+  for (const [id, bake] of Object.entries(boxes)) {
+    if (typeof id === 'string' && id.length < 80 && isFleetBake(bake)) {
+      out.boxes[id] = {
+        half: [bake.half[0], bake.half[1], bake.half[2]],
+        offset: [bake.offset[0], bake.offset[1], bake.offset[2]],
+      };
+    }
+  }
+  if (raw.parts && typeof raw.parts === 'object') {
+    out.parts = {};
+    for (const [assetId, map] of Object.entries(raw.parts)) {
+      if (typeof assetId !== 'string' || assetId.length > 80 || !map || typeof map !== 'object') continue;
+      const cleaned = {};
+      for (const [partName, xf] of Object.entries(map)) {
+        if (typeof partName !== 'string' || partName.length > 80) continue;
+        const one = sanitizeFleetPart(xf);
+        if (one) cleaned[partName] = one;
+      }
+      if (Object.keys(cleaned).length) out.parts[assetId] = cleaned;
+    }
+  }
+  return out;
+}
+
+function mergeFleetOverlay(base, patch) {
+  const parts = { ...(base?.parts || {}) };
+  if (patch?.parts) {
+    for (const [id, map] of Object.entries(patch.parts)) {
+      parts[id] = { ...(parts[id] || {}), ...map };
+    }
+  }
+  return {
+    schema: 1,
+    updatedAt: patch.updatedAt || new Date().toISOString(),
+    boxes: { ...(base?.boxes || {}), ...(patch?.boxes || {}) },
+    parts,
+  };
+}
+
+async function readFleetOverlayObject(env) {
+  const fromAssets = await env.BUCKET?.get(FLEET_COLLIDERS_R2_KEY);
+  if (fromAssets) {
+    try {
+      return { overlay: sanitizeFleetOverlay(JSON.parse(await fromAssets.text())), source: 'r2-assets' };
+    } catch { /* fall through */ }
+  }
+  const fromGame = await env.GAME_DATA?.get(FLEET_COLLIDERS_GAMEDATA_KEY);
+  if (fromGame) {
+    try {
+      return { overlay: sanitizeFleetOverlay(JSON.parse(await fromGame.text())), source: 'r2-gamedata' };
+    } catch { /* fall through */ }
+  }
+  return { overlay: { schema: 1, updatedAt: '', boxes: {} }, source: 'empty' };
+}
+
+async function serveFleetColliders(env) {
+  const { overlay, source } = await readFleetOverlayObject(env);
+  return json(overlay, 200, {
+    'Cache-Control': 'no-store',
+    'X-Source': source,
+    'X-Persist': 'cloudflare-r2',
+  });
+}
+
+async function putFleetColliders(request, env) {
+  let raw;
+  try {
+    raw = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body' }, 400);
+  }
+  const { overlay: current } = await readFleetOverlayObject(env);
+  const next = mergeFleetOverlay(current, sanitizeFleetOverlay(raw));
+  next.updatedAt = new Date().toISOString();
+  const body = JSON.stringify(next);
+  const puts = [
+    env.BUCKET.put(FLEET_COLLIDERS_R2_KEY, body, {
+      httpMetadata: { contentType: 'application/json', cacheControl: 'no-store' },
+      customMetadata: { kind: 'fleet-collider-overlay', updatedAt: next.updatedAt },
+    }),
+  ];
+  if (env.GAME_DATA) {
+    puts.push(env.GAME_DATA.put(FLEET_COLLIDERS_GAMEDATA_KEY, body, {
+      httpMetadata: { contentType: 'application/json', cacheControl: 'no-store' },
+      customMetadata: { kind: 'fleet-collider-overlay', updatedAt: next.updatedAt },
+    }));
+  }
+  await Promise.all(puts);
+  return json(
+    { ok: true, persist: 'cloudflare-r2', saved: Object.keys(next.boxes).length, overlay: next },
+    200,
+    { 'Cache-Control': 'no-store', 'X-Persist': 'cloudflare-r2' },
+  );
 }
 
 /** Serve static /api/v1/:name.json (supports nested paths like _meta/fleet-truth) */
@@ -1286,8 +1450,8 @@ function corsResponse(env, response, requestOrigin = '') {
   headers.set('Vary', 'Origin');
   if (origin !== '*') headers.set('Access-Control-Allow-Credentials', 'true');
   headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility, Authorization');
-  headers.set('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Type, X-Source');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Admin-Token, X-Filename, X-Category, X-Tags, X-Metadata, X-Visibility, Authorization');
+  headers.set('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Type, X-Source, X-Persist');
   headers.set('Access-Control-Max-Age', '86400');
   return new Response(response.body, { status: response.status, headers });
 }

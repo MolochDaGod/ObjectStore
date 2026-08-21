@@ -33,6 +33,7 @@
     .stat-row .k { color: var(--muted); }
     .stat-row .v { color: var(--green); font-family: var(--font-mono); }
     .class-grid, .race-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .class-grid .fam { grid-column: 1 / -1; font-size: 0.72em; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px; }
     .class-btn, .race-btn { padding: 10px; border: 2px solid hsl(225 20% 20%); border-radius: 4px; cursor: pointer; text-align: center; transition: 0.2s; font-size: 0.85em; color: var(--text); background: hsl(225 28% 10%); font-family: var(--font-heading); }
     .class-btn:hover, .race-btn:hover { border-color: var(--gold-dim); }
     .class-btn.active, .race-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.08); }
@@ -58,7 +59,7 @@
     <a class="back-link" href="index.html">← Back to Hub</a>
     <header class="header">
       <h1 class="gold-text">Character Builder</h1>
-      <p style="color:var(--muted);margin-top:6px;">160 points across 8 attributes — 37 derived stats</p>
+      <p style="color:var(--muted);margin-top:6px;">160 points · 8 specs (4 families) · swap spec by reset + different L0 · no Knight class — Worge is the fourth family</p>
     </header>
     <div class="layout">
       <div class="panel fantasy-panel" id="leftPanel"></div>
@@ -93,10 +94,14 @@
     };
 
     const CLASS_DATA = {
-      Warrior:          { color:'#ff7d87', bonuses:{strength:2,vitality:1,endurance:1,tactics:1}, desc:'Tank / DPS / Support' },
-      'Mage Priest':    { color:'#bb95ff', bonuses:{intellect:3,wisdom:2}, desc:'Healer / DPS / Utility' },
-      Ranger:           { color:'#49de95', bonuses:{dexterity:2,agility:2,tactics:1}, desc:'DPS / Utility / Off-Tank' },
-      Worge:            { color:'#ffb16d', bonuses:{strength:1,vitality:2,endurance:1,agility:1}, desc:'Tank / DPS / Utility' },
+      Warrior:  { id:'warrior',  family:'Warrior',  color:'#ff7d87', bonuses:{strength:2,vitality:1,endurance:1,tactics:1}, desc:'Shield or tome — tank / heal / DPS' },
+      Raider:   { id:'raider',   family:'Warrior',  color:'#b91c1c', bonuses:{strength:3,endurance:1,dexterity:1}, desc:'2H parry tank / execute' },
+      Mage:     { id:'mage',     family:'Mage',     color:'#bb95ff', bonuses:{intellect:3,wisdom:2}, desc:'Arcane DPS / control' },
+      Priest:   { id:'priest',   family:'Mage',     color:'#fde68a', bonuses:{wisdom:3,intellect:1,tactics:1}, desc:'Disc healer / dispel / reflect' },
+      Ranger:   { id:'ranger',   family:'Ranger',   color:'#49de95', bonuses:{dexterity:2,agility:2,tactics:1}, desc:'Ranged kite' },
+      Thief:    { id:'thief',    family:'Ranger',   color:'#ca8a04', bonuses:{agility:3,dexterity:2}, desc:'Outlaw melee / peel' },
+      Worge:    { id:'worge',    family:'Worge',    color:'#ffb16d', bonuses:{strength:1,vitality:2,endurance:1,agility:1}, desc:'Shapeshift tank / burst' },
+      Verduror: { id:'verduror', family:'Worge',    color:'#86efac', bonuses:{wisdom:2,vitality:1,agility:1}, desc:'Mistweaver heals / forms' },
     };
     const RACE_DATA = {
       Human:     { bonuses:{strength:2,vitality:2,intellect:1}, desc:'Crusade — Balanced fighters' },
@@ -173,6 +178,16 @@
         });
       }
       return stats;
+    }
+
+    function calculateNeedPools() {
+      const vit = effectivePoints(getTotal('vitality'));
+      const end = effectivePoints(getTotal('endurance'));
+      return {
+        oxygen: Math.floor(80 + end * 2 + vit * 1),
+        hunger: Math.floor(100 + vit * 1.5),
+        thirst: Math.floor(80 + end * 1.2 + vit * 0.5),
+      };
     }
 
     function calculateCombatPower(stats) {
@@ -305,7 +320,7 @@
       // CENTER PANEL — update sub-sections without touching the persistent canvas
       document.getElementById('centerClassRace').innerHTML = '<h2>Class & Race</h2>' +
         `<div class="class-grid">${Object.entries(CLASS_DATA).map(([n,d]) =>
-          `<div class="class-btn ${selectedClass===n?'active':''}" style="${selectedClass===n?'border-color:'+d.color:''}" onclick="selectClass('${n}')">${n}<br><small style="color:var(--muted)">${d.desc}</small></div>`
+          `<div class="class-btn ${selectedClass===n?'active':''}" style="${selectedClass===n?'border-color:'+d.color:''}" onclick="selectClass('${n}')">${n}<br><small style="color:var(--muted)">${d.family} · ${d.desc}</small></div>`
         ).join('')}</div>` +
         `<div class="race-grid">${Object.entries(RACE_DATA).map(([n,d]) =>
           `<div class="race-btn ${selectedRace===n?'active':''}" onclick="selectRace('${n}')">${n}<br><small style="color:var(--muted)">${d.desc}</small></div>`
@@ -321,8 +336,25 @@
           <div class="review-advice">${remaining()===0 ? (cp < 3000 ? 'Low combat effectiveness. Try focusing on synergy stats.' : cp > 5000 ? 'Excellent build efficiency!' : 'Solid build. Consider specializing further for higher tiers.') : 'Allocate all 160 points to see your build rating.'}</div>
         </div>`;
 
+      const needs = calculateNeedPools();
+      const pools = [
+        ['Health', Math.floor(stats.health), '#e74c3c'],
+        ['Mana', Math.floor(stats.mana), '#3498db'],
+        ['Stamina', Math.floor(stats.stamina), '#f1c40f'],
+        ['Armour', Math.floor(stats.armor), '#95a5a6'],
+        ['Oxygen', needs.oxygen, '#5dade2'],
+        ['Hunger', needs.hunger, '#e67e22'],
+        ['Thirst', needs.thirst, '#48c9b0'],
+      ];
       document.getElementById('centerStats').innerHTML =
-        '<h2 style="margin-top:20px">Derived Stats (37)</h2>' +
+        '<h2 style="margin-top:20px">Vitals · API pools</h2>' +
+        '<p style="color:var(--muted);font-size:0.78em;margin:0 0 8px">HP / MP / SP / armour from 8 attrs. O2 / hunger / thirst are need pools on character progress <code>stats</code> — not extra ATTR ids.</p>' +
+        '<div class="stats-grid" style="max-height:none;margin-bottom:16px">' +
+          pools.map(([k,v,c]) =>
+            `<div class="stat-row inset-panel"><span class="k">${k} max</span><span class="v" style="color:${c}">${v}</span></div>`
+          ).join('') +
+        '</div>' +
+        '<h2>Derived Stats (37)</h2>' +
         '<div class="stats-grid">' +
           Object.entries(stats).map(([k,v]) => {
             const isPct = PERCENT_STATS.has(k);

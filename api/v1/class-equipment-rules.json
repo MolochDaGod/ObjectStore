@@ -1,133 +1,46 @@
 {
-  "version": "1.2.0",
+  "version": "1.0.0",
   "updated": "2026-08-11",
   "canonical": true,
-  "source": "Warlords era class mesh + soft effectiveness SSOT",
-  "description": "Classes do NOT hard-block armor or weapons. Anyone can equip anything. Class passives multiply effectiveness (damage/armor contribution) by type.",
-  "policy": {
-    "restrictEquip": false,
-    "softOnly": true,
-    "defaultWeaponMult": 0.78,
-    "defaultArmorMult": 0.82,
-    "notes": [
-      "Preferred types use mult >= 1.0 (increase effectiveness).",
-      "Off-type uses mult < 1.0 (reduce effectiveness) — still equippable.",
-      "Dual-wield style: Warrior is efficient; other classes can dual but at reduced dual penalty.",
-      "2H still clears off-hand mesh for animation clarity (not a class ban).",
-      "Anim packs follow grudge6 combat runtime."
-    ]
-  },
+  "source": "Warlords era class mesh + anim pack SSOT",
+  "description": "Mesh-level equipment gates by class. Wire equip UI / grudge6-kit / main-panel off-hand from this file only.",
+  "notes": [
+    "Warrior and Thief may dual-wield 1H weapons in off-hand.",
+    "2H weapons clear off-hand for all classes.",
+    "Mage off-hand is orb / tome / focus — never second staff dual.",
+    "Anim packs follow grudge6 combat runtime (sword_shield, dual_wield, two_handed, longbow, magic_spell, rifle)."
+  ],
   "slotDefs": {
-    "mainHand": {
-      "slot": "main_hand",
-      "mesh": "R_hand_container"
-    },
-    "offHand": {
-      "slot": "off_hand",
-      "mesh": "L_hand_container"
-    },
-    "twoHand": {
-      "slot": "main_hand",
-      "mesh": "R_hand_container",
-      "blocksOffHand": true
-    }
+    "mainHand": { "slot": "main_hand", "mesh": "R_hand_container" },
+    "offHand": { "slot": "off_hand", "mesh": "L_hand_container" },
+    "twoHand": { "slot": "main_hand", "mesh": "R_hand_container", "blocksOffHand": true }
   },
   "weaponFamilies": {
-    "1h_melee": [
-      "swords",
-      "axes1h",
-      "hammers1h",
-      "daggers",
-      "maces"
-    ],
-    "2h_melee": [
-      "greatswords",
-      "greataxes",
-      "hammers2h",
-      "spears"
-    ],
-    "shield": [
-      "shields"
-    ],
-    "bow": [
-      "bows",
-      "crossbows"
-    ],
-    "gun": [
-      "guns",
-      "rifles",
-      "pistols"
-    ],
-    "staff": [
-      "fireStaves",
-      "frostStaves",
-      "holyStaves",
-      "lightningStaves",
-      "arcaneStaves",
-      "natureStaves",
-      "staves"
-    ],
-    "focus": [
-      "orbs",
-      "tomes",
-      "foci",
-      "wands"
-    ]
-  },
-  "armorFamilies": {
-    "cloth": [
-      "cloth",
-      "robe"
-    ],
-    "leather": [
-      "leather"
-    ],
-    "mail": [
-      "mail",
-      "chain"
-    ],
-    "plate": [
-      "plate",
-      "heavy"
-    ]
+    "1h_melee": ["swords", "axes1h", "hammers1h", "daggers", "maces"],
+    "2h_melee": ["greatswords", "greataxes", "hammers2h", "spears"],
+    "shield": ["shields"],
+    "bow": ["bows", "crossbows"],
+    "gun": ["guns", "rifles", "pistols"],
+    "staff": ["fireStaves", "frostStaves", "holyStaves", "lightningStaves", "arcaneStaves", "natureStaves", "staves"],
+    "focus": ["orbs", "tomes", "foci", "wands"]
   },
   "classes": {
     "warrior": {
       "id": "warrior",
       "name": "Warrior",
       "color": "#ef4444",
-      "preferredWeapons": [
-        "shields",
-        "swords",
-        "greatswords",
-        "axes1h",
-        "greataxes",
-        "hammers1h",
-        "hammers2h"
-      ],
-      "preferredArmor": [
-        "plate",
-        "mail"
-      ],
-      "dualWieldEfficient": true,
-      "dualWieldFamilies": [
-        "1h_melee"
-      ],
-      "defaultLoadout": {
-        "main": "swords",
-        "off": "shields",
-        "style": "sword_shield"
-      },
+      "armorTypes": ["plate", "mail"],
+      "weaponTypes": ["shields", "swords", "greatswords", "axes1h", "greataxes", "hammers1h", "hammers2h"],
+      "dualWield": true,
+      "dualWieldFamilies": ["1h_melee"],
+      "offHandAllowed": ["shield", "1h_melee"],
+      "mainHandAllowed": ["1h_melee", "2h_melee"],
+      "blocked": ["bow", "gun", "staff"],
+      "defaultLoadout": { "main": "swords", "off": "shields", "style": "sword_shield" },
       "animPacks": {
-        "sword_shield": {
-          "when": "1h_melee+shield"
-        },
-        "dual_wield": {
-          "when": "1h_melee+1h_melee"
-        },
-        "two_handed": {
-          "when": "2h_melee"
-        }
+        "sword_shield": { "when": "1h_melee+shield" },
+        "dual_wield": { "when": "1h_melee+1h_melee", "requiresDualWield": true },
+        "two_handed": { "when": "2h_melee" }
       },
       "skillTreeKey": "warrior",
       "prefabPack": "barbarian",
@@ -140,120 +53,22 @@
         "intellect": 0,
         "wisdom": 0,
         "tactics": 0
-      },
-      "weaponEffectiveness": {
-        "1h_melee": 1.15,
-        "2h_melee": 1.12,
-        "shield": 1.18,
-        "bow": 0.72,
-        "gun": 0.7,
-        "staff": 0.68,
-        "focus": 0.75
-      },
-      "armorEffectiveness": {
-        "plate": 1.2,
-        "mail": 1.1,
-        "leather": 0.88,
-        "cloth": 0.72
-      },
-      "dualWieldEffectiveness": 1.08,
-      "passives": [
-        {
-          "id": "w_plate_training",
-          "name": "Plate Training",
-          "kind": "armor",
-          "description": "Trained in heavy armor — plate and mail grant full protection; lighter sets feel thin.",
-          "effect": {
-            "armor": {
-              "plate": 1.2,
-              "mail": 1.1,
-              "leather": 0.88,
-              "cloth": 0.72
-            }
-          },
-          "icon": "/icons/skills/class/barbarian/barbarian_05.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/barbarian/barbarian_05.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+20% armor effectiveness (plate)",
-            "+10% armor effectiveness (mail)",
-            "-12% armor effectiveness (leather)",
-            "-28% armor effectiveness (cloth)"
-          ]
-        },
-        {
-          "id": "w_weapon_mastery",
-          "name": "Weapon Mastery",
-          "kind": "weapon",
-          "description": "Swords, axes, hammers, and shields hit harder; bows and staves are clumsy in warrior hands.",
-          "effect": {
-            "weapon": {
-              "1h_melee": 1.15,
-              "2h_melee": 1.12,
-              "shield": 1.18,
-              "bow": 0.72,
-              "staff": 0.68
-            }
-          },
-          "icon": "/icons/skills/class/barbarian/barbarian_01.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/barbarian/barbarian_01.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+15% weapon effectiveness (1h_melee)",
-            "+12% weapon effectiveness (2h_melee)",
-            "+18% weapon effectiveness (shield)",
-            "-28% weapon effectiveness (bow)",
-            "-32% weapon effectiveness (staff)"
-          ]
-        },
-        {
-          "id": "w_dual_blades",
-          "name": "Twin Blades",
-          "kind": "dual",
-          "description": "Only class that fights efficiently dual-wielding 1H weapons (+8% dual contribution). Others may dual at a penalty.",
-          "effect": {
-            "dualWield": 1.08
-          },
-          "icon": "/icons/skills/class/barbarian/barbarian_06.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/barbarian/barbarian_06.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+8% dual-wield contribution"
-          ]
-        }
-      ]
+      }
     },
     "mage": {
       "id": "mage",
       "name": "Mage Priest",
       "color": "#8b5cf6",
-      "preferredWeapons": [
-        "fireStaves",
-        "frostStaves",
-        "holyStaves",
-        "lightningStaves",
-        "arcaneStaves",
-        "natureStaves",
-        "orbs",
-        "tomes"
-      ],
-      "preferredArmor": [
-        "cloth"
-      ],
-      "dualWieldEfficient": false,
+      "armorTypes": ["cloth"],
+      "weaponTypes": ["fireStaves", "frostStaves", "holyStaves", "lightningStaves", "arcaneStaves", "natureStaves"],
+      "dualWield": false,
       "dualWieldFamilies": [],
-      "defaultLoadout": {
-        "main": "arcaneStaves",
-        "off": "tomes",
-        "style": "magic_spell"
-      },
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["staff", "focus"],
+      "blocked": ["1h_melee", "2h_melee", "bow", "gun", "shield"],
+      "defaultLoadout": { "main": "arcaneStaves", "off": "tomes", "style": "magic_spell" },
       "animPacks": {
-        "magic_spell": {
-          "when": "staff|focus"
-        }
+        "magic_spell": { "when": "staff|focus" }
       },
       "skillTreeKey": "mage",
       "prefabPack": "firemage",
@@ -266,128 +81,25 @@
         "intellect": 5,
         "wisdom": 4,
         "tactics": 1
-      },
-      "weaponEffectiveness": {
-        "staff": 1.22,
-        "focus": 1.18,
-        "1h_melee": 0.7,
-        "2h_melee": 0.65,
-        "shield": 0.72,
-        "bow": 0.75,
-        "gun": 0.7
-      },
-      "armorEffectiveness": {
-        "cloth": 1.25,
-        "leather": 0.9,
-        "mail": 0.7,
-        "plate": 0.55
-      },
-      "dualWieldEffectiveness": 0.72,
-      "passives": [
-        {
-          "id": "m_arcane_vestments",
-          "name": "Arcane Vestments",
-          "kind": "armor",
-          "description": "Cloth channels mana freely; plate and mail choke spell flow (still wearable).",
-          "effect": {
-            "armor": {
-              "cloth": 1.25,
-              "leather": 0.9,
-              "mail": 0.7,
-              "plate": 0.55
-            }
-          },
-          "icon": "/icons/skills/class/firemage/firemage_05.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/firemage/firemage_05.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+25% armor effectiveness (cloth)",
-            "-10% armor effectiveness (leather)",
-            "-30% armor effectiveness (mail)",
-            "-45% armor effectiveness (plate)"
-          ]
-        },
-        {
-          "id": "m_focus_channel",
-          "name": "Focus Channel",
-          "kind": "weapon",
-          "description": "Staves and tomes amplify spell power; steel weapons barely conduct.",
-          "effect": {
-            "weapon": {
-              "staff": 1.22,
-              "focus": 1.18,
-              "1h_melee": 0.7,
-              "2h_melee": 0.65
-            }
-          },
-          "icon": "/icons/skills/class/firemage/firemage_01.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/firemage/firemage_01.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+22% weapon effectiveness (staff)",
-            "+18% weapon effectiveness (focus)",
-            "-30% weapon effectiveness (1h_melee)",
-            "-35% weapon effectiveness (2h_melee)"
-          ]
-        },
-        {
-          "id": "m_no_twin_steel",
-          "name": "Single Focus",
-          "kind": "dual",
-          "description": "Dual melee is awkward for casters (−28% dual contribution). Staff + tome is preferred.",
-          "effect": {
-            "dualWield": 0.72
-          },
-          "icon": "/icons/skills/class/firemage/firemage_03.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/firemage/firemage_03.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "-28% dual-wield contribution"
-          ]
-        }
-      ]
+      }
     },
     "ranger": {
       "id": "ranger",
       "name": "Ranger",
       "color": "#22c55e",
-      "preferredWeapons": [
-        "bows",
-        "crossbows",
-        "guns",
-        "daggers",
-        "greatswords",
-        "spears"
-      ],
-      "preferredArmor": [
-        "leather",
-        "mail"
-      ],
-      "dualWieldEfficient": false,
-      "dualWieldFamilies": [
-        "1h_melee"
-      ],
-      "defaultLoadout": {
-        "main": "bows",
-        "off": null,
-        "style": "longbow"
-      },
+      "armorTypes": ["leather", "mail"],
+      "weaponTypes": ["bows", "crossbows", "guns", "daggers", "greatswords", "spears"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": [],
+      "mainHandAllowed": ["bow", "gun", "2h_melee", "1h_melee"],
+      "blocked": ["staff", "shield"],
+      "defaultLoadout": { "main": "bows", "off": null, "style": "longbow" },
       "animPacks": {
-        "longbow": {
-          "when": "bow"
-        },
-        "rifle": {
-          "when": "gun"
-        },
-        "two_handed": {
-          "when": "2h_melee"
-        },
-        "sword_shield": {
-          "when": "1h_melee"
-        }
+        "longbow": { "when": "bow" },
+        "rifle": { "when": "gun" },
+        "two_handed": { "when": "2h_melee" },
+        "sword_shield": { "when": "1h_melee", "note": "melee fallback without dual" }
       },
       "skillTreeKey": "ranger",
       "prefabPack": "hunter",
@@ -400,129 +112,25 @@
         "intellect": 1,
         "wisdom": 0,
         "tactics": 1
-      },
-      "weaponEffectiveness": {
-        "bow": 1.22,
-        "gun": 1.15,
-        "1h_melee": 1.0,
-        "2h_melee": 1.05,
-        "shield": 0.78,
-        "staff": 0.72,
-        "focus": 0.8
-      },
-      "armorEffectiveness": {
-        "leather": 1.18,
-        "mail": 1.08,
-        "cloth": 0.85,
-        "plate": 0.68
-      },
-      "dualWieldEffectiveness": 0.88,
-      "passives": [
-        {
-          "id": "r_trail_gear",
-          "name": "Trail Gear",
-          "kind": "armor",
-          "description": "Leather and mail keep mobility; plate slows the hunt.",
-          "effect": {
-            "armor": {
-              "leather": 1.18,
-              "mail": 1.08,
-              "cloth": 0.85,
-              "plate": 0.68
-            }
-          },
-          "icon": "/icons/skills/class/hunter/hunter_05.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/hunter/hunter_05.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+18% armor effectiveness (leather)",
-            "+8% armor effectiveness (mail)",
-            "-15% armor effectiveness (cloth)",
-            "-32% armor effectiveness (plate)"
-          ]
-        },
-        {
-          "id": "r_marksman",
-          "name": "Marksman",
-          "kind": "weapon",
-          "description": "Bows and guns excel; staves and heavy shields are dead weight in the trees.",
-          "effect": {
-            "weapon": {
-              "bow": 1.22,
-              "gun": 1.15,
-              "2h_melee": 1.05,
-              "staff": 0.72,
-              "shield": 0.78
-            }
-          },
-          "icon": "/icons/skills/class/hunter/hunter_01.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/hunter/hunter_01.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+22% weapon effectiveness (bow)",
-            "+15% weapon effectiveness (gun)",
-            "+5% weapon effectiveness (2h_melee)",
-            "-28% weapon effectiveness (staff)",
-            "-22% weapon effectiveness (shield)"
-          ]
-        },
-        {
-          "id": "r_offhand_burden",
-          "name": "Off-Hand Burden",
-          "kind": "dual",
-          "description": "Can dual 1H but not trained — dual contribution reduced (−12%).",
-          "effect": {
-            "dualWield": 0.88
-          },
-          "icon": "/icons/skills/class/hunter/hunter_03.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/hunter/hunter_03.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "-12% dual-wield contribution"
-          ]
-        }
-      ]
+      }
     },
     "worge": {
       "id": "worge",
       "name": "Worge",
       "color": "#d97706",
-      "preferredWeapons": [
-        "fireStaves",
-        "natureStaves",
-        "spears",
-        "daggers",
-        "bows",
-        "hammers1h"
-      ],
-      "preferredArmor": [
-        "leather"
-      ],
-      "dualWieldEfficient": false,
-      "dualWieldFamilies": [
-        "1h_melee"
-      ],
-      "defaultLoadout": {
-        "main": "hammers1h",
-        "off": null,
-        "style": "sword_shield"
-      },
+      "armorTypes": ["leather"],
+      "weaponTypes": ["fireStaves", "natureStaves", "spears", "daggers", "bows", "hammers1h"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["1h_melee", "2h_melee", "staff", "bow"],
+      "blocked": ["shield", "gun", "2h_melee_heavy"],
+      "defaultLoadout": { "main": "hammers1h", "off": null, "style": "sword_shield" },
       "animPacks": {
-        "sword_shield": {
-          "when": "1h_melee"
-        },
-        "magic_spell": {
-          "when": "staff"
-        },
-        "longbow": {
-          "when": "bow"
-        },
-        "two_handed": {
-          "when": "spears"
-        }
+        "sword_shield": { "when": "1h_melee" },
+        "magic_spell": { "when": "staff" },
+        "longbow": { "when": "bow" },
+        "two_handed": { "when": "spears" }
       },
       "skillTreeKey": "worge",
       "prefabPack": "necromancer",
@@ -535,121 +143,103 @@
         "intellect": 2,
         "wisdom": 1,
         "tactics": 0
+      }
+    },
+    "priest": {
+      "id": "priest",
+      "name": "Priest",
+      "family": "mage",
+      "color": "#fde68a",
+      "armorTypes": ["cloth"],
+      "weaponTypes": ["holyStaves", "arcaneStaves", "orbs", "tomes"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["staff", "focus"],
+      "blocked": ["1h_melee", "2h_melee", "bow", "gun", "shield"],
+      "defaultLoadout": { "main": "holyStaves", "off": "tomes", "style": "magic_spell" },
+      "animPacks": { "magic_spell": { "when": "staff|focus" } },
+      "skillTreeKey": "priest",
+      "prefabPack": "firemage",
+      "startingAttributes": {
+        "strength": 0, "vitality": 1, "endurance": 1, "dexterity": 0,
+        "agility": 0, "intellect": 2, "wisdom": 5, "tactics": 1
+      }
+    },
+    "raider": {
+      "id": "raider",
+      "name": "Raider",
+      "family": "warrior",
+      "color": "#b91c1c",
+      "armorTypes": ["plate", "mail"],
+      "weaponTypes": ["greatswords", "greataxes", "hammers2h"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": [],
+      "mainHandAllowed": ["2h_melee"],
+      "blocked": ["bow", "gun", "staff", "shield", "focus"],
+      "defaultLoadout": { "main": "greatswords", "off": null, "style": "two_handed" },
+      "animPacks": { "two_handed": { "when": "2h_melee" } },
+      "skillTreeKey": "raider",
+      "prefabPack": "barbarian",
+      "startingAttributes": {
+        "strength": 5, "vitality": 2, "endurance": 2, "dexterity": 2,
+        "agility": 1, "intellect": 0, "wisdom": 0, "tactics": 0
+      }
+    },
+    "thief": {
+      "id": "thief",
+      "name": "Thief",
+      "family": "ranger",
+      "color": "#ca8a04",
+      "armorTypes": ["leather"],
+      "weaponTypes": ["daggers", "swords", "pistols"],
+      "dualWield": true,
+      "dualWieldFamilies": ["1h_melee"],
+      "offHandAllowed": ["1h_melee", "gun"],
+      "mainHandAllowed": ["1h_melee", "gun"],
+      "blocked": ["staff", "shield", "bow"],
+      "defaultLoadout": { "main": "daggers", "off": "pistols", "style": "dual_wield" },
+      "animPacks": {
+        "dual_wield": { "when": "1h_melee+1h_melee", "requiresDualWield": true },
+        "rifle": { "when": "gun" }
       },
-      "weaponEffectiveness": {
-        "1h_melee": 1.1,
-        "2h_melee": 1.05,
-        "staff": 1.12,
-        "bow": 1.05,
-        "focus": 1.0,
-        "shield": 0.8,
-        "gun": 0.75
+      "skillTreeKey": "thief",
+      "prefabPack": "hunter",
+      "startingAttributes": {
+        "strength": 1, "vitality": 1, "endurance": 1, "dexterity": 4,
+        "agility": 4, "intellect": 0, "wisdom": 0, "tactics": 1
+      }
+    },
+    "verduror": {
+      "id": "verduror",
+      "name": "Verduror",
+      "family": "worge",
+      "color": "#86efac",
+      "armorTypes": ["leather", "cloth"],
+      "weaponTypes": ["natureStaves", "hammers1h"],
+      "dualWield": false,
+      "dualWieldFamilies": [],
+      "offHandAllowed": ["focus"],
+      "mainHandAllowed": ["staff", "1h_melee"],
+      "blocked": ["shield", "gun", "bow"],
+      "defaultLoadout": { "main": "natureStaves", "off": null, "style": "magic_spell" },
+      "animPacks": {
+        "magic_spell": { "when": "staff" },
+        "sword_shield": { "when": "1h_melee" }
       },
-      "armorEffectiveness": {
-        "leather": 1.2,
-        "mail": 0.92,
-        "cloth": 0.95,
-        "plate": 0.65
-      },
-      "dualWieldEffectiveness": 0.85,
-      "passives": [
-        {
-          "id": "o_hidebound",
-          "name": "Hidebound",
-          "kind": "armor",
-          "description": "Beast-form prefers leather — plate fights the shift.",
-          "effect": {
-            "armor": {
-              "leather": 1.2,
-              "cloth": 0.95,
-              "mail": 0.92,
-              "plate": 0.65
-            }
-          },
-          "icon": "/icons/skills/class/necromancer/necromancer_05.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/necromancer/necromancer_05.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+20% armor effectiveness (leather)",
-            "-5% armor effectiveness (cloth)",
-            "-8% armor effectiveness (mail)",
-            "-35% armor effectiveness (plate)"
-          ]
-        },
-        {
-          "id": "o_primal_tools",
-          "name": "Primal Tools",
-          "kind": "weapon",
-          "description": "Hybrid: mace, spear, nature/fire staff, and bow all serve; guns and tower shields less so.",
-          "effect": {
-            "weapon": {
-              "1h_melee": 1.1,
-              "staff": 1.12,
-              "bow": 1.05,
-              "gun": 0.75,
-              "shield": 0.8
-            }
-          },
-          "icon": "/icons/skills/class/necromancer/necromancer_01.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/necromancer/necromancer_01.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "+10% weapon effectiveness (1h_melee)",
-            "+12% weapon effectiveness (staff)",
-            "+5% weapon effectiveness (bow)",
-            "-25% weapon effectiveness (gun)",
-            "-20% weapon effectiveness (shield)"
-          ]
-        },
-        {
-          "id": "o_wild_grip",
-          "name": "Wild Grip",
-          "kind": "dual",
-          "description": "Dual possible in human form but inefficient (−15%).",
-          "effect": {
-            "dualWield": 0.85
-          },
-          "icon": "/icons/skills/class/necromancer/necromancer_03.png",
-          "iconUrl": "https://assets.grudge-studio.com/icons/skills/class/necromancer/necromancer_03.png",
-          "alwaysOn": true,
-          "rank": "Passive",
-          "tooltipLines": [
-            "-15% dual-wield contribution"
-          ]
-        }
-      ]
+      "skillTreeKey": "verduror",
+      "prefabPack": "necromancer",
+      "startingAttributes": {
+        "strength": 1, "vitality": 2, "endurance": 1, "dexterity": 1,
+        "agility": 2, "intellect": 1, "wisdom": 3, "tactics": 0
+      }
     }
   },
-  "runtime": {
-    "weaponStatKeys": [
-      "damage",
-      "attackSpeed",
-      "criticalChance",
-      "armorPenetration"
-    ],
-    "armorStatKeys": [
-      "defense",
-      "armor",
-      "damageReduction",
-      "block",
-      "resistance"
-    ],
-    "apply": "mult = effectiveness for family; finalStat = baseStat * mult (equip always allowed)",
-    "canEquip": "always true",
-    "canDualWieldStyle": "always true; use dualWieldEffectiveness for contribution"
-  },
-  "migration": {
-    "from": "1.0.0 hard blocked/allowed lists",
-    "to": "1.2.0 soft effectiveness + spellbook passives",
-    "breaking": false,
-    "steps": [
-      "Remove equip bans; canEquip always true",
-      "Use weaponEffectiveness/armorEffectiveness mults on combat stats",
-      "Render passives with icons + WoW tooltips at top of class skill tab",
-      "dualWieldEfficient is efficiency only, not a ban",
-      "Tree skills with passive:true also appear in spellbook passive row"
-    ]
+  "equipChecks": {
+    "canDualWield": "class.dualWield === true && both hands are 1h_melee families listed in dualWieldFamilies",
+    "canEquipOffHand": "family in offHandAllowed; if dual weapon, requires dualWield",
+    "twoHandClearsOff": true,
+    "meshLevel": "After prefix strip, SLOT_DEFS + mesh_ids; arms include hands"
   }
 }

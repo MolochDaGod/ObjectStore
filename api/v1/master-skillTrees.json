@@ -1,8 +1,8 @@
 {
   "version": "3.0.0",
-  "generated": "2026-06-22T04:21:30.192Z",
-  "totalClasses": 4,
-  "totalSkills": 69,
+  "generated": "2026-08-21T08:11:15.656Z",
+  "totalClasses": 8,
+  "totalSkills": 117,
   "skillTrees": {
     "warrior": {
       "uuid": "ITEM-20260621232130-000CDA-12518D41",
@@ -441,7 +441,480 @@
             }
           ]
         }
-      ]
+      ],
+      "family": "warrior",
+      "graph": {
+        "totalNodes": 21,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 6
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-w_taunt",
+            "id": 1,
+            "name": "Taunt",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Force enemies to target you",
+            "skillId": "w_taunt",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_quick_strike",
+            "id": 2,
+            "name": "Quick Strike",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Fast attack with speed bonus",
+            "skillId": "w_quick_strike",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_rending_strikes",
+            "id": 3,
+            "name": "Rending Strikes",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Attacks have a chance to cause bleeding",
+            "skillId": "w_rending_strikes",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Warrior-P1",
+            "id": 4,
+            "name": "Level 5 - Specialization",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Specialization.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_damage_surge",
+            "id": 5,
+            "name": "Damage Surge",
+            "x": 22,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Temporary damage boost",
+            "skillId": "w_damage_surge",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_guardian_aura",
+            "id": 6,
+            "name": "Guardian's Aura",
+            "x": 50,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Defense buff",
+            "skillId": "w_guardian_aura",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_demoralizing_shout",
+            "id": 7,
+            "name": "Demoralizing Shout",
+            "x": 78,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "A fearsome shout that weakens enemy attacks",
+            "skillId": "w_demoralizing_shout",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Warrior-P2",
+            "id": 8,
+            "name": "Level 10 - Advanced",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Advanced.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_dual_wield",
+            "id": 9,
+            "name": "Dual Wield",
+            "x": 18,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 8,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Attack speed and multi-hit",
+            "skillId": "w_dual_wield",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_shield_spec",
+            "id": 10,
+            "name": "Shield Specialist",
+            "x": 34,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 8,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Block chance and defense",
+            "skillId": "w_shield_spec",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_life_drain",
+            "id": 11,
+            "name": "Life Drain",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 8,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Damage that heals you",
+            "skillId": "w_life_drain",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_concussive_blow",
+            "id": 12,
+            "name": "Concussive Blow",
+            "x": 66,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 8,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "A stunning strike that dazes the target",
+            "skillId": "w_concussive_blow",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_sunder_armor",
+            "id": 13,
+            "name": "Sunder Armor",
+            "x": 82,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 8,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Shatter enemy defenses",
+            "skillId": "w_sunder_armor",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Warrior-P3",
+            "id": 14,
+            "name": "Level 15 - Master",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 8,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Master.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_execute",
+            "id": 15,
+            "name": "Execute",
+            "x": 18,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Bonus damage vs low health",
+            "skillId": "w_execute",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_double_strike",
+            "id": 16,
+            "name": "Double Strike",
+            "x": 39.33333333333333,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Two consecutive attacks",
+            "skillId": "w_double_strike",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_ignite_weapon",
+            "id": 17,
+            "name": "Ignite Weapon",
+            "x": 60.666666666666664,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "effect",
+            "description": "Enflame your weapon, burning enemies on hit",
+            "skillId": "w_ignite_weapon",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_bloodlust",
+            "id": 18,
+            "name": "Bloodlust",
+            "x": 82,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "effect",
+            "description": "Each bleed on target increases your damage",
+            "skillId": "w_bloodlust",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Warrior-P4",
+            "id": 19,
+            "name": "Level 20 - Legendary",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 14,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_avatar",
+            "id": 20,
+            "name": "Avatar Form",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "All stats boost",
+            "skillId": "w_avatar",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-w_relentless",
+            "id": 21,
+            "name": "Relentless",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Right",
+            "nodeType": "effect",
+            "description": "Killing blows restore stamina and reset cooldowns",
+            "skillId": "w_relentless",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "w_taunt",
+        "name": "Taunt",
+        "description": "Force enemies to target you"
+      }
     },
     "mage": {
       "uuid": "ITEM-20260621232130-000CED-9F855249",
@@ -945,7 +1418,500 @@
             }
           ]
         }
-      ]
+      ],
+      "family": "mage",
+      "graph": {
+        "totalNodes": 22,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 7
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-m_mana_flow",
+            "id": 1,
+            "name": "Mana Flow",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Faster mana regeneration",
+            "skillId": "m_mana_flow",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_arcane_focus",
+            "id": 2,
+            "name": "Arcane Focus",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Increased spell damage",
+            "skillId": "m_arcane_focus",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_enfeeble",
+            "id": 3,
+            "name": "Enfeeble",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Spells sap enemy strength",
+            "skillId": "m_enfeeble",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Mage Priest-P1",
+            "id": 4,
+            "name": "Level 5 - Elemental Arts",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Elemental Arts.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_fire_mastery",
+            "id": 5,
+            "name": "Fire Mastery",
+            "x": 18,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Fire spell bonus",
+            "skillId": "m_fire_mastery",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_ice_mastery",
+            "id": 6,
+            "name": "Ice Mastery",
+            "x": 39.33333333333333,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Ice spell bonus",
+            "skillId": "m_ice_mastery",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_flame_brand",
+            "id": 7,
+            "name": "Flame Brand",
+            "x": 60.666666666666664,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Ignite the target in searing flames",
+            "skillId": "m_flame_brand",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_blessing",
+            "id": 8,
+            "name": "Blessing",
+            "x": 82,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Divine light heals over time",
+            "skillId": "m_blessing",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Mage Priest-P2",
+            "id": 9,
+            "name": "Level 10 - Divine Power",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Divine Power.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_meteor",
+            "id": 10,
+            "name": "Meteor Strike",
+            "x": 18,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Call down a meteor",
+            "skillId": "m_meteor",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_divine_shield",
+            "id": 11,
+            "name": "Divine Shield",
+            "x": 34,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Holy protection",
+            "skillId": "m_divine_shield",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_chain_lightning",
+            "id": 12,
+            "name": "Chain Lightning",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Lightning bounces between foes",
+            "skillId": "m_chain_lightning",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_sleep",
+            "id": 13,
+            "name": "Slumber",
+            "x": 66,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Put the target into a magical sleep",
+            "skillId": "m_sleep",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_mind_break",
+            "id": 14,
+            "name": "Mind Break",
+            "x": 82,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Shatter mental defenses, lowering magic resistance",
+            "skillId": "m_mind_break",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Mage Priest-P3",
+            "id": 15,
+            "name": "Level 15 - Grand Magus",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 9,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Grand Magus.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_spell_echo",
+            "id": 16,
+            "name": "Spell Echo",
+            "x": 18,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 15,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Chance to double cast",
+            "skillId": "m_spell_echo",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_holy_nova",
+            "id": 17,
+            "name": "Holy Nova",
+            "x": 39.33333333333333,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 15,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "AoE heal and damage",
+            "skillId": "m_holy_nova",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_confuse",
+            "id": 18,
+            "name": "Bewilderment",
+            "x": 60.666666666666664,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 15,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Confuse the target, making them attack randomly",
+            "skillId": "m_confuse",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_purify",
+            "id": 19,
+            "name": "Purify",
+            "x": 82,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 15,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Cleanse all debuffs and heal",
+            "skillId": "m_purify",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Mage Priest-P4",
+            "id": 20,
+            "name": "Level 20 - Legendary",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 15,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_arcane_cataclysm",
+            "id": 21,
+            "name": "Arcane Cataclysm",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 20,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Devastating magic storm",
+            "skillId": "m_arcane_cataclysm",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-m_spellweave",
+            "id": 22,
+            "name": "Spellweave",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 20,
+            "branch": "Right",
+            "nodeType": "effect",
+            "description": "Spells have a chance to apply a random debuff (burn, sleep, confuse, lower defense)",
+            "skillId": "m_spellweave",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "m_mana_flow",
+        "name": "Mana Flow",
+        "description": "Faster mana regeneration"
+      }
     },
     "worge": {
       "uuid": "ITEM-20260621232130-000CFF-22531714",
@@ -1417,7 +2383,480 @@
             }
           ]
         }
-      ]
+      ],
+      "family": "worge",
+      "graph": {
+        "totalNodes": 21,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 6
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-wr_storm_touch",
+            "id": 1,
+            "name": "Storm Touch",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Lightning spells hit harder",
+            "skillId": "wr_storm_touch",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_bark_skin",
+            "id": 2,
+            "name": "Bark Skin",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Nature hardens your skin",
+            "skillId": "wr_bark_skin",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_feral_instinct",
+            "id": 3,
+            "name": "Feral Instinct",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Chance for a bonus follow-up attack on hit",
+            "skillId": "wr_feral_instinct",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Worge-P1",
+            "id": 4,
+            "name": "Level 5 - Dual Nature",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Dual Nature.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_weapon_mastery",
+            "id": 5,
+            "name": "Weapon Mastery",
+            "x": 18,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Mace and dagger expertise",
+            "skillId": "wr_weapon_mastery",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_wild_growth",
+            "id": 6,
+            "name": "Wild Growth",
+            "x": 39.33333333333333,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Nature heals strengthen",
+            "skillId": "wr_wild_growth",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_lacerate",
+            "id": 7,
+            "name": "Lacerate",
+            "x": 60.666666666666664,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Claw attack that causes deep bleeding",
+            "skillId": "wr_lacerate",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_soothing_rain",
+            "id": 8,
+            "name": "Soothing Rain",
+            "x": 82,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Call rain that heals over time",
+            "skillId": "wr_soothing_rain",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Worge-P2",
+            "id": 9,
+            "name": "Level 10 - Shapeshifter",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Shapeshifter.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_thunderclap",
+            "id": 10,
+            "name": "Thunderclap",
+            "x": 18,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Storm spells stun briefly",
+            "skillId": "wr_thunderclap",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_iron_hide",
+            "id": 11,
+            "name": "Iron Hide",
+            "x": 39.33333333333333,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Bear form is tougher",
+            "skillId": "wr_iron_hide",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_venom_edge",
+            "id": 12,
+            "name": "Venom Edge",
+            "x": 60.666666666666664,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Dagger poison is deadlier",
+            "skillId": "wr_venom_edge",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_entangle",
+            "id": 13,
+            "name": "Entangle",
+            "x": 82,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Vines root and damage the target",
+            "skillId": "wr_entangle",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Worge-P3",
+            "id": 14,
+            "name": "Level 15 - Warden",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 9,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Warden.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_tempest",
+            "id": 15,
+            "name": "Tempest",
+            "x": 18,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Storm mastery unleashed",
+            "skillId": "wr_tempest",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_rejuvenate",
+            "id": 16,
+            "name": "Rejuvenate",
+            "x": 39.33333333333333,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Nature mends all wounds",
+            "skillId": "wr_rejuvenate",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_primal_roar",
+            "id": 17,
+            "name": "Primal Roar",
+            "x": 60.666666666666664,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "A terrifying roar that confuses and weakens",
+            "skillId": "wr_primal_roar",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_savage_bleed",
+            "id": 18,
+            "name": "Savage Rend",
+            "x": 82,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "effect",
+            "description": "Bear form attacks cause deep wounds",
+            "skillId": "wr_savage_bleed",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Worge-P4",
+            "id": 19,
+            "name": "Level 20 - Legendary",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 14,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_natures_wrath",
+            "id": 20,
+            "name": "Nature's Wrath",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Command storm and wild as one",
+            "skillId": "wr_natures_wrath",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-wr_alpha_predator",
+            "id": 21,
+            "name": "Alpha Predator",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Right",
+            "nodeType": "effect",
+            "description": "Each kill in bear form extends duration and heals",
+            "skillId": "wr_alpha_predator",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "wr_storm_touch",
+        "name": "Storm Touch",
+        "description": "Lightning spells hit harder"
+      }
     },
     "ranger": {
       "uuid": "ITEM-20260621232130-000D11-6BAF93A3",
@@ -1912,7 +3351,2605 @@
             }
           ]
         }
-      ]
+      ],
+      "family": "ranger",
+      "graph": {
+        "totalNodes": 21,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 6
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-r_precision",
+            "id": 1,
+            "name": "Precision",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Better accuracy",
+            "skillId": "r_precision",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_swift_draw",
+            "id": 2,
+            "name": "Swift Draw",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Faster arrow nocking",
+            "skillId": "r_swift_draw",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_crippling_shot",
+            "id": 3,
+            "name": "Crippling Shot",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Arrows weaken enemy defenses",
+            "skillId": "r_crippling_shot",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Ranger-P1",
+            "id": 4,
+            "name": "Level 5 - Hunter",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Hunter.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_headshot",
+            "id": 5,
+            "name": "Headshot",
+            "x": 18,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Critical damage bonus",
+            "skillId": "r_headshot",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_evasion",
+            "id": 6,
+            "name": "Nature's Grace",
+            "x": 39.33333333333333,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Dodge chance up",
+            "skillId": "r_evasion",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_venom_arrow",
+            "id": 7,
+            "name": "Venom Arrow",
+            "x": 60.666666666666664,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Tip arrows with deadly poison",
+            "skillId": "r_venom_arrow",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_hunters_mark",
+            "id": 8,
+            "name": "Hunter's Mark",
+            "x": 82,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Mark the target, lowering its defense",
+            "skillId": "r_hunters_mark",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Ranger-P2",
+            "id": 9,
+            "name": "Level 10 - Sharpshooter",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Sharpshooter.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_piercing",
+            "id": 10,
+            "name": "Piercing Shot",
+            "x": 18,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Arrows pierce armor",
+            "skillId": "r_piercing",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_multishot",
+            "id": 11,
+            "name": "Multishot",
+            "x": 39.33333333333333,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Fire multiple arrows",
+            "skillId": "r_multishot",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_trap",
+            "id": 12,
+            "name": "Bear Trap",
+            "x": 60.666666666666664,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Place traps that root",
+            "skillId": "r_trap",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_bleed_arrow",
+            "id": 13,
+            "name": "Barbed Arrow",
+            "x": 82,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 9,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Barbed tips cause heavy bleeding",
+            "skillId": "r_bleed_arrow",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Ranger-P3",
+            "id": 14,
+            "name": "Level 15 - Elite",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 9,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Elite.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_sniper",
+            "id": 15,
+            "name": "Sniper",
+            "x": 18,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Massive long range damage",
+            "skillId": "r_sniper",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_wind_walk",
+            "id": 16,
+            "name": "Wind Walk",
+            "x": 39.33333333333333,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Become invisible briefly",
+            "skillId": "r_wind_walk",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_sleep_dart",
+            "id": 17,
+            "name": "Sleep Dart",
+            "x": 60.666666666666664,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "A tranquilizer dart that puts the enemy to sleep",
+            "skillId": "r_sleep_dart",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_expose_weakness",
+            "id": 18,
+            "name": "Expose Weakness",
+            "x": 82,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 14,
+            "branch": "Center",
+            "nodeType": "effect",
+            "description": "Crits reduce enemy attack power",
+            "skillId": "r_expose_weakness",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Ranger-P4",
+            "id": 19,
+            "name": "Level 20 - Legendary",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 14,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_arrow_storm",
+            "id": 20,
+            "name": "Arrow Storm",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Rain arrows from the sky",
+            "skillId": "r_arrow_storm",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-r_death_blossom",
+            "id": 21,
+            "name": "Death Blossom",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 19,
+            "branch": "Right",
+            "nodeType": "effect",
+            "description": "Attacks apply all DOTs at once (poison, bleed, lower defense)",
+            "skillId": "r_death_blossom",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "r_precision",
+        "name": "Precision",
+        "description": "Better accuracy"
+      }
+    },
+    "priest": {
+      "uuid": "ITEM-20260821120000-PRIEST-0001",
+      "className": "Priest",
+      "color": "#fde68a",
+      "family": "mage",
+      "tiers": [
+        {
+          "name": "Level 1 - Rites",
+          "requiredLevel": 1,
+          "skills": [
+            {
+              "id": "p_atonement",
+              "name": "Atonement",
+              "icon": "/icons/skill_nobg/Paladinskill_01_nobg.png",
+              "description": "Damage you deal heals the bonded ally",
+              "effect": "40% of damage as heal",
+              "maxPoints": 1,
+              "passive": true,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_01_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_smite",
+              "name": "Smite",
+              "icon": "/icons/skill_nobg/Paladinskill_02_nobg.png",
+              "description": "Holy bolt. Feeds Atonement",
+              "effect": "Holy damage",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_02_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_flash_mend",
+              "name": "Flash Mend",
+              "icon": "/icons/skill_nobg/Paladinskill_03_nobg.png",
+              "description": "Instant emergency heal",
+              "effect": "28% HP",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_03_nobg.png",
+              "sourcePack": "firemage"
+            }
+          ]
+        },
+        {
+          "name": "Level 5 - Wards",
+          "requiredLevel": 5,
+          "skills": [
+            {
+              "id": "p_pw_shield",
+              "name": "Word Shield",
+              "icon": "/icons/skill_nobg/Paladinskill_23_nobg.png",
+              "description": "Absorb shield. Atonement ticks through it",
+              "effect": "22% absorb 8s",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_23_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_purify",
+              "name": "Purify",
+              "icon": "/icons/skill_nobg/Paladinskill_05_nobg.png",
+              "description": "Dispel 2 magic, poison, or curse",
+              "effect": "2 dispels",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_05_nobg.png",
+              "sourcePack": "firemage"
+            }
+          ]
+        },
+        {
+          "name": "Level 10 - Discipline",
+          "requiredLevel": 10,
+          "skills": [
+            {
+              "id": "p_pain_reflect",
+              "name": "Pain Reflect",
+              "icon": "/icons/skill_nobg/Paladinskill_08_nobg.png",
+              "description": "Ally takes less. Damage returns as heal and thorns",
+              "effect": "30% taken down, 40% reflect",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_08_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_mass_dispel",
+              "name": "Mass Dispel",
+              "icon": "/icons/skill_nobg/Paladinskill_09_nobg.png",
+              "description": "AoE purge allies and enemies",
+              "effect": "Strip 1 magic each",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_09_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_barrier",
+              "name": "Barrier Dome",
+              "icon": "/icons/skill_nobg/Paladinskill_10_nobg.png",
+              "description": "Party bubble before a slam",
+              "effect": "35% absorb 8s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_10_nobg.png",
+              "sourcePack": "firemage"
+            }
+          ]
+        },
+        {
+          "name": "Level 15 - Mastery",
+          "requiredLevel": 15,
+          "skills": [
+            {
+              "id": "p_evangelism",
+              "name": "Evangelism",
+              "icon": "/icons/skill_nobg/Paladinskill_12_nobg.png",
+              "description": "Extend Atonement. Healing from damage up",
+              "effect": "+25% heal 8s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_12_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_spirit_shell",
+              "name": "Spirit Shell",
+              "icon": "/icons/skill_nobg/Paladinskill_13_nobg.png",
+              "description": "Heals become absorbs",
+              "effect": "10s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_13_nobg.png",
+              "sourcePack": "firemage"
+            }
+          ]
+        },
+        {
+          "name": "Level 20 - Legendary Faith",
+          "requiredLevel": 20,
+          "skills": [
+            {
+              "id": "p_rapture",
+              "name": "Rapture",
+              "icon": "/icons/skill_nobg/Paladinskill_16_nobg.png",
+              "description": "Shields bloom. Party immune 3s",
+              "effect": "Ultimate",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_16_nobg.png",
+              "sourcePack": "firemage"
+            },
+            {
+              "id": "p_penance",
+              "name": "Penance",
+              "icon": "/icons/skill_nobg/Paladinskill_17_nobg.png",
+              "description": "3 holy ticks damage or heal, each feeding Atonement",
+              "effect": "Channel 3 ticks",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Paladinskill_17_nobg.png",
+              "sourcePack": "firemage"
+            }
+          ]
+        }
+      ],
+      "graph": {
+        "totalNodes": 16,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 1
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-p_atonement",
+            "id": 1,
+            "name": "Atonement",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Damage you deal heals the bonded ally",
+            "skillId": "p_atonement",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_smite",
+            "id": 2,
+            "name": "Smite",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Holy bolt. Feeds Atonement",
+            "skillId": "p_smite",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_flash_mend",
+            "id": 3,
+            "name": "Flash Mend",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Instant emergency heal",
+            "skillId": "p_flash_mend",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Priest-P1",
+            "id": 4,
+            "name": "Level 5 - Wards",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Wards.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_pw_shield",
+            "id": 5,
+            "name": "Word Shield",
+            "x": 32,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Absorb shield. Atonement ticks through it",
+            "skillId": "p_pw_shield",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_purify",
+            "id": 6,
+            "name": "Purify",
+            "x": 68,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Dispel 2 magic, poison, or curse",
+            "skillId": "p_purify",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Priest-P2",
+            "id": 7,
+            "name": "Level 10 - Discipline",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Discipline.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_pain_reflect",
+            "id": 8,
+            "name": "Pain Reflect",
+            "x": 22,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Ally takes less. Damage returns as heal and thorns",
+            "skillId": "p_pain_reflect",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_mass_dispel",
+            "id": 9,
+            "name": "Mass Dispel",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "AoE purge allies and enemies",
+            "skillId": "p_mass_dispel",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_barrier",
+            "id": 10,
+            "name": "Barrier Dome",
+            "x": 78,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Party bubble before a slam",
+            "skillId": "p_barrier",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Priest-P3",
+            "id": 11,
+            "name": "Level 15 - Mastery",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 7,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Mastery.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_evangelism",
+            "id": 12,
+            "name": "Evangelism",
+            "x": 32,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Extend Atonement. Healing from damage up",
+            "skillId": "p_evangelism",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_spirit_shell",
+            "id": 13,
+            "name": "Spirit Shell",
+            "x": 68,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Heals become absorbs",
+            "skillId": "p_spirit_shell",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Priest-P4",
+            "id": 14,
+            "name": "Level 20 - Legendary Faith",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 11,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary Faith.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_rapture",
+            "id": 15,
+            "name": "Rapture",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Shields bloom. Party immune 3s",
+            "skillId": "p_rapture",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-p_penance",
+            "id": 16,
+            "name": "Penance",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "3 holy ticks damage or heal, each feeding Atonement",
+            "skillId": "p_penance",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "p_atonement",
+        "name": "Atonement",
+        "description": "Damage you deal heals the bonded ally"
+      }
+    },
+    "raider": {
+      "uuid": "ITEM-20260821120000-RAIDER-0001",
+      "className": "Raider",
+      "color": "#b91c1c",
+      "family": "warrior",
+      "tiers": [
+        {
+          "name": "Level 1 - Two-Hand School",
+          "requiredLevel": 1,
+          "skills": [
+            {
+              "id": "rd_riposte",
+              "name": "Riposte Stance",
+              "icon": "/icons/skill_nobg/Warriorskill_01_nobg.png",
+              "description": "Every 2H swing opens a parry window",
+              "effect": "Parry 0.35s",
+              "maxPoints": 1,
+              "passive": true,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_01_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_overpower",
+              "name": "Overpower",
+              "icon": "/icons/skill_nobg/Warriorskill_02_nobg.png",
+              "description": "Cannot miss after a parry",
+              "effect": "2H follow-up",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_02_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_rend",
+              "name": "Rend",
+              "icon": "/icons/skill_nobg/Warriorskill_03_nobg.png",
+              "description": "2H bleed DoT",
+              "effect": "Bleed 8s",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_03_nobg.png",
+              "sourcePack": "barbarian"
+            }
+          ]
+        },
+        {
+          "name": "Level 5 - Specialization",
+          "requiredLevel": 5,
+          "skills": [
+            {
+              "id": "rd_sweeping",
+              "name": "Sweeping Strikes",
+              "icon": "/icons/skill_nobg/Warriorskill_04_nobg.png",
+              "description": "Next 5 hits cleave",
+              "effect": "Pack tank",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_04_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_iron_parry",
+              "name": "Iron Parry",
+              "icon": "/icons/skill_nobg/Warriorskill_05_nobg.png",
+              "description": "Parry chance up. Absorb per parry",
+              "effect": "+12% parry",
+              "maxPoints": 3,
+              "passive": true,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_05_nobg.png",
+              "sourcePack": "barbarian"
+            }
+          ]
+        },
+        {
+          "name": "Level 10 - Advanced Combat",
+          "requiredLevel": 10,
+          "skills": [
+            {
+              "id": "rd_mortal",
+              "name": "Mortal Strike",
+              "icon": "/icons/skill_nobg/Warriorskill_06_nobg.png",
+              "description": "Healing received cut 50%",
+              "effect": "PvP pressure",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_06_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_die_by_sword",
+              "name": "Die by the Sword",
+              "icon": "/icons/skill_nobg/Warriorskill_07_nobg.png",
+              "description": "Parry and dodge doubled 8s",
+              "effect": "Last stand window",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_07_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_charge",
+              "name": "Charge",
+              "icon": "/icons/skill_nobg/Warriorskill_08_nobg.png",
+              "description": "Gap close. Opens Riposte",
+              "effect": "12y root 1s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_08_nobg.png",
+              "sourcePack": "barbarian"
+            }
+          ]
+        },
+        {
+          "name": "Level 15 - Master Raider",
+          "requiredLevel": 15,
+          "skills": [
+            {
+              "id": "rd_colossus",
+              "name": "Colossus Smash",
+              "icon": "/icons/skill_nobg/Warriorskill_09_nobg.png",
+              "description": "Armor break 8s",
+              "effect": "-30% armor",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_09_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_bladestorm",
+              "name": "Bladestorm",
+              "icon": "/icons/skill_nobg/Warriorskill_10_nobg.png",
+              "description": "Spin 4s. Parry still works",
+              "effect": "4m AoE",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_10_nobg.png",
+              "sourcePack": "barbarian"
+            }
+          ]
+        },
+        {
+          "name": "Level 20 - Legendary Raider",
+          "requiredLevel": 20,
+          "skills": [
+            {
+              "id": "rd_recklessness",
+              "name": "Recklessness",
+              "icon": "/icons/skill_nobg/Warriorskill_11_nobg.png",
+              "description": "All 2H hits crit. Parry stays open",
+              "effect": "12s",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_11_nobg.png",
+              "sourcePack": "barbarian"
+            },
+            {
+              "id": "rd_last_stand",
+              "name": "Last Stand",
+              "icon": "/icons/skill_nobg/Warriorskill_12_nobg.png",
+              "description": "+30% HP. Parry refunds heal",
+              "effect": "2H tank ult",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Warriorskill_12_nobg.png",
+              "sourcePack": "barbarian"
+            }
+          ]
+        }
+      ],
+      "graph": {
+        "totalNodes": 16,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 1
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-rd_riposte",
+            "id": 1,
+            "name": "Riposte Stance",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Every 2H swing opens a parry window",
+            "skillId": "rd_riposte",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_overpower",
+            "id": 2,
+            "name": "Overpower",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Cannot miss after a parry",
+            "skillId": "rd_overpower",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_rend",
+            "id": 3,
+            "name": "Rend",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "2H bleed DoT",
+            "skillId": "rd_rend",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Raider-P1",
+            "id": 4,
+            "name": "Level 5 - Specialization",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Specialization.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_sweeping",
+            "id": 5,
+            "name": "Sweeping Strikes",
+            "x": 32,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Next 5 hits cleave",
+            "skillId": "rd_sweeping",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_iron_parry",
+            "id": 6,
+            "name": "Iron Parry",
+            "x": 68,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "effect",
+            "description": "Parry chance up. Absorb per parry",
+            "skillId": "rd_iron_parry",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Raider-P2",
+            "id": 7,
+            "name": "Level 10 - Advanced Combat",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Advanced Combat.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_mortal",
+            "id": 8,
+            "name": "Mortal Strike",
+            "x": 22,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Healing received cut 50%",
+            "skillId": "rd_mortal",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_die_by_sword",
+            "id": 9,
+            "name": "Die by the Sword",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Parry and dodge doubled 8s",
+            "skillId": "rd_die_by_sword",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_charge",
+            "id": 10,
+            "name": "Charge",
+            "x": 78,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Gap close. Opens Riposte",
+            "skillId": "rd_charge",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Raider-P3",
+            "id": 11,
+            "name": "Level 15 - Master Raider",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 7,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Master Raider.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_colossus",
+            "id": 12,
+            "name": "Colossus Smash",
+            "x": 32,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Armor break 8s",
+            "skillId": "rd_colossus",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_bladestorm",
+            "id": 13,
+            "name": "Bladestorm",
+            "x": 68,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Spin 4s. Parry still works",
+            "skillId": "rd_bladestorm",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Raider-P4",
+            "id": 14,
+            "name": "Level 20 - Legendary Raider",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 11,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary Raider.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_recklessness",
+            "id": 15,
+            "name": "Recklessness",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "All 2H hits crit. Parry stays open",
+            "skillId": "rd_recklessness",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-rd_last_stand",
+            "id": 16,
+            "name": "Last Stand",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "+30% HP. Parry refunds heal",
+            "skillId": "rd_last_stand",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "rd_riposte",
+        "name": "Riposte Stance",
+        "description": "Every 2H swing opens a parry window"
+      }
+    },
+    "thief": {
+      "uuid": "ITEM-20260821120000-THIEF-0001",
+      "className": "Thief",
+      "color": "#ca8a04",
+      "family": "ranger",
+      "tiers": [
+        {
+          "name": "Level 1 - Outlaw Basics",
+          "requiredLevel": 1,
+          "skills": [
+            {
+              "id": "t_between",
+              "name": "Between the Eyes",
+              "icon": "/icons/skill_nobg/Archerskill_01_nobg.png",
+              "description": "Combo finisher stun + crit",
+              "effect": "Spend combo",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Archerskill_01_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_sinister",
+              "name": "Sinister Strike",
+              "icon": "/icons/skill_nobg/Archerskill_02_nobg.png",
+              "description": "Combo builder",
+              "effect": "+1 combo",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Archerskill_02_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_pistol",
+              "name": "Pistol Shot",
+              "icon": "/icons/skill_nobg/Archerskill_03_nobg.png",
+              "description": "Ranged interrupt",
+              "effect": "12y interrupt",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Archerskill_03_nobg.png",
+              "sourcePack": "hunter"
+            }
+          ]
+        },
+        {
+          "name": "Level 5 - Specialization",
+          "requiredLevel": 5,
+          "skills": [
+            {
+              "id": "t_blade_flurry",
+              "name": "Blade Flurry",
+              "icon": "/icons/skill_nobg/Archerskill_04_nobg.png",
+              "description": "Melee hits splash nearby foes",
+              "effect": "40% splash 10s",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Archerskill_04_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_grapple",
+              "name": "Grappling Hook",
+              "icon": "/icons/skill_nobg/Archerskill_05_nobg.png",
+              "description": "Pull to a point or target",
+              "effect": "14y",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Archerskill_05_nobg.png",
+              "sourcePack": "hunter"
+            }
+          ]
+        },
+        {
+          "name": "Level 10 - Advanced Outlaw",
+          "requiredLevel": 10,
+          "skills": [
+            {
+              "id": "t_roll",
+              "name": "Roll the Bones",
+              "icon": "/icons/skill_nobg/Archerskill_06_nobg.png",
+              "description": "Random combat buff table",
+              "effect": "20s",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Archerskill_06_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_kidney",
+              "name": "Kidney Shot",
+              "icon": "/icons/skill_nobg/Archerskill_07_nobg.png",
+              "description": "Combo stun",
+              "effect": "1–4s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Archerskill_07_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_smoke",
+              "name": "Smoke Bomb",
+              "icon": "/icons/skill_nobg/Archerskill_08_nobg.png",
+              "description": "Targeted spells miss inside",
+              "effect": "5s 5m",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Archerskill_08_nobg.png",
+              "sourcePack": "hunter"
+            }
+          ]
+        },
+        {
+          "name": "Level 15 - Master Thief",
+          "requiredLevel": 15,
+          "skills": [
+            {
+              "id": "t_adrenaline",
+              "name": "Adrenaline Rush",
+              "icon": "/icons/skill_nobg/Archerskill_09_nobg.png",
+              "description": "Combo generation doubled",
+              "effect": "10s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Archerskill_09_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_vanish",
+              "name": "Vanish",
+              "icon": "/icons/skill_nobg/Archerskill_10_nobg.png",
+              "description": "Drop combat. Next strike crits",
+              "effect": "4s stealth",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Archerskill_10_nobg.png",
+              "sourcePack": "hunter"
+            }
+          ]
+        },
+        {
+          "name": "Level 20 - Legendary Outlaw",
+          "requiredLevel": 20,
+          "skills": [
+            {
+              "id": "t_killing_spree",
+              "name": "Killing Spree",
+              "icon": "/icons/skill_nobg/Archerskill_11_nobg.png",
+              "description": "Seven teleport hits",
+              "effect": "Immune while dashing",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Archerskill_11_nobg.png",
+              "sourcePack": "hunter"
+            },
+            {
+              "id": "t_dreadblades",
+              "name": "Dreadblades",
+              "icon": "/icons/skill_nobg/Archerskill_12_nobg.png",
+              "description": "Combo spenders cost nothing",
+              "effect": "12s",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Archerskill_12_nobg.png",
+              "sourcePack": "hunter"
+            }
+          ]
+        }
+      ],
+      "graph": {
+        "totalNodes": 16,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 1
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-t_between",
+            "id": 1,
+            "name": "Between the Eyes",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Combo finisher stun + crit",
+            "skillId": "t_between",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_sinister",
+            "id": 2,
+            "name": "Sinister Strike",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Combo builder",
+            "skillId": "t_sinister",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_pistol",
+            "id": 3,
+            "name": "Pistol Shot",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Ranged interrupt",
+            "skillId": "t_pistol",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Thief-P1",
+            "id": 4,
+            "name": "Level 5 - Specialization",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Specialization.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_blade_flurry",
+            "id": 5,
+            "name": "Blade Flurry",
+            "x": 32,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Melee hits splash nearby foes",
+            "skillId": "t_blade_flurry",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_grapple",
+            "id": 6,
+            "name": "Grappling Hook",
+            "x": 68,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Pull to a point or target",
+            "skillId": "t_grapple",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Thief-P2",
+            "id": 7,
+            "name": "Level 10 - Advanced Outlaw",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Advanced Outlaw.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_roll",
+            "id": 8,
+            "name": "Roll the Bones",
+            "x": 22,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Random combat buff table",
+            "skillId": "t_roll",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_kidney",
+            "id": 9,
+            "name": "Kidney Shot",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Combo stun",
+            "skillId": "t_kidney",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_smoke",
+            "id": 10,
+            "name": "Smoke Bomb",
+            "x": 78,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Targeted spells miss inside",
+            "skillId": "t_smoke",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Thief-P3",
+            "id": 11,
+            "name": "Level 15 - Master Thief",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 7,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Master Thief.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_adrenaline",
+            "id": 12,
+            "name": "Adrenaline Rush",
+            "x": 32,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Combo generation doubled",
+            "skillId": "t_adrenaline",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_vanish",
+            "id": 13,
+            "name": "Vanish",
+            "x": 68,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Drop combat. Next strike crits",
+            "skillId": "t_vanish",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Thief-P4",
+            "id": 14,
+            "name": "Level 20 - Legendary Outlaw",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 11,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Legendary Outlaw.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_killing_spree",
+            "id": 15,
+            "name": "Killing Spree",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Seven teleport hits",
+            "skillId": "t_killing_spree",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-t_dreadblades",
+            "id": 16,
+            "name": "Dreadblades",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Combo spenders cost nothing",
+            "skillId": "t_dreadblades",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "t_between",
+        "name": "Between the Eyes",
+        "description": "Combo finisher stun + crit"
+      }
+    },
+    "verduror": {
+      "uuid": "ITEM-20260821120000-VERDUR-0001",
+      "className": "Verduror",
+      "color": "#86efac",
+      "family": "worge",
+      "tiers": [
+        {
+          "name": "Level 1 - Mist Arts",
+          "requiredLevel": 1,
+          "skills": [
+            {
+              "id": "v_jade_mist",
+              "name": "Jade Mist Form",
+              "icon": "/icons/skill_nobg/Druideskill_01_nobg.png",
+              "description": "Mist aura heals nearby allies while you melee",
+              "effect": "Stance HPS",
+              "maxPoints": 1,
+              "passive": true,
+              "iconUrl": "/icons/skill_nobg/Druideskill_01_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_soothing_mist",
+              "name": "Soothing Mist",
+              "icon": "/icons/skill_nobg/Druideskill_02_nobg.png",
+              "description": "Channeled single heal",
+              "effect": "Instant other heals on target",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Druideskill_02_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_crane_kick",
+              "name": "Crane Kick",
+              "icon": "/icons/skill_nobg/Druideskill_03_nobg.png",
+              "description": "Melee kick. Splashes Soothing Mist",
+              "effect": "Fistweaver filler",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Druideskill_03_nobg.png",
+              "sourcePack": "necromancer"
+            }
+          ]
+        },
+        {
+          "name": "Level 5 - Envelop",
+          "requiredLevel": 5,
+          "skills": [
+            {
+              "id": "v_enveloping",
+              "name": "Enveloping Mist",
+              "icon": "/icons/skill_nobg/Druideskill_04_nobg.png",
+              "description": "Hot + incoming reduced",
+              "effect": "-20% taken 6s",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Druideskill_04_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_rising_sun",
+              "name": "Rising Sun Kick",
+              "icon": "/icons/skill_nobg/Druideskill_05_nobg.png",
+              "description": "Next 3 Crane Kicks heal more",
+              "effect": "Loop",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Druideskill_05_nobg.png",
+              "sourcePack": "necromancer"
+            }
+          ]
+        },
+        {
+          "name": "Level 10 - Forms",
+          "requiredLevel": 10,
+          "skills": [
+            {
+              "id": "v_chiji",
+              "name": "Chi-Ji Form",
+              "icon": "/icons/skill_nobg/Druideskill_06_nobg.png",
+              "description": "Crane form. Gusts heal as you melee",
+              "effect": "+20% MS 20s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Druideskill_06_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_revival",
+              "name": "Revival",
+              "icon": "/icons/skill_nobg/Druideskill_07_nobg.png",
+              "description": "Party AoE heal",
+              "effect": "35% 15m",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Druideskill_07_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_detox",
+              "name": "Detox",
+              "icon": "/icons/skill_nobg/Druideskill_08_nobg.png",
+              "description": "Dispel magic, poison, disease",
+              "effect": "2 dispels",
+              "maxPoints": 3,
+              "iconUrl": "/icons/skill_nobg/Druideskill_08_nobg.png",
+              "sourcePack": "necromancer"
+            }
+          ]
+        },
+        {
+          "name": "Level 15 - Focus",
+          "requiredLevel": 15,
+          "skills": [
+            {
+              "id": "v_tea",
+              "name": "Thunder Focus Tea",
+              "icon": "/icons/skill_nobg/Druideskill_09_nobg.png",
+              "description": "Next heal instant and empowered",
+              "effect": "15s",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Druideskill_09_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_font",
+              "name": "Essence Font",
+              "icon": "/icons/skill_nobg/Druideskill_10_nobg.png",
+              "description": "Moving AoE heal",
+              "effect": "Walk the party",
+              "maxPoints": 2,
+              "iconUrl": "/icons/skill_nobg/Druideskill_10_nobg.png",
+              "sourcePack": "necromancer"
+            }
+          ]
+        },
+        {
+          "name": "Level 20 - Celestial",
+          "requiredLevel": 20,
+          "skills": [
+            {
+              "id": "v_celestial",
+              "name": "Celestial Form",
+              "icon": "/icons/skill_nobg/Druideskill_11_nobg.png",
+              "description": "Mist heals double. You can still Crane Kick",
+              "effect": "16s",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Druideskill_11_nobg.png",
+              "sourcePack": "necromancer"
+            },
+            {
+              "id": "v_serpent",
+              "name": "Invoke Serpent",
+              "icon": "/icons/skill_nobg/Druideskill_12_nobg.png",
+              "description": "Jade serpent channels Soothing Mist while you melee",
+              "effect": "20s",
+              "maxPoints": 1,
+              "iconUrl": "/icons/skill_nobg/Druideskill_12_nobg.png",
+              "sourcePack": "necromancer"
+            }
+          ]
+        }
+      ],
+      "graph": {
+        "totalNodes": 16,
+        "branches": [
+          {
+            "name": "Core",
+            "color": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            },
+            "nodeCount": 3
+          },
+          {
+            "name": "Path",
+            "color": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Left",
+            "color": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Right",
+            "color": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            },
+            "nodeCount": 4
+          },
+          {
+            "name": "Center",
+            "color": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            },
+            "nodeCount": 1
+          }
+        ],
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-v_jade_mist",
+            "id": 1,
+            "name": "Jade Mist Form",
+            "x": 22,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "effect",
+            "description": "Mist aura heals nearby allies while you melee",
+            "skillId": "v_jade_mist",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_soothing_mist",
+            "id": 2,
+            "name": "Soothing Mist",
+            "x": 50,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Channeled single heal",
+            "skillId": "v_soothing_mist",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_crane_kick",
+            "id": 3,
+            "name": "Crane Kick",
+            "x": 78,
+            "y": 92,
+            "reqLevel": 1,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Melee kick. Splashes Soothing Mist",
+            "skillId": "v_crane_kick",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#fbbf24",
+              "fill": "rgba(251,191,36,0.25)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Verduror-P1",
+            "id": 4,
+            "name": "Level 5 - Envelop",
+            "x": 50,
+            "y": 84,
+            "reqLevel": 4,
+            "parent": 1,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 5 - Envelop.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_enveloping",
+            "id": 5,
+            "name": "Enveloping Mist",
+            "x": 32,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Hot + incoming reduced",
+            "skillId": "v_enveloping",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_rising_sun",
+            "id": 6,
+            "name": "Rising Sun Kick",
+            "x": 68,
+            "y": 76,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Next 3 Crane Kicks heal more",
+            "skillId": "v_rising_sun",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Verduror-P2",
+            "id": 7,
+            "name": "Level 10 - Forms",
+            "x": 50,
+            "y": 68,
+            "reqLevel": 9,
+            "parent": 4,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 10 - Forms.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_chiji",
+            "id": 8,
+            "name": "Chi-Ji Form",
+            "x": 22,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Crane form. Gusts heal as you melee",
+            "skillId": "v_chiji",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_revival",
+            "id": 9,
+            "name": "Revival",
+            "x": 50,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Party AoE heal",
+            "skillId": "v_revival",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_detox",
+            "id": 10,
+            "name": "Detox",
+            "x": 78,
+            "y": 60,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Dispel magic, poison, disease",
+            "skillId": "v_detox",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#22c55e",
+              "fill": "rgba(34,197,94,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Verduror-P3",
+            "id": 11,
+            "name": "Level 15 - Focus",
+            "x": 50,
+            "y": 52,
+            "reqLevel": 14,
+            "parent": 7,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 15 - Focus.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_tea",
+            "id": 12,
+            "name": "Thunder Focus Tea",
+            "x": 32,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Next heal instant and empowered",
+            "skillId": "v_tea",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_font",
+            "id": 13,
+            "name": "Essence Font",
+            "x": 68,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 11,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Moving AoE heal",
+            "skillId": "v_font",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-Verduror-P4",
+            "id": 14,
+            "name": "Level 20 - Celestial",
+            "x": 50,
+            "y": 36,
+            "reqLevel": 19,
+            "parent": 11,
+            "branch": "Path",
+            "nodeType": "stat",
+            "description": "Path node — spend to open Level 20 - Celestial.",
+            "skillId": null,
+            "path": true,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#64748b",
+              "fill": "rgba(100,116,139,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_celestial",
+            "id": 15,
+            "name": "Celestial Form",
+            "x": 32,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Left",
+            "nodeType": "combat",
+            "description": "Mist heals double. You can still Crane Kick",
+            "skillId": "v_celestial",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#f97316",
+              "fill": "rgba(249,115,22,0.2)"
+            }
+          },
+          {
+            "uuid": "NODE-CLASS-v_serpent",
+            "id": 16,
+            "name": "Invoke Serpent",
+            "x": 68,
+            "y": 28,
+            "reqLevel": 20,
+            "parent": 14,
+            "branch": "Right",
+            "nodeType": "combat",
+            "description": "Jade serpent channels Soothing Mist while you melee",
+            "skillId": "v_serpent",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": [],
+            "branchColor": {
+              "stroke": "#6366f1",
+              "fill": "rgba(99,102,241,0.2)"
+            }
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "v_jade_mist",
+        "name": "Jade Mist Form",
+        "description": "Mist aura heals nearby allies while you melee"
+      }
     }
-  }
+  },
+  "graphNote": "Each class.graph uses the same node schema as master-professionTrees (x/y 0–100, parent, branch, nodeType). Path nodes sit between pick tiers. L0 skill is spec identity — swap family spec by reset + different L0, or rewrite with the same L0."
 }

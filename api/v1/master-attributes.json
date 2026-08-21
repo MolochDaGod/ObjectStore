@@ -1,10 +1,11 @@
 {
-  "version": "2.0.0",
-  "updated": "2026-07-19",
+  "version": "2.1.0",
+  "updated": "2026-08-18",
   "canonical": true,
   "source": "Warlord-Crafting-Suite/shared/attributeSystem.ts",
   "totalAttributes": 8,
   "totalDerivedStats": 37,
+  "totalNeedPools": 3,
   "allocation": {
     "startingPoints": 20,
     "pointsPerLevel": 7,
@@ -369,6 +370,57 @@
       "iconLegacy": "game-assets/icons/sigils/tactics.png"
     }
   ],
+  "resourcePools": [
+    { "id": "health", "label": "Health", "abbrev": "HP", "scope": "character", "from": ["strength", "vitality", "endurance"] },
+    { "id": "mana", "label": "Mana", "abbrev": "MP", "scope": "character", "from": ["intellect", "wisdom"] },
+    { "id": "stamina", "label": "Stamina", "abbrev": "SP", "scope": "character", "from": ["endurance", "vitality", "agility"] },
+    { "id": "armor", "label": "Armour", "abbrev": "AR", "scope": "character", "from": ["endurance", "vitality"], "note": "Defense-derived armour rating, not a 9th attribute" }
+  ],
+  "needPools": [
+    {
+      "id": "oxygen",
+      "label": "Oxygen",
+      "abbrev": "O2",
+      "scope": "character",
+      "base": 80,
+      "gains": { "endurance": 2, "vitality": 1 },
+      "drainPerSec": { "underwater": 8, "surfaceRegen": 12 },
+      "note": "Need pool. Not an allocation attribute. Max from END/VIT."
+    },
+    {
+      "id": "hunger",
+      "label": "Hunger",
+      "abbrev": "HU",
+      "scope": "character",
+      "base": 100,
+      "gains": { "vitality": 1.5 },
+      "drainPerSec": 0.15,
+      "restore": "bag food consumable",
+      "note": "Need pool. Restore from account bag food. Not a 9th ATTR."
+    },
+    {
+      "id": "thirst",
+      "label": "Thirst",
+      "abbrev": "TH",
+      "scope": "character",
+      "base": 80,
+      "gains": { "endurance": 1.2, "vitality": 0.5 },
+      "drainPerSec": 0.22,
+      "restore": "bag water / bucket",
+      "note": "Need pool. Restore from account bag drink. Not a 9th ATTR."
+    }
+  ],
+  "progressApi": {
+    "read": "GET /api/characters/:id",
+    "write": "POST /api/characters/:id/progress",
+    "scope": "character UUID",
+    "fields": {
+      "attributes": "8 allocation ids (strength…tactics)",
+      "unspentAttributePoints": "remaining 160-point pool",
+      "stats": "current/max health mana stamina armor oxygen hunger thirst + 37 derived"
+    },
+    "never": "Do not add oxygen/hunger/thirst as ATTR ids. Do not put pools on /api/account."
+  },
   "statDescriptions": {
     "health": "Total hit points. Reaching 0 means defeat.",
     "mana": "Magical energy for casting spells and abilities.",

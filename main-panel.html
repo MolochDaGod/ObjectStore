@@ -811,6 +811,7 @@
   </style>
 </head>
 <body class="scroll-theme">
+<script>if (/\bembed=1\b/.test(location.search)) document.documentElement.classList.add('mp-embed');</script>
 <div class="app">
   <header class="top-bar">
     <div class="logo"><a href="index.html" style="color:var(--gold)" data-i18n="app.hub">← Hub</a> <h1 style="display:inline;margin-left:12px" class="gold-text" data-i18n="app.brand">Grudge Warlords</h1></div>
@@ -876,8 +877,8 @@
 <div class="eq-tooltip" id="eqTooltip"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="./js/weapon-skill-tree.js?v=fluid4"></script>
-<script src="./js/main-panel-systems.js?v=spellbook-passives1"></script>
+<script src="./js/weapon-skill-tree.js?v=greataxe1"></script>
+<script src="./js/main-panel-systems.js?v=class-graph-specs1"></script>
 <script src="./js/main-panel-i18n.js?v=fluid4"></script>
 <script src="./js/main-panel-2d.js?v=sidepanels1"></script>
 <script src="./js/main-panel-side-panels.js?v=sidepanels1"></script>
@@ -1195,6 +1196,9 @@
       allSkillTrees = skillsRes?.classes || skillsRes?.skillTrees || [];
       allWeaponSkills = wpnSkillsRes?.weaponTypes || wpnSkillsRes?.weapons || [];
       if (wpnSkillsRes?.weaponTypes?.length) WeaponSkillTree.setCatalog(wpnSkillsRes);
+      if (typeof WeaponSkillTree.loadWeaponsCatalog === 'function') {
+        await WeaponSkillTree.loadWeaponsCatalog(['./api/v1']);
+      }
       allArtifacts = artsRes?.artifacts || [];
       professionTreesData = profTreesRes;
       classEquipRulesData = classEquipRes || null;

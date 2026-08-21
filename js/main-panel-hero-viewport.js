@@ -389,6 +389,7 @@ export async function mountHeroViewport(host, opts) {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.9, 0);
   controls.enableDamping = true;
+  controls.autoRotate = false;
   controls.minDistance = 1.4;
   controls.maxDistance = 7;
   controls.maxPolarAngle = Math.PI * 0.55;
@@ -478,18 +479,7 @@ export async function mountHeroViewport(host, opts) {
             variant,
             useCastMesh: true,
           });
-          // Demo cast loop for paperdoll preview (gentle)
-          let castT = 0;
-          const prevUpdate = tomeCtrl.update.bind(tomeCtrl);
-          tomeCtrl.update = (dt) => {
-            castT += dt;
-            if (castT > 4.5) {
-              castT = 0;
-              tomeCtrl.beginCast();
-              setTimeout(() => { try { tomeCtrl?.endCast(); } catch { /* ok */ } }, 1600);
-            }
-            prevUpdate(dt);
-          };
+          // Rest pose only — no demo cast loop, no spinning weapons.
         } catch (e) {
           console.warn('[main-panel] tome offhand', e);
         }

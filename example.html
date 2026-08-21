@@ -71,7 +71,7 @@ import StatsGL            from 'stats-gl';
 import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader }     from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader }    from 'three/addons/loaders/DRACOLoader.js';
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { clone as skeletonClone } from 'three/addons/utils/SkeletonUtils.js';
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  ASSET URLs  (KayKit rigs from ObjectStore CDN)
@@ -537,7 +537,7 @@ class Character {
   }
 
   attachModel(baseGLTF, allClips) {
-    const model = SkeletonUtils.clone(baseGLTF.scene);
+    const model = skeletonClone(baseGLTF.scene);
     model.traverse(n => {
       if (n.isMesh) { n.material = n.material.clone(); n.material.fog = false; }
     });
@@ -958,7 +958,7 @@ import StatsGL            from 'stats-gl';
 import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader }     from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader }    from 'three/addons/loaders/DRACOLoader.js';
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { clone as skeletonClone } from 'three/addons/utils/SkeletonUtils.js';
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  ASSET URLs  (KayKit rigs from ObjectStore CDN)
@@ -1424,7 +1424,7 @@ class Character {
   }
 
   attachModel(baseGLTF, allClips) {
-    const model = SkeletonUtils.clone(baseGLTF.scene);
+    const model = skeletonClone(baseGLTF.scene);
     model.traverse(n => {
       if (n.isMesh) { n.material = n.material.clone(); n.material.fog = false; }
     });

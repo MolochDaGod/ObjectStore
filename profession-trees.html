@@ -121,8 +121,15 @@
     <div class="loading" id="weaponLoading" style="display:none">Loading…</div>
   </div>
 
-  <!-- Class Skill Trees -->
+  <!-- Class Skill Trees — same SVG graph as professions -->
   <div class="mode-panel" id="mode-classes">
+    <div class="prof-tabs" id="classTabs"></div>
+    <div class="tree-container" id="classTreeContainer">
+      <div class="tree-bg" id="classTreeBg"></div>
+      <svg class="tree-svg" id="classTreeSvg"></svg>
+      <div class="branch-legend" id="classLegend"></div>
+      <div class="prof-info" id="classInfo"></div>
+    </div>
     <div id="classTreesRoot"></div>
     <div class="loading" id="classLoading">Loading class skill trees…</div>
   </div>
@@ -143,6 +150,7 @@ let profData = null;
 let activeProf = 'miner';
 let weaponData = null;
 let classData = null;
+let activeClass = 'warrior';
 
 async function fetchJSON(path) {
   const res = await fetch(`${API}/${path}`);
@@ -168,6 +176,7 @@ document.getElementById('modeTabs').addEventListener('click', (e) => {
   btn.classList.add('active');
   document.getElementById('mode-' + btn.dataset.mode).classList.add('active');
   if (btn.dataset.mode === 'professions') renderTree();
+  if (btn.dataset.mode === 'classes') renderClassGraph();
 });
 
 function applyHashTab() {
@@ -314,6 +323,93 @@ async function loadWeapons() {
 }
 
 // ── Class skill trees ──────────────────────────────────────────────────────
+const CLASS_FAMILY = { mage:'mage', priest:'mage', warrior:'warrior', raider:'warrior', ranger:'ranger', thief:'ranger', worge:'worge', verduror:'worge' };
+
+function renderClassTabs() {
+  const container = document.getElementById('classTabs');
+  if (!container || !classData) return;
+  const trees = classData.skillTrees || {};
+  container.innerHTML = '';
+  for (const [key, cls] of Object.entries(trees)) {
+    const tab = document.createElement('button');
+    tab.className = key === activeClass ? 'active' : '';
+    const fam = cls.family || CLASS_FAMILY[key] || key;
+    tab.innerHTML = `${cls.className || key} <span style="opacity:.6;font-size:.8em">${fam}</span>`;
+    tab.onclick = () => { activeClass = key; renderClassTabs(); renderClassGraph(); };
+    container.appendChild(tab);
+  }
+}
+
+function renderClassGraph() {
+  if (!classData) return;
+  const cls = classData.skillTrees?.[activeClass];
+  const graph = cls?.graph;
+  document.getElementById('classLoading').style.display = 'none';
+  if (!graph?.nodes) { renderClassTrees(); return; }
+
+  document.getElementById('classInfo').innerHTML = `
+    <div class="pi-name">${cls.className || activeClass}</div>
+    <div class="pi-role">${cls.family || ''} · L0 ${cls.specIdentity?.name || '—'}</div>
+    <div class="pi-count">${graph.totalNodes} nodes · reset + other L0 swaps spec</div>
+  `;
+  document.getElementById('classLegend').innerHTML = `<h3>Branches</h3>` +
+    (graph.branches || []).map(b => `<div class="legend-item"><div class="legend-dot" style="background:${b.color?.stroke || '#888'}"></div> ${b.name} (${b.nodeCount})</div>`).join('');
+
+  const svg = document.getElementById('classTreeSvg');
+  const W = svg.clientWidth || 800;
+  const H = svg.clientHeight || 600;
+  const PAD = 40;
+  const mapX = (x) => PAD + (x / 100) * (W - PAD * 2);
+  const mapY = (y) => PAD + ((100 - y) / 100) * (H - PAD * 2);
+  const nodes = graph.nodes;
+  let svgContent = '';
+  for (const node of nodes) {
+    if (node.parent != null) {
+      const parent = nodes.find(n => n.id === node.parent);
+      if (parent) {
+        const color = node.branchColor?.stroke || '#555';
+        svgContent += `<line x1="${mapX(parent.x)}" y1="${mapY(parent.y)}" x2="${mapX(node.x)}" y2="${mapY(node.y)}" stroke="${color}" stroke-width="2" stroke-opacity="0.5"/>`;
+      }
+    }
+  }
+  for (const node of nodes) {
+    const cx = mapX(node.x), cy = mapY(node.y);
+    const color = node.branchColor?.stroke || cls.color || '#d4a84b';
+    const fill = node.branchColor?.fill || 'rgba(212,168,75,0.15)';
+    const r = node.path ? 11 : 16;
+    if (node.nodeType === 'effect') {
+      svgContent += `<polygon points="${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+    } else if (node.path) {
+      svgContent += `<rect x="${cx-r}" y="${cy-r}" width="${r*2}" height="${r*2}" rx="3" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+    } else {
+      svgContent += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${color}" stroke-width="2" class="node" data-id="${node.id}" style="cursor:pointer"/>`;
+    }
+    const label = node.name.length > 16 ? node.name.substring(0, 14) + '…' : node.name;
+    svgContent += `<text x="${cx}" y="${cy+r+14}" text-anchor="middle" fill="${color}" font-family="Cinzel,serif" font-size="9" font-weight="600" opacity="0.8">${label}</text>`;
+    if (node.reqLevel > 0) {
+      svgContent += `<text x="${cx+r+4}" y="${cy-r+4}" fill="#ef4444" font-size="8" font-family="Cinzel,serif" opacity="0.7">Lv${node.reqLevel}</text>`;
+    }
+  }
+  svg.innerHTML = svgContent;
+  const tooltip = document.getElementById('tooltip');
+  svg.querySelectorAll('.node').forEach(el => {
+    el.addEventListener('mouseenter', (e) => {
+      const id = parseInt(el.dataset.id, 10);
+      const node = nodes.find(n => n.id === id);
+      if (!node) return;
+      tooltip.innerHTML = `<div class="tt-name">${node.name}</div><div class="tt-desc">${node.description || ''}</div>${node.l0 ? '<div class="tt-unlock">Spec identity (L0)</div>' : ''}${node.path ? '<div class="tt-unlock">Path node between tiers</div>' : ''}`;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY + 12) + 'px';
+    });
+    el.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY + 12) + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  });
+}
+
 function renderClassTrees() {
   if (!classData) return;
   document.getElementById('classLoading').style.display = 'none';
@@ -372,6 +468,9 @@ async function loadClasses() {
     renderProfTabs();
     renderTree();
     renderWeaponSummary();
+    activeClass = Object.keys(cls.skillTrees || {})[0] || 'warrior';
+    renderClassTabs();
+    renderClassGraph();
     renderClassTrees();
     applyHashTab();
   } catch (e) {
@@ -380,7 +479,7 @@ async function loadClasses() {
 })();
 
 window.addEventListener('hashchange', applyHashTab);
-window.addEventListener('resize', () => { if (profData) renderTree(); });
+window.addEventListener('resize', () => { if (profData) renderTree(); if (classData) renderClassGraph(); });
 </script>
 <script src="./js/nav.js" defer></script>
 </body>

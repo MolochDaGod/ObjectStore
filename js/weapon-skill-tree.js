@@ -137,9 +137,45 @@
     return key ? key.toUpperCase() : null;
   }
 
+  const NAMED_TYPE_HINTS = [
+    [/greataxe|skullsunder|bloodreaver|wraithhew|embermaul|ironrend|dusksplitter/i, 'GREATAXE'],
+    [/greatsword|bloodspire|wraithblade|emberbrand|ironedge|duskbringer/i, 'GREATSWORD'],
+    [/\baxe\b|gorehowl|skullsplitter|veinreaver|ironmaw|dreadcleaver|bonehew/i, 'AXE'],
+  ];
+
   function resolveTypeFromWeapon(weapon) {
     if (!weapon) return null;
-    return categoryToTypeId(weapon.category || weapon.weaponType || weapon.subType || weapon._weaponKey);
+    const typed = String(weapon.weaponType || '').toUpperCase();
+    if (typed && catalogById[typed]) return typed;
+    const fromCat = categoryToTypeId(weapon.category || weapon.subType || weapon._weaponKey);
+    if (fromCat && catalogById[fromCat]) return fromCat;
+    const blob = `${weapon.id || ''} ${weapon.name || ''} ${weapon.baseName || ''} ${weapon.category || ''}`;
+    for (const [re, typeId] of NAMED_TYPE_HINTS) {
+      if (re.test(blob) && catalogById[typeId]) return typeId;
+    }
+    return fromCat;
+  }
+
+  function variantBaseName(weapon) {
+    return String(weapon?.baseName || weapon?.name || '')
+      .toLowerCase()
+      .replace(/\s+t\d+\s*$/i, '')
+      .trim();
+  }
+
+  function findVariantForWeapon(typeId, weapon) {
+    if (!weapon) return null;
+    const list = listVariantsForType(typeId);
+    if (!list.length) return null;
+    const id = String(weapon.id || '').toLowerCase();
+    const slug = String(weapon.slug || '').toLowerCase();
+    const base = variantBaseName(weapon);
+    return (
+      list.find((v) => v.id && (v.id === id || v.id === slug || v.id === base.replace(/\s+/g, ''))) ||
+      list.find((v) => v.name && v.name.toLowerCase() === base) ||
+      list.find((v) => v.name && (base.startsWith(v.name.toLowerCase()) || v.name.toLowerCase().startsWith(base))) ||
+      null
+    );
   }
 
   function isOffhandItem(weapon) {
@@ -245,7 +281,7 @@
     const offhandToggleActive = opts.offhandToggleActive ?? opts.blockActive ?? false;
     const mainTypeId = resolveTypeFromWeapon(mainhand);
     const baseDef = getTypeDef(mainTypeId);
-    const mainVariant = opts.mainVariant || null;
+    const mainVariant = opts.mainVariant || findVariantForWeapon(mainTypeId, mainhand);
     let mainDef = applyVariantToTypeDef(cloneTypeDef(baseDef), mainVariant);
 
     if (!mainDef) {
@@ -354,6 +390,8 @@
       abilities: item.abilities || [],
       signatureAbility: item.signatureAbility || null,
       passives: item.passives || [],
+      primaryStat: item.primaryStat || null,
+      secondaryStat: item.secondaryStat || null,
       craftingRecipe: item.craftingRecipe || null,
       usedInT1Crafting: item.usedInT1Crafting !== false,
       weaponSkills: item.weaponSkills || null,
@@ -533,6 +571,16 @@
     }
 
     cloned.slotPattern = 'five-slot';
+    cloned.primaryStat = variant.primaryStat || null;
+    cloned.secondaryStat = variant.secondaryStat || null;
+
+    const identityKeys = collectVariantSkillKeys(variant);
+    const filterShared = (pool) => {
+      const list = pool || [];
+      if (!identityKeys.size) return list;
+      const matched = list.filter((sk) => skillNameMatches(sk.name, identityKeys));
+      return matched.length ? matched : list;
+    };
 
     const nextSlots = [];
     if (byType.primary) {
@@ -546,14 +594,14 @@
       nextSlots.push({
         ...byType.secondary,
         label: SLOT_UI_LABELS.secondary,
-        skills: [...(byType.secondary.skills || [])],
+        skills: filterShared(byType.secondary.skills),
       });
     }
     if (byType.ability) {
       nextSlots.push({
         ...byType.ability,
         label: SLOT_UI_LABELS.ability,
-        skills: [...(byType.ability.skills || [])],
+        skills: filterShared(byType.ability.skills),
       });
     }
     if (byType.ultimate) {
@@ -624,7 +672,7 @@
       ${icon ? `<img class="wst-weapon-icon" src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
       <div class="wst-weapon-meta">
         <div class="wst-weapon-title">${esc(variant.name)} ${tierBadge}</div>
-        <div class="wst-weapon-lore">${esc(variant.lore)}</div>
+        <div class="wst-weapon-lore">${esc(variant.lore)}${variant.primaryStat ? ` · identity <b>${esc(variant.primaryStat)}</b>` : ''}</div>
         ${statsHtml}
       </div>
     </div>`;
@@ -1035,8 +1083,8 @@
       ${icon ? `<img class="wst-icon" src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
       <div>
         <div class="wst-title">${esc(mainhand.name)}</div>
-        <div class="wst-lore">${esc(mainhand.lore || mainhand.description || '')}</div>
-        <div class="wst-meta"><span style="color:var(--gold)">${esc(typeDef.name)} · T${playerTier}</span></div>
+        <div class="wst-lore">${esc(mainhand.lore || mainhand.description || typeDef._variant?.lore || '')}</div>
+        <div class="wst-meta"><span style="color:var(--gold)">${esc(typeDef.name)} · T${playerTier}${typeDef.primaryStat ? ` · ${esc(typeDef.primaryStat)}` : typeDef._variant?.primaryStat ? ` · ${esc(typeDef._variant.primaryStat)}` : ''}</span></div>
       </div>
     </div>`;
 
@@ -1100,6 +1148,7 @@
     applyVariantToTypeDef,
     categoryToTypeId,
     resolveTypeFromWeapon,
+    findVariantForWeapon,
     isOffhandItem,
     isOneHandMainhand,
     resolveShieldType,
