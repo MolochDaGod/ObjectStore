@@ -1,0 +1,29 @@
+{
+  "id": "grudge-play-classes",
+  "version": "2026-08-21.play-classes.1",
+  "product": ["warrior", "raider", "mage", "priest", "ranger", "thief", "worge", "verduror"],
+  "families": {
+    "warrior": ["warrior", "raider"],
+    "mage": ["mage", "priest"],
+    "ranger": ["ranger", "thief"],
+    "worge": ["worge", "verduror"]
+  },
+  "collider": ["cct", "heightfield", "convex", "trimesh", "followConvex", "sensor", "hurtbox"],
+  "travel": ["melee", "bullet", "linear", "bend"],
+  "defaults": {
+    "warrior": { "travelMode": "melee", "colliderClass": "followConvex", "pack": "sword_shield" },
+    "raider": { "travelMode": "melee", "colliderClass": "followConvex", "pack": "sword_shield" },
+    "mage": { "travelMode": "linear", "colliderClass": "sensor", "pack": "magic" },
+    "priest": { "travelMode": "linear", "colliderClass": "sensor", "pack": "magic" },
+    "ranger": { "travelMode": "linear", "colliderClass": "followConvex", "pack": "longbow" },
+    "thief": { "travelMode": "bullet", "colliderClass": "followConvex", "pack": "pistol" },
+    "worge": { "travelMode": "melee", "colliderClass": "followConvex", "pack": "sword_shield" },
+    "verduror": { "travelMode": "bend", "colliderClass": "sensor", "pack": "magic" }
+  },
+  "xyz": { "up": "+Y", "ground": "XZ", "forward": "+Z", "right": "+X", "unit": "1=1m" },
+  "si": { "humanM": 1.8, "orcM": 2.0, "capsule": "r=0.35 halfH=0.55" },
+  "hosts": {
+    "casting": "https://casting.grudge.studio/api/v1/casting-lab-contract.json",
+    "info": "https://info.grudge-studio.com/api/v1/play-classes.json"
+  }
+}

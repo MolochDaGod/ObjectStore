@@ -1,0 +1,132 @@
+{
+  "version": "1.1.0",
+  "updated": "2026-08-12",
+  "title": "Agent asset playbook — audit · improve · use with agentic services",
+  "oneTruth": {
+    "binaries": "https://assets.grudge-studio.com/<r2Key>",
+    "indexD1": "D1 asset_registry (~6363 rows via api.grudge-studio.com/assets)",
+    "definitions": "https://objectstore.grudge-studio.com/api/v1/*.json",
+    "playerState": "Railway Postgres — never D1/R2 for bag/characters",
+    "forgeFast": "https://forge.grudge-studio.com/api/catalog/fast-assets (53 curated)",
+    "forgeSearch": "https://forge.grudge-studio.com/api/catalog/search?q=&category=&prefix= (filters in free-ai Worker)",
+    "legionContext": "https://ai.grudge-studio.com/v1/context"
+  },
+  "localDiskRoots": {
+    "models": "D:\\Games\\Models",
+    "animPacks": "D:\\Games\\Models\\_anim_packs",
+    "documents": "C:\\Users\\nugye\\Documents",
+    "objectStore": "F:\\GitHub\\ObjectStore",
+    "note": "Local is author source; production agents must only spawn CDN/builtin URLs"
+  },
+  "knownGaps": [
+    {
+      "id": "d1-api-no-filter",
+      "severity": "high",
+      "detail": "GET api.grudge-studio.com/assets ignores q/category/prefix — always returns first page (codex cold-biome accessories). free-ai loadFleetIndex pages+filters; use forge catalog/search not raw D1 API for agents."
+    },
+    {
+      "id": "category-tag-drift",
+      "severity": "high",
+      "detail": "Many D1 rows tagged accessories; path heuristics in free-ai matchFleetQuery compensate for characters/weapons/maps/nature."
+    },
+    {
+      "id": "forge-search-cold-start",
+      "severity": "med",
+      "detail": "First catalog/search can timeout while loading ~9k index pages. Prefer Fast assets + prefix=models/grudge6 for agent turns."
+    }
+  ],
+  "auditMatrix": {
+    "layer": [
+      {
+        "name": "CDN binary",
+        "how": "HEAD https://assets.grudge-studio.com/<r2Key> → 200, non-HTML Content-Type, size>1KB; GLB magic glTF",
+        "fix": "re-upload via wrangler r2 object put or GrudgeBuilder upload scripts"
+      },
+      {
+        "name": "D1 index row",
+        "how": "Row exists with r2Key matching CDN; category + name searchable via free-ai filter",
+        "fix": "seed-d1 / re-upsert after manifest; fix category tags"
+      },
+      {
+        "name": "ObjectStore def",
+        "how": "weapons/equipment/materials JSON ids link to iconUrl + optional mesh path",
+        "fix": "edit api/v1/*.json + deploy ObjectStore"
+      },
+      {
+        "name": "Forge Fast",
+        "how": "fast-assets.json id → spawn_fast_asset; 53 curated always-on",
+        "fix": "export-fast-assets.mjs + free-ai deploy"
+      },
+      {
+        "name": "Local author",
+        "how": "D:\\Games\\Models + _anim_packs; bake with grudge-asset-convert before R2",
+        "fix": "convert → R2 put → D1 seed → HEAD verify"
+      },
+      {
+        "name": "Texture quality",
+        "how": "sRGB color maps; no 1x1 placeholder; flipY false for FBX atlases; race atlas rebind",
+        "fix": "grudge-character-correctness + convert bake"
+      }
+    ]
+  },
+  "priorityCdnKeys": [
+    "models/grudge6/races/WK_Characters.fbx",
+    "models/grudge6/races/ORC_Characters.fbx",
+    "models/grudge6/races/ELF_Characters.fbx",
+    "models/grudge6/races/DWF_Characters.fbx",
+    "models/grudge6/races/BRB_Characters.fbx",
+    "models/grudge6/races/UD_Characters.fbx",
+    "asset-packs/toon-rts-characters/glb/characters/human.glb",
+    "models/lobby/pirate-islands/scene.glb"
+  ],
+  "agentRules": [
+    "Never invent r2Key — only Fast catalog, catalog/search, or verified HEAD",
+    "Play heroes: Toon RTS grudge6 GLB / race kits — not Meshy/capsule",
+    "Anim packs: Bip001 under _anim_packs (sword_shield, longbow, magic, rifle, pistol) + baked CDN when available",
+    "30characters.glb = outline/look only on local disk",
+    "Icons/stats: ObjectStore gamedata; 3D meshes: R2",
+    "After multi-step spawn: Forge verify_mesh_scale + verify_textures"
+  ],
+  "improveLoop": [
+    "1. Run scripts/audit-agent-assets.mjs (HEAD priority keys + D1 total + Fast count)",
+    "2. Fix red HEAD keys: convert if needed → wrangler r2 put → HEAD",
+    "3. Re-seed D1 categories for grudge6/weapons/nature (fix filter drift)",
+    "4. Expand Fast catalog for agent-hot paths only (not all 6k)",
+    "5. Publish agent sidecars: this playbook + roster/ai-context JSON on ObjectStore/R2",
+    "6. Legion/Forge agents load /v1/context + this playbook before inventing paths"
+  ],
+  "tools": {
+    "forge": [
+      "list_fast_assets",
+      "search_fleet_assets",
+      "spawn_fast_asset",
+      "spawn_fleet_asset",
+      "verify_mesh_scale",
+      "verify_textures",
+      "list_threejs_standards"
+    ],
+    "cli": [
+      "node ObjectStore/scripts/audit-agent-assets.mjs",
+      "npx wrangler r2 object put grudge-assets/<key> --file=... --remote",
+      "curl -sI https://assets.grudge-studio.com/<key>"
+    ]
+  },
+  "sceneReadyCatalog": {
+    "full": "api/v1/game-ready-scene-catalog.json",
+    "index": "api/v1/game-ready-scene-index.json",
+    "build": "node scripts/build-game-ready-scene-catalog.mjs",
+    "rule": "Only assets.grudge-studio.com HEAD-green entries; not github.io models3d-game",
+    "forgeFast": "https://forge.grudge-studio.com/api/catalog/fast-assets"
+  },
+  "relatedObjectStore": [
+    "game-ready-scene-catalog.json",
+    "game-ready-scene-index.json",
+    "asset-registry.json",
+    "models3d-audit.json",
+    "models3d-game.json",
+    "weapon-model-game-urls.json",
+    "icon-registry.json",
+    "unified-registry.json",
+    "fleet-canonical.json"
+  ]
+}

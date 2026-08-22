@@ -4,6 +4,7 @@
  *
  * Off-hand rules:
  *   SHIELD + TOME — toggle F replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
+ *   Active only with 1H sword, knife (dagger), hammer, mace, or axe — not 2H, gun, wand, claw, staff, bow
  *   All weapons share: 1=standard attack, 2–3=shared type pools, 4=signature, 5=passives
  */
 (function (global) {
@@ -38,9 +39,18 @@
     scythe: 'SCYTHE',
     maces: 'MACE',
     tools: 'TOOL',
+    claws: 'CLAW',
+    claw: 'CLAW',
+    knives: 'DAGGER',
+    knife: 'DAGGER',
+    dagger: 'DAGGER',
+    mace: 'MACE',
+    axe: 'AXE',
   };
 
-  const ONE_HAND_TYPES = new Set(['SWORD', 'AXE', 'DAGGER', 'HAMMER', 'MACE', 'GUN', 'WAND']);
+  /** 1H melee that can activate SHIELD / TOME. Knife = DAGGER. Not gun, wand, claw, 2H. */
+  const ONE_HAND_TYPES = new Set(['SWORD', 'AXE', 'DAGGER', 'HAMMER', 'MACE']);
+  const TWO_HAND_CATEGORIES = new Set(['hammers2h', 'greatswords', 'greataxes', 'spears', 'bows', 'crossbows', 'staves', 'staff']);
   const OFFHAND_MODIFIER_TYPES = new Set(['SHIELD', 'TOME']);
   const SHIELD_TYPE_KEYWORDS = {
     buckler: /buckler|wraithfang/i,
@@ -187,8 +197,11 @@
   function isOneHandMainhand(weapon) {
     const typeId = resolveTypeFromWeapon(weapon);
     if (!typeId) return false;
-    if (weapon?.subCategory === '2h') return false;
-    return ONE_HAND_TYPES.has(typeId);
+    if (!ONE_HAND_TYPES.has(typeId)) return false;
+    if (weapon?.subCategory === '2h' || weapon?.handed === '2h' || weapon?.twoHanded === true) return false;
+    const cat = normalizeCategory(weapon?.category || weapon?.subType || weapon?._weaponKey || '');
+    if (TWO_HAND_CATEGORIES.has(cat) || cat.endsWith('2h')) return false;
+    return true;
   }
 
   function resolveShieldType(shield) {
@@ -233,6 +246,8 @@
   function getOffhandModifierSlots(offhand, mainhand) {
     if (!offhand) return null;
     const offType = resolveTypeFromWeapon(offhand);
+    if (!OFFHAND_MODIFIER_TYPES.has(offType)) return null;
+    if (!isOneHandMainhand(mainhand)) return null;
     if (offType === 'SHIELD') {
       const shieldType = resolveShieldType(offhand);
       const variant = getShieldVariant(shieldType);
@@ -240,7 +255,6 @@
       return { kind: 'shield', title: variant.name || shieldType, slots: variant.slots, meta: { shieldType } };
     }
     if (offType === 'TOME') {
-      if (!isOneHandMainhand(mainhand)) return null;
       const mode = resolveTomeCouplingMode(offhand);
       const coupling = getTomeCoupling(mode);
       if (!coupling) return null;
@@ -782,7 +796,7 @@
     const castText = skill.castTime ? `${skill.castTime}s` : 'Instant';
     const rangeText = skill.range ? `${skill.range}m` : '—';
     const dmgTypeClass = skill.damageType || 'physical';
-    const icon = asset(skill.icon);
+    const icon = skill.iconUrl || asset(skill.icon);
 
     const modTag =
       skill._modifier === 'shield'
@@ -860,7 +874,7 @@
       const isUnlocked = slot && playerTier >= slot.unlockTier;
       const selectedId = selected[slotType];
       const skill = selectedId ? findSkill(typeDef, slotType, selectedId) : null;
-      const icon = skill ? asset(skill.icon) : '';
+      const icon = skill ? (skill.iconUrl || asset(skill.icon)) : '';
       const title = labels[slotType] || slotType;
       const skillName = skill?.name || (isUnlocked ? 'Empty' : 'Locked');
 
@@ -976,19 +990,21 @@
       OFFHAND_INJECT_SLOTS.includes(s.type),
     );
     const pseudo = { slots: injectSlots, _passives: [] };
-    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} active · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives when paired.</div>`;
+    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} active · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong> only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives.</div>`;
     return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
   /** Paired loadout controls — preview mainhand + shield/tome with F toggle */
   function renderPairedLoadoutBar(opts = {}) {
+    const mainTypeId = String(opts.mainTypeId || '').toUpperCase();
+    if (mainTypeId && !ONE_HAND_TYPES.has(mainTypeId)) return '';
     const offhand = opts.pairedOffhand || 'none';
     const toggleOn = opts.offhandToggleActive === true;
     const shieldKey = opts.shieldKey || 'kite';
     const tomeKey = opts.tomeKey || 'elemental';
 
     let html = '<div class="wst-paired-bar">';
-    html += '<span class="wst-variant-label">Paired off-hand:</span>';
+    html += '<span class="wst-variant-label">Paired off-hand (1H sword / knife / hammer / mace / axe):</span>';
     html += '<div class="wst-variant-bar">';
     for (const [id, label] of [
       ['none', 'None'],
@@ -1116,7 +1132,7 @@
         key: SLOT_HOTKEYS[i],
         slotType,
         skill,
-        icon: skill ? asset(skill.icon) : null,
+        icon: skill ? (skill.iconUrl || asset(skill.icon)) : null,
         label: skill?.name || SLOT_UI_LABELS[slotType],
         modifier: skill?._modifier || null,
       };
@@ -1128,6 +1144,7 @@
     CATEGORY_TO_TYPE,
     TYPE_TO_CATEGORIES,
     ONE_HAND_TYPES,
+    TWO_HAND_CATEGORIES,
     OFFHAND_MODIFIER_TYPES,
     OFFHAND_TOGGLE_KEY,
     OFFHAND_INJECT_SLOTS,

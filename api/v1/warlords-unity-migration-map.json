@@ -1,0 +1,1786 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-08-01T21:03:21.391Z",
+  "description": "Unity FRESH GRUDGE → Warlords-era asset migration map. Icons under Desktop/entities are SSOT for UI names; Unity prefabs are source for meshes/anims/buildings when present.",
+  "sources": {
+    "iconsDir": "C:/Users/nugye/Desktop/icons/icons/entities",
+    "unityProject": "C:/Users/nugye/Desktop/grudgeproduction/grudgenew/FRESH GRUDGE",
+    "ummorpg": "C:\\Users\\nugye\\Desktop\\grudgeproduction\\grudgenew\\FRESH GRUDGE\\Assets\\uMMORPG",
+    "prefabsRoot": "C:\\Users\\nugye\\Desktop\\grudgeproduction\\grudgenew\\FRESH GRUDGE\\Assets\\uMMORPG\\Prefabs",
+    "warlordsCdn": "https://assets.grudge-studio.com",
+    "objectStoreCatalog": "api/v1/warlords-entity-prefabs.json"
+  },
+  "principles": [
+    "Entity icons name the Warlords prefab id (entities/<slug>).",
+    "Match Unity prefab by alias or name before inventing meshes.",
+    "Player race bodies → prefer grudge6 CDN FBX over legacy Unity player prefabs.",
+    "Buildings: Structure Crusade/Legion/Fabled + Structures are primary Unity building sources.",
+    "Harvest/nature: prefer stylized CDN packs; Unity Harvestables are legacy fallback.",
+    "Preview/Invis prefabs are not ship targets.",
+    "Pipeline: Unity prefab → resolve FBX/anim → FBX→GLB bake → R2 + D1 → ObjectStore catalog."
+  ],
+  "pipeline": [
+    {
+      "step": 1,
+      "name": "inventory",
+      "script": "scripts/inventory-unity-warlords-migration.mjs"
+    },
+    {
+      "step": 2,
+      "name": "match_icons",
+      "output": "api/v1/warlords-unity-migration-map.json"
+    },
+    {
+      "step": 3,
+      "name": "extract_sources",
+      "output": "assets/unity-extract/"
+    },
+    {
+      "step": 4,
+      "name": "convert_glb",
+      "skill": "grudge-asset-convert / gltf-asset-pipeline"
+    },
+    {
+      "step": 5,
+      "name": "upload_r2_seed_d1",
+      "skill": "grudge-d1-r2"
+    },
+    {
+      "step": 6,
+      "name": "wire_warlords_loaders",
+      "skill": "grudge-warlords-assets"
+    }
+  ],
+  "domainCounts": {
+    "unclassified": 102,
+    "entity_other": 76,
+    "npc_race": 121,
+    "harvest": 83,
+    "monster_pve": 137,
+    "unit_heavy_merc": 24,
+    "mount": 68,
+    "unit_merc": 24,
+    "siege": 9,
+    "player_race": 24,
+    "vehicle": 23,
+    "environment": 47,
+    "equipment_mesh": 14,
+    "vfx": 460,
+    "building_crusade": 15,
+    "building_invis": 3,
+    "building_preview": 44,
+    "building_fabled": 15,
+    "building_legion": 15,
+    "building_neutral": 18
+  },
+  "migrationLanes": [
+    {
+      "lane": "player_race",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 5,
+      "note": "Player race shells — prefer grudge6 CDN race FBX for Warlords web",
+      "count": 24,
+      "samples": [
+        "Entities/Players/Barbarian.prefab",
+        "Entities/Players/cloths/GameObject.prefab",
+        "Entities/Players/cloths/Hat.prefab",
+        "Entities/Players/cloths/Long Cape 1.prefab",
+        "Entities/Players/cloths/Object.prefab",
+        "Entities/Players/cloths/Wide Cape 1.prefab",
+        "Entities/Players/Dwarf.prefab",
+        "Entities/Players/Elf.prefab",
+        "Entities/Players/Human.prefab",
+        "Entities/Players/Orc.prefab",
+        "Entities/Players/Player Effects/Arcane Syphon.prefab",
+        "Entities/Players/Player Effects/Berserker Rush.prefab"
+      ]
+    },
+    {
+      "lane": "unit_heavy_merc",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 10,
+      "note": "Guard/Defender heavy mercs",
+      "count": 24,
+      "samples": [
+        "Entities/Monsters/Deployable Merc Preview/Barbarian Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Dwarve Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Elf Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Barbarian Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Dwarve Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Elf Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Human Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Orc Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Heavy Undead Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Human Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Orc Merc Preview.prefab",
+        "Entities/Monsters/Deployable Merc Preview/Undead Merc Preview.prefab"
+      ]
+    },
+    {
+      "lane": "mount",
+      "kind": "mount",
+      "category": "mount",
+      "faction": null,
+      "priority": 10,
+      "note": "World mounts, mecha, drakes",
+      "count": 68,
+      "samples": [
+        "Entities/Mounts/Ancient Thrasher.prefab",
+        "Entities/Mounts/Dark Horse.prefab",
+        "Entities/Mounts/Drake Preview/Dragon Bone Preview.prefab",
+        "Entities/Mounts/Drake Preview/Emerald Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Forest Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Frigid Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Frost Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Hellfire Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Lava Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Nightstalker Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Rock Drake Preview.prefab",
+        "Entities/Mounts/Drake Preview/Void Drake Preview.prefab"
+      ]
+    },
+    {
+      "lane": "unit_merc",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 10,
+      "note": "Race mercs (Warrior/Ranger/Mage/Paladin) → grudge6 role kits + Warlords unit prefabs",
+      "count": 24,
+      "samples": [
+        "Entities/Pets/Mercs/Barbarian Mage.prefab",
+        "Entities/Pets/Mercs/Barbarian Paladin.prefab",
+        "Entities/Pets/Mercs/Barbarian Ranger.prefab",
+        "Entities/Pets/Mercs/Barbarian Warrior.prefab",
+        "Entities/Pets/Mercs/Dwarve Mage.prefab",
+        "Entities/Pets/Mercs/Dwarve Paladin.prefab",
+        "Entities/Pets/Mercs/Dwarve Ranger.prefab",
+        "Entities/Pets/Mercs/Dwarve Warrior.prefab",
+        "Entities/Pets/Mercs/Elf Mage.prefab",
+        "Entities/Pets/Mercs/Elf Paladin.prefab",
+        "Entities/Pets/Mercs/Elf Ranger.prefab",
+        "Entities/Pets/Mercs/Elf Warrior.prefab"
+      ]
+    },
+    {
+      "lane": "siege",
+      "kind": "siege",
+      "category": "siege",
+      "faction": null,
+      "priority": 10,
+      "note": "Faction catapults / bolt throwers",
+      "count": 9,
+      "samples": [
+        "Entities/Pets/Siege/Crusade Bolt Thrower.prefab",
+        "Entities/Pets/Siege/Crusade Catapult.prefab",
+        "Entities/Pets/Siege/Crusade Heavy Catapult.prefab",
+        "Entities/Pets/Siege/Fabled Bolt Thrower.prefab",
+        "Entities/Pets/Siege/Fabled Catapult.prefab",
+        "Entities/Pets/Siege/Fabled Heavy Catapult.prefab",
+        "Entities/Pets/Siege/Legion Bolt Thrower.prefab",
+        "Entities/Pets/Siege/Legion Catapult.prefab",
+        "Entities/Pets/Siege/Legion Heavy Catapult.prefab"
+      ]
+    },
+    {
+      "lane": "building_crusade",
+      "kind": "structure",
+      "category": "camp_building",
+      "faction": "crusade",
+      "priority": 10,
+      "note": null,
+      "count": 15,
+      "samples": [
+        "Structure Crusade/Barbarian House.prefab",
+        "Structure Crusade/Crusade Armory.prefab",
+        "Structure Crusade/Crusade Arsenal.prefab",
+        "Structure Crusade/Crusade Black Smith.prefab",
+        "Structure Crusade/Crusade Claim Flag.prefab",
+        "Structure Crusade/Crusade Gate.prefab",
+        "Structure Crusade/Crusade Laboratory.prefab",
+        "Structure Crusade/Crusade Loom.prefab",
+        "Structure Crusade/Crusade Stable.prefab",
+        "Structure Crusade/Crusade Study.prefab",
+        "Structure Crusade/Crusade Tent.prefab",
+        "Structure Crusade/Crusade Wall.prefab"
+      ]
+    },
+    {
+      "lane": "building_fabled",
+      "kind": "structure",
+      "category": "camp_building",
+      "faction": "fabled",
+      "priority": 10,
+      "note": null,
+      "count": 15,
+      "samples": [
+        "Structure Fabled/Dwarf House.prefab",
+        "Structure Fabled/Elf House.prefab",
+        "Structure Fabled/Fabled Armory.prefab",
+        "Structure Fabled/Fabled Arsenal.prefab",
+        "Structure Fabled/Fabled Black Smith.prefab",
+        "Structure Fabled/Fabled Claim Flag.prefab",
+        "Structure Fabled/Fabled Gate.prefab",
+        "Structure Fabled/Fabled Laboratory.prefab",
+        "Structure Fabled/Fabled Loom.prefab",
+        "Structure Fabled/Fabled Stable.prefab",
+        "Structure Fabled/Fabled Study.prefab",
+        "Structure Fabled/Fabled Tent.prefab"
+      ]
+    },
+    {
+      "lane": "building_legion",
+      "kind": "structure",
+      "category": "camp_building",
+      "faction": "legion",
+      "priority": 10,
+      "note": null,
+      "count": 15,
+      "samples": [
+        "Structure Legion/Legion Armory.prefab",
+        "Structure Legion/Legion Arsenal.prefab",
+        "Structure Legion/Legion Black Smith.prefab",
+        "Structure Legion/Legion Claim Flag.prefab",
+        "Structure Legion/Legion Gate.prefab",
+        "Structure Legion/Legion Laboratory.prefab",
+        "Structure Legion/Legion Loom.prefab",
+        "Structure Legion/Legion Stable.prefab",
+        "Structure Legion/Legion Study.prefab",
+        "Structure Legion/Legion Tent.prefab",
+        "Structure Legion/Legion Wall.prefab",
+        "Structure Legion/Legion Workbench.prefab"
+      ]
+    },
+    {
+      "lane": "building_neutral",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 12,
+      "note": "Campfire, benches, totems, storage, foundry",
+      "count": 18,
+      "samples": [
+        "Structures/Campfire.prefab",
+        "Structures/Chair.prefab",
+        "Structures/Claim Flag.prefab",
+        "Structures/Earth totem.prefab",
+        "Structures/effects/Build Effect.prefab",
+        "Structures/effects/Small Build Effect.prefab",
+        "Structures/Fire Totem.prefab",
+        "Structures/Foundry.prefab",
+        "Structures/Ladder.prefab",
+        "Structures/Large Furnace.prefab",
+        "Structures/Refinery.prefab",
+        "Structures/Sawmill.prefab"
+      ]
+    },
+    {
+      "lane": "vehicle",
+      "kind": "vehicle",
+      "category": "ship",
+      "faction": null,
+      "priority": 15,
+      "note": "Land + water vehicles",
+      "count": 23,
+      "samples": [
+        "Entities/Vehicles Land/Air Ship.prefab",
+        "Entities/Vehicles Land/Dragon Glider.prefab",
+        "Entities/Vehicles Land/Siege Tower.prefab",
+        "Entities/Vehicles Land/Yolocopter.prefab",
+        "Entities/Vehicles Water/Battle Ship.prefab",
+        "Entities/Vehicles Water/Catamaran.prefab",
+        "Entities/Vehicles Water/Vehicle Small Sailboat 1.prefab",
+        "Entities/Vehicles(original)/SailMultipleLocalParent.prefab",
+        "Entities/Vehicles(original)/UnderVehicleKiller.prefab",
+        "Entities/Vehicles(original)/VehicleBoat.prefab",
+        "Entities/Vehicles(original)/VehicleBoatDriverAttack.prefab",
+        "Entities/Vehicles(original)/VehicleBoatPassengerAttack.prefab"
+      ]
+    },
+    {
+      "lane": "npc_race",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 20,
+      "note": "Town NPCs per race",
+      "count": 121,
+      "samples": [
+        "Entities/GRUDGE NPCS/Barbarian Camp.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Barbarian Scout.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Barbarian Watchman.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Blacksmith.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Bounty Board.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Commander.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/scholar.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Storage.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCs/Traveler.prefab",
+        "Entities/GRUDGE NPCS/Barbarian NPCS.prefab",
+        "Entities/GRUDGE NPCS/Dwarf Camp.prefab",
+        "Entities/GRUDGE NPCS/Dwarf NPCs/Blacksmith.prefab"
+      ]
+    },
+    {
+      "lane": "harvest",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 20,
+      "note": "Prefer stylized nature packs on CDN for islands; Unity harvest = legacy",
+      "count": 83,
+      "samples": [
+        "Entities/Harvestables/Bag 1.prefab",
+        "Entities/Harvestables/Bag.prefab",
+        "Entities/Harvestables/Fish.prefab",
+        "Entities/Harvestables/Flower 1.prefab",
+        "Entities/Harvestables/Flower 2.prefab",
+        "Entities/Harvestables/Flower 3.prefab",
+        "Entities/Harvestables/Flower.prefab",
+        "Entities/Harvestables/Hemp.prefab",
+        "Entities/Harvestables/large blue crystal.prefab",
+        "Entities/Harvestables/large green crystal.prefab",
+        "Entities/Harvestables/large red crystal.prefab",
+        "Entities/Harvestables/Lv10 Chest.prefab"
+      ]
+    },
+    {
+      "lane": "monster_pve",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 30,
+      "note": "Dungeon / world mobs / bosses — migrate selectively",
+      "count": 137,
+      "samples": [
+        "Entities/Monsters/Arena Monsters/Lv10 Spawner.prefab",
+        "Entities/Monsters/Arena Monsters/Lv15 Spawner.prefab",
+        "Entities/Monsters/Arena Monsters/Lv20 Spawner.prefab",
+        "Entities/Monsters/Arena Monsters/Lv5 Spawner.prefab",
+        "Entities/Monsters/Arena Monsters/Notification.prefab",
+        "Entities/Monsters/Arena Monsters/PvPTeleport Bindpoint.prefab",
+        "Entities/Monsters/Arena Monsters/SpawnAfter.prefab",
+        "Entities/Monsters/Bandit Boss.prefab",
+        "Entities/Monsters/Bandit.prefab",
+        "Entities/Monsters/Castle Dungeon/Durahan The Destroyer.prefab",
+        "Entities/Monsters/Castle Dungeon/Gargoyle.prefab",
+        "Entities/Monsters/Castle Dungeon/War Bear.prefab"
+      ]
+    },
+    {
+      "lane": "equipment_mesh",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 35,
+      "note": null,
+      "count": 14,
+      "samples": [
+        "ItemModels/Archer Clothes/Archer Boots.prefab",
+        "ItemModels/Archer Clothes/Archer Chest.prefab",
+        "ItemModels/Archer Clothes/Archer Legs.prefab",
+        "ItemModels/Archer Clothes/Archer Shoulders.prefab",
+        "ItemModels/Blacksmiths Shield.prefab",
+        "ItemModels/Blacksmiths Sword.prefab",
+        "ItemModels/Skeleton Helmet.prefab",
+        "ItemModels/Warrior Clothes/Arms.prefab",
+        "ItemModels/Warrior Clothes/Boots.prefab",
+        "ItemModels/Warrior Clothes/Gloves.prefab",
+        "ItemModels/Warrior Clothes/Helmet.prefab",
+        "ItemModels/Warrior Clothes/Legs.prefab"
+      ]
+    },
+    {
+      "lane": "environment",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 40,
+      "note": null,
+      "count": 47,
+      "samples": [
+        "Environment/Boat.prefab",
+        "Environment/Dojo.prefab",
+        "Environment/Floating Dungeon (1).prefab",
+        "Environment/Foliage/Bush03_B_LOD0 (1).prefab",
+        "Environment/Foliage/BushB2.prefab",
+        "Environment/Foliage/bush_02a.prefab",
+        "Environment/Foliage/bush_03.prefab",
+        "Environment/Foliage/bush_04.prefab",
+        "Environment/Foliage/bush_04b.prefab",
+        "Environment/Foliage/fern.prefab",
+        "Environment/Foliage/fern_01.prefab",
+        "Environment/Foliage/fern_02.prefab"
+      ]
+    },
+    {
+      "lane": "entity_other",
+      "kind": "unit",
+      "category": "unit",
+      "faction": null,
+      "priority": 50,
+      "note": null,
+      "count": 76,
+      "samples": [
+        "Entities/Backup mobs/Berserker.prefab",
+        "Entities/Backup mobs/Centaur.prefab",
+        "Entities/Backup mobs/Hunter.prefab",
+        "Entities/Backup mobs/Lancer.prefab",
+        "Entities/Backup mobs/LowPoly_Cyc.prefab",
+        "Entities/Backup mobs/LowPoly_Skeleton.prefab",
+        "Entities/Backup mobs/LowPoly_Sus.prefab",
+        "Entities/Backup mobs/minotaur1.prefab",
+        "Entities/Backup mobs/Minotos.prefab",
+        "Entities/Backup mobs/Tortoise_Boss_Anims (1).prefab",
+        "Entities/Backup mobs/troll.prefab",
+        "Entities/Ghost Wolf.prefab"
+      ]
+    },
+    {
+      "lane": "vfx",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 80,
+      "note": "VFX — separate VFX pipeline, not entity mesh",
+      "count": 460,
+      "samples": [
+        "Particles/Prefabs/Auras/Aura_Arcane.prefab",
+        "Particles/Prefabs/Auras/Aura_Dark.prefab",
+        "Particles/Prefabs/Auras/Aura_Fire.prefab",
+        "Particles/Prefabs/Auras/Aura_Ice.prefab",
+        "Particles/Prefabs/Auras/Aura_Light.prefab",
+        "Particles/Prefabs/Auras/Aura_Nature.prefab",
+        "Particles/Prefabs/Auras/Aura_Storm.prefab",
+        "Particles/Prefabs/Buffs/Buff_Arcane.prefab",
+        "Particles/Prefabs/Buffs/Buff_Dark.prefab",
+        "Particles/Prefabs/Buffs/Buff_Fire.prefab",
+        "Particles/Prefabs/Buffs/Buff_Ice.prefab",
+        "Particles/Prefabs/Buffs/Buff_Light.prefab"
+      ]
+    },
+    {
+      "lane": "building_preview",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 90,
+      "note": "Ghost/preview only — do not ship as mesh",
+      "count": 44,
+      "samples": [
+        "Structure Crusade Preview/Armory Preview.prefab",
+        "Structure Crusade Preview/Arsenal  Preview.prefab",
+        "Structure Crusade Preview/Barbarian House 1.prefab",
+        "Structure Crusade Preview/Blacksmith Preview.prefab",
+        "Structure Crusade Preview/Crusade Claim Flag (1).prefab",
+        "Structure Crusade Preview/Human House 1.prefab",
+        "Structure Crusade Preview/Laboratory Preview.prefab",
+        "Structure Crusade Preview/Loom Preview.prefab",
+        "Structure Crusade Preview/Stable Preview.prefab",
+        "Structure Crusade Preview/Study Preview.prefab",
+        "Structure Crusade Preview/Tent Crusade Preview.prefab",
+        "Structure Crusade Preview/Wood Door Preview.prefab"
+      ]
+    },
+    {
+      "lane": "building_invis",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 95,
+      "note": "Collider shells — skip mesh export",
+      "count": 3,
+      "samples": [
+        "Structure Crusade Invis/Crusade Wall.prefab",
+        "Structure Fabled Invis/Fabled Wall.prefab",
+        "Structure Legion Invis/Legion Wall.prefab"
+      ]
+    },
+    {
+      "lane": "unclassified",
+      "kind": "structure",
+      "category": "structure",
+      "faction": null,
+      "priority": 99,
+      "note": null,
+      "count": 102,
+      "samples": [
+        "Air Ship Model.prefab",
+        "Bag_A.prefab",
+        "Banner_b (1).prefab",
+        "Boat Model.prefab",
+        "DamagePopup.prefab",
+        "Dungeons/Catacombs underground.prefab",
+        "Dungeons/Cube.prefab",
+        "Dungeons/Dark Elf Castle lv1.prefab",
+        "Dungeons/Dark elf Castle.prefab",
+        "Dungeons/Dungeon.prefab",
+        "Dungeons/Enterence.prefab",
+        "Dungeons/Sewer.prefab"
+      ]
+    }
+  ],
+  "iconCoverage": {
+    "icons": 118,
+    "prefabsScanned": 1322,
+    "matched": 108,
+    "weak": 0,
+    "unmatched": 0,
+    "uiOnly": 10,
+    "withMeshFbx": 61,
+    "withAnims": 66,
+    "guidAssetsIndexed": 7338
+  },
+  "iconMatches": [
+    {
+      "icon": "Air Ship",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Vehicles Land/Air Ship.prefab",
+      "lane": "vehicle",
+      "meshes": 1,
+      "anims": 0
+    },
+    {
+      "icon": "Armory Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Armory.prefab",
+      "lane": "building_crusade",
+      "meshes": 2,
+      "anims": 3
+    },
+    {
+      "icon": "Arsenal Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Arsenal.prefab",
+      "lane": "building_crusade",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "barb archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Barbarian Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "Barb merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Barbarian Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "barb paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Barbarian Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "barb warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Barbarian Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "barbarian cabin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Barbarian House.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "barbarian Mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Barbarian Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "Battle Ship",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Vehicles Water/Battle Ship.prefab",
+      "lane": "vehicle",
+      "meshes": 1,
+      "anims": 0
+    },
+    {
+      "icon": "Bed Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Blacksmith Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Black Smith.prefab",
+      "lane": "building_crusade",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Boat Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Vehicles Water/Vehicle Small Sailboat 1.prefab",
+      "lane": "vehicle",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Bolt Thrower",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Siege/Crusade Bolt Thrower.prefab",
+      "lane": "siege",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Brute Mecha Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Mecha/Brute Mecha.prefab",
+      "lane": "mount",
+      "meshes": 1,
+      "anims": 1
+    },
+    {
+      "icon": "Campfire",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Campfire.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Castle Gate Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Gate.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Castle Stairs Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Wood Stairs.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Castle Wall Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Wall.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Catamaran",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Vehicles Water/Catamaran.prefab",
+      "lane": "vehicle",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Catapult",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Siege/Crusade Catapult.prefab",
+      "lane": "siege",
+      "meshes": 9,
+      "anims": 8
+    },
+    {
+      "icon": "Chair",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Chair.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Dark Horse",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Dark Horse.prefab",
+      "lane": "mount",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "Dragon Glider Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/World Mounts/Dragon Fly Mecha.prefab",
+      "lane": "mount",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "dwarf archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Dwarve Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "dwarf house",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Fabled/Dwarf House.prefab",
+      "lane": "building_fabled",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "dwarf mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Dwarve Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "dwarf paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Dwarve Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "dwarf warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Dwarve Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "Dwarve merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Dwarve Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "elf archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Elf Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "elf house",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Fabled/Elf House.prefab",
+      "lane": "building_fabled",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "elf mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Elf Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 2
+    },
+    {
+      "icon": "Elf Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Elf Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 2,
+      "anims": 2
+    },
+    {
+      "icon": "elf paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Elf Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 2
+    },
+    {
+      "icon": "elf warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Elf Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "Flag Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Claim Flag.prefab",
+      "lane": "building_neutral",
+      "meshes": 1,
+      "anims": 0
+    },
+    {
+      "icon": "Foundry Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Foundry.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "heavy barb merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Barbarian Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 6,
+      "anims": 1
+    },
+    {
+      "icon": "Heavy Catapult",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Siege/Crusade Heavy Catapult.prefab",
+      "lane": "siege",
+      "meshes": 1,
+      "anims": 1
+    },
+    {
+      "icon": "Heavy Dwarve Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Dwarve Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Heavy Elf Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Elf Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Heavy Human Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Human Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "Heavy Orc Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Orc Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 3,
+      "anims": 2
+    },
+    {
+      "icon": "Heavy Undead Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Undead Defender.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 6,
+      "anims": 1
+    },
+    {
+      "icon": "horse",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Horse.prefab",
+      "lane": "mount",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "House Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Human House.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "human archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Human Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "Human Cabin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Human House.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "human mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Human Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Human Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Human Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "human paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Human Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Human Warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Human Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 3,
+      "anims": 1
+    },
+    {
+      "icon": "Laboritory",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Laboratory.prefab",
+      "lane": "building_crusade",
+      "meshes": 1,
+      "anims": 0
+    },
+    {
+      "icon": "Ladder",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Ladder.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Lamp Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Large Furnace Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Large Furnace.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Legion Alch",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Laboratory.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "legion armory",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Armory.prefab",
+      "lane": "building_legion",
+      "meshes": 9,
+      "anims": 3
+    },
+    {
+      "icon": "Legion Arsenal",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Arsenal.prefab",
+      "lane": "building_legion",
+      "meshes": 9,
+      "anims": 3
+    },
+    {
+      "icon": "Legion Blacksmith",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Black Smith.prefab",
+      "lane": "building_legion",
+      "meshes": 5,
+      "anims": 1
+    },
+    {
+      "icon": "Legion Claim Flag",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Claim Flag.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Legion Loom",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Loom.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Legion Stable",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Stable.prefab",
+      "lane": "building_legion",
+      "meshes": 8,
+      "anims": 4
+    },
+    {
+      "icon": "Legion Study",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Study.prefab",
+      "lane": "building_legion",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "Legion Workbench",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Workbench.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Loom",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Loom.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Market Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "orc archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Orc Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "orc hut",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Orc House.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "orc mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Orc Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "Orc Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Orc Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 3,
+      "anims": 2
+    },
+    {
+      "icon": "orc paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Orc Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 4,
+      "anims": 2
+    },
+    {
+      "icon": "orc warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Orc Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "Ram mount",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Ram.prefab",
+      "lane": "mount",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Recycler Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Refinery Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Refinery.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Sawmill Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Sawmill.prefab",
+      "lane": "building_neutral",
+      "meshes": 2,
+      "anims": 2
+    },
+    {
+      "icon": "Scorpid Launcher Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Mecha/Scorpid Launcher Mecha.prefab",
+      "lane": "mount",
+      "meshes": 0,
+      "anims": 2
+    },
+    {
+      "icon": "Siege Tower",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Skeeter Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Mecha/Skeeter Mecha.prefab",
+      "lane": "mount",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "Small Furnace Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Large Furnace.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Small Wardrobe Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Stable Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Stable.prefab",
+      "lane": "building_crusade",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "Stone Gate Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Gate.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Stone Stairs Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Fabled/Wood Stairs 1.prefab",
+      "lane": "building_fabled",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Stone Wall Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Wall.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Storage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Storage Crate.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Study",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Study.prefab",
+      "lane": "building_crusade",
+      "meshes": 6,
+      "anims": 1
+    },
+    {
+      "icon": "Table Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tannery",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Tannery.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Cruisade Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Tent.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Cruisade Small",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Tent.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Fabled Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Fabled/Fabled Tent.prefab",
+      "lane": "building_fabled",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Fabled Small",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Fabled/Fabled Tent.prefab",
+      "lane": "building_fabled",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Legion Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Tent.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Tent Legion Small",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Legion Tent.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "totem 2",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Fire Totem.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "totem 3",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Water totem.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "totem 4",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Wind totem.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "totem1",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structures/Earth totem.prefab",
+      "lane": "building_neutral",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "tower 2",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "tower",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "und horse",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Undead Horse.prefab",
+      "lane": "mount",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "undead archer",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Undead Ranger.prefab",
+      "lane": "unit_merc",
+      "meshes": 6,
+      "anims": 2
+    },
+    {
+      "icon": "undead crypt",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Legion/Undead House.prefab",
+      "lane": "building_legion",
+      "meshes": 0,
+      "anims": 1
+    },
+    {
+      "icon": "undead mage",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Undead Mage.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "Undead Merc",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Monsters/Deployable Mercs/Undead Guard.prefab",
+      "lane": "unit_heavy_merc",
+      "meshes": 5,
+      "anims": 1
+    },
+    {
+      "icon": "undead paladin",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Undead Paladin.prefab",
+      "lane": "unit_merc",
+      "meshes": 5,
+      "anims": 2
+    },
+    {
+      "icon": "undead warrior",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Pets/Mercs/Undead Warrior.prefab",
+      "lane": "unit_merc",
+      "meshes": 6,
+      "anims": 2
+    },
+    {
+      "icon": "Wardrobe Icon",
+      "status": "ui_only",
+      "method": "alias_null",
+      "score": 0,
+      "prefab": null,
+      "lane": null,
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "White Horse",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/White Horse.prefab",
+      "lane": "mount",
+      "meshes": 4,
+      "anims": 1
+    },
+    {
+      "icon": "wolf mount",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Mounts/Wolf.prefab",
+      "lane": "mount",
+      "meshes": 2,
+      "anims": 1
+    },
+    {
+      "icon": "Wood Gate Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Gate.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Wood Stairs Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Wood Stairs.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Wood Wall Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Wall.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "Workbench",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Structure Crusade/Crusade Workbench.prefab",
+      "lane": "building_crusade",
+      "meshes": 0,
+      "anims": 0
+    },
+    {
+      "icon": "YoloCopter Icon",
+      "status": "matched",
+      "method": "alias",
+      "score": 100,
+      "prefab": "Entities/Vehicles Land/Yolocopter.prefab",
+      "lane": "vehicle",
+      "meshes": 0,
+      "anims": 0
+    }
+  ],
+  "unmatchedIcons": [
+    {
+      "icon": "Bed Icon",
+      "slug": "bed",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Lamp Icon",
+      "slug": "lamp",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Market Icon",
+      "slug": "market",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Recycler Icon",
+      "slug": "recycler",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Siege Tower",
+      "slug": "siege_tower",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Small Wardrobe Icon",
+      "slug": "small_wardrobe",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Table Icon",
+      "slug": "table",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "tower 2",
+      "slug": "tower_2",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "tower",
+      "slug": "tower",
+      "reason": "explicit_null_alias_ui_only"
+    },
+    {
+      "icon": "Wardrobe Icon",
+      "slug": "wardrobe",
+      "reason": "explicit_null_alias_ui_only"
+    }
+  ],
+  "weakMatches": [],
+  "priorityMigrationTargets": {
+    "description": "Ship-first lanes for entity icons that already exist in Unity",
+    "lanes": [
+      "unit_merc",
+      "unit_heavy_merc",
+      "siege",
+      "mount",
+      "vehicle",
+      "building_crusade",
+      "building_legion",
+      "building_fabled",
+      "building_neutral"
+    ]
+  }
+}

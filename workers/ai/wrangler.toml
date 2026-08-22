@@ -4,9 +4,12 @@
 # Dev:    wrangler dev --config workers/ai/wrangler.toml
 # ─────────────────────────────────────────────────────────────────────
 
-name = "grudge-ai-hub"
+# STALE fork — production AI is F:\GitHub\grudge-ai-hub (ai.grudge-studio.com).
+# Do not bind that hostname here.
+name = "grudge-ai-hub-objectstore-legacy"
 main = "index.js"
 compatibility_date = "2025-03-01"
+workers_dev = true
 
 # ── Workers AI ──────────────────────────────────────────────────────
 [ai]
@@ -15,7 +18,7 @@ binding = "AI"
 # ── Environment variables ──────────────────────────────────────
 # Wildcards (leading '*.') are supported by the cors() matcher in index.js.
 [vars]
-ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,*.grudge-studio.com,*.grudgestudio.com,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,*.vercel.app,*.puter.site,https://app.puter.com,http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
+ALLOWED_ORIGINS = "https://molochdagod.github.io,https://grudgewarlords.com,https://www.grudgewarlords.com,https://grudge-studio.com,https://grudge.studio,*.grudge-studio.com,*.grudge.studio,*.grudgestudio.com,https://open.grudge-studio.com,https://casting.grudge.studio,https://grudgedot-launcher.vercel.app,https://grudge-engine-web.vercel.app,https://grudge-builder.vercel.app,*.vercel.app,*.puter.site,*.puter.work,https://app.puter.com,http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
 OBJECTSTORE_URL = "https://objectstore.grudge-studio.com"
 ENVIRONMENT = "production"
 MAX_PAYLOAD_BYTES = "65536"
@@ -48,7 +51,4 @@ database_id = "8fc367a8-9120-490e-a503-b0fcb755c044"
 binding = "KV"
 id = "486553dfacdc40b394e630b1cdfa97d6"
 
-# ── Custom domain ────────────────────────────────────────────────────────
-[[routes]]
-pattern = "ai.grudge-studio.com"
-custom_domain = true
+# Custom domain REMOVED — ai.grudge-studio.com belongs to grudge-ai-hub.

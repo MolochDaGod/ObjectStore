@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-06",
+  "title": "Grudge Warlords HUD / command / upgrade icons",
+  "authorSource": "D:/Games/Models/animationsadded/animator/public/icons",
+  "cdnBases": [
+    "https://assets.grudge-studio.com/icons/hud/",
+    "https://assets.grudge-studio.com/icons/warlords/commands/",
+    "https://assets.grudge-studio.com/icons/animator/"
+  ],
+  "registry": "D:/Games/Models/animationsadded/animator/src/three/icons.ts (UI_ICONS + ACTION_ICONS)",
+  "note": "Framed gold RPG icons for unit orders, HUD pads, skill slots, and upgrade trees. Pair cast skills with BEAM_CAST_FX / VFX sandbox (Alt+VBFGTC). Verify casts on Toon RTS at casting-abilities-threejs.vercel.app + grudge6 lab.",
+  "hudCommandBar": [
+    { "id": "move", "icon": "move.png", "label": "Move", "slot": "cmd_0", "key": "M", "category": "orders" },
+    { "id": "attack", "icon": "attack.png", "label": "Attack", "slot": "cmd_1", "key": "A", "category": "orders" },
+    { "id": "stop", "icon": "stop.png", "label": "Stop", "slot": "cmd_2", "key": "S", "category": "orders" },
+    { "id": "hold", "icon": "hold.png", "label": "Hold", "slot": "cmd_3", "key": "H", "category": "orders" },
+    { "id": "patrol", "icon": "patrol.png", "label": "Patrol", "slot": "cmd_4", "key": "P", "category": "orders", "imageRef": "user Image #1 style: flag+arrows" },
+    { "id": "guard", "icon": "guard.png", "label": "Guard", "slot": "cmd_5", "key": "G", "category": "orders" },
+    { "id": "defend", "icon": "defend.png", "label": "Defend", "slot": "cmd_6", "category": "orders" },
+    { "id": "charge", "icon": "charge.png", "label": "Charge", "slot": "cmd_7", "category": "orders" },
+    { "id": "retreat", "icon": "retreat.png", "label": "Retreat", "slot": "cmd_8", "category": "orders", "imageRef": "user Image #7 blue banner left arrow" },
+    { "id": "rally", "icon": "rally.png", "label": "Rally", "slot": "cmd_9", "category": "orders", "imageRef": "user Image #4 lion banner army" }
+  ],
+  "economyBuild": [
+    { "id": "build", "icon": "build.png", "label": "Build", "slot": "eco_0" },
+    { "id": "repair", "icon": "repair.png", "label": "Repair", "slot": "eco_1", "imageRef": "user Image #5 hammer anvil" },
+    { "id": "harvest", "icon": "harvest.png", "label": "Harvest", "slot": "eco_2" },
+    { "id": "trade", "icon": "trade.png", "label": "Trade", "slot": "eco_3" },
+    { "id": "inventory", "icon": "inventory.png", "label": "Inventory", "slot": "eco_4" },
+    { "id": "loot", "icon": "loot.png", "label": "Loot", "slot": "eco_5" }
+  ],
+  "scoutingSiege": [
+    { "id": "scout", "icon": "scout.png", "label": "Scout", "slot": "mil_0", "imageRef": "user Image #8 telescope" },
+    { "id": "explore", "icon": "explore.png", "label": "Explore", "slot": "mil_1" },
+    { "id": "ambush", "icon": "ambush.png", "label": "Ambush", "slot": "mil_2" },
+    { "id": "siege", "icon": "siege.png", "label": "Siege", "slot": "mil_3", "imageRef": "user Image #10 trebuchet" },
+    { "id": "disband", "icon": "disband.png", "label": "Disband", "slot": "mil_4" }
+  ],
+  "socialRest": [
+    { "id": "rest", "icon": "rest.png", "label": "Rest", "slot": "soc_0", "imageRef": "user Image #6 campfire" },
+    { "id": "pray", "icon": "pray.png", "label": "Pray / Channel", "slot": "soc_1", "imageRef": "user Image #3 praying hands", "castHint": "tome/staff channel + events/casting-spell" },
+    { "id": "equip", "icon": "equip.png", "label": "Equip", "slot": "soc_2" },
+    { "id": "unequip", "icon": "unequip.png", "label": "Unequip", "slot": "soc_3" }
+  ],
+  "studioUpgrades": [
+    { "id": "physics", "icon": "physics.png", "label": "Physics / Systems", "slot": "up_0", "imageRef": "user Image #2 gears", "panel": "settings" },
+    { "id": "scriptable-skills", "icon": "scriptable-skills.png", "label": "Scriptable Skills", "slot": "up_1", "imageRef": "user Image #9 scroll code", "panel": "skills" },
+    { "id": "skill-vfx-lab", "icon": "skill-vfx-lab.png", "label": "Skill VFX Lab", "slot": "up_2", "panel": "vfx" },
+    { "id": "skill-slot", "icon": "skill-slot.png", "label": "Skill Slot frame", "slot": "up_3" },
+    { "id": "action-bar", "icon": "action-bar.png", "label": "Action Bar chrome", "slot": "up_4" },
+    { "id": "combat-pad", "icon": "combat-pad.png", "label": "Combat Pad", "slot": "up_5" },
+    { "id": "movement-pad", "icon": "movement-pad.png", "label": "Movement Pad", "slot": "up_6" },
+    { "id": "loadout-card", "icon": "loadout-card.png", "label": "Loadout Card", "slot": "up_7" },
+    { "id": "gear-trial", "icon": "gear-trial.png", "label": "Gear Trial", "slot": "up_8" },
+    { "id": "building-kit", "icon": "building-kit.png", "label": "Building Kit", "slot": "up_9" }
+  ],
+  "weaponSkillIconHints": {
+    "sword": "attack.png",
+    "greatsword": "siege.png",
+    "dagger": "ambush.png",
+    "spear": "patrol.png",
+    "bow": "scout.png",
+    "staff": "skill-vfx-lab.png",
+    "tome": "pray.png",
+    "grimoire": "pray.png",
+    "pistol": "stop.png",
+    "rifle": "defend.png",
+    "hammer": "repair.png",
+    "shield": "guard.png"
+  },
+  "castEffectsVerify": {
+    "site": "https://casting-abilities-threejs.vercel.app/",
+    "character": "Toon RTS / grudge6 GLB from assets CDN toon-rts-characters pack",
+    "cdnKits": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{race}.glb",
+    "vfxHotkeys": "Alt+V ice · Alt+B moon · Alt+F frost wave · Alt+G aura · Alt+T earth · Alt+C fireball (grudge-vfx-hotkeys)",
+    "tomeCast": {
+      "mesh": "https://assets.grudge-studio.com/models/weapons/tome.glb",
+      "animPack": "magic",
+      "channel": "prod/anims/events/casting-spell.json",
+      "beamProfile": "tome",
+      "icon": "pray.png"
+    },
+    "checklist": [
+      "Load grudge6 race GLB (toonRts)",
+      "Equip tome on L_hand_container with grip offset",
+      "Play magic cast / channel clip",
+      "Spawn bolt/heal/aura from hand or tome origin",
+      "HUD skill slots use pray / skill-vfx-lab icons from icons/hud/"
+    ]
+  },
+  "urlFor": {
+    "move": "https://assets.grudge-studio.com/icons/hud/move.png",
+    "patrol": "https://assets.grudge-studio.com/icons/hud/patrol.png",
+    "physics": "https://assets.grudge-studio.com/icons/hud/physics.png",
+    "pray": "https://assets.grudge-studio.com/icons/hud/pray.png",
+    "rally": "https://assets.grudge-studio.com/icons/hud/rally.png",
+    "repair": "https://assets.grudge-studio.com/icons/hud/repair.png",
+    "rest": "https://assets.grudge-studio.com/icons/hud/rest.png",
+    "retreat": "https://assets.grudge-studio.com/icons/hud/retreat.png",
+    "scout": "https://assets.grudge-studio.com/icons/hud/scout.png",
+    "scriptable-skills": "https://assets.grudge-studio.com/icons/hud/scriptable-skills.png",
+    "siege": "https://assets.grudge-studio.com/icons/hud/siege.png"
+  }
+}

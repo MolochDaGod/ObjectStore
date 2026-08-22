@@ -1,0 +1,839 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-13T01:04:26.413Z",
+  "title": "Game-ready scene catalog (CDN verified)",
+  "description": "Assets that HEAD green on assets.grudge-studio.com — converted/baked production meshes for Forge and fleet scenes. SI metres. Agents must only spawn listed loadInScene / builtin keys.",
+  "cdn": "https://assets.grudge-studio.com",
+  "si": {
+    "unit": "1 unit = 1 metre",
+    "humanHeightM": 1.8,
+    "orcHeightM": 2,
+    "rule": "Never fit weapons to human height"
+  },
+  "summary": {
+    "sceneReady": 27,
+    "failedHead": 0,
+    "byGroup": {
+      "characters": 13,
+      "weapons": 6,
+      "maps": 5,
+      "buildings": 3
+    }
+  },
+  "agentRules": [
+    "Prefer builtin: keys from this catalog or Forge Fast",
+    "Absolute URL only assets.grudge-studio.com",
+    "After spawn: verify_mesh_scale + verify_textures",
+    "Characters: one AnimationMixer; Bip001 packs; strip position tracks",
+    "Do not use molochdagod.github.io for production scenes"
+  ],
+  "models3dGameLab": {
+    "total": 337,
+    "gameReadyOnDisk": 337,
+    "avgReadiness": 81,
+    "byKind": {
+      "prop": 31,
+      "character": 6,
+      "character-animated": 3,
+      "kaykit-rig": 2,
+      "static-mesh": 1,
+      "weapon": 276,
+      "animation-clip": 18
+    },
+    "warning": "models3d-game.json paths use github.io ObjectStore — NOT assets.grudge-studio.com. Re-upload _game-ready/* to R2 before scene use.",
+    "pipeline": {
+      "audit": "npm run audit:models",
+      "optimize": "npm run optimize:models",
+      "manifest": "npm run build:models-game",
+      "full": "npm run build:models-pipeline"
+    }
+  },
+  "items": [
+    {
+      "id": "toon-human",
+      "label": "Toon RTS · Human",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/human.glb",
+      "builtin": "builtin:race:warrior",
+      "si": {
+        "heightM": 1.8,
+        "note": "human yardstick"
+      },
+      "bake": "toon-rts-glb",
+      "anim": "Bip001 packs optional",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb"
+      },
+      "loadInScene": "builtin:race:warrior",
+      "agentSpawn": {
+        "preferred": "builtin:race:warrior",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "toon-orc",
+      "label": "Toon RTS · Orc",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/orc.glb",
+      "builtin": "builtin:race:orc",
+      "si": {
+        "heightM": 2,
+        "note": "orc ~2 m"
+      },
+      "bake": "toon-rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb"
+      },
+      "loadInScene": "builtin:race:orc",
+      "agentSpawn": {
+        "preferred": "builtin:race:orc",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "toon-elf",
+      "label": "Toon RTS · Elf",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/elf.glb",
+      "builtin": "builtin:race:elf",
+      "si": {
+        "heightM": 1.8
+      },
+      "bake": "toon-rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb"
+      },
+      "loadInScene": "builtin:race:elf",
+      "agentSpawn": {
+        "preferred": "builtin:race:elf",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "toon-dwarf",
+      "label": "Toon RTS · Dwarf",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
+      "builtin": "builtin:race:dwarf",
+      "si": {
+        "heightM": 1.4
+      },
+      "bake": "toon-rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb"
+      },
+      "loadInScene": "builtin:race:dwarf",
+      "agentSpawn": {
+        "preferred": "builtin:race:dwarf",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "toon-barbarian",
+      "label": "Toon RTS · Barbarian",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
+      "builtin": "builtin:race:frost-dwarf",
+      "si": {
+        "heightM": 1.85
+      },
+      "bake": "toon-rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb"
+      },
+      "loadInScene": "builtin:race:frost-dwarf",
+      "agentSpawn": {
+        "preferred": "builtin:race:frost-dwarf",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "toon-undead",
+      "label": "Toon RTS · Undead",
+      "group": "characters",
+      "r2Key": "asset-packs/toon-rts-characters/glb/characters/undead.glb",
+      "builtin": "builtin:race:skeleton",
+      "si": {
+        "heightM": 1.8
+      },
+      "bake": "toon-rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb"
+      },
+      "loadInScene": "builtin:race:skeleton",
+      "agentSpawn": {
+        "preferred": "builtin:race:skeleton",
+        "absolute": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-wk",
+      "label": "Grudge6 · WK kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/WK_Characters.glb",
+      "builtin": "builtin:grudge6:warrior",
+      "si": {
+        "heightM": 1.8,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "anim": "Bip001 sword_shield/longbow/magic",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:warrior",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:warrior",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/WK_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-orc",
+      "label": "Grudge6 · ORC kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/ORC_Characters.glb",
+      "builtin": "builtin:grudge6:orc",
+      "si": {
+        "heightM": 2,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:orc",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:orc",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/ORC_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-elf",
+      "label": "Grudge6 · ELF kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/ELF_Characters.glb",
+      "builtin": "builtin:grudge6:elf",
+      "si": {
+        "heightM": 1.8,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:elf",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:elf",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/ELF_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-dwf",
+      "label": "Grudge6 · DWF kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/DWF_Characters.glb",
+      "builtin": "builtin:grudge6:dwarf",
+      "si": {
+        "heightM": 1.4,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:dwarf",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:dwarf",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/DWF_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-brb",
+      "label": "Grudge6 · BRB kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/BRB_Characters.glb",
+      "builtin": "builtin:grudge6:frost-dwarf",
+      "si": {
+        "heightM": 1.85,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:frost-dwarf",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:frost-dwarf",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/BRB_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "g6-ud",
+      "label": "Grudge6 · UD kit",
+      "group": "characters",
+      "r2Key": "models/grudge6/races/UD_Characters.glb",
+      "builtin": "builtin:grudge6:skeleton",
+      "si": {
+        "heightM": 1.8,
+        "modular": true
+      },
+      "bake": "grudge6-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb"
+      },
+      "loadInScene": "builtin:grudge6:skeleton",
+      "agentSpawn": {
+        "preferred": "builtin:grudge6:skeleton",
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/UD_Characters.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-wk-sword",
+      "label": "WK Sword A",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/human/WK_weapon_sword_A.glb",
+      "si": {
+        "lengthM": "~1.0",
+        "note": "never fit to human height"
+      },
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/human/WK_weapon_sword_A.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/human/WK_weapon_sword_A.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/human/WK_weapon_sword_A.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/human/WK_weapon_sword_A.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-elf-bow",
+      "label": "ELF Bow",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/elf/ELF_weapon_bow.glb",
+      "si": {
+        "lengthM": "~1.2"
+      },
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/elf/ELF_weapon_bow.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/elf/ELF_weapon_bow.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/elf/ELF_weapon_bow.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/elf/ELF_weapon_bow.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-orc-axe",
+      "label": "ORC Axe A",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/orc/ORC_weapon_Axe_A.glb",
+      "si": {
+        "lengthM": "~1.1"
+      },
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/orc/ORC_weapon_Axe_A.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/orc/ORC_weapon_Axe_A.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/orc/ORC_weapon_Axe_A.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/orc/ORC_weapon_Axe_A.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-dwf-axe",
+      "label": "DWF Axe A",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/dwarf/DWF_Weapon_axe_A.glb",
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/dwarf/DWF_Weapon_axe_A.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/dwarf/DWF_Weapon_axe_A.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/dwarf/DWF_Weapon_axe_A.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/dwarf/DWF_Weapon_axe_A.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-brb-hammer",
+      "label": "BRB Hammer A",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/barbarian/BRB_weapon_hammer_A.glb",
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/barbarian/BRB_weapon_hammer_A.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/barbarian/BRB_weapon_hammer_A.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/barbarian/BRB_weapon_hammer_A.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/barbarian/BRB_weapon_hammer_A.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "wpn-ud-sword",
+      "label": "UD Sword A",
+      "group": "weapons",
+      "r2Key": "models/grudge6/races/library/undead/UD_weapon_Sword_A.glb",
+      "bake": "grudge6-library-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/races/library/undead/UD_weapon_Sword_A.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/grudge6/races/library/undead/UD_weapon_Sword_A.glb"
+      },
+      "loadInScene": "https://assets.grudge-studio.com/models/grudge6/races/library/undead/UD_weapon_Sword_A.glb",
+      "agentSpawn": {
+        "preferred": null,
+        "absolute": "https://assets.grudge-studio.com/models/grudge6/races/library/undead/UD_weapon_Sword_A.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "map-pirate",
+      "label": "Pirate Islands",
+      "group": "maps",
+      "r2Key": "models/lobby/pirate-islands/scene.glb",
+      "builtin": "builtin:map-pirate-islands-scene",
+      "si": {
+        "note": "world map SI metres"
+      },
+      "bake": "production-map",
+      "cdnUrl": "https://assets.grudge-studio.com/models/lobby/pirate-islands/scene.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/lobby/pirate-islands/scene.glb"
+      },
+      "loadInScene": "builtin:map-pirate-islands-scene",
+      "agentSpawn": {
+        "preferred": "builtin:map-pirate-islands-scene",
+        "absolute": "https://assets.grudge-studio.com/models/lobby/pirate-islands/scene.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "map-encampment",
+      "label": "Encampment",
+      "group": "maps",
+      "r2Key": "builtin/map-encampment.glb",
+      "builtin": "builtin:map-encampment",
+      "bake": "forge-builtin-r2",
+      "cdnUrl": "https://assets.grudge-studio.com/builtin/map-encampment.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/builtin/map-encampment.glb"
+      },
+      "loadInScene": "builtin:map-encampment",
+      "agentSpawn": {
+        "preferred": "builtin:map-encampment",
+        "absolute": "https://assets.grudge-studio.com/builtin/map-encampment.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "map-cyberpunk",
+      "label": "Cyberpunk",
+      "group": "maps",
+      "r2Key": "builtin/map-cyberpunk.glb",
+      "builtin": "builtin:map-cyberpunk",
+      "bake": "forge-builtin-r2",
+      "cdnUrl": "https://assets.grudge-studio.com/builtin/map-cyberpunk.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/builtin/map-cyberpunk.glb"
+      },
+      "loadInScene": "builtin:map-cyberpunk",
+      "agentSpawn": {
+        "preferred": "builtin:map-cyberpunk",
+        "absolute": "https://assets.grudge-studio.com/builtin/map-cyberpunk.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "map-fort-royale",
+      "label": "Fort Royale",
+      "group": "maps",
+      "r2Key": "builtin/map-fort-royale.glb",
+      "builtin": "builtin:map-fort-royale",
+      "bake": "forge-builtin-r2",
+      "cdnUrl": "https://assets.grudge-studio.com/builtin/map-fort-royale.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/builtin/map-fort-royale.glb"
+      },
+      "loadInScene": "builtin:map-fort-royale",
+      "agentSpawn": {
+        "preferred": "builtin:map-fort-royale",
+        "absolute": "https://assets.grudge-studio.com/builtin/map-fort-royale.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "map-underground",
+      "label": "Underground Wars",
+      "group": "maps",
+      "r2Key": "builtin/map-underground-wars.glb",
+      "builtin": "builtin:map-underground-wars",
+      "bake": "forge-builtin-r2",
+      "cdnUrl": "https://assets.grudge-studio.com/builtin/map-underground-wars.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/builtin/map-underground-wars.glb"
+      },
+      "loadInScene": "builtin:map-underground-wars",
+      "agentSpawn": {
+        "preferred": "builtin:map-underground-wars",
+        "absolute": "https://assets.grudge-studio.com/builtin/map-underground-wars.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "bldg-tavern",
+      "label": "Orc Tavern",
+      "group": "buildings",
+      "r2Key": "models/orc_settlement/Tavern.glb",
+      "builtin": "builtin:rts-bldg-townhall",
+      "bake": "rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/orc_settlement/Tavern.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/orc_settlement/Tavern.glb"
+      },
+      "loadInScene": "builtin:rts-bldg-townhall",
+      "agentSpawn": {
+        "preferred": "builtin:rts-bldg-townhall",
+        "absolute": "https://assets.grudge-studio.com/models/orc_settlement/Tavern.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "bldg-smithy",
+      "label": "Orc Smithy",
+      "group": "buildings",
+      "r2Key": "models/orc_settlement/Smithy.glb",
+      "builtin": "builtin:rts-bldg-barracks",
+      "bake": "rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/orc_settlement/Smithy.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/orc_settlement/Smithy.glb"
+      },
+      "loadInScene": "builtin:rts-bldg-barracks",
+      "agentSpawn": {
+        "preferred": "builtin:rts-bldg-barracks",
+        "absolute": "https://assets.grudge-studio.com/models/orc_settlement/Smithy.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "tower-archer",
+      "label": "Archer Tower L1",
+      "group": "buildings",
+      "r2Key": "models/battle_towers/Archer_Tower_L1.glb",
+      "builtin": "builtin:rts-tower-archer",
+      "bake": "rts-glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/battle_towers/Archer_Tower_L1.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/models/battle_towers/Archer_Tower_L1.glb"
+      },
+      "loadInScene": "builtin:rts-tower-archer",
+      "agentSpawn": {
+        "preferred": "builtin:rts-tower-archer",
+        "absolute": "https://assets.grudge-studio.com/models/battle_towers/Archer_Tower_L1.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    },
+    {
+      "id": "hero-blake",
+      "label": "Blake",
+      "group": "characters",
+      "r2Key": "builtin/blake.glb",
+      "builtin": "builtin:blake",
+      "si": {
+        "heightM": 1.8
+      },
+      "bake": "forge-builtin-r2",
+      "cdnUrl": "https://assets.grudge-studio.com/builtin/blake.glb",
+      "sceneReady": true,
+      "head": {
+        "ok": true,
+        "status": 200,
+        "contentType": "model/gltf-binary",
+        "bytes": null,
+        "url": "https://assets.grudge-studio.com/builtin/blake.glb"
+      },
+      "loadInScene": "builtin:blake",
+      "agentSpawn": {
+        "preferred": "builtin:blake",
+        "absolute": "https://assets.grudge-studio.com/builtin/blake.glb",
+        "tools": [
+          "spawn_fast_asset",
+          "add_model_entity",
+          "spawn_fleet_asset"
+        ]
+      }
+    }
+  ],
+  "failed": []
+}

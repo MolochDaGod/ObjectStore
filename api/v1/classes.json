@@ -28,7 +28,8 @@
         "axes1h",
         "greataxes",
         "hammers1h",
-        "hammers2h"
+        "hammers2h",
+        "claws"
       ],
       "armorTypes": [
         "plate",
@@ -36,7 +37,7 @@
       ],
       "dualWield": true,
       "equipmentRulesRef": "class-equipment-rules.json#classes.warrior",
-      "animPacks": ["sword_shield", "dual_wield", "two_handed"],
+      "animPacks": ["sword_shield", "dual_wield", "two_handed", "unarmed"],
       "abilities": [
         {
           "id": "slash",
@@ -203,14 +204,15 @@
         "holyStaves",
         "lightningStaves",
         "arcaneStaves",
-        "natureStaves"
+        "natureStaves",
+        "claws"
       ],
       "armorTypes": [
         "cloth"
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.mage",
-      "animPacks": ["magic_spell"],
+      "animPacks": ["magic_spell", "unarmed"],
       "abilities": [
         {
           "id": "arcane_bolt",
@@ -334,14 +336,15 @@
         "spears",
         "daggers",
         "bows",
-        "hammers1h"
+        "hammers1h",
+        "claws"
       ],
       "armorTypes": [
         "leather"
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.worge",
-      "animPacks": ["sword_shield", "magic_spell", "longbow"],
+      "animPacks": ["sword_shield", "magic_spell", "longbow", "unarmed"],
       "abilities": [
         {
           "id": "mace_strike",
@@ -577,7 +580,8 @@
         "guns",
         "daggers",
         "greatswords",
-        "spears"
+        "spears",
+        "claws"
       ],
       "armorTypes": [
         "leather",
@@ -585,7 +589,7 @@
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.ranger",
-      "animPacks": ["longbow", "rifle", "two_handed"],
+      "animPacks": ["longbow", "rifle", "two_handed", "unarmed"],
       "abilities": [
         {
           "id": "quick_shot",
@@ -705,11 +709,11 @@
       "description": "Discipline healer — Atonement from damage, shields, mass dispel, pain reflect.",
       "lore": "Priests bind an ally and turn every holy bolt into a heal. They strip hexes, plant barriers before slams, and reflect pain back as light.",
       "startingAttributes": { "Strength": 0, "Vitality": 1, "Endurance": 1, "Dexterity": 0, "Agility": 0, "Intellect": 2, "Wisdom": 5, "Tactics": 1 },
-      "weaponTypes": ["holyStaves", "arcaneStaves", "tomes", "orbs"],
+      "weaponTypes": ["holyStaves", "arcaneStaves", "tomes", "orbs", "claws"],
       "armorTypes": ["cloth"],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.priest",
-      "animPacks": ["magic_spell"],
+      "animPacks": ["magic_spell", "unarmed"],
       "abilities": [
         { "id": "smite", "name": "Smite", "description": "Holy bolt that feeds Atonement", "type": "holy", "damage": 0.9, "manaCost": 8, "cooldown": 0 },
         { "id": "word_shield", "name": "Word Shield", "description": "Absorb shield; Atonement ticks through it", "type": "holy", "manaCost": 18, "cooldown": 8 }
@@ -727,11 +731,11 @@
       "description": "Two-hand parry tank and execute DPS. Timing is the armor.",
       "lore": "Raiders dropped the shield. Every swing opens a parry window; a catch becomes Overpower. They offtank slams and cut healing in the arena.",
       "startingAttributes": { "Strength": 5, "Vitality": 2, "Endurance": 2, "Dexterity": 2, "Agility": 1, "Intellect": 0, "Wisdom": 0, "Tactics": 0 },
-      "weaponTypes": ["greatswords", "greataxes", "hammers2h"],
+      "weaponTypes": ["greatswords", "greataxes", "hammers2h", "claws"],
       "armorTypes": ["plate", "mail"],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.raider",
-      "animPacks": ["two_handed"],
+      "animPacks": ["two_handed", "unarmed"],
       "abilities": [
         { "id": "riposte", "name": "Riposte Stance", "description": "Parry window on every 2H swing", "type": "physical", "passive": true },
         { "id": "mortal_strike", "name": "Mortal Strike", "description": "Cut incoming heals on the target", "type": "physical", "damage": 1.4, "staminaCost": 15, "cooldown": 10 }
@@ -749,11 +753,11 @@
       "description": "Outlaw rogue — combo, pistol interrupt, blade flurry, smoke bomb peel.",
       "lore": "Thieves fight dirty and close. A pistol shot stops a cast; a smoke bomb covers the healer; Between the Eyes spends the combo.",
       "startingAttributes": { "Strength": 1, "Vitality": 1, "Endurance": 1, "Dexterity": 4, "Agility": 4, "Intellect": 0, "Wisdom": 0, "Tactics": 1 },
-      "weaponTypes": ["daggers", "swords", "pistols"],
+      "weaponTypes": ["daggers", "swords", "pistols", "claws"],
       "armorTypes": ["leather"],
       "dualWield": true,
       "equipmentRulesRef": "class-equipment-rules.json#classes.thief",
-      "animPacks": ["dual_wield", "rifle"],
+      "animPacks": ["dual_wield", "rifle", "unarmed"],
       "abilities": [
         { "id": "sinister", "name": "Sinister Strike", "description": "Combo builder", "type": "physical", "damage": 0.9, "staminaCost": 4 },
         { "id": "pistol_shot", "name": "Pistol Shot", "description": "Ranged interrupt", "type": "physical", "damage": 0.7, "staminaCost": 8, "cooldown": 6 }
@@ -771,11 +775,11 @@
       "description": "Mistweaver — jade mist, crane kicks that heal, detox, celestial forms.",
       "lore": "Verduror walk in mist. They heal while they move, kick like a crane, and call a jade serpent to soothe the tank.",
       "startingAttributes": { "Strength": 1, "Vitality": 2, "Endurance": 1, "Dexterity": 1, "Agility": 2, "Intellect": 1, "Wisdom": 3, "Tactics": 0 },
-      "weaponTypes": ["natureStaves", "hammers1h"],
+      "weaponTypes": ["natureStaves", "hammers1h", "claws"],
       "armorTypes": ["leather", "cloth"],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.verduror",
-      "animPacks": ["magic_spell", "sword_shield"],
+      "animPacks": ["magic_spell", "sword_shield", "unarmed"],
       "abilities": [
         { "id": "soothing_mist", "name": "Soothing Mist", "description": "Channeled single heal", "type": "nature", "manaCost": 6 },
         { "id": "crane_kick", "name": "Crane Kick", "description": "Melee kick that splashes heal", "type": "nature", "damage": 0.8, "manaCost": 8 }

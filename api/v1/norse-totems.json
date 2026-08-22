@@ -1,0 +1,104 @@
+{
+  "version": "1.1.0",
+  "updated": "2026-08-21",
+  "license": "CC-BY-4.0 XList (Sketchfab)",
+  "note": "Combat deploy gadgets. Production GLBs baked Y-up, feet at y=0, SI height (2.15–3.85 m). Spawn rises from underground; small earth-bend VFX at the base; the totem pole is the spike. Placement: 2.2 m ahead of caster, or 2.2 m from locked target for taunt. Player bag stays Railway.",
+  "cdnPrefix": "https://assets.grudge-studio.com/models/vfx/totems/",
+  "openPublic": "artifacts/animator/public/models/vfx/totems/",
+  "bake": {
+    "script": "tools/grudge-convert/scripts/bake-norse-totems.mjs",
+    "authorUp": "z",
+    "prodUp": "y",
+    "texture": "webp 512",
+    "simplify": 0.4,
+    "spawn": "rise from y = ground − heightM, ease-out cubic, earthBend at base"
+  },
+  "placement": {
+    "casterForwardM": 2.2,
+    "targetOffsetM": 2.2,
+    "si": "1 unit = 1 m"
+  },
+  "effects": ["heal_mist", "attack_ward", "trap", "taunt", "stun"],
+  "items": [
+    {
+      "id": "nordin_t0",
+      "file": "totem_nordin_t0.glb",
+      "god": "nordin",
+      "tier": 0,
+      "heightM": 2.15,
+      "riseSec": 0.48,
+      "effect": "trap",
+      "place": "caster_forward"
+    },
+    {
+      "id": "nordin_t1",
+      "file": "totem_nordin_t1.glb",
+      "god": "nordin",
+      "tier": 1,
+      "heightM": 2.3,
+      "riseSec": 0.5,
+      "effect": "trap",
+      "place": "caster_forward"
+    },
+    {
+      "id": "tyr_t2",
+      "file": "totem_tyr_t2.glb",
+      "god": "tyr",
+      "tier": 2,
+      "heightM": 2.5,
+      "riseSec": 0.5,
+      "effect": "stun",
+      "place": "caster_forward"
+    },
+    {
+      "id": "freya_t3",
+      "file": "totem_freya_t3.glb",
+      "god": "freya",
+      "tier": 3,
+      "heightM": 2.7,
+      "riseSec": 0.52,
+      "effect": "heal_mist",
+      "place": "caster_forward"
+    },
+    {
+      "id": "loki_t4",
+      "file": "totem_loki_t4.glb",
+      "god": "loki",
+      "tier": 4,
+      "heightM": 2.9,
+      "riseSec": 0.52,
+      "effect": "trap",
+      "place": "caster_forward"
+    },
+    {
+      "id": "thor_t5",
+      "file": "totem_thor_t5.glb",
+      "god": "thor",
+      "tier": 5,
+      "heightM": 3.15,
+      "riseSec": 0.55,
+      "effect": "attack_ward",
+      "place": "caster_forward"
+    },
+    {
+      "id": "odin_t6",
+      "file": "totem_odin_t6.glb",
+      "god": "odin",
+      "tier": 6,
+      "heightM": 3.4,
+      "riseSec": 0.58,
+      "effect": "taunt",
+      "place": "target"
+    },
+    {
+      "id": "valhalla_t7",
+      "file": "totem_valhalla_t7.glb",
+      "god": "valhalla",
+      "tier": 7,
+      "heightM": 3.85,
+      "riseSec": 0.62,
+      "effect": "stun",
+      "place": "caster_forward"
+    }
+  ]
+}

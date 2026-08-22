@@ -1,5 +1,7 @@
 # ─── Grudge Asset CDN Worker ─────────────────────────────────────────
-# Smart CDN: R2-first, GitHub Pages fallback, auto-backfill
+# LIVE at assets.grudge-studio.com (ObjectStore). Public CORS: `*`.
+# Do NOT deploy F:\GitHub\GrudgeBuilder\workers\cdn — same Worker name,
+# it would overwrite this route and drop range/cache-tag behaviour.
 #
 # Deploy:  npx wrangler deploy -c workers/cdn/wrangler.toml
 # Test:    npx wrangler dev -c workers/cdn/wrangler.toml

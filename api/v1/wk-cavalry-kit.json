@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "id": "wk_cavalry",
+  "class": "mount",
+  "repoRaceId": "western-kingdoms",
+  "prefix": "WK_",
+  "sourceFbx": "D:/Grudge/3DCharacters/characters/WK_Cavalry_customizable.FBX",
+  "localUrl": "./models/grudge6/mounts/western-kingdoms/cavalry.glb",
+  "r2Key": "models/grudge6/mounts/western-kingdoms/cavalry.glb",
+  "cdnUrl": "https://assets.grudge-studio.com/models/grudge6/mounts/western-kingdoms/cavalry.glb",
+  "heightM": 1.85,
+  "seat": ["WK_horse_Seat", "Bone_Mount"],
+  "horseMeshes": ["WK_Horse", "WK_horse_Seat"],
+  "hideOnPlay": "in-kit rider Units_/weapon/shield — player Toon kit is the rider",
+  "meshSlots": {
+    "horse": ["WK_Horse"],
+    "seat": ["WK_horse_Seat"],
+    "body": ["WK_Units_Body_A", "WK_Units_Body_B", "WK_Units_Body_C", "WK_Units_Body_D", "WK_Units_Body_E"],
+    "arms": ["WK_Units_Arms_A", "WK_Units_Arms_B", "WK_Units_Arms_C", "WK_Units_Arms_D"],
+    "legs": ["WK_Units_Legs_A", "WK_Units_Legs_B", "WK_Units_Legs_C"],
+    "head": ["WK_Units_head_A", "WK_Units_head_B", "WK_Units_head_C", "WK_Units_head_D", "WK_Units_head_E", "WK_Units_head_F", "WK_Units_head_G", "WK_Units_head_H", "WK_Units_head_I"],
+    "shoulders": ["WK_Units_shoulderpads_A", "WK_Units_shoulderpads_B"],
+    "weapon": ["WK_weapon_sword_A", "WK_weapon_sword_B", "WK_weapon_lance", "WK_weapon_spear", "WK_weapon_axe_A", "WK_weapon_axe_B", "WK_weapon_hammer_A", "WK_weapon_hammer_B", "WK_weapon_Bow", "WK_weapon_staff_A", "WK_weapon_staff_B", "WK_weapon_staff_C", "WK_weapon_pick"],
+    "shield": ["WK_Shield_A", "WK_Shield_B", "WK_Shield_C", "WK_Shield_D"],
+    "back": ["WK_Xtra_quiver"]
+  },
+  "holdM": {
+    "radial": ["horse", "windsurf", "back_none"],
+    "tap": "summon last / dismount"
+  },
+  "note": "Mesh-level visibility on cavalry kit. Play rider is loadRaceKit hero parented to WK_horse_Seat. Horse mixer isolated."
+}

@@ -27,7 +27,7 @@
  *   *    /v1/assets/*              — Proxy to ObjectStore worker
  */
 
-const VERSION = '2.0.0';
+const VERSION = '2.0.1';
 
 const MODELS = {
   TEXT:  '@cf/meta/llama-3.1-8b-instruct',
@@ -111,6 +111,10 @@ export default {
       console.error('AI Hub error:', err);
       return cors(env, json({ error: 'Internal error', detail: err.message }, 500), origin);
     }
+  },
+  /** Dashboard leftover queue consumer — ack so deploys do not fail (no queue in wrangler.toml). */
+  async queue(batch) {
+    for (const msg of batch.messages) msg.ack();
   },
 };
 

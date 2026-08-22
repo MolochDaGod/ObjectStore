@@ -1,0 +1,131 @@
+{
+  "version": "1.1.0",
+  "updated": "2026-08-22",
+  "canonical": true,
+  "description": "Warlords CLAW weapon class. Forestry craft. Any class may equip. Slot 4 form is empty until a Worge who knows that form enchants the claw at the Enchanting Bench.",
+  "weaponType": "CLAW",
+  "category": "claws",
+  "animPack": "unarmed",
+  "craftedBy": "Forester",
+  "classes": "any",
+  "slotPatternT0": "three-slot-starter",
+  "slotPatternT1": "five-slot",
+  "notes": [
+    "Unarmed play is this weapon class — not empty hands.",
+    "No class gate on equip. Warrior, mage, ranger, worge, priest, raider, thief, verduror may all use claws.",
+    "No default form on the claw. Slot 4 is empty until enchanted.",
+    "Form bind: Worge + known grimoire form + Enchanting Bench (existing station). Not a Mystic stat enchant.",
+    "Animals are WORGE_NATURE_GRIMOIRE form ids only."
+  ],
+  "grimoireRef": "class-relic-skillTrees.json#WORGE_NATURE_GRIMOIRE",
+  "formEnchant": {
+    "station": "Enchanting Bench",
+    "stationId": "enchanting-table",
+    "appliedByClass": "worge",
+    "requiresKnownForm": true,
+    "bindsSlot": 4,
+    "defaultForm": null,
+    "catalog": "master-enchants.json"
+  },
+  "sharedSkills": {
+    "slot1": {
+      "id": "claw_rending_slash",
+      "name": "Rending Slash",
+      "role": "standardAttack",
+      "description": "Slashing strike. All claws share this primary."
+    },
+    "slot2": [
+      {
+        "id": "claw_blood_frenzy",
+        "name": "Blood Frenzy",
+        "description": "Attacks stack bleed on the target."
+      },
+      {
+        "id": "claw_beast_stomp",
+        "name": "Beast Stomp",
+        "description": "AoE stomp — damage and slow."
+      }
+    ],
+    "slot3Shared": {
+      "id": "claw_instinct",
+      "name": "Instinct",
+      "description": "Slight health and a larger stamina buff / self-heal."
+    }
+  },
+  "t0": {
+    "id": "t0-claw",
+    "name": "Training Claws",
+    "craftedBy": "Forester",
+    "slot1": "t0_claw_practice_slash",
+    "slot2": "t0_claw_instinct",
+    "slot3Options": ["t0_claw_blood_frenzy", "t0_claw_beast_stomp"]
+  },
+  "families": [
+    {
+      "id": "bear-claws",
+      "name": "Bear Claws",
+      "formId": "bear",
+      "formSkillId": "bear_form",
+      "enchantId": "enchant-claw-form-bear",
+      "uniqueSlot3": [
+        { "id": "claw_bear_maul", "name": "Bear Maul" },
+        { "id": "claw_bear_guard", "name": "Bear Guard" }
+      ]
+    },
+    {
+      "id": "raptor-claws",
+      "name": "Raptor Claws",
+      "formId": "raptor",
+      "formSkillId": "raptor_form",
+      "enchantId": "enchant-claw-form-raptor",
+      "uniqueSlot3": [
+        { "id": "claw_raptor_pounce", "name": "Raptor Pounce" },
+        { "id": "claw_raptor_shred", "name": "Raptor Shred" }
+      ]
+    },
+    {
+      "id": "bird-talons",
+      "name": "Bird Talons",
+      "formId": "bird",
+      "formSkillId": "bird_form",
+      "enchantId": "enchant-claw-form-bird",
+      "uniqueSlot3": [
+        { "id": "claw_bird_talon", "name": "Sky Talon" },
+        { "id": "claw_bird_gust", "name": "Wing Gust" }
+      ]
+    },
+    {
+      "id": "wolf-claws",
+      "name": "Wolf Claws",
+      "formId": "wolf",
+      "formSkillId": "wolf_form",
+      "enchantId": "enchant-claw-form-wolf",
+      "uniqueSlot3": [
+        { "id": "claw_wolf_howl", "name": "Wolf Howl" },
+        { "id": "claw_wolf_hamstring", "name": "Hamstring" }
+      ]
+    },
+    {
+      "id": "cheetah-claws",
+      "name": "Cheetah Claws",
+      "formId": "cheetah",
+      "formSkillId": "cheetah_form",
+      "enchantId": "enchant-claw-form-cheetah",
+      "uniqueSlot3": [
+        { "id": "claw_cheetah_sprint", "name": "Cheetah Sprint" },
+        { "id": "claw_cheetah_rake", "name": "Rake" }
+      ]
+    },
+    {
+      "id": "spider-fangs",
+      "name": "Spider Fangs",
+      "formId": "spider",
+      "formSkillId": "spider_form",
+      "enchantId": "enchant-claw-form-spider",
+      "uniqueSlot3": [
+        { "id": "claw_spider_venom", "name": "Venom Bite" },
+        { "id": "claw_spider_web", "name": "Web Bind" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-08-21",
+  "canonical": true,
+  "description": "Isolated MagicRock_1–6 from magic_rocks.glb. Never load the fused pack. SI 0.45 m. Staff slot-1 normals stay gd_orbs; these rocks are nature/ice/holy travel, quake/stone/fissure, and shrine objects.",
+  "source": "D:/Games/Models/magic_rocks.glb",
+  "skip": [
+    "survival_game_propasset_pack.glb — modern jerrycan/radio/compass, not Warlords",
+    "magic_rocks.glb fused — isolate MagicRock_N only",
+    "assorted rock-0..7 — different pack, do not overwrite"
+  ],
+  "cdnBase": "https://assets.grudge-studio.com",
+  "r2Prefix": "models/vfx/rocks/",
+  "diameterM": 0.45,
+  "neverLoadWhole": "models/vfx/rocks/magic_rocks.glb",
+  "rocks": [
+    {
+      "id": "magic-rock-1",
+      "sourceMesh": "MagicRock_1",
+      "r2Key": "models/vfx/rocks/magic-rock-1.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-1.glb",
+      "element": "fire",
+      "use": ["staff-projectile", "fissure", "object"],
+      "wiredSkills": ["flame_sword"]
+    },
+    {
+      "id": "magic-rock-2",
+      "sourceMesh": "MagicRock_2",
+      "r2Key": "models/vfx/rocks/magic-rock-2.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-2.glb",
+      "element": "ice",
+      "use": ["staff-projectile", "object"],
+      "wiredSkills": ["frostlance", "ice_skill_2"]
+    },
+    {
+      "id": "magic-rock-3",
+      "sourceMesh": "MagicRock_3",
+      "r2Key": "models/vfx/rocks/magic-rock-3.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-3.glb",
+      "element": "nature",
+      "use": ["staff-projectile", "fissure", "object"],
+      "wiredSkills": ["staff_earthquake", "staff_quake", "staff_natures_fury", "casting_earth_spike", "casting_quake", "casting_stone_wall", "glacier", "nature_skill_1", "nature_skill_2"]
+    },
+    {
+      "id": "magic-rock-4",
+      "sourceMesh": "MagicRock_4",
+      "r2Key": "models/vfx/rocks/magic-rock-4.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-4.glb",
+      "element": "storm",
+      "use": ["staff-projectile", "object"],
+      "wiredSkills": []
+    },
+    {
+      "id": "magic-rock-5",
+      "sourceMesh": "MagicRock_5",
+      "r2Key": "models/vfx/rocks/magic-rock-5.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-5.glb",
+      "element": "holy",
+      "use": ["staff-projectile", "object"],
+      "wiredSkills": ["holy_beam"]
+    },
+    {
+      "id": "magic-rock-6",
+      "sourceMesh": "MagicRock_6",
+      "r2Key": "models/vfx/rocks/magic-rock-6.glb",
+      "cdn": "https://assets.grudge-studio.com/models/vfx/rocks/magic-rock-6.glb",
+      "element": "arcane",
+      "use": ["staff-projectile", "object"],
+      "wiredSkills": ["snare"]
+    }
+  ],
+  "objects": {
+    "shrine": ["magic-rock-3", "magic-rock-5"],
+    "fissure": ["magic-rock-1", "magic-rock-3"],
+    "breakable": ["magic-rock-1", "magic-rock-2", "magic-rock-3"]
+  }
+}

@@ -78,6 +78,13 @@
       color: var(--text-muted);
       letter-spacing: 0.08em;
     }
+    .header .ssot {
+      margin-top: 10px;
+      font-size: 0.78em;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+    .header .ssot a { color: var(--gold-light); }
 
     /* Weapon Type Tabs */
     .weapon-tabs {
@@ -824,6 +831,9 @@
 <div class="header">
   <h1>⚔ Weapon Skills</h1>
   <p>Equip combat abilities for each weapon type</p>
+  <p class="ssot">SSOT <a href="https://info.grudge-studio.com/api/v1/master-weaponSkills.json">master-weaponSkills.json</a>
+    · browse this page · drafts <a href="https://weapon-skills.grudge-studio.com/api/health">weapon-skills DO</a> (not the catalog)
+    · each slot is a single PNG, not a sheet</p>
 </div>
 
 <div class="weapon-tabs" id="weaponTabs"></div>
@@ -866,12 +876,17 @@ function asset(url) {
   return url;
 }
 
-/** Prefer local api/v1 (browse Pages + Vercel), then live ObjectStore mirrors. */
+function skillIcon(skill) {
+  if (!skill) return '';
+  if (skill.iconUrl) return skill.iconUrl;
+  return asset(skill.icon);
+}
+
+/** Catalog SSOT: info.grudge-studio.com. Drafts DO is not this catalog. */
 const API_SOURCES = [
-  './api/v1',
-  'https://objectstore.grudge-studio.com/api/v1',
   'https://info.grudge-studio.com/api/v1',
-  'https://molochdagod.github.io/ObjectStore/api/v1',
+  './api/v1',
+  'https://grudge-objectstore.pages.dev/api/v1',
 ];
 
 let activeWeapon = 'SWORD';
@@ -950,6 +965,10 @@ function renderWeaponTabs() {
       const preferT0 = playerTier === 0 && !WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(key);
       activeVariantId = WeaponSkillTree.getDefaultVariantId(key, preferT0);
       variantKey = key === 'SHIELD' ? 'kite' : key === 'TOME' ? 'elemental' : variantKey;
+      if (!WeaponSkillTree.ONE_HAND_TYPES.has(key)) {
+        pairedOffhandMode = 'none';
+        pairedOffhandToggle = false;
+      }
       if (isViewingT0()) playerTier = 0;
       else if (playerTier === 0) playerTier = 1;
       selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
@@ -963,13 +982,14 @@ function renderWeaponTabs() {
 function renderPairedLoadoutBar() {
   const bar = document.getElementById('pairedLoadoutBar');
   if (!bar) return;
-  if (isOffhandModifierTab() || isViewingT0()) {
+  if (isOffhandModifierTab() || isViewingT0() || !WeaponSkillTree.ONE_HAND_TYPES.has(activeWeapon)) {
     bar.innerHTML = '';
     bar.style.display = 'none';
     return;
   }
   bar.style.display = '';
   bar.innerHTML = WeaponSkillTree.renderPairedLoadoutBar({
+    mainTypeId: activeWeapon,
     pairedOffhand: pairedOffhandMode,
     shieldKey: pairedShieldKey,
     tomeKey: pairedTomeKey,
@@ -996,6 +1016,7 @@ function renderPairedLoadoutBar() {
 
 function getPairedOffhandItem() {
   if (pairedOffhandMode === 'none') return null;
+  if (!WeaponSkillTree.ONE_HAND_TYPES.has(activeWeapon)) return null;
   return WeaponSkillTree.buildPairedOffhandItem(pairedOffhandMode, {
     shieldKey: pairedShieldKey,
     tomeKey: pairedTomeKey,
@@ -1177,7 +1198,7 @@ function renderSlotColumns() {
 
 function showDetail(skill, slotType) {
   const panel = document.getElementById('detailPanel');
-  document.getElementById('detailIcon').innerHTML = `<img src="${asset(skill.icon)}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailIcon').innerHTML = `<img src="${skillIcon(skill)}" alt="${skill.name}" onerror="this.style.display='none'">`;
   document.getElementById('detailName').textContent = skill.name;
   document.getElementById('detailDesc').textContent = skill.description;
 

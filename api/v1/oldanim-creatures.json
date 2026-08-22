@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-18",
+  "note": "Converted from Desktop/FRESH GRUDGE/three-port/oldanimations. Extend NODE_PALETTE + biome-ecosystems. bdl_byx is ObjectStore big-bat (not creature_crab).",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "creatures": [
+    {
+      "id": "ent",
+      "label": "Ent",
+      "category": "land",
+      "biome": ["forest", "wildwood"],
+      "r2Key": "models/creatures/land/ent.glb",
+      "localUrl": "./models/creatures/land/ent.glb",
+      "heightM": 3.2,
+      "source": "oldanimations/ent.fbx",
+      "paletteId": "node.pve_ent"
+    },
+    {
+      "id": "energus",
+      "label": "Energus",
+      "category": "land",
+      "biome": ["ethereal_falls", "starfall"],
+      "r2Key": "models/creatures/land/energus.glb",
+      "localUrl": "./models/creatures/land/energus.glb",
+      "heightM": 2.2,
+      "source": "oldanimations/Energus2.FBX",
+      "paletteId": "node.pve_energus"
+    },
+    {
+      "id": "big_bat",
+      "label": "Big bat",
+      "category": "land",
+      "biome": ["cave", "dungeon"],
+      "r2Key": "models/creatures/land/big_bat.glb",
+      "localUrl": "./models/creatures/land/big_bat.glb",
+      "heightM": 1.1,
+      "source": "oldanimations/bdl_byx.FBX",
+      "objectStorePack": "big-bat",
+      "userAskedAs": "crab",
+      "not": "creature_crab (separate CDN crab already exists)",
+      "clips": {
+        "stand": "models/creatures/anim/big_bat_stand.glb",
+        "run": "models/creatures/anim/big_bat_run.glb",
+        "attack1": "models/creatures/anim/big_bat_attack1.glb",
+        "attack2": "models/creatures/anim/big_bat_attack2.glb",
+        "dead": "models/creatures/anim/big_bat_dead.glb"
+      },
+      "paletteId": "node.pve_big_bat"
+    },
+    {
+      "id": "fire_totem",
+      "label": "Fire totem",
+      "category": "totem",
+      "skillId": "summon_fire_totem",
+      "r2Key": "models/creatures/totem/fire_totem.glb",
+      "localUrl": "./models/creatures/totem/fire_totem.glb",
+      "heightM": 1.8,
+      "source": "oldanimations/FireTotem.FBX",
+      "paletteId": "node.totem_fire"
+    },
+    {
+      "id": "air_totem",
+      "label": "Air totem",
+      "category": "totem",
+      "skillId": "summon_air_totem",
+      "r2Key": "models/creatures/totem/air_totem.glb",
+      "localUrl": "./models/creatures/totem/air_totem.glb",
+      "heightM": 1.8,
+      "source": "oldanimations/AirTotem.FBX",
+      "paletteId": "node.totem_air"
+    }
+  ]
+}

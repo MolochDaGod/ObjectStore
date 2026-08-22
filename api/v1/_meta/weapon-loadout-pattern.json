@@ -49,8 +49,10 @@
       "preservesMainhandSlots": [4, 5],
       "description": "Hold/toggle F — off-hand skills replace mainhand slots 1–3. Signature (4) and passives (5) remain from the main weapon."
     },
+    "validMainhands": ["SWORD", "DAGGER", "HAMMER", "MACE", "AXE"],
+    "validMainhandNote": "Knife = DAGGER. Not 2H, gun, wand, claw, staff, or bow.",
     "shield": {
-      "requiresOneHandMainhand": false,
+      "requiresOneHandMainhand": true,
       "usesShieldTypePool": true
     },
     "tome": {

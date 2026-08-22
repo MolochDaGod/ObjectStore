@@ -1,13 +1,13 @@
 {
   "version": "3.0.0",
   "generated": "2026-04-23T03:25:23.445Z",
-  "total": 72,
-  "totalEnchants": 72,
+  "total": 78,
+  "totalEnchants": 78,
   "baseEnchants": 9,
   "tiersPerEnchant": 8,
   "profession": "Mystic",
   "appliedAt": "Enchanting Bench (Mystic tree)",
-  "note": "Mystic-crafted enchants. Consumed on apply; bakes a permanent stat bonus into the target weapon or armor. Unlocks and crafting all live inside the Mystic profession tree.",
+  "note": "Mystic stat enchants plus Worge claw-form binds at the Enchanting Bench. Claw slot 4 is empty until a Worge who knows the form applies the bind.",
   "enchants": [
     {
       "uuid": "ENCH-20260423030000-000001-AF9DC0FC",
@@ -2936,6 +2936,272 @@
       "craftingRecipe": null,
       "consumedOnApply": true,
       "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-77FD62-4FEB9215",
+      "baseUuid": "ENCH-20260822010000-77FD62-4FEB9215",
+      "baseName": "Bear Claws Form Bind",
+      "id": "enchant-claw-form-bear",
+      "name": "Bear Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "bear_form",
+      "formId": "bear",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "bear",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "bear_form",
+        "formId": "bear"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows bear form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-93D06E-F190B533",
+      "baseUuid": "ENCH-20260822010000-93D06E-F190B533",
+      "baseName": "Raptor Claws Form Bind",
+      "id": "enchant-claw-form-raptor",
+      "name": "Raptor Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "raptor_form",
+      "formId": "raptor",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "raptor",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "raptor_form",
+        "formId": "raptor"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows raptor form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-F6C7C3-85ECD841",
+      "baseUuid": "ENCH-20260822010000-F6C7C3-85ECD841",
+      "baseName": "Bird Talons Form Bind",
+      "id": "enchant-claw-form-bird",
+      "name": "Bird Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "bird_form",
+      "formId": "bird",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "bird",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "bird_form",
+        "formId": "bird"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows bird form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-F6AE33-036F80EE",
+      "baseUuid": "ENCH-20260822010000-F6AE33-036F80EE",
+      "baseName": "Wolf Claws Form Bind",
+      "id": "enchant-claw-form-wolf",
+      "name": "Wolf Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "wolf_form",
+      "formId": "wolf",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "wolf",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "wolf_form",
+        "formId": "wolf"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows wolf form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-BC3E58-99F81750",
+      "baseUuid": "ENCH-20260822010000-BC3E58-99F81750",
+      "baseName": "Cheetah Claws Form Bind",
+      "id": "enchant-claw-form-cheetah",
+      "name": "Cheetah Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "cheetah_form",
+      "formId": "cheetah",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "cheetah",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "cheetah_form",
+        "formId": "cheetah"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows cheetah form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
+    },
+    {
+      "uuid": "ENCH-20260822010000-3619BE-48116C01",
+      "baseUuid": "ENCH-20260822010000-3619BE-48116C01",
+      "baseName": "Spider Fangs Form Bind",
+      "id": "enchant-claw-form-spider",
+      "name": "Spider Form Bind",
+      "type": "enchant",
+      "category": "claw-form",
+      "tier": 1,
+      "target": "CLAW",
+      "bindsSlot": 4,
+      "skillId": "spider_form",
+      "formId": "spider",
+      "appliedByClass": "worge",
+      "requiresKnownForm": "spider",
+      "station": "Enchanting Bench",
+      "stationId": "enchanting-table",
+      "effect": {
+        "kind": "bindSkill",
+        "slot": 4,
+        "skillId": "spider_form",
+        "formId": "spider"
+      },
+      "iconUrl": "https://assets.grudge-studio.com/icons/pack/misc/Naturecircle.png",
+      "description": "Worge who knows spider form binds it to claw slot 4 at the Enchanting Bench. Claw has no default form.",
+      "profession": null,
+      "acquisition": "worge-form-enchant",
+      "craftingRecipe": {
+        "profession": null,
+        "class": "worge",
+        "station": "Enchanting Bench",
+        "materials": [
+          {
+            "id": "minor-essence",
+            "quantity": 2
+          }
+        ],
+        "craftTime": 20,
+        "gold": 0
+      },
+      "consumedOnApply": true,
+      "permanent": true
     }
+  ],
+  "clawFormBinds": [
+    "enchant-claw-form-bear",
+    "enchant-claw-form-raptor",
+    "enchant-claw-form-bird",
+    "enchant-claw-form-wolf",
+    "enchant-claw-form-cheetah",
+    "enchant-claw-form-spider"
   ]
 }

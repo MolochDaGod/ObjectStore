@@ -6,6 +6,8 @@
  *
  * Deploy:  npx wrangler deploy -c workers/cdn/wrangler.toml
  * Domain:  assets.grudge-studio.com
+ * LIVE worker for this host. Do not also deploy GrudgeBuilder/workers/cdn
+ * (same Worker name `grudge-asset-cdn`) — that fork overwrites this route.
  *
  * Resolution order:
  *   1. CF Edge Cache (Cache API) — instant, 0ms TTFB
@@ -25,50 +27,9 @@
 
 const GITHUB_PAGES_BASE = 'https://info.grudge-studio.com';
 
-// ════════════════════════════════════════════════════════════════════════
-//  CORS — all Grudge domains + local dev
-// ════════════════════════════════════════════════════════════════════════
-const ALLOWED_ORIGINS = new Set([
-  'https://grudgewarlords.com',
-  'https://www.grudgewarlords.com',
-  'https://grudge-studio.com',
-  'https://play.grudge-studio.com',
-  'https://engine.grudge-studio.com',
-  'https://dash.grudge-studio.com',
-  'https://id.grudge-studio.com',
-  'https://account.grudge-studio.com',
-  'https://client.grudge-studio.com',
-  'https://pvp.grudge-studio.com',
-  'https://molochdagod.github.io',
-  'https://grudgedot-launcher.vercel.app',
-  'https://grudge-engine-web.vercel.app',
-  'https://grudge-builder.vercel.app',
-  'https://grudge-warlords-game.vercel.app',
-  'https://warlord-crafting-suite.vercel.app',
-  'https://app.puter.com',
-  'http://localhost:3000',
-  'http://localhost:5000',
-  'http://localhost:5173',
-  'https://mech.grudge-studio.com',
-  'https://mech-playground.vercel.app',
-  'http://localhost:4173',
-  'http://localhost:8080',
-]);
-
-// Wildcard origin patterns. Anything matching is allowed. Mirrors the matcher
-// used in the sibling objectstore worker (see ObjectStore/workers/src/index.js).
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/[a-z0-9-]+\.grudge-studio\.com$/i,
-  /^https:\/\/[a-z0-9-]+\.vercel\.app$/i,
-  /^https:\/\/[a-z0-9-]+\.puter\.site$/i,
-];
-
-function isOriginAllowed(origin) {
-  if (!origin) return false;
-  if (ALLOWED_ORIGINS.has(origin)) return true;
-  for (const re of ALLOWED_ORIGIN_PATTERNS) if (re.test(origin)) return true;
-  return false;
-}
+// Public binaries (GLB/PNG/audio) — no cookies. `*` is fleet SSOT.
+// The old allowlist + warlords fallback made Casting (`*.grudge.studio`) and
+// no-Origin loads look like a CORS miss even when the file 200'd.
 
 
 // ════════════════════════════════════════════════════════════════════════
@@ -182,7 +143,7 @@ export default {
 
     if (url.pathname === '/_health' || url.pathname === '/health') {
       return cors(origin, Response.json({
-        status: 'ok', service: 'grudge-asset-cdn', version: '2.1.0',
+        status: 'ok', service: 'grudge-asset-cdn', version: '2.2.0',
         features: ['range-requests','etag','cf-cache','backfill','gltf-optimized','cache-tags'],
       }));
     }
@@ -205,7 +166,7 @@ export default {
     const key = normalizeKey(url.pathname);
     if (!key) {
       return cors(origin, Response.json({
-        service: 'grudge-asset-cdn', version: '2.1.0',
+        service: 'grudge-asset-cdn', version: '2.2.0',
         usage: 'GET /<path>',
         examples: ['/models/_optimized/buildings/cantina.glb', '/effects/3d/fire/arpg-effects_fire_16x4.png', '/api/v1/effect-definitions.json'],
       }));
@@ -356,13 +317,14 @@ function buildHeaders(mime, cc, tags, etag, src, key) {
   return h;
 }
 
-function cors(origin, resp) {
+function cors(_origin, resp) {
   const h = new Headers(resp.headers);
-  h.set('Access-Control-Allow-Origin', isOriginAllowed(origin) ? origin : 'https://grudgewarlords.com');
+  h.set('Access-Control-Allow-Origin', '*');
   h.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, If-None-Match');
+  h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, If-None-Match, X-Requested-With');
   h.set('Access-Control-Expose-Headers', 'Content-Range, Content-Length, ETag, Accept-Ranges, CF-Cache-Tag, X-Asset-Source');
   h.set('Access-Control-Max-Age', '86400');
-  h.set('Vary', 'Origin');
+  h.set('Timing-Allow-Origin', '*');
+  h.set('Cross-Origin-Resource-Policy', 'cross-origin');
   return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers: h });
 }

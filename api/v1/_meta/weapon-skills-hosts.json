@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-08-22",
+  "canonical": true,
+  "description": "One browse + one JSON catalog for Warlords weapon skills. Drafts worker is not the catalog.",
+  "browse": "https://info.grudge-studio.com/WEAPON_SKILLS.html",
+  "json": "https://info.grudge-studio.com/api/v1/master-weaponSkills.json",
+  "t0": "https://info.grudge-studio.com/api/v1/t0-weapons.json",
+  "prefabs": "https://info.grudge-studio.com/api/v1/master-weapon-prefabs.json",
+  "iconsCdn": "https://assets.grudge-studio.com/icons/",
+  "repo": "F:/GitHub/ObjectStore",
+  "hosts": {
+    "info": {
+      "url": "https://info.grudge-studio.com",
+      "role": "SSOT browse + JSON (ObjectStore Vercel alias)",
+      "page": "/WEAPON_SKILLS.html",
+      "api": "/api/v1/master-weaponSkills.json"
+    },
+    "objectstoreWorker": {
+      "url": "https://objectstore.grudge-studio.com",
+      "role": "Cloudflare Worker. /v1 = R2+D1 asset CRUD. /api/v1/*.json MUST proxy info (no R2 catalog cache). Not the browse HTML. Not Vercel."
+    },
+    "pagesMirror": {
+      "url": "https://grudge-objectstore.pages.dev",
+      "role": "Git Pages mirror of JSON. Fallback only."
+    },
+    "githubPages": {
+      "url": "https://molochdagod.github.io/ObjectStore",
+      "role": "Legacy Pages mirror. Do not treat as SSOT."
+    },
+    "draftsDo": {
+      "url": "https://weapon-skills.grudge-studio.com",
+      "role": "Durable Object drafts / promote for Casting production overrides. NOT the catalog browse. NOT master-weaponSkills."
+    }
+  },
+  "fetchOrder": [
+    "https://info.grudge-studio.com/api/v1",
+    "./api/v1",
+    "https://grudge-objectstore.pages.dev/api/v1"
+  ],
+  "doNotUseAsCatalog": [
+    "https://weapon-skills.grudge-studio.com",
+    "https://molochdagod.github.io/ObjectStore/api/v1"
+  ],
+  "iconLaw": "Each skill id maps to one PNG from icon-path-index.json (skills_rpg / abilities / skills/class / spells). Same skill id (and same skill name) reuses that PNG on every weapon that offers it. Never a sprite sheet. Never a weapon-item PNG for a skill."
+}

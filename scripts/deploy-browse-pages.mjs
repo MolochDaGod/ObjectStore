@@ -30,6 +30,8 @@ const API_FILES = [
   'classes.json',
   'races.json',
   'grudge6-characters.json',
+  'class-equipment-rules.json',
+  'catalog.json',
 ];
 
 const JS_FILES = ['weapon-skill-tree.js', 'nav.js'];

@@ -734,36 +734,21 @@ async function putFleetColliders(request, env) {
 /** Serve static /api/v1/:name.json (supports nested paths like _meta/fleet-truth) */
 async function serveStaticJson(name, env) {
   const relativePath = String(name).replace(/^\/+/, '');
-  const cacheKey = `static-json/${relativePath}.json`;
-  const cached = await env.BUCKET.get(cacheKey);
-  if (cached) {
-    return new Response(cached.body, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-        'X-Source': 'r2-cache',
-      },
-    });
-  }
-
+  // Catalog JSON SSOT is info.* (Vercel). Do not serve stale R2 copies —
+  // that is how objectstore drifted (252 skills, no CLAW) from info (335 + CLAW).
   const base = (env.STATIC_JSON_BASE || STATIC_JSON_BASE).replace(/\/$/, '');
   const sourceUrl = `${base}/${relativePath}.json`;
   try {
-    const resp = await fetch(sourceUrl);
+    const resp = await fetch(sourceUrl, { redirect: 'follow' });
     if (!resp.ok) {
       return json({ error: `Failed to fetch ${name}.json`, status: resp.status, source: sourceUrl }, resp.status === 404 ? 404 : 502);
     }
     const body = await resp.arrayBuffer();
-    env.BUCKET.put(cacheKey, body, {
-      httpMetadata: { contentType: 'application/json' },
-      customMetadata: { source: 'upstream', cachedAt: new Date().toISOString() },
-    }).catch(() => {});
-
     return new Response(body, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=300, s-maxage=3600',
-        'X-Source': 'upstream',
+        'Cache-Control': 'public, max-age=60, s-maxage=120',
+        'X-Source': 'info.grudge-studio.com',
       },
     });
   } catch (e) {
