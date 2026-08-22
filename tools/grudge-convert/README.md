@@ -97,6 +97,9 @@ node bin/grudge-convert.mjs batch ./raw -o ./dist/production --height 1.7 --cm-t
 
 # Inspect
 node bin/grudge-convert.mjs inspect dist/WK_Characters.glb
+
+# Ship to R2 + HEAD fail-closed (HTML-miss ~44 KB)
+node bin/grudge-convert.mjs ship dist/WK_Characters.glb --key models/grudge6/races/WK_Characters.glb
 ```
 
 ### Flags
@@ -155,12 +158,25 @@ npm run convert:doctor
 npm run convert:glb -- input.glb -o dist/out.glb --height 1.7
 ```
 
-CDN upload after convert:
+CDN upload after convert (preferred — inspect + R2 put + HEAD fail-closed if GLB &lt; 100 KB HTML miss):
+
+```bash
+node ./tools/grudge-convert/bin/grudge-convert.mjs ship dist/WK_Characters.glb \
+  --key models/grudge6/races/WK_Characters.glb
+
+# Play totems (1.2 m WebP 256):
+#   node tools/grudge-convert/scripts/bake-norse-totems.mjs play
+#   node tools/grudge-convert/bin/grudge-convert.mjs ship \
+#     F:/GitHub/GrudgeBuilder/client/public/models/vfx/totems/tyr_tier_2.glb \
+#     --key models/vfx/totems/tyr_tier_2.glb
+```
+
+Manual wrangler (same bucket):
 
 ```bash
 wrangler r2 object put grudge-assets/models/grudge6/races/WK_Characters.glb \
   --file=dist/WK_Characters.glb \
-  --content-type=model/gltf-binary
+  --content-type=model/gltf-binary --remote
 ```
 
 ## Blender MCP

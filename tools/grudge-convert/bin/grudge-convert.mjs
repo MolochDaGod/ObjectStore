@@ -10,12 +10,14 @@
  *   grudge-convert obj2fbx  <in.obj> -o <out.fbx>
  *   grudge-convert batch <dir> -o <outDir> [options]
  *   grudge-convert inspect <input.glb>
+ *   grudge-convert ship <file.glb> --key models/vfx/totems/foo.glb
  *   grudge-convert doctor
  *
  * Formats in:  .fbx .obj .glb .gltf .blend .dae .stl .ply
  * Formats out: .glb .gltf .fbx (+ .collider.json + .manifest.json)
  */
-import { promises as fs } from "node:fs";
+import { promises as fs, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { basename, extname, join, resolve } from "node:path";
 import {
   convertProduction,
@@ -53,6 +55,7 @@ USAGE
   grudge-convert <pipeline> <input> -o <output> [options]
   grudge-convert batch <inputDir> -o <outputDir> [options]
   grudge-convert inspect <file.glb|gltf>
+  grudge-convert ship <file.glb> [--key models/...] [--cdn-dir path]
   grudge-convert doctor
 
 NAMED PIPELINES
@@ -84,6 +87,9 @@ OPTIONS
   --no-colliders           Skip collider extras + .collider.json
   --format glb|gltf|fbx    Output container (default glb)
   --work-dir <path>        Intermediate files directory
+  --key <r2Key>            ship: R2 object key (default: models/... from path)
+  --cdn-dir <path>         ship: wrangler cwd (default GRUDGE_CDN_WORKER or GrudgeBuilder/workers/cdn)
+  --min-bytes <n>          ship: fail HEAD if GLB smaller (default 100000 = HTML-fake)
 
 OUTPUTS (production pack)
   <name>.glb               Optimized binary glTF
@@ -117,6 +123,115 @@ async function cmdDoctor() {
   } else {
     console.log("\n✓ Backends ready for production convert.");
   }
+}
+
+const HTML_FAKE_MIN_GLB = 100000;
+const DEFAULT_CDN_DIR =
+  process.env.GRUDGE_CDN_WORKER || "F:/GitHub/GrudgeBuilder/workers/cdn";
+const CDN_HOST = "https://assets.grudge-studio.com";
+
+function deriveR2Key(filePath) {
+  const norm = filePath.replace(/\\/g, "/");
+  const m = norm.match(/\/(models\/.+)$/i);
+  if (m) return m[1];
+  return `models/${basename(filePath)}`;
+}
+
+function contentTypeFor(filePath) {
+  const e = extname(filePath).toLowerCase();
+  if (e === ".glb") return "model/gltf-binary";
+  if (e === ".gltf") return "model/gltf+json";
+  if (e === ".json") return "application/json";
+  return "application/octet-stream";
+}
+
+function wranglerPut(localFile, r2Key, cwd) {
+  const ct = contentTypeFor(localFile);
+  const args = [
+    "wrangler",
+    "r2",
+    "object",
+    "put",
+    `grudge-assets/${r2Key}`,
+    `--file=${localFile}`,
+    `--content-type=${ct}`,
+    "--remote",
+  ];
+  console.log(`  wrangler r2 object put grudge-assets/${r2Key}`);
+  const result = spawnSync("npx", args, {
+    cwd,
+    stdio: "inherit",
+    shell: true,
+    env: process.env,
+  });
+  return result.status === 0;
+}
+
+async function headCdn(r2Key) {
+  const url = `${CDN_HOST}/${r2Key}`;
+  const res = await fetch(url, { method: "HEAD" });
+  const lenRaw = res.headers.get("content-length");
+  const len = Number(lenRaw || 0);
+  const type = res.headers.get("content-type") || "";
+  return { url, status: res.status, len, type };
+}
+
+async function cmdShip(fileArg) {
+  if (!fileArg) {
+    console.error("ship requires <file.glb> [--key models/...]");
+    process.exit(1);
+  }
+  const file = resolve(fileArg);
+  if (!existsSync(file)) {
+    console.error("missing", file);
+    process.exit(1);
+  }
+  const key = arg("--key", null) || deriveR2Key(file);
+  const cdnDir = resolve(arg("--cdn-dir", DEFAULT_CDN_DIR));
+  const minBytes = Number(arg("--min-bytes", HTML_FAKE_MIN_GLB)) || HTML_FAKE_MIN_GLB;
+  const st = await fs.stat(file);
+  console.log(`ship ${file}`);
+  console.log(`  key  ${key}`);
+  console.log(`  size ${st.size} bytes`);
+  console.log(`  cwd  ${cdnDir}`);
+
+  if (extname(file).toLowerCase() === ".glb") {
+    await cmdInspect(file);
+  }
+
+  const companions = [];
+  const collider = file.replace(/\.glb$/i, ".collider.json");
+  if (existsSync(collider)) companions.push(collider);
+
+  if (!wranglerPut(file, key, cdnDir)) {
+    console.error("✗ R2 put failed", key);
+    process.exit(1);
+  }
+  for (const extra of companions) {
+    const extraKey = key.replace(/\.glb$/i, ".collider.json");
+    if (!wranglerPut(extra, extraKey, cdnDir)) {
+      console.error("✗ R2 put failed", extraKey);
+      process.exit(1);
+    }
+  }
+
+  const head = await headCdn(key);
+  console.log(`  HEAD ${head.status} ${head.len} ${head.type} ${head.url}`);
+  const isGlb = extname(file).toLowerCase() === ".glb";
+  if (head.status !== 200) {
+    console.error("✗ CDN HEAD not 200");
+    process.exit(1);
+  }
+  if (isGlb && head.len < minBytes) {
+    console.error(
+      `✗ CDN body ${head.len} < ${minBytes} — likely HTML miss (was 44118 on this fleet)`,
+    );
+    process.exit(1);
+  }
+  if (isGlb && head.len > 0 && Math.abs(head.len - st.size) > 64) {
+    console.warn(`  warn: CDN length ${head.len} ≠ local ${st.size} (cache lag?)`);
+  }
+  console.log("✓ shipped");
 }
 
 function inspectBounds(doc) {
@@ -281,6 +396,11 @@ async function main() {
       process.exit(1);
     }
     await cmdInspect(resolve(f));
+    return;
+  }
+
+  if (argv[0] === "ship") {
+    await cmdShip(argv[1]);
     return;
   }
 
