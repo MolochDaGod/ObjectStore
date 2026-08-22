@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to the ObjectStore API and assets.
 
-## 2026-08-18
-### Fixed
-- fix(api): class-skill-bridges, /api/ssot, /content rewrite, HEAD JSON (2ec65c2)
+## 2026-08-21
+### Changed
+- Purge Meshy placeholders and stop serving stale R2 catalogs. (f0c34e8)
 
