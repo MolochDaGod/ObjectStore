@@ -9,14 +9,13 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 │                     CLOUDFLARE EDGE                             │
 │                                                                 │
 │  ┌──────────────────────┐     ┌──────────────────────────┐     │
-│  │  grudgeassets         │     │  grudge-ai-hub            │     │
-│  │  objectstore.grudge-  │     │  ai.grudge-studio.com     │     │
-│  │  studio.com           │     │                            │     │
-│  │                        │     │  Workers AI (LLaMA, SDXL) │     │
-│  │  Asset CRUD API        │◄───►│  Game agents (6 types)    │     │
-│  │  3D model serving      │     │  Sprite/icon generation   │     │
-│  │  Metadata search       │     │  Auto-tagging & search    │     │
-│  └──────────┬─────────────┘     │  VPS AI proxy             │     │
+│  │  grudgeassets         │     │  grudge-ai-hub (LIVE)     │     │
+│  │  objectstore.*        │     │  F:\GitHub\grudge-ai-hub  │     │
+│  │  JSON proxies info.*  │     │  ai.grudge-studio.com     │     │
+│  │                        │     │  1.6.7 dual worker        │     │
+│  │  + grudge-asset-cdn   │     │  NOT this repo workers/ai │     │
+│  │  assets.grudge-studio │     │                            │     │
+│  └──────────┬─────────────┘     └──────────┬───────────────┘     │
 │             │                    └─────┬──────────┬──────────┘     │
 │             │                          │          │                │
 │  ┌──────────▼──────────────────────────▼──┐  ┌───▼───┐           │
@@ -26,8 +25,8 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 │  └─────────────────────────────────────────┘  │  cache │           │
 │                                                └───────┘           │
 │  ┌──────────────────────┐  ┌──────────────────────┐               │
-│  │  D1: objectstore-meta │  │  D1: grudge-ai-hub   │               │
-│  │  (asset metadata)     │  │  (ai_jobs tracking)  │               │
+│  │  D1: grudge-objectstore│  │  D1: grudge-ai-hub  │               │
+│  │  (search index)        │  │  (AI jobs)          │               │
 │  └──────────────────────┘  └──────────────────────┘               │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -52,8 +51,9 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 **Purpose:** CRUD API for all game assets stored in R2. Public reads, API-key-gated writes.
 
 **Bindings:**
-- `env.BUCKET` → R2 `objectstore-assets`
-- `env.DB` → D1 `objectstore-meta`
+- `env.BUCKET` → R2 `grudge-assets`
+- `env.DB` → D1 `grudge-objectstore`
+- Catalog JSON: fetch `info.grudge-studio.com/api/v1` (no R2 JSON cache)
 
 **Routes:**
 | Method | Path | Auth | Description |
@@ -71,22 +71,22 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 
 ---
 
-### 2. `grudge-ai-hub` — AI Worker
+### 2. `grudge-asset-cdn` — binary CDN
+| | |
+|---|---|
+| **Domain** | `assets.grudge-studio.com` |
+| **Source** | `workers/cdn/index.js` |
+| **Config** | `workers/cdn/wrangler.toml` |
+| **Version** | 2.2.0 — CORS `*` |
+
+**Do not** deploy `GrudgeBuilder/workers/cdn` (same Worker name).
+
+### 3. `grudge-ai-hub` — AI Worker (not this tree)
 | | |
 |---|---|
 | **Domain** | `ai.grudge-studio.com` |
-| **Source** | `workers/ai/index.js` |
-| **Config** | `workers/ai/wrangler.toml` |
-
-**Purpose:** AI-powered asset generation, game agents, auto-tagging, and search. Full R2 access for reading/writing assets.
-
-**Bindings:**
-- `env.AI` → Cloudflare Workers AI
-- `env.BUCKET` → R2 `objectstore-assets` (shared with ObjectStore worker)
-- `env.DB` → D1 `grudge-ai-hub` (AI jobs tracking)
-- `env.OBJECTSTORE_DB` → D1 `objectstore-meta` (asset metadata queries)
-- `env.KV` → KV namespace (rate limiting + response cache)
-- `env.VPS_AI_AGENT_URL` → `https://api.grudge-studio.com`
+| **Source** | **`F:\GitHub\grudge-ai-hub`** (`npm run deploy`) |
+| **This repo** | `workers/ai/` is a **stale fork** (`grudge-ai-hub-objectstore-legacy`). Do not bind the hostname. |
 
 **Routes:**
 | Method | Path | Description |
@@ -164,11 +164,9 @@ wrangler deploy                    # uses root wrangler.toml
 
 ### Deploy AI Hub Worker
 ```bash
-# First time: run D1 migration
-wrangler d1 execute grudge-ai-hub --file=workers/ai/schema.sql --remote
-
-# Deploy
-wrangler deploy --config workers/ai/wrangler.toml
+cd F:\GitHub\grudge-ai-hub
+npm run deploy
+# Do NOT: wrangler deploy --config ObjectStore/workers/ai/wrangler.toml
 ```
 
 ### Secrets
@@ -185,8 +183,8 @@ wrangler secret put VPS_INTERNAL_KEY --config workers/ai/wrangler.toml
 # ObjectStore worker
 wrangler dev                        # http://localhost:8787
 
-# AI hub worker
-wrangler dev --config workers/ai/wrangler.toml   # http://localhost:8788
+# AI hub (canonical repo)
+cd F:\GitHub\grudge-ai-hub && wrangler dev --config wrangler.domain.toml
 ```
 
 ---

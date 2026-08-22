@@ -22,17 +22,23 @@ npm run blender:mcp:setup
 
 ## What This Is
 Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static data host.
-- **R2 bucket** `grudge-assets`: stores all binary assets (sprites, audio, 3D models, icons)
-- **D1 database** `objectstore-meta`: asset metadata (id, filename, category, tags, mime)
-- **GitHub Pages**: static JSON game data at `/api/v1/*.json`
+- **R2 bucket** `grudge-assets`: binaries (sprites, audio, 3D, icons)
+- **D1 database** `grudge-objectstore`: search index (legacy name `objectstore-meta` is retired)
+- **Definitions JSON:** `info.grudge-studio.com/api/v1` (Vercel). Worker proxies the same paths.
 
 ## Architecture
 
-### Live Endpoints
-- `objectstore.grudge-studio.com` — Cloudflare Worker (R2 + D1 CRUD)
-- `grudgeassets.grudge.workers.dev` — same worker, workers.dev fallback
-- `assets.grudge-studio.com` — R2 CDN (direct file serving)
-- `molochdagod.github.io/ObjectStore` — GitHub Pages (served from `gh-pages` branch)
+### Live Endpoints (do not collapse)
+| Host | Owns |
+|------|------|
+| `info.grudge-studio.com` | Vercel `objectstore-grudge` — catalog HTML + `/api/v1` JSON SSOT |
+| `objectstore.grudge-studio.com` | Worker **`grudgeassets`** (`workers/src`) — CRUD/search; JSON **proxies info.*** (no stale R2 catalog cache) |
+| `assets.grudge-studio.com` | Worker **`grudge-asset-cdn`** (`workers/cdn`) — R2 binaries, CORS `*` |
+| `ai.grudge-studio.com` | **`F:\GitHub\grudge-ai-hub`** (1.6.7). **Not** this repo’s `workers/ai` (stale fork; do not bind that hostname) |
+| `grudgeassets.grudge.workers.dev` | Same as objectstore Worker |
+
+**Do not** `wrangler deploy -c workers/ai/wrangler.toml` onto `ai.grudge-studio.com`.  
+**Do not** deploy `GrudgeBuilder/workers/cdn` (same Worker name as live CDN).
 
 ### Worker Routes (workers/src/index.js)
 - `GET /health` — health check

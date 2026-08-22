@@ -54,9 +54,9 @@ ignored. Bump `SCHEMA_VER` in `index.js` when the layout changes.
 
 | Pattern | What it does |
 |---------|-------------|
-| `https://assets.grudge-studio.com/{r2key}` | Direct R2 CDN — immutable cache header for `game/` keys |
-| `https://ai.grudge-studio.com/cdn/{r2key}` | Worker-served with ETag + conditional 304 |
-| `https://ai.grudge-studio.com/img/{preset}/{r2key}` | Cloudflare Image Resizing |
+| `https://assets.grudge-studio.com/{r2key}` | **Canonical** R2 CDN (`grudge-asset-cdn`, ObjectStore `workers/cdn`) |
+| `https://ai.grudge-studio.com/cdn/{r2key}` | **Do not use for play meshes** — Legion hub is chat/skills, not the file CDN |
+| `https://ai.grudge-studio.com/img/{preset}/{r2key}` | Optional Image Resizing on the hub; binaries still live on `assets.*` |
 
 Image presets: `thumb` (64×64) · `icon` (128×128) · `card` (256×256) · `banner` (512×256) · `full`
 

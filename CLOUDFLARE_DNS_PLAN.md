@@ -11,7 +11,7 @@ wcs.grudge-studio.com         → Cloudflare Pages (grudge-wcs SPA) (NEW)
 wcs-api.grudge-studio.com     → Node backend on Grudge VPS (NEW)
 grudgedot.grudge-studio.com   → Cloudflare Pages (GDevelopAssistant rebrand) (NEW, optional)
 dash.grudge-studio.com        → Dashboard (already live)
-ai.grudge-studio.com          → Legion AI hub (planned)
+ai.grudge-studio.com          → Legion AI hub LIVE (`F:\GitHub\grudge-ai-hub`, 1.6.7) — not ObjectStore workers/ai
 ```
 ## DNS records to add
 All A/AAAA records should be Proxied (orange cloud) unless noted. CNAMEs to Cloudflare-managed targets are automatically HTTPS-terminated.
