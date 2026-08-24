@@ -80,10 +80,11 @@
     global.MainPanelI18n.applyDom();
     sel.addEventListener("change", function () {
       global.MainPanelI18n.setLocale(sel.value);
-      // Re-paint tab labels after locale change
+      // Re-paint tab labels + equipment slot words after locale change
       try {
         if (typeof global.rebuildTabStrip === "function") global.rebuildTabStrip();
         else global.MainPanelI18n.applyDom();
+        if (typeof global.refreshAll === "function") global.refreshAll();
       } catch (_) {}
     });
   }

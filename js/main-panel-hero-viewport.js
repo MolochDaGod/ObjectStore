@@ -310,11 +310,24 @@ function rematchClipBones(root, clip) {
   });
   const resolved = [];
   for (const track of clip.tracks) {
-    // Skip hip/root position — prevents float after SI ground
+    // Skip hip/root position and scale — prevents float after SI ground
     if (/\.position$|\.scale$/i.test(track.name)) continue;
     const dot = track.name.indexOf('.');
-    if (dot < 0) continue;
-    const node = track.name.slice(0, dot);
+    const node = dot < 0 ? track.name : track.name.slice(0, dot);
+    // Never drive wardrobe weapon/shield meshes from clip tracks — that spins
+    // held props around bind origin. Hands/Bip bones stay.
+    if (
+      /(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(
+        node,
+      ) &&
+      !/hand|bip|mixamo|container/i.test(node)
+    ) {
+      continue;
+    }
+    if (dot < 0) {
+      resolved.push(track);
+      continue;
+    }
     const prop = track.name.slice(dot + 1);
     if (node === 'Bip001' || /Footsteps/i.test(node) || /Nub$/i.test(node) || /mixamorig/i.test(node)) continue;
     if (
@@ -660,24 +673,34 @@ export async function mountHeroViewport(host, opts) {
     } catch (animErr) {
       console.warn('[main-panel hero] pack idle bind failed', animErr);
     }
+    // Try embedded clips first, then fall back to CDN baked idle
     if (!idleOn) {
       const embedded = (kit.animations || []).find((c) => /idle/i.test(c.name || '')) || (kit.animations || [])[0];
       if (embedded) {
-        const clip = rematchClipBones(root, embedded) || embedded;
-        mixer.clipAction(clip).reset().setLoop(THREE.LoopRepeat, Infinity).play();
-        mixer.update(1 / 30);
-        idleOn = true;
-      } else {
-        const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
-        if (idleClip) {
+        try {
+          const clip = rematchClipBones(root, embedded) || embedded;
+          mixer.clipAction(clip).reset().setLoop(THREE.LoopRepeat, Infinity).play();
+          mixer.update(1 / 30);
+          idleOn = true;
+        } catch (embErr) {
+          console.warn('[main-panel hero] embedded idle failed', embErr);
+        }
+      }
+    }
+    if (!idleOn) {
+      const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
+      if (idleClip) {
+        try {
           const idle = rematchClipBones(root, idleClip) || idleClip;
           mixer.clipAction(idle).reset().setLoop(THREE.LoopRepeat, Infinity).play();
           mixer.update(1 / 30);
           idleOn = true;
+        } catch (cdnErr) {
+          console.warn('[main-panel hero] CDN idle failed', cdnErr);
         }
       }
-      finalH = fitRootSi(root, targetH);
     }
+    finalH = fitRootSi(root, targetH);
     if (!idleOn) reGroundFeet(root);
 
     vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
