@@ -48,6 +48,7 @@ import {
   applyFootIk,
   flatGround,
 } from './grudge6-foot-ik.js?v=feet1';
+import { createHeadLook } from './grudge6-head-look.js?v=look1';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -483,7 +484,11 @@ export async function mountHeroViewport(host, opts) {
   let equip = null;
   let mixer = null;
   let poseReady = false;
+<<<<<<< HEAD
   let lastEquipArgs = { equippedItems: opts.equippedItems || {}, findItem: opts.findItem };
+=======
+  let headLook = null;
+>>>>>>> c6b20a05 (Paperdoll head follows the user/cursor (neck+head lookAt).)
   let raf = 0;
   let disposed = false;
   /** @type {Awaited<ReturnType<typeof createTomeOffhand>>|null} */
@@ -518,6 +523,7 @@ export async function mountHeroViewport(host, opts) {
     if (poseReady && root) {
       placeRootBetweenFeet(root, flatGround);
       applyFootIk(root, flatGround);
+      headLook?.update(camera, dt, root);
     }
     if (poseReady && mixer && equip) {
       const kind = resolveHoldKindFromEquip(equip);
@@ -552,6 +558,8 @@ export async function mountHeroViewport(host, opts) {
       disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
+      try { headLook?.dispose(); } catch { /* ok */ }
+      headLook = null;
       controls.dispose();
       renderer.dispose();
       if (tomeCtrl) {
@@ -725,6 +733,7 @@ export async function mountHeroViewport(host, opts) {
     _state.doll = doll;
     _state.equip = equip;
     _state.materialMode = kit.materialMode;
+    headLook = createHeadLook(root, renderer.domElement);
     clock.getDelta();
     poseReady = true;
 
