@@ -2105,7 +2105,11 @@ function showError(msg) {
       attachSlotListeners();
       // Mount Three.js hero after DOM paint (equip mesh filter + mesh kit editor)
       requestAnimationFrame(() => {
+<<<<<<< HEAD
         import('./js/main-panel-hero-viewport.js?v=paperdoll5')
+=======
+        import('./js/main-panel-hero-viewport.js?v=dollfold5')
+>>>>>>> f22da670 (Plant character root between the feet; two-bone IK onto the ground plane.)
           .then(async (mod) => {
             const host = document.getElementById('hero-viewport');
             if (!host) return;

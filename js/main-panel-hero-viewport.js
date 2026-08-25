@@ -43,6 +43,11 @@ import {
   PaperdollPreviewPlayer,
   paperdollSkipHoldPose,
 } from './grudge6-anim-packs.js?v=paperdollidle3';
+import {
+  placeRootBetweenFeet,
+  applyFootIk,
+  flatGround,
+} from './grudge6-foot-ik.js?v=feet1';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -301,12 +306,15 @@ function plantPaperdollSi(root, targetH) {
   }
   root.scale.multiplyScalar(targetH / h);
   root.updateMatrixWorld(true);
-  box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
-  if (!box || !Number.isFinite(box.min.y)) box = new THREE.Box3().setFromObject(root);
-  root.position.x -= (box.min.x + box.max.x) * 0.5;
-  root.position.z -= (box.min.z + box.max.z) * 0.5;
-  root.position.y -= box.min.y;
-  root.updateMatrixWorld(true);
+  if (!placeRootBetweenFeet(root, flatGround)) {
+    box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+    if (!box || !Number.isFinite(box.min.y)) box = new THREE.Box3().setFromObject(root);
+    root.position.x -= (box.min.x + box.max.x) * 0.5;
+    root.position.z -= (box.min.z + box.max.z) * 0.5;
+    root.position.y -= box.min.y;
+    root.updateMatrixWorld(true);
+  }
+  applyFootIk(root, flatGround);
   const out = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
   return out && Number.isFinite(out.max.y) ? out.max.y - out.min.y : targetH;
 }
@@ -447,6 +455,13 @@ export async function mountHeroViewport(host, opts) {
   const fill = new THREE.DirectionalLight(0xa0c0ff, 0.35);
   fill.position.set(-2, 1.5, -1);
   scene.add(fill);
+  const ground = new THREE.Mesh(
+    new THREE.CircleGeometry(0.9, 32),
+    new THREE.MeshStandardMaterial({ color: 0x2a1c10, roughness: 1, metalness: 0 }),
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.9, 0);
@@ -500,6 +515,10 @@ export async function mountHeroViewport(host, opts) {
     if (disposed) return;
     const dt = clock.getDelta();
     if (poseReady && mixer) mixer.update(dt);
+    if (poseReady && root) {
+      placeRootBetweenFeet(root, flatGround);
+      applyFootIk(root, flatGround);
+    }
     if (poseReady && mixer && equip) {
       const kind = resolveHoldKindFromEquip(equip);
       const offKind = equip.equippedOffhand?.slot || null;
@@ -697,7 +716,6 @@ export async function mountHeroViewport(host, opts) {
       }
     }
     finalH = plantPaperdollSi(root, targetH);
-    reGroundFeet(root);
 
     doll = new THREE.Group();
     doll.name = 'paperdoll-facing';
