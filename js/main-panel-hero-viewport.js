@@ -6,7 +6,9 @@
  *  2. EquipmentManager: hide all → exclusive body/weapon variants only
  *  3. hardenVisibility() — no ghost layers
  *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
- *  5. Face camera: yaw = 0 (Toon art-forward +Z; camera on +Z → faces user). Never π.
+ *  5. NEVER write Euler/yaw on the animated kit root after mixer.update.
+ *     Bip001 / FBX Y-up lives in authored rotation. Zeroing it folds the doll
+ *     in half. Facing belongs on an un-animated wrapper group only.
  *  6. Idle from CDN baked pack when kit has no embedded clips
  *  7. Never auto invert UV V on production kits (opts.invertUvV opt-in only)
  */
@@ -24,9 +26,7 @@ import {
   WEAPON_R,
   WEAPON_L,
   WEAPON_1H,
-  fitRootUniformSi,
   measureStructuralBBox,
-  faceRootTowardCamera,
   GRUDGE6_FACE_CAMERA_YAW,
 } from './grudge6-kit.js';
 import {
@@ -61,23 +61,14 @@ const PANEL_TO_BODY = {
 };
 
 /**
- * Paperdoll face-user yaw (SSOT: grudge6-kit GRUDGE6_FACE_CAMERA_YAW = 0).
- * Camera sits on +Z looking at origin. Toon kits are art-forward +Z at yaw 0
- * so they face the user. Math.PI shows the BACK — that was the bug.
- * Re-applied every frame so idle tracks cannot undo it.
+ * Facing is the WRAPPER's job. Do not set kit-root Euler after the mixer.
+ * Kept as a no-op export so old call sites do not reintroduce the fold.
  */
-export const FACE_CAMERA_YAW = GRUDGE6_FACE_CAMERA_YAW; // 0 — not Math.PI
+export const FACE_CAMERA_YAW = GRUDGE6_FACE_CAMERA_YAW;
 
-export function applyFaceCamera(root, yaw = FACE_CAMERA_YAW) {
-  if (!root) return;
-  // Kit helper: full rotation clean plant; yaw 0 faces +Z camera
-  if (typeof faceRootTowardCamera === 'function' && Math.abs(yaw) < 1e-6) {
-    faceRootTowardCamera(root, { artFacesPlusX: false });
-  } else {
-    root.rotation.order = 'YXZ';
-    root.rotation.y = yaw;
-  }
-  root.userData.paperdollFaceYaw = root.rotation.y;
+export function applyFaceCamera(_root, _yaw = FACE_CAMERA_YAW) {
+  // Intentionally empty. Writing root.rotation after mixer.update decomposes
+  // the Bip001 quaternion to Euler and folds the character (3rd time).
 }
 
 /**
@@ -284,17 +275,39 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
 }
 
 /**
- * Paperdoll SI fit + face camera.
- * Camera on +Z → Toon face user at yaw 0 (grudge6-kit SSOT). Not π.
+ * SI plant WITHOUT touching rotation.
+ * fitRootUniformSi zeros root.rotation — that destroys FBX/Bip001 Y-up
+ * (−π/2 on the scene root) and folds the doll after idle samples.
  */
-function fitRootSi(root, targetH) {
-  const result = fitRootUniformSi(THREE, root, targetH, {
-    characterType: 'infantry',
-    centerXZ: true,
-  });
-  applyFaceCamera(root, FACE_CAMERA_YAW);
+function plantPaperdollSi(root, targetH) {
+  if (!root) return 0;
+  // Scale + feet only. Leave quaternion / Euler exactly as authored (and as
+  // the mixer last wrote). Do not identity-rotate — that folds Bip001.
+  root.position.set(0, 0, 0);
+  root.scale.setScalar(1);
   root.updateMatrixWorld(true);
-  return result.height;
+
+  let box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  if (!box || !Number.isFinite(box.min.y)) {
+    box = new THREE.Box3().setFromObject(root);
+  }
+  let h = Math.max(box.max.y - box.min.y, 1e-4);
+  if (h > 40) {
+    root.scale.setScalar(0.01);
+    root.updateMatrixWorld(true);
+    box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true }) || box;
+    h = Math.max(box.max.y - box.min.y, 1e-4);
+  }
+  root.scale.multiplyScalar(targetH / h);
+  root.updateMatrixWorld(true);
+  box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  if (!box || !Number.isFinite(box.min.y)) box = new THREE.Box3().setFromObject(root);
+  root.position.x -= (box.min.x + box.max.x) * 0.5;
+  root.position.z -= (box.min.z + box.max.z) * 0.5;
+  root.position.y -= box.min.y;
+  root.updateMatrixWorld(true);
+  const out = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  return out && Number.isFinite(out.max.y) ? out.max.y - out.min.y : targetH;
 }
 
 /**
@@ -445,6 +458,7 @@ export async function mountHeroViewport(host, opts) {
   host.appendChild(status);
 
   let root = null;
+  let doll = null;
   let equip = null;
   let mixer = null;
   let preview = null;
@@ -492,8 +506,6 @@ export async function mountHeroViewport(host, opts) {
       });
     }
     if (tomeCtrl) tomeCtrl.update(dt);
-    // Lock face-user yaw after mixer (anim may write root rotation tracks)
-    if (root) applyFaceCamera(root, FACE_CAMERA_YAW);
     controls.update();
     renderer.render(scene, camera);
     raf = requestAnimationFrame(tick);
@@ -655,10 +667,14 @@ export async function mountHeroViewport(host, opts) {
     }
     bindRigidHeldToHands(root, equip);
 
-    // SI fit AFTER equip visibility (bone measure ignores mesh visibility, OK)
-    let finalH = fitRootSi(root, targetH);
-    scene.add(root);
+    // SI fit AFTER equip visibility. Wrapper owns facing; kit root keeps bind/mixer rotation.
+    let finalH = plantPaperdollSi(root, targetH);
+    doll = new THREE.Group();
+    doll.name = 'paperdoll-facing';
+    doll.add(root);
+    scene.add(doll);
     _state.root = root;
+    _state.doll = doll;
     _state.equip = equip;
     _state.materialMode = kit.materialMode;
 
@@ -705,7 +721,7 @@ export async function mountHeroViewport(host, opts) {
 
     vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
     const matMode = kit.materialMode || root.userData.grudge6MaterialMode || '?';
-    status.textContent = `${race} · ${kit.source} · faceYaw=${(root.rotation.y).toFixed(2)} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
+    status.textContent = `${race} · ${kit.source} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
     console.info('[main-panel hero]', {
       race,
       url: kit.url,
@@ -717,7 +733,7 @@ export async function mountHeroViewport(host, opts) {
       visible: vis,
       visibleNames: equip.allMeshes?.filter((m) => m.visible).map((m) => m.name),
       slots: equip.summary?.() || equip.summary(),
-      faceCameraYawSSOT: FACE_CAMERA_YAW,
+      note: 'no Euler on animated root',
       yaw: root.rotation.y,
     });
     setTimeout(() => {
