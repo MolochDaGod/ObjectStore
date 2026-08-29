@@ -99,8 +99,8 @@
     {
       "id": "chill",
       "name": "Chill",
-      "type": "slow_to_freeze",
-      "description": "Movement slow that stacks to freeze",
+      "type": "slow",
+      "description": "Movement slow that stacks",
       "applyCondition": "on_hit",
       "effect": {
         "slowPerStack": 0.15,
@@ -108,7 +108,7 @@
         "maxSlowPercent": 0.45
       },
       "maxStacks": 3,
-      "duration": 8.0,
+      "duration": 3.0,
       "damageType": "frost",
       "weaponTypes": ["staff_frost"],
       "sources": {
@@ -121,7 +121,7 @@
       "id": "shock",
       "name": "Shock",
       "type": "dot",
-      "description": "Lightning damage with interrupt chance",
+      "description": "Lightning damage per tick",
       "applyCondition": "on_hit",
       "effect": {
         "damagePerTick": null,
