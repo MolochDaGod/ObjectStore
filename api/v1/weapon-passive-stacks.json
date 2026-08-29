@@ -1,0 +1,313 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-29T14:30:00Z",
+  "source": {
+    "design": "MolochDaGod/ObjectStore",
+    "runtime": "MolochDaGod/threejs-rapier-react-three-controller",
+    "runtimeStatus": "NOT_IMPLEMENTED"
+  },
+  "statusEffects": [
+    {
+      "id": "grudge_mark",
+      "name": "Grudge Mark",
+      "type": "damage_amplifier",
+      "description": "Damage amplification that stacks on target",
+      "applyCondition": "on_hit",
+      "effect": {
+        "amplification": 0.05,
+        "amplificationPerStack": 0.05
+      },
+      "maxStacks": 3,
+      "duration": 6.0,
+      "damageType": "physical",
+      "weaponTypes": ["sword", "axe"],
+      "sources": {
+        "design": "api/v1/weapons.json:34",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "bleed",
+      "name": "Bleed",
+      "type": "dot",
+      "description": "Physical damage over time",
+      "applyCondition": "on_hit_or_crit",
+      "effect": {
+        "damagePerTick": null,
+        "tickInterval": 1.0,
+        "damageType": "physical"
+      },
+      "maxStacks": 5,
+      "duration": 8.0,
+      "damageType": "physical",
+      "weaponTypes": ["dagger", "axe", "sword"],
+      "vfxAsset": "/sprites/effects/physical/red_crit_bleed.png",
+      "sources": {
+        "design": "api/v1/weapons.json:41,290,548,712",
+        "manifest": "api/v1/studio-manifest.json:248",
+        "vfx": "api/v1/sprites2d.json:6570",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "burn",
+      "name": "Burn",
+      "type": "dot",
+      "description": "Fire damage over time, spreads on contact",
+      "applyCondition": "on_ability_hit",
+      "effect": {
+        "damagePerTick": null,
+        "tickInterval": 1.0,
+        "damageType": "fire",
+        "spreadOnContact": true
+      },
+      "maxStacks": 3,
+      "duration": 6.0,
+      "damageType": "fire",
+      "weaponTypes": ["axe", "staff_fire", "dagger"],
+      "vfxAsset": "/sprites/effects/pixel/16_sunburn_spritesheet.png",
+      "sources": {
+        "design": "api/v1/weapons.json:222,246,2234",
+        "manifest": "api/v1/studio-manifest.json:250",
+        "vfx": "api/v1/sprites2d.json:6770",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "poison",
+      "name": "Poison",
+      "type": "dot",
+      "description": "Nature damage over time, reduces healing",
+      "applyCondition": "on_ability_hit",
+      "effect": {
+        "damagePerTick": null,
+        "tickInterval": 1.5,
+        "damageType": "nature",
+        "healingReduction": 0.5
+      },
+      "maxStacks": 3,
+      "duration": 10.0,
+      "damageType": "nature",
+      "weaponTypes": ["dagger", "bow", "crossbow"],
+      "vfxAsset": "/sprites/effects/poison/poison_blast.png",
+      "sources": {
+        "design": "api/v1/weapons.json:548,712",
+        "manifest": "api/v1/studio-manifest.json:249",
+        "vfx": "api/v1/sprites2d.json:7770,7790,7810",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "chill",
+      "name": "Chill",
+      "type": "slow_to_freeze",
+      "description": "Movement slow that stacks to freeze",
+      "applyCondition": "on_hit",
+      "effect": {
+        "slowPerStack": 0.15,
+        "freezeAtStacks": 3,
+        "freezeDuration": 2.0
+      },
+      "maxStacks": 3,
+      "duration": 8.0,
+      "damageType": "frost",
+      "weaponTypes": ["staff_frost"],
+      "sources": {
+        "design": "api/v1/weapons.json:2367,3246",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "shock",
+      "name": "Shock",
+      "type": "dot",
+      "description": "Lightning damage with interrupt chance",
+      "applyCondition": "on_hit",
+      "effect": {
+        "damagePerTick": null,
+        "tickInterval": 1.0,
+        "damageType": "lightning",
+        "interruptChance": 0.15
+      },
+      "maxStacks": 3,
+      "duration": 6.0,
+      "damageType": "lightning",
+      "weaponTypes": ["staff_lightning"],
+      "sources": {
+        "design": "api/v1/weapons.json:2633",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "lifesteal",
+      "name": "Lifesteal",
+      "type": "on_hit_heal",
+      "description": "Heal for percentage of damage dealt",
+      "applyCondition": "on_damage",
+      "effect": {
+        "healPercentage": null,
+        "appliesTo": "attacker"
+      },
+      "maxStacks": null,
+      "duration": null,
+      "damageType": null,
+      "weaponTypes": ["axe", "sword", "hammer"],
+      "sources": {
+        "design": "api/v1/weapons.json:15,139,352,377,1039",
+        "manifest": "api/v1/studio-manifest.json:281",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "rune_stack",
+      "name": "Rune Stack",
+      "type": "power_up",
+      "description": "Gain stacks on hit/kill, consume for burst damage",
+      "applyCondition": "on_kill_or_3hits",
+      "effect": {
+        "damagePerStack": 0.03,
+        "consumeEffect": {
+          "type": "aoe_burst",
+          "damageMultiplier": 50.0,
+          "radius": 10.0
+        },
+        "persistsOnDeath": true,
+        "deathStackLoss": 0.5
+      },
+      "maxStacks": 10,
+      "duration": null,
+      "damageType": null,
+      "weaponTypes": ["greatsword"],
+      "weaponSpecific": ["Runic Behemoth"],
+      "sources": {
+        "design": "api/v1/weapons.json:2904-2915",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "combo_meter",
+      "name": "Combo Meter",
+      "type": "attack_speed",
+      "description": "Attack speed bonus that stacks",
+      "applyCondition": "on_consecutive_hits",
+      "effect": {
+        "attackSpeedPerStack": null,
+        "refreshOnHit": true
+      },
+      "maxStacks": 5,
+      "duration": 5.0,
+      "damageType": null,
+      "weaponTypes": ["all"],
+      "sources": {
+        "design": "IMPLIED_FROM_DESIGN",
+        "runtime": "NOT_IMPLEMENTED"
+      }
+    }
+  ],
+  "weaponPassiveBindings": [
+    {
+      "weaponId": "sword-bloodfeud",
+      "weaponName": "Bloodfeud Blade",
+      "ability": "Vengeful Slash",
+      "statusEffect": "grudge_mark",
+      "source": "api/v1/weapons.json:34"
+    },
+    {
+      "weaponId": "sword-bloodfeud",
+      "weaponName": "Bloodfeud Blade",
+      "ability": "Deep Wound",
+      "statusEffect": "bleed",
+      "source": "api/v1/weapons.json:41"
+    },
+    {
+      "weaponId": "axe-ember",
+      "weaponName": "Ember Axe",
+      "ability": "Flame Slash",
+      "statusEffect": "burn",
+      "source": "api/v1/weapons.json:246"
+    },
+    {
+      "weaponId": "axe-veinreaver",
+      "weaponName": "Veinreaver",
+      "ability": "Blood Harvest",
+      "statusEffect": "lifesteal",
+      "source": "api/v1/weapons.json:377"
+    },
+    {
+      "weaponId": "dagger-shadow-fang",
+      "weaponName": "Shadow Fang",
+      "ability": "Crimson Stab",
+      "statusEffect": "bleed",
+      "source": "api/v1/weapons.json:550"
+    },
+    {
+      "weaponId": "dagger-venom-fang",
+      "weaponName": "Venom Fang",
+      "ability": "Poison Shiv",
+      "statusEffect": "poison",
+      "source": "api/v1/weapons.json:712"
+    },
+    {
+      "weaponId": "bow-crimson",
+      "weaponName": "Crimson Bow",
+      "ability": "Crimson Shot",
+      "statusEffect": "bleed",
+      "source": "api/v1/weapons.json:1471"
+    },
+    {
+      "weaponId": "staff-fire-wrath",
+      "weaponName": "Fire Staff (Wrath)",
+      "ability": "Fire Bolt",
+      "statusEffect": "burn",
+      "source": "api/v1/weapons.json:2234"
+    },
+    {
+      "weaponId": "staff-fire-wrath",
+      "weaponName": "Fire Staff (Wrath)",
+      "ability": "Flame Nova",
+      "statusEffect": "burn",
+      "statusEffectAction": "explode_all",
+      "source": "api/v1/weapons.json:2242"
+    },
+    {
+      "weaponId": "staff-frost",
+      "weaponName": "Frost Staff",
+      "ability": "Frost Bolt",
+      "statusEffect": "chill",
+      "source": "api/v1/weapons.json:2367"
+    },
+    {
+      "weaponId": "staff-lightning",
+      "weaponName": "Lightning Staff",
+      "ability": "Thunder Bolt",
+      "statusEffect": "shock",
+      "source": "api/v1/weapons.json:2633"
+    },
+    {
+      "weaponId": "greatsword-runic-behemoth",
+      "weaponName": "Runic Behemoth",
+      "ability": "Runic Cleave",
+      "statusEffect": "rune_stack",
+      "source": "api/v1/weapons.json:2904"
+    }
+  ],
+  "runtimeIntegration": {
+    "currentStatus": "NOT_IMPLEMENTED",
+    "requiredFiles": [
+      "threejs-rapier-react-three-controller/lib/epicfight/src/combat/StatusEffectController.ts",
+      "threejs-rapier-react-three-controller/lib/epicfight/src/combat/types.ts"
+    ],
+    "implementationNotes": [
+      "CombatController has health/stamina/poise but no DoT system",
+      "Vulnerable states and crit windows exist",
+      "StatusEffect manager needs to be added",
+      "DoT tick system needs update() integration",
+      "VFX sprites exist for bleed/poison, others needed"
+    ],
+    "relatedDocs": [
+      "docs/WEAPON-PASSIVE-STACKS.md",
+      "docs/WEAPON-STATS-ATTRIBUTES.md",
+      "threejs-rapier/docs/STACK_AUDIT_COMBAT_RENDER_DEPLOY.md"
+    ]
+  }
+}
