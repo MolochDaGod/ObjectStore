@@ -141,7 +141,7 @@ From `api/v1/weapons.json` design layer:
 | Bow | Crimson Shot | Bleed (single target) | 3 | `:1471` |
 | Staff (Fire) | Fire Bolt | Burn stack | 3 | `:2234` |
 | Staff (Fire) | Flame Nova | Explode all burns | N/A | `:2242` |
-| Staff (Frost) | Frost Bolt | Chill stack → freeze | 3 | `:2367` |
+| Staff (Frost) | Frost Bolt | Chill stack | 3 | `:2367` |
 | Staff (Lightning) | Thunder Bolt | Shock stack | 3 | `:2633` |
 | Greatsword | Runic Cleave | Rune Stack (+3% dmg) | 10 | `:2904` |
 
