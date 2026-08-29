@@ -31,11 +31,10 @@ From `api/v1/studio-manifest.json` and weapon ability descriptions:
 | **Burn** | Fire DoT | 3–6s | Damage per tick, spreads on contact | 3 | VFX needed |
 | **Poison** | Nature DoT | 4–10s | Damage per tick, reduces healing | 3 | VFX needed |
 | **Grudge Mark** | Damage amp | Per hit | 5% damage amplification per stack | 3 | Implemented in design |
-| **Chill/Freeze** | Slow/Stun | 3–8s | Movement slow stacks to freeze | 3 | VFX needed |
-| **Shock** | Lightning DoT | 2–6s | Damage + interrupt chance | 3 | VFX needed |
+| **Chill** | Slow | 3s/stack | Movement slow (15%/stack, max 45%) | 3 | VFX needed |
+| **Shock** | Lightning DoT | 2–4s | Lightning damage per tick | 3 | VFX needed |
 | **Lifesteal** | On-hit heal | Instant | Heal for % of damage dealt | N/A | VFX needed |
 | **Rune Stack** | Power-up | Permanent | Gain stacks on hit/kill, consume for burst | 10 | Design only |
-| **Combo Meter** | Attack speed | 5s refresh | Attack speed per stack | 5 | Not specified |
 
 **Source files:**
 - `api/v1/studio-manifest.json:248-281` — status effect catalog
@@ -68,7 +67,6 @@ Current implementation in `lib/epicfight/src/combat/`:
 | **Stack Management** | ❌ Not in runtime | Apply, refresh, max stacks, duration |
 | **On-Hit Passives** | ❌ Not in runtime | Grudge Mark amplification |
 | **Lifesteal** | ❌ Not in runtime | Heal on damage |
-| **Combo Meter** | ❌ Not in runtime | Attack speed scaling |
 
 ---
 
@@ -83,7 +81,7 @@ Current implementation in `lib/epicfight/src/combat/`:
 | **Apply condition** | On hit (basic attack) |
 | **Effect** | 5% damage amplification per stack |
 | **Max stacks** | 3 |
-| **Duration** | Not specified (likely 6–8s) |
+| **Duration** | Not specified in source |
 | **Weapon family** | Swords (1H melee) |
 | **SKIL-* binding** | Vengeful Slash |
 
@@ -91,12 +89,12 @@ Current implementation in `lib/epicfight/src/combat/`:
 
 ### Dagger — Bleed / Poison
 
-**Source:** `api/v1/weapons.json:548,712` (Shadow Fang, Venom Fang)
+**Source:** `api/v1/weapons.json:41,290,550,715` (Bleed), `api/v1/weapons.json:548,712` (Poison)
 
 | Effect | Apply Condition | Duration | Max Stacks | Damage Type |
 |--------|----------------|----------|-----------|-------------|
-| **Bleed** | On critical hit | 3–8s | 3 | Physical DoT |
-| **Poison** | Poison Shiv ability | 4–10s | 3 | Nature DoT, -healing |
+| **Bleed** | On hit or ability | 3–8s | 3-5 | Physical DoT |
+| **Poison** | Poison Shiv ability | 4–10s | 3 | Nature DoT |
 
 **Runtime gap:** DoT tick system not in `CombatController`.
 
@@ -111,9 +109,9 @@ Current implementation in `lib/epicfight/src/combat/`:
 
 **Runtime gap:** Burn spread mechanic and lifesteal healing not in `CombatController`.
 
-### Hammer — Rune Stack (Runic Behemoth)
+### Greatsword — Rune Stack (Runed Great Sword)
 
-**Source:** `api/v1/weapons.json:2904-2915`
+**Source:** `api/v1/weapons.json:2884-2915`
 
 | Field | Value |
 |-------|-------|
@@ -135,8 +133,9 @@ From `api/v1/weapons.json` design layer:
 |-------------|---------|--------|-----------|-------------|
 | Sword | Vengeful Slash | Grudge Mark (5% amp) | 3 | `:34` |
 | Sword | Deep Wound | Bleed stack | 3–5 | `:41` |
-| Dagger | Poison Shiv | Poison DoT | 3 | `:712` |
-| Dagger | Crimson Stab | High bleed | 5 | `:550` |
+| Dagger | Poison Shiv | Poison DoT | 3 | `:548,712` |
+| Dagger | Crimson Stab | Bleed | 5 | `:550` |
+| Dagger | Crimson Stab | Bleed | 3-5 | `:715` |
 | Axe | Flame Slash | Burn stack | 3 | `:246` |
 | Axe | Blood Harvest | Lifesteal AoE | N/A | `:377` |
 | Bow | Crimson Shot | Bleed (single target) | 3 | `:1471` |
@@ -144,7 +143,7 @@ From `api/v1/weapons.json` design layer:
 | Staff (Fire) | Flame Nova | Explode all burns | N/A | `:2242` |
 | Staff (Frost) | Frost Bolt | Chill stack → freeze | 3 | `:2367` |
 | Staff (Lightning) | Thunder Bolt | Shock stack | 3 | `:2633` |
-| Hammer | Runic Cleave | Rune Stack (+3% dmg) | 10 | `:2904` |
+| Greatsword | Runic Cleave | Rune Stack (+3% dmg) | 10 | `:2904` |
 
 **All weapon abilities:** `api/v1/weapons.json`  
 **Skill-to-SKIL UUID mapping:** `api/v1/master-weaponSkills.json`

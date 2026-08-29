@@ -18,7 +18,7 @@
         "amplificationPerStack": 0.05
       },
       "maxStacks": 3,
-      "duration": 6.0,
+      "duration": null,
       "damageType": "physical",
       "weaponTypes": ["sword", "axe"],
       "sources": {
@@ -43,7 +43,7 @@
       "weaponTypes": ["dagger", "axe", "sword"],
       "vfxAsset": "/sprites/effects/physical/red_crit_bleed.png",
       "sources": {
-        "design": "api/v1/weapons.json:41,290,548,712",
+        "design": "api/v1/weapons.json:41,290,550,715",
         "manifest": "api/v1/studio-manifest.json:248",
         "vfx": "api/v1/sprites2d.json:6570",
         "runtime": "NOT_IMPLEMENTED"
@@ -82,13 +82,12 @@
       "effect": {
         "damagePerTick": null,
         "tickInterval": 1.5,
-        "damageType": "nature",
-        "healingReduction": 0.5
+        "damageType": "nature"
       },
       "maxStacks": 3,
       "duration": 10.0,
       "damageType": "nature",
-      "weaponTypes": ["dagger", "bow", "crossbow"],
+      "weaponTypes": ["dagger"],
       "vfxAsset": "/sprites/effects/poison/poison_blast.png",
       "sources": {
         "design": "api/v1/weapons.json:548,712",
@@ -105,17 +104,18 @@
       "applyCondition": "on_hit",
       "effect": {
         "slowPerStack": 0.15,
-        "freezeAtStacks": 3,
-        "freezeDuration": 2.0
+        "slowDuration": 3.0,
+        "maxSlowPercent": 0.45
       },
       "maxStacks": 3,
       "duration": 8.0,
       "damageType": "frost",
       "weaponTypes": ["staff_frost"],
       "sources": {
-        "design": "api/v1/weapons.json:2367,3246",
+        "design": "api/v1/weapons.json:2367 (Frost Bolt chill stacks), 3246 (Frostbite 15% slow per stack, 3s duration)",
         "runtime": "NOT_IMPLEMENTED"
-      }
+      },
+      "notes": "Line 3246 specifies slow mechanics (15%/stack, 3s, stacks 3x to 45%). Freeze-on-stack not explicitly in source."
     },
     {
       "id": "shock",
@@ -126,15 +126,16 @@
       "effect": {
         "damagePerTick": null,
         "tickInterval": 1.0,
-        "damageType": "lightning",
-        "interruptChance": 0.15
+        "damageType": "lightning"
       },
       "maxStacks": 3,
-      "duration": 6.0,
+      "duration": null,
+      "durationRange": "2-4s",
       "damageType": "lightning",
       "weaponTypes": ["staff_lightning"],
       "sources": {
         "design": "api/v1/weapons.json:2633",
+        "manifest": "api/v1/studio-manifest.json:252",
         "runtime": "NOT_IMPLEMENTED"
       }
     },
@@ -178,28 +179,9 @@
       "duration": null,
       "damageType": null,
       "weaponTypes": ["greatsword"],
-      "weaponSpecific": ["Runic Behemoth"],
+      "weaponSpecific": ["runed-great-sword"],
       "sources": {
         "design": "api/v1/weapons.json:2904-2915",
-        "runtime": "NOT_IMPLEMENTED"
-      }
-    },
-    {
-      "id": "combo_meter",
-      "name": "Combo Meter",
-      "type": "attack_speed",
-      "description": "Attack speed bonus that stacks",
-      "applyCondition": "on_consecutive_hits",
-      "effect": {
-        "attackSpeedPerStack": null,
-        "refreshOnHit": true
-      },
-      "maxStacks": 5,
-      "duration": 5.0,
-      "damageType": null,
-      "weaponTypes": ["all"],
-      "sources": {
-        "design": "IMPLIED_FROM_DESIGN",
         "runtime": "NOT_IMPLEMENTED"
       }
     }
@@ -284,8 +266,8 @@
       "source": "api/v1/weapons.json:2633"
     },
     {
-      "weaponId": "greatsword-runic-behemoth",
-      "weaponName": "Runic Behemoth",
+      "weaponId": "runed-great-sword",
+      "weaponName": "Runed Great Sword",
       "ability": "Runic Cleave",
       "statusEffect": "rune_stack",
       "source": "api/v1/weapons.json:2904"
