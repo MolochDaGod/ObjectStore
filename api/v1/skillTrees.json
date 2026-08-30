@@ -1832,7 +1832,534 @@
           ]
         }
       ]
+    },
+    "verduror": {
+      "uuid": "ITEM-20260830000000-VERDUR-SEED",
+      "className": "Verduror",
+      "color": "#86efac",
+      "family": "worge",
+      "tiers": [
+        {
+          "name": "Level 0 - Seed",
+          "requiredLevel": 0,
+          "skills": [
+            {
+              "id": "v_seed",
+              "name": "Plant Seed",
+              "description": "Drop an oxygen plant. It opens and heals whoever stands in the bloom.",
+              "icon": "/icons/skills/class/verduror/plant-seed.png",
+              "iconUrl": "/icons/skills/class/verduror/plant-seed.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 8,
+              "effect": "Seed",
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_lash",
+              "name": "Vine Lash",
+              "description": "Lash an enemy. Allies in the whip's arc heal, and a seed drops at their feet.",
+              "icon": "/icons/skills/class/verduror/vine-lash.png",
+              "iconUrl": "/icons/skills/class/verduror/vine-lash.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "damage": 0.9,
+              "cooldown": 6,
+              "effect": "Lash + seed",
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_iguana",
+              "name": "Iguana",
+              "description": "Level 0 skill \u2014 crawl and cast. Not a form page. Nature bolts while you move.",
+              "icon": "/icons/skills/class/verduror/iguana.png",
+              "iconUrl": "/icons/skills/class/verduror/iguana.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "damage": 0.8
+            }
+          ]
+        },
+        {
+          "name": "Level 1 - Sprout",
+          "requiredLevel": 1,
+          "skills": [
+            {
+              "id": "v_bolt",
+              "name": "Nature Bolt",
+              "description": "Cast while moving. Builds wild mana for the next seed.",
+              "icon": "/icons/skills/class/verduror/nature-bolt.png",
+              "iconUrl": "/icons/skills/class/verduror/nature-bolt.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "damage": 0.9
+            }
+          ]
+        },
+        {
+          "name": "Level 5 - Grove",
+          "requiredLevel": 5,
+          "skills": [
+            {
+              "id": "v_vine",
+              "name": "Vine Cast",
+              "description": "Root a target while you move. A seed can grow on the root.",
+              "icon": "/icons/skills/class/verduror/vine-cast.png",
+              "iconUrl": "/icons/skills/class/verduror/vine-cast.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 8,
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_bloom",
+              "name": "Seed Bloom",
+              "description": "Force every planted oxygen plant to open. Pulse heal.",
+              "icon": "/icons/skills/class/verduror/seed-bloom.png",
+              "iconUrl": "/icons/skills/class/verduror/seed-bloom.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 12,
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_cactus_trap",
+              "name": "Barrel Trap",
+              "description": "Call the cactus page: plant a barrel cactus that swells and explodes.",
+              "icon": "/icons/skills/class/verduror/barrel-cactus.png",
+              "iconUrl": "/icons/skills/class/verduror/barrel-cactus.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "damage": 1.4,
+              "cooldown": 14,
+              "prefabUrl": "/models/class-skills/barrel-cactus.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/barrel-cactus.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "Level 10 - Mantra",
+          "requiredLevel": 10,
+          "skills": [
+            {
+              "id": "v_tara",
+              "name": "Green Tara",
+              "description": "Arcanum mantra. AOE heal in a green mandala.",
+              "icon": "/icons/skills/class/verduror/green-tara.png",
+              "iconUrl": "/icons/skills/class/verduror/green-tara.png",
+              "type": "holy",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 12,
+              "effect": "AOE heal",
+              "prefabUrl": "/models/class-skills/green-tara-mantra.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/green-tara-mantra.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_blink",
+              "name": "Slip Step",
+              "description": "Short teleport. Does not need an animal page.",
+              "icon": "/icons/skills/class/verduror/nature-bolt.png",
+              "iconUrl": "/icons/skills/class/verduror/nature-bolt.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 12
+            },
+            {
+              "id": "v_flare",
+              "name": "Seedflare",
+              "description": "Casting burst. Seeds in range bloom.",
+              "icon": "/icons/skills/class/verduror/seed-bloom.png",
+              "iconUrl": "/icons/skills/class/verduror/seed-bloom.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "damage": 1.3,
+              "cooldown": 10,
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "Level 15 - Coil",
+          "requiredLevel": 15,
+          "skills": [
+            {
+              "id": "v_surge",
+              "name": "Wild Surge",
+              "description": "Next three casts while moving are empowered.",
+              "icon": "/icons/skills/class/verduror/vine-lash.png",
+              "iconUrl": "/icons/skills/class/verduror/vine-lash.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "cooldown": 14
+            },
+            {
+              "id": "v_move_cast",
+              "name": "Primal Cadence",
+              "description": "Casting does not snare you. Iguana skill still crawls.",
+              "icon": "/icons/skills/class/verduror/iguana.png",
+              "iconUrl": "/icons/skills/class/verduror/iguana.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3
+            },
+            {
+              "id": "v_grove",
+              "name": "Living Grove",
+              "description": "Oxygen plants, cactus traps, and Tara rings persist longer.",
+              "icon": "/icons/skills/class/verduror/living-grove.png",
+              "iconUrl": "/icons/skills/class/verduror/living-grove.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 3,
+              "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/oxygen-plant.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "Level 20 - Arcanum",
+          "requiredLevel": 20,
+          "skills": [
+            {
+              "id": "v_current",
+              "name": "Primal Current",
+              "description": "Seeds, cactus, and Tara at once. No GCD for a burst.",
+              "icon": "/icons/skills/class/verduror/green-tara.png",
+              "iconUrl": "/icons/skills/class/verduror/green-tara.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 1,
+              "cooldown": 30,
+              "role": "signature",
+              "prefabUrl": "/models/class-skills/green-tara-mantra.glb",
+              "prefab": {
+                "modelRef": "/models/class-skills/green-tara-mantra.glb",
+                "vfxRef": null,
+                "impactRef": null,
+                "animationClip": null
+              }
+            },
+            {
+              "id": "v_arcanum",
+              "name": "Open Arcanum",
+              "description": "Signature: the last plant you dropped refunds Seedflare.",
+              "icon": "/icons/skills/class/verduror/plant-seed.png",
+              "iconUrl": "/icons/skills/class/verduror/plant-seed.png",
+              "type": "nature",
+              "sourcePack": "verduror",
+              "maxPoints": 1,
+              "role": "signature"
+            }
+          ]
+        }
+      ],
+      "graph": {
+        "totalNodes": 15,
+        "nodes": [
+          {
+            "uuid": "NODE-CLASS-v_seed",
+            "id": 1,
+            "name": "Plant Seed",
+            "x": 22.0,
+            "y": 92,
+            "reqLevel": 0,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Drop an oxygen plant. It opens and heals whoever stands in the bloom.",
+            "skillId": "v_seed",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_lash",
+            "id": 2,
+            "name": "Vine Lash",
+            "x": 50.0,
+            "y": 92,
+            "reqLevel": 0,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Lash an enemy. Allies in the whip's arc heal, and a seed drops at their feet.",
+            "skillId": "v_lash",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_iguana",
+            "id": 3,
+            "name": "Iguana",
+            "x": 78.0,
+            "y": 92,
+            "reqLevel": 0,
+            "parent": null,
+            "branch": "Core",
+            "nodeType": "combat",
+            "description": "Level 0 skill \u2014 crawl and cast. Not a form page. Nature bolts while you move.",
+            "skillId": "v_iguana",
+            "l0": true,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_bolt",
+            "id": 4,
+            "name": "Nature Bolt",
+            "x": 50,
+            "y": 80,
+            "reqLevel": 1,
+            "parent": 3,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Cast while moving. Builds wild mana for the next seed.",
+            "skillId": "v_bolt",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_vine",
+            "id": 5,
+            "name": "Vine Cast",
+            "x": 22.0,
+            "y": 68,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Root a target while you move. A seed can grow on the root.",
+            "skillId": "v_vine",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_bloom",
+            "id": 6,
+            "name": "Seed Bloom",
+            "x": 50.0,
+            "y": 68,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Force every planted oxygen plant to open. Pulse heal.",
+            "skillId": "v_bloom",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_cactus_trap",
+            "id": 7,
+            "name": "Barrel Trap",
+            "x": 78.0,
+            "y": 68,
+            "reqLevel": 5,
+            "parent": 4,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Call the cactus page: plant a barrel cactus that swells and explodes.",
+            "skillId": "v_cactus_trap",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_tara",
+            "id": 8,
+            "name": "Green Tara",
+            "x": 22.0,
+            "y": 56,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Arcanum mantra. AOE heal in a green mandala.",
+            "skillId": "v_tara",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_blink",
+            "id": 9,
+            "name": "Slip Step",
+            "x": 50.0,
+            "y": 56,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Short teleport. Does not need an animal page.",
+            "skillId": "v_blink",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_flare",
+            "id": 10,
+            "name": "Seedflare",
+            "x": 78.0,
+            "y": 56,
+            "reqLevel": 10,
+            "parent": 7,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Casting burst. Seeds in range bloom.",
+            "skillId": "v_flare",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_surge",
+            "id": 11,
+            "name": "Wild Surge",
+            "x": 22.0,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 10,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Next three casts while moving are empowered.",
+            "skillId": "v_surge",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_move_cast",
+            "id": 12,
+            "name": "Primal Cadence",
+            "x": 50.0,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 10,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Casting does not snare you. Iguana skill still crawls.",
+            "skillId": "v_move_cast",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_grove",
+            "id": 13,
+            "name": "Living Grove",
+            "x": 78.0,
+            "y": 44,
+            "reqLevel": 15,
+            "parent": 10,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Oxygen plants, cactus traps, and Tara rings persist longer.",
+            "skillId": "v_grove",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_current",
+            "id": 14,
+            "name": "Primal Current",
+            "x": 22.0,
+            "y": 32,
+            "reqLevel": 20,
+            "parent": 13,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Seeds, cactus, and Tara at once. No GCD for a burst.",
+            "skillId": "v_current",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          },
+          {
+            "uuid": "NODE-CLASS-v_arcanum",
+            "id": 15,
+            "name": "Open Arcanum",
+            "x": 78.0,
+            "y": 32,
+            "reqLevel": 20,
+            "parent": 13,
+            "branch": "Center",
+            "nodeType": "combat",
+            "description": "Signature: the last plant you dropped refunds Seedflare.",
+            "skillId": "v_arcanum",
+            "l0": false,
+            "bonuses": [],
+            "unlocks": []
+          }
+        ]
+      },
+      "specIdentity": {
+        "skillId": "v_seed",
+        "name": "Plant Seed",
+        "description": "Drop an oxygen plant. It opens and heals whoever stands in the bloom."
+      }
     }
   },
-  "totalClasses": 4
+  "totalClasses": 5
 }
