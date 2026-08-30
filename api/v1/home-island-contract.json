@@ -1,7 +1,7 @@
 {
   "version": "1.4.0",
   "generated": "2026-07-09T06:00:00.000Z",
-  "description": "Home island seed + scale contract — Driftwood Bay & Ironfang Spire size foundations, organized realistic nature, Railway SSOT, R2 glTF, 2m character",
+  "description": "Home island seed + scale contract \u2014 Driftwood Bay & Ironfang Spire size foundations, organized realistic nature, Railway SSOT, R2 glTF, 2m character",
   "authority": {
     "seedContract": "GrudgeBuilder/shared/definitions/homeIslandSeed.ts",
     "specCatalog": "GrudgeBuilder/shared/definitions/homeIslandSpec.ts",
@@ -9,7 +9,7 @@
     "natureAssets": "GrudgeBuilder/shared/definitions/natureAssetCatalog.ts",
     "liveSpecApi": "GET /api/island/spec",
     "rtsBridge": "GrudgeBuilder/shared/definitions/rtsTerrainBridge.ts",
-    "database": "home_islands (Postgres on Railway) — NOT Cloudflare D1",
+    "database": "home_islands (Postgres on Railway) \u2014 NOT Cloudflare D1",
     "stateApi": "PATCH /api/island/state",
     "exportApi": "POST /api/island/export-from-rts",
     "studioEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
@@ -29,7 +29,13 @@
     "logicalMapPercent": 100,
     "harvestZoneCount": 19,
     "campPlateauRadiusM": 88,
-    "characterReferenceHeightM": 2
+    "characterReferenceHeightM": 2,
+    "birdAboveTerrainM": 12,
+    "wildlife": {
+      "birdAboveTerrainM": 12,
+      "birdCount": 8,
+      "note": "Birds orbit this many meters above terrain. island3d reads scale.birdAboveTerrainM \u2014 never undefined."
+    }
   },
   "sizeFoundations": {
     "rule": "Driftwood Bay + Ironfang Spire are the only size foundations for player home islands. Both use worldSizeM=1024 and characterHeightM=2.",
@@ -46,7 +52,12 @@
       "beachBandDepthM": 28,
       "mountainFootprintFraction": 0.08,
       "mountainPeakHeightM": 20,
-      "preferredBiomes": ["beach", "tropical", "plains", "storm"]
+      "preferredBiomes": [
+        "beach",
+        "tropical",
+        "plains",
+        "storm"
+      ]
     },
     "ironfang_spire": {
       "id": "ironfang_spire",
@@ -61,7 +72,14 @@
       "beachBandDepthM": 14,
       "mountainFootprintFraction": 0.12,
       "mountainPeakHeightM": 20,
-      "preferredBiomes": ["forest", "winter", "frozen", "volcanic", "abyssal", "nexus"]
+      "preferredBiomes": [
+        "forest",
+        "winter",
+        "frozen",
+        "volcanic",
+        "abyssal",
+        "nexus"
+      ]
     }
   },
   "natureAssets": {
@@ -84,19 +102,44 @@
       "tropicalPalmPack": "/models/environment/palm-tree.glb",
       "tropicalPalmNodes": "/models/nature/organized/trees/M_Palm_P2_*.glb"
     },
-    "interimNote": "Until realistic GLBs are uploaded, harvest + scatter use environment multi-mesh packs only — never Quaternius megakit scatter props. Tropical/home-island palms isolate M_Palm_P2_* from palm-tree.glb — never place the whole pack.",
+    "interimNote": "Until realistic GLBs are uploaded, harvest + scatter use environment multi-mesh packs only \u2014 never Quaternius megakit scatter props. Tropical/home-island palms isolate M_Palm_P2_* from palm-tree.glb \u2014 never place the whole pack.",
     "palmTree": {
       "pack": "/models/environment/palm-tree.glb",
       "parentNode": "Palm_2",
       "isolateRule": "clone named M_Palm_P2_* only; each child has Trunk_0 + Leaf_0",
-      "deploy": ["tropical", "beach", "home-island", "haven_shore"],
+      "deploy": [
+        "tropical",
+        "beach",
+        "home-island",
+        "haven_shore"
+      ],
       "nodes": [
-        "M_Palm_P2_1", "M_Palm_P2_2", "M_Palm_P2_3", "M_Palm_P2_4", "M_Palm_P2_5",
-        "M_Palm_P2_6", "M_Palm_P2_7", "M_Palm_P2_8", "M_Palm_P2_9", "M_Palm_P2_10",
-        "M_Palm_P2_11", "M_Palm_P2_12", "M_Palm_P2_13", "M_Palm_P2_14", "M_Palm_P2_15",
-        "M_Palm_P2_16", "M_Palm_P2_17", "M_Palm_P2_18", "M_Palm_P2_19", "M_Palm_P2_20",
-        "M_Palm_P2_21", "M_Palm_P2_22", "M_Palm_P2_23", "M_Palm_P2_25",
-        "M_Palm_P2_30", "M_Palm_P2_31"
+        "M_Palm_P2_1",
+        "M_Palm_P2_2",
+        "M_Palm_P2_3",
+        "M_Palm_P2_4",
+        "M_Palm_P2_5",
+        "M_Palm_P2_6",
+        "M_Palm_P2_7",
+        "M_Palm_P2_8",
+        "M_Palm_P2_9",
+        "M_Palm_P2_10",
+        "M_Palm_P2_11",
+        "M_Palm_P2_12",
+        "M_Palm_P2_13",
+        "M_Palm_P2_14",
+        "M_Palm_P2_15",
+        "M_Palm_P2_16",
+        "M_Palm_P2_17",
+        "M_Palm_P2_18",
+        "M_Palm_P2_19",
+        "M_Palm_P2_20",
+        "M_Palm_P2_21",
+        "M_Palm_P2_22",
+        "M_Palm_P2_23",
+        "M_Palm_P2_25",
+        "M_Palm_P2_30",
+        "M_Palm_P2_31"
       ]
     }
   },
@@ -122,9 +165,18 @@
       "/models/evil_rock_mountain_peak_2.glb"
     ],
     "peakOffsetsM": [
-      { "x": -55, "z": 0 },
-      { "x": 0, "z": 0 },
-      { "x": 55, "z": 0 }
+      {
+        "x": -55,
+        "z": 0
+      },
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 55,
+        "z": 0
+      }
     ]
   },
   "stateFields": [
@@ -142,11 +194,11 @@
     "stats"
   ],
   "notes": {
-    "natureScatter": "rtsNatureScatter v2 — organized assets only; isBannedNaturePath gate in client scatter",
+    "natureScatter": "rtsNatureScatter v2 \u2014 organized assets only; isBannedNaturePath gate in client scatter",
     "puterKv": "grudge:island:{id}:state is cache; Railway home_islands.state is SSOT",
     "textures": "PBR ground textures on CDN assets.grudge-studio.com/textures/pbr/ground/",
-    "specVersion": "2.2.0 — see GET /api/island/spec on Railway game-data API",
-    "d1": "Cloudflare D1 is ObjectStore meta/assets registry — island seeds live in Railway home_islands",
+    "specVersion": "2.2.0 \u2014 see GET /api/island/spec on Railway game-data API",
+    "d1": "Cloudflare D1 is ObjectStore meta/assets registry \u2014 island seeds live in Railway home_islands",
     "studioEditor": "Primary design surface for high-quality biome placement; seed remains deterministic for runtime",
     "ai": "CreatureBrain wildlife, AllyController navmesh, OrcBossAI for PvE bosses",
     "foundations": "Coastal biomes resolve to Driftwood Bay; highland/cold/dark to Ironfang Spire"
@@ -154,7 +206,8 @@
   "characterScale": {
     "referenceHeightM": 2,
     "rule": "All props/animals/GLBs fit relative to CHARACTER_REFERENCE_HEIGHT_M",
-    "source": "shared/definitions/homeIslandSpec.ts"
+    "source": "shared/definitions/homeIslandSpec.ts",
+    "birdAboveTerrainM": 12
   },
   "pipeline": [
     "studio-editor mode=home-island",
@@ -165,7 +218,11 @@
   ],
   "factionCities": {
     "policy": "No Elf City / Human City / Undead City prefab. Each city is a parent tree of own meshes (house + camp + alliance kit). Isolate meshName; never fuse the kit into one GLB.",
-    "seed": ["home-island", "tropical", "haven_shore"],
+    "seed": [
+      "home-island",
+      "tropical",
+      "haven_shore"
+    ],
     "cities": {
       "human": {
         "id": "faction_city/human",
@@ -273,5 +330,6 @@
         ]
       }
     }
-  }
+  },
+  "birdAboveTerrainM": 12
 }
