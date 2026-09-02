@@ -279,6 +279,60 @@ export const L_HAND_SOCKETS = [
   'mixamorigLeftHand',
 ];
 
+export const R_HAND_SOCKETS = [
+  'R_hand_container',
+  'Bip001 R Hand',
+  'Bip001_R_Hand',
+  'mixamorig:RightHand',
+  'mixamorigRightHand',
+];
+
+export function findRHandSocket(root) {
+  if (!root) return null;
+  for (const n of R_HAND_SOCKETS) {
+    const o = root.getObjectByName(n);
+    if (o) return o;
+  }
+  let hit = null;
+  root.traverse((o) => {
+    if (hit) return;
+    const nm = String(o.name || '');
+    if (/R_hand_container|Bip001.?R.?Hand|RightHand/i.test(nm)) hit = o;
+  });
+  return hit;
+}
+
+/**
+ * Reparent rigid (non-skinned) held meshes to hand containers so they
+ * follow idle without a second mixer. Skinned kit weapons stay on the rig.
+ */
+export function bindRigidHeldToHands(root, equip) {
+  if (!root || !equip) return 0;
+  const rHand = findRHandSocket(root);
+  const lHand = findLHandSocket(root);
+  if (!rHand && !lHand) return 0;
+  let n = 0;
+  const tryBind = (mesh, socket) => {
+    if (!mesh || !socket || !mesh.visible) return;
+    let skinned = false;
+    mesh.traverse((o) => {
+      if (o.isSkinnedMesh) skinned = true;
+    });
+    if (skinned) return;
+    if (mesh.parent === socket) return;
+    socket.attach(mesh);
+    n++;
+  };
+  for (const [slot, variant] of Object.entries(equip.equipped || {})) {
+    const mesh = equip.slots[slot]?.[variant];
+    const group = mesh?.userData?.equipGroup;
+    if (group === 'weapon_r') tryBind(mesh, rHand);
+    else if (group === 'weapon_l' || group === 'shield') tryBind(mesh, lHand);
+  }
+  if (equip._offhandClone) tryBind(equip._offhandClone, lHand);
+  return n;
+}
+
 export function findLHandSocket(root) {
   if (!root) return null;
   for (const n of L_HAND_SOCKETS) {
