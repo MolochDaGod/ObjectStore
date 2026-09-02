@@ -20,6 +20,7 @@ import {
   loadRaceKit,
   loadRaceTexture,
   bindRaceAtlas,
+  bindRigidHeldToHands,
   WEAPON_R,
   WEAPON_L,
   WEAPON_1H,
@@ -37,6 +38,10 @@ import {
   applyWeaponHoldPose,
   resolveHoldKindFromEquip,
 } from './grudge6-weapon-hold-pose.js?v=holdspin2';
+import {
+  PaperdollPreviewPlayer,
+  paperdollSkipHoldPose,
+} from './grudge6-anim-packs.js?v=paperdollidle3';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -138,6 +143,28 @@ function weaponSlotFromItem(item) {
   return null;
 }
 
+/** Anim pack kind from catalog item (guns stay pistol/rifle even if kit mesh is sword). */
+function animKindFromItem(item) {
+  if (!item) return null;
+  const cat = String(item.category || item.type || item.weaponType || item.name || '').toLowerCase();
+  if (/rifle|shotgun/.test(cat)) return 'rifle';
+  if (/\bpistol\b|handgun|\bguns?\b|flint/.test(cat) && !/crossbow/.test(cat)) return 'pistol';
+  if (/shield/.test(cat)) return 'shield';
+  if (/spear|lance|pole/.test(cat)) return 'spear';
+  if (/hammer|maul/.test(cat)) return /2h|hammers2h/.test(cat) ? 'hammers2h' : 'hammer';
+  if (/greataxe/.test(cat)) return 'greataxe';
+  if (/greatsword/.test(cat)) return 'greatsword';
+  if (/\baxe\b/.test(cat)) return 'axe';
+  if (/dagger|knife/.test(cat)) return 'dagger';
+  if (/mace|club/.test(cat)) return 'mace';
+  if (/bow|longbow|crossbow/.test(cat)) return 'bow';
+  if (/staff|stave|wand/.test(cat)) return 'staff';
+  if (/tome|grimoire/.test(cat)) return 'tome';
+  if (/claw/.test(cat)) return 'claw';
+  if (/sword|blade/.test(cat)) return 'sword';
+  return weaponSlotFromItem(item);
+}
+
 /** True if kit 1H weapon can equip main or off (same bone reception). */
 function isOneHandWeaponSlot(slot) {
   return slot && WEAPON_1H.has(slot);
@@ -163,9 +190,12 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
     const uuid = equippedItems?.[panelSlot];
     const item = uuid && findItem ? findItem(uuid) : null;
     const letter = armorLetterFromItem(item);
-    const v = pickVariant(equip.slots[kitSlot], letter);
+    const v = pickVariant(equip.slots[kitSlot], item ? letter : 'A');
     if (v) equip.equip(kitSlot, v);
-    else equip.unequip?.(kitSlot);
+    else if (!item) {
+      const def = pickVariant(equip.slots[kitSlot], 'A');
+      if (def) equip.equip(kitSlot, def);
+    } else equip.unequip?.(kitSlot);
   }
 
   if (!equippedItems?.Shoulder && !equippedItems?.Cloak && equip.slots.shoulders) {
@@ -281,20 +311,18 @@ function rematchClipBones(root, clip) {
   const resolved = [];
   for (const track of clip.tracks) {
     // Skip hip/root position — prevents float after SI ground
-    if (/\.position$/.test(track.name)) continue;
-    // Never drive wardrobe weapon/shield meshes from clip tracks — that spins
-    // held props around bind origin. Hands/Bip bones stay.
-    if (/(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(node)
-      && !/hand|bip|mixamo|container/i.test(node)) {
-      continue;
-    }
+    if (/\.position$|\.scale$/i.test(track.name)) continue;
     const dot = track.name.indexOf('.');
-    if (dot < 0) {
-      resolved.push(track);
-      continue;
-    }
+    if (dot < 0) continue;
     const node = track.name.slice(0, dot);
     const prop = track.name.slice(dot + 1);
+    if (node === 'Bip001' || /Footsteps/i.test(node) || /Nub$/i.test(node) || /mixamorig/i.test(node)) continue;
+    if (
+      /^(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(node) &&
+      !/hand|bip|mixamo|container/i.test(node)
+    ) {
+      continue;
+    }
     let hit = null;
     if (names.has(node)) hit = node;
     else if (names.has(node.replace(/_/g, ' '))) hit = node.replace(/_/g, ' ');
@@ -320,7 +348,9 @@ async function tryLoadIdleClip(urls) {
     try {
       const res = await fetch(url, { mode: 'cors' });
       if (!res.ok) continue;
-      const data = await res.json();
+      const text = await res.text();
+      if (!text || /^\s*</.test(text)) continue;
+      const data = JSON.parse(text);
       // Fleet baked: { name, duration, tracks:[{name,times,values,type}] }
       if (data.tracks && Array.isArray(data.tracks)) {
         return THREE.AnimationClip.parse(data);
@@ -404,18 +434,41 @@ export async function mountHeroViewport(host, opts) {
   let root = null;
   let equip = null;
   let mixer = null;
+  let preview = null;
+  let lastEquipArgs = { equippedItems: opts.equippedItems || {}, findItem: opts.findItem };
   let raf = 0;
   let disposed = false;
   /** @type {Awaited<ReturnType<typeof createTomeOffhand>>|null} */
   let tomeCtrl = null;
   const clock = new THREE.Clock();
 
+  function kindsFromEquip(equippedItems, findItem) {
+    const main = equippedItems?.Mainhand && findItem ? findItem(equippedItems.Mainhand) : null;
+    const off = equippedItems?.Offhand && findItem ? findItem(equippedItems.Offhand) : null;
+    const mainKind =
+      animKindFromItem(main) || (equip ? resolveHoldKindFromEquip(equip) : 'sword') || 'sword';
+    const offKind = animKindFromItem(off);
+    const twoHanded = /greatsword|greataxe|hammers2h|staff|spear|bow|rifle/.test(String(mainKind));
+    return { mainKind, offKind, twoHanded };
+  }
+
+  async function refreshPreview(equippedItems, findItem) {
+    if (!preview || disposed) return;
+    const k = kindsFromEquip(equippedItems, findItem);
+    try {
+      const pack = await preview.setLoadout(k.mainKind, k.offKind, { twoHanded: k.twoHanded });
+      if (status?.parentNode && pack) status.textContent = `${race} · ${pack}`;
+    } catch (e) {
+      console.warn('[main-panel hero] pack idle', e);
+    }
+  }
+
   const tick = () => {
     if (disposed) return;
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
-    // Post-mixer hold residual (SSOT: grudge6-weapon-hold-pose) — paperdoll idle gait
-    if (mixer && equip) {
+    if (preview) preview.update();
+    if (mixer && equip && !preview?.busy && !paperdollSkipHoldPose(preview?.pack)) {
       const kind = resolveHoldKindFromEquip(equip);
       const offKind = equip.equippedOffhand?.slot || null;
       applyWeaponHoldPose(mixer, 'idle', kind, {
@@ -456,6 +509,10 @@ export async function mountHeroViewport(host, opts) {
         try { tomeCtrl.dispose(); } catch { /* ok */ }
         tomeCtrl = null;
       }
+      if (preview) {
+        try { preview.dispose(); } catch { /* ok */ }
+        preview = null;
+      }
       if (root) scene.remove(root);
       mixer = null;
       equip = null;
@@ -464,7 +521,10 @@ export async function mountHeroViewport(host, opts) {
     },
     applyEquip(equippedItems, findItem) {
       if (!equip) return;
+      lastEquipArgs = { equippedItems: equippedItems || {}, findItem };
       applyPanelEquip(equip, equippedItems || {}, findItem);
+      bindRigidHeldToHands(root, equip);
+      void refreshPreview(equippedItems || {}, findItem);
       // Async external tome (book_set split) — shoulder rest → cast on L hand
       const pending = equip._pendingTomeOffhand;
       void (async () => {
@@ -544,8 +604,9 @@ export async function mountHeroViewport(host, opts) {
     let kit;
     try {
       kit = await loadRaceKit(THREE, { FBXLoader, GLTFLoader }, race, {
-        // GOLDEN: Toon RTS pack (same as Characters lab ★) — keep embeds
+        // GOLDEN Toon RTS {race}.glb — paperdoll is not world play (no foot IK)
         source: opts.source || 'toonRts',
+        play: false,
         ground: false,
         skipDefaultLoadout: true,
         atlasVariant: opts.atlasVariant || 'default',
@@ -572,6 +633,7 @@ export async function mountHeroViewport(host, opts) {
     applyPanelEquip(equip, opts.equippedItems || {}, opts.findItem);
     // Exclusive wardrobe — no stacked A–N variants looking like explode
     equip.hardenVisibility?.();
+    bindRigidHeldToHands(root, equip);
 
     // SI fit AFTER equip visibility (bone measure ignores mesh visibility, OK)
     let finalH = fitRootSi(root, targetH);
@@ -580,28 +642,21 @@ export async function mountHeroViewport(host, opts) {
     _state.equip = equip;
     _state.materialMode = kit.materialMode;
 
-    // Idle: embedded kit clips first, else CDN baked Bip001 idle (fixes T-pose)
-    let clips = (kit.animations || []).slice();
-    if (!clips.length) {
+    mixer = new THREE.AnimationMixer(root);
+    preview = new PaperdollPreviewPlayer(THREE, { root, mixer });
+    try {
+      await refreshPreview(lastEquipArgs.equippedItems, lastEquipArgs.findItem);
+      mixer.update(1 / 30);
+      finalH = fitRootSi(root, targetH);
+    } catch (animErr) {
+      console.warn('[main-panel hero] pack idle bind failed', animErr);
       const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
-      if (idleClip) clips = [idleClip];
-    }
-    if (clips.length) {
-      mixer = new THREE.AnimationMixer(root);
-      const notSpin = (c) => !/spin|whirl|cyclone|attack|slash|death|hit|cast/i.test(c.name || '');
-      let idle =
-        clips.find((c) => /idle|stand|wait/i.test(c.name || '')) ||
-        clips.find(notSpin) ||
-        clips[0];
-      idle = rematchClipBones(root, idle) || idle;
-      try {
-        const action = mixer.clipAction(idle);
-        action.play();
-        // Sample one frame so skinned weapons leave bind-float, then re-SI + re-ground
+      if (idleClip) {
+        const idle = rematchClipBones(root, idleClip) || idleClip;
+        mixer.clipAction(idle).play();
         mixer.update(1 / 30);
         finalH = fitRootSi(root, targetH);
-      } catch (animErr) {
-        console.warn('[main-panel hero] idle bind failed (skeleton mismatch?)', animErr);
+      } else {
         reGroundFeet(root);
       }
     }
