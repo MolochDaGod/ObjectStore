@@ -629,10 +629,17 @@ export async function mountHeroViewport(host, opts) {
     root = kit.root;
     equip = kit.equip;
 
-    // Paperdoll loadout only (no default dump + panel double-apply ghosts)
+    // Baseline wardrobe (body/arms/legs/head A + sword) then overlay bag.
+    // Empty bag must not leave a T-pose with zero visible meshes.
+    equip.applyDefaultLoadout?.();
     applyPanelEquip(equip, opts.equippedItems || {}, opts.findItem);
-    // Exclusive wardrobe — no stacked A–N variants looking like explode
     equip.hardenVisibility?.();
+    let vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
+    if (vis < 1) {
+      equip.applyDefaultLoadout?.();
+      equip.hardenVisibility?.();
+      vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
+    }
     bindRigidHeldToHands(root, equip);
 
     // SI fit AFTER equip visibility (bone measure ignores mesh visibility, OK)
@@ -644,24 +651,36 @@ export async function mountHeroViewport(host, opts) {
 
     mixer = new THREE.AnimationMixer(root);
     preview = new PaperdollPreviewPlayer(THREE, { root, mixer });
+    let idleOn = false;
     try {
       await refreshPreview(lastEquipArgs.equippedItems, lastEquipArgs.findItem);
+      idleOn = !!preview?.idleAction;
       mixer.update(1 / 30);
       finalH = fitRootSi(root, targetH);
     } catch (animErr) {
       console.warn('[main-panel hero] pack idle bind failed', animErr);
-      const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
-      if (idleClip) {
-        const idle = rematchClipBones(root, idleClip) || idleClip;
-        mixer.clipAction(idle).play();
-        mixer.update(1 / 30);
-        finalH = fitRootSi(root, targetH);
-      } else {
-        reGroundFeet(root);
-      }
     }
+    if (!idleOn) {
+      const embedded = (kit.animations || []).find((c) => /idle/i.test(c.name || '')) || (kit.animations || [])[0];
+      if (embedded) {
+        const clip = rematchClipBones(root, embedded) || embedded;
+        mixer.clipAction(clip).reset().setLoop(THREE.LoopRepeat, Infinity).play();
+        mixer.update(1 / 30);
+        idleOn = true;
+      } else {
+        const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
+        if (idleClip) {
+          const idle = rematchClipBones(root, idleClip) || idleClip;
+          mixer.clipAction(idle).reset().setLoop(THREE.LoopRepeat, Infinity).play();
+          mixer.update(1 / 30);
+          idleOn = true;
+        }
+      }
+      finalH = fitRootSi(root, targetH);
+    }
+    if (!idleOn) reGroundFeet(root);
 
-    const vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
+    vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
     const matMode = kit.materialMode || root.userData.grudge6MaterialMode || '?';
     status.textContent = `${race} · ${kit.source} · faceYaw=${(root.rotation.y).toFixed(2)} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
     console.info('[main-panel hero]', {
