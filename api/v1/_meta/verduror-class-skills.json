@@ -1,6 +1,6 @@
 {
   "classId": "verduror",
-  "updated": "2026-08-30",
+  "updated": "2026-09-03",
   "icons": "/icons/skills/class/verduror/",
   "prefabs": "/models/class-skills/",
   "l0": [
@@ -26,7 +26,10 @@
     "v_arcanum": "open-arcanum.png"
   },
   "shared": {
-    "v_flare": "seed-bloom.png \u2014 Seedflare is a bloom burst; same art as Seed Bloom on purpose."
+    "v_flare": "seed-bloom.png — Seedflare is a bloom burst; same art as Seed Bloom on purpose."
   },
-  "note": "Canonical Verduror tree. Not mistweaver. Unique painted icons \u2014 leftover skills no longer reuse iguana/seed/bolt."
+  "cdnStatus": "pending_upload",
+  "cdnNote": "Local PNGs verified (256x256 RGBA). CDN currently returns HTML instead of images. Upload to R2 required before consumers can resolve iconUrl paths.",
+  "uploadCommand": "npm run sync:icons && node scripts/upload-icon-registry-r2.mjs",
+  "note": "Canonical Verduror tree. Not mistweaver. Unique painted icons — leftover skills no longer reuse iguana/seed/bolt."
 }
