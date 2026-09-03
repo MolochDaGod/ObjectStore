@@ -1,0 +1,53 @@
+{
+  "id": "uuid-law",
+  "version": "2026-09-03",
+  "title": "Grudge UUID families — one law, do not mix",
+  "wiki": "https://info.grudge-studio.com/wiki.html",
+  "docs": [
+    "docs/API-AND-UUID-GUIDE.md",
+    "api/v1/account-game-uuid-contract.json",
+    "docs/WEAPON_SKILLS_API_SSOT.md",
+    "docs/ICON-ASSET-LIBRARY.md"
+  ],
+  "player": {
+    "authority": "Railway Postgres grudge-api-production",
+    "notAuthority": ["D1", "ObjectStore JSON", "localStorage", "Puter KV", "client ent_*"],
+    "account": { "field": "grudge_id", "format": "GRUDGE_*", "use": "SSO, bag, wallet, home island" },
+    "character": { "field": "characters.id", "format": "RFC UUID", "use": "only play handoff ?characterId=" },
+    "heroStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display only, not PK" },
+    "itemInstance": { "field": "grudge_uuid", "mint": "server ledger", "use": "unique gear" }
+  },
+  "definitions": {
+    "authority": "info.grudge-studio.com/api/v1",
+    "skill": {
+      "field": "grudgeUuid",
+      "format": "SKIL-XXXX-XXXX-XXXX",
+      "algorithm": "sha1(grudge-skill:{id})",
+      "catalog": "/api/v1/master-weaponSkills.json",
+      "legacy": "uuid / uuidLegacy"
+    },
+    "icon": {
+      "field": "grudgeUuid",
+      "format": "ICON-XXXX-XXXX-XXXX",
+      "algorithm": "sha1(grudge-asset:{r2Key})",
+      "catalog": "/api/v1/icon-registry.json",
+      "pathIndex": "/api/v1/icon-path-index.json",
+      "cdn": "https://assets.grudge-studio.com/game-assets/icons/..."
+    },
+    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
+    "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
+    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" }
+  },
+  "assets": {
+    "binaries": "https://assets.grudge-studio.com/{r2Key}",
+    "index": "https://objectstore.grudge-studio.com/v1/assets (D1)",
+    "notPlayer": true
+  },
+  "banned": [
+    "handoff with GRDG-* or GRUDGE_* as character PK",
+    "client-minted bag ids as SSOT",
+    "api.grudge-studio.com as live character API",
+    "GitHub Pages as live JSON/icon SSOT",
+    "Mixamo clip names on Bip001 play prefabs"
+  ]
+}

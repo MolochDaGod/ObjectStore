@@ -411,7 +411,7 @@
     <div class="hero-content">
       <div class="hero-badge"><span class="dot"></span> Grudge Studio — Single Source of Truth</div>
       <h1>Grudge Warlords — Game Info Hub</h1>
-      <p>The canonical data hub for Grudge Warlords — items, weapon skills, skill trees, 3D models, 10,000+ sprites, VFX, and the full T1–T8 tier system.</p>
+      <p>The canonical data hub for Grudge Warlords — lore, spell book, items, weapon skills, skill trees, 3D models, sprites, VFX, and the T1–T8 tier system. Definitions live here; player saves live on Railway.</p>
       <div class="hero-actions">
         <a href="https://github.com/MolochDaGod/ObjectStore" class="btn btn-primary">&#9889; View on GitHub</a>
         <a href="./docs" class="btn btn-primary">&#128214; Canonical API Docs</a>
@@ -440,7 +440,17 @@
         <h2>Browse & Explore</h2>
       </div>
       <div class="tool-grid">
-                <a href="./WORLD_MAP.html" class="tool-card">
+                <a href="./LORE.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1510,#2a1a08 50%,#0d1520)"></div>
+          <span class="tool-name">Lore Book</span>
+          <span class="tool-desc">Three gods, three factions, 24 heroes + legends</span>
+        </a>
+        <a href="./SPELL_BOOK.html" class="tool-card">
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1028,#2a1050 50%,#0d1520)"></div>
+          <span class="tool-name">Spell Book</span>
+          <span class="tool-desc">Staff · Tome · Wand play skills + caster VFX</span>
+        </a>
+        <a href="./WORLD_MAP.html" class="tool-card">
           <div class="tool-thumb" style="background:linear-gradient(135deg,#0c1a2e,#1a1030 50%,#0d2030)"></div>
           <span class="tool-name">World Map · 9 Zones</span>
           <span class="tool-desc">Server zones — lore, health, assets, enemies</span>
@@ -632,7 +642,8 @@
           <a class="ep" href="./api/v1/regions.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/regions.json</span><span class="ep-desc">5 world regions</span></a>
           <a class="ep" href="./api/v1/dialogue.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/dialogue.json</span><span class="ep-desc">NPC dialogue</span></a>
           <a class="ep" href="./api/v1/cutscenes.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/cutscenes.json</span><span class="ep-desc">Zone cinematics</span></a>
-          <a class="ep" href="./api/v1/lore.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/lore.json</span><span class="ep-desc">Gods & hero lore</span></a>
+          <a class="ep" href="./api/v1/lore.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/lore.json</span><span class="ep-desc">Gods, factions, 24 heroes</span></a>
+          <a class="ep" href="./api/v1/spell-book.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/spell-book.json</span><span class="ep-desc">Staff/Tome/Wand + VFX</span></a>
           <a class="ep" href="./api/v1/randomEvents.json"><span class="ep-method">GET</span><span class="ep-path">/api/v1/randomEvents.json</span><span class="ep-desc">8 event templates</span></a>
         </div>
       </div>
@@ -804,7 +815,7 @@
     <div class="footer-links">
       <a href="https://grudgewarlords.com">&#127918; Grudge Warlords</a>
       <a href="https://github.com/MolochDaGod/ObjectStore">&#128187; GitHub</a>
-      <a href="https://github.com/MolochDaGod/ObjectStore/wiki">&#128218; Wiki</a>
+      <a href="./wiki.html">Wiki</a>
       <a href="./docs/">&#128214; API Docs</a>
       <a href="./openapi.yaml">&#128203; OpenAPI Spec</a>
       <a href="./AGENT-CONTEXT.md">&#129302; Agent Context</a>

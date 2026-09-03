@@ -73,6 +73,7 @@ let currentViewerModel = null;
 let currentViewerUrl = null;
 let filteredModels = [];
 let activeCategory = null;
+let activeEra = null;
 let currentPage = 0;
 let r2Available = false;
 
@@ -344,20 +345,39 @@ function mergeGameManifest(models, gameByPath) {
 }
 
 async function loadRegistry() {
-  const [uuidData, gameByPath, data] = await Promise.all([
+  const [uuidData, gameByPath, data, d1pack] = await Promise.all([
     fetchJsonFirst(UUID_URLS),
     loadGameManifest(),
     fetchJsonFirst(REGISTRY_URLS),
+    import('./d1-era-catalog.js').then((m) => m.loadD1EraCatalog()).catch((e) => {
+      console.warn('[model-browser] D1 catalog', e);
+      return { models: [], eras: {}, d1Total: 0 };
+    }),
   ]);
   uuidMap = uuidData?.uuids || {};
-  if (!data) {
-    registry = null;
-    allModels = [];
-    return;
+  const legacy = attachUuids((data && data.models) || []);
+  const d1 = d1pack.models || [];
+  const byPath = new Map();
+  for (const m of legacy) {
+    const path = (m.path || '').replace(/\\/g, '/');
+    const url = (m.url || '').includes('github.io')
+      ? `${R2_CDN_URL}/${path.replace(/^\/+/, '')}`
+      : (m.url || `${R2_CDN_URL}/${path.replace(/^\/+/, '')}`);
+    byPath.set(path, { ...m, path, url, era: m.era || 'warlords', source: m.source || 'models3d' });
   }
-  registry = data;
-  allModels = mergeGameManifest(attachUuids(registry.models || []), gameByPath);
-  console.log(`Loaded ${allModels.length} models`);
+  for (const m of d1) byPath.set(m.path, { ...byPath.get(m.path), ...m });
+  allModels = mergeGameManifest([...byPath.values()], gameByPath);
+  registry = data || { models: allModels, byCategory: {} };
+  const byCat = {};
+  for (const m of allModels) {
+    const c = m.category || 'uncategorized';
+    byCat[c] = byCat[c] || [];
+    byCat[c].push(m);
+  }
+  registry.byCategory = byCat;
+  registry.eras = d1pack.eras || {};
+  registry.d1Total = d1pack.d1Total || 0;
+  console.log(`[model-browser] ${allModels.length} models (D1 ${d1pack.d1Total || 0})`);
 }
 
 // ── Stats ──────────────────────────────────────────────
@@ -366,6 +386,8 @@ function updateStats() {
   if (el) el.textContent = allModels.length || '0';
   const catEl = document.getElementById('totalCategories');
   if (catEl) catEl.textContent = Object.keys(registry?.byCategory || {}).length;
+  const d1El = document.getElementById('d1Count');
+  if (d1El) d1El.textContent = String(registry?.d1Total || allModels.filter((m) => m.source === 'd1').length);
   const kb = allModels.reduce((s, m) => s + (m.sizeKB || 0), 0);
   const szEl = document.getElementById('totalSize');
   if (szEl) szEl.textContent = kb > 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`;
@@ -422,7 +444,13 @@ function renderCategoryFilters() {
   if (!row) return;
   const cats = {};
   allModels.forEach(m => { const c = m.category || 'uncategorized'; cats[c] = (cats[c] || 0) + 1; });
-  let html = `<button class="filter-btn ${!activeCategory ? 'active' : ''}" onclick="window._filterCategory(null)">All (${allModels.length})</button>`;
+  const eras = {};
+  allModels.forEach(m => { const e = m.era || 'shared'; eras[e] = (eras[e] || 0) + 1; });
+  let html = `<button class="filter-btn ${!activeEra ? 'active' : ''}" onclick="window._filterEra(null)">era:all</button>`;
+  Object.entries(eras).sort((a, b) => b[1] - a[1]).forEach(([e, n]) => {
+    html += `<button class="filter-btn ${activeEra === e ? 'active' : ''}" onclick="window._filterEra('${e}')">${e} (${n})</button>`;
+  });
+  html += `<button class="filter-btn ${!activeCategory ? 'active' : ''}" onclick="window._filterCategory(null)">All (${allModels.length})</button>`;
   Object.entries(cats).sort((a, b) => b[1] - a[1]).forEach(([c, n]) => {
     html += `<button class="filter-btn ${activeCategory === c ? 'active' : ''}" onclick="window._filterCategory('${c}')">${c} (${n})</button>`;
   });
@@ -432,6 +460,7 @@ function renderCategoryFilters() {
 function applyFilters() {
   const q = (document.getElementById('searchBox')?.value || '').toLowerCase().trim();
   filteredModels = allModels.filter(m => {
+    if (activeEra && (m.era || 'shared') !== activeEra) return false;
     if (activeCategory && (m.category || 'uncategorized') !== activeCategory) return false;
     if (q) {
       const hay = [m.name, m.category || '', m.uuid || '', m.path || ''].join(' ').toLowerCase();
@@ -859,6 +888,7 @@ window.exportCurrentModel = function () {
 
 // ── Global handlers ────────────────────────────────────
 window._filterCategory = c => { activeCategory = c; renderCategoryFilters(); applyFilters(); };
+window._filterEra = e => { activeEra = e; renderCategoryFilters(); applyFilters(); };
 window.closeViewer = () => {
   document.getElementById('viewerOverlay').classList.remove('active');
   document.body.style.overflow = '';

@@ -16,4 +16,6 @@ Do **not** invent skill rows. Do **not** use sprite sheets for slot icons — ea
 
 Fetch order for the HTML page: info → `./api/v1` → Pages mirror.
 
-Icons CDN: `https://assets.grudge-studio.com/icons/...` (single PNG files under `icons/skills`, `icons/skills_rpg`, `icons/abilities`).
+Icons CDN: `https://assets.grudge-studio.com/game-assets/icons/...`  
+Each skill row: `grudgeUuid` (`SKIL-*`), `iconUuid` (`ICON-*`), `iconUrl`, `prefab.animationClip` = `{pack}/{role}`.  
+Wiki: https://info.grudge-studio.com/wiki.html · Law: `/api/v1/uuid-law.json`

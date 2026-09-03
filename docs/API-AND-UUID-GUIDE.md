@@ -11,7 +11,7 @@ Single reference for **which API serves what**, **which UUID scheme to use**, an
 | ObjectStore API (live JSON) | https://objectstore.grudge-studio.com/api/v1/ |
 | Docs hub (browse data) | https://info.grudge-studio.com/docs |
 | Asset CDN (binary files) | https://assets.grudge-studio.com/ |
-| Game API (characters, islands) | https://api.grudge-studio.com/ |
+| Game API (characters, islands) | Railway `grudge-api-production` via same-origin `/api/*` — **not** `api.grudge-studio.com` |
 | Auth (Grudge ID) | https://id.grudge-studio.com/ |
 | Production game | https://grudgewarlords.com/ |
 | Integration manifest | [`api/v1/assets-api.json`](../api/v1/assets-api.json) |
@@ -68,14 +68,25 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 // → https://assets.grudge-studio.com/game-assets/icons/sigils/strength.png
 ```
 
-### 2. `char_*` — Player characters
+### 2. Character UUID — Player heroes (Railway)
 
 | Field | Value |
 |-------|-------|
-| **Scope** | One row per hero (race, class, gear, `model3d`, island link) |
-| **Format** | `char_` + nanoid (GrudgeBuilder) or UUID in `player_characters` (RTS-Grudge) |
-| **Authority** | Railway / `api.grudge-studio.com` (`GET/PATCH /api/characters`) |
-| **3D join** | `raceId` + `equipment` → `panelEquipmentToModel3d()` → grudge6 GLB on CDN |
+| **Scope** | One row per hero (`characters.id`) |
+| **Format** | RFC UUID — **only** play handoff `?characterId=` |
+| **Stamp** | `characters.grudge_code` = `GRDG-…` display only |
+| **Account** | `grudge_id` = `GRUDGE_…` owns bag |
+| **Authority** | Railway `grudge-api-production` (`GET/PATCH /api/characters?era=`) |
+| **3D join** | `loadRaceKit` Toon `{race}.glb` on CDN |
+
+### 2b. `SKIL-*` — Skill definitions (ObjectStore)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Catalog skills in `master-weaponSkills.json` |
+| **Format** | `SKIL-XXXX-XXXX-XXXX` = `sha1("grudge-skill:" + id)` |
+| **Icons** | `iconUuid` `ICON-*` + `iconUrl` on `assets.grudge-studio.com` |
+| **Play clip** | `prefab.animationClip` = `{pack}/{role}` on Bip001 |
 
 ### 3. `HERO-*` / `EQIP-*` / `ITEM-*` — Backend asset catalog
 
@@ -103,7 +114,7 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 | **Algorithm** | `sha1("grudge-asset:" + r2Key)` → UUID (same stable-key idea as `ICON-*`) |
 | **D1 database** | `grudge-assets-db` · table `asset_registry` |
 | **R2 bucket** | `grudge-assets` → `https://assets.grudge-studio.com/{r2Key}` |
-| **API** | `GET https://api.grudge-studio.com/assets?limit=50` |
+| **API** | `GET https://objectstore.grudge-studio.com/v1/assets` (D1). Dead: `api.grudge-studio.com` |
 | **By category** | `GET /assets/category/character` · `weapon` · `environment` · `animation` |
 | **By UUID** | `GET /assets/uuid/{grudgeUuid}` |
 

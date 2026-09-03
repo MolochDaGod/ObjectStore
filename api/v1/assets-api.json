@@ -17,7 +17,10 @@
     "iconSearchIndex": "/api/v1/icon-search-index.json",
     "iconShards": "/api/v1/icon-shards/{category}.json",
     "masterRegistry": "/api/v1/master-registry.json",
-    "assetRegistry": "/api/v1/asset-registry.json"
+    "assetRegistry": "/api/v1/asset-registry.json",
+    "uuidLaw": "/api/v1/uuid-law.json",
+    "weaponSkills": "/api/v1/master-weaponSkills.json",
+    "wiki": "/wiki.html"
   },
   "browser": {
     "page": "/ICON_BROWSER.html",
@@ -28,6 +31,9 @@
     "listIcons": "GET /api/v1/icons?category=skill&page=1&limit=50",
     "searchIcons": "GET /api/v1/icons/search?q=fire&category=spell",
     "iconByUuid": "GET /api/v1/icons/:grudgeUuid",
+    "aiIconLookup": "GET https://ai.grudge-studio.com/v1/icons/:grudgeUuid",
+    "aiIconReview": "POST https://ai.grudge-studio.com/v1/icons/review",
+    "aiIconReviewStream": "POST https://ai.grudge-studio.com/v1/icons/review/stream",
     "iconByPath": "GET /api/v1/icons/by-path?path=/icons/sigils/strength.png",
     "categories": "GET /api/v1/icons/categories"
   },

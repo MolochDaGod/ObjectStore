@@ -273,6 +273,7 @@
     <a href="#creation-truth">Creation of Truth (SSOT)</a>
     <a href="#production-wiring">Production Wiring</a>
     <a href="#fleet-wiring">Editors · Prefabs · Stack</a>
+    <a href="#uuid-law">UUID law</a>
     <a href="#deploy-practices">API · D1 · Deploy</a>
     <a href="#animations">Animations</a>
     <a href="#ai">AI Systems</a>
@@ -1465,6 +1466,19 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
           <p class="endpoint-desc">Studio service endpoints including home-island contract, biome catalog URLs, and <code class="inline-code">productionWiring</code>.</p>
         </div>
       </div>
+    </section>
+
+    <section id="uuid-law">
+      <h2>UUID law</h2>
+      <p>Wiki: <a href="../wiki.html">wiki.html</a>. Machine: <a href="../api/v1/uuid-law.json"><code class="inline-code">/api/v1/uuid-law.json</code></a>. Account contract: <a href="../api/v1/account-game-uuid-contract.json">account-game-uuid-contract.json</a>.</p>
+      <table>
+        <tr><th>Family</th><th>Format</th><th>SSOT</th></tr>
+        <tr><td>Account</td><td><code class="inline-code">GRUDGE_…</code></td><td>Railway JWT / bag</td></tr>
+        <tr><td>Character</td><td>RFC UUID</td><td>handoff <code class="inline-code">?characterId=</code></td></tr>
+        <tr><td>Skill definition</td><td><code class="inline-code">SKIL-*</code></td><td><a href="../api/v1/master-weaponSkills.json">master-weaponSkills.json</a></td></tr>
+        <tr><td>Icon asset</td><td><code class="inline-code">ICON-*</code></td><td><a href="../api/v1/icon-path-index.json">icon-path-index.json</a></td></tr>
+        <tr><td>Item instance</td><td>server <code class="inline-code">grudge_uuid</code></td><td>ledger — not this JSON</td></tr>
+      </table>
     </section>
 
     <section id="fleet-wiring">
