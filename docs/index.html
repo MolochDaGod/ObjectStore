@@ -7,7 +7,7 @@
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
   <!-- CANONICAL_META:START -->
     <link rel="canonical" href="https://info.grudge-studio.com/docs">
-    <meta name="grudge-canonical-generated" content="2026-08-22T02:24:27.262Z">
+    <meta name="grudge-canonical-generated" content="2026-09-03T04:00:05.289Z">
     <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -250,6 +250,8 @@
     <a href="#consumables">Consumables</a>
     <a href="#skills">Skills</a>
     <a href="#weapon-skills">Weapon Skills</a>
+    <a href="#spell-book">Spell Book</a>
+    <a href="#lore">Lore</a>
     <a href="#professions">Professions</a>
     <a href="#classes">Classes & Races</a>
     <a href="#enemies">Enemies & Bosses</a>
@@ -270,6 +272,8 @@
     <a href="#freeform-arpg">Freeform ARPG</a>
     <a href="#creation-truth">Creation of Truth (SSOT)</a>
     <a href="#production-wiring">Production Wiring</a>
+    <a href="#fleet-wiring">Editors · Prefabs · Stack</a>
+    <a href="#deploy-practices">API · D1 · Deploy</a>
     <a href="#animations">Animations</a>
     <a href="#ai">AI Systems</a>
     
@@ -311,6 +315,8 @@
     <a href="../SPRITE_DATABASE.html">Sprite Browser</a>
     <a href="../VFX_BROWSER.html">VFX Browser</a>
     <a href="../2D_MODELS.html">2D Models Browser</a>
+    <a href="../LORE.html">Lore Book</a>
+    <a href="../SPELL_BOOK.html">Spell Book</a>
     <a href="../GRUDGE_Item_Database.html">Item Database</a>
   </nav>
 
@@ -338,7 +344,7 @@
         <li><strong>2,765 Registry Entries</strong> in <code class="inline-code">master-registry.json</code></li>
         <li><strong>0 Unified Items</strong> in items-database.json (browser UI)</li>
         <li><strong>313 Animated Characters</strong> in sprite-characters.json</li>
-        <li><strong>192 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
+        <li><strong>196 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
       <!-- CANONICAL_STATS:END -->
       </ul>
       
@@ -348,7 +354,7 @@
       </div>
       <div class="tip">
         <div class="tip-title">🏝️ Home islands (2026-07)</div>
-        <p>Player islands use <a href="#home-islands">Driftwood Bay / Ironfang Spire</a> foundations. Nature scatter bans Quaternius megakit — see <a href="#nature-assets">Nature Assets</a>. Live play scale is always <strong>1024 m</strong> world diameter, <strong>2.0 m</strong> character.</p>
+        <p>Player islands use <a href="#home-islands">Driftwood Bay / Ironfang Spire</a> foundations. Nature scatter bans Quaternius megakit — see <a href="#nature-assets">Nature Assets</a>. Live play scale is <strong>1024 m</strong> world diameter. SI yardstick: <strong>1.8 m human</strong> / <strong>~2.0 m orc</strong> — feet from bone box, not a 2 m capsule.</p>
       </div>
     </section>
 
@@ -381,17 +387,17 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
       <h3>Icon &amp; Asset Paths</h3>
       <p>All icon URLs in JSON data use <strong>relative paths</strong> (e.g. <code class="inline-code">/icons/weapons/Sword_01.png</code>). Each file also has a stable <code class="inline-code">ICON-*</code> UUID in <a href="../api/v1/icon-registry.json">icon-registry.json</a>. Browse visually at <a href="../ICON_BROWSER.html">Icon Library</a> or resolve at runtime via <code class="inline-code">grudgeSDK.resolveIconUrl()</code>.</p>
       <h3>Prefab Connection Fields</h3>
-      <p>Every weapon skill has a <code class="inline-code">prefab</code> block for game engine wiring:</p>
+      <p>Every weapon skill has a <code class="inline-code">prefab</code> block for game engine wiring. Play clip names are <strong>Bip001 pack/role</strong>, not Mixamo. Full map: <a href="#fleet-wiring">Editors · Prefabs · Stack</a>.</p>
       <pre><code>"prefab": {
-  "modelRef": null,        // GRUDGE UUID → GLB model on R2
-  "vfxRef": null,          // GRUDGE UUID → VFX effect on R2
-  "impactRef": null,       // GRUDGE UUID → impact particle
-  "animationClip": "2h_slash", // animation clip name
-  "soundRef": null,        // GRUDGE UUID → audio on R2
-  "projectileRef": null,   // GRUDGE UUID → projectile model
-  "cameraShake": null      // camera shake profile
+  "modelRef": "prod/gltf/weapons/sword.glb",
+  "vfxRef": null,
+  "impactRef": null,
+  "animationClip": "sword_shield/attack",
+  "soundRef": null,
+  "projectileRef": null,
+  "cameraShake": null
 }</code></pre>
-      <p>Fields are <code class="inline-code">null</code> until assets are created and wired. Game client skips null refs gracefully.</p>
+      <p>Null refs are skipped. Fill clips with <code class="inline-code">npm run wire:skill-prefab-anims</code>. Play body is still <code class="inline-code">loadRaceKit</code> Toon <code class="inline-code">{race}.glb</code> — not FBX, not Meshy.</p>
     </section>
 
     <section id="authentication">
@@ -414,7 +420,7 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
         <tr>
           <td><strong>Item / skill / recipe definitions</strong></td>
           <td>ObjectStore <code class="inline-code">api/v1/*</code></td>
-          <td>PR into ObjectStore → publish Pages / R2 catalogs</td>
+          <td>PR into ObjectStore → <code class="inline-code">npx vercel --prod</code> (info + objectstore aliases). Binaries stay on R2 — never git-commit GLBs as the catalog.</td>
           <td><code class="inline-code">info…/api/v1/</code> or <code class="inline-code">objectstore…/api/v1/</code></td>
         </tr>
         <tr>
@@ -426,7 +432,7 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
         <tr>
           <td><strong>Account identity</strong></td>
           <td><code class="inline-code">id.grudge-studio.com</code></td>
-          <td>Login / register / guest / bridge → JWT</td>
+          <td>Login / register via Puter, GitHub (Puter), Google → JWT. <strong>No product guest accounts or wallets.</strong></td>
           <td>Bearer JWT · bootstrap <code class="inline-code">grudge-game-bootstrap.js</code></td>
         </tr>
         <tr>
@@ -445,17 +451,17 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
           <td><strong>Live play UI / open world</strong></td>
           <td>Vercel <code class="inline-code">grudge-builder</code></td>
           <td>Deploy from GrudgeBuilder <code class="inline-code">main</code></td>
-          <td><strong>Primary:</strong> <code class="inline-code">client.grudge-studio.com</code> · alias <code class="inline-code">grudgewarlords.com</code></td>
+          <td><strong>Warlords era play:</strong> <code class="inline-code">grudgewarlords.com</code>. Same SPA also at <code class="inline-code">client.grudge-studio.com</code> (legacy). Not Open, not GRUDOX, not RTS-Grudge.</td>
         </tr>
       </table>
 
       <h3>Warlords create → play funnel (only this)</h3>
-      <pre><code>id.grudge-studio.com/login?redirect_uri=https://client.grudge-studio.com/auth/callback
-  → client.grudge-studio.com/home  (hub; roster from Railway)
-  → empty roster: Create hero → character.grudge-studio.com (Foundry create)
-  → save → return client /airship?characterId=&amp;from=gcs
-  → /home-island | /play | /tutorial | lobby with that characterId
-  → definitions: ObjectStore JSON · meshes: assets CDN</code></pre>
+      <pre><code>id.grudge-studio.com/login?redirect_uri=https://grudgewarlords.com/auth/callback
+  → grudgewarlords.com (or client.grudge-studio.com) hub; roster from Railway
+  → empty roster: Create hero → character.grudge-studio.com/foundry
+  → save → return ?characterId=&amp;era=warlords&amp;from=gcs
+  → /airship | /home-island | /play | /tutorial with that UUID
+  → definitions: info/objectstore JSON · meshes: assets CDN (Toon RTS GLB via loadRaceKit)</code></pre>
 
       <div class="warning">
         <div class="warning-title">Do not treat as Warlords SSOT</div>
@@ -730,8 +736,36 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
             <tr><td>Ultimate</td><td>High-impact ultimate abilities</td><td><span style="color:#ef4444">Red</span></td></tr>
           </table>
 
-          <h3>Weapon Types (24)</h3>
-          <p>Sword, Axe (1H), Greatsword, Greataxe, Bow, Crossbow, Gun, Fire Staff, Frost Staff, Holy Staff, Lightning Staff, Nature Staff, Dagger, Arcane Staff, Spear, Hammer, Scythe, Tool, Fire Tome, Frost Tome, Holy Tome, Shadow Tome, Nature Tome, Arcane Tome</p>
+          <h3>Play catalog (18 types)</h3>
+          <p>Canonical JSON is <code class="inline-code">master-weaponSkills.json</code> (not the legacy 473-row WCS dump above). Types: Sword, Axe, Hammer, Shield, Greatsword, Greataxe, Claw, Staff, Tome, Mace, Wand, Dagger, Bow, Crossbow, Gun, Spear, Scythe, Tool. Browse: <a href="../WEAPON_SKILLS.html">WEAPON_SKILLS.html</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="spell-book">
+      <h2>Spell Book</h2>
+      <p>Caster <strong>play</strong> skills are the STAFF / TOME / WAND rows of <code class="inline-code">master-weaponSkills.json</code>. VFX lab spells are a separate catalog — do not invent a second skill tree.</p>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/spell-book.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Derived caster book: Staff, Tome, Wand skills + <code class="inline-code">vfx-spells.json</code> summaries. Browse <a href="../SPELL_BOOK.html">SPELL_BOOK.html</a>. 3D lab: <a href="../spell-vfx-library.html">spell-vfx-library.html</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="lore">
+      <h2>Lore</h2>
+      <p>Public copy of the Warlords roster. Names come from GrudgeBuilder <code class="inline-code">lore.ts</code> + <code class="inline-code">heroCodex.ts</code>. Do not invent Sir Aldric / Grommash substitutes.</p>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/lore.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">World, 3 gods (Odin / Madra / Omni), 3 factions, 24 heroes + pirate legends. Browse <a href="../LORE.html">LORE.html</a>. Long-form notes: <a href="./loreHeroes.txt">loreHeroes.txt</a>.</p>
         </div>
       </div>
     </section>
@@ -769,7 +803,7 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
           <span class="endpoint-url">/api/v1/classes.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">4 classes — Warrior, Mage Priest, Worge, Ranger — with starting attributes, abilities, and weapon restrictions.</p>
+          <p class="endpoint-desc">8 class specs — Warrior, Raider, Mage, Priest, Ranger, Thief, Worge, Verduror — with starting attributes, abilities, and preferred weapons. Soft bonuses, not hard locks. There is no Knight class (30-character plate look maps to Worge).</p>
         </div>
       </div>
 
@@ -1003,9 +1037,9 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
         </tr>
         <tr>
           <td><strong>D1 asset registry</strong></td>
-          <td><code class="inline-code">https://api.grudge-studio.com/assets</code></td>
-          <td>Category, R2 key, bone map, animation pack names, file size, deterministic UUID</td>
-          <td><code class="inline-code">GET /assets?limit=50</code> · <code class="inline-code">/assets/category/character</code> · <code class="inline-code">/assets/uuid/:uuid</code></td>
+          <td><code class="inline-code">https://objectstore.grudge-studio.com</code> (Worker <code class="inline-code">grudgeassets</code>)</td>
+          <td>Search/upload index. D1 is not the file server. <code class="inline-code">api.grudge-studio.com</code> is dead — do not wire new clients there.</td>
+          <td>JSON catalogs on <code class="inline-code">info.*</code> · binaries on <code class="inline-code">assets.*</code></td>
         </tr>
         <tr>
           <td><strong>ObjectStore JSON</strong></td>
@@ -1022,7 +1056,9 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
       </table>
 
       <h3>R2 key layout (3D models)</h3>
-      <pre><code>models/characters/&lt;name&gt;.glb           — rigged humanoids (Mixamo / grudge6)
+      <pre><code>asset-packs/toon-rts-characters/glb/characters/{race}.glb — play kits (loadRaceKit)
+prod/anims/&lt;pack&gt;/                     — Bip001 idle/walk/cast/melee
+models/characters/&lt;name&gt;.glb           — other rigged humanoids (not Warlords play default)
 models/environment/island_*.glb        — home-island harvest multi-mesh packs
 models/nature/organized/trees|rocks/   — extracted per-variant GLBs (no megakit)
 models/nature/realistic/trees|rocks/   — catalog layout for scatter (runtime-ready)
@@ -1041,10 +1077,10 @@ catalogs/home-island/*.json            — CDN copies of island SSOT catalogs</c
 
       <h3>Animation &amp; mesh wiring</h3>
       <p>Character GLBs in <code class="inline-code">models/characters/</code> get default animation packs in D1: <code class="inline-code">glocomotion</code>, <code class="inline-code">glocomotion_combat</code>, <code class="inline-code">gestures_basic</code>. Bone map is detected from filename/path (<code class="inline-code">mixamo</code>, <code class="inline-code">bip001</code> for grudge6, <code class="inline-code">kaykit</code>). Weapons declare <code class="inline-code">attachmentProfile</code> (<code class="inline-code">main_hand</code>, <code class="inline-code">off_hand</code>, <code class="inline-code">ranged_2h</code>) and universal skeleton compatibility.</p>
-      <p>grudge6 race characters use <strong>FBX on CDN</strong> (not GLB) for material fidelity — see RTS-Grudge <code class="inline-code">FactionCharacterRegistry</code>. ObjectStore <code class="inline-code">prefab.modelRef</code> points at registry UUIDs; games resolve UUID → R2 URL via the asset API or icon resolver.</p>
+      <p>Play heroes use <strong>Toon RTS <code class="inline-code">{race}.glb</code></strong> via ObjectStore <code class="inline-code">js/grudge6-kit.js</code> <code class="inline-code">loadRaceKit</code> only. FBX race kits are the Unity author source — not the play default. RTS-Grudge <code class="inline-code">FactionCharacterRegistry</code> is example-tool code, not the Warlords play loader. ObjectStore <code class="inline-code">prefab.modelRef</code> points at registry UUIDs; games resolve UUID → R2 URL via CDN, not D1 as the file server.</p>
 
-      <h3>Upload pipeline (local → R2 → D1)</h3>
-      <p>Run from <code class="inline-code">RTS-Grudge</code> after placing files or auditing <code class="inline-code">Documents</code>:</p>
+      <h3>Upload pipeline (local → R2 → D1 index)</h3>
+      <p>Bake with ObjectStore <code class="inline-code">npm run convert</code>, then upload to R2. D1 is the <strong>search index</strong> only. Prefer GrudgeBuilder <code class="inline-code">scripts/upload-*-to-r2.mjs</code> for new Warlords meshes. Legacy RTS-Grudge seed scripts still exist for the old asset-api Worker:</p>
       <pre><code># Audit + upload + purge local copies (≤50 MB default)
 npx tsx scripts/audit-documents-assets.ts --from-json scan.ndjson --upload --purge --priority
 
@@ -1171,11 +1207,11 @@ npx tsx scripts/seed-d1.ts</code></pre>
         <tr><th>Contract</th><th>Value</th></tr>
         <tr><td>World diameter</td><td><strong>1024 m</strong></td></tr>
         <tr><td>RTS core</td><td>200 m (upsampled into 1024 m center)</td></tr>
-        <tr><td>Character height</td><td><strong>2.0 m</strong> (all props scale relative to this)</td></tr>
+        <tr><td>Character height</td><td><strong>1.8 m human</strong> yardstick · orc ~<strong>2.0 m</strong> — bone-box feet, not pelvis, not a 2 m capsule</td></tr>
         <tr><td>Mountain peak</td><td><strong>20 m</strong> — seed picks one of three evil peaks</td></tr>
         <tr><td>Harvest regen</td><td>4 hours</td></tr>
         <tr><td>Seed database</td><td>Railway Postgres <code class="inline-code">home_islands</code> — <strong>not D1</strong></td></tr>
-        <tr><td>Studio editor</td><td><a href="https://grudge-studio-editor.vercel.app/editor?mode=home-island">editor?mode=home-island</a></td></tr>
+        <tr><td>Map / scene editors</td><td><a href="https://forge.grudge-studio.com">forge.grudge-studio.com</a> · <a href="https://threeflow.vercel.app">threeflow.vercel.app</a> (legacy home-island URL is not Forge)</td></tr>
       </table>
 
       <h3>Size foundations</h3>
@@ -1219,7 +1255,7 @@ npx tsx scripts/seed-d1.ts</code></pre>
 
       <div class="tip">
         <div class="tip-title">Pipeline</div>
-        <p>Studio editor → map to home island state → <code class="inline-code">PATCH /api/island/state</code> (Railway) → Island3DEngine play + mountain portal + CreatureBrain / navmesh AI.</p>
+        <p>Forge / ThreeFlow → map to home island state → <code class="inline-code">PATCH /api/island/state</code> (Railway) → Island3DEngine play + mountain portal + CreatureBrain / navmesh AI. Play hero stays <code class="inline-code">loadRaceKit</code>.</p>
       </div>
     </section>
 
@@ -1266,7 +1302,7 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
 
     <section id="biome-ecosystems">
       <h2>Biome Ecosystems</h2>
-      <p>One truth for what each biome offers: 5 land animals, 10 fish species pool, tree class policy, 20 m mountain peak, 4 h harvest regen, character reference 2.0 m.</p>
+      <p>One truth for what each biome offers: 5 land animals, 10 fish species pool, tree class policy, 20 m mountain peak, 4 h harvest regen, character reference <strong>1.8 m human</strong> (orc ~2.0 m).</p>
 
       <div class="endpoint-card">
         <div class="endpoint-header">
@@ -1324,17 +1360,22 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
         <tr>
           <td><strong>Character Studio (Foundry)</strong></td>
           <td><code class="inline-code">https://character.grudge-studio.com</code></td>
-          <td>Create-only heroes (GCS). After save → return to <strong>client</strong> with <code class="inline-code">characterId</code></td>
+          <td>Create-only heroes (GCS). After save → return to <strong>grudgewarlords.com</strong> with <code class="inline-code">characterId</code> + <code class="inline-code">era=warlords</code></td>
         </tr>
         <tr>
-          <td><strong>Warlords play client (primary)</strong></td>
-          <td><code class="inline-code">https://client.grudge-studio.com</code></td>
-          <td>Hub <code class="inline-code">/home</code>, heroes, home-island, lobby, tutorial, play. Same-origin <code class="inline-code">/api/*</code> → Railway</td>
-        </tr>
-        <tr>
-          <td><strong>Warlords play client (alias)</strong></td>
+          <td><strong>Warlords era play</strong></td>
           <td><code class="inline-code">https://grudgewarlords.com</code></td>
-          <td>Same Vercel project as client — marketing alias, not a second app</td>
+          <td>Apex + SPA. Same-origin <code class="inline-code">/api/*</code> → Railway. Preferred play host.</td>
+        </tr>
+        <tr>
+          <td><strong>Same SPA (legacy)</strong></td>
+          <td><code class="inline-code">https://client.grudge-studio.com</code></td>
+          <td>Same GrudgeBuilder Vercel project — not a second roster or second game</td>
+        </tr>
+        <tr>
+          <td><strong>Wallet / cNFT</strong></td>
+          <td><code class="inline-code">https://wallet.grudge-studio.com</code></td>
+          <td>GBUX, custodial wallet, swaps — <strong>not</strong> id.*</td>
         </tr>
         <tr>
           <td><strong>Definitions docs</strong></td>
@@ -1342,9 +1383,9 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
           <td>This page — ObjectStore API reference</td>
         </tr>
         <tr>
-          <td><strong>Crafting (Puter)</strong></td>
-          <td><code class="inline-code">https://grudge-crafting.puter.site</code></td>
-          <td>Shared account bag + per-character XP; SSO via ID; definitions from ObjectStore</td>
+          <td><strong>Crafting</strong></td>
+          <td><code class="inline-code">https://grudgewarlords.com/craft/</code></td>
+          <td>Account bag + per-character XP. Puter craft URL is a legacy redirect.</td>
         </tr>
         <tr>
           <td><strong>Fleet JS</strong></td>
@@ -1369,8 +1410,9 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
           <li>SSO return allowlist includes <code class="inline-code">*.puter.site</code> and <code class="inline-code">*.grudge-studio.com</code>.</li>
           <li>Vercel apps: same-origin <code class="inline-code">/api</code> rewrites to Railway. Puter sites: call Railway + ID explicitly with CORS.</li>
           <li>Do not use <code class="inline-code">api.grudge-studio.com</code> for auth or as character SSOT.</li>
-          <li>Primary play host is <code class="inline-code">client.grudge-studio.com</code> — not water.*, not open.*, not genesis.</li>
-          <li>Do not alias <code class="inline-code">id.grudge-studio.com</code> or <code class="inline-code">rts-grudge.vercel.app</code> onto the Warlords SPA project.</li>
+          <li>Warlords play host is <code class="inline-code">grudgewarlords.com</code> — not water.*, not open.*, not genesis, not RTS-Grudge.</li>
+          <li>Do not alias <code class="inline-code">id.grudge-studio.com</code> or <code class="inline-code">rts-grudge.vercel.app</code> onto the Warlords SPA project. RTS-Grudge is an <strong>example tool</strong>, not a production game to upgrade.</li>
+          <li>Guest product accounts / auto re-login / free cNFT wallets are <strong>not wanted</strong>.</li>
         </ul>
       </div>
 
@@ -1420,8 +1462,111 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
           <span class="endpoint-url">/api/v1/studio.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Studio service endpoints including home-island contract and biome catalog URLs.</p>
+          <p class="endpoint-desc">Studio service endpoints including home-island contract, biome catalog URLs, and <code class="inline-code">productionWiring</code>.</p>
         </div>
+      </div>
+    </section>
+
+    <section id="fleet-wiring">
+      <h2>Editors · Prefabs · Stack · Scripts</h2>
+      <p>Correct wiring for agents. Machine JSON: <a href="../api/v1/fleet-wiring.json"><code class="inline-code">/api/v1/fleet-wiring.json</code></a>. Do not invent a second editor, loader, bag DB, or npm stack.</p>
+
+      <h3>Editors (do not collapse brands)</h3>
+      <table>
+        <tr><th>Host</th><th>Brand / owns</th></tr>
+        <tr><td><a href="https://forge.grudge-studio.com">forge.grudge-studio.com</a></td><td><strong>Grudge Forge</strong> — R3F + Rapier + <code class="inline-code">.gfscene</code> deploy</td></tr>
+        <tr><td><a href="https://threeflow.vercel.app">threeflow.vercel.app</a></td><td><strong>ThreeFlow</strong> — Warlords scene editor (Vue + three r185). Elite handoff <code class="inline-code">?asset=</code></td></tr>
+        <tr><td><a href="https://character.grudge-studio.com/foundry">character.grudge-studio.com/foundry</a></td><td><strong>Character Foundry</strong> — create-only, 4-slot → play handoff</td></tr>
+        <tr><td><a href="https://casting.grudge-studio.com">casting.grudge-studio.com</a></td><td>Warlords UX / weapon-effects lab — <code class="inline-code">loadRaceKit</code></td></tr>
+        <tr><td><a href="https://grudge-combat.vercel.app/admin">grudge-combat.vercel.app/admin</a></td><td>Gladiators kit bake / weapon skill studio</td></tr>
+        <tr><td><a href="../grudge6-editor.html">info…/grudge6-editor</a></td><td>Prefab ↔ anim worker (this repo)</td></tr>
+        <tr><td><a href="../editors/">info…/editors/</a></td><td>Material / ObjectStore local editors</td></tr>
+        <tr><td><code class="inline-code">http://127.0.0.1:3847/</code></td><td>GRUDA Studio — local project window, not a public Vercel app</td></tr>
+      </table>
+      <div class="warning">
+        <div class="warning-title">Not the map editor</div>
+        <p><code class="inline-code">grudge-studio-editor.vercel.app</code> is a <strong>legacy</strong> home-island URL. Do not treat it as Forge or ThreeFlow. Open / GRUDOX / Warlords stay separate hosts.</p>
+      </div>
+
+      <h3>Prefabs</h3>
+      <table>
+        <tr><th>Layer</th><th>SSOT</th></tr>
+        <tr><td>Play hero</td><td>Toon RTS <code class="inline-code">{race}.glb</code> via <code class="inline-code">js/grudge6-kit.js</code> <code class="inline-code">loadRaceKit</code> only. Contract: <a href="../api/v1/grudge6-warlords-play-contract.json">grudge6-warlords-play-contract.json</a></td></tr>
+        <tr><td>Weapon items</td><td><a href="../api/v1/master-weapon-prefabs.json">master-weapon-prefabs.json</a></td></tr>
+        <tr><td>Weapon skills</td><td><a href="../api/v1/master-weaponSkills.json">master-weaponSkills.json</a> — <code class="inline-code">prefab.animationClip</code> = <code class="inline-code">{pack}/{role}</code> on Bip001</td></tr>
+        <tr><td>Equip</td><td>mesh_ids + SLOT_DEFS after prefix strip · one mixer · bone-box feet (not pelvis)</td></tr>
+        <tr><td>Fill clips</td><td><code class="inline-code">npm run wire:skill-prefab-anims</code> · editor <a href="../grudge6-editor.html">grudge6-editor</a></td></tr>
+      </table>
+      <p>Play CDN: <code class="inline-code">https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{race}.glb</code></p>
+
+      <h3>Stack dependencies (do not add a second)</h3>
+      <table>
+        <tr><th>Use</th><th>Package</th></tr>
+        <tr><td>Scene / mixer</td><td><code class="inline-code">three</code> ^0.185 — <strong>one</strong> <code class="inline-code">AnimationMixer</code></td></tr>
+        <tr><td>Physics</td><td><code class="inline-code">@dimforge/rapier3d-compat</code> + in-repo physics world</td></tr>
+        <tr><td>Mesh ground</td><td><code class="inline-code">three-mesh-bvh</code></td></tr>
+        <tr><td>Nav / AI</td><td><code class="inline-code">three-pathfinding</code>, <code class="inline-code">yuka</code></td></tr>
+      </table>
+      <p>Ban: second mixer, second physics engine, Meshy/capsule as play hero, OrbitControls writing combat TPS camera. Full matrix: skill <code class="inline-code">grudge-3d-game-packages</code> · Open <code class="inline-code">docs/OPEN_PACKAGE_SSOT.md</code>.</p>
+
+      <h3>ObjectStore scripts</h3>
+      <pre><code>cd F:\GitHub\ObjectStore
+npm run sync:docs                 # this /docs page + canonical-manifest
+npm run convert                   # production GLB bake → then R2
+npm run wire:skill-prefab-anims   # prefab.animationClip pack/role
+npx vercel --prod                 # info.grudge-studio.com + objectstore.grudge-studio.com</code></pre>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/fleet-wiring.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Editors, prefabs, deploy bans, scripts, stack pins — same table as this section.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="deploy-practices">
+      <h2>API · D1 · Deploy (do not mix stores)</h2>
+      <p>ObjectStore is <strong>definitions</strong>. D1 is an <strong>index</strong>. Railway is <strong>player state</strong>. R2 is <strong>binaries</strong>. Mixing those is how catalogs and heroes go stale.</p>
+      <table>
+        <tr><th>Store</th><th>Owns</th><th>Does not own</th><th>How to ship</th></tr>
+        <tr>
+          <td><strong>ObjectStore / info</strong></td>
+          <td>JSON catalogs (<code class="inline-code">api/v1/*.json</code>), lore, spell book, docs</td>
+          <td>Player bag, roster, island seeds, GLB files</td>
+          <td><code class="inline-code">cd ObjectStore; npx vercel --prod</code> — aliases <code class="inline-code">info.grudge-studio.com</code> + <code class="inline-code">objectstore.grudge-studio.com</code>. <code class="inline-code">.vercelignore</code> already drops icons/models/sprites.</td>
+        </tr>
+        <tr>
+          <td><strong>R2 <code class="inline-code">grudge-assets</code></strong></td>
+          <td>GLB / audio / icons / anim JSON</td>
+          <td>Search metadata, player rows</td>
+          <td><code class="inline-code">wrangler r2 object put</code> from ObjectStore CDN worker cwd. Verify <code class="inline-code">HEAD assets.grudge-studio.com/&lt;key&gt;</code> is 200 and <strong>not HTML</strong> (CDN serves the info hub as <code class="inline-code">application/json</code> on missing keys).</td>
+        </tr>
+        <tr>
+          <td><strong>D1 <code class="inline-code">grudge-assets-db</code></strong></td>
+          <td><code class="inline-code">asset_registry</code> search index (<code class="inline-code">purpose=play|isolate|author</code>)</td>
+          <td>Characters, bag, island, wallet, skill definitions</td>
+          <td>Seed from a manifest in batches of ≤100. Stamp <code class="inline-code">body_status</code> from magic bytes, not HEAD 200.</td>
+        </tr>
+        <tr>
+          <td><strong>Railway Postgres</strong></td>
+          <td>Accounts (<code class="inline-code">GRUDGE_…</code>), character UUIDs, bag, wallet, home island</td>
+          <td>Recipe JSON, race GLBs</td>
+          <td>GrudgeBuilder API deploy. Backup: grudge-dev-tool <code class="inline-code">npm run backup:postgres</code>.</td>
+        </tr>
+      </table>
+      <div class="warning">
+        <div class="warning-title">Deploy hygiene</div>
+        <ul>
+          <li>Intentional deploys — do not mix unrelated WIP into “update info”.</li>
+          <li>Play kit fail-closed: Toon <code class="inline-code">{race}.glb</code> HEAD 200, one mixer, Bip001 clips, bone-box feet. Red: races bake / FBX / Meshy / capsule as play body.</li>
+          <li><code class="inline-code">api.grudge-studio.com</code> is a dead public host — do not wire new clients to it.</li>
+          <li>Live CDN Worker is <code class="inline-code">ObjectStore/workers/cdn/</code>. Do not deploy <code class="inline-code">GrudgeBuilder/workers/cdn</code> (same Worker name overwrites the route).</li>
+          <li>Do not <code class="inline-code">wrangler deploy</code> ObjectStore <code class="inline-code">workers/ai</code> onto <code class="inline-code">ai.grudge-studio.com</code> (stale fork). Legion is <code class="inline-code">F:\GitHub\grudge-ai-hub</code>.</li>
+          <li>After catalog JSON changes: <code class="inline-code">npm run sync:docs</code> (Vercel <code class="inline-code">buildCommand</code> already runs it).</li>
+        </ul>
       </div>
     </section>
 
@@ -1851,7 +1996,7 @@ const t5 = GrudgeSDK.getTierColor(5); // { name: 'Red', hex: '#ff4d4d', label: '
 
       <table>
         <tr><th>Client</th><th>URL (production)</th><th>Description</th></tr>
-        <tr><td><code>sdk.auth</code></td><td><code class="inline-code">id.grudge-studio.com</code></td><td>Login, register, guest, wallet, Discord, Puter auth</td></tr>
+        <tr><td><code>sdk.auth</code></td><td><code class="inline-code">id.grudge-studio.com</code></td><td>Login / register via Puter (username, Grudge ID, Puter ID). Wallet/cNFT stay on <code class="inline-code">wallet.grudge-studio.com</code>. No product guest.</td></tr>
         <tr><td><code>sdk.game</code></td><td><code class="inline-code">grudge-api-production-0d46.up.railway.app</code> (or same-origin <code class="inline-code">/api</code> on client)</td><td>Characters, account bag, island, wallet, lobbies</td></tr>
         <tr><td><code>sdk.account</code></td><td>same Railway game API <code class="inline-code">/api/account/*</code></td><td>Profile / bag — do not invent a second account DB</td></tr>
         <tr><td><code>sdk.definitions</code></td><td><code class="inline-code">objectstore.grudge-studio.com/api/v1</code> or <code class="inline-code">info…/api/v1</code></td><td>Static ObjectStore JSON (this catalog)</td></tr>
@@ -1999,7 +2144,7 @@ function getCraftingRequirements(weaponId, tier) {
 
     <footer style="text-align: center; color: var(--text-dim); margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);">
       <p>© 2026 Grudge Studio | ObjectStore v5.1.0 | Home-island foundations · organized nature · freeform ARPG</p>
-      <p style="margin-top:8px;"><a href="https://client.grudge-studio.com">client.grudge-studio.com</a> (play primary) · <a href="https://grudgewarlords.com">grudgewarlords.com</a> (alias) · <a href="https://character.grudge-studio.com">Foundry</a> · <a href="https://assets.grudge-studio.com">assets CDN</a> · <a href="#creation-truth">Creation of Truth</a></p>
+      <p style="margin-top:8px;"><a href="https://grudgewarlords.com">grudgewarlords.com</a> (Warlords play) · <a href="https://character.grudge-studio.com">Foundry</a> · <a href="https://id.grudge-studio.com">Grudge ID</a> · <a href="https://wallet.grudge-studio.com">Wallet</a> · <a href="https://assets.grudge-studio.com">assets CDN</a> · <a href="#creation-truth">Creation of Truth</a></p>
     </footer>
   </main>
   <script src="../js/nav.js"></script>

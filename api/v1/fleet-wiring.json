@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-02",
+  "docs": "https://info.grudge-studio.com/docs#fleet-wiring",
+  "law": "Do not invent parallel editors, loaders, bag DBs, or npm stacks. Patch these hosts.",
+  "editors": {
+    "forge": { "url": "https://forge.grudge-studio.com", "role": "Grudge Forge — R3F + Rapier map/deploy, .gfscene" },
+    "threeflow": { "url": "https://threeflow.vercel.app", "role": "Warlords scene editor (Vue + three r185). Elite handoff ?asset=" },
+    "foundry": { "url": "https://character.grudge-studio.com/foundry", "role": "Character Foundry — create-only, 4-slot, play handoff" },
+    "casting": { "url": "https://casting.grudge-studio.com", "role": "Warlords UX / weapon-effects lab — loadRaceKit play" },
+    "combatLab": { "url": "https://grudge-combat.vercel.app/admin", "role": "Gladiators kit bake / weapon skill studio" },
+    "grudge6Editor": { "url": "https://info.grudge-studio.com/grudge6-editor", "role": "Prefab ↔ anim worker on ObjectStore" },
+    "objectstoreEditors": { "url": "https://info.grudge-studio.com/editors/", "role": "Material / local ObjectStore editors" },
+    "grudaStudio": { "url": "http://127.0.0.1:3847/", "role": "Local GRUDA project window — not a public Vercel app" },
+    "legacyHomeIslandEditor": { "url": "https://grudge-studio-editor.vercel.app/editor?mode=home-island", "role": "Legacy — do not treat as Forge/ThreeFlow" }
+  },
+  "prefabs": {
+    "playHero": "Toon RTS {race}.glb via js/grudge6-kit.js loadRaceKit only",
+    "playCdn": "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/{race}.glb",
+    "contract": "/api/v1/grudge6-warlords-play-contract.json",
+    "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+    "weaponSkills": "/api/v1/master-weaponSkills.json",
+    "skillPrefab": {
+      "modelRef": "R2 key or ITEM UUID → GLB",
+      "animationClip": "{pack}/{role} e.g. sword_shield/attack — not Mixamo names on Bip001",
+      "vfxRef": "VFX UUID or null",
+      "wireScript": "npm run wire:skill-prefab-anims"
+    },
+    "equip": "mesh_ids + SLOT_DEFS after prefix strip; one AnimationMixer; bone-box feet"
+  },
+  "deploy": {
+    "info": { "host": "info.grudge-studio.com", "repo": "ObjectStore", "cmd": "npx vercel --prod" },
+    "cdn": { "host": "assets.grudge-studio.com", "worker": "ObjectStore/workers/cdn", "ban": "Do not wrangler deploy GrudgeBuilder/workers/cdn" },
+    "objectstoreWorker": { "host": "objectstore.grudge-studio.com", "worker": "grudgeassets", "note": "/api/v1/*.json proxies info.*" },
+    "ai": { "host": "ai.grudge-studio.com", "repo": "F:/GitHub/grudge-ai-hub", "ban": "Do not deploy ObjectStore/workers/ai onto ai.*" },
+    "open": "open.grudge-studio.com",
+    "warlords": "grudgewarlords.com",
+    "id": "id.grudge-studio.com"
+  },
+  "scripts": {
+    "syncDocs": "npm run sync:docs",
+    "convert": "npm run convert",
+    "wirePrefabs": "npm run wire:skill-prefab-anims",
+    "repo": "F:/GitHub/ObjectStore"
+  },
+  "stack": {
+    "three": "^0.185",
+    "physics": "@dimforge/rapier3d-compat",
+    "meshGround": "three-mesh-bvh",
+    "nav": "three-pathfinding",
+    "aiSteer": "yuka",
+    "mixerLaw": "one AnimationMixer per play body",
+    "ban": ["second mixer", "second physics engine", "Meshy/capsule play hero", "OrbitControls writing combat TPS camera"],
+    "ssot": "skill grudge-3d-game-packages · Open docs/OPEN_PACKAGE_SSOT.md"
+  }
+}
