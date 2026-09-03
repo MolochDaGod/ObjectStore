@@ -250,6 +250,7 @@
     <a href="#consumables">Consumables</a>
     <a href="#skills">Skills</a>
     <a href="#weapon-skills">Weapon Skills</a>
+    <a href="#weapon-passives">Weapon Passive Stacks</a>
     <a href="#professions">Professions</a>
     <a href="#classes">Classes & Races</a>
     <a href="#enemies">Enemies & Bosses</a>
@@ -687,14 +688,25 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
 
     <section id="weapon-skills">
       <h2>Weapon Skills Endpoint</h2>
+
+      <div class="warning">
+        <div class="warning-title">⚠️ Archived Endpoint</div>
+        <p><code class="inline-code">GET /api/v1/weaponSkills.json</code> is <strong>ARCHIVED</strong>. Canonical weapon skills are now in:</p>
+        <ul>
+          <li><code class="inline-code">GET /api/v1/master-weaponSkills.json</code> — Full skill catalog with SKIL-* UUIDs</li>
+          <li><code class="inline-code">GET /api/v1/weapon-stat-bridge.json</code> — Stat connections</li>
+          <li><code class="inline-code">docs/WEAPON-STATS-ATTRIBUTES.md</code> — Attribute scaling docs</li>
+        </ul>
+        <p>Legacy <code class="inline-code">weaponSkills.json</code> remains for backward compatibility but is not updated.</p>
+      </div>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="method">GET</span>
-          <span class="endpoint-url">/api/v1/weaponSkills.json</span>
+          <span class="endpoint-url">/api/v1/master-weaponSkills.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Returns 473 weapon skills across 24 weapon types sourced from the Warlord Crafting Suite. Each skill includes an icon path, cooldown, mana cost, effects, and slot assignment.</p>
+          <p class="endpoint-desc">Canonical weapon skills catalog with 300+ skills across weapon types. Each skill includes GRUDGE UUID (SKIL-*), icon, cooldown, mana cost, damage formulas, and stat connections.</p>
           
           <h3>Response Structure</h3>
           <pre><code>{
@@ -732,6 +744,128 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
 
           <h3>Weapon Types (24)</h3>
           <p>Sword, Axe (1H), Greatsword, Greataxe, Bow, Crossbow, Gun, Fire Staff, Frost Staff, Holy Staff, Lightning Staff, Nature Staff, Dagger, Arcane Staff, Spear, Hammer, Scythe, Tool, Fire Tome, Frost Tome, Holy Tome, Shadow Tome, Nature Tome, Arcane Tome</p>
+
+          <div class="tip">
+            <div class="tip-title">💡 Related</div>
+            <p>See <a href="#weapon-passives">Weapon Passive Stacks</a> for status effects (bleed, burn, Grudge Mark) and <a href="./WEAPON-STATS-ATTRIBUTES.md">WEAPON-STATS-ATTRIBUTES.md</a> for stat scaling.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="weapon-passives">
+      <h2>Weapon Passive Stacks</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/weapon-passive-stacks.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Status effects and passive stack catalog for weapon combat — DoT effects (bleed, burn, poison), damage amplifiers (Grudge Mark), and conditional triggers.</p>
+
+          <div class="warning">
+            <div class="warning-title">⚠️ Design Layer Only</div>
+            <p>Passive stacks are currently <strong>design-layer concepts</strong> extracted from <code class="inline-code">weapons.json</code> and <code class="inline-code">studio-manifest.json</code>. The Three.js + Rapier combat runtime (<code class="inline-code">threejs-rapier-react-three-controller</code>) does <strong>NOT yet implement</strong> DoT or stack systems in <code class="inline-code">CombatController</code>.</p>
+            <p>See <a href="./WEAPON-PASSIVE-STACKS.md">WEAPON-PASSIVE-STACKS.md</a> for full implementation status and runtime requirements.</p>
+          </div>
+
+          <h3>Status Effect Types</h3>
+          <table>
+            <tr><th>Effect</th><th>Type</th><th>Max Stacks</th><th>Duration</th><th>Weapon Types</th></tr>
+            <tr>
+              <td><strong>Grudge Mark</strong></td>
+              <td>Damage amp (+5% per stack)</td>
+              <td>3</td>
+              <td>Not specified</td>
+              <td>Sword, Axe</td>
+            </tr>
+            <tr>
+              <td><strong>Bleed</strong></td>
+              <td>Physical DoT</td>
+              <td>5</td>
+              <td>3–8s</td>
+              <td>Dagger, Axe, Sword, Bow</td>
+            </tr>
+            <tr>
+              <td><strong>Burn</strong></td>
+              <td>Fire DoT (spreads)</td>
+              <td>3</td>
+              <td>3–6s</td>
+              <td>Axe, Fire Staff, Dagger</td>
+            </tr>
+            <tr>
+              <td><strong>Poison</strong></td>
+              <td>Nature DoT</td>
+              <td>3</td>
+              <td>4–10s</td>
+              <td>Dagger</td>
+            </tr>
+            <tr>
+              <td><strong>Chill</strong></td>
+              <td>Slow (15%/stack, max 45%)</td>
+              <td>3</td>
+              <td>3s/stack</td>
+              <td>Frost Staff</td>
+            </tr>
+            <tr>
+              <td><strong>Shock</strong></td>
+              <td>Lightning DoT</td>
+              <td>3</td>
+              <td>2–4s</td>
+              <td>Lightning Staff</td>
+            </tr>
+            <tr>
+              <td><strong>Lifesteal</strong></td>
+              <td>On-hit heal</td>
+              <td>—</td>
+              <td>Instant</td>
+              <td>Axe, Sword, Hammer</td>
+            </tr>
+            <tr>
+              <td><strong>Rune Stack</strong></td>
+              <td>Power-up (+3% dmg, burst)</td>
+              <td>10</td>
+              <td>Permanent</td>
+              <td>Greatsword (Runed Great Sword)</td>
+            </tr>
+          </table>
+
+          <h3>Example: Grudge Mark (Sword)</h3>
+          <pre><code>{
+  "id": "grudge_mark",
+  "name": "Grudge Mark",
+  "applyCondition": "on_hit",
+  "effect": {
+    "amplification": 0.05
+  },
+  "maxStacks": 3,
+  "duration": null,
+  "weaponTypes": ["sword", "axe"],
+  "sources": {
+    "design": "api/v1/weapons.json:34",
+    "runtime": "NOT_IMPLEMENTED"
+  }
+}</code></pre>
+
+          <h3>Weapon Ability Bindings</h3>
+          <table>
+            <tr><th>Weapon</th><th>Ability</th><th>Effect</th><th>Source</th></tr>
+            <tr><td>Bloodfeud Blade</td><td>Vengeful Slash</td><td>Grudge Mark</td><td><code class="inline-code">weapons.json:34</code></td></tr>
+            <tr><td>Shadow Fang</td><td>Crimson Stab</td><td>Bleed</td><td><code class="inline-code">weapons.json:550</code></td></tr>
+            <tr><td>Venom Fang</td><td>Poison Shiv</td><td>Poison</td><td><code class="inline-code">weapons.json:712</code></td></tr>
+            <tr><td>Ember Axe</td><td>Flame Slash</td><td>Burn</td><td><code class="inline-code">weapons.json:246</code></td></tr>
+            <tr><td>Fire Staff</td><td>Fire Bolt</td><td>Burn</td><td><code class="inline-code">weapons.json:2234</code></td></tr>
+            <tr><td>Fire Staff</td><td>Flame Nova</td><td>Explode all burns</td><td><code class="inline-code">weapons.json:2242</code></td></tr>
+            <tr><td>Frost Staff</td><td>Frost Bolt</td><td>Chill</td><td><code class="inline-code">weapons.json:2367</code></td></tr>
+            <tr><td>Lightning Staff</td><td>Thunder Bolt</td><td>Shock</td><td><code class="inline-code">weapons.json:2633</code></td></tr>
+            <tr><td>Runed Great Sword</td><td>Runic Cleave</td><td>Rune Stack</td><td><code class="inline-code">weapons.json:2904</code></td></tr>
+          </table>
+
+          <div class="tip">
+            <div class="tip-title">📖 Full Documentation</div>
+            <p><a href="./WEAPON-PASSIVE-STACKS.md">WEAPON-PASSIVE-STACKS.md</a> — Complete passive stack system documentation including runtime implementation requirements, source file paths, and VFX asset catalog.</p>
+          </div>
         </div>
       </div>
     </section>
