@@ -484,11 +484,7 @@ export async function mountHeroViewport(host, opts) {
   let equip = null;
   let mixer = null;
   let poseReady = false;
-<<<<<<< HEAD
-  let lastEquipArgs = { equippedItems: opts.equippedItems || {}, findItem: opts.findItem };
-=======
   let headLook = null;
->>>>>>> c6b20a05 (Paperdoll head follows the user/cursor (neck+head lookAt).)
   let raf = 0;
   let disposed = false;
   /** @type {Awaited<ReturnType<typeof createTomeOffhand>>|null} */
