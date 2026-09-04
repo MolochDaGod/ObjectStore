@@ -3,11 +3,13 @@
  *
  * Scale: buildings are baked at 4 m vs character 2 m.
  * Host injects THREE + GLTFLoader (same peer as main-panel / labs).
- * Rejects HTML-as-GLB (hub 200) via glTF magic before parse.
+ * Identity: glTF magic + catalog byte length (reject HTML hub and stale R2 dollhouse).
+ * Never GET models/_optimized/* on CDN v2.2.1 — miss re-backfills hub HTML.
  *
  * Catalog SSOT: api/v1/island-building-prefabs.json
  */
 export const CDN = "https://assets.grudge-studio.com";
+export const INFO = "https://info.grudge-studio.com";
 export const CHARACTER_HEIGHT_M = 2;
 export const BUILDING_HEIGHT_M = 4;
 
@@ -19,6 +21,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/cantina.glb",
     "r2KeyOptimized": "models/_optimized/buildings/cantina.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/cantina.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/cantina.glb",
+    "bytes": 158656,
+    "md5": "3f2ead9e89a8aaa076433494ddec8874",
     "heightM": 4,
     "craftStation": false
   },
@@ -29,6 +34,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/tavern.glb",
     "r2KeyOptimized": "models/_optimized/buildings/tavern.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/tavern.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/tavern.glb",
+    "bytes": 158656,
+    "md5": "135ec54080525b5fe23cc73601b9d27f",
     "heightM": 4,
     "craftStation": false
   },
@@ -39,6 +47,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/inn.glb",
     "r2KeyOptimized": "models/_optimized/buildings/inn.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/inn.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/inn.glb",
+    "bytes": 79924,
+    "md5": "e7364c95ffc24343cd0944ef51d2e014",
     "heightM": 4,
     "craftStation": false
   },
@@ -49,6 +60,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/house.glb",
     "r2KeyOptimized": "models/_optimized/buildings/house.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/house.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/house.glb",
+    "bytes": 53180,
+    "md5": "ca7c36642ca961ff3e4b71099898be32",
     "heightM": 4,
     "craftStation": false
   },
@@ -59,6 +73,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/blacksmith.glb",
     "r2KeyOptimized": "models/_optimized/buildings/blacksmith.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/blacksmith.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/blacksmith.glb",
+    "bytes": 59148,
+    "md5": "8423f86eb041a1ae8fcbf2694eb1e316",
     "heightM": 4,
     "craftStation": true
   },
@@ -69,6 +86,9 @@ export const ISLAND_BUILDINGS = [
     "r2Key": "models/buildings/market.glb",
     "r2KeyOptimized": "models/_optimized/buildings/market.glb",
     "cdnUrl": "https://assets.grudge-studio.com/models/buildings/market.glb",
+    "infoUrl": "https://info.grudge-studio.com/models/buildings/market.glb",
+    "bytes": 71848,
+    "md5": "bd319838fd1745923c699aa23a9367c5",
     "heightM": 4,
     "craftStation": false
   }
@@ -110,13 +130,16 @@ export function looksLikeHtmlHub(bytes) {
 }
 
 /**
- * Fetch a building GLB, fail-closed on HTML hub / MIME lie.
- * Tries canonical key then _optimized/ alias.
+ * Fetch a building GLB, fail-closed on HTML hub / MIME lie / stale R2 size.
+ * Order: CDN canonical → info.* same key. Never _optimized on 2.2.1.
  */
 export async function fetchBuildingGlb(id, fetchImpl = fetch) {
   const b = BY_ID[id];
   if (!b) throw new Error(`unknown island building ${id}`);
-  const urls = [`${CDN}/${b.r2Key}`, `${CDN}/${b.r2KeyOptimized}`];
+  const urls = [
+    b.cdnUrl || `${CDN}/${b.r2Key}`,
+    b.infoUrl || `${INFO}/${b.r2Key}`,
+  ];
   let lastErr = null;
   for (const url of urls) {
     try {
@@ -128,6 +151,10 @@ export async function fetchBuildingGlb(id, fetchImpl = fetch) {
       const buf = new Uint8Array(await res.arrayBuffer());
       if (looksLikeHtmlHub(buf) || !looksLikeGlb(buf)) {
         lastErr = new Error(`html-hub-rejected ${url}`);
+        continue;
+      }
+      if (b.bytes && buf.byteLength !== b.bytes) {
+        lastErr = new Error(`size-mismatch ${buf.byteLength}!=${b.bytes} ${url}`);
         continue;
       }
       return { id, url, bytes: buf, prefab: b };
@@ -171,4 +198,12 @@ export async function loadIslandBuilding(id, host = {}) {
   } finally {
     URL.revokeObjectURL(objectUrl);
   }
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.GrudgeIslandBuildings = {
+    CDN, INFO, CHARACTER_HEIGHT_M, BUILDING_HEIGHT_M,
+    ISLAND_BUILDINGS, getIslandBuilding, buildingCdnUrl, buildingR2Keys,
+    looksLikeGlb, looksLikeHtmlHub, fetchBuildingGlb, loadIslandBuilding,
+  };
 }
