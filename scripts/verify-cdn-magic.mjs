@@ -26,6 +26,13 @@ const CHECKS = [
   { path: 'models/grudge6/races/WK_Characters.fbx', expect: 'fbx' },
   { path: 'models/_optimized/buildings/cantina.glb', expect: 'glb-or-404', missPoisons: true },
   { path: 'models/_optimized/buildings/tavern.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/_optimized/buildings/inn.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/_optimized/buildings/house.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/_optimized/buildings/blacksmith.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/_optimized/buildings/market.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/buildings/cantina.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/buildings/house.glb', expect: 'glb-or-404', missPoisons: true },
+  { path: 'models/buildings/market.glb', expect: 'glb-or-404', missPoisons: true },
   { path: 'effects/3d/fire/arpg-effects_fire_16x4.png', expect: 'png' },
 ];
 

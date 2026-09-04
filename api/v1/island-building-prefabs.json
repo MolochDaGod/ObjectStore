@@ -1,0 +1,360 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-09-04T22:27:28.627Z",
+  "description": "Island/camp building prefabs — KayKit + cantina baked to 4 m (2× character). Magic-byte GLB only.",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "convertCli": "tools/grudge-convert",
+  "scale": {
+    "characterHeightM": 2,
+    "buildingHeightM": 4,
+    "unit": "meter",
+    "rule": "Bake --height 4 into mesh positions. Runtime must not apply 0.01 hacks.",
+    "source": "api/v1/home-island-contract.json characterScale + camp_building si.heightM"
+  },
+  "script": "js/island-building-prefabs.js",
+  "count": 6,
+  "prefabs": [
+    {
+      "prefabId": "PFAB-BLDG-CANTINA",
+      "id": "cantina",
+      "entityId": "entities/cantina",
+      "name": "Cantina",
+      "displayName": "Cantina",
+      "kind": "structure",
+      "category": "camp_building",
+      "role": "tavern_bar",
+      "era": "warlords",
+      "source": "models/buildings/cantina.glb",
+      "sourceNote": "Local cantina.glb (~0.26 m raw) scaled to 4 m",
+      "mesh": {
+        "r2Key": "models/buildings/cantina.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/cantina.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/cantina.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/cantina.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/cantina.glb",
+        "bytes": 158656,
+        "md5": "3f2ead9e89a8aaa076433494ddec8874",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -0.836275041103363,
+          -2,
+          -0.8362752795219421
+        ],
+        "max": [
+          0.836275041103363,
+          2,
+          0.8362752795219421
+        ],
+        "size": [
+          1.672550082206726,
+          4,
+          1.6725505590438843
+        ],
+        "heightM": 4,
+        "longestM": 4,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": false,
+        "buildLayer": "rts"
+      },
+      "collider": "dist/production/buildings/cantina.collider.json"
+    },
+    {
+      "prefabId": "PFAB-BLDG-TAVERN",
+      "id": "tavern",
+      "entityId": "entities/tavern",
+      "name": "Tavern",
+      "displayName": "Tavern",
+      "kind": "structure",
+      "category": "camp_building",
+      "role": "tavern",
+      "era": "warlords",
+      "source": "models/buildings/cantina.glb",
+      "sourceNote": "Same unique bar mesh as cantina; own bake + r2Key + prefab id",
+      "mesh": {
+        "r2Key": "models/buildings/tavern.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/tavern.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/tavern.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/tavern.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/tavern.glb",
+        "bytes": 158656,
+        "md5": "135ec54080525b5fe23cc73601b9d27f",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -0.836275041103363,
+          -2,
+          -0.8362752795219421
+        ],
+        "max": [
+          0.836275041103363,
+          2,
+          0.8362752795219421
+        ],
+        "size": [
+          1.672550082206726,
+          4,
+          1.6725505590438843
+        ],
+        "heightM": 4,
+        "longestM": 4,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": false,
+        "buildLayer": "rts"
+      },
+      "collider": "dist/production/buildings/tavern.collider.json"
+    },
+    {
+      "prefabId": "PFAB-BLDG-INN",
+      "id": "inn",
+      "entityId": "entities/inn",
+      "name": "Inn",
+      "displayName": "Inn",
+      "kind": "structure",
+      "category": "camp_building",
+      "role": "lodging",
+      "era": "warlords",
+      "source": "models/KayKit_MedievalBuilder/objects/gltf/barracks.gltf.glb",
+      "sourceNote": "KayKit barracks (~1.3 m) as lodging hall, scaled to 4 m",
+      "mesh": {
+        "r2Key": "models/buildings/inn.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/inn.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/inn.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/inn.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/inn.glb",
+        "bytes": 79924,
+        "md5": "e7364c95ffc24343cd0944ef51d2e014",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -3.093268632888794,
+          -0.022260084748268127,
+          -3.2226736545562744
+        ],
+        "max": [
+          3.033189296722412,
+          3.9777398109436035,
+          1.737133502960205
+        ],
+        "size": [
+          6.126457929611206,
+          3.9999998956918716,
+          4.9598071575164795
+        ],
+        "heightM": 4,
+        "longestM": 6.1265,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": false,
+        "buildLayer": "rts"
+      },
+      "collider": "dist/production/buildings/inn.collider.json"
+    },
+    {
+      "prefabId": "PFAB-BLDG-HOUSE",
+      "id": "house",
+      "entityId": "entities/house",
+      "name": "House",
+      "displayName": "House",
+      "kind": "structure",
+      "category": "camp_building",
+      "role": "dwelling",
+      "era": "warlords",
+      "source": "models/KayKit_MedievalBuilder/objects/gltf/house.gltf.glb",
+      "sourceNote": "KayKit house (~0.91 m RTS tile) scaled to 4 m",
+      "mesh": {
+        "r2Key": "models/buildings/house.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/house.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/house.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/house.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/house.glb",
+        "bytes": 53180,
+        "md5": "ca7c36642ca961ff3e4b71099898be32",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -3.6925811767578125,
+          -0.03904442861676216,
+          -3.584956407546997
+        ],
+        "max": [
+          3.6925806999206543,
+          3.9609556198120117,
+          3.6645829677581787
+        ],
+        "size": [
+          7.385161876678467,
+          4.000000048428774,
+          7.249539375305176
+        ],
+        "heightM": 4,
+        "longestM": 7.3852,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": false,
+        "buildLayer": "rts"
+      },
+      "collider": "dist/production/buildings/house.collider.json"
+    },
+    {
+      "prefabId": "PFAB-BLDG-BLACKSMITH",
+      "id": "blacksmith",
+      "entityId": "entities/Blacksmith_Icon",
+      "name": "Blacksmith",
+      "displayName": "Blacksmith",
+      "kind": "structure",
+      "category": "bench",
+      "role": "craft_station",
+      "era": "warlords",
+      "source": "models/KayKit_MedievalBuilder/objects/gltf/lumbermill.gltf.glb",
+      "sourceNote": "KayKit lumbermill (~1.47 m workshop) scaled to 4 m",
+      "mesh": {
+        "r2Key": "models/buildings/blacksmith.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/blacksmith.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/blacksmith.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/blacksmith.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/blacksmith.glb",
+        "bytes": 59148,
+        "md5": "8423f86eb041a1ae8fcbf2694eb1e316",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -2.494811534881592,
+          -0.04274824261665344,
+          -2.195563316345215
+        ],
+        "max": [
+          2.470121383666992,
+          3.957251787185669,
+          2.3160178661346436
+        ],
+        "size": [
+          4.964932918548584,
+          4.000000029802322,
+          4.511581182479858
+        ],
+        "heightM": 4,
+        "longestM": 4.9649,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": true,
+        "buildLayer": "camp"
+      },
+      "collider": "dist/production/buildings/blacksmith.collider.json"
+    },
+    {
+      "prefabId": "PFAB-BLDG-MARKET",
+      "id": "market",
+      "entityId": "entities/Market_Icon",
+      "name": "Market",
+      "displayName": "Market",
+      "kind": "structure",
+      "category": "camp_building",
+      "role": "market",
+      "era": "warlords",
+      "source": "models/KayKit_MedievalBuilder/objects/gltf/market.gltf.glb",
+      "sourceNote": "KayKit market (~0.86 m stall) scaled to 4 m; was unity_prefab_only",
+      "mesh": {
+        "r2Key": "models/buildings/market.glb",
+        "r2KeyOptimized": "models/_optimized/buildings/market.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/market.glb",
+        "cdnUrlOptimized": "https://assets.grudge-studio.com/models/_optimized/buildings/market.glb",
+        "contentType": "model/gltf-binary",
+        "local": "dist/production/buildings/market.glb",
+        "bytes": 71848,
+        "md5": "bd319838fd1745923c699aa23a9367c5",
+        "magic": "glTF",
+        "status": "baked"
+      },
+      "si": {
+        "heightM": 4,
+        "unit": "meter",
+        "measuredHeightM": 4
+      },
+      "bounds": {
+        "min": [
+          -3.4723432064056396,
+          -0.19201059639453888,
+          -3.572603464126587
+        ],
+        "max": [
+          3.3328940868377686,
+          3.8079893589019775,
+          4.180168151855469
+        ],
+        "size": [
+          6.805237293243408,
+          3.9999999552965164,
+          7.752771615982056
+        ],
+        "heightM": 4,
+        "longestM": 7.7528,
+        "feetOnGround": false,
+        "source": "grudgeColliders"
+      },
+      "game": {
+        "placeable": true,
+        "craftStation": false,
+        "buildLayer": "rts"
+      },
+      "collider": "dist/production/buildings/market.collider.json"
+    }
+  ]
+}

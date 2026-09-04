@@ -235,7 +235,11 @@
     "cdn:purge-html": "node ./scripts/purge-cdn-html.mjs",
     "cdn:verify-magic": "node ./scripts/verify-cdn-magic.mjs",
     "cdn:verify-magic:purge": "node ./scripts/verify-cdn-magic.mjs --purge",
-    "worker:cdn:deploy": "wrangler deploy -c workers/cdn/wrangler.toml"
+    "worker:cdn:deploy": "wrangler deploy -c workers/cdn/wrangler.toml",
+    "buildings:bake": "node ./scripts/bake-island-buildings.mjs",
+    "buildings:wire": "node ./scripts/bake-island-buildings.mjs --skip-bake",
+    "buildings:upload": "node ./scripts/bake-island-buildings.mjs --upload"
+
   },
   "repository": {
     "type": "git",

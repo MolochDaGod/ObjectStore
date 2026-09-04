@@ -30,7 +30,9 @@
     "masterItems": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
     "archive": "https://molochdagod.github.io/ObjectStore/api/v1/archive/manifest.json",
     "economyCoverage": "https://molochdagod.github.io/ObjectStore/api/v1/economy-coverage.json",
-    "economySpiderUi": "https://molochdagod.github.io/ObjectStore/docs/economy-spider.html"
+    "economySpiderUi": "https://molochdagod.github.io/ObjectStore/docs/economy-spider.html",
+    "islandBuildingPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/island-building-prefabs.json",
+    "warlordsEntityPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/warlords-entity-prefabs.json"
   },
   "design": {
     "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
@@ -241,7 +243,11 @@
     "wcs": "https://wcs.grudge-studio.com",
     "puterGsApp": "https://grudge-crafting.puter.site",
     "fleetBridge": "https://assets.grudge-studio.com/js/grudge-fleet.js",
-    "saveOrder": ["PATCH /api/island/state", "puter.kv grudge:island:{id}:state", "localStorage"],
+    "saveOrder": [
+      "PATCH /api/island/state",
+      "puter.kv grudge:island:{id}:state",
+      "localStorage"
+    ],
     "scale3dM": 1024,
     "scaleRtsM": 200
   },
