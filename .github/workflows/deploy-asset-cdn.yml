@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - workers/cdn/**
+      - .github/workflows/deploy-asset-cdn.yml
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,6 +19,7 @@ jobs:
       - run: npm install -g wrangler
       - name: Deploy grudge-asset-cdn
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # Existing ObjectStore secret is CF_API_TOKEN (see sync-r2.yml).
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler deploy -c workers/cdn/wrangler.toml
