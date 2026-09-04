@@ -37,7 +37,14 @@ async function purge(path) {
   return { path, status: res.status, body };
 }
 
-const paths = process.argv.filter((a) => !a.startsWith('-') && a !== process.argv[1] && !a.endsWith('.mjs'));
+const args = process.argv.slice(2);
+const paths = [];
+for (let i = 0; i < args.length; i++) {
+  const a = args[i];
+  if (a === '--token') { i++; continue; }
+  if (a.startsWith('-')) continue;
+  paths.push(a);
+}
 const list = paths.length ? paths : HIGH_VALUE_PURGE;
 
 const rows = [];

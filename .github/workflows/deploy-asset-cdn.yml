@@ -17,6 +17,17 @@ jobs:
         with:
           node-version: '20'
       - run: npm install -g wrangler
+      - name: Require Cloudflare token
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Repo Action secret CF_API_TOKEN (or CLOUDFLARE_API_TOKEN) is empty."
+            echo "Create a Cloudflare API token with Workers Scripts Edit + Account, then:"
+            echo "  gh secret set CF_API_TOKEN --repo MolochDaGod/ObjectStore"
+            echo "Re-run: gh workflow run deploy-asset-cdn.yml --ref main"
+            exit 1
+          fi
       - name: Deploy grudge-asset-cdn
         env:
           # Existing ObjectStore secret is CF_API_TOKEN (see sync-r2.yml).
