@@ -52,6 +52,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
 
+      - name: Deploy Asset CDN Worker
+        if: inputs.category == 'all' || inputs.category == 'worker' || inputs.category == 'cdn'
+        run: npx wrangler deploy --config workers/cdn/wrangler.toml
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
       - name: Deploy AI Hub Worker
         if: inputs.category == 'all' || inputs.category == 'worker'
         run: npx wrangler deploy --config workers/ai/wrangler.toml

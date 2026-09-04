@@ -2,7 +2,7 @@
   "name": "@grudge-studio/objectstore",
   "version": "3.0.0",
   "type": "module",
-  "description": "Grudge Studio ObjectStore — Public game data API, SDK, MCP server, and asset browser for Grudge Warlords",
+  "description": "Grudge Studio ObjectStore \u2014 Public game data API, SDK, MCP server, and asset browser for Grudge Warlords",
   "main": "./integrations/grudge-studio-core.js",
   "module": "./integrations/grudge-studio-core.js",
   "types": "./types/index.d.ts",
@@ -231,7 +231,11 @@
     "helper:ai": "node ./scripts/helpers/index.mjs ai list",
     "deploy:helper": "node ./scripts/helpers/deploy-helper.mjs list",
     "deploy:smoke": "node ./scripts/helpers/index.mjs deploy smoke",
-    "ai:workers": "node ./scripts/helpers/index.mjs ai list"
+    "ai:workers": "node ./scripts/helpers/index.mjs ai list",
+    "cdn:purge-html": "node ./scripts/purge-cdn-html.mjs",
+    "cdn:verify-magic": "node ./scripts/verify-cdn-magic.mjs",
+    "cdn:verify-magic:purge": "node ./scripts/verify-cdn-magic.mjs --purge",
+    "worker:cdn:deploy": "wrangler deploy -c workers/cdn/wrangler.toml"
   },
   "repository": {
     "type": "git",
