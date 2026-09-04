@@ -40,6 +40,7 @@ import { loadFleetEnv, resolveR2S3Config } from './lib/load-fleet-env.mjs';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const CDN = 'https://assets.grudge-studio.com';
+const INFO = 'https://info.grudge-studio.com';
 const CHARACTER_HEIGHT_M = 2;
 const BUILDING_HEIGHT_M = 4;
 const CONVERT = join(ROOT, 'tools/grudge-convert/bin/grudge-convert.mjs');
@@ -183,8 +184,9 @@ function writePrefabCatalog(rows) {
     version: '1.0.0',
     generated: new Date().toISOString(),
     description:
-      'Island/camp building prefabs — KayKit + cantina baked to 4 m (2× character). Magic-byte GLB only.',
+      'Island/camp building prefabs — KayKit + cantina baked to 4 m (2× character). Magic-byte GLB only. Fetch rejects HTML hub and byte-size drift (stale R2 dollhouse).',
     cdnBase: CDN,
+    infoBase: INFO,
     convertCli: 'tools/grudge-convert',
     scale: {
       characterHeightM: CHARACTER_HEIGHT_M,
@@ -211,6 +213,9 @@ function writeRuntimeJs(rows) {
     r2Key: p.mesh.r2Key,
     r2KeyOptimized: p.mesh.r2KeyOptimized,
     cdnUrl: p.mesh.cdnUrl,
+    infoUrl: p.mesh.infoUrl || `${INFO}/${p.mesh.r2Key}`,
+    bytes: p.mesh.bytes,
+    md5: p.mesh.md5,
     heightM: p.si.heightM,
     craftStation: p.game.craftStation,
   }));
@@ -219,11 +224,13 @@ function writeRuntimeJs(rows) {
  *
  * Scale: buildings are baked at ${BUILDING_HEIGHT_M} m vs character ${CHARACTER_HEIGHT_M} m.
  * Host injects THREE + GLTFLoader (same peer as main-panel / labs).
- * Rejects HTML-as-GLB (hub 200) via glTF magic before parse.
+ * Identity: glTF magic + catalog byte length (reject HTML hub and stale R2 dollhouse).
+ * Never GET models/_optimized/* on CDN v2.2.1 — miss re-backfills hub HTML.
  *
  * Catalog SSOT: api/v1/island-building-prefabs.json
  */
 export const CDN = ${JSON.stringify(CDN)};
+export const INFO = ${JSON.stringify(INFO)};
 export const CHARACTER_HEIGHT_M = ${CHARACTER_HEIGHT_M};
 export const BUILDING_HEIGHT_M = ${BUILDING_HEIGHT_M};
 
@@ -265,13 +272,16 @@ export function looksLikeHtmlHub(bytes) {
 }
 
 /**
- * Fetch a building GLB, fail-closed on HTML hub / MIME lie.
- * Tries canonical key then _optimized/ alias.
+ * Fetch a building GLB, fail-closed on HTML hub / MIME lie / stale R2 size.
+ * Order: CDN canonical → info.* same key. Never _optimized on 2.2.1.
  */
 export async function fetchBuildingGlb(id, fetchImpl = fetch) {
   const b = BY_ID[id];
   if (!b) throw new Error(\`unknown island building \${id}\`);
-  const urls = [\`\${CDN}/\${b.r2Key}\`, \`\${CDN}/\${b.r2KeyOptimized}\`];
+  const urls = [
+    b.cdnUrl || \`\${CDN}/\${b.r2Key}\`,
+    b.infoUrl || \`\${INFO}/\${b.r2Key}\`,
+  ];
   let lastErr = null;
   for (const url of urls) {
     try {
@@ -283,6 +293,10 @@ export async function fetchBuildingGlb(id, fetchImpl = fetch) {
       const buf = new Uint8Array(await res.arrayBuffer());
       if (looksLikeHtmlHub(buf) || !looksLikeGlb(buf)) {
         lastErr = new Error(\`html-hub-rejected \${url}\`);
+        continue;
+      }
+      if (b.bytes && buf.byteLength !== b.bytes) {
+        lastErr = new Error(\`size-mismatch \${buf.byteLength}!=\${b.bytes} \${url}\`);
         continue;
       }
       return { id, url, bytes: buf, prefab: b };
@@ -327,6 +341,14 @@ export async function loadIslandBuilding(id, host = {}) {
     URL.revokeObjectURL(objectUrl);
   }
 }
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.GrudgeIslandBuildings = {
+    CDN, INFO, CHARACTER_HEIGHT_M, BUILDING_HEIGHT_M,
+    ISLAND_BUILDINGS, getIslandBuilding, buildingCdnUrl, buildingR2Keys,
+    looksLikeGlb, looksLikeHtmlHub, fetchBuildingGlb, loadIslandBuilding,
+  };
+}
 `;
   const out = join(ROOT, 'js/island-building-prefabs.js');
   writeFileSync(out, src);
@@ -356,6 +378,9 @@ function wireCatalogs(prefabDoc) {
         id: p.id,
         r2Key: p.mesh.r2Key,
         cdnUrl: p.mesh.cdnUrl,
+        infoUrl: p.mesh.infoUrl,
+        bytes: p.mesh.bytes,
+        md5: p.mesh.md5,
         heightM: p.si.heightM,
         role: p.role,
       })),
@@ -365,7 +390,7 @@ function wireCatalogs(prefabDoc) {
   patchJson('api/v1/games-library.json', (doc) => {
     doc.runtime = doc.runtime || {};
     doc.runtime.islandBuildingPrefabs =
-      'https://molochdagod.github.io/ObjectStore/api/v1/island-building-prefabs.json';
+      `${INFO}/api/v1/island-building-prefabs.json`;
     doc.runtime.warlordsEntityPrefabs =
       doc.runtime.warlordsEntityPrefabs ||
       'https://molochdagod.github.io/ObjectStore/api/v1/warlords-entity-prefabs.json';
@@ -462,6 +487,7 @@ async function main() {
         r2KeyOptimized: keys.optimized,
         cdnUrl: `${CDN}/${keys.canonical}`,
         cdnUrlOptimized: `${CDN}/${keys.optimized}`,
+        infoUrl: `${INFO}/${keys.canonical}`,
         contentType: 'model/gltf-binary',
         local: `dist/production/buildings/${b.id}.glb`,
         bytes,
