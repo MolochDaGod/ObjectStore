@@ -46,7 +46,12 @@
       "beachBandDepthM": 28,
       "mountainFootprintFraction": 0.08,
       "mountainPeakHeightM": 20,
-      "preferredBiomes": ["beach", "tropical", "plains", "storm"]
+      "preferredBiomes": [
+        "beach",
+        "tropical",
+        "plains",
+        "storm"
+      ]
     },
     "ironfang_spire": {
       "id": "ironfang_spire",
@@ -61,7 +66,14 @@
       "beachBandDepthM": 14,
       "mountainFootprintFraction": 0.12,
       "mountainPeakHeightM": 20,
-      "preferredBiomes": ["forest", "winter", "frozen", "volcanic", "abyssal", "nexus"]
+      "preferredBiomes": [
+        "forest",
+        "winter",
+        "frozen",
+        "volcanic",
+        "abyssal",
+        "nexus"
+      ]
     }
   },
   "natureAssets": {
@@ -89,14 +101,39 @@
       "pack": "/models/environment/palm-tree.glb",
       "parentNode": "Palm_2",
       "isolateRule": "clone named M_Palm_P2_* only; each child has Trunk_0 + Leaf_0",
-      "deploy": ["tropical", "beach", "home-island", "haven_shore"],
+      "deploy": [
+        "tropical",
+        "beach",
+        "home-island",
+        "haven_shore"
+      ],
       "nodes": [
-        "M_Palm_P2_1", "M_Palm_P2_2", "M_Palm_P2_3", "M_Palm_P2_4", "M_Palm_P2_5",
-        "M_Palm_P2_6", "M_Palm_P2_7", "M_Palm_P2_8", "M_Palm_P2_9", "M_Palm_P2_10",
-        "M_Palm_P2_11", "M_Palm_P2_12", "M_Palm_P2_13", "M_Palm_P2_14", "M_Palm_P2_15",
-        "M_Palm_P2_16", "M_Palm_P2_17", "M_Palm_P2_18", "M_Palm_P2_19", "M_Palm_P2_20",
-        "M_Palm_P2_21", "M_Palm_P2_22", "M_Palm_P2_23", "M_Palm_P2_25",
-        "M_Palm_P2_30", "M_Palm_P2_31"
+        "M_Palm_P2_1",
+        "M_Palm_P2_2",
+        "M_Palm_P2_3",
+        "M_Palm_P2_4",
+        "M_Palm_P2_5",
+        "M_Palm_P2_6",
+        "M_Palm_P2_7",
+        "M_Palm_P2_8",
+        "M_Palm_P2_9",
+        "M_Palm_P2_10",
+        "M_Palm_P2_11",
+        "M_Palm_P2_12",
+        "M_Palm_P2_13",
+        "M_Palm_P2_14",
+        "M_Palm_P2_15",
+        "M_Palm_P2_16",
+        "M_Palm_P2_17",
+        "M_Palm_P2_18",
+        "M_Palm_P2_19",
+        "M_Palm_P2_20",
+        "M_Palm_P2_21",
+        "M_Palm_P2_22",
+        "M_Palm_P2_23",
+        "M_Palm_P2_25",
+        "M_Palm_P2_30",
+        "M_Palm_P2_31"
       ]
     }
   },
@@ -122,9 +159,18 @@
       "/models/evil_rock_mountain_peak_2.glb"
     ],
     "peakOffsetsM": [
-      { "x": -55, "z": 0 },
-      { "x": 0, "z": 0 },
-      { "x": 55, "z": 0 }
+      {
+        "x": -55,
+        "z": 0
+      },
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 55,
+        "z": 0
+      }
     ]
   },
   "stateFields": [
@@ -165,7 +211,11 @@
   ],
   "factionCities": {
     "policy": "No Elf City / Human City / Undead City prefab. Each city is a parent tree of own meshes (house + camp + alliance kit). Isolate meshName; never fuse the kit into one GLB.",
-    "seed": ["home-island", "tropical", "haven_shore"],
+    "seed": [
+      "home-island",
+      "tropical",
+      "haven_shore"
+    ],
     "cities": {
       "human": {
         "id": "faction_city/human",
@@ -273,5 +323,65 @@
         ]
       }
     }
+  },
+  "islandBuildings": {
+    "version": "1.0.0",
+    "generated": "2026-09-04T22:27:28.627Z",
+    "catalog": "api/v1/island-building-prefabs.json",
+    "script": "js/island-building-prefabs.js",
+    "bake": "scripts/bake-island-buildings.mjs",
+    "scale": {
+      "characterHeightM": 2,
+      "buildingHeightM": 4,
+      "unit": "meter",
+      "rule": "Bake --height 4 into mesh positions. Runtime must not apply 0.01 hacks.",
+      "source": "api/v1/home-island-contract.json characterScale + camp_building si.heightM"
+    },
+    "r2Prefix": "models/buildings",
+    "optimizedPrefix": "models/_optimized/buildings",
+    "items": [
+      {
+        "id": "cantina",
+        "r2Key": "models/buildings/cantina.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/cantina.glb",
+        "heightM": 4,
+        "role": "tavern_bar"
+      },
+      {
+        "id": "tavern",
+        "r2Key": "models/buildings/tavern.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/tavern.glb",
+        "heightM": 4,
+        "role": "tavern"
+      },
+      {
+        "id": "inn",
+        "r2Key": "models/buildings/inn.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/inn.glb",
+        "heightM": 4,
+        "role": "lodging"
+      },
+      {
+        "id": "house",
+        "r2Key": "models/buildings/house.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/house.glb",
+        "heightM": 4,
+        "role": "dwelling"
+      },
+      {
+        "id": "blacksmith",
+        "r2Key": "models/buildings/blacksmith.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/blacksmith.glb",
+        "heightM": 4,
+        "role": "craft_station"
+      },
+      {
+        "id": "market",
+        "r2Key": "models/buildings/market.glb",
+        "cdnUrl": "https://assets.grudge-studio.com/models/buildings/market.glb",
+        "heightM": 4,
+        "role": "market"
+      }
+    ]
   }
 }
