@@ -61,7 +61,9 @@ export const ISLAND_BUILDINGS = [
     category: 'camp_building',
     craftStation: false,
     entityId: 'entities/cantina',
-    sourceNote: 'Local cantina.glb (~0.26 m raw) scaled to 4 m',
+    sourceNote:
+      'Local cantina.glb (~0.26 m raw) scaled to 4 m. Public CDN key is cantina-4m.glb — R2 models/buildings/cantina.glb is still the 8.9 MB dollhouse (worker 2.2.1 purge does not overwrite).',
+    publicR2Key: 'models/buildings/cantina-4m.glb',
   },
   {
     id: 'tavern',
@@ -115,10 +117,12 @@ export const ISLAND_BUILDINGS = [
   },
 ];
 
-function r2Keys(id) {
+function r2Keys(b) {
+  const tracked = `models/buildings/${b.id}.glb`;
   return {
-    canonical: `models/buildings/${id}.glb`,
-    optimized: `models/_optimized/buildings/${id}.glb`,
+    canonical: b.publicR2Key || tracked,
+    tracked,
+    optimized: `models/_optimized/buildings/${b.id}.glb`,
   };
 }
 
@@ -184,7 +188,7 @@ function writePrefabCatalog(rows) {
     version: '1.0.0',
     generated: new Date().toISOString(),
     description:
-      'Island/camp building prefabs — KayKit + cantina baked to 4 m (2× character). Magic-byte GLB only. Fetch rejects HTML hub and byte-size drift (stale R2 dollhouse).',
+      'Island/camp building prefabs — KayKit + cantina baked to 4 m (2× character). Magic-byte GLB only. Cantina CDN key is models/buildings/cantina-4m.glb (canonical R2 cantina.glb is still the 8.9 MB dollhouse). Fetch rejects HTML hub and byte-size drift.',
     cdnBase: CDN,
     infoBase: INFO,
     convertCli: 'tools/grudge-convert',
@@ -273,7 +277,8 @@ export function looksLikeHtmlHub(bytes) {
 
 /**
  * Fetch a building GLB, fail-closed on HTML hub / MIME lie / stale R2 size.
- * Order: CDN canonical → info.* same key. Never _optimized on 2.2.1.
+ * Order: CDN public key (cantina → cantina-4m.glb) → info.* tracked key.
+ * Never _optimized on 2.2.1.
  */
 export async function fetchBuildingGlb(id, fetchImpl = fetch) {
   const b = BY_ID[id];
@@ -440,6 +445,9 @@ async function main() {
         join(ROOT, 'models/buildings', `${b.id}.glb`),
         join(ROOT, 'models/_game-ready/buildings', `${b.id}.glb`),
       ];
+      if (b.publicR2Key && b.publicR2Key !== `models/buildings/${b.id}.glb`) {
+        tracked.push(join(ROOT, b.publicR2Key));
+      }
       for (const dest of tracked) {
         mkdirSync(dirname(dest), { recursive: true });
         copyFileSync(out, dest);
@@ -469,7 +477,7 @@ async function main() {
       }
     }
 
-    const keys = r2Keys(b.id);
+    const keys = r2Keys(b);
     rows.push({
       prefabId: `PFAB-BLDG-${b.id.toUpperCase()}`,
       id: b.id,
@@ -487,7 +495,7 @@ async function main() {
         r2KeyOptimized: keys.optimized,
         cdnUrl: `${CDN}/${keys.canonical}`,
         cdnUrlOptimized: `${CDN}/${keys.optimized}`,
-        infoUrl: `${INFO}/${keys.canonical}`,
+        infoUrl: `${INFO}/${keys.tracked}`,
         contentType: 'model/gltf-binary',
         local: `dist/production/buildings/${b.id}.glb`,
         bytes,
