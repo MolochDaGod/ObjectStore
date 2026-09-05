@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-09-05T22:40:00.000Z",
+  "canonical": true,
+  "description": "Harvest loot SSOT: every ore/tree/herb/hide/fish node grants rewards from the harvester's gathering profession level — never from node quality or node.tier.",
+  "live": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
+  "law": {
+    "lootAuthority": "character professionLevels[gatheringKey].level",
+    "notLootAuthority": ["node.tier", "node.quality", "node.rarity", "node.drops as quality gate"],
+    "bag": "account Railway /api/account/resources (mats)",
+    "xp": "character UUID POST /api/characters/:id/progress",
+    "never": "second bag DB · D1 as loot · localStorage bag"
+  },
+  "tables": {
+    "gatheringMilestones": "professions.json#gatheringMilestones",
+    "tierResources": "professions.json#gathering.{Mining|Logging|Herbalism|Skinning|Fishing|Scavenging}.tierResources",
+    "materials": "master-materials.json",
+    "nodePrefabs": "master-harvest-nodes.json (visual / mesh / respawn only)"
+  },
+  "nodeTypes": {
+    "ore": { "gathering": "Mining", "feedsCraft": ["Miner", "Engineer", "Mystic"], "prefabPack": "models/nature/stylized/harvest/ore_nodes.glb", "isolate": "meshName per rock, never whole pack as one node" },
+    "wood": { "gathering": "Logging", "feedsCraft": ["Forester", "Engineer"], "prefabPack": "models/environment/island_tree.glb", "isolate": "meshName per tree" },
+    "herb": { "gathering": "Herbalism", "feedsCraft": ["Chef", "Mystic"] },
+    "hide": { "gathering": "Skinning", "feedsCraft": ["Forester"] },
+    "fish": { "gathering": "Fishing", "feedsCraft": ["Chef"] },
+    "scrap": { "gathering": "Scavenging", "feedsCraft": ["Engineer"] }
+  },
+  "levelToResourceTier": [
+    { "minLevel": 1, "tier": 1 },
+    { "minLevel": 13, "tier": 2 },
+    { "minLevel": 25, "tier": 3 },
+    { "minLevel": 38, "tier": 4 },
+    { "minLevel": 50, "tier": 5 },
+    { "minLevel": 63, "tier": 6 },
+    { "minLevel": 76, "tier": 7 },
+    { "minLevel": 88, "tier": 8 }
+  ],
+  "quantityBonus": [
+    { "minLevel": 1, "extra": 0 },
+    { "minLevel": 10, "extra": 1 },
+    { "minLevel": 20, "extra": 2 },
+    { "minLevel": 30, "extra": 3 },
+    { "minLevel": 40, "extra": 4 },
+    { "minLevel": 60, "extra": 6 },
+    { "minLevel": 70, "extra": 7 },
+    { "minLevel": 80, "extra": 8 },
+    { "minLevel": 90, "extra": 9 },
+    { "minLevel": 100, "extra": 10 }
+  ],
+  "gearDropChance": [
+    { "minLevel": 1, "chance": 0 },
+    { "minLevel": 35, "chance": 0.05 },
+    { "minLevel": 55, "chance": 0.1 },
+    { "minLevel": 75, "chance": 0.15 },
+    { "minLevel": 95, "chance": 0.2 },
+    { "minLevel": 100, "chance": 0.25 }
+  ],
+  "resolve": {
+    "input": ["node.type (ore|wood|herb|hide|fish|scrap)", "professionLevel 1-100"],
+    "output": {
+      "tier": "highest levelToResourceTier.minLevel <= professionLevel",
+      "materials": "gathering[nodeTypes[type].gathering].tierResources[tier]",
+      "quantity": "1 + quantityBonus.extra",
+      "gearDrop": "gearDropChance.chance at professionLevel",
+      "xp": "base 10 * (1 + (tier-1)*0.5) — from profession level, not node.tier"
+    }
+  },
+  "runtime": {
+    "warlordsIsland": "GrudgeBuilder client/src/pages/island.tsx + professionSystem.ts",
+    "professionSync": "ObjectStore professions.json via professionSync.ts",
+    "deposit": "craftHarvestDeposit.depositHarvestLoot → account bag"
+  }
+}

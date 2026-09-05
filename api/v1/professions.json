@@ -148,6 +148,13 @@
       "description": "Maximum gathering efficiency, 25% legendary drop chance, +10 quantity"
     }
   ],
+  "harvestLootLaw": {
+    "authority": "this file gatheringMilestones + gathering.*.tierResources + character professionLevels",
+    "resolver": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
+    "nodeQualityDoesNotAffectLoot": true,
+    "bag": "account",
+    "xp": "character"
+  },
   "gathering": {
     "Mining": {
       "icon": "⛏️",

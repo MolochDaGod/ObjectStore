@@ -8,7 +8,8 @@
     "items": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
     "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
     "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
-    "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
+    "harvestNodes": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json",
+    "harvestLootByProfession": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
     "staffLooks": "https://molochdagod.github.io/ObjectStore/api/v1/staff-looks.json",
     "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
     "armor": "https://molochdagod.github.io/ObjectStore/api/v1/armor.json",
@@ -50,7 +51,7 @@
     "prefabsWithSkills": 823
   },
   "graph": {
-    "harvestToMaterial": "master-harvest-nodes.json → drops[].materialUuid",
+    "harvestToMaterial": "harvest-loot-by-profession.json (profession level → gathering.tierResources) → master-materials.json. Node prefab = master-harvest-nodes.json type only — node.tier does not gate loot.",
     "materialToRecipe": "master-recipes.json → materials[].uuid",
     "recipeToItem": "master-recipes.json → resultItemId → master-items.json",
     "itemToIcon": "master-items.json → iconUrl | staff-looks.json → iconUrl",
