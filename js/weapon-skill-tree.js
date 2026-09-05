@@ -5,7 +5,8 @@
  * Off-hand rules:
  *   SHIELD + TOME — toggle F replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
  *   Active only with 1H sword, knife (dagger), hammer, mace, or axe — not 2H, gun, wand, claw, staff, bow
- *   All weapons share: 1=standard attack, 2–3=shared type pools, 4=signature, 5=passives
+ *   Each weapon TYPE has a unique 5-slot tree. Named weapons filter that type
+ *   (never dump another weapon's pool into slots 2–3).
  */
 (function (global) {
   const CDN = 'https://assets.grudge-studio.com';
@@ -75,11 +76,20 @@
   const SLOT_TYPES = ['primary', 'secondary', 'ability', 'ultimate'];
   const SLOT_HOTKEYS = ['1', '2', '3', '4', '5'];
   const SLOT_UI_LABELS = {
-    primary: 'Slot 1 · Standard Attack',
-    secondary: 'Slot 2 · Shared',
-    ability: 'Slot 3 · Shared',
+    primary: 'Slot 1 · Attack',
+    secondary: 'Slot 2 · Weapon arts',
+    ability: 'Slot 3 · Weapon techniques',
     ultimate: 'Slot 4 · Signature',
     passive: 'Slot 5 · Passives',
+  };
+
+  const STAFF_SCHOOL_RE = {
+    fireStaves: /fire|flame|inferno|hell|ember|meteor|blaze/i,
+    frostStaves: /frost|ice|glacier|zero|blizzard|chill/i,
+    holyStaves: /holy|divine|sacred|radiant|heal|smite|dawn/i,
+    lightningStaves: /lightning|thunder|storm|shock|voltaic/i,
+    natureStaves: /nature|wild|verdant|thorn|bloom|earth/i,
+    arcaneStaves: /arcane|void|rune|mana|time|gravity/i,
   };
 
   const T0_SLOT_UI_LABELS = {
@@ -263,26 +273,75 @@
     return null;
   }
 
-  function buildFiveSlotFromRawSlots(rawSlots, variant) {
+  function slotLabelFor(typeDef, slotType) {
+    return typeDef?.slotLabels?.[slotType] || SLOT_UI_LABELS[slotType] || slotType;
+  }
+
+  function skillMatchesIdentity(sk, identityKeys) {
+    if (!identityKeys.size) return true;
+    const nameKey = normalizeSkillKey(sk.name);
+    const idKey = normalizeSkillKey(String(sk.id || '').replace(/^[a-z]+_/, '').replace(/_/g, ' '));
+    return skillNameMatches(sk.name, identityKeys) || skillNameMatches(idKey, identityKeys) || identityKeys.has(nameKey);
+  }
+
+  function staffSchoolRe(variant) {
+    const cat = String(variant?.category || '');
+    if (STAFF_SCHOOL_RE[cat]) return STAFF_SCHOOL_RE[cat];
+    const blob = `${variant?.name || ''} ${variant?.lore || ''}`;
+    for (const re of Object.values(STAFF_SCHOOL_RE)) {
+      if (re.test(blob)) return re;
+    }
+    return null;
+  }
+
+  function filterUniqueSkills(pool, variant, typeId) {
+    const list = pool || [];
+    if (!list.length) return [];
+    const identityKeys = collectVariantSkillKeys(variant || {});
+    let next = list;
+    if (identityKeys.size) {
+      const matched = list.filter((sk) => skillMatchesIdentity(sk, identityKeys));
+      if (matched.length) next = matched;
+    }
+    if (typeId === 'STAFF' && variant) {
+      const re = staffSchoolRe(variant);
+      if (re) {
+        const school = next.filter((sk) => re.test(`${sk.id} ${sk.name} ${sk.description || ''}`));
+        if (school.length) next = school;
+      }
+    }
+    return next;
+  }
+
+  function buildFiveSlotFromRawSlots(rawSlots, variant, typeDef) {
     const byType = Object.fromEntries((rawSlots || []).map((s) => [s.type, s]));
+    const typeId = typeDef?.id;
     const next = [];
     if (byType.primary) {
       next.push({
         ...byType.primary,
-        label: SLOT_UI_LABELS.primary,
+        label: slotLabelFor(typeDef, 'primary'),
         skills: pickStandardAttack(byType.primary.skills, variant),
       });
     }
     if (byType.secondary) {
-      next.push({ ...byType.secondary, label: SLOT_UI_LABELS.secondary, skills: [...(byType.secondary.skills || [])] });
+      next.push({
+        ...byType.secondary,
+        label: slotLabelFor(typeDef, 'secondary'),
+        skills: filterUniqueSkills(byType.secondary.skills, variant, typeId),
+      });
     }
     if (byType.ability) {
-      next.push({ ...byType.ability, label: SLOT_UI_LABELS.ability, skills: [...(byType.ability.skills || [])] });
+      next.push({
+        ...byType.ability,
+        label: slotLabelFor(typeDef, 'ability'),
+        skills: filterUniqueSkills(byType.ability.skills, variant, typeId),
+      });
     }
     if (byType.ultimate) {
       next.push({
         ...byType.ultimate,
-        label: SLOT_UI_LABELS.ultimate,
+        label: slotLabelFor(typeDef, 'ultimate'),
         skills: pickSignature(byType.ultimate.skills, variant),
       });
     }
@@ -308,7 +367,11 @@
     if (offhand && isOffhandItem(offhand) && offhandToggleActive) {
       const source = getOffhandModifierSlots(offhand, mainhand);
       if (source) {
-        const offSlots = buildFiveSlotFromRawSlots(source.slots, offhand);
+        const offSlots = buildFiveSlotFromRawSlots(
+          source.slots,
+          offhand,
+          getTypeDef(source.kind === 'shield' ? 'SHIELD' : 'TOME') || mainDef,
+        );
         modifiers.push({ kind: source.kind, ...source.meta, source });
         banner = {
           kind: source.kind,
@@ -325,7 +388,7 @@
               _modifier: source.kind,
               _offhandToggle: OFFHAND_TOGGLE_KEY,
             }));
-            baseSlot.label = `${SLOT_UI_LABELS[slotType]} · ${OFFHAND_TOGGLE_KEY}`;
+            baseSlot.label = `${slotLabelFor(mainDef, slotType)} · ${OFFHAND_TOGGLE_KEY}`;
           }
         }
       }
@@ -545,11 +608,19 @@
     return first ? [first] : [];
   }
 
-  /** 5-slot pattern: 1=standard attack, 2–3=shared type pools, 4=signature, 5=passives */
+  /** 5-slot unique tree: 1 attack, 2–3 this weapon's arts, 4 signature, 5 passives */
   function applyVariantToTypeDef(typeDef, variant) {
     if (!typeDef) return null;
     const cloned = cloneTypeDef(typeDef);
-    if (!variant) return cloned;
+    if (!variant) {
+      if (cloned.slots) {
+        cloned.slots = cloned.slots.map((s) => ({
+          ...s,
+          label: slotLabelFor(cloned, s.type),
+        }));
+      }
+      return cloned;
+    }
 
     cloned._variant = variant;
     cloned._passives = variant.passives || [];
@@ -584,44 +655,37 @@
       return cloned;
     }
 
-    cloned.slotPattern = 'five-slot';
+    cloned.slotPattern = 'five-slot-unique';
     cloned.primaryStat = variant.primaryStat || null;
     cloned.secondaryStat = variant.secondaryStat || null;
-
-    const identityKeys = collectVariantSkillKeys(variant);
-    const filterShared = (pool) => {
-      const list = pool || [];
-      if (!identityKeys.size) return list;
-      const matched = list.filter((sk) => skillNameMatches(sk.name, identityKeys));
-      return matched.length ? matched : list;
-    };
+    cloned.uniqueTree = true;
 
     const nextSlots = [];
     if (byType.primary) {
       nextSlots.push({
         ...byType.primary,
-        label: SLOT_UI_LABELS.primary,
+        label: slotLabelFor(cloned, 'primary'),
         skills: pickStandardAttack(byType.primary.skills, variant),
       });
     }
     if (byType.secondary) {
       nextSlots.push({
         ...byType.secondary,
-        label: SLOT_UI_LABELS.secondary,
-        skills: filterShared(byType.secondary.skills),
+        label: slotLabelFor(cloned, 'secondary'),
+        skills: filterUniqueSkills(byType.secondary.skills, variant, cloned.id),
       });
     }
     if (byType.ability) {
       nextSlots.push({
         ...byType.ability,
-        label: SLOT_UI_LABELS.ability,
-        skills: filterShared(byType.ability.skills),
+        label: slotLabelFor(cloned, 'ability'),
+        skills: filterUniqueSkills(byType.ability.skills, variant, cloned.id),
       });
     }
     if (byType.ultimate) {
       nextSlots.push({
         ...byType.ultimate,
-        label: SLOT_UI_LABELS.ultimate,
+        label: slotLabelFor(cloned, 'ultimate'),
         skills: pickSignature(byType.ultimate.skills, variant),
       });
     }
