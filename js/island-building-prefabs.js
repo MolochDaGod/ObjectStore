@@ -18,9 +18,9 @@ export const ISLAND_BUILDINGS = [
     "id": "cantina",
     "name": "Cantina",
     "role": "tavern_bar",
-    "r2Key": "models/buildings/cantina.glb",
+    "r2Key": "models/buildings/cantina-4m.glb",
     "r2KeyOptimized": "models/_optimized/buildings/cantina.glb",
-    "cdnUrl": "https://assets.grudge-studio.com/models/buildings/cantina.glb",
+    "cdnUrl": "https://assets.grudge-studio.com/models/buildings/cantina-4m.glb",
     "infoUrl": "https://info.grudge-studio.com/models/buildings/cantina.glb",
     "bytes": 158656,
     "md5": "3f2ead9e89a8aaa076433494ddec8874",
@@ -131,7 +131,8 @@ export function looksLikeHtmlHub(bytes) {
 
 /**
  * Fetch a building GLB, fail-closed on HTML hub / MIME lie / stale R2 size.
- * Order: CDN canonical → info.* same key. Never _optimized on 2.2.1.
+ * Order: CDN public key (cantina → cantina-4m.glb) → info.* tracked key.
+ * Never _optimized on 2.2.1.
  */
 export async function fetchBuildingGlb(id, fetchImpl = fetch) {
   const b = BY_ID[id];

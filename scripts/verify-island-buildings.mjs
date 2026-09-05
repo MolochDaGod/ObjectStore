@@ -37,8 +37,8 @@ console.log(`catalog ${catalog.count} buildings  height=${catalog.scale?.buildin
 for (const p of rows) {
   const want = p.mesh?.bytes;
   const key = p.mesh?.r2Key;
-  const cdn = await get(`${CDN}/${key}`);
-  const info = await get(`${INFO}/${key}`);
+  const cdn = await get(p.mesh?.cdnUrl || `${CDN}/${key}`);
+  const info = await get(p.mesh?.infoUrl || `${INFO}/${key}`);
   const cdnOk = cdn.kind === 'glTF' && cdn.bytes === want;
   const infoOk = info.kind === 'glTF' && info.bytes === want;
   const mark = infoOk ? (cdnOk ? 'OK ' : 'INFO') : 'FAIL';
@@ -51,4 +51,4 @@ if (fail) {
   console.error(`\n${fail} building(s) missing 4 m glTF on info.*`);
   process.exit(1);
 }
-console.log('\ninfo.* identity OK. CDN size-mismatch is rejected by js/island-building-prefabs.js (falls through to info).');
+console.log('\nidentity OK. CDN public key should match catalog bytes (cantina uses cantina-4m.glb).');
