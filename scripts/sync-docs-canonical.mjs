@@ -20,7 +20,7 @@ const DOCS_INDEX = join(ROOT, 'docs', 'index.html');
 const MANIFEST_PATH = join(ROOT, 'docs', 'canonical-manifest.json');
 const CATALOG_PATH = join(ROOT, 'api', 'v1', 'catalog.json');
 const CANONICAL_URL = 'https://info.grudge-studio.com/docs';
-const OBJECTSTORE_URL = 'https://info.grudge-studio.com';
+const OBJECTSTORE_URL = 'https://objectstore.grudge-studio.com';
 
 function loadJSON(filename) {
   try {
