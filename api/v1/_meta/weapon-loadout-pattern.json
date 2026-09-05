@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "Universal combat loadout — mainhand + off-hand modifier share the same five-slot fundamentals",
-  "toggleKey": "F",
-  "toggleLabel": "Off-Hand Mode (Block / Tome Coupling)",
+  "toggleKey": "E",
+  "toggleLabel": "Off-Hand Mode (E · Block / Tome Coupling)",
   "slots": {
     "1": {
       "role": "standardAttack",
@@ -43,11 +43,11 @@
   },
   "offhandModifier": {
     "types": ["SHIELD", "TOME"],
-    "toggleKey": "F",
+    "toggleKey": "E",
     "whenToggleActive": {
       "replacesMainhandSlots": [1, 2, 3],
       "preservesMainhandSlots": [4, 5],
-      "description": "Hold/toggle F — off-hand skills replace mainhand slots 1–3. Signature (4) and passives (5) remain from the main weapon."
+      "description": "Hold E (block) — off-hand skills replace mainhand slots 1–3. Signature (4) and passives (5) remain from the main weapon."
     },
     "validMainhands": ["SWORD", "DAGGER", "HAMMER", "MACE", "AXE"],
     "validMainhandNote": "Knife = DAGGER. Not 2H, gun, wand, claw, staff, or bow.",
@@ -59,6 +59,6 @@
       "requiresOneHandMainhand": true,
       "usesCouplingModePool": true
     },
-    "offhandOwnPattern": "five-slot on shield/tome pools — slots 1–3 inject into mainhand when F active"
+    "offhandOwnPattern": "five-slot on shield/tome pools — slots 1–3 inject into mainhand when E (block) is held"
   }
 }

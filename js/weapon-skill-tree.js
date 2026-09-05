@@ -3,7 +3,7 @@
  * slots 2–4 secondary / ability / ultimate with tier unlocks).
  *
  * Off-hand rules:
- *   SHIELD + TOME — toggle F replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
+ *   SHIELD + TOME — hold E (block) replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
  *   Active only with 1H sword, knife (dagger), hammer, mace, or axe — not 2H, gun, wand, claw, staff, bow
  *   Each weapon TYPE has a unique 5-slot tree. Named weapons filter that type
  *   (never dump another weapon's pool into slots 2–3).
@@ -70,7 +70,7 @@
     arcane: 'ranged',
   };
 
-  const OFFHAND_TOGGLE_KEY = 'F';
+  const OFFHAND_TOGGLE_KEY = 'E';
   const OFFHAND_INJECT_SLOTS = ['primary', 'secondary', 'ability'];
 
   const SLOT_TYPES = ['primary', 'secondary', 'ability', 'ultimate'];
@@ -348,7 +348,7 @@
     return next;
   }
 
-  /** Merge mainhand five-slot + optional F-toggle off-hand override (slots 1–3 only) */
+  /** Merge mainhand five-slot + optional E (block) off-hand override (slots 1–3 only) */
   function resolveEffectiveLoadout(mainhand, offhand, opts = {}) {
     const playerTier = opts.playerTier ?? mainhand?.tier ?? 1;
     const offhandToggleActive = opts.offhandToggleActive ?? opts.blockActive ?? false;
@@ -1016,7 +1016,7 @@
     return html;
   }
 
-  /** Render offhand modifier browser (SHIELD types or TOME coupling modes) — five-slot subset for F toggle */
+  /** Render offhand modifier browser (SHIELD types or TOME coupling modes) — five-slot subset for E (block) */
   function renderOffhandModifierColumns(typeId, opts = {}) {
     const def = getTypeDef(typeId);
     if (!def) return '<div class="wst-empty">Off-hand data not loaded.</div>';
@@ -1027,7 +1027,7 @@
     const toggleOn = opts.offhandToggleActive === true;
 
     if (!toggleOn) {
-      return `<div class="wst-modifier-intro">Press <strong>${OFFHAND_TOGGLE_KEY}</strong> (or use the toggle above) to preview off-hand skills. When inactive, your <strong>main weapon</strong> slots 1–3 are used.</div>`;
+      return `<div class="wst-modifier-intro">Hold <strong>${OFFHAND_TOGGLE_KEY}</strong> (block) to preview off-hand skills. When released, your <strong>main weapon</strong> slots 1–3 are used.</div>`;
     }
 
     if (playerTier === 0 && def.starterSlots?.length) {
@@ -1050,15 +1050,15 @@
       title = coupling.name;
     }
 
-    const injectSlots = buildFiveSlotFromRawSlots(rawSlots, null).filter((s) =>
+    const injectSlots = buildFiveSlotFromRawSlots(rawSlots, null, def).filter((s) =>
       OFFHAND_INJECT_SLOTS.includes(s.type),
     );
     const pseudo = { slots: injectSlots, _passives: [] };
-    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} active · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong> only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives.</div>`;
+    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} (block) · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong> only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives.</div>`;
     return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
-  /** Paired loadout controls — preview mainhand + shield/tome with F toggle */
+  /** Paired loadout controls — preview mainhand + shield/tome with E (block) */
   function renderPairedLoadoutBar(opts = {}) {
     const mainTypeId = String(opts.mainTypeId || '').toUpperCase();
     if (mainTypeId && !ONE_HAND_TYPES.has(mainTypeId)) return '';
@@ -1098,7 +1098,7 @@
 
     if (offhand !== 'none') {
       html += `<label class="wst-paired-toggle"><input type="checkbox" id="pairedOffhandToggle" ${toggleOn ? 'checked' : ''}>
-        <kbd>${OFFHAND_TOGGLE_KEY}</kbd> active — off-hand replaces slots 1–3</label>`;
+        <kbd>${OFFHAND_TOGGLE_KEY}</kbd> (block) — off-hand replaces slots 1–3</label>`;
     }
     html += '</div>';
     return html;
@@ -1175,7 +1175,7 @@
     html += `<div class="wst-action-bar-compact">${renderActionBarHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div class="slot-columns wst-compact-cols">${renderSlotColumnsHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div style="margin-top:10px;font-size:9px;color:var(--dim);text-align:center">
-      1=standard · 2–3=shared · 4=signature · 5=passives · ${OFFHAND_TOGGLE_KEY}=off-hand slots 1–3 (shield/tome) ·
+      1=attack · 2–3=this weapon · 4=signature · 5=passives · ${OFFHAND_TOGGLE_KEY}=block / off-hand slots 1–3 (shield/tome) ·
       <a href="./WEAPON_SKILLS.html" style="color:var(--gold)">Full browser</a></div>`;
     return html;
   }
