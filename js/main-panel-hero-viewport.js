@@ -6,8 +6,11 @@
  *  2. EquipmentManager: hide all → exclusive body/weapon variants only
  *  3. hardenVisibility() — no ghost layers
  *  4. Root SI fit only (1.8 m human; no special orc stretch) — never per-mesh scale
- *  5. Face camera: yaw = 0 (Toon art-forward +Z; camera on +Z → faces user). Never π.
- *  6. Idle from CDN baked pack when kit has no embedded clips
+ *  5. NEVER write Euler/yaw on the kit root after mixer.update.
+ *  6. CDN Mixamo→Bip001 idle (Bip001_* tracks) is Y-up. FBX bind uses −90 X
+ *     on Bip001 so bind stands. Playing those clips on top of −90 folds the
+ *     doll after first paint. Identity the kit quaternion ONCE before mixer,
+ *     then sample idle, then plant. Do not also parent the −90.
  *  7. Never auto invert UV V on production kits (opts.invertUvV opt-in only)
  */
 import * as THREE from 'https://esm.sh/three@0.185.0';
@@ -24,9 +27,7 @@ import {
   WEAPON_R,
   WEAPON_L,
   WEAPON_1H,
-  fitRootUniformSi,
   measureStructuralBBox,
-  faceRootTowardCamera,
   GRUDGE6_FACE_CAMERA_YAW,
 } from './grudge6-kit.js';
 import {
@@ -42,6 +43,12 @@ import {
   PaperdollPreviewPlayer,
   paperdollSkipHoldPose,
 } from './grudge6-anim-packs.js?v=paperdollidle3';
+import {
+  placeRootBetweenFeet,
+  applyFootIk,
+  flatGround,
+} from './grudge6-foot-ik.js?v=feet1';
+import { createHeadLook } from './grudge6-head-look.js?v=look1';
 
 /**
  * Paperdoll SI — one human yardstick for ALL races (grudge6-cdn-ssot:
@@ -61,23 +68,14 @@ const PANEL_TO_BODY = {
 };
 
 /**
- * Paperdoll face-user yaw (SSOT: grudge6-kit GRUDGE6_FACE_CAMERA_YAW = 0).
- * Camera sits on +Z looking at origin. Toon kits are art-forward +Z at yaw 0
- * so they face the user. Math.PI shows the BACK — that was the bug.
- * Re-applied every frame so idle tracks cannot undo it.
+ * Facing is the WRAPPER's job. Do not set kit-root Euler after the mixer.
+ * Kept as a no-op export so old call sites do not reintroduce the fold.
  */
-export const FACE_CAMERA_YAW = GRUDGE6_FACE_CAMERA_YAW; // 0 — not Math.PI
+export const FACE_CAMERA_YAW = GRUDGE6_FACE_CAMERA_YAW;
 
-export function applyFaceCamera(root, yaw = FACE_CAMERA_YAW) {
-  if (!root) return;
-  // Kit helper: full rotation clean plant; yaw 0 faces +Z camera
-  if (typeof faceRootTowardCamera === 'function' && Math.abs(yaw) < 1e-6) {
-    faceRootTowardCamera(root, { artFacesPlusX: false });
-  } else {
-    root.rotation.order = 'YXZ';
-    root.rotation.y = yaw;
-  }
-  root.userData.paperdollFaceYaw = root.rotation.y;
+export function applyFaceCamera(_root, _yaw = FACE_CAMERA_YAW) {
+  // Intentionally empty. Writing root.rotation after mixer.update decomposes
+  // the Bip001 quaternion to Euler and folds the character (3rd time).
 }
 
 /**
@@ -284,23 +282,52 @@ export function applyPanelEquip(equip, equippedItems, findItem) {
 }
 
 /**
- * Paperdoll SI fit + face camera.
- * Camera on +Z → Toon face user at yaw 0 (grudge6-kit SSOT). Not π.
+ * SI plant WITHOUT touching rotation.
+ * fitRootUniformSi zeros root.rotation — that destroys FBX/Bip001 Y-up
+ * (−π/2 on the scene root) and folds the doll after idle samples.
  */
-function fitRootSi(root, targetH) {
-  const result = fitRootUniformSi(THREE, root, targetH, {
-    characterType: 'infantry',
-    centerXZ: true,
-  });
-  applyFaceCamera(root, FACE_CAMERA_YAW);
+function plantPaperdollSi(root, targetH) {
+  if (!root) return 0;
+  // Scale + feet only. Leave quaternion / Euler exactly as authored (and as
+  // the mixer last wrote). Do not identity-rotate — that folds Bip001.
+  root.position.set(0, 0, 0);
+  root.scale.setScalar(1);
   root.updateMatrixWorld(true);
-  return result.height;
+
+  let box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  if (!box || !Number.isFinite(box.min.y)) {
+    box = new THREE.Box3().setFromObject(root);
+  }
+  let h = Math.max(box.max.y - box.min.y, 1e-4);
+  if (h > 40) {
+    root.scale.setScalar(0.01);
+    root.updateMatrixWorld(true);
+    box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true }) || box;
+    h = Math.max(box.max.y - box.min.y, 1e-4);
+  }
+  root.scale.multiplyScalar(targetH / h);
+  root.updateMatrixWorld(true);
+  if (!placeRootBetweenFeet(root, flatGround)) {
+    box = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+    if (!box || !Number.isFinite(box.min.y)) box = new THREE.Box3().setFromObject(root);
+    root.position.x -= (box.min.x + box.max.x) * 0.5;
+    root.position.z -= (box.min.z + box.max.z) * 0.5;
+    root.position.y -= box.min.y;
+    root.updateMatrixWorld(true);
+  }
+  applyFootIk(root, flatGround);
+  const out = measureStructuralBBox(THREE, root, 'infantry', { onlyVisible: true });
+  return out && Number.isFinite(out.max.y) ? out.max.y - out.min.y : targetH;
+}
+
+/** Mixamo→Bip001 JSON uses Bip001_Pelvis (underscore). Native FBX uses spaces. */
+function isMixamoBipBake(clip) {
+  return !!clip?.tracks?.some((t) => /^Bip001_/.test(t.name || ''));
 }
 
 /**
- * Map baked track node names onto kit bones.
- * CDN JSON uses Bip001_Pelvis; FBX kits use "Bip001 Pelvis".
- * Drop .position tracks so grounded SI feet stay planted.
+ * Drop root / exact-Bip001 / position tracks. Mixer on Bip001 (the FBX hip
+ * root) plus Mixamo pelvis is the fold. Keep Pelvis/Spine/limbs only.
  */
 function rematchClipBones(root, clip) {
   if (!clip?.tracks?.length || !root) return clip;
@@ -308,26 +335,40 @@ function rematchClipBones(root, clip) {
   root.traverse((o) => {
     if (o.name) names.add(o.name);
   });
-  const resolved = [];
-  for (const track of clip.tracks) {
-    // Skip hip/root position — prevents float after SI ground
-    if (/\.position$|\.scale$/i.test(track.name)) continue;
-    const dot = track.name.indexOf('.');
-    if (dot < 0) continue;
-    const node = track.name.slice(0, dot);
-    const prop = track.name.slice(dot + 1);
-    if (node === 'Bip001' || /Footsteps/i.test(node) || /Nub$/i.test(node) || /mixamorig/i.test(node)) continue;
+  const skipNode = (node) => {
+    if (!node) return true;
+    if (node === root.name) return true;
+    if (/^(Bip001|RootNode|Armature|Scene|Hips|mixamorigHips)$/i.test(node)) return true;
     if (
-      /^(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(node) &&
+      /(?:weapon_|units_)?(?:sword|axe|hammer|mace|dagger|spear|bow|staff|shield|pick)(?:_[A-Z])?$/i.test(
+        node,
+      ) &&
       !/hand|bip|mixamo|container/i.test(node)
     ) {
-      continue;
+      return true;
     }
+    return false;
+  };
+  const resolved = [];
+  for (const track of clip.tracks) {
+    // Skip hip/root position and scale — prevents float after SI ground
+    if (/\.position$|\.scale$/i.test(track.name)) continue;
+    const dot = track.name.indexOf('.');
+    const node = dot < 0 ? track.name : track.name.slice(0, dot);
+    if (skipNode(node)) continue;
+  for (const track of clip.tracks) {
+    if (/\.(position|scale)$/.test(track.name)) continue;
+    const dot = track.name.indexOf('.');
+    const node = dot < 0 ? track.name : track.name.slice(0, dot);
+    if (skipNode(node)) continue;
+    if (dot < 0) continue;
+    const prop = track.name.slice(dot + 1);
+    if (prop !== 'quaternion') continue;
     let hit = null;
     if (names.has(node)) hit = node;
     else if (names.has(node.replace(/_/g, ' '))) hit = node.replace(/_/g, ' ');
     else if (names.has(node.replace(/ /g, '_'))) hit = node.replace(/ /g, '_');
-    if (!hit) continue;
+    if (!hit || skipNode(hit)) continue;
     if (hit !== node) {
       const t = track.clone();
       t.name = `${hit}.${prop}`;
@@ -415,6 +456,13 @@ export async function mountHeroViewport(host, opts) {
   const fill = new THREE.DirectionalLight(0xa0c0ff, 0.35);
   fill.position.set(-2, 1.5, -1);
   scene.add(fill);
+  const ground = new THREE.Mesh(
+    new THREE.CircleGeometry(0.9, 32),
+    new THREE.MeshStandardMaterial({ color: 0x2a1c10, roughness: 1, metalness: 0 }),
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.9, 0);
@@ -432,10 +480,11 @@ export async function mountHeroViewport(host, opts) {
   host.appendChild(status);
 
   let root = null;
+  let doll = null;
   let equip = null;
   let mixer = null;
-  let preview = null;
-  let lastEquipArgs = { equippedItems: opts.equippedItems || {}, findItem: opts.findItem };
+  let poseReady = false;
+  let headLook = null;
   let raf = 0;
   let disposed = false;
   /** @type {Awaited<ReturnType<typeof createTomeOffhand>>|null} */
@@ -466,9 +515,13 @@ export async function mountHeroViewport(host, opts) {
   const tick = () => {
     if (disposed) return;
     const dt = clock.getDelta();
-    if (mixer) mixer.update(dt);
-    if (preview) preview.update();
-    if (mixer && equip && !preview?.busy && !paperdollSkipHoldPose(preview?.pack)) {
+    if (poseReady && mixer) mixer.update(dt);
+    if (poseReady && root) {
+      placeRootBetweenFeet(root, flatGround);
+      applyFootIk(root, flatGround);
+      headLook?.update(camera, dt, root);
+    }
+    if (poseReady && mixer && equip) {
       const kind = resolveHoldKindFromEquip(equip);
       const offKind = equip.equippedOffhand?.slot || null;
       applyWeaponHoldPose(mixer, 'idle', kind, {
@@ -479,8 +532,6 @@ export async function mountHeroViewport(host, opts) {
       });
     }
     if (tomeCtrl) tomeCtrl.update(dt);
-    // Lock face-user yaw after mixer (anim may write root rotation tracks)
-    if (root) applyFaceCamera(root, FACE_CAMERA_YAW);
     controls.update();
     renderer.render(scene, camera);
     raf = requestAnimationFrame(tick);
@@ -503,6 +554,8 @@ export async function mountHeroViewport(host, opts) {
       disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
+      try { headLook?.dispose(); } catch { /* ok */ }
+      headLook = null;
       controls.dispose();
       renderer.dispose();
       if (tomeCtrl) {
@@ -642,47 +695,47 @@ export async function mountHeroViewport(host, opts) {
     }
     bindRigidHeldToHands(root, equip);
 
-    // SI fit AFTER equip visibility (bone measure ignores mesh visibility, OK)
-    let finalH = fitRootSi(root, targetH);
-    scene.add(root);
+    // CDN Mixamo bake only. Embedded kit clips (when present) are a second
+    // mixer source and fight the bake — that is the late fold.
+    const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
+    if (idleClip && isMixamoBipBake(idleClip)) {
+      root.quaternion.identity();
+    }
+
+    let finalH = 0;
+    if (idleClip) {
+      mixer = new THREE.AnimationMixer(root);
+      let idle = idleClip;
+      try {
+        idle = rematchClipBones(root, idle) || idle;
+      } catch (remapErr) {
+        console.warn('[main-panel hero] bone remap skipped', remapErr);
+      }
+      try {
+        const action = mixer.clipAction(idle);
+        action.play();
+        mixer.update(1 / 30);
+      } catch (animErr) {
+        console.warn('[main-panel hero] idle bind failed (skeleton mismatch?)', animErr);
+      }
+    }
+    finalH = plantPaperdollSi(root, targetH);
+
+    doll = new THREE.Group();
+    doll.name = 'paperdoll-facing';
+    doll.add(root);
+    scene.add(doll);
     _state.root = root;
+    _state.doll = doll;
     _state.equip = equip;
     _state.materialMode = kit.materialMode;
-
-    mixer = new THREE.AnimationMixer(root);
-    preview = new PaperdollPreviewPlayer(THREE, { root, mixer });
-    let idleOn = false;
-    try {
-      await refreshPreview(lastEquipArgs.equippedItems, lastEquipArgs.findItem);
-      idleOn = !!preview?.idleAction;
-      mixer.update(1 / 30);
-      finalH = fitRootSi(root, targetH);
-    } catch (animErr) {
-      console.warn('[main-panel hero] pack idle bind failed', animErr);
-    }
-    if (!idleOn) {
-      const embedded = (kit.animations || []).find((c) => /idle/i.test(c.name || '')) || (kit.animations || [])[0];
-      if (embedded) {
-        const clip = rematchClipBones(root, embedded) || embedded;
-        mixer.clipAction(clip).reset().setLoop(THREE.LoopRepeat, Infinity).play();
-        mixer.update(1 / 30);
-        idleOn = true;
-      } else {
-        const idleClip = await tryLoadIdleClip(IDLE_CLIP_URLS[race] || IDLE_CLIP_URLS.human);
-        if (idleClip) {
-          const idle = rematchClipBones(root, idleClip) || idleClip;
-          mixer.clipAction(idle).reset().setLoop(THREE.LoopRepeat, Infinity).play();
-          mixer.update(1 / 30);
-          idleOn = true;
-        }
-      }
-      finalH = fitRootSi(root, targetH);
-    }
-    if (!idleOn) reGroundFeet(root);
+    headLook = createHeadLook(root, renderer.domElement);
+    clock.getDelta();
+    poseReady = true;
 
     vis = equip.allMeshes?.filter((m) => m.visible).length ?? 0;
     const matMode = kit.materialMode || root.userData.grudge6MaterialMode || '?';
-    status.textContent = `${race} · ${kit.source} · faceYaw=${(root.rotation.y).toFixed(2)} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
+    status.textContent = `${race} · ${kit.source} · h≈${finalH.toFixed(2)}m · vis=${vis}`;
     console.info('[main-panel hero]', {
       race,
       url: kit.url,
@@ -694,8 +747,7 @@ export async function mountHeroViewport(host, opts) {
       visible: vis,
       visibleNames: equip.allMeshes?.filter((m) => m.visible).map((m) => m.name),
       slots: equip.summary?.() || equip.summary(),
-      faceCameraYawSSOT: FACE_CAMERA_YAW,
-      yaw: root.rotation.y,
+      note: 'mixamo idle in Y-up; no Euler after mixer',
     });
     setTimeout(() => {
       if (status.parentNode) status.remove();
