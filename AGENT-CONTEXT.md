@@ -2,7 +2,7 @@
 
 > **Purpose**: This document is the authoritative continuation prompt for any AI agent (Oz or successor) working on this repository. Update it whenever a session ends, a milestone completes, or task priorities change.
 >
-> **Last Updated**: 2026-06-24
+> **Last Updated**: 2026-09-06
 
 ---
 
@@ -12,8 +12,9 @@
 |-------|-------|
 | **Repository** | `MolochDaGod/ObjectStore` |
 | **Package** | `@grudgstudio/core` v2.2.0 / SDK v5.0.0 |
-| **Live URL** | https://molochdagod.github.io/ObjectStore |
-| **Primary Role** | Centralized single source of truth for all Grudge Studio game data |
+| **Live URL** | https://info.grudge-studio.com (JSON `/api/v1`) · Worker proxy `objectstore.grudge-studio.com` |
+| **Binaries** | https://assets.grudge-studio.com |
+| **Primary Role** | Definitions SSOT. Not player bag. GitHub Pages is **not** live JSON. |
 | **Agent Co-author** | Oz `<oz-agent@warp.dev>` |
 
 ObjectStore exposes a static JSON API (GitHub Pages) for Grudge Warlords weapons, materials, armor, consumables, skills, sprites, races, classes, factions, and attributes. The SDK v5.0 (`sdk/grudge-sdk.js`) is the unified client for all Grudge Studio services — static data, auth, game API, account API, launcher, asset service, and WebSocket. All backend services run on a self-hosted VPS (Docker + Coolify) at `grudge-studio.com` subdomains.
@@ -72,6 +73,18 @@ Priority order based on last session state:
 **Machine manifest:** [api/v1/assets-api.json](api/v1/assets-api.json)
 
 ---
+
+## 3b) 3D VFX overlay (2026-09-06) — agents MUST use this
+
+| Need | File / field |
+|------|----------------|
+| Overlay catalog | `GET /api/v1/stylized-projectiles.json` (`VFX-STY-*`) |
+| Bind | `skill.prefab.overlayRef` = `VFX-STY-LASER` etc. |
+| Keep | `prefab.vfxRef` / `impactRef` = catalog GLB effect (`inferno`, `frost_wave`) |
+| 3D bolt | `models/vfx/orbs/orb-*.glb` — **never** whole `fireball.glb` |
+| Not | mint `GRDG-3DFX-*` (collides with hero `GRDG-*`) |
+
+Bows → `styproj.arrow`. Guns → laser / laser2. Staffs → element look. Do not invent skill ids.
 
 ## 4) Technical Inventory
 

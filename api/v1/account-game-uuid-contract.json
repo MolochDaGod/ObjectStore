@@ -1,6 +1,6 @@
 {
   "id": "account-game-uuid-contract",
-  "version": "2026-08-18",
+  "version": "2026-09-03",
   "title": "Grudge account DB · game character DB · UUID law",
   "authority": "Railway Postgres grudge-api-production (player SSOT)",
   "notAuthority": ["D1", "localStorage", "Puter KV", "client-minted ent_* bag ids"],
@@ -14,7 +14,10 @@
     "characterName": { "field": "characters.name", "use": "in-world game name" },
     "characterStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display/support not PK" },
     "itemInstance": { "field": "grudge_uuid", "mint": "server ledger/uuid only" },
-    "itemDefinition": { "field": "catalog slug", "use": "recipes/templates only" }
+    "itemDefinition": { "field": "catalog slug", "use": "recipes/templates only" },
+    "skillDefinition": { "field": "grudgeUuid", "format": "SKIL-*", "catalog": "/api/v1/master-weaponSkills.json" },
+    "iconAsset": { "field": "iconUuid", "format": "ICON-*", "catalog": "/api/v1/icon-path-index.json" },
+    "effectDefinition": { "field": "vfxRef", "format": "VFX-*", "catalog": "/api/v1/stylized-projectiles.json", "legacy": "GRDG-3DFX-* read-only" }
   },
   "eras": ["warlords", "voxel", "nexus", "armada"],
   "scope": {
@@ -73,7 +76,9 @@
     "docs/CANONICAL_IDENTITY.md",
     "docs/GRUDGE_IDENTITY_CONSOLIDATION.md",
     "docs/WARLORDS_ACCOUNT_CHARACTER_SSOT.md",
-    "docs/UUID_SYSTEM.md"
+    "docs/UUID_SYSTEM.md",
+    "api/v1/uuid-law.json",
+    "https://info.grudge-studio.com/wiki.html"
   ],
   "agentSkill": "grudge-production-wiring",
   "agentReference": "references/account-game-uuid-law.md"

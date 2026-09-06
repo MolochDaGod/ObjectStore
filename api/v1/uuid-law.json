@@ -1,0 +1,84 @@
+{
+  "id": "uuid-law",
+  "version": "2026-09-06",
+  "title": "Grudge UUID families — one law, do not mix",
+  "wiki": "https://info.grudge-studio.com/wiki.html",
+  "docs": [
+    "docs/API-AND-UUID-GUIDE.md",
+    "api/v1/account-game-uuid-contract.json",
+    "docs/WEAPON_SKILLS_API_SSOT.md",
+    "docs/ICON-ASSET-LIBRARY.md"
+  ],
+  "player": {
+    "authority": "Railway Postgres grudge-api-production",
+    "notAuthority": ["D1", "ObjectStore JSON", "localStorage", "Puter KV", "client ent_*"],
+    "account": { "field": "grudge_id", "format": "GRUDGE_*", "use": "SSO, bag, wallet, home island" },
+    "character": { "field": "characters.id", "format": "RFC UUID", "use": "only play handoff ?characterId=" },
+    "heroStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display only, not PK" },
+    "itemInstance": { "field": "grudge_uuid", "mint": "server ledger", "use": "unique gear" }
+  },
+  "definitions": {
+    "authority": "info.grudge-studio.com/api/v1",
+    "skill": {
+      "field": "grudgeUuid",
+      "format": "SKIL-XXXX-XXXX-XXXX",
+      "algorithm": "sha1(grudge-skill:{id})",
+      "catalog": "/api/v1/master-weaponSkills.json",
+      "legacy": "uuid / uuidLegacy"
+    },
+    "icon": {
+      "field": "grudgeUuid",
+      "format": "ICON-XXXX-XXXX-XXXX",
+      "algorithm": "sha1(grudge-asset:{r2Key})",
+      "catalog": "/api/v1/icon-registry.json",
+      "pathIndex": "/api/v1/icon-path-index.json",
+      "cdn": "https://assets.grudge-studio.com/game-assets/icons/..."
+    },
+    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
+    "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
+    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" },
+    "vfx": {
+      "field": "vfxRef",
+      "format": "VFX-*",
+      "catalog": "/api/v1/stylized-projectiles.json",
+      "also": ["/api/v1/vfx-production-glb.json", "/api/v1/vfx-skill-types.json"],
+      "bind": "skill.prefab.overlayRef",
+      "keep": "prefab.vfxRef is catalog GLB effect (inferno); overlayRef is VFX-STY-*",
+      "legacy": "GRDG-3DFX-* in 3dfx-uuids.json — do not mint; collides with hero GRDG-*"
+    }
+  },
+  "assets": {
+    "binaries": "https://assets.grudge-studio.com/{r2Key}",
+    "index": "https://objectstore.grudge-studio.com/v1/assets (D1)",
+    "notPlayer": true
+  },
+  "banned": [
+    "handoff with GRDG-* or GRUDGE_* as character PK",
+    "client-minted bag ids as SSOT",
+    "api.grudge-studio.com as live character API",
+    "GitHub Pages as live JSON/icon SSOT",
+    "Mixamo clip names on Bip001 play prefabs",
+    "weaponSkills.json / skills.json / weapons.json as play catalog",
+    "SkillAPI Durable Object bundle as skill SSOT (drafts only)",
+    "flatten consumables.json as items[] (use categories.*.items + slug)",
+    "emoji icon field as production art (use iconPath → assets CDN)",
+    "minting new GRDG-3DFX-* (collides with hero stamp GRDG-*; use VFX-*)"
+  ],
+  "classifyPrefix": {
+    "GRUDGE_": "account grudge_id",
+    "GRDG-": "hero display stamp (not VFX — legacy GRDG-3DFX rows stay read-only)",
+    "SKIL-": "skill definition",
+    "ICON-": "icon asset",
+    "ITEM-": "item / weapon prefab definition (not bag instance)",
+    "PFAB-": "entity prefab",
+    "ATTR-": "attribute definition",
+    "ENCH-": "enchant definition",
+    "VFX-": "effect / overlay definition (prefab.vfxRef)",
+    "RFC-UUID": "characters.id play handoff only"
+  },
+  "workerStart": [
+    "https://info.grudge-studio.com/api/v1/uuid-law.json",
+    "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
+    "https://info.grudge-studio.com/api/v1/fleet-wiring.json"
+  ]
+}

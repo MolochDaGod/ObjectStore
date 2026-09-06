@@ -125,6 +125,23 @@
         { "id": "teleport_finish",  "uuid": "GRDG-3DFX-B20378CA", "name": "Teleport Finish",  "element": "arcane" },
         { "id": "void_rift",        "uuid": "GRDG-3DFX-8B971713", "name": "Void Rift",        "element": "shadow" }
       ]
+    },
+    "overlay": {
+      "label": "Stylized overlay (trail / head / hit)",
+      "description": "Texture overlay on existing orb/linear travel. Not a second VFX engine. Ids are VFX-*.",
+      "spawnPoint": "weapon_tip",
+      "behavior": "follow_projectile",
+      "catalog": "/api/v1/stylized-projectiles.json",
+      "effects": [
+        { "id": "styproj.laser", "uuid": "VFX-STY-LASER", "name": "Laser trail", "element": "fire" },
+        { "id": "styproj.diamond", "uuid": "VFX-STY-DIAMOND", "name": "Diamond frost", "element": "frost" },
+        { "id": "styproj.heart", "uuid": "VFX-STY-HEART", "name": "Heart holy", "element": "holy" },
+        { "id": "styproj.leaf", "uuid": "VFX-STY-LEAF", "name": "Leaf nature", "element": "nature" },
+        { "id": "styproj.shadow", "uuid": "VFX-STY-SHADOW", "name": "Shadow mask", "element": "shadow" },
+        { "id": "styproj.card", "uuid": "VFX-STY-CARD", "name": "Arcane cards", "element": "arcane" },
+        { "id": "styhit.smoke", "uuid": "VFX-STYHIT-SMOKE", "name": "Hit smoke", "element": "physical" },
+        { "id": "styhit.head_mesh", "uuid": "VFX-STYHIT-SLASH", "name": "Hit slash", "element": "physical" }
+      ]
     }
   },
   "elements": ["physical", "fire", "frost", "lightning", "arcane", "holy", "shadow", "nature", "earth", "void"],
@@ -138,6 +155,6 @@
     "impact_point": "Spawns at collision/hit point between attacker and target",
     "hit_point": "Single burst at exact contact location"
   },
-  "totalEffects": 64,
-  "totalClassified": 60
+  "totalEffects": 72,
+  "totalClassified": 68
 }

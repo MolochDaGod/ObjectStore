@@ -11,7 +11,7 @@ Single reference for **which API serves what**, **which UUID scheme to use**, an
 | ObjectStore API (live JSON) | https://objectstore.grudge-studio.com/api/v1/ |
 | Docs hub (browse data) | https://info.grudge-studio.com/docs |
 | Asset CDN (binary files) | https://assets.grudge-studio.com/ |
-| Game API (characters, islands) | https://api.grudge-studio.com/ |
+| Game API (characters, islands) | Railway `grudge-api-production` via same-origin `/api/*` — **not** `api.grudge-studio.com` |
 | Auth (Grudge ID) | https://id.grudge-studio.com/ |
 | Production game | https://grudgewarlords.com/ |
 | Integration manifest | [`api/v1/assets-api.json`](../api/v1/assets-api.json) |
@@ -30,6 +30,8 @@ Multiple visual variants per spell **type** so one effect family can serve many 
 | `GET /api/v1/spell-arsenal.json` | 10 types → 50+ variants with `skillSlot`, `skillUses` |
 | `GET /api/v1/vfx-spells.json` | Full descriptors (shaders, particles, timing) — 26 spells |
 | `GET /api/v1/vfx-skill-types.json` | Classify effects by combat role |
+| `GET /api/v1/stylized-projectiles.json` | Trail / head / hit overlay pack (`VFX-STY-*`) — not a second engine |
+| `GET /api/v1/vfx-production-glb.json` | Production GLB meshes + overlay note |
 
 **Browse:** [3dfx-viewer.html](../3dfx-viewer.html) (Arsenal + Sandbox tabs) · [spell-vfx-library.html](../spell-vfx-library.html)
 
@@ -68,14 +70,37 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 // → https://assets.grudge-studio.com/game-assets/icons/sigils/strength.png
 ```
 
-### 2. `char_*` — Player characters
+### 2. Character UUID — Player heroes (Railway)
 
 | Field | Value |
 |-------|-------|
-| **Scope** | One row per hero (race, class, gear, `model3d`, island link) |
-| **Format** | `char_` + nanoid (GrudgeBuilder) or UUID in `player_characters` (RTS-Grudge) |
-| **Authority** | Railway / `api.grudge-studio.com` (`GET/PATCH /api/characters`) |
-| **3D join** | `raceId` + `equipment` → `panelEquipmentToModel3d()` → grudge6 GLB on CDN |
+| **Scope** | One row per hero (`characters.id`) |
+| **Format** | RFC UUID — **only** play handoff `?characterId=` |
+| **Stamp** | `characters.grudge_code` = `GRDG-…` display only |
+| **Account** | `grudge_id` = `GRUDGE_…` owns bag |
+| **Authority** | Railway `grudge-api-production` (`GET/PATCH /api/characters?era=`) |
+| **3D join** | `loadRaceKit` Toon `{race}.glb` on CDN |
+
+### 2c. `VFX-*` — Effect overlays (ObjectStore)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Skill `prefab.vfxRef` — trail / hit / muzzle overlays + production GLB ids |
+| **Format** | `VFX-*` (e.g. `VFX-STY-LASER`) |
+| **Catalog** | [`api/v1/stylized-projectiles.json`](../api/v1/stylized-projectiles.json) |
+| **Not** | `GRDG-3DFX-*` — that prefix collides with hero display stamp `GRDG-*`. Legacy rows in `3dfx-uuids.json` stay read-only. |
+| **3D bolt** | Still `models/vfx/orbs/orb-*.glb` — overlay pack does not replace orbs |
+
+**Wire:** overlay `vfxRef` → `skill.prefab.vfxRef`. Runtime keeps orb mesh + LinearCast / SkillProjectileSystem.
+
+### 2b. `SKIL-*` — Skill definitions (ObjectStore)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Catalog skills in `master-weaponSkills.json` |
+| **Format** | `SKIL-XXXX-XXXX-XXXX` = `sha1("grudge-skill:" + id)` |
+| **Icons** | `iconUuid` `ICON-*` + `iconUrl` on `assets.grudge-studio.com` |
+| **Play clip** | `prefab.animationClip` = `{pack}/{role}` on Bip001 |
 
 ### 3. `HERO-*` / `EQIP-*` / `ITEM-*` — Backend asset catalog
 
@@ -103,7 +128,7 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 | **Algorithm** | `sha1("grudge-asset:" + r2Key)` → UUID (same stable-key idea as `ICON-*`) |
 | **D1 database** | `grudge-assets-db` · table `asset_registry` |
 | **R2 bucket** | `grudge-assets` → `https://assets.grudge-studio.com/{r2Key}` |
-| **API** | `GET https://api.grudge-studio.com/assets?limit=50` |
+| **API** | `GET https://objectstore.grudge-studio.com/v1/assets` (D1). Dead: `api.grudge-studio.com` |
 | **By category** | `GET /assets/category/character` · `weapon` · `environment` · `animation` |
 | **By UUID** | `GET /assets/uuid/{grudgeUuid}` |
 
