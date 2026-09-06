@@ -4,8 +4,18 @@
   "description": "Production VFX GLB meshes on R2 CDN (assets.grudge-studio.com). Used by 3DFX viewer, Danger Room, and fleet combat.",
   "cdnBase": "https://assets.grudge-studio.com",
   "never": [
-    "Do not load whole fireball.glb as a staff projectile — prefer orbs when present, or explosion/meteor for AoE."
+    "Do not load whole fireball.glb as a staff projectile — prefer orbs when present, or explosion/meteor for AoE.",
+    "Do not mint GRDG-3DFX-* for new effects (uuid-law VFX-*). Stylized Projectiles are overlay textures, not a second engine."
   ],
+  "overlays": {
+    "id": "stylized-projectiles",
+    "grudgeUuid": "VFX-STY-PACK",
+    "catalog": "/api/v1/stylized-projectiles.json",
+    "path": "models/vfx/stylized-projectiles/",
+    "kind": "overlay",
+    "notes": "19 projectile heads + 8 trails + 5 hits + 4 muzzle. Keep orb-*.glb as travel mesh.",
+    "siMaxM": 1.4
+  },
   "meshes": [
     {
       "id": "explosion",

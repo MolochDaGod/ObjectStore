@@ -30,6 +30,8 @@ Multiple visual variants per spell **type** so one effect family can serve many 
 | `GET /api/v1/spell-arsenal.json` | 10 types → 50+ variants with `skillSlot`, `skillUses` |
 | `GET /api/v1/vfx-spells.json` | Full descriptors (shaders, particles, timing) — 26 spells |
 | `GET /api/v1/vfx-skill-types.json` | Classify effects by combat role |
+| `GET /api/v1/stylized-projectiles.json` | Trail / head / hit overlay pack (`VFX-STY-*`) — not a second engine |
+| `GET /api/v1/vfx-production-glb.json` | Production GLB meshes + overlay note |
 
 **Browse:** [3dfx-viewer.html](../3dfx-viewer.html) (Arsenal + Sandbox tabs) · [spell-vfx-library.html](../spell-vfx-library.html)
 
@@ -78,6 +80,18 @@ const url = resolveIconUrl('/icons/sigils/strength.png');
 | **Account** | `grudge_id` = `GRUDGE_…` owns bag |
 | **Authority** | Railway `grudge-api-production` (`GET/PATCH /api/characters?era=`) |
 | **3D join** | `loadRaceKit` Toon `{race}.glb` on CDN |
+
+### 2c. `VFX-*` — Effect overlays (ObjectStore)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Skill `prefab.vfxRef` — trail / hit / muzzle overlays + production GLB ids |
+| **Format** | `VFX-*` (e.g. `VFX-STY-LASER`) |
+| **Catalog** | [`api/v1/stylized-projectiles.json`](../api/v1/stylized-projectiles.json) |
+| **Not** | `GRDG-3DFX-*` — that prefix collides with hero display stamp `GRDG-*`. Legacy rows in `3dfx-uuids.json` stay read-only. |
+| **3D bolt** | Still `models/vfx/orbs/orb-*.glb` — overlay pack does not replace orbs |
+
+**Wire:** overlay `vfxRef` → `skill.prefab.vfxRef`. Runtime keeps orb mesh + LinearCast / SkillProjectileSystem.
 
 ### 2b. `SKIL-*` — Skill definitions (ObjectStore)
 

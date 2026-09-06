@@ -1,6 +1,6 @@
 {
   "id": "uuid-law",
-  "version": "2026-09-03",
+  "version": "2026-09-06",
   "title": "Grudge UUID families — one law, do not mix",
   "wiki": "https://info.grudge-studio.com/wiki.html",
   "docs": [
@@ -36,7 +36,15 @@
     },
     "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
     "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
-    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" }
+    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" },
+    "vfx": {
+      "field": "vfxRef",
+      "format": "VFX-*",
+      "catalog": "/api/v1/stylized-projectiles.json",
+      "also": ["/api/v1/vfx-production-glb.json", "/api/v1/vfx-skill-types.json"],
+      "bind": "skill.prefab.vfxRef",
+      "legacy": "GRDG-3DFX-* in 3dfx-uuids.json — do not mint; collides with hero GRDG-*"
+    }
   },
   "assets": {
     "binaries": "https://assets.grudge-studio.com/{r2Key}",
@@ -52,17 +60,19 @@
     "weaponSkills.json / skills.json / weapons.json as play catalog",
     "SkillAPI Durable Object bundle as skill SSOT (drafts only)",
     "flatten consumables.json as items[] (use categories.*.items + slug)",
-    "emoji icon field as production art (use iconPath → assets CDN)"
+    "emoji icon field as production art (use iconPath → assets CDN)",
+    "minting new GRDG-3DFX-* (collides with hero stamp GRDG-*; use VFX-*)"
   ],
   "classifyPrefix": {
     "GRUDGE_": "account grudge_id",
-    "GRDG-": "hero display stamp",
+    "GRDG-": "hero display stamp (not VFX — legacy GRDG-3DFX rows stay read-only)",
     "SKIL-": "skill definition",
     "ICON-": "icon asset",
     "ITEM-": "item / weapon prefab definition (not bag instance)",
     "PFAB-": "entity prefab",
     "ATTR-": "attribute definition",
     "ENCH-": "enchant definition",
+    "VFX-": "effect / overlay definition (prefab.vfxRef)",
     "RFC-UUID": "characters.id play handoff only"
   },
   "workerStart": [
