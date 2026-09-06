@@ -42,7 +42,8 @@
       "format": "VFX-*",
       "catalog": "/api/v1/stylized-projectiles.json",
       "also": ["/api/v1/vfx-production-glb.json", "/api/v1/vfx-skill-types.json"],
-      "bind": "skill.prefab.vfxRef",
+      "bind": "skill.prefab.overlayRef",
+      "keep": "prefab.vfxRef is catalog GLB effect (inferno); overlayRef is VFX-STY-*",
       "legacy": "GRDG-3DFX-* in 3dfx-uuids.json — do not mint; collides with hero GRDG-*"
     }
   },

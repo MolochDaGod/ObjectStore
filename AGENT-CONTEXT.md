@@ -74,6 +74,18 @@ Priority order based on last session state:
 
 ---
 
+## 3b) 3D VFX overlay (2026-09-06) — agents MUST use this
+
+| Need | File / field |
+|------|----------------|
+| Overlay catalog | `GET /api/v1/stylized-projectiles.json` (`VFX-STY-*`) |
+| Bind | `skill.prefab.overlayRef` = `VFX-STY-LASER` etc. |
+| Keep | `prefab.vfxRef` / `impactRef` = catalog GLB effect (`inferno`, `frost_wave`) |
+| 3D bolt | `models/vfx/orbs/orb-*.glb` — **never** whole `fireball.glb` |
+| Not | mint `GRDG-3DFX-*` (collides with hero `GRDG-*`) |
+
+Bows → `styproj.arrow`. Guns → laser / laser2. Staffs → element look. Do not invent skill ids.
+
 ## 4) Technical Inventory
 
 ### Key Files
