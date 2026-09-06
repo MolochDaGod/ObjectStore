@@ -48,6 +48,26 @@
     "client-minted bag ids as SSOT",
     "api.grudge-studio.com as live character API",
     "GitHub Pages as live JSON/icon SSOT",
-    "Mixamo clip names on Bip001 play prefabs"
+    "Mixamo clip names on Bip001 play prefabs",
+    "weaponSkills.json / skills.json / weapons.json as play catalog",
+    "SkillAPI Durable Object bundle as skill SSOT (drafts only)",
+    "flatten consumables.json as items[] (use categories.*.items + slug)",
+    "emoji icon field as production art (use iconPath → assets CDN)"
+  ],
+  "classifyPrefix": {
+    "GRUDGE_": "account grudge_id",
+    "GRDG-": "hero display stamp",
+    "SKIL-": "skill definition",
+    "ICON-": "icon asset",
+    "ITEM-": "item / weapon prefab definition (not bag instance)",
+    "PFAB-": "entity prefab",
+    "ATTR-": "attribute definition",
+    "ENCH-": "enchant definition",
+    "RFC-UUID": "characters.id play handoff only"
+  },
+  "workerStart": [
+    "https://info.grudge-studio.com/api/v1/uuid-law.json",
+    "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
+    "https://info.grudge-studio.com/api/v1/fleet-wiring.json"
   ]
 }

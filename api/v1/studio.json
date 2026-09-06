@@ -27,7 +27,27 @@
       }
     },
     "gameData": {
-      "description": "Static JSON game data for Grudge Warlords",
+      "description": "Static JSON game data for Grudge Warlords. Play runtime = runtimeCatalog (master-*). endpoints[] includes legacy files that still 200.",
+      "start": "/api/v1/game-data-manifest.json",
+      "uuidLaw": "/api/v1/uuid-law.json",
+      "canonicalManifest": "/api/v1/canonical-manifest.json",
+      "runtimeCatalog": {
+        "weaponSkills": "/api/v1/master-weaponSkills.json",
+        "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+        "classTrees": "/api/v1/master-skillTrees.json",
+        "attributes": "/api/v1/master-attributes.json",
+        "items": "/api/v1/master-items.json",
+        "materials": "/api/v1/master-materials.json",
+        "recipes": "/api/v1/master-recipes.json",
+        "t0Weapons": "/api/v1/t0-weapons.json"
+      },
+      "doNotUseForPlay": {
+        "weaponSkills.json": "archived stub — use master-weaponSkills.json",
+        "skills.json": "legacy kebab ids",
+        "weapons.json": "design templates",
+        "attributes.json": "archived",
+        "github.io": "not live JSON SSOT"
+      },
       "endpoints": {
         "weapons": "/api/v1/weapons.json",
         "armor": "/api/v1/armor.json",
@@ -86,7 +106,8 @@
         "natureManifest": "/api/v1/organized-nature-manifest.json",
         "cdnCatalogs": "https://assets.grudge-studio.com/catalogs/home-island/",
         "cdnNature": "https://assets.grudge-studio.com/models/nature/realistic/",
-        "studioEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
+        "studioEditor": "https://forge.grudge-studio.com",
+        "legacyEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
         "database": "Railway Postgres home_islands (NOT D1)",
         "worldSizeM": 1024,
         "characterHeightM": 1.8,
