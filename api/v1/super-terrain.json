@@ -1,0 +1,301 @@
+{
+  "format": "grudge-super-terrain/v1",
+  "version": "1.0.0",
+  "updated": "2026-09-05",
+  "title": "Super Terrain — fleet world kit",
+  "description": "Terrain kinds, forest presets, foliage species, paint channels, and CDN scatter meshes for Forge, Warlords, Open, and AI. Heightfield bake only — do not vendor the WebGPU WorldTerrain editor.",
+  "repo": "https://github.com/vibe-stack/super-terrain",
+  "hosts": {
+    "definitions": "https://info.grudge-studio.com/api/v1/super-terrain.json",
+    "objectstore": "https://objectstore.grudge-studio.com/api/v1/super-terrain.json",
+    "cdn": "https://assets.grudge-studio.com",
+    "catalogCdn": "https://assets.grudge-studio.com/catalogs/super-terrain.json",
+    "bakes": "https://assets.grudge-studio.com/worlds/super-terrain/",
+    "textures": "https://assets.grudge-studio.com/textures/super-terrain/"
+  },
+  "law": [
+    "Definitions = this JSON (info.grudge-studio.com). Binaries = assets.grudge-studio.com. D1 = search index only.",
+    "Do not import Super Terrain WorldTerrain / WebGPU foliage blades into Forge or Warlords play.",
+    "Scatter = one Kenney mesh per instance. Never nature_vegetation.glb, ore_nodes.glb, *-pack, or pirate-islands/scene.glb as a tree/rock.",
+    "Stems plant on the same heightfield the player walks. Trees refuse slope > 40° and above treeline 0.54.",
+    "Textures = Super Terrain channel tiles (this catalog) or Forge Poly Haven 1K. Do not autoload Ground_N 15–85 MB maps.",
+    "pirate-islands/scene.glb is the lobby MAP shell — terrain/shovel/harvest on that mesh, not scatter."
+  ],
+  "cdn": "https://assets.grudge-studio.com",
+  "natureBase": "https://assets.grudge-studio.com/models/nature",
+  "scatter": {
+    "trees": [
+      "https://assets.grudge-studio.com/models/nature/CommonTree_1.glb",
+      "https://assets.grudge-studio.com/models/nature/CommonTree_2.glb",
+      "https://assets.grudge-studio.com/models/nature/CommonTree_3.glb",
+      "https://assets.grudge-studio.com/models/nature/CommonTree_4.glb",
+      "https://assets.grudge-studio.com/models/nature/CommonTree_5.glb"
+    ],
+    "pines": [
+      "https://assets.grudge-studio.com/models/nature/Pine_1.glb",
+      "https://assets.grudge-studio.com/models/nature/Pine_2.glb",
+      "https://assets.grudge-studio.com/models/nature/Pine_3.glb",
+      "https://assets.grudge-studio.com/models/nature/Pine_4.glb",
+      "https://assets.grudge-studio.com/models/nature/Pine_5.glb"
+    ],
+    "rocks": [
+      "https://assets.grudge-studio.com/models/nature/Rock_Medium_1.glb",
+      "https://assets.grudge-studio.com/models/nature/Rock_Medium_2.glb",
+      "https://assets.grudge-studio.com/models/nature/Rock_Medium_3.glb"
+    ],
+    "bush": "https://assets.grudge-studio.com/models/nature/Bush_Common.glb",
+    "fern": "https://assets.grudge-studio.com/models/nature/Fern_1.glb",
+    "plant": "https://assets.grudge-studio.com/models/nature/Plant_1.glb",
+    "deny": [
+      "models/nature/stylized/biome/nature_vegetation.glb",
+      "models/nature/stylized/harvest/ore_nodes.glb",
+      "models/lobby/pirate-islands/scene.glb"
+    ]
+  },
+  "climate": {
+    "montaneTop": 0.3,
+    "treeLine": 0.54,
+    "alpineTurfTop": 0.74,
+    "fellfieldTop": 0.88,
+    "snowLine": 0.6,
+    "treeMaxSlopeDeg": 40
+  },
+  "channels": [
+    {
+      "id": "channel0",
+      "name": "Grass",
+      "color": "#4f7d32",
+      "roughness": 0.94,
+      "polyhaven": "dirt",
+      "groundN": 2,
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/channel-grass.png"
+    },
+    {
+      "id": "channel1",
+      "name": "Rock",
+      "color": "#77736c",
+      "roughness": 0.82,
+      "polyhaven": "rock_wall",
+      "groundN": 4,
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/channel-rock.png"
+    },
+    {
+      "id": "channel2",
+      "name": "Soil",
+      "color": "#604733",
+      "roughness": 0.91,
+      "polyhaven": "dirt",
+      "groundN": 6,
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/channel-soil.png"
+    },
+    {
+      "id": "channel3",
+      "name": "Snow",
+      "color": "#dce4ee",
+      "roughness": 0.68,
+      "polyhaven": "rock_wall",
+      "groundN": 8,
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/channel-snow.png"
+    }
+  ],
+  "proceduralSurfaces": ["rock-ground", "cliff-side", "alpine-cliff-rock", "ember-fault-rock"],
+  "groundN": {
+    "autoload": false,
+    "reason": "BaseColor 15–22 MB, Normal ~86 MB. Use channel tiles or Poly Haven 1K.",
+    "base": "https://assets.grudge-studio.com/textures/pbr/ground/Ground_{1-10}_{BaseColor,Normal,Roughness,Metallic,AmbientOcclusion,Height}.png"
+  },
+  "biomes": [
+    { "id": "ocean", "index": 0, "color": "#163a52", "foliage": [], "cover": [] },
+    { "id": "shore", "index": 1, "color": "#c2a878", "foliage": ["bush", "plant"], "cover": ["sedge-reed", "wildflower"] },
+    { "id": "sand", "index": 2, "color": "#d4c49a", "foliage": ["bush", "plant"], "cover": ["dry-steppe", "sedge-reed"] },
+    { "id": "grass", "index": 3, "color": "#3d6b2e", "foliage": ["trees", "bush", "plant"], "cover": ["meadow-fescue", "tussock", "wildflower", "clover-mat"] },
+    { "id": "forest", "index": 4, "color": "#1a3d14", "foliage": ["pines", "fern", "bush"], "cover": ["woodland-fern", "forest-moss", "bramble", "bracken", "wood-rush"] },
+    { "id": "rock", "index": 5, "color": "#5a544c", "foliage": ["rocks"], "cover": ["dry-steppe", "wood-rush"] },
+    { "id": "snow", "index": 6, "color": "#e8eef4", "foliage": ["pines", "rocks"], "cover": [] },
+    { "id": "lava", "index": 7, "color": "#6b1c08", "foliage": ["rocks"], "cover": [] }
+  ],
+  "kinds": [
+    {
+      "id": "harbor-atoll",
+      "title": "Harbor Atoll",
+      "source": "island-engine",
+      "sectorId": "haven_shore",
+      "forestPreset": "tropical-wet",
+      "polyhaven": "sand_01",
+      "procedural": "rock-ground",
+      "seaLevel": 0.2,
+      "maxHeight": 11,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/harbor-atoll.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-harbor-atoll.png"
+    },
+    {
+      "id": "volcanic-ridge",
+      "title": "Volcanic Ridge",
+      "source": "island-engine",
+      "sectorId": "ember_depths",
+      "forestPreset": "arid-woodland",
+      "polyhaven": "dirt",
+      "procedural": "ember-fault-rock",
+      "seaLevel": 0.16,
+      "maxHeight": 16,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/volcanic-ridge.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-volcanic-ridge.png"
+    },
+    {
+      "id": "frozen-fjord",
+      "title": "Frozen Fjord",
+      "source": "island-engine",
+      "sectorId": "frostbite_expanse",
+      "forestPreset": "boreal-conifer",
+      "polyhaven": "rock_wall",
+      "procedural": "alpine-cliff-rock",
+      "seaLevel": 0.18,
+      "maxHeight": 14,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/frozen-fjord.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-frozen-fjord.png"
+    },
+    {
+      "id": "alpine-mesh",
+      "title": "Alpine Mesh",
+      "source": "super-terrain",
+      "sectorId": "frostbite_expanse",
+      "forestPreset": "boreal-conifer",
+      "polyhaven": "rock_wall",
+      "procedural": "alpine-cliff-rock",
+      "seaLevel": 0.12,
+      "maxHeight": 16,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/alpine-mesh.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-alpine-mesh.png"
+    },
+    {
+      "id": "granite-csg",
+      "title": "Granite CSG",
+      "source": "super-terrain",
+      "sectorId": "ashen_wastes",
+      "forestPreset": "arid-woodland",
+      "polyhaven": "rock_wall",
+      "procedural": "cliff-side",
+      "seaLevel": 0.1,
+      "maxHeight": 15,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/granite-csg.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-granite-csg.png"
+    },
+    {
+      "id": "spline-forest",
+      "title": "Spline Forest",
+      "source": "super-terrain",
+      "sectorId": "thornwood_wilds",
+      "forestPreset": "mossy-old-growth",
+      "polyhaven": "dirt",
+      "procedural": "rock-ground",
+      "seaLevel": 0.14,
+      "maxHeight": 12,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/spline-forest.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-spline-forest.png"
+    },
+    {
+      "id": "tunnel-cavern",
+      "title": "Tunnel Cavern",
+      "source": "super-terrain",
+      "sectorId": "abyssal_trench",
+      "forestPreset": "arid-woodland",
+      "polyhaven": "rock_wall",
+      "procedural": "cliff-side",
+      "seaLevel": 0.08,
+      "maxHeight": 14,
+      "bake": "https://assets.grudge-studio.com/worlds/super-terrain/tunnel-cavern.json",
+      "albedo": "https://assets.grudge-studio.com/textures/super-terrain/kind-tunnel-cavern.png"
+    }
+  ],
+  "forestPresets": [
+    {
+      "id": "mossy-old-growth",
+      "label": "Mossy old-growth beech",
+      "treesPerHectare": 380,
+      "gapRate": 0.14,
+      "stems": ["trees", "bush", "fern"]
+    },
+    {
+      "id": "temperate-mixed",
+      "label": "Temperate mixed woodland",
+      "treesPerHectare": 125,
+      "gapRate": 0.12,
+      "stems": ["trees", "pines", "bush"]
+    },
+    {
+      "id": "ancient-oak-grove",
+      "label": "Ancient oak grove",
+      "treesPerHectare": 52,
+      "gapRate": 0.28,
+      "stems": ["trees", "bush"]
+    },
+    {
+      "id": "boreal-conifer",
+      "label": "Boreal conifer forest",
+      "treesPerHectare": 178,
+      "gapRate": 0.08,
+      "stems": ["pines", "trees", "bush"]
+    },
+    {
+      "id": "primeval-redwood",
+      "label": "Primeval redwood forest",
+      "treesPerHectare": 72,
+      "gapRate": 0.16,
+      "stems": ["pines", "fern"]
+    },
+    {
+      "id": "tropical-wet",
+      "label": "Tropical wet forest",
+      "treesPerHectare": 112,
+      "gapRate": 0.1,
+      "stems": ["trees", "fern"]
+    },
+    {
+      "id": "palm-oasis",
+      "label": "Palm oasis",
+      "treesPerHectare": 62,
+      "gapRate": 0.22,
+      "stems": ["plant", "trees", "bush"]
+    },
+    {
+      "id": "savanna",
+      "label": "Open savanna",
+      "treesPerHectare": 26,
+      "gapRate": 0.36,
+      "stems": ["trees"]
+    },
+    {
+      "id": "arid-woodland",
+      "label": "Arid sculptural woodland",
+      "treesPerHectare": 44,
+      "gapRate": 0.3,
+      "stems": ["trees", "bush", "rocks"]
+    }
+  ],
+  "foliageSpecies": [
+    { "id": "meadow-fescue", "mesh": "plant" },
+    { "id": "tussock", "mesh": "plant" },
+    { "id": "dry-steppe", "mesh": "plant" },
+    { "id": "clover-mat", "mesh": "bush" },
+    { "id": "broadleaf-weed", "mesh": "bush" },
+    { "id": "woodland-fern", "mesh": "fern" },
+    { "id": "wildflower", "mesh": "plant" },
+    { "id": "sedge-reed", "mesh": "plant" },
+    { "id": "forest-moss", "mesh": "bush" },
+    { "id": "wood-rush", "mesh": "fern" },
+    { "id": "bramble", "mesh": "bush" },
+    { "id": "bracken", "mesh": "fern" }
+  ],
+  "agent": {
+    "forge": {
+      "tools": ["list_world_biomes", "create_world", "generate_map", "paint_world_brush"],
+      "create": "create_world({ recipe: 'alpine-mesh'|'spline-forest'|'harbor-atoll'|… })"
+    },
+    "load": [
+      "GET hosts.definitions",
+      "Pick kinds[].id → bake JSON + forestPreset + albedo",
+      "Scatter scatter.trees/pines/rocks/bush/fern/plant — never deny[]",
+      "Bind channels[].albedo (or polyhaven 1K). Skip groundN unless user asks."
+    ]
+  }
+}
