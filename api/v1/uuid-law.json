@@ -34,9 +34,13 @@
       "pathIndex": "/api/v1/icon-path-index.json",
       "cdn": "https://assets.grudge-studio.com/game-assets/icons/..."
     },
-    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
+    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*", "also": ["FOOD-*", "POTN-*", "CONS-*"] },
+    "materialDefinition": { "catalog": "/api/v1/master-materials.json", "prefix": "MATL-*" },
+    "recipeDefinition": { "catalog": "/api/v1/master-recipes.json", "prefix": "RECP-*" },
+    "harvestNode": { "catalog": "/api/v1/master-harvest-nodes.json", "prefix": "NODE-*", "field": "nodeUuid" },
     "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
     "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" },
+    "islandBuilding": { "catalog": "/api/v1/island-building-prefabs.json", "prefix": "PFAB-BLDG-*" },
     "vfx": {
       "field": "vfxRef",
       "format": "VFX-*",
@@ -51,6 +55,28 @@
     "binaries": "https://assets.grudge-studio.com/{r2Key}",
     "index": "https://objectstore.grudge-studio.com/v1/assets (D1)",
     "notPlayer": true
+  },
+  "mapDeploy": {
+    "law": "Maps stamp DEFINITION ids + transform. Ownership is Railway. D1 is binary index only.",
+    "sceneFile": ".gfscene / island seed — definitionUuid + r2Key + SI transform, not bag SSOT",
+    "definitionPrefixes": ["NODE-*", "PFAB-*", "ITEM-*", "MATL-*", "RECP-*"],
+    "databases": {
+      "definitions": "info.grudge-studio.com/api/v1 (NODE/PFAB/ITEM/MATL/RECP)",
+      "islandState": "Railway home_islands — GET/PATCH /api/island/state",
+      "uniqueLoot": "Railway ledger grudge_uuid via /api/uuid/* /api/ledger/*",
+      "stackMats": "Railway account bag — MATL-* + qty (no per-stack UUID)",
+      "binaries": "R2 grudge-assets via r2Key",
+      "assetIndex": "D1 asset_registry — search only, never map ownership"
+    },
+    "stampOnPlace": "definitionUuid + r2Key + transform; never client-mint ent_* as bag id",
+    "harvest": "nodeUuid NODE-* → profession level → MATL-* into account bag; unique gear mint grudge_uuid",
+    "buildings": "prefabId PFAB-BLDG-* from island-building-prefabs.json",
+    "catalogs": [
+      "/api/v1/master-harvest-nodes.json",
+      "/api/v1/island-building-prefabs.json",
+      "/api/v1/home-island-contract.json",
+      "/api/v1/game-ready-scene-index.json"
+    ]
   },
   "banned": [
     "handoff with GRDG-* or GRUDGE_* as character PK",
@@ -70,7 +96,13 @@
     "SKIL-": "skill definition",
     "ICON-": "icon asset",
     "ITEM-": "item / weapon prefab definition (not bag instance)",
-    "PFAB-": "entity prefab",
+    "FOOD-": "consumable food definition (master-items)",
+    "POTN-": "potion definition (master-items)",
+    "CONS-": "consumable definition (master-items)",
+    "MATL-": "material definition (stack mats — account bag qty)",
+    "RECP-": "recipe definition",
+    "NODE-": "harvest node definition on maps (not a bag item)",
+    "PFAB-": "entity / building prefab on maps",
     "ATTR-": "attribute definition",
     "ENCH-": "enchant definition",
     "VFX-": "effect / overlay definition (prefab.vfxRef)",
@@ -80,5 +112,12 @@
     "https://info.grudge-studio.com/api/v1/uuid-law.json",
     "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
     "https://info.grudge-studio.com/api/v1/fleet-wiring.json"
-  ]
+  ],
+  "verified": {
+    "date": "2026-09-06",
+    "masterItems": { "ITEM": 2229, "FOOD": 90, "POTN": 30, "CONS": 12, "total": 2361 },
+    "masterRecipes": { "RECP": 2183 },
+    "masterHarvestNodes": { "NODE": 21, "dropsMATL": 63 },
+    "islandBuildings": { "PFAB": 6 }
+  }
 }
