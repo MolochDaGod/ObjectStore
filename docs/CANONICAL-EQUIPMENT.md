@@ -25,10 +25,10 @@ Machine-readable spec: [`api/v1/_meta/canonical-equipment-pattern.json`](../api/
 
 ## Live URLs (fetch in this order)
 
-1. **Static JSON (canonical):** `https://molochdagod.github.io/ObjectStore/api/v1/`
-2. **Worker mirror:** `https://objectstore.grudge-studio.com/api/v1/`
+1. **Static JSON (canonical):** `https://info.grudge-studio.com/api/v1/` — start `game-data-manifest.json`
+2. **Worker proxy:** `https://objectstore.grudge-studio.com/api/v1/` (fetches info.*)
 3. **Binary CDN:** `https://assets.grudge-studio.com/`
-4. **D1:** `objectstore-meta` → `weapon_prefabs` table (seeded from prefab pipeline)
+4. **D1:** asset **index** only — not player bag / recipes
 
 ---
 

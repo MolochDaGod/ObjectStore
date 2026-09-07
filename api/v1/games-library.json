@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "generated": "2026-07-01T05:53:38.747Z",
+  "generated": "2026-09-06T00:00:00.000Z",
   "description": "Grudge Warlords runtime index — weapons, tools, economy, and canonical item manifest",
   "canonical": true,
   "assetCdn": "https://assets.grudge-studio.com",
-  "staticApi": "https://molochdagod.github.io/ObjectStore/api/v1",
+  "staticApi": "https://info.grudge-studio.com/api/v1",
   "workerApi": "https://objectstore.grudge-studio.com/api/v1",
   "d1": {
     "database": "objectstore-meta",
@@ -12,30 +12,30 @@
     "seed": "workers/seed/weapon-prefabs.sql"
   },
   "runtime": {
-    "weaponPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json",
-    "t0Weapons": "https://molochdagod.github.io/ObjectStore/api/v1/t0-weapons.json",
-    "weaponSkills": "https://molochdagod.github.io/ObjectStore/api/v1/master-weaponSkills.json",
-    "ummorpgBridge": "https://molochdagod.github.io/ObjectStore/api/v1/ummorpg-systems-bridge.json",
-    "registry": "https://molochdagod.github.io/ObjectStore/api/v1/master-registry.json",
-    "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
-    "recipes": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json",
-    "materials": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json",
-    "enchants": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json",
-    "attributes": "https://molochdagod.github.io/ObjectStore/api/v1/master-attributes.json",
-    "weaponStatBridge": "https://molochdagod.github.io/ObjectStore/api/v1/weapon-stat-bridge.json",
-    "statPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/weapon-stats-attributes.json",
-    "equipmentPattern": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/canonical-equipment-pattern.json",
-    "manifest": "https://molochdagod.github.io/ObjectStore/api/v1/game-data-manifest.json",
-    "itemsManifest": "https://molochdagod.github.io/ObjectStore/api/v1/canonical-items-manifest.json",
-    "masterItems": "https://molochdagod.github.io/ObjectStore/api/v1/master-items.json",
-    "archive": "https://molochdagod.github.io/ObjectStore/api/v1/archive/manifest.json",
-    "economyCoverage": "https://molochdagod.github.io/ObjectStore/api/v1/economy-coverage.json",
-    "economySpiderUi": "https://molochdagod.github.io/ObjectStore/docs/economy-spider.html",
+    "weaponPrefabs": "https://info.grudge-studio.com/api/v1/master-weapon-prefabs.json",
+    "t0Weapons": "https://info.grudge-studio.com/api/v1/t0-weapons.json",
+    "weaponSkills": "https://info.grudge-studio.com/api/v1/master-weaponSkills.json",
+    "ummorpgBridge": "https://info.grudge-studio.com/api/v1/ummorpg-systems-bridge.json",
+    "registry": "https://info.grudge-studio.com/api/v1/master-registry.json",
+    "harvestNodes": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json",
+    "recipes": "https://info.grudge-studio.com/api/v1/master-recipes.json",
+    "materials": "https://info.grudge-studio.com/api/v1/master-materials.json",
+    "enchants": "https://info.grudge-studio.com/api/v1/master-enchants.json",
+    "attributes": "https://info.grudge-studio.com/api/v1/master-attributes.json",
+    "weaponStatBridge": "https://info.grudge-studio.com/api/v1/weapon-stat-bridge.json",
+    "statPattern": "https://info.grudge-studio.com/api/v1/_meta/weapon-stats-attributes.json",
+    "equipmentPattern": "https://info.grudge-studio.com/api/v1/_meta/canonical-equipment-pattern.json",
+    "manifest": "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
+    "itemsManifest": "https://info.grudge-studio.com/api/v1/canonical-items-manifest.json",
+    "masterItems": "https://info.grudge-studio.com/api/v1/master-items.json",
+    "archive": "https://info.grudge-studio.com/api/v1/archive/manifest.json",
+    "economyCoverage": "https://info.grudge-studio.com/api/v1/economy-coverage.json",
+    "economySpiderUi": "https://info.grudge-studio.com/docs/economy-spider.html",
     "islandBuildingPrefabs": "https://info.grudge-studio.com/api/v1/island-building-prefabs.json",
-    "warlordsEntityPrefabs": "https://molochdagod.github.io/ObjectStore/api/v1/warlords-entity-prefabs.json"
+    "warlordsEntityPrefabs": "https://info.grudge-studio.com/api/v1/warlords-entity-prefabs.json"
   },
   "design": {
-    "weapons": "https://molochdagod.github.io/ObjectStore/api/v1/weapons.json",
+    "weapons": "https://info.grudge-studio.com/api/v1/weapons.json",
     "note": "Design templates only — abilities/passives for editors, not runtime ITEM-*"
   },
   "counts": {
@@ -91,7 +91,7 @@
       "uuidPrefix": "ITEM-*",
       "count": 822,
       "notes": "Runtime prefab — skills, assets, recipes, statConnections",
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-weapon-prefabs.json"
     },
     "harvestTools": {
       "status": "live",
@@ -99,8 +99,8 @@
       "filter": "weaponType === TOOL",
       "uuidPrefix": "ITEM-*",
       "count": 49,
-      "harvestNodes": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json",
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-weapon-prefabs.json"
+      "harvestNodes": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json",
+      "url": "https://info.grudge-studio.com/api/v1/master-weapon-prefabs.json"
     },
     "armor": {
       "status": "catalog-live",
@@ -111,7 +111,7 @@
       "uuidPrefix": "ITEM-*",
       "count": 1344,
       "targetPrefab": "master-armor-prefabs.json",
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-armor.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-armor.json"
     },
     "consumables": {
       "status": "live",
@@ -129,7 +129,7 @@
         "potion": 30,
         "consumable": 12
       },
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-consumables.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-consumables.json"
     },
     "materials": {
       "status": "live",
@@ -138,21 +138,21 @@
       "uuidPrefix": "MATL-*",
       "count": 104,
       "harvestGraph": "master-harvest-nodes.json → materialUuid → master-recipes.json",
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-materials.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-materials.json"
     },
     "recipes": {
       "status": "live",
       "authority": "master-recipes.json",
       "uuidPrefix": "RECP-*",
       "count": 2183,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-recipes.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-recipes.json"
     },
     "relics": {
       "status": "live",
       "authority": "master-relics.json",
       "uuidPrefix": "RELC-*",
       "count": 136,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-relics.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-relics.json"
     },
     "enchants": {
       "status": "live",
@@ -160,41 +160,41 @@
       "uuidPrefix": "ENCH-*",
       "count": 72,
       "bridge": "ummorpg-systems-bridge.json",
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-enchants.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-enchants.json"
     },
     "infusions": {
       "status": "live",
       "authority": "master-infusions.json",
       "uuidPrefix": "INFU-*",
       "count": 20,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-infusions.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-infusions.json"
     },
     "artifacts": {
       "status": "live",
       "authority": "master-artifacts.json",
       "uuidPrefix": "ARTF-*",
       "count": 20,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-artifacts.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-artifacts.json"
     },
     "buildings": {
       "status": "live",
       "authority": "master-buildings.json",
       "uuidPrefix": "BLDG-*",
       "count": 15,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-buildings.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-buildings.json"
     },
     "mounts": {
       "status": "live",
       "authority": "master-mounts.json",
       "uuidPrefix": "MNT-*",
       "count": 8,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-mounts.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-mounts.json"
     },
     "harvestNodes": {
       "status": "live",
       "authority": "master-harvest-nodes.json",
       "count": 9,
-      "url": "https://molochdagod.github.io/ObjectStore/api/v1/master-harvest-nodes.json"
+      "url": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json"
     }
   },
   "loadOrder": [
@@ -235,9 +235,9 @@
     "drops": "partial"
   },
   "integration": {
-    "wiring": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/warlords-integration-wiring.json",
-    "missions": "https://molochdagod.github.io/ObjectStore/api/v1/_meta/missions/",
-    "homeIslandContract": "https://molochdagod.github.io/ObjectStore/api/v1/home-island-contract.json",
+    "wiring": "https://info.grudge-studio.com/api/v1/_meta/warlords-integration-wiring.json",
+    "missions": "https://info.grudge-studio.com/api/v1/_meta/missions/",
+    "homeIslandContract": "https://info.grudge-studio.com/api/v1/home-island-contract.json",
     "authGateway": "https://id.grudge-studio.com",
     "gameDataApi": "https://grudge-api-production-0d46.up.railway.app",
     "wcs": "https://wcs.grudge-studio.com",

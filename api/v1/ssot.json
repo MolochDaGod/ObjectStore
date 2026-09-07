@@ -1,15 +1,47 @@
 {
   "version": {
     "worldFleet": "2026-09-06",
-    "assetCatalog": "2026-09-06"
+    "assetCatalog": "2026-09-06",
+    "definitions": "2026-09-06"
   },
+  "law": "Definitions JSON = info.grudge-studio.com/api/v1. Worker objectstore.grudge-studio.com proxies info (no R2 JSON cache). Binaries = assets.grudge-studio.com. Player bag/craft XP = Railway. Start info updates from game-data-manifest + master items/recipes/materials/harvest — not forge-editor.json and not github.io.",
+  "startHere": "/api/v1/game-data-manifest.json",
+  "runtimeIndex": "/api/v1/games-library.json",
   "cdn": "https://assets.grudge-studio.com",
   "info": "https://info.grudge-studio.com",
   "objectStore": "https://objectstore.grudge-studio.com",
   "open": "https://open.grudge-studio.com",
+  "deploy": {
+    "edit": "ObjectStore api/v1/*.json on main",
+    "sync": "npm run sync:docs",
+    "ship": "git push origin main → Vercel objectstore-grudge → info.grudge-studio.com",
+    "proxy": "GET objectstore.grudge-studio.com/api/v1/:name.json fetches info.*",
+    "doNot": [
+      "Do not wrangler catalog JSON onto R2",
+      "Do not start from molochdagod.github.io/ObjectStore",
+      "Do not start from forge-editor.json",
+      "Do not mix feat/blox-edge-proxy WIP into an info JSON deploy"
+    ]
+  },
+  "graph": {
+    "harvestToMaterial": "master-harvest-nodes.json → drops[].materialUuid (loot follows profession level, not node quality)",
+    "materialToRecipe": "master-recipes.json → materials[].uuid",
+    "recipeToItem": "master-recipes.json → resultItemId → master-items.json",
+    "itemToIcon": "master-items.json → iconUrl (assets.grudge-studio.com)",
+    "craftScope": "mats → account bag; profession XP → character UUID"
+  },
   "catalogs": {
-    "masterWeaponSkills": "/api/v1/master-weaponSkills.json",
+    "gameDataManifest": "/api/v1/game-data-manifest.json",
+    "gamesLibrary": "/api/v1/games-library.json",
+    "canonicalItems": "/api/v1/canonical-items-manifest.json",
     "masterItems": "/api/v1/master-items.json",
+    "masterRecipes": "/api/v1/master-recipes.json",
+    "masterMaterials": "/api/v1/master-materials.json",
+    "masterHarvestNodes": "/api/v1/master-harvest-nodes.json",
+    "masterProfessions": "/api/v1/master-professions.json",
+    "homeIslandContract": "/api/v1/home-island-contract.json",
+    "masterWeaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+    "masterWeaponSkills": "/api/v1/master-weaponSkills.json",
     "masterSkillTrees": "/api/v1/master-skillTrees.json",
     "classSkillBridges": "/api/v1/class-skill-bridges.json",
     "classes": "/api/v1/classes.json",
