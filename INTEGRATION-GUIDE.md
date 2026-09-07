@@ -22,7 +22,7 @@ npm install @grudge-studio/core
 import { initGrudgeStudio } from '@grudge-studio/core';
 
 const api = await initGrudgeStudio({
-  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore',
+  objectStoreUrl: 'https://info.grudge-studio.com',
   arsenalUrl: 'https://warlord-crafting-suite.vercel.app',
   puterEnabled: true
 });
@@ -46,7 +46,7 @@ console.log(newItem.uuid); // ITEM-20260225120000-000001-A1B2C3D4
 The SDK now provides typed clients for all Grudge Studio backend services alongside static data:
 
 ```javascript
-import { GrudgeSDK } from 'https://molochdagod.github.io/ObjectStore/sdk/grudge-sdk.js';
+import { GrudgeSDK } from 'https://info.grudge-studio.com/sdk/grudge-sdk.js';
 
 const sdk = new GrudgeSDK({ token: '<JWT>' });
 
@@ -199,7 +199,7 @@ public class GameManager : MonoBehaviour
 import { GrudgeStudioAPI } from '@grudge-studio/core';
 
 const api = new GrudgeStudioAPI({
-  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore'
+  objectStoreUrl: 'https://info.grudge-studio.com'
 });
 
 await api.initialize();
@@ -253,7 +253,7 @@ class ItemSystem {
   }
   
   async loadItems() {
-    const response = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json');
+    const response = await fetch('https://info.grudge-studio.com/api/v1/weapons.json');
     const data = await response.json();
     
     // Register all weapons
@@ -416,7 +416,7 @@ const api = await initGrudgeStudio(config);
 **Config Options**:
 ```typescript
 {
-  objectStoreUrl: string;      // Default: https://molochdagod.github.io/ObjectStore
+  objectStoreUrl: string;      // Default: https://info.grudge-studio.com
   arsenalUrl?: string;         // Default: https://warlord-crafting-suite.vercel.app
   puterEnabled?: boolean;      // Default: false
   puterApiKey?: string;        // Required if puterEnabled
