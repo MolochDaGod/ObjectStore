@@ -50,9 +50,11 @@ Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static d
 - `POST /v1/convert` — 3D model conversion pipeline (Durable Object)
 
 ### Static Game Data (api/v1/)
-Published via GitHub Pages.
+Live SSOT host: **`info.grudge-studio.com/api/v1`**. Worker **proxies** the same paths.  
+Do **not** start updates from `forge-editor.json` or `molochdagod.github.io/ObjectStore`.
 
-**Runtime index (start here):** `games-library.json` → `game-data-manifest.json`
+**Runtime index (start here):** `game-data-manifest.json` → `games-library.json` → master items / recipes / materials / harvest / professions.  
+Deploy pattern: [`docs/INFO_JSON_DEPLOY.md`](docs/INFO_JSON_DEPLOY.md).
 
 **Canonical runtime (weapons, stats, items):**
 - `master-weapon-prefabs.json`, `master-weaponSkills.json`, `master-attributes.json`
