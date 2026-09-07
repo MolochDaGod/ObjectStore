@@ -1,6 +1,6 @@
 {
   "id": "account-game-uuid-contract",
-  "version": "2026-09-03",
+  "version": "2026-09-06",
   "title": "Grudge account DB · game character DB · UUID law",
   "authority": "Railway Postgres grudge-api-production (player SSOT)",
   "notAuthority": ["D1", "localStorage", "Puter KV", "client-minted ent_* bag ids"],
@@ -14,7 +14,11 @@
     "characterName": { "field": "characters.name", "use": "in-world game name" },
     "characterStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display/support not PK" },
     "itemInstance": { "field": "grudge_uuid", "mint": "server ledger/uuid only" },
-    "itemDefinition": { "field": "catalog slug", "use": "recipes/templates only" },
+    "itemDefinition": { "field": "uuid", "format": "ITEM-*|FOOD-*|POTN-*|CONS-*", "catalog": "/api/v1/master-items.json" },
+    "materialDefinition": { "field": "uuid", "format": "MATL-*", "catalog": "/api/v1/master-materials.json" },
+    "recipeDefinition": { "field": "uuid", "format": "RECP-*", "catalog": "/api/v1/master-recipes.json" },
+    "harvestNode": { "field": "nodeUuid", "format": "NODE-*", "catalog": "/api/v1/master-harvest-nodes.json" },
+    "mapPrefab": { "field": "prefabId", "format": "PFAB-*", "catalog": "/api/v1/island-building-prefabs.json" },
     "skillDefinition": { "field": "grudgeUuid", "format": "SKIL-*", "catalog": "/api/v1/master-weaponSkills.json" },
     "iconAsset": { "field": "iconUuid", "format": "ICON-*", "catalog": "/api/v1/icon-path-index.json" },
     "effectDefinition": { "field": "vfxRef", "format": "VFX-*", "catalog": "/api/v1/stylized-projectiles.json", "legacy": "GRDG-3DFX-* read-only" }
@@ -61,6 +65,15 @@
     "serverBan": "world scene.rules.bannedRecipeIds — overlay only",
     "professionXp": "character progress",
     "uniqueOutput": "server grudge_uuid + ledger"
+  },
+  "mapAssets": {
+    "law": "Maps stamp definition UUIDs. Railway owns instances. D1 is not the map DB.",
+    "scene": "definitionUuid + r2Key + SI transform in .gfscene / island seed",
+    "islandDb": "Railway home_islands via /api/island/state",
+    "uniqueLoot": "/api/uuid/* + /api/ledger/* → grudge_uuid",
+    "stackMats": "account bag MATL-* + qty",
+    "harvest": "NODE-* + profession level → MATL-* (not node quality)",
+    "notAuthority": ["D1", "client ent_*", "ObjectStore JSON as ownership"]
   },
   "handoff": {
     "required": ["characterId=uuid", "era"],

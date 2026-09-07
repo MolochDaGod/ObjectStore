@@ -26,7 +26,21 @@ Do **not** start from `forge-editor.json`, a whole-repo WIP dump, or `molochdago
 5. `master-professions.json` · `home-island-contract.json`  
 6. `master-weapon-prefabs.json` · `master-weaponSkills.json`
 
-Harvest loot follows **profession level**, not node quality. Node prefab = `master-harvest-nodes.json` type only.
+Harvest loot follows **profession level**, not node quality. Node prefab = `master-harvest-nodes.json` type only (`NODE-*`).
+
+## UUID + map deploy databases
+
+| Prefix | Catalog | On a map |
+|--------|---------|----------|
+| `NODE-*` | `master-harvest-nodes.json` | Place definition + transform. Harvest → `MATL-*` qty on **account bag** |
+| `PFAB-*` | `island-building-prefabs.json` | Building prefab. Island state = Railway `home_islands` |
+| `ITEM-*` / `FOOD-*` / `POTN-*` / `CONS-*` | `master-items.json` | Definition only. Unique gear → server `grudge_uuid` |
+| `MATL-*` | `master-materials.json` | Stack id + qty — no per-stack UUID |
+| `RECP-*` | `master-recipes.json` | Craft template |
+| RFC UUID | Railway `characters.id` | Play handoff only |
+| `grudge_uuid` | Railway ledger | Unique instance after mint/craft/loot |
+
+D1 = binary **index**. Scene files are not the player DB. Law: [`api/v1/uuid-law.json`](../api/v1/uuid-law.json) `mapDeploy`.
 
 ## Ship
 
