@@ -6,10 +6,10 @@
 
 | Host | Role | Status |
 |------|------|--------|
-| **`grudgewarlords.com/craft/`** | **Full suite SSOT** — stations, benches, bag, XP, arsenal | Live product |
-| **`ui.grudge-studio.com/main-panel.html?era=warlords&tab=craft`** | **HUD craft tab SSOT** — native recipes, no iframe | Live product |
+| **`grudgewarlords.com/craft/`** | **Full suite SSOT** — stations, benches, bag, XP, arsenal · **pop-out** (XFO SAMEORIGIN) | Live product |
+| **`info.grudge-studio.com/main-panel.html`** | **Character sheet SSOT** — paperdoll / bag view · craft tab pops out to suite | Live product |
+| **`ui.grudge-studio.com/main-panel.html`** | HYDRA / era HUD **editor** — not the Warlords character product | Live editor |
 | **`wcs.grudge-studio.com`** | **Brand hub** — routes to suite + panel | Fix: deploy `grudge-wcs/pages-wcs` |
-| `info.grudge-studio.com/main-panel.html` | Legacy mirror of main panel | Native craft tab (no Puter iframe) |
 | `grudge-crafting.puter.site` | Legacy redirect only | Not player SSOT |
 
 ## Hard rules
