@@ -1,7 +1,10 @@
 # Grudge Studio — Canonical Codex (ONE TRUTH)
 
 **Machine SSOT:** [`/api/v1/fleet-canonical.json`](../api/v1/fleet-canonical.json)  
-**Updated:** 2026-07-19  
+**Eras:** [`/api/v1/era-systems.json`](../api/v1/era-systems.json) · [ERA_SYSTEMS_API.md](./ERA_SYSTEMS_API.md)  
+**Open launcher:** [`/api/v1/open-launcher.json`](../api/v1/open-launcher.json)  
+**Prefabs:** [`/api/v1/prefab-scheme.json`](../api/v1/prefab-scheme.json)  
+**Updated:** 2026-09-11  
 **Audience:** agents, deploy, production audits  
 
 This file is the **human index** of the complete production system. Prefer it over scattered notes when wiring, purging, or verifying.

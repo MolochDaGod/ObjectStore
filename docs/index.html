@@ -7,7 +7,7 @@
   <meta name="description" content="Complete API documentation for Grudge Warlords game data">
   <!-- CANONICAL_META:START -->
     <link rel="canonical" href="https://info.grudge-studio.com/docs">
-    <meta name="grudge-canonical-generated" content="2026-09-03T04:00:05.289Z">
+    <meta name="grudge-canonical-generated" content="2026-09-11T05:27:26.365Z">
     <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -237,6 +237,17 @@
     <a href="WARLORDS-PRODUCTION-SSOT.md">Build · Dock · Ships · Water</a>
     <a href="../api/v1/fleet-canonical.json">fleet-canonical.json</a>
     <a href="../api/v1/warlords-production.json">warlords-production.json</a>
+    <div class="section-title">Eras · Open · Prefabs</div>
+    <a href="#era-systems">Era systems API</a>
+    <a href="#open-launcher">Open launcher</a>
+    <a href="#prefab-scheme">Prefab · asset scheme</a>
+    <a href="../api/v1/era-systems.json">era-systems.json</a>
+    <a href="../api/v1/open-launcher.json">open-launcher.json</a>
+    <a href="../api/v1/prefab-scheme.json">prefab-scheme.json</a>
+    <a href="../api/v1/uuid-law.json">uuid-law.json</a>
+    <a href="ERA_SYSTEMS_API.md">Era systems (md)</a>
+    <a href="OPEN_LAUNCHER_API.md">Open launcher (md)</a>
+    <a href="PREFAB_ASSET_SCHEME.md">Prefab scheme (md)</a>
     <div class="section-title">Getting Started</div>
     <a href="#overview">Overview</a>
     <a href="#base-url">Base URL</a>
@@ -345,7 +356,7 @@
         <li><strong>2,765 Registry Entries</strong> in <code class="inline-code">master-registry.json</code></li>
         <li><strong>0 Unified Items</strong> in items-database.json (browser UI)</li>
         <li><strong>313 Animated Characters</strong> in sprite-characters.json</li>
-        <li><strong>196 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
+        <li><strong>205 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
       <!-- CANONICAL_STATS:END -->
       </ul>
       
@@ -1464,6 +1475,103 @@ npm run home-island:upload            # R2 put (skip if size matches)</code></pr
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">Studio service endpoints including home-island contract, biome catalog URLs, and <code class="inline-code">productionWiring</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="era-systems">
+      <h2>Era systems API</h2>
+      <p>Four product eras. One Grudge ID. Roster is <code class="inline-code">GET /api/characters?era=</code>. Machine: <a href="../api/v1/era-systems.json"><code class="inline-code">/api/v1/era-systems.json</code></a>. Human: <a href="./ERA_SYSTEMS_API.md">ERA_SYSTEMS_API.md</a>. UI slots: <a href="https://ui.grudge-studio.com/api/eras">ui.grudge-studio.com/api/eras</a>.</p>
+      <table>
+        <tr><th>Era</th><th>Play</th><th>Stats / body</th><th>Main panel</th><th>Codex JSON</th></tr>
+        <tr>
+          <td><strong>warlords</strong></td>
+          <td><a href="https://client.grudge-studio.com">client.*</a> / grudgewarlords.com</td>
+          <td>STR…TAC · Toon <code class="inline-code">loadRaceKit</code></td>
+          <td><a href="https://ui.grudge-studio.com/main-panel.html?era=warlords">?era=warlords</a></td>
+          <td><a href="../api/v1/grudge6-warlords-play-contract.json">play-contract</a> · <a href="../api/v1/master-items.json">master-items</a></td>
+        </tr>
+        <tr>
+          <td><strong>nexus</strong></td>
+          <td><a href="https://grudges.grudge-studio.com/arpg-game/">grudges play</a> · grudox</td>
+          <td>BIO…GRA · <a href="https://grudges.grudge-studio.com/api/stats/primary">/api/stats</a></td>
+          <td><a href="https://ui.grudge-studio.com/main-panel.html?era=nexus">?era=nexus</a></td>
+          <td>weapons.json · armor.json · era-characters#nexus</td>
+        </tr>
+        <tr>
+          <td><strong>voxel</strong></td>
+          <td>Grudges + Mine-Loader + GRUDOX</td>
+          <td>BIO…GRA in Grudges · TVS / explorer</td>
+          <td><a href="https://ui.grudge-studio.com/main-panel.html?era=voxel">?era=voxel</a></td>
+          <td><a href="../api/v1/voxelAssets.json">voxelAssets.json</a></td>
+        </tr>
+        <tr>
+          <td><strong>armada</strong></td>
+          <td>gated naval / mech</td>
+          <td>hardpoints cockpit/chassis/HPL/HPR/core</td>
+          <td><a href="https://ui.grudge-studio.com/main-panel.html?era=armada">?era=armada</a></td>
+          <td><a href="../api/v1/grudge-armada.json">grudge-armada.json</a></td>
+        </tr>
+      </table>
+      <div class="warning">
+        <div class="warning-title">Handoff + product lock</div>
+        <p>Play URL is always <code class="inline-code">?characterId=&lt;RFC-UUID&gt;&amp;era=&lt;era&gt;</code>. Grudges <strong>play roster is <code class="inline-code">era=voxel</code></strong>. Nexus is the stat/API name and the Grudges main-panel sheet — do not default Grudges heroes to <code class="inline-code">era=nexus</code>.</p>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/era-systems.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Per-era play hosts, catalogs, CDN roots, Foundry create URLs, UI contracts, account wiring.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="open-launcher">
+      <h2>Open launcher (library + account into games)</h2>
+      <p><strong>open.grudge-studio.com</strong> is the Steam-like library and Grudge ID hub — not Warlords play, not GRUDOX cabinets, not Foundry. Machine: <a href="../api/v1/open-launcher.json"><code class="inline-code">/api/v1/open-launcher.json</code></a>. Human: <a href="./OPEN_LAUNCHER_API.md">OPEN_LAUNCHER_API.md</a>.</p>
+      <table>
+        <tr><th>Intent</th><th>URL</th></tr>
+        <tr><td>Library</td><td><a href="https://open.grudge-studio.com/">open.grudge-studio.com</a></td></tr>
+        <tr><td>Danger lab</td><td><code class="inline-code">/danger?era=voxel|warlords|nexus|armada</code></td></tr>
+        <tr><td>Account / roster</td><td><code class="inline-code">/account</code></td></tr>
+        <tr><td>Create hero</td><td><a href="https://character.grudge-studio.com/foundry">character.*/foundry</a></td></tr>
+      </table>
+      <p>Same-origin <code class="inline-code">open…/api/*</code> → Railway. JWT keys: <code class="inline-code">grudge.open.token</code>, <code class="inline-code">sso_token</code>. Engine keeps Controller / weapon / camera on map change; rebind terrain only. Handoff: <code class="inline-code">?characterId=&amp;era=</code>.</p>
+      <div class="warning">
+        <div class="warning-title">Do not</div>
+        <p>Open racer/cabinets on Open Danger. Warlords <code class="inline-code">/home-island</code> on the Open SPA. Login <code class="inline-code">returnTo</code> at <code class="inline-code">character.*</code> or <code class="inline-code">id.*</code>. Second bag DB per satellite.</p>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/open-launcher.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Library filters, SSO, player API routes, per-era play URLs, entry-catch bans.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="prefab-scheme">
+      <h2>Prefab · asset update scheme</h2>
+      <p>One pattern for agents. Machine: <a href="../api/v1/prefab-scheme.json"><code class="inline-code">/api/v1/prefab-scheme.json</code></a>. Human: <a href="./PREFAB_ASSET_SCHEME.md">PREFAB_ASSET_SCHEME.md</a>.</p>
+      <table>
+        <tr><th>Store</th><th>Owns</th><th>How to update</th></tr>
+        <tr><td>ObjectStore JSON</td><td>ITEM / SKIL / PFAB / ICON definitions</td><td>Edit <code class="inline-code">api/v1</code> → <code class="inline-code">npm run sync:docs</code> → <code class="inline-code">npx vercel --prod</code></td></tr>
+        <tr><td>R2 CDN</td><td>GLB / PNG / audio</td><td><code class="inline-code">grudge-convert</code> → r2 put → HEAD 200 not HTML</td></tr>
+        <tr><td>D1 asset_registry</td><td>Search index only</td><td>Seed batches ≤100</td></tr>
+        <tr><td>Railway</td><td>Heroes, bag, ledger instances</td><td>Auth <code class="inline-code">/api/characters</code> · <code class="inline-code">/api/account</code> · <code class="inline-code">/api/uuid</code></td></tr>
+      </table>
+      <p>Skill/item <code class="inline-code">prefab</code> block: <code class="inline-code">modelRef</code> · <code class="inline-code">vfxRef</code> · <code class="inline-code">animationClip</code> = <code class="inline-code">{pack}/{role}</code> on Bip001. Null refs are valid. Play Warlords body = Toon <code class="inline-code">{race}.glb</code> via <code class="inline-code">loadRaceKit</code>.</p>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/prefab-scheme.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Definition vs instance vs binary vs player; add/update steps; Warlords play gate.</p>
         </div>
       </div>
     </section>

@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-11",
+  "title": "Asset · prefab · era update scheme (one pattern)",
+  "docs": [
+    "/docs/PREFAB_ASSET_SCHEME.md",
+    "/docs/ERA-ASSET-TAXONOMY.md",
+    "https://info.grudge-studio.com/docs#prefab-scheme",
+    "/api/v1/fleet-wiring.json",
+    "/api/v1/uuid-law.json"
+  ],
+  "layers": {
+    "definition": {
+      "store": "ObjectStore api/v1 JSON on info.grudge-studio.com",
+      "id": "ITEM-* / SKIL-* / PFAB-* / ICON-*",
+      "write": "PR + vercel --prod ObjectStore"
+    },
+    "instance": {
+      "store": "Railway uuid_ledger",
+      "id": "server-minted grudge_uuid",
+      "write": "POST /api/uuid/generate or craft/ledger"
+    },
+    "binary": {
+      "store": "R2 assets.grudge-studio.com/{r2Key}",
+      "id": "sha1(grudge-asset:{r2Key}) in D1 asset_registry",
+      "write": "grudge-convert → wrangler r2 put → D1 seed"
+    },
+    "player": {
+      "store": "Railway characters / account bag",
+      "id": "characters.id UUID + account grudge_id",
+      "write": "authenticated /api/characters / /api/account/*"
+    }
+  },
+  "neverMix": [
+    "Do not put GLBs in ObjectStore git",
+    "Do not put bag rows in D1",
+    "Do not mint client ent_* as bag SSOT",
+    "Do not use github.io as live JSON SSOT",
+    "Do not treat GRDG-* as character PK"
+  ],
+  "prefabBlock": {
+    "on": "weapon skills / entity prefabs / item prefabs",
+    "fields": {
+      "modelRef": "ITEM UUID or R2 key → GLB",
+      "vfxRef": "VFX-* catalog GLB effect (or null)",
+      "overlayRef": "VFX-STY-* trail overlay (or null)",
+      "impactRef": "impact particle UUID or null",
+      "animationClip": "{pack}/{role} on Bip001 — never Mixamo names on Toon play",
+      "soundRef": "audio UUID or Kenney CDN key",
+      "projectileRef": "projectile mesh UUID or null"
+    },
+    "nullOk": "Client skips null refs. Do not invent placeholder meshes."
+  },
+  "catalogs": {
+    "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+    "itemPrefabs": "/api/v1/master-item-prefabs.json",
+    "entityPrefabs": "/api/v1/warlords-entity-prefabs.json",
+    "weaponSkills": "/api/v1/master-weaponSkills.json",
+    "playHero": "/api/v1/grudge6-warlords-play-contract.json",
+    "gearPresets": "/api/v1/grudge6-gear-presets.json"
+  },
+  "addOrUpdate": {
+    "definition": [
+      "1. Pick era (warlords|nexus|voxel|armada) via /api/v1/era-recognition.json",
+      "2. Add/edit row in the master-* catalog (not archived weapons.json for play)",
+      "3. Mint definition UUID with the family in uuid-law.json (SKIL-/ITEM-/PFAB-/ICON-)",
+      "4. Fill prefab block; leave unused refs null",
+      "5. npm run sync:docs",
+      "6. npx vercel --prod from ObjectStore (info + objectstore aliases)"
+    ],
+    "binary": [
+      "1. Convert with grudge-convert (SI meters, atlas, collider)",
+      "2. R2 key under era-asset-taxonomy prefix",
+      "3. HEAD https://assets.grudge-studio.com/{key} → 200 and not HTML",
+      "4. D1 asset_registry batch ≤100, purpose=play|isolate|author",
+      "5. Point prefab.modelRef at UUID or r2Key"
+    ],
+    "uiEra": [
+      "Patch ui.grudge-studio.com/eras/{era}.json slots + dataBindings",
+      "Do not add a second paperdoll schema"
+    ]
+  },
+  "warlordsPlayGate": {
+    "loader": "loadRaceKit only",
+    "body": "Toon {race}.glb HEAD 200",
+    "mixer": "one AnimationMixer",
+    "anims": "Bip001 idle+walk+cast+melee",
+    "feet": "bone-box min.y on same terrain sample",
+    "red": ["races bake as play body", "FBX in browser", "Meshy", "capsule", "multi-mixer"]
+  }
+}
