@@ -1,0 +1,84 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-11",
+  "title": "Open launcher API — library, account, engine handoff into games",
+  "docs": [
+    "/docs/OPEN_LAUNCHER_API.md",
+    "https://info.grudge-studio.com/docs#open-launcher",
+    "gameopen/docs/ENTRY_CATCH_SSOT.md",
+    "gameopen/docs/FLEET_ERA_CODEX_UUID_SSOT.md",
+    "gameopen/docs/PRODUCT_ROLES_SSOT.md"
+  ],
+  "role": "Steam-like library. Not Warlords play. Not GRUDOX cabinets. Not Foundry.",
+  "host": "https://open.grudge-studio.com",
+  "repo": "Documents/gameopen (MolochDaGod/gameopen)",
+  "libraryFilters": ["voxel", "warlords", "nexus", "armada", "account"],
+  "starts": {
+    "library": "https://open.grudge-studio.com/",
+    "danger": "https://open.grudge-studio.com/danger",
+    "account": "https://open.grudge-studio.com/account",
+    "equipment": "https://open.grudge-studio.com/equipment",
+    "login": "https://open.grudge-studio.com/login",
+    "createHero": "https://character.grudge-studio.com/foundry"
+  },
+  "doNot": [
+    "Open Voxel Velocity / racer inside Danger Room",
+    "Warlords /home-island on the Open SPA",
+    "Login returnTo character.* or id.*",
+    "GRUDOX cabinets on open.grudge-studio.com",
+    "Treat Open as Warlords hub (that is client.grudge-studio.com)"
+  ],
+  "identity": {
+    "sso": "https://id.grudge-studio.com",
+    "bootstrap": "https://id.grudge-studio.com/grudge-game-bootstrap.js",
+    "tokenKeys": ["grudge.open.token", "sso_token", "grudge_token"],
+    "prefer": "sso_token",
+    "me": "GET /api/auth/me (same-origin Open rewrite → Railway)"
+  },
+  "playerApi": {
+    "sameOrigin": "https://open.grudge-studio.com/api/*",
+    "railway": "https://grudge-api-production-0d46.up.railway.app/api/*",
+    "routes": {
+      "health": "GET /api/health",
+      "me": "GET /api/auth/me",
+      "characters": "GET /api/characters?era={warlords|voxel|nexus|armada}",
+      "character": "GET /api/characters/:uuid",
+      "progress": "POST /api/characters/:uuid/progress",
+      "accountBag": "GET /api/account/resources",
+      "inventory": "GET /api/inventory/*",
+      "wallet": "GET /api/wallet/*",
+      "island": "GET /api/island/*",
+      "uuidMint": "POST /api/uuid/generate",
+      "ledgerValidate": "GET /api/ledger/validate/:uuid"
+    }
+  },
+  "definitions": {
+    "info": "https://info.grudge-studio.com/api/v1",
+    "objectstore": "https://objectstore.grudge-studio.com/api/v1",
+    "eraSystems": "/api/v1/era-systems.json",
+    "uuidLaw": "/api/v1/uuid-law.json"
+  },
+  "engineIntoGames": {
+    "handoff": "?characterId=<RFC-UUID>&era=<era>",
+    "keepOnMapChange": ["Controller", "weaponId", "T0 skills", "viewMode"],
+    "rebindOnly": ["MapSurface height", "water", "occluders", "foot sampler"],
+    "code": {
+      "entryCatch": "gameopen artifacts/animator/src/lib/entryCatch.ts",
+      "openRoutes": "openRoutes.ts startUrlForIntent / PRODUCT_STARTS",
+      "auth": "lib/grudgeAuth.ts FLEET_CHARACTER_ERAS",
+      "catalogs": "lib/fleetSsot.ts FLEET_CATALOGS"
+    },
+    "perEraPlay": {
+      "warlords": "https://client.grudge-studio.com/?characterId=&era=warlords",
+      "voxel": "https://grudges.grudge-studio.com/arpg-game/?characterId=&era=voxel",
+      "nexus": "https://ui.grudge-studio.com/main-panel.html?era=nexus&characterId= then grudox/grudges play",
+      "armada": "Foundry/play host when ungated ?era=armada"
+    }
+  },
+  "accountConnections": {
+    "oneAccount": "grudge_id GRUDGE_… owns bag, wallet, home island",
+    "manyHeroes": "characters.id UUID per era shelf",
+    "craft": "mats → account bag · XP → character UUID",
+    "never": "second bag DB per game, guest product auto-login, localStorage-only roster"
+  }
+}
