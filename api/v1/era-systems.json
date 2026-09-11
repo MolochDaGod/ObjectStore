@@ -1,0 +1,157 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-11",
+  "title": "Era systems API — warlords · nexus · voxel · armada",
+  "docs": [
+    "/docs/ERA_SYSTEMS_API.md",
+    "/docs/ERA-ASSET-TAXONOMY.md",
+    "/docs/CANONICAL_CODEX.md",
+    "https://info.grudge-studio.com/docs#era-systems"
+  ],
+  "law": "Four product eras. One Grudge ID account. Roster is per era (GET /api/characters?era=). Definitions live on info/objectstore. Binaries on assets CDN. Player bag/wallet/island on Railway. Do not invent a fifth era or a second roster DB.",
+  "hosts": {
+    "definitions": "https://info.grudge-studio.com/api/v1",
+    "definitionsProxy": "https://objectstore.grudge-studio.com/api/v1",
+    "binaries": "https://assets.grudge-studio.com",
+    "player": "https://grudge-api-production-0d46.up.railway.app",
+    "identity": "https://id.grudge-studio.com",
+    "uiEras": "https://ui.grudge-studio.com/api/eras",
+    "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era={era}",
+    "foundry": "https://character.grudge-studio.com/foundry?era={era}",
+    "open": "https://open.grudge-studio.com"
+  },
+  "uuid": {
+    "contract": "/api/v1/uuid-law.json",
+    "accountGame": "/api/v1/account-game-uuid-contract.json",
+    "handoff": "?characterId=<RFC-UUID>&era=<era>",
+    "banned": ["handoff with GRDG-* or GRUDGE_* as character PK", "client-minted bag ids as SSOT"]
+  },
+  "codex": {
+    "fleet": "/api/v1/fleet-canonical.json",
+    "taxonomy": "/api/v1/era-asset-taxonomy.json",
+    "characters": "/api/v1/era-characters.json",
+    "recognition": "/api/v1/era-recognition.json",
+    "prefabScheme": "/api/v1/prefab-scheme.json",
+    "openLauncher": "/api/v1/open-launcher.json"
+  },
+  "accountIntoGames": {
+    "login": "id.grudge-studio.com → JWT",
+    "tokenKeys": ["grudge.open.token", "sso_token", "grudge_token"],
+    "me": "GET /api/auth/me",
+    "roster": "GET /api/characters?era=<era>",
+    "bag": "GET /api/account/resources",
+    "progress": "POST /api/characters/:id/progress",
+    "sameOrigin": "Vercel SPA /api/* rewrite → Railway",
+    "engine": "Keep Controller + skills + camera on map change; rebind terrain only"
+  },
+  "eras": {
+    "warlords": {
+      "id": "warlords",
+      "status": "canonical",
+      "slots": 4,
+      "pipeline": "grudge6 / Toon RTS loadRaceKit",
+      "stats": "STR VIT DEX INT TAC (8 attrs in master-attributes)",
+      "play": ["https://client.grudge-studio.com", "https://grudgewarlords.com"],
+      "library": "https://open.grudge-studio.com (Warlords shelf)",
+      "create": "https://character.grudge-studio.com/foundry?era=warlords",
+      "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=warlords",
+      "uiContract": "https://ui.grudge-studio.com/api/main-panel/warlords",
+      "codex": {
+        "playContract": "/api/v1/grudge6-warlords-play-contract.json",
+        "catalog": "/api/v1/warlords-catalog.json",
+        "zones": "/api/v1/warlords-zones.json",
+        "items": "/api/v1/master-items.json",
+        "weapons": "/api/v1/master-weapons.json",
+        "weaponSkills": "/api/v1/master-weaponSkills.json",
+        "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+        "entityPrefabs": "/api/v1/warlords-entity-prefabs.json",
+        "gear": "/api/v1/grudge6-gear-presets.json",
+        "kit": "/api/v1/grudge6-canonical.json"
+      },
+      "cdn": {
+        "playBody": "asset-packs/toon-rts-characters/glb/characters/{race}.glb",
+        "anims": "prod/anims/{sword_shield,longbow,magic,rifle}/"
+      },
+      "notPlayBody": ["races bake", "FBX in browser", "Meshy", "capsule"],
+      "factions": "/api/v1/factions.json"
+    },
+    "nexus": {
+      "id": "nexus",
+      "status": "shipping",
+      "slots": 12,
+      "pipeline": "quaternius-humanoid (interim voxel)",
+      "stats": "BIO NEU KIN QNT SYN CHR ENT GRA — live GET https://grudges.grudge-studio.com/api/stats/primary",
+      "note": "Nexus is the stat/API name. Grudges play roster is era=voxel (product lock). Main panel ?era=nexus binds Grudges items + factions.",
+      "play": ["https://grudges.grudge-studio.com/arpg-game/", "https://grudox.grudge-studio.com"],
+      "library": "https://open.grudge-studio.com (Nexus shelf)",
+      "create": "https://character.grudge-studio.com/foundry?era=nexus",
+      "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=nexus",
+      "uiContract": "https://ui.grudge-studio.com/api/main-panel/nexus",
+      "codex": {
+        "stats": "https://grudges.grudge-studio.com/api/stats/catalog",
+        "weapons": "/api/v1/weapons.json",
+        "armor": "/api/v1/armor.json",
+        "characters": "/api/v1/era-characters.json#nexus",
+        "taxonomy": "/api/v1/era-asset-taxonomy.json#eras.nexus"
+      },
+      "cdn": {
+        "characters": "models/nexus/characters/",
+        "factions": "https://grudges.grudge-studio.com/icons/factions/{id}.png"
+      },
+      "factions": ["unaligned", "keepers", "tech_scavengers", "hollow_lords", "network", "forgotten"],
+      "origins": ["street", "military", "scientist", "medic", "engineer", "drifter", "psionic", "chrono"]
+    },
+    "voxel": {
+      "id": "voxel",
+      "status": "canonical",
+      "slots": 4,
+      "pipeline": "voxel / Mixamo explorer / TVS",
+      "stats": "Same Nexus BIO…GRA when playing Grudges",
+      "play": ["https://grudges.grudge-studio.com", "https://mineloader.grudge-studio.com", "https://grudox.grudge-studio.com"],
+      "library": "https://open.grudge-studio.com (Voxel shelf)",
+      "create": "https://character.grudge-studio.com/foundry?era=voxel",
+      "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=voxel",
+      "uiContract": "https://ui.grudge-studio.com/api/main-panel/voxel",
+      "codex": {
+        "voxelAssets": "/api/v1/voxelAssets.json",
+        "tvs": "https://assets.grudge-studio.com/models/voxels/tvs/catalog.json",
+        "openVoxel": "gameopen docs/VOXEL_CANONICAL.md"
+      },
+      "cdn": {
+        "tvs": "models/voxels/tvs/",
+        "generic": "models/voxel/"
+      },
+      "productLock": "Grudges = voxel-era lead game. Do not default Grudges heroes to era=nexus."
+    },
+    "armada": {
+      "id": "armada",
+      "status": "gated",
+      "slots": 4,
+      "pipeline": "naval / mech hardpoints",
+      "stats": "ship/mech loadout (not Toon STR)",
+      "play": ["armada / sail products when ungated"],
+      "library": "https://open.grudge-studio.com (Armada shelf)",
+      "create": "https://character.grudge-studio.com/foundry?era=armada",
+      "mainPanel": "https://ui.grudge-studio.com/main-panel.html?era=armada",
+      "uiContract": "https://ui.grudge-studio.com/api/main-panel/armada",
+      "codex": {
+        "armada": "/api/v1/grudge-armada.json",
+        "naval": "/api/v1/warlords-naval-assets.json",
+        "taxonomy": "/api/v1/era-asset-taxonomy.json#eras.armada"
+      },
+      "cdn": {
+        "ships": "models/ships/",
+        "armada": "models/armada/",
+        "pack": "grudge-armada/"
+      },
+      "slotsUi": ["cockpit", "chassis", "HPL", "HPR", "core"]
+    }
+  },
+  "updatePattern": {
+    "definitions": "Edit ObjectStore api/v1/*.json → npm run sync:docs → vercel --prod info",
+    "binaries": "grudge-convert → R2 put under era taxonomy prefix → D1 seed ≤100 → HEAD CDN",
+    "prefabs": "See /api/v1/prefab-scheme.json",
+    "uiEra": "Patch ui.grudge-studio.com/eras/{era}.json (slots, tabs, dataBindings)",
+    "roster": "Never a second characters table — Railway ?era= only"
+  }
+}
