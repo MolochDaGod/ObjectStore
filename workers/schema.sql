@@ -2,8 +2,9 @@
 -- Run: wrangler d1 execute objectstore-meta --file=workers/schema.sql
 
 CREATE TABLE IF NOT EXISTS assets (
-  id         TEXT PRIMARY KEY,                          -- uuid
+  id         TEXT PRIMARY KEY,                          -- uuid (deterministic sha1(grudge-asset:key) when stamped)
   key        TEXT NOT NULL UNIQUE,                      -- R2 object key (path)
+  grudge_uuid TEXT,                                     -- same UUID v5 as RTS-Grudge asset_registry
   filename   TEXT NOT NULL,                             -- original upload filename
   mime       TEXT,                                      -- content-type
   size       INTEGER,                                   -- bytes
