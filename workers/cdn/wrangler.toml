@@ -27,3 +27,6 @@ bucket_name = "grudge-assets"
 binding = "DB"
 database_name = "grudge-objectstore"
 database_id = "8fc367a8-9120-490e-a503-b0fcb755c044"
+
+# Optional: npx wrangler secret put PURGE_TOKEN -c workers/cdn/wrangler.toml
+# Until set, POST /_purge remains open (used for HTML-poison cleanup).

@@ -1,0 +1,51 @@
+{
+  "id": "canonical-manifest",
+  "aliasOf": "/api/v1/game-data-manifest.json",
+  "version": "2026-09-06",
+  "host": "https://info.grudge-studio.com",
+  "cdn": "https://assets.grudge-studio.com",
+  "uuidLaw": "/api/v1/uuid-law.json",
+  "fleetWiring": "/api/v1/fleet-wiring.json",
+  "startHere": [
+    "/api/v1/uuid-law.json",
+    "/api/v1/game-data-manifest.json",
+    "/api/v1/fleet-wiring.json"
+  ],
+  "play": {
+    "weaponSkills": "/api/v1/master-weaponSkills.json",
+    "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+    "classTrees": "/api/v1/master-skillTrees.json",
+    "attributes": "/api/v1/master-attributes.json",
+    "items": "/api/v1/master-items.json",
+    "materials": "/api/v1/master-materials.json",
+    "recipes": "/api/v1/master-recipes.json",
+    "t0Weapons": "/api/v1/t0-weapons.json",
+    "classes": "/api/v1/classes.json",
+    "races": "/api/v1/races.json",
+    "hero": "Toon RTS {race}.glb via loadRaceKit — not FBX, not sprites",
+    "vfxOverlay": "/api/v1/stylized-projectiles.json",
+    "vfxGlb": "/api/v1/vfx-production-glb.json",
+    "vfxTypes": "/api/v1/vfx-skill-types.json"
+  },
+  "icons": {
+    "relative": "/icons/… on JSON",
+    "cdn": "https://assets.grudge-studio.com + path (or game-assets/icons/…)",
+    "uuid": "ICON-* via /api/v1/icon-path-index.json",
+    "not": "emoji field, /ui/craftpix/icons, invented PNG"
+  },
+  "itemsShape": {
+    "consumables.json": "categories.{redFoods|…}.items[] — slug + iconPath, not items[]",
+    "materials.json": "categories.{ore|…}.items[] — design; runtime master-materials.json",
+    "master-items.json": "ITEM-* definitions"
+  },
+  "doNotUseForPlay": {
+    "weaponSkills.json": "archived stub — replacement master-weaponSkills.json",
+    "skills.json": "legacy kebab ids (vengeful-slash) — not play",
+    "weapons.json": "design templates — runtime master-weapon-prefabs.json",
+    "attributes.json": "archived — master-attributes.json",
+    "items-database.json": "archived — master-items.json",
+    "github.io/ObjectStore": "not live JSON SSOT (uuid-law banned)",
+    "api.grudge-studio.com": "dead public host",
+    "SkillAPI /api/v1/bundle": "drafts Durable Object, not catalog"
+  }
+}

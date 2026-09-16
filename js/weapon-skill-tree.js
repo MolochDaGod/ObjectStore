@@ -128,9 +128,12 @@
 
   function defaultAsset(url) {
     if (!url) return url;
-    if (/^(https?:|data:|blob:)/i.test(url)) return url;
-    if (url.startsWith('/icons/')) return `${CDN}${url}`;
-    return url;
+    let u = String(url).trim();
+    // info/objectstore return HTML (200) for missing /icons — never load those.
+    u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+    if (/^(https?:|data:|blob:)/i.test(u)) return u;
+    if (u.startsWith('/icons/') || u.startsWith('/game-assets/icons/')) return `${CDN}${u}`;
+    return u;
   }
 
   function normalizeCategory(raw) {

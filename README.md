@@ -3,7 +3,7 @@
 
 The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
-**Live API:** [info.grudge-studio.com](https://info.grudge-studio.com) · [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
+**Live API:** [info.grudge-studio.com](https://info.grudge-studio.com) · Worker [objectstore.grudge-studio.com](https://objectstore.grudge-studio.com) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
 
 ---
 
@@ -127,7 +127,7 @@ npm install @grudgstudio/core
 import { initGrudgeStudio } from '@grudgstudio/core';
 
 const api = await initGrudgeStudio({
-  objectStoreUrl: 'https://molochdagod.github.io/ObjectStore',
+  objectStoreUrl: 'https://info.grudge-studio.com',
   puterEnabled: true,  // Enable AI image generation
   aiBackendUrl: 'http://localhost:3000/api/ai',  // AI agents backend
   gameApiUrl: 'http://localhost:4000/api/gruda'  // GAME_API_GRUDA

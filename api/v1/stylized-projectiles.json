@@ -1,0 +1,109 @@
+{
+  "id": "stylized-projectiles",
+  "version": "1.2.0",
+  "updated": "2026-09-06",
+  "source": "laplahce Stylized Projectiles (Unity URP/HDRP demo player). Free pack: 19 projectiles + 19 muzzle + 19 hit. Unity VFX Graph — ripped textures + catalog, not a second VFX engine.",
+  "license": "Unity Asset Store / itch.io laplahce — credit pack; do not redistribute UnityPlayer.exe",
+  "rip": {
+    "from": "Desktop/grudgeproduction/.../Stylized Projectiles_Data (compiled player, not FBX source)",
+    "method": "UnityPy Texture2D extract",
+    "not": "Unity VFX Graph graphs cannot become GLB 1:1 — heads are meshes+shaders; trails/hits are textures"
+  },
+  "hosts": {
+    "playSameOrigin": "/models/vfx/stylized-projectiles/",
+    "dungeon": "https://grudge-dungeons.vercel.app/models/vfx/stylized-projectiles/",
+    "grudaskill": "https://grudaskill.grok.me/models/vfx/stylized-projectiles/",
+    "cdnLater": "assets.grudge-studio.com/models/vfx/stylized-projectiles/"
+  },
+  "uuid": {
+    "prefix": "VFX-",
+    "field": "overlayRef",
+    "bind": "skill.prefab.overlayRef",
+    "keep": "prefab.vfxRef / impactRef stay catalog GLB effect ids (inferno, frost_wave). Do not replace with VFX-STY-* — VfxDirector does not play overlay ids as scenes.",
+    "not": "GRDG-3DFX-* collides with hero display stamp GRDG-* — do not mint new GRDG-3DFX ids"
+  },
+  "agentRules": [
+    "Load this catalog before inventing a projectile look.",
+    "3D bolt mesh = models/vfx/orbs/orb-*.glb (never whole fireball.glb).",
+    "Trail/head/hit = this pack. Bind skill.prefab.overlayRef = VFX-STY-*.",
+    "prefab.vfxRef stays impact/travel GLB id (inferno, frost_wave, moon_beam).",
+    "Match existing catalog skill ids only — never invent SKIL- rows.",
+    "Bows use styproj.arrow (Arrow01). Guns use laser/laser2. Staffs use element look.",
+    "Unity VFX Graph graphs are not GLB."
+  ],
+  "keepOrbs": "models/vfx/orbs/orb-*.glb remain 3D bolt mesh; this pack is trail/hit/head overlay",
+  "vfxGraph": [
+    "Emitter-Mesh", "Emitter-Quad", "Emitter-Smoke",
+    "Head-Ice", "Head-Lit", "Head-Mesh", "Head-Quad",
+    "Hit-Emitter-Alpha", "Hit-Emitter-Quad", "Hit-Emitter-Smoke", "Hit-Head-Mesh", "Hit-Head-Quad",
+    "Muzzle-Core", "Muzzle-Emitter", "Muzzle-Emitter-Smoke", "Muzzle-Shape",
+    "Shield"
+  ],
+  "meshesNamed": ["Diamond", "Dice", "Laser01", "Laser02", "Shard", "Shield01", "Shield03", "Shield04", "Shuriken", "Star", "Cylinder"],
+  "projectiles": [
+    { "id": "styproj.card", "vfxRef": "VFX-STY-CARD", "name": "Cards", "kind": "projectile", "tex": "Card01.png", "trail": "Trail01.png", "hit": "Glow01.png", "muzzle": "Flash01.png", "element": "arcane", "spin": 5, "headSize": 0.72, "trailLen": 1.7, "trailWidth": 0.32, "skills": ["staff_arcane_bolt", "tome_arcane_burst", "t0_tome_practice_cantrip"] },
+    { "id": "styproj.shadow", "vfxRef": "VFX-STY-SHADOW", "name": "Shadow", "kind": "projectile", "tex": "Mask01.png", "trail": "Trail08.png", "hit": "Smoke_3.png", "muzzle": "Flare01.png", "element": "shadow", "spin": 0, "headSize": 0.82, "trailLen": 2.0, "trailWidth": 0.36, "skills": ["staff_void_bolt", "gun_shadow_shot", "gun_crimson_blast", "bow_phantom_arrows"] },
+    { "id": "styproj.triangle", "vfxRef": "VFX-STY-TRIANGLE", "name": "Triangle", "kind": "projectile", "tex": "Shape01.png", "trail": "Trail04.png", "hit": "Flash01.png", "muzzle": "Flash01.png", "element": "arcane", "spin": 10, "headSize": 0.5, "trailLen": 1.55, "trailWidth": 0.24, "skills": ["staff_arcane_missile", "t0_wand_arcane_ping"] },
+    { "id": "styproj.heart", "vfxRef": "VFX-STY-HEART", "name": "Heart", "kind": "projectile", "tex": "Glow01.png", "trail": "Trail07.png", "hit": "Flare01.png", "muzzle": "Glow01.png", "element": "holy", "spin": 1.2, "headSize": 0.78, "trailLen": 1.8, "trailWidth": 0.34, "skills": ["staff_holy_light", "staff_radiant_heal", "t0_tome_minor_heal"] },
+    { "id": "styproj.leaf", "vfxRef": "VFX-STY-LEAF", "name": "Leaf", "kind": "projectile", "tex": "Leaf_1.png", "trail": "Trail06.png", "hit": "Smoke_3.png", "muzzle": "Flare01.png", "element": "nature", "spin": 7, "headSize": 0.58, "trailLen": 1.7, "trailWidth": 0.28, "skills": ["staff_natures_fury", "t0_staff_vine_lash", "bow_poison_arrow"] },
+    { "id": "styproj.diamond", "vfxRef": "VFX-STY-DIAMOND", "name": "Diamond", "kind": "projectile", "tex": "Shape02.png", "trail": "Trail02.png", "hit": "Snowflakes_1.png", "muzzle": "Glow01.png", "mesh": "Diamond", "element": "frost", "spin": 12, "headSize": 0.52, "trailLen": 1.85, "trailWidth": 0.26, "skills": ["staff_frost_bolt", "t0_wand_frost_spark"] },
+    { "id": "styproj.diamond2", "vfxRef": "VFX-STY-DIAMOND2", "name": "Diamond B", "kind": "projectile", "tex": "Shape02-hollow.png", "trail": "Trail05.png", "hit": "Snow.png", "muzzle": "Glow01.png", "mesh": "Diamond", "element": "ice", "spin": 9, "headSize": 0.62, "trailLen": 1.6, "trailWidth": 0.3, "skills": ["staff_ice_nova", "staff_glacial_shield"] },
+    { "id": "styproj.angelic", "vfxRef": "VFX-STY-ANGELIC", "name": "Angelic", "kind": "projectile", "tex": "Flare01.png", "trail": "Trail09.png", "hit": "Glow01.png", "muzzle": "Flare01.png", "element": "holy", "spin": 2, "headSize": 0.88, "trailLen": 2.0, "trailWidth": 0.38, "skills": ["staff_crusaders_light", "staff_retribution"] },
+    { "id": "styproj.laser", "vfxRef": "VFX-STY-LASER", "name": "Laser", "kind": "beam", "tex": "Thin01.png", "trail": "Trail01.png", "hit": "Flash01.png", "muzzle": "Flash01.png", "mesh": "Laser01", "element": "fire", "spin": 0, "headSize": 0.38, "trailLen": 2.45, "trailWidth": 0.16, "skills": ["staff_fire_bolt", "staff_flame_wave", "gun_explosive_round", "gun_flame_burst", "gun_hellfire_barrage", "gun_demon_blast"] },
+    { "id": "styproj.laser2", "vfxRef": "VFX-STY-LASER2", "name": "Laser B", "kind": "beam", "tex": "Thin02.png", "trail": "Trail02.png", "hit": "Lightning01.png", "muzzle": "Flash01.png", "mesh": "Laser02", "element": "lightning", "spin": 0, "headSize": 0.34, "trailLen": 2.6, "trailWidth": 0.14, "skills": ["staff_chain_lightning", "staff_storm_call", "gun_grudge_shot", "gun_sniper_round", "gun_cannon_execute"] },
+    { "id": "styproj.dagger", "vfxRef": "VFX-STY-DAGGER", "name": "Dagger", "kind": "projectile", "tex": "Dagger.png", "trail": "Trail04.png", "hit": "Slash01.png", "muzzle": "Flash01.png", "element": "physical", "spin": 14, "headSize": 0.48, "trailLen": 1.45, "trailWidth": 0.2, "skills": ["dagger_crimson_stab", "spear_javelin", "gs_giant_reach"] },
+    { "id": "styproj.dagger2", "vfxRef": "VFX-STY-DAGGER2", "name": "Dagger B", "kind": "projectile", "tex": "Dagger.png", "trail": "Trail08.png", "hit": "Slash02.png", "muzzle": "Flash01.png", "element": "shadow", "spin": 16, "headSize": 0.48, "trailLen": 1.55, "trailWidth": 0.2, "skills": ["dagger_phantom_dash", "dagger_shadow_stab"] },
+    { "id": "styproj.frost", "vfxRef": "VFX-STY-FROST", "name": "Frost", "kind": "projectile", "tex": "Snowflakes_1.png", "trail": "Trail05.png", "hit": "Glow01.png", "muzzle": "Glow01.png", "vfxGraph": "Head-Ice", "element": "frost", "spin": 3, "headSize": 0.74, "trailLen": 1.75, "trailWidth": 0.32, "skills": ["staff_blizzard", "staff_absolute_zero"] },
+    { "id": "styproj.flower", "vfxRef": "VFX-STY-FLOWER", "name": "Flower", "kind": "projectile", "tex": "Flower.png", "trail": "Trail06.png", "hit": "Leaf_4.png", "muzzle": "Flare01.png", "element": "nature", "spin": 2.4, "headSize": 0.64, "trailLen": 1.5, "trailWidth": 0.28, "skills": ["t0_staff_healing_sprout"] },
+    { "id": "styproj.star", "vfxRef": "VFX-STY-STAR", "name": "Star", "kind": "projectile", "tex": "Star_1.png", "sheet": "Star_1_Spritesheet.png", "trail": "Trail09.png", "hit": "Flare01.png", "muzzle": "Glow01.png", "mesh": "Star", "element": "holy", "spin": 8, "headSize": 0.68, "trailLen": 1.9, "trailWidth": 0.3, "skills": ["staff_divine_wave", "staff_holy_beacon"] },
+    { "id": "styproj.electric_shadow", "vfxRef": "VFX-STY-ELECSHADOW", "name": "Electric Shadow", "kind": "projectile", "tex": "Lightning01.png", "trail": "Trail08.png", "hit": "Flash01.png", "muzzle": "Flash01.png", "element": "shadow", "spin": 0, "headSize": 0.86, "trailLen": 2.1, "trailWidth": 0.28, "skills": ["spear_phantom"] },
+    { "id": "styproj.electric", "vfxRef": "VFX-STY-ELECTRIC", "name": "Electric", "kind": "beam", "tex": "Lightning01.png", "trail": "Trail02.png", "hit": "Flash01.png", "muzzle": "Flash01.png", "element": "lightning", "spin": 0, "headSize": 0.9, "trailLen": 2.3, "trailWidth": 0.26, "skills": ["staff_thundergods_judgment", "staff_thunder_cataclysm"] },
+    { "id": "styproj.shuriken", "vfxRef": "VFX-STY-SHURIKEN", "name": "Shuriken", "kind": "projectile", "tex": "Shape03.png", "trail": "Trail04.png", "hit": "Slash01.png", "muzzle": "Flash01.png", "mesh": "Shuriken", "element": "physical", "spin": 20, "headSize": 0.5, "trailLen": 1.4, "trailWidth": 0.22, "skills": ["dagger_raging_blades"] },
+    { "id": "styproj.smoke", "vfxRef": "VFX-STY-SMOKE", "name": "Smoke", "kind": "projectile", "tex": "Smoke_1.png", "trail": "Trail09.png", "hit": "Smoke_3.png", "muzzle": "Smoke_2.png", "vfxGraph": "Emitter-Smoke", "element": "physical", "spin": 0, "headSize": 0.92, "trailLen": 1.55, "trailWidth": 0.4, "skills": ["t0_wand_practice_bolt"] },
+    { "id": "styproj.arrow", "vfxRef": "VFX-STY-ARROW", "name": "Arrow", "kind": "projectile", "tex": "Arrow01.png", "trail": "Trail04.png", "hit": "Slash01.png", "muzzle": "Flash01.png", "element": "physical", "spin": 0, "headSize": 0.7, "trailLen": 1.9, "trailWidth": 0.16, "skills": ["t0_bow_practice_shot", "t0_bow_pinning_arrow", "t0_bow_rapid_fire", "bow_quick_shot", "bow_multishot", "bow_piercing"] }
+  ],
+  "muzzle": [
+    { "id": "stymuz.core", "vfxRef": "VFX-STYMUZ-CORE", "tex": "Flash01.png", "vfxGraph": "Muzzle-Core" },
+    { "id": "stymuz.emitter", "vfxRef": "VFX-STYMUZ-EMIT", "tex": "Flare01.png", "vfxGraph": "Muzzle-Emitter" },
+    { "id": "stymuz.smoke", "vfxRef": "VFX-STYMUZ-SMOKE", "tex": "Smoke_2.png", "vfxGraph": "Muzzle-Emitter-Smoke" },
+    { "id": "stymuz.shape", "vfxRef": "VFX-STYMUZ-SHAPE", "tex": "Glow01.png", "vfxGraph": "Muzzle-Shape" }
+  ],
+  "hits": [
+    { "id": "styhit.alpha", "vfxRef": "VFX-STYHIT-ALPHA", "tex": "Glow01.png", "vfxGraph": "Hit-Emitter-Alpha", "use": "impact" },
+    { "id": "styhit.quad", "vfxRef": "VFX-STYHIT-QUAD", "tex": "Flash01.png", "vfxGraph": "Hit-Emitter-Quad", "use": "impact" },
+    { "id": "styhit.smoke", "vfxRef": "VFX-STYHIT-SMOKE", "tex": "Smoke_3.png", "vfxGraph": "Hit-Emitter-Smoke", "use": "explosion" },
+    { "id": "styhit.head_mesh", "vfxRef": "VFX-STYHIT-SLASH", "tex": "Slash01.png", "vfxGraph": "Hit-Head-Mesh", "use": "melee" },
+    { "id": "styhit.head_quad", "vfxRef": "VFX-STYHIT-SLASH2", "tex": "Slash02.png", "vfxGraph": "Hit-Head-Quad", "use": "slash" }
+  ],
+  "trails": [
+    { "file": "Trail01.png", "vfxRef": "VFX-STYTRAIL-01" },
+    { "file": "Trail02.png", "vfxRef": "VFX-STYTRAIL-02" },
+    { "file": "Trail04.png", "vfxRef": "VFX-STYTRAIL-04" },
+    { "file": "Trail05.png", "vfxRef": "VFX-STYTRAIL-05" },
+    { "file": "Trail06.png", "vfxRef": "VFX-STYTRAIL-06" },
+    { "file": "Trail07.png", "vfxRef": "VFX-STYTRAIL-07" },
+    { "file": "Trail08.png", "vfxRef": "VFX-STYTRAIL-08" },
+    { "file": "Trail09.png", "vfxRef": "VFX-STYTRAIL-09" }
+  ],
+  "bind": {
+    "skillField": "prefab.overlayRef",
+    "prefix": "VFX-",
+    "catalog": "stylized-projectiles.json id",
+    "keepOrbs": "models/vfx/orbs/orb-*.glb remain 3D bolt mesh; this pack is trail/hit/head overlay",
+    "keepVfxRef": "prefab.vfxRef is GLB/catalog effect (inferno) — overlayRef is VFX-STY-*"
+  },
+  "idPatterns": [
+    { "test": "bow_|_arrow|quick_shot|multishot|piercing|pinning", "id": "styproj.arrow" },
+    { "test": "gun_|sniper|cannon", "element": "fire", "id": "styproj.laser" },
+    { "test": "gun_|sniper|cannon", "element": "shadow", "id": "styproj.shadow" },
+    { "test": "gun_|sniper|cannon", "id": "styproj.laser2" },
+    { "test": "javelin|giant_reach", "id": "styproj.dagger" },
+    { "test": "frost|ice|glacial|blizzard|spark", "id": "styproj.diamond" },
+    { "test": "holy|radiant|heal|beacon|divine", "id": "styproj.heart" },
+    { "test": "nature|vine|leaf|poison", "id": "styproj.leaf" },
+    { "test": "lightning|thunder|storm", "id": "styproj.electric" },
+    { "test": "fire|flame|inferno|meteor|hell", "id": "styproj.laser" },
+    { "test": "shadow|void|phantom", "id": "styproj.shadow" },
+    { "test": "arcane|wand|cantrip|card", "id": "styproj.card" }
+  ]
+}

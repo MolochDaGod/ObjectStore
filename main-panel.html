@@ -816,7 +816,7 @@
   <header class="top-bar">
     <div class="logo"><a href="index.html" style="color:var(--gold)" data-i18n="app.hub">← Hub</a> <h1 style="display:inline;margin-left:12px" class="gold-text" data-i18n="app.brand">Grudge Warlords</h1></div>
     <div class="player-info">
-      <span class="name" id="playerName">Guest</span>
+      <span class="name" id="playerName" data-i18n="app.guest">Guest</span>
       <span style="color:var(--muted);font-size:11px" id="playerClass">Lv.1 Warrior</span>
       <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
       <div id="mp2dLangHost"></div>
@@ -826,7 +826,7 @@
   <div id="mainScroll" class="main-canvas-host" aria-label="Main panel canvas">
   <div class="main-body" id="mainBody">
     <aside class="left-col mp-side" id="leftPanel" data-side="left" aria-label="Character stats panel">
-      <button type="button" class="mp-side-rail" data-side="left" data-mp-expand="left" aria-expanded="true" title="Expand stats panel">Stats</button>
+      <button type="button" class="mp-side-rail" data-side="left" data-mp-expand="left" aria-expanded="true" title="Expand stats panel" data-i18n="app.stats">Stats</button>
       <div class="mp-side-inner">
         <div class="mp-side-toolbar">
           <button type="button" class="mp-side-min" data-mp-collapse="left" title="Minimize to side tab" aria-label="Minimize left panel">«</button>
@@ -837,9 +837,9 @@
     </aside>
     <main class="center-col">
       <div class="unit-context-banner" id="unitContextBanner" aria-live="polite">
-        <span class="uc-kind" id="ucKind">Unit</span>
+        <span class="uc-kind" id="ucKind" data-i18n="app.unit">Unit</span>
         <span id="ucName">—</span>
-        <button type="button" class="uc-clear" id="ucClear">Clear · Self</button>
+        <button type="button" class="uc-clear" id="ucClear" data-i18n="app.clearSelf">Clear · Self</button>
       </div>
       <div class="mp-status" id="mpStatus" role="status" aria-live="polite"></div>
       <div class="error-banner" id="errorBanner"></div>
@@ -850,7 +850,7 @@
     </main>
     <aside class="right-col mp-side" id="invPanel" data-side="right" aria-label="Inventory panel">
       <div class="mp-side-resizer" data-side="right" role="separator" aria-orientation="vertical" aria-label="Resize inventory panel" title="Drag to resize · double-click to minimize"></div>
-      <button type="button" class="mp-side-rail" data-side="right" data-mp-expand="right" aria-expanded="true" title="Expand inventory">Bag</button>
+      <button type="button" class="mp-side-rail" data-side="right" data-mp-expand="right" aria-expanded="true" title="Expand inventory" data-i18n="app.bag">Bag</button>
       <div class="mp-side-inner">
         <div class="mp-side-toolbar">
           <button type="button" class="mp-side-min" data-mp-collapse="right" title="Minimize to side tab" aria-label="Minimize inventory panel">»</button>
@@ -858,7 +858,7 @@
         <div class="inv-header">
           <div>
             <h3 data-i18n="app.inventory">Inventory</h3>
-            <div class="bag-scope" id="bagScope">Account bag · UUID stacks</div>
+            <div class="bag-scope" id="bagScope" data-i18n="app.bagScope">Account bag · UUID stacks</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="inv-count" id="invCount">0/42</span>
@@ -877,10 +877,10 @@
 <div class="eq-tooltip" id="eqTooltip"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="./js/weapon-skill-tree.js?v=greataxe1"></script>
+<script src="./js/weapon-skill-tree.js?v=icons2"></script>
 <script src="./js/main-panel-systems.js?v=class-graph-specs1"></script>
-<script src="./js/main-panel-i18n.js?v=fluid4"></script>
-<script src="./js/main-panel-2d.js?v=sidepanels1"></script>
+<script src="./js/main-panel-i18n.js?v=i18n2"></script>
+<script src="./js/main-panel-2d.js?v=i18n2"></script>
 <script src="./js/main-panel-side-panels.js?v=sidepanels1"></script>
 <script src="./js/main-panel-canvas-2d.js?v=sidepanels1"></script>
 <script>
@@ -891,9 +891,13 @@
   })();
   function asset(url) {
     if (!url) return url;
-    if (/^(https?:|data:|blob:)/i.test(url)) return url;
-    if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
-    return url;
+    let u = String(url).trim();
+    // Missing keys on info.grudge-studio.com 200 as HTML — icons must hit R2.
+    u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+    if (/^(https?:|data:|blob:)/i.test(u)) return u;
+    if (u.startsWith('/icons/') || u.startsWith('/game-assets/icons/')) return `${CDN}${u}`;
+    if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
+    return u;
   }
   const API_SOURCES = [
     'https://info.grudge-studio.com/api/v1',
@@ -967,6 +971,12 @@
     Cloak: 'Cloak',
     Ring: 'Ring',
   };
+  function slotLabel(slot) {
+    const key = 'slots.' + slot;
+    const t = window.MainPanelI18n?.t?.(key);
+    if (t && t !== key) return t;
+    return SLOT_LABELS[slot] || slot;
+  }
 
   // Class → armor material type
   const CLASS_ARMOR = {
@@ -1125,8 +1135,9 @@
     1:'#8b7355', 2:'#a8a8a8', 3:'#4a9eff', 4:'#9d4dff',
     5:'#ff4d4d', 6:'#ffaa00', 7:'#d4a84b', 8:'#f0d890'
   };
+  // SSOT: master-items.tierLabel (Starter + Common…Legendary). Not docs T8 Divine.
   const TIER_LABELS = {
-    1:'Common', 2:'Uncommon', 3:'Rare', 4:'Epic',
+    0:'Starter', 1:'Common', 2:'Uncommon', 3:'Rare', 4:'Epic',
     5:'Heroic', 6:'Mythic', 7:'Ancient', 8:'Legendary'
   };
 
@@ -1142,18 +1153,20 @@
     { name:'Engineer', color:'var(--engineer)', level:1, xp:10, iconUrl:`${CDN}/icons/pack/weapons/Crossbow_01.png` },
   ];
 
-  // Runtime icon URL fixer — remaps legacy broken paths to real ObjectStore paths
+  // Runtime icon URL fixer — remaps legacy broken paths to R2 PNG URLs.
+  // Never resolve /icons on info.grudge-studio.com (HTML-on-miss).
   function fixIconUrl(url) {
     if (!url) return '';
-    if (url.includes('/icons/food/')) {
+    let u = asset(url);
+    if (u.includes('/icons/food/')) {
       const map = { 'food_red.png':'food_steak_cooked.png', 'food_green.png':'food_grapes.png', 'food_blue.png':'food_fish_red.png' };
-      const file = url.split('/').pop();
-      return `${CDN}/icons/consumables/${map[file] || 'food_steak_cooked.png'}`;
+      const file = u.split('/').pop();
+      return `${CDN}/game-assets/icons/consumables/${map[file] || 'food_steak_cooked.png'}`;
     }
-    if (url.includes('/icons/potions/')) {
-      return `${CDN}/icons/consumables/health_potion.png`;
+    if (u.includes('/icons/potions/')) {
+      return `${CDN}/game-assets/icons/consumables/health_potion.png`;
     }
-    return url;
+    return u;
   }
 
   function findItemByUuid(uuid) { return allItems.find(i => i.uuid === uuid); }
@@ -1919,7 +1932,7 @@ function showError(msg) {
     let html = '';
     for (let i = 0; i < 5; i++) {
       const s = hotbarSkills[i];
-      const icon = s?.icon || '';
+      const icon = fixIconUrl(s?.icon || s?.skill?.iconUrl || s?.skill?.icon || '');
       const title = s?.label || `Slot ${i + 1}`;
       html += `<div class="hb-slot skill" title="${esc(title)}"><span class="key">${i + 1}</span>`;
       if (icon) html += `<img src="${icon}" alt="${esc(title)}" onerror="this.style.display='none'">`;
@@ -1962,6 +1975,7 @@ function showError(msg) {
     renderHotbar();
     if (['Equipment', 'Skills', 'Attributes', 'Professions', 'Crafting'].includes(activeTab)) renderTab();
   }
+  window.refreshAll = refreshAll;
 
   function switchTab(t) {
     activeTab = t;
@@ -2091,7 +2105,7 @@ function showError(msg) {
       attachSlotListeners();
       // Mount Three.js hero after DOM paint (equip mesh filter + mesh kit editor)
       requestAnimationFrame(() => {
-        import('./js/main-panel-hero-viewport.js?v=paperdoll4')
+        import('./js/main-panel-hero-viewport.js?v=dollfold6')
           .then(async (mod) => {
             const host = document.getElementById('hero-viewport');
             if (!host) return;
@@ -2167,15 +2181,7 @@ function showError(msg) {
     }).join('');
 
 
-    // Large grudge6 hero viewport — equip mesh visibility (bag/lumber hidden)
-    const grudge6Url = `https://assets.grudge-studio.com/models/grudge6/races/${
-      selectedRace === 'human' ? 'WK' :
-      selectedRace === 'orc' ? 'ORC' :
-      selectedRace === 'elf' ? 'ELF' :
-      selectedRace === 'dwarf' ? 'DWF' :
-      selectedRace === 'undead' ? 'UD' :
-      selectedRace === 'barbarian' ? 'BRB' : 'WK'
-    }_Characters.glb`;
+    // Play kit SSOT: Toon RTS {race}.glb (Bip001). Not Unity WK_Characters.glb.
     let centerHtml = `
       <div style="text-align:center;padding:4px 8px 8px;width:100%;">
         <div style="font-family:var(--font-display);font-size:14px;color:${rm.color};letter-spacing:1px;">${rm.name}</div>
@@ -2208,8 +2214,8 @@ function showError(msg) {
     }
 
     centerHtml += `<div style="margin-top:6px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-      <a href="${grudge6Url}" target="_blank" rel="noopener" style="font-size:8px;color:var(--gold);">grudge6 GLB ↗</a>
-      <a href="${modelUrl}" target="_blank" rel="noopener" style="font-size:8px;color:var(--dim);">toon pack ↗</a>
+      <a href="${modelUrl}" target="_blank" rel="noopener" style="font-size:8px;color:var(--gold);">Toon RTS kit ↗</a>
+      <a href="./GRUDGE6_Characters.html" style="font-size:8px;color:var(--dim);">Bones / sockets ↗</a>
     </div>`;
     centerHtml += `</div>`;
 
@@ -2278,14 +2284,14 @@ function showError(msg) {
     const tierColor = TIER_COLORS[tier] || '#3a2a1a';
     const iconHtml = item && item.iconUrl
       ? `<img class="slot-icon" src="${fixIconUrl(item.iconUrl)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`
-      : `<span class="slot-placeholder">${SLOT_LABELS[slotName] || slotName}</span>`;
+      : `<span class="slot-placeholder">${slotLabel(slotName)}</span>`;
     const tierBadge = item
       ? `<span class="slot-tier" style="background:${tierColor};color:#000;">T${tier}</span>`
       : '';
     return `<div class="eq-slot ${isEquipped ? 'equipped' : ''}" data-slot="${slotName}" data-uuid="${item ? uuid : ''}" style="${isEquipped ? 'border-color:'+tierColor : ''}" title="${isEquipped ? esc(item.name) : slotName + ' (empty)'}">
       ${tierBadge}
       ${iconHtml}
-      <span class="slot-label">${SLOT_LABELS[slotName] || slotName}</span>
+      <span class="slot-label">${slotLabel(slotName)}</span>
     </div>`;
   }
 
@@ -2299,7 +2305,7 @@ function showError(msg) {
       if (!item || !isMeshEquipmentItem(item)) continue;
       const icon = item.iconUrl
         ? `<img src="${fixIconUrl(item.iconUrl)}" alt="" onerror="this.style.display='none'">`
-        : `<span style="font-size:9px;color:var(--dim)">${SLOT_LABELS[slot] || slot}</span>`;
+        : `<span style="font-size:9px;color:var(--dim)">${slotLabel(slot)}</span>`;
       chips.push(`<div class="eq-mesh-chip" data-slot="${slot}" data-uuid="${uuid}">
         ${icon}
         <div>

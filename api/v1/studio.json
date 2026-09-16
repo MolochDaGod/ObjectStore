@@ -27,7 +27,28 @@
       }
     },
     "gameData": {
-      "description": "Static JSON game data for Grudge Warlords",
+      "description": "Static JSON game data for Grudge Warlords. Play runtime = runtimeCatalog (master-*). endpoints[] includes legacy files that still 200.",
+      "start": "/api/v1/game-data-manifest.json",
+      "uuidLaw": "/api/v1/uuid-law.json",
+      "canonicalManifest": "/api/v1/canonical-manifest.json",
+      "runtimeCatalog": {
+        "weaponSkills": "/api/v1/master-weaponSkills.json",
+        "weaponPrefabs": "/api/v1/master-weapon-prefabs.json",
+        "classTrees": "/api/v1/master-skillTrees.json",
+        "attributes": "/api/v1/master-attributes.json",
+        "items": "/api/v1/master-items.json",
+        "materials": "/api/v1/master-materials.json",
+        "recipes": "/api/v1/master-recipes.json",
+        "t0Weapons": "/api/v1/t0-weapons.json",
+        "stylizedProjectiles": "/api/v1/stylized-projectiles.json"
+      },
+      "doNotUseForPlay": {
+        "weaponSkills.json": "archived stub — use master-weaponSkills.json",
+        "skills.json": "legacy kebab ids",
+        "weapons.json": "design templates",
+        "attributes.json": "archived",
+        "github.io": "not live JSON SSOT"
+      },
       "endpoints": {
         "weapons": "/api/v1/weapons.json",
         "armor": "/api/v1/armor.json",
@@ -50,6 +71,7 @@
         "worldMap": "/api/v1/worldMap.json",
         "regions": "/api/v1/regions.json",
         "lore": "/api/v1/lore.json",
+        "spellBook": "/api/v1/spell-book.json",
         "audio": "/api/v1/audio.json",
         "video": "/api/v1/video.json",
         "heroes": "/api/v1/heroes.json",
@@ -66,7 +88,7 @@
         "zones": "/api/v1/warlords-zones.json",
         "catalog": "/api/v1/warlords-catalog.json",
         "mapRegistry": "/api/v1/map-registry.json",
-        "clientPlay": "https://client.grudge-studio.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1",
+        "clientPlay": "https://grudgewarlords.com/play?sector=haven_shore&mode=zone&worldSeed=grudge-world-1",
         "worldSeed": "grudge-world-1",
         "sourceRepo": "GrudgeBuilder/shared/definitions/worldMapSectors.ts",
         "characterRule": "race=body mesh; equipment=weapons/armor/anims; class=flavor",
@@ -79,16 +101,17 @@
         "sourceRepo": "GrudgeBuilder/shared/definitions/mapRegistry.ts"
       },
       "homeIslandCanonical": {
-        "description": "Player home islands — Driftwood Bay + Ironfang Spire size foundations, 1024m, 2m character, organized nature (no megakit)",
+        "description": "Player home islands — Driftwood Bay + Ironfang Spire size foundations, 1024m, 1.8m human yardstick, organized nature (no megakit)",
         "contract": "/api/v1/home-island-contract.json",
         "biomes": "/api/v1/biome-ecosystems.json",
         "natureManifest": "/api/v1/organized-nature-manifest.json",
         "cdnCatalogs": "https://assets.grudge-studio.com/catalogs/home-island/",
         "cdnNature": "https://assets.grudge-studio.com/models/nature/realistic/",
-        "studioEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
+        "studioEditor": "https://forge.grudge-studio.com",
+        "legacyEditor": "https://grudge-studio-editor.vercel.app/editor?mode=home-island",
         "database": "Railway Postgres home_islands (NOT D1)",
         "worldSizeM": 1024,
-        "characterHeightM": 2,
+        "characterHeightM": 1.8,
         "mountainPeakHeightM": 20,
         "foundations": [
           "driftwood_bay",
@@ -108,10 +131,13 @@
         "characterStudio": "https://character.grudge-studio.com",
         "warlords": "https://grudgewarlords.com",
         "client": "https://client.grudge-studio.com",
+        "wallet": "https://wallet.grudge-studio.com",
+        "crafting": "https://grudgewarlords.com/craft/",
         "craftingPuter": "https://grudge-crafting.puter.site",
         "fleetJs": "https://assets.grudge-studio.com/js/grudge-fleet.js",
         "definitions": "https://objectstore.grudge-studio.com/api/v1",
         "cdn": "https://assets.grudge-studio.com",
+        "fleetWiring": "https://info.grudge-studio.com/api/v1/fleet-wiring.json",
         "scope": {
           "account": [
             "inventory",
@@ -132,13 +158,16 @@
           "Never put account inventory on character PATCH",
           "SSO return allowlist includes *.puter.site and *.grudge-studio.com",
           "Vercel apps use same-origin /api rewrites; Puter sites call Railway+ID explicitly",
-          "Primary play host is client.grudge-studio.com — not water.*, open.*, or genesis",
+          "Warlords play host is grudgewarlords.com — not water.*, open.*, genesis, or RTS-Grudge",
           "Do not alias id.grudge-studio.com or rts-grudge.vercel.app onto the Warlords SPA",
-          "Create heroes only via character.grudge-studio.com Foundry; return with characterId"
+          "Create heroes only via character.grudge-studio.com Foundry; return with characterId + era=warlords",
+          "No product guest accounts or wallets — Puter / GitHub / Google via id.grudge-studio.com",
+          "Wallet / cNFT UI is wallet.grudge-studio.com — id.* is login only",
+          "D1 is asset index only; Railway is player SSOT; ObjectStore is definitions"
         ],
-        "version": "1.1.0",
-        "updated": "2026-07-29",
-        "warlordsPrimary": "https://client.grudge-studio.com",
+        "version": "1.2.0",
+        "updated": "2026-08-22",
+        "warlordsPrimary": "https://grudgewarlords.com",
         "createFunnel": [
           "id login",
           "client /home",
