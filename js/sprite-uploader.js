@@ -658,8 +658,10 @@
         '"characterType": "STRING", "animationType": "STRING", "frameCount": NUMBER}. ' +
         'Look at the frames in the sheet, count columns and rows of sprite frames, and calculate frame dimensions.';
 
-      var response = await puter.ai.chat(prompt, thumbUrl, { model: 'gpt-4o' });
-      var text = response?.message?.content?.[0]?.text || response?.message?.content || response || '';
+      var text = await window.grudaChatText(
+        [{ role: 'user', content: prompt }],
+        { model: 'puter:gpt-4o', page: 'objectstore_sprite_uploader', maxTokens: 400, imageUrl: thumbUrl }
+      );
       if (typeof text !== 'string') text = JSON.stringify(text);
 
       // Extract JSON from response
