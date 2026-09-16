@@ -8,6 +8,7 @@
   <!-- CANONICAL_META:START -->
     <link rel="canonical" href="https://info.grudge-studio.com/docs">
     <meta name="grudge-canonical-generated" content="2026-09-11T05:27:26.365Z">
+    <meta name="grudge-canonical-generated" content="2026-09-07T01:16:59.733Z">
     <!-- CANONICAL_META:END -->
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -263,6 +264,7 @@
     <a href="#weapon-skills">Weapon Skills</a>
     <a href="#spell-book">Spell Book</a>
     <a href="#lore">Lore</a>
+    <a href="#weapon-passives">Weapon Passive Stacks</a>
     <a href="#professions">Professions</a>
     <a href="#classes">Classes & Races</a>
     <a href="#enemies">Enemies & Bosses</a>
@@ -278,6 +280,7 @@
     <a href="#maps-terrain">Maps & Terrain</a>
     <a href="#map-families">Map Families</a>
     <a href="#home-islands">Home Islands</a>
+    <a href="#island-build">Island Build Doctrine</a>
     <a href="#nature-assets">Nature Assets</a>
     <a href="#biome-ecosystems">Biome Ecosystems</a>
     <a href="#freeform-arpg">Freeform ARPG</a>
@@ -357,6 +360,7 @@
         <li><strong>0 Unified Items</strong> in items-database.json (browser UI)</li>
         <li><strong>313 Animated Characters</strong> in sprite-characters.json</li>
         <li><strong>205 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
+        <li><strong>199 API Endpoints</strong> — static JSON under <code class="inline-code">/api/v1/</code>, no auth required</li>
       <!-- CANONICAL_STATS:END -->
       </ul>
       
@@ -705,14 +709,25 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
 
     <section id="weapon-skills">
       <h2>Weapon Skills Endpoint</h2>
+
+      <div class="warning">
+        <div class="warning-title">⚠️ Archived Endpoint</div>
+        <p><code class="inline-code">GET /api/v1/weaponSkills.json</code> is <strong>ARCHIVED</strong>. Canonical weapon skills are now in:</p>
+        <ul>
+          <li><code class="inline-code">GET /api/v1/master-weaponSkills.json</code> — Full skill catalog with SKIL-* UUIDs</li>
+          <li><code class="inline-code">GET /api/v1/weapon-stat-bridge.json</code> — Stat connections</li>
+          <li><code class="inline-code">docs/WEAPON-STATS-ATTRIBUTES.md</code> — Attribute scaling docs</li>
+        </ul>
+        <p>Legacy <code class="inline-code">weaponSkills.json</code> remains for backward compatibility but is not updated.</p>
+      </div>
       
       <div class="endpoint-card">
         <div class="endpoint-header">
           <span class="method">GET</span>
-          <span class="endpoint-url">/api/v1/weaponSkills.json</span>
+          <span class="endpoint-url">/api/v1/master-weaponSkills.json</span>
         </div>
         <div class="endpoint-body">
-          <p class="endpoint-desc">Returns 473 weapon skills across 24 weapon types sourced from the Warlord Crafting Suite. Each skill includes an icon path, cooldown, mana cost, effects, and slot assignment.</p>
+          <p class="endpoint-desc">Canonical weapon skills catalog with 300+ skills across weapon types. Each skill includes GRUDGE UUID (SKIL-*), icon, cooldown, mana cost, damage formulas, and stat connections.</p>
           
           <h3>Response Structure</h3>
           <pre><code>{
@@ -764,6 +779,13 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">Derived caster book: Staff, Tome, Wand skills + <code class="inline-code">vfx-spells.json</code> summaries. Browse <a href="../SPELL_BOOK.html">SPELL_BOOK.html</a>. 3D lab: <a href="../spell-vfx-library.html">spell-vfx-library.html</a>.</p>
+          <h3>Weapon Types (24)</h3>
+          <p>Sword, Axe (1H), Greatsword, Greataxe, Bow, Crossbow, Gun, Fire Staff, Frost Staff, Holy Staff, Lightning Staff, Nature Staff, Dagger, Arcane Staff, Spear, Hammer, Scythe, Tool, Fire Tome, Frost Tome, Holy Tome, Shadow Tome, Nature Tome, Arcane Tome</p>
+
+          <div class="tip">
+            <div class="tip-title">💡 Related</div>
+            <p>See <a href="#weapon-passives">Weapon Passive Stacks</a> for status effects (bleed, burn, Grudge Mark) and <a href="./WEAPON-STATS-ATTRIBUTES.md">WEAPON-STATS-ATTRIBUTES.md</a> for stat scaling.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -778,6 +800,119 @@ GET https://info.grudge-studio.com/api/v1/map-registry.json</code></pre>
         </div>
         <div class="endpoint-body">
           <p class="endpoint-desc">World, 3 gods (Odin / Madra / Omni), 3 factions, 24 heroes + pirate legends. Browse <a href="../LORE.html">LORE.html</a>. Long-form notes: <a href="./loreHeroes.txt">loreHeroes.txt</a>.</p>
+    <section id="weapon-passives">
+      <h2>Weapon Passive Stacks</h2>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/weapon-passive-stacks.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Status effects and passive stack catalog for weapon combat — DoT effects (bleed, burn, poison), damage amplifiers (Grudge Mark), and conditional triggers.</p>
+
+          <div class="warning">
+            <div class="warning-title">⚠️ Design Layer Only</div>
+            <p>Passive stacks are currently <strong>design-layer concepts</strong> extracted from <code class="inline-code">weapons.json</code> and <code class="inline-code">studio-manifest.json</code>. The Three.js + Rapier combat runtime (<code class="inline-code">threejs-rapier-react-three-controller</code>) does <strong>NOT yet implement</strong> DoT or stack systems in <code class="inline-code">CombatController</code>.</p>
+            <p>See <a href="./WEAPON-PASSIVE-STACKS.md">WEAPON-PASSIVE-STACKS.md</a> for full implementation status and runtime requirements.</p>
+          </div>
+
+          <h3>Status Effect Types</h3>
+          <table>
+            <tr><th>Effect</th><th>Type</th><th>Max Stacks</th><th>Duration</th><th>Weapon Types</th></tr>
+            <tr>
+              <td><strong>Grudge Mark</strong></td>
+              <td>Damage amp (+5% per stack)</td>
+              <td>3</td>
+              <td>Not specified</td>
+              <td>Sword, Axe</td>
+            </tr>
+            <tr>
+              <td><strong>Bleed</strong></td>
+              <td>Physical DoT</td>
+              <td>5</td>
+              <td>3–8s</td>
+              <td>Dagger, Axe, Sword, Bow</td>
+            </tr>
+            <tr>
+              <td><strong>Burn</strong></td>
+              <td>Fire DoT (spreads)</td>
+              <td>3</td>
+              <td>3–6s</td>
+              <td>Axe, Fire Staff, Dagger</td>
+            </tr>
+            <tr>
+              <td><strong>Poison</strong></td>
+              <td>Nature DoT</td>
+              <td>3</td>
+              <td>4–10s</td>
+              <td>Dagger</td>
+            </tr>
+            <tr>
+              <td><strong>Chill</strong></td>
+              <td>Slow (15%/stack, max 45%)</td>
+              <td>3</td>
+              <td>3s/stack</td>
+              <td>Frost Staff</td>
+            </tr>
+            <tr>
+              <td><strong>Shock</strong></td>
+              <td>Lightning DoT</td>
+              <td>3</td>
+              <td>2–4s</td>
+              <td>Lightning Staff</td>
+            </tr>
+            <tr>
+              <td><strong>Lifesteal</strong></td>
+              <td>On-hit heal</td>
+              <td>—</td>
+              <td>Instant</td>
+              <td>Axe, Sword, Hammer</td>
+            </tr>
+            <tr>
+              <td><strong>Rune Stack</strong></td>
+              <td>Power-up (+3% dmg, burst)</td>
+              <td>10</td>
+              <td>Permanent</td>
+              <td>Greatsword (Runed Great Sword)</td>
+            </tr>
+          </table>
+
+          <h3>Example: Grudge Mark (Sword)</h3>
+          <pre><code>{
+  "id": "grudge_mark",
+  "name": "Grudge Mark",
+  "applyCondition": "on_hit",
+  "effect": {
+    "amplification": 0.05
+  },
+  "maxStacks": 3,
+  "duration": null,
+  "weaponTypes": ["sword", "axe"],
+  "sources": {
+    "design": "api/v1/weapons.json:34",
+    "runtime": "NOT_IMPLEMENTED"
+  }
+}</code></pre>
+
+          <h3>Weapon Ability Bindings</h3>
+          <table>
+            <tr><th>Weapon</th><th>Ability</th><th>Effect</th><th>Source</th></tr>
+            <tr><td>Bloodfeud Blade</td><td>Vengeful Slash</td><td>Grudge Mark</td><td><code class="inline-code">weapons.json:34</code></td></tr>
+            <tr><td>Shadow Fang</td><td>Crimson Stab</td><td>Bleed</td><td><code class="inline-code">weapons.json:550</code></td></tr>
+            <tr><td>Venom Fang</td><td>Poison Shiv</td><td>Poison</td><td><code class="inline-code">weapons.json:712</code></td></tr>
+            <tr><td>Ember Axe</td><td>Flame Slash</td><td>Burn</td><td><code class="inline-code">weapons.json:246</code></td></tr>
+            <tr><td>Fire Staff</td><td>Fire Bolt</td><td>Burn</td><td><code class="inline-code">weapons.json:2234</code></td></tr>
+            <tr><td>Fire Staff</td><td>Flame Nova</td><td>Explode all burns</td><td><code class="inline-code">weapons.json:2242</code></td></tr>
+            <tr><td>Frost Staff</td><td>Frost Bolt</td><td>Chill</td><td><code class="inline-code">weapons.json:2367</code></td></tr>
+            <tr><td>Lightning Staff</td><td>Thunder Bolt</td><td>Shock</td><td><code class="inline-code">weapons.json:2633</code></td></tr>
+            <tr><td>Runed Great Sword</td><td>Runic Cleave</td><td>Rune Stack</td><td><code class="inline-code">weapons.json:2904</code></td></tr>
+          </table>
+
+          <div class="tip">
+            <div class="tip-title">📖 Full Documentation</div>
+            <p><a href="./WEAPON-PASSIVE-STACKS.md">WEAPON-PASSIVE-STACKS.md</a> — Complete passive stack system documentation including runtime implementation requirements, source file paths, and VFX asset catalog.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -1271,9 +1406,75 @@ npx tsx scripts/seed-d1.ts</code></pre>
       </div>
     </section>
 
+    <section id="island-build">
+      <h2>Island Build Doctrine</h2>
+      <p>Canonical 1&nbsp;m occupy grid, faction kits, NPC execution order, HUD, dock crew, and honest asset gaps. Play client executes this contract. Definitions: ObjectStore. Binaries: R2. Island seed: Railway <code class="inline-code">home_islands</code>.</p>
+      <p><a href="./ISLAND-BUILD-DOCTRINE.md">ISLAND-BUILD-DOCTRINE.md</a> · machine JSON below.</p>
+
+      <table>
+        <tr><th>Contract</th><th>Value</th></tr>
+        <tr><td>Occupy grid</td><td><strong>1 m × 1 m</strong></td></tr>
+        <tr><td>Small building / 4×4 RTS</td><td><strong>4 × 4 m</strong></td></tr>
+        <tr><td>Medium RTS</td><td><strong>6 × 4 m</strong> (barn, smith, brewery)</td></tr>
+        <tr><td>Bench</td><td><strong>0.5 × 1 m</strong> · chairs/chests share the leftover 1×1</td></tr>
+        <tr><td>Wall / fence / gate ribbon</td><td><strong>2 × 1 m</strong> · isolate <code class="inline-code">nodeName</code></td></tr>
+        <tr><td>Gate opening</td><td><strong>1.6 × 3.2 m</strong> · 1.8 m kit walks through</td></tr>
+        <tr><td>Kit plant height</td><td><strong>1.8 m</strong> GOLDEN grudge6 — do not stretch to 2.0</td></tr>
+        <tr><td>Prop-scale human</td><td><strong>2.0 m</strong> home-island-contract reference</td></tr>
+        <tr><td>Harvest regen</td><td><strong>4 hours</strong></td></tr>
+        <tr><td>Personal homes</td><td><strong>Outside</strong> the fenced yard · attackable</td></tr>
+      </table>
+
+      <h3>Build phases (NPC order)</h3>
+      <p>Claim flag → harvest → plaza → walls/gates → paths → outposts → lots → profession RTS → defense. One host pack. No mixed-faction mashups. No dummy benches.</p>
+
+      <h3>Dock crew (hubs only)</h3>
+      <p>Sailor · Weatherman · Gunner — race of the captain, grudge6 kit @ <strong>0.9</strong>. Planted on the dock / outpost zone, not inside the curtain.</p>
+
+      <h3>Nature runtime</h3>
+      <p>Kenney <code class="inline-code">CommonTree</code> / <code class="inline-code">Pine_1</code> / <code class="inline-code">Rock_Medium</code> / <code class="inline-code">Bush_Common</code> are <strong>author-only</strong>. Play loads organized stems + R2 <code class="inline-code">island_tree.glb</code> / <code class="inline-code">island_rock.glb</code> / palm isolate <code class="inline-code">M_Palm_P2_*</code>.</p>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/island-build-doctrine.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Machine SSOT: size law, occupy layers, phases, stations, HUD, dock crew, ships, nature policy, honest gaps.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/buildable-prefabs.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">118 playable prefabs with 1&nbsp;m footprints, roles, occupy layer, size class, attackable flag, wood/stone/iron, build duration.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/faction-kits.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Crusade / Fabled / Legion kits — keep, walls, gates, houses, RTS lots. One host pack per settlement.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/npc-roster.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Hub / camp / outpost rosters + dock crew. Jobs, professions, zones (plaza · homestead · curtain · outpost).</p>
+        </div>
+      </div>
+    </section>
+
     <section id="nature-assets">
       <h2>Nature Assets (Home Island)</h2>
-      <p>Organized nature for home islands. Quaternius / nature-megakit scatter props are <strong>banned</strong> at runtime.</p>
+      <p>Organized nature for home islands. Quaternius / nature-megakit scatter props are <strong>banned</strong> at runtime. The Warlords play client loads stylized-tree, stone-black, realistic-palms, and R2 harvest packs — never Kenney CommonTree / Pine_1 / Rock_Medium / Bush_Common.</p>
 
       <h3>Banned path fragments</h3>
       <p><code class="inline-code">CommonTree</code>, <code class="inline-code">TwistedTree</code>, <code class="inline-code">DeadTree</code>, <code class="inline-code">Rock_Medium</code>, <code class="inline-code">Pine_1..5</code> megakit, <code class="inline-code">Bush_Common</code>, <code class="inline-code">nature-megakit</code>, <code class="inline-code">/models/lowpoly/</code></p>
@@ -2076,7 +2277,7 @@ npx vercel --prod                 # info.grudge-studio.com + objectstore.grudge-
       <h3>APIs Used</h3>
       <table>
         <tr><th>API</th><th>Purpose</th></tr>
-        <tr><td><code>puter.ai.chat()</code></td><td>Vision analysis, sprite editing chat, streaming responses</td></tr>
+        <tr><td><code>POST /api/ai/chat</code> (Railway gruda-ai-router)</td><td>Vision analysis, sprite editing chat — Legion first, Puter backup server-side</td></tr>
         <tr><td><code>puter.ai.txt2img()</code></td><td>Sprite generation with GPT Image 1.5</td></tr>
         <tr><td><code>puter.fs.write()</code></td><td>Save sprites to Puter cloud storage</td></tr>
         <tr><td><code>puter.kv.set()/get()</code></td><td>Persist chat history and user preferences</td></tr>

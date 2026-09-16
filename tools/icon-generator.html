@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GRUDGE Icon Generator - Puter AI</title>
   <script src="https://js.puter.com/v2/"></script>
+  <script src="../js/gruda-ai-client.js"></script>
   <style>
     :root { --bg: #0a0e14; --surface: #151d2b; --border: #1e2a3a; --gold: #d4a84b; --gold-light: #f0d890; --gold-dim: rgba(212,168,75,0.15); --text: #e8e6e3; --text-dim: #7a7877; --accent: #6366f1; --success: #22c55e; --error: #ef4444; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -836,9 +837,10 @@
       try {
         const visionPrompt =
           'You are a fantasy game asset prompt engineer. Look at this reference image and write a single concise English prompt fragment (under 60 words) describing the visual subject, materials, colors, textures, silhouette, and ornamentation suitable for re-creating the same kind of icon with a text-to-image model. Do NOT mention background, lighting, framing, watermarks, or composition — only the SUBJECT itself. Reply with the prompt fragment ONLY, no preamble.';
-        // puter.ai.chat overload: chat(text, imageUrl, opts)
-        const reply = await puter.ai.chat(visionPrompt, manualRefDataUrl, { model: 'gpt-4o-mini' });
-        const text = (reply?.message?.content?.[0]?.text || reply?.message?.content || reply?.text || reply || '').toString().trim();
+        const text = (await window.grudaChatText(
+          [{ role: 'user', content: visionPrompt }],
+          { model: 'puter:gpt-4o-mini', page: 'objectstore_icon_generator', imageUrl: manualRefDataUrl, maxTokens: 200 }
+        ) || '').toString().trim();
         manualRefDescription = text.replace(/^["']|["']$/g, '').replace(/\n+/g, ' ').trim();
         log(`Reference analyzed: "${manualRefDescription.slice(0, 80)}..."`, 'success');
         buildManualPrompt();

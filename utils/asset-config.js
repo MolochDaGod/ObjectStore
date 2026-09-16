@@ -12,12 +12,12 @@ export const MODEL_CDN = 'https://assets.grudge-studio.com';
 export const OBJECTSTORE_PAGES = 'https://molochdagod.github.io/ObjectStore';
 
 /**
- * Catalog JSON SSOT — prefer info static (Vercel) so /api/v1/*.json always resolve.
- * objectstore.grudge-studio.com is Worker-owned and may not serve static JSON.
+ * Catalog JSON SSOT — objectstore.grudge-studio.com Worker serves /api/v1/*.json.
+ * info.grudge-studio.com is HTML documentation only, not a JSON API.
  */
-export const OBJECTSTORE_API = 'https://info.grudge-studio.com/api/v1';
-export const OBJECTSTORE_ORIGIN = 'https://info.grudge-studio.com';
-/** Worker origin for uploads / dynamic APIs (not static catalog) */
+export const OBJECTSTORE_API = 'https://objectstore.grudge-studio.com/api/v1';
+export const OBJECTSTORE_ORIGIN = 'https://objectstore.grudge-studio.com';
+/** Worker origin for uploads / dynamic APIs (same as OBJECTSTORE_ORIGIN) */
 export const OBJECTSTORE_WORKER = 'https://objectstore.grudge-studio.com';
 
 /** Legacy host aliases rewritten to R2 for binaries */

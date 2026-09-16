@@ -5,6 +5,7 @@
 **Open launcher:** [`/api/v1/open-launcher.json`](../api/v1/open-launcher.json)  
 **Prefabs:** [`/api/v1/prefab-scheme.json`](../api/v1/prefab-scheme.json)  
 **Updated:** 2026-09-11  
+**Updated:** 2026-09-16  
 **Audience:** agents, deploy, production audits  
 
 This file is the **human index** of the complete production system. Prefer it over scattered notes when wiring, purging, or verifying.
@@ -144,7 +145,8 @@ Smoke: `npm run probe:auth` · unauthenticated `GET /api/auth/verify` → `valid
 |------|----------------|
 | Fleet JS | `/js/grudge-fleet.js` · grudge6-kit · grudge-id-client |
 | Race kits | `/models/grudge6/races/*` |
-| Buildings | `/models/buildings/**` (nodeName isolate) |
+| Buildings | `/models/buildings/**` (nodeName isolate) · 1 m occupy grid |
+| Island nature | `/models/nature/organized/**` + `island_tree.glb` — **never** CommonTree megakit |
 | Ships | `/models/ships/**` |
 | Icons | `ICON-*` registry → CDN |
 
@@ -200,7 +202,12 @@ npm run production:verify-cdn
 ## 9. Related machine JSON
 
 - `fleet-canonical.json` — this codex  
-- `warlords-production.json` — build/dock/ships/water  
+- `warlords-production.json` — build/dock/ships/water
+- `island-build-doctrine.json` — 1 m occupy grid, phases, HUD, nature, gaps
+- `buildable-prefabs.json` — 118 playable buildings/benches with footprints
+- `faction-kits.json` — crusade/fabled/legion kits
+- `npc-roster.json` — settlement jobs + dock crew
+- `warlords-hud.json` — two-row HUD + chrome 6–0  
 - `docs-catalog.json` — doc index  
 - `best-practices.json` — convert/render/combat  
 - `grudge6-canonical.json` — race kits  

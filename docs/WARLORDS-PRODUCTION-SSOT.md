@@ -1,9 +1,9 @@
-# Warlords Production SSOT — Build · Dock · Ships · Water · Fleet
+# Warlords Production SSOT — Build · Dock · Ships · Water · Fleet · Island
 
-**Canonical hub:** [info.grudge-studio.com/docs](https://info.grudge-studio.com/docs) · [Creation of Truth](https://info.grudge-studio.com/docs#creation-truth)  
-**Machine JSON:** [`/api/v1/warlords-production.json`](../api/v1/warlords-production.json)  
+**Canonical hub:** [info.grudge-studio.com/docs](https://info.grudge-studio.com/docs) · [Creation of Truth](https://info.grudge-studio.com/docs#creation-truth) · [Island Build Doctrine](https://info.grudge-studio.com/docs#island-build)  
+**Machine JSON:** [`/api/v1/warlords-production.json`](../api/v1/warlords-production.json) · [`/api/v1/island-build-doctrine.json`](../api/v1/island-build-doctrine.json)  
 **Game repo:** GrudgeBuilder · **Battle satellite:** Grudge-Studio-Game  
-**Updated:** 2026-07-29
+**Updated:** 2026-09-16
 
 ---
 
@@ -15,7 +15,10 @@
 4. **Dock crew** = three roles only at harbor: Sailor, Weatherman, Gunner (race of captain, scale **0.9** grudge6).  
 5. **Build layers never mixed** — quick craft ≠ bench ≠ modular ≠ dock ≠ RTS train.  
 6. **Hardened HUD** — few tabs, visible costs, empty states, hotkeys, no silent fail on missing mesh.  
-7. **One play client** — primary host `client.grudge-studio.com` (Vercel `grudge-builder`); `grudgewarlords.com` is an alias only.
+7. **One play client** — primary host `client.grudge-studio.com` (Vercel `grudge-builder`); `grudgewarlords.com` is an alias only.  
+8. **Occupy grid is 1 m** — buildings exclusive on ground; benches share a 1×1 with chairs/chests; small props sit on hosts.  
+9. **Homes outside the fence** — personal/faction houses are attackable lots outside the gated yard.  
+10. **Banned nature never loads** — CommonTree / Pine_1..5 / Rock_Medium / Bush_Common / nature-megakit are author-only.
 
 ---
 
@@ -25,8 +28,8 @@
 |---------|------|--------|
 | Auth | `id.grudge-studio.com` | Login + JWT — **not** the Warlords SPA project |
 | Characters / island / wallet / ships | Railway Postgres | `grudge-api-production-0d46` |
-| Catalogs JSON | `objectstore.grudge-studio.com/api/v1` · `info…/api/v1` | weapons, races, recipes |
-| Binary models | `assets.grudge-studio.com` | grudge6, buildings, ships |
+| Catalogs JSON | `objectstore.grudge-studio.com/api/v1` · `info…/api/v1` | weapons, races, recipes, **island-build-doctrine** |
+| Binary models | `assets.grudge-studio.com` | grudge6, buildings, ships, organized nature |
 | Docs / UUID browsers | `info.grudge-studio.com` | this site |
 | **Live play client (primary)** | **`client.grudge-studio.com`** | Hub `/home`, heroes, home-island, lobby, tutorial, play |
 | Live play client (alias) | `grudgewarlords.com` | Same Vercel project as client |
@@ -60,19 +63,42 @@ Do **not** bounce `/play` / `/tutorial` / `/airship` to empty `/heroes` without 
 
 ---
 
+## Island build system (live 2026-09-16)
+
+See [ISLAND-BUILD-DOCTRINE.md](./ISLAND-BUILD-DOCTRINE.md).
+
+| Piece | Live | Notes |
+|-------|------|-------|
+| 1 m occupy grid | yes | ground exclusive · floor share · surface on host |
+| Size law 4×4 / 6×4 / 0.5×1 bench | yes | civic 8×6 · ribbon wall 2×1 |
+| Canonical island blueprints | yes | 54 atlas islands · NPC phase timeline |
+| Faction kits (one host pack) | yes | crusade / fabled / legion |
+| NPC harvest → build → defend | yes | claim first · homes outside fence |
+| Dock crew roster on hubs | catalog | 0.9 scale · sailor/weatherman/gunner |
+| Harvest regen 4 h | yes | stone / herb / trees |
+| Organized nature (no megakit) | yes | stylized-tree + R2 island_tree/rock |
+| HUD two-row + chrome 6–0 | yes | weapon 1–5 · class Shift+1–5 · utility Shift+6–0 |
+| 8 ATTR combat math | yes | stats-guide.html · sigils/{id}.png |
+| T0–T1 craft stations | yes | cook / engineer / forestry / smelter / loom / potion / anvil |
+| Ocean sim / ship cargo / storm barrier | **no** | still P0/P1 |
+
+**Homes, profession RTS, and farms sit outside the curtain.** Keep, inn, vendor, barracks stay in the plaza. Walls, gates, towers, homes, and enemy NPCs are attackable.
+
+---
+
 ## RTS building system (production)
 
 See also GrudgeBuilder `docs/BUILD_SYSTEM_SSOT.md`.
 
 | Layer | Code | Effect |
 |-------|------|--------|
-| Quick craft | Inventory / WCS | No world prop |
+| Quick craft | Inventory / WCS / HUD 0 | No world prop |
 | Camp | survival kit nodes | Tent / fire / bedroll |
 | Bench | profession stations | XP 1–100 |
-| Modular | snap wood | Housing |
+| Modular | snap wood | Housing **outside fence** |
 | Dock | float Y = water+0.2 | Ship + **crew train** |
 | RTS | UFRTS / barracks | Train AI → promote hero |
-| Race home | per-race id | Spawn bind |
+| Race home | per-race id | Spawn bind **outside fence** |
 
 **Multipack rule:** always isolate `nodeName` (e.g. fantasy walls `WoodenWall_Stairs_WoodenWall_0`) — never place whole GLB as one entity.
 
@@ -105,7 +131,7 @@ See also GrudgeBuilder `docs/BUILD_SYSTEM_SSOT.md`.
 **Visual:** grudge6 race kit @ **0.9** scale, unarmed base + T0 weapons/tools + locomotion & T0 skill anims.  
 **AI:** behavior tags + future AI-chat edit; equipment meshing via mesh_ids; auto-harvest jobs share island harvest when docked.
 
-Code: GrudgeBuilder `shared/definitions/dockCrew.ts`.
+Code: GrudgeBuilder `shared/definitions/dockCrew.ts` · play client `src/lib/production-ssot.ts`.
 
 ---
 
@@ -125,23 +151,28 @@ SSOT: `shipCatalog.ts` · persistence: `player_ships` · UI: `ShipDockPanel` / m
 
 ## Gameplay loops
 
-1. **Island loop** — harvest → craft → build benches/modular/dock  
-2. **RTS loop** — place UFRTS → train land units → promote hero  
-3. **Harbor loop** — build ship → train crew → assign → sail  
-4. **Ocean loop** — sectors, combat, event islands, return  
+1. **Island loop** — harvest → craft → build benches/modular/dock  *(live)*
+2. **RTS loop** — place UFRTS → train land units → promote hero  *(live kits)*
+3. **Harbor loop** — build ship → train crew → assign → sail  *(catalog)*
+4. **Ocean loop** — sectors, combat, event islands, return  *(spec)*
 5. **Battle loop** (satellite) — lane deploy + command-post builds  
 
 ---
 
 ## Missing systems (priority)
 
-| P0 | Dock crew API + assign to `crew_ids` + 0.9 grudge6 preview |
-| P0 | Ship Stats tab wired to catalog + live buffs |
-| P1 | Storm barrier + side wave + oil/mine runtime |
-| P1 | Ship cargo bag scope |
-| P1 | Asset CDN verify for all dock tools / ship GLBs |
-| P2 | AI chat edit for crew · sector event director |
-| P2 | Register fantasy wall leafs as modular/RTS pieces |
+| Id | Priority | Status 2026-09-16 |
+|----|----------|-------------------|
+| dock_crew_api | P0 | catalog + island roster live; Railway `crew_ids` still P0 |
+| crew_ai_ocean_runtime | P0 | missing |
+| ship_stats_panel_full | P0 | catalog |
+| storm_barrier_physics | P1 | missing |
+| oil_mine_entities | P1 | missing |
+| ship_cargo_bag | P1 | missing |
+| cdn_asset_verify_dock_tools | P1 | missing |
+| sector_event_director | P2 | missing |
+| fantasy_walls_as_build_pieces | P2 | **live** — faction kits isolate wall/gate/fence |
+| lumber-camp / mine / faction-house / candle / bed | gap | named in occupy.ts — no fake GLB |
 
 ---
 
@@ -153,6 +184,6 @@ Docks are the hinge of the Grudge Wars: free folk bind timber to will before the
 
 ## Related links
 
-- [Best practices](./best-practices.html) · [GRUDGE6](./GRUDGE6.md) · [USAGE](./USAGE.md)  
+- [Island Build Doctrine](./ISLAND-BUILD-DOCTRINE.md) · [Best practices](./best-practices.html) · [GRUDGE6](./GRUDGE6.md) · [USAGE](./USAGE.md)  
 - Icon browser · Weapon skills · 3DFX viewer (info hub)  
 - GrudgeBuilder: `docs/DOCK_CREW_AND_WATER_SSOT.md`, `docs/BUILD_SYSTEM_SSOT.md`, `docs/SAILING.md`

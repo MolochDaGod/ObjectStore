@@ -1,11 +1,12 @@
 {
-  "version": "1.1.0",
-  "updated": "2026-07-29",
+  "version": "1.2.0",
+  "updated": "2026-09-16",
   "title": "Warlords Production SSOT",
   "docs": {
     "markdown": "/docs/WARLORDS-PRODUCTION-SSOT.md",
     "infoHtml": "https://info.grudge-studio.com/docs/WARLORDS-PRODUCTION-SSOT.md",
-    "grudgeBuilder": "docs/DOCK_CREW_AND_WATER_SSOT.md"
+    "grudgeBuilder": "docs/DOCK_CREW_AND_WATER_SSOT.md",
+    "islandBuild": "/docs/ISLAND-BUILD-DOCTRINE.md"
   },
   "fleet": {
     "auth": "https://id.grudge-studio.com",
@@ -116,7 +117,8 @@
   "missingSystems": [
     {
       "id": "dock_crew_api",
-      "priority": "P0"
+      "priority": "P0",
+      "status": "catalog"
     },
     {
       "id": "crew_ai_ocean_runtime",
@@ -124,7 +126,8 @@
     },
     {
       "id": "ship_stats_panel_full",
-      "priority": "P0"
+      "priority": "P0",
+      "status": "catalog"
     },
     {
       "id": "storm_barrier_physics",
@@ -148,7 +151,23 @@
     },
     {
       "id": "fantasy_walls_as_build_pieces",
-      "priority": "P2"
+      "priority": "P2",
+      "status": "live"
+    },
+    {
+      "id": "lumber-camp",
+      "priority": "gap",
+      "status": "named"
+    },
+    {
+      "id": "mine",
+      "priority": "gap",
+      "status": "named"
+    },
+    {
+      "id": "faction-house",
+      "priority": "gap",
+      "status": "named"
     }
   ],
   "codePaths": {
@@ -163,15 +182,15 @@
   "deployChecklist": [
     "Railway grudge-api health: database connected",
     "Primary play: client.grudge-studio.com (not water/open/genesis)",
-    "Create: character.grudge-studio.com → return characterId to client",
+    "Create: character.grudge-studio.com \u2192 return characterId to client",
     "Strip id.* and rts-grudge.vercel.app from grudge-builder aliases",
     "Upload build packs and ship GLBs to R2 with magic-byte verify",
-    "Smoke: login → create hero → home-island or lobby with characterId",
+    "Smoke: login \u2192 create hero \u2192 home-island or lobby with characterId",
     "Publish ObjectStore docs to info.grudge-studio.com"
   ],
   "attributes": {
     "catalog": "/api/v1/master-attributes.json",
-    "iconRule": "ONLY icons/sigils/{id}.png — source art C:/Users/nugye/Pictures/sigils/sigils. Never weapon/skill/profession packs for ATTR tooltips.",
+    "iconRule": "ONLY icons/sigils/{id}.png \u2014 source art C:/Users/nugye/Pictures/sigils/sigils. Never weapon/skill/profession packs for ATTR tooltips.",
     "ids": [
       "strength",
       "vitality",
@@ -213,5 +232,74 @@
     "Supabase player DB",
     "api.grudge-studio.com for auth/characters",
     "grudge-builder Vercel aliases on id.grudge-studio.com"
-  ]
+  ],
+  "islandBuild": {
+    "gridM": 1,
+    "smallBuilding": "4x4",
+    "rts": [
+      "4x4",
+      "6x4"
+    ],
+    "bench": "0.5x1",
+    "homes": "outside fence",
+    "phases": [
+      "claim",
+      "harvest",
+      "plaza",
+      "walls",
+      "paths",
+      "outposts",
+      "lots",
+      "rts",
+      "defense"
+    ],
+    "characterMeshM": 1.8,
+    "characterReferenceM": 2.0,
+    "worldSizeM": 1024,
+    "harvestRegenHours": 4,
+    "json": "/api/v1/island-build-doctrine.json"
+  },
+  "hud": {
+    "weaponKeys": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "classKeys": [
+      "Shift+1",
+      "Shift+2",
+      "Shift+3",
+      "Shift+4",
+      "Shift+5"
+    ],
+    "chromeKeys": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "0"
+    ],
+    "utilityKeys": [
+      "Shift+6",
+      "Shift+7",
+      "Shift+8",
+      "Shift+9",
+      "Shift+0"
+    ],
+    "json": "/api/v1/warlords-hud.json"
+  },
+  "nature": {
+    "banned": [
+      "CommonTree",
+      "TwistedTree",
+      "DeadTree",
+      "Rock_Medium",
+      "Pine_1..5",
+      "Bush_Common",
+      "nature-megakit"
+    ],
+    "runtime": "organized stems + R2 island_tree/island_rock"
+  }
 }

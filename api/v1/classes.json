@@ -37,7 +37,12 @@
       ],
       "dualWield": true,
       "equipmentRulesRef": "class-equipment-rules.json#classes.warrior",
-      "animPacks": ["sword_shield", "dual_wield", "two_handed", "unarmed"],
+      "animPacks": [
+        "sword_shield",
+        "dual_wield",
+        "two_handed",
+        "unarmed"
+      ],
       "abilities": [
         {
           "id": "slash",
@@ -177,7 +182,7 @@
         "iconUrl": "/icons/skills/class/barbarian/barbarian_07.png",
         "sourcePack": "barbarian"
       },
-      "emoji": "⚔️",
+      "emoji": "\u2694\ufe0f",
       "iconUrl": "https://assets.grudge-studio.com/icons/warlords/classes/warrior.png",
       "sourcePack": "barbarian"
     },
@@ -187,7 +192,7 @@
       "icon": "/icons/warlords/classes/mage.png",
       "color": "#8b5cf6",
       "description": "Master of arcane magic and divine healing arts.",
-      "lore": "Drawing power from ancient ley lines and forgotten gods, Mage Priests wield destructive magic alongside sacred healing — a balance few can master.",
+      "lore": "Drawing power from ancient ley lines and forgotten gods, Mage Priests wield destructive magic alongside sacred healing \u2014 a balance few can master.",
       "startingAttributes": {
         "Strength": 0,
         "Vitality": 1,
@@ -212,7 +217,10 @@
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.mage",
-      "animPacks": ["magic_spell", "unarmed"],
+      "animPacks": [
+        "magic_spell",
+        "unarmed"
+      ],
       "abilities": [
         {
           "id": "arcane_bolt",
@@ -309,7 +317,7 @@
         "iconUrl": "/icons/skills/class/firemage/firemage_05.png",
         "sourcePack": "firemage"
       },
-      "emoji": "🔮",
+      "emoji": "\ud83d\udd2e",
       "iconUrl": "https://assets.grudge-studio.com/icons/warlords/classes/mage.png",
       "sourcePack": "firemage"
     },
@@ -319,7 +327,7 @@
       "icon": "/icons/warlords/classes/worge.png",
       "color": "#d97706",
       "description": "A shapeshifter who wields nature and storm magic in human form, then transforms into a devastating beast.",
-      "lore": "Worges walk between worlds — scholars of storm and root in mortal guise, unstoppable predators in beast form. Their mace and dagger channel primal energies until the wild within is unleashed.",
+      "lore": "Worges walk between worlds \u2014 scholars of storm and root in mortal guise, unstoppable predators in beast form. Their mace and dagger channel primal energies until the wild within is unleashed.",
       "startingAttributes": {
         "Strength": 2,
         "Vitality": 2,
@@ -344,7 +352,12 @@
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.worge",
-      "animPacks": ["sword_shield", "magic_spell", "longbow", "unarmed"],
+      "animPacks": [
+        "sword_shield",
+        "magic_spell",
+        "longbow",
+        "unarmed"
+      ],
       "abilities": [
         {
           "id": "mace_strike",
@@ -553,7 +566,7 @@
         "iconUrl": "/icons/skills/class/necromancer/necromancer_11.png",
         "sourcePack": "necromancer"
       },
-      "emoji": "🐺",
+      "emoji": "\ud83d\udc3a",
       "iconUrl": "https://assets.grudge-studio.com/icons/warlords/classes/worge.png",
       "sourcePack": "necromancer"
     },
@@ -589,7 +602,12 @@
       ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.ranger",
-      "animPacks": ["longbow", "rifle", "two_handed", "unarmed"],
+      "animPacks": [
+        "longbow",
+        "rifle",
+        "two_handed",
+        "unarmed"
+      ],
       "abilities": [
         {
           "id": "quick_shot",
@@ -696,7 +714,7 @@
         "iconUrl": "/icons/skills/class/hunter/hunter_06.png",
         "sourcePack": "hunter"
       },
-      "emoji": "🏹",
+      "emoji": "\ud83c\udff9",
       "iconUrl": "https://assets.grudge-studio.com/icons/warlords/classes/ranger.png",
       "sourcePack": "hunter"
     },
@@ -706,19 +724,54 @@
       "name": "Priest",
       "icon": "/icons/warlords/classes/priest.jpg",
       "color": "#fde68a",
-      "description": "Discipline healer — Atonement from damage, shields, mass dispel, pain reflect.",
+      "description": "Discipline healer \u2014 Atonement from damage, shields, mass dispel, pain reflect.",
       "lore": "Priests bind an ally and turn every holy bolt into a heal. They strip hexes, plant barriers before slams, and reflect pain back as light.",
-      "startingAttributes": { "Strength": 0, "Vitality": 1, "Endurance": 1, "Dexterity": 0, "Agility": 0, "Intellect": 2, "Wisdom": 5, "Tactics": 1 },
-      "weaponTypes": ["holyStaves", "arcaneStaves", "tomes", "orbs", "claws"],
-      "armorTypes": ["cloth"],
+      "startingAttributes": {
+        "Strength": 0,
+        "Vitality": 1,
+        "Endurance": 1,
+        "Dexterity": 0,
+        "Agility": 0,
+        "Intellect": 2,
+        "Wisdom": 5,
+        "Tactics": 1
+      },
+      "weaponTypes": [
+        "holyStaves",
+        "arcaneStaves",
+        "tomes",
+        "orbs",
+        "claws"
+      ],
+      "armorTypes": [
+        "cloth"
+      ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.priest",
-      "animPacks": ["magic_spell", "unarmed"],
-      "abilities": [
-        { "id": "smite", "name": "Smite", "description": "Holy bolt that feeds Atonement", "type": "holy", "damage": 0.9, "manaCost": 8, "cooldown": 0 },
-        { "id": "word_shield", "name": "Word Shield", "description": "Absorb shield; Atonement ticks through it", "type": "holy", "manaCost": 18, "cooldown": 8 }
+      "animPacks": [
+        "magic_spell",
+        "unarmed"
       ],
-      "emoji": "✚",
+      "abilities": [
+        {
+          "id": "smite",
+          "name": "Smite",
+          "description": "Holy bolt that feeds Atonement",
+          "type": "holy",
+          "damage": 0.9,
+          "manaCost": 8,
+          "cooldown": 0
+        },
+        {
+          "id": "word_shield",
+          "name": "Word Shield",
+          "description": "Absorb shield; Atonement ticks through it",
+          "type": "holy",
+          "manaCost": 18,
+          "cooldown": 8
+        }
+      ],
+      "emoji": "\u271a",
       "iconUrl": "/icons/warlords/classes/priest.jpg",
       "sourcePack": "firemage"
     },
@@ -730,17 +783,51 @@
       "color": "#b91c1c",
       "description": "Two-hand parry tank and execute DPS. Timing is the armor.",
       "lore": "Raiders dropped the shield. Every swing opens a parry window; a catch becomes Overpower. They offtank slams and cut healing in the arena.",
-      "startingAttributes": { "Strength": 5, "Vitality": 2, "Endurance": 2, "Dexterity": 2, "Agility": 1, "Intellect": 0, "Wisdom": 0, "Tactics": 0 },
-      "weaponTypes": ["greatswords", "greataxes", "hammers2h", "claws"],
-      "armorTypes": ["plate", "mail"],
+      "startingAttributes": {
+        "Strength": 5,
+        "Vitality": 2,
+        "Endurance": 2,
+        "Dexterity": 2,
+        "Agility": 1,
+        "Intellect": 0,
+        "Wisdom": 0,
+        "Tactics": 0
+      },
+      "weaponTypes": [
+        "greatswords",
+        "greataxes",
+        "hammers2h",
+        "claws"
+      ],
+      "armorTypes": [
+        "plate",
+        "mail"
+      ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.raider",
-      "animPacks": ["two_handed", "unarmed"],
-      "abilities": [
-        { "id": "riposte", "name": "Riposte Stance", "description": "Parry window on every 2H swing", "type": "physical", "passive": true },
-        { "id": "mortal_strike", "name": "Mortal Strike", "description": "Cut incoming heals on the target", "type": "physical", "damage": 1.4, "staminaCost": 15, "cooldown": 10 }
+      "animPacks": [
+        "two_handed",
+        "unarmed"
       ],
-      "emoji": "⚔",
+      "abilities": [
+        {
+          "id": "riposte",
+          "name": "Riposte Stance",
+          "description": "Parry window on every 2H swing",
+          "type": "physical",
+          "passive": true
+        },
+        {
+          "id": "mortal_strike",
+          "name": "Mortal Strike",
+          "description": "Cut incoming heals on the target",
+          "type": "physical",
+          "damage": 1.4,
+          "staminaCost": 15,
+          "cooldown": 10
+        }
+      ],
+      "emoji": "\u2694",
       "iconUrl": "/icons/warlords/classes/raider.jpg",
       "sourcePack": "barbarian"
     },
@@ -750,19 +837,54 @@
       "name": "Thief",
       "icon": "/icons/warlords/classes/thief.jpg",
       "color": "#ca8a04",
-      "description": "Outlaw rogue — combo, pistol interrupt, blade flurry, smoke bomb peel.",
+      "description": "Outlaw rogue \u2014 combo, pistol interrupt, blade flurry, smoke bomb peel.",
       "lore": "Thieves fight dirty and close. A pistol shot stops a cast; a smoke bomb covers the healer; Between the Eyes spends the combo.",
-      "startingAttributes": { "Strength": 1, "Vitality": 1, "Endurance": 1, "Dexterity": 4, "Agility": 4, "Intellect": 0, "Wisdom": 0, "Tactics": 1 },
-      "weaponTypes": ["daggers", "swords", "pistols", "claws"],
-      "armorTypes": ["leather"],
+      "startingAttributes": {
+        "Strength": 1,
+        "Vitality": 1,
+        "Endurance": 1,
+        "Dexterity": 4,
+        "Agility": 4,
+        "Intellect": 0,
+        "Wisdom": 0,
+        "Tactics": 1
+      },
+      "weaponTypes": [
+        "daggers",
+        "swords",
+        "pistols",
+        "claws"
+      ],
+      "armorTypes": [
+        "leather"
+      ],
       "dualWield": true,
       "equipmentRulesRef": "class-equipment-rules.json#classes.thief",
-      "animPacks": ["dual_wield", "rifle", "unarmed"],
-      "abilities": [
-        { "id": "sinister", "name": "Sinister Strike", "description": "Combo builder", "type": "physical", "damage": 0.9, "staminaCost": 4 },
-        { "id": "pistol_shot", "name": "Pistol Shot", "description": "Ranged interrupt", "type": "physical", "damage": 0.7, "staminaCost": 8, "cooldown": 6 }
+      "animPacks": [
+        "dual_wield",
+        "rifle",
+        "unarmed"
       ],
-      "emoji": "🗡",
+      "abilities": [
+        {
+          "id": "sinister",
+          "name": "Sinister Strike",
+          "description": "Combo builder",
+          "type": "physical",
+          "damage": 0.9,
+          "staminaCost": 4
+        },
+        {
+          "id": "pistol_shot",
+          "name": "Pistol Shot",
+          "description": "Ranged interrupt",
+          "type": "physical",
+          "damage": 0.7,
+          "staminaCost": 8,
+          "cooldown": 6
+        }
+      ],
+      "emoji": "\ud83d\udde1",
       "iconUrl": "/icons/warlords/classes/thief.jpg",
       "sourcePack": "hunter"
     },
@@ -772,21 +894,79 @@
       "name": "Verduror",
       "icon": "/icons/warlords/classes/verduror.jpg",
       "color": "#86efac",
-      "description": "Mistweaver — jade mist, crane kicks that heal, detox, celestial forms.",
-      "lore": "Verduror walk in mist. They heal while they move, kick like a crane, and call a jade serpent to soothe the tank.",
-      "startingAttributes": { "Strength": 1, "Vitality": 2, "Endurance": 1, "Dexterity": 1, "Agility": 2, "Intellect": 1, "Wisdom": 3, "Tactics": 0 },
-      "weaponTypes": ["natureStaves", "hammers1h", "claws"],
-      "armorTypes": ["leather", "cloth"],
+      "description": "Plant caster \u2014 oxygen seeds, vine lash, iguana crawl. Arcanum pages are cactus and Green Tara, found like spells.",
+      "lore": "Verduror drop living plants. Iguana is a level 0 skill, not a form. The Arcanum opens on Barrel Cactus; Green Tara is the heal mantra.",
+      "startingAttributes": {
+        "Strength": 1,
+        "Vitality": 2,
+        "Endurance": 1,
+        "Dexterity": 1,
+        "Agility": 2,
+        "Intellect": 1,
+        "Wisdom": 3,
+        "Tactics": 0
+      },
+      "weaponTypes": [
+        "natureStaves",
+        "hammers1h",
+        "claws"
+      ],
+      "armorTypes": [
+        "leather",
+        "cloth"
+      ],
       "dualWield": false,
       "equipmentRulesRef": "class-equipment-rules.json#classes.verduror",
-      "animPacks": ["magic_spell", "sword_shield", "unarmed"],
-      "abilities": [
-        { "id": "soothing_mist", "name": "Soothing Mist", "description": "Channeled single heal", "type": "nature", "manaCost": 6 },
-        { "id": "crane_kick", "name": "Crane Kick", "description": "Melee kick that splashes heal", "type": "nature", "damage": 0.8, "manaCost": 8 }
+      "animPacks": [
+        "magic_spell",
+        "sword_shield",
+        "unarmed"
       ],
-      "emoji": "🌿",
+      "abilities": [
+        {
+          "id": "v_seed",
+          "name": "Plant Seed",
+          "description": "Drop an oxygen plant that heals in the bloom.",
+          "type": "nature",
+          "cooldown": 8,
+          "iconUrl": "/icons/skills/class/verduror/plant-seed.png",
+          "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+          "icon": "/icons/skills/class/verduror/plant-seed.png"
+        },
+        {
+          "id": "v_lash",
+          "name": "Vine Lash",
+          "description": "Lash an enemy; allies in the arc heal and a seed drops.",
+          "type": "nature",
+          "damage": 0.9,
+          "cooldown": 6,
+          "iconUrl": "/icons/skills/class/verduror/vine-lash.png",
+          "prefabUrl": "/models/class-skills/oxygen-plant.glb",
+          "icon": "/icons/skills/class/verduror/vine-lash.png"
+        },
+        {
+          "id": "v_iguana",
+          "name": "Iguana",
+          "description": "Crawl and cast. Not a form page.",
+          "type": "nature",
+          "damage": 0.8,
+          "iconUrl": "/icons/skills/class/verduror/iguana.png",
+          "icon": "/icons/skills/class/verduror/iguana.png"
+        }
+      ],
+      "emoji": "\ud83c\udf3f",
       "iconUrl": "/icons/warlords/classes/verduror.jpg",
-      "sourcePack": "necromancer"
+      "sourcePack": "necromancer",
+      "signatureAbility": {
+        "id": "v_current",
+        "name": "Primal Current",
+        "description": "Seeds, cactus, and Tara at once.",
+        "type": "nature",
+        "role": "signature",
+        "iconUrl": "/icons/skills/class/verduror/primal-current.png",
+        "prefabUrl": "/models/class-skills/green-tara-mantra.glb",
+        "icon": "/icons/skills/class/verduror/primal-current.png"
+      }
     }
   },
   "tiers": [

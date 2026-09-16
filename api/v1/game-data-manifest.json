@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-06-22T04:22:14.544Z",
+  "generated": "2026-09-06T00:00:00.000Z",
   "canonical": true,
   "description": "Grudge Studio unified game data — single source of truth",
   "endpoints": {
@@ -10,6 +10,10 @@
     "materials": "https://info.grudge-studio.com/api/v1/master-materials.json",
     "harvestNodes": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json",
     "harvestLootByProfession": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
+    "uuidLaw": "https://info.grudge-studio.com/api/v1/uuid-law.json",
+    "accountGameUuid": "https://info.grudge-studio.com/api/v1/account-game-uuid-contract.json",
+    "islandBuildings": "https://info.grudge-studio.com/api/v1/island-building-prefabs.json",
+    "gameReadyScene": "https://info.grudge-studio.com/api/v1/game-ready-scene-index.json",
     "staffLooks": "https://info.grudge-studio.com/api/v1/staff-looks.json",
     "weapons": "https://info.grudge-studio.com/api/v1/weapons.json",
     "armor": "https://info.grudge-studio.com/api/v1/armor.json",
@@ -39,6 +43,8 @@
     "stylizedProjectiles": "https://info.grudge-studio.com/api/v1/stylized-projectiles.json",
     "vfxProductionGlb": "https://info.grudge-studio.com/api/v1/vfx-production-glb.json",
     "vfxSkillTypes": "https://info.grudge-studio.com/api/v1/vfx-skill-types.json"
+    "stylizedProjectiles": "https://info.grudge-studio.com/api/v1/stylized-projectiles.json",
+    "vfxProductionGlb": "https://info.grudge-studio.com/api/v1/vfx-production-glb.json"
   },
   "assetCdn": "https://assets.grudge-studio.com",
   "counts": {
@@ -56,6 +62,7 @@
   },
   "graph": {
     "harvestToMaterial": "harvest-loot-by-profession.json (profession level → gathering.tierResources) → master-materials.json. Node prefab = master-harvest-nodes.json type only — node.tier does not gate loot.",
+    "harvestToMaterial": "master-harvest-nodes.json type + profession level → master-materials.json (not node quality)",
     "materialToRecipe": "master-recipes.json → materials[].uuid",
     "recipeToItem": "master-recipes.json → resultItemId → master-items.json",
     "itemToIcon": "master-items.json → iconUrl | staff-looks.json → iconUrl",

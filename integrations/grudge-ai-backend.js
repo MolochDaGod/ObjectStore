@@ -223,37 +223,44 @@ export class AIBackendClient {
         tokensUsed: response.tokensUsed
       };
     } catch (error) {
-      // Fallback to Puter if backend unavailable
-      if (this.puter) {
-        return await this._fallbackToPuter(request, agent);
-      }
+      return await this._fallbackToRouter(request, agent);
       
       throw error;
     }
   }
 
   /**
-   * Fallback to Puter AI when backend unavailable
+   * Fallback to Railway /api/ai/chat when local AI backend is down
    */
-  async _fallbackToPuter(request, agent) {
-    try {
-      const prompt = `${agent.systemPrompt}\n\nTask: ${request.prompt}\n\nContext: ${JSON.stringify(request.context || {})}`;
-      
-      const result = await this.puter.ai.chat(prompt, {
-        model: 'gpt-4o-mini',
-        temperature: request.options?.temperature || 0.7
-      });
-
-      return {
-        success: true,
-        agentType: request.agentType,
-        result: extractChatText(result),
-        metadata: { source: 'puter-fallback' },
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      throw new Error(`AI request failed: ${error.message}`);
+  async _fallbackToRouter(request, agent) {
+    const prompt = `${agent.systemPrompt}\n\nTask: ${request.prompt}\n\nContext: ${JSON.stringify(request.context || {})}`;
+    const origin =
+      typeof location !== 'undefined' &&
+      (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? ''
+        : 'https://grudge-api-production-0d46.up.railway.app';
+    const r = await fetch(`${origin}/api/ai/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'cheap',
+        page: 'objectstore_ai_backend',
+        tier: 'cheap',
+        maxTokens: request.options?.maxTokens || 2000,
+      }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.ok === false) {
+      throw new Error(data.error || `AI request failed: ${r.status}`);
     }
+    return {
+      success: true,
+      agentType: request.agentType,
+      result: data.text,
+      metadata: { source: 'gruda-ai-router' },
+      timestamp: new Date().toISOString(),
+    };
   }
 
   /**
@@ -282,12 +289,7 @@ export class AIBackendClient {
         suggestions: response.suggestions || []
       };
     } catch (error) {
-      // Fallback to Puter research
-      if (this.puter) {
-        return await this._puterResearch(query);
-      }
-      
-      throw error;
+      return await this._puterResearch(query);
     }
   }
 
@@ -297,13 +299,28 @@ export class AIBackendClient {
   async _puterResearch(query) {
     const prompt = `Research the following topic for the Grudge Warlords MMO:\n\nTopic: ${query.topic}\nCategory: ${query.category}\nContext: ${JSON.stringify(query.context || {})}\n\nProvide detailed findings, confidence level, and actionable suggestions.`;
 
-    const result = await this.puter.ai.chat(prompt);
-    
+    const origin =
+      typeof location !== 'undefined' &&
+      (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? ''
+        : 'https://grudge-api-production-0d46.up.railway.app';
+    const r = await fetch(`${origin}/api/ai/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'cheap',
+        page: 'objectstore_research',
+        tier: 'cheap',
+        maxTokens: 1200,
+      }),
+    });
+    const data = await r.json().catch(() => ({}));
     return {
       query: query.topic,
-      findings: extractChatText(result),
+      findings: data.text || '',
       confidence: 0.7,
-      sources: ['puter-ai'],
+      sources: ['gruda-ai-router'],
       suggestions: []
     };
   }

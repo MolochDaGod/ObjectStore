@@ -171,3 +171,4 @@ Or: `npm run build:weapon-pipeline`
 
 - [stats-guide.html](../stats-guide.html) — interactive attribute reference
 - [CANONICAL-EQUIPMENT.md](./CANONICAL-EQUIPMENT.md) — prefab + harvest tool standard
+- [WEAPON-PASSIVE-STACKS.md](./WEAPON-PASSIVE-STACKS.md) — status effects (bleed, burn, Grudge Mark) and passive stacks

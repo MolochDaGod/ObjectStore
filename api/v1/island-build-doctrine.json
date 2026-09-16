@@ -1,0 +1,1373 @@
+{
+  "version": "1.2.0",
+  "updated": "2026-09-16",
+  "title": "Warlords island \u00b7 NPC \u00b7 build \u00b7 HUD production SSOT",
+  "docs": {
+    "markdown": "/docs/ISLAND-BUILD-DOCTRINE.md",
+    "infoHtml": "https://info.grudge-studio.com/docs/ISLAND-BUILD-DOCTRINE.md",
+    "production": "https://info.grudge-studio.com/docs/WARLORDS-PRODUCTION-SSOT.md",
+    "homeIsland": "https://info.grudge-studio.com/api/v1/home-island-contract.json",
+    "biomes": "https://info.grudge-studio.com/api/v1/biome-ecosystems.json",
+    "benches": "https://info.grudge-studio.com/api/v1/bench-mesh-catalog.json",
+    "attributes": "https://info.grudge-studio.com/api/v1/master-attributes.json"
+  },
+  "fleet": {
+    "auth": "https://id.grudge-studio.com",
+    "gameApi": "https://grudge-api-production-0d46.up.railway.app",
+    "catalogs": "https://info.grudge-studio.com/api/v1",
+    "cdn": "https://assets.grudge-studio.com",
+    "liveClient": "https://client.grudge-studio.com",
+    "docs": "https://info.grudge-studio.com/docs"
+  },
+  "homeIsland": {
+    "version": "1.4.0",
+    "docs": "https://info.grudge-studio.com/api/v1/home-island-contract.json",
+    "worldSizeM": 1024,
+    "rtsCoreSizeM": 200,
+    "characterReferenceM": 2,
+    "meshHeightM": 1.8,
+    "mountainPeakM": 20,
+    "harvestRegenHours": 4,
+    "seedDatabase": "Railway Postgres home_islands \u2014 not D1",
+    "foundations": {
+      "driftwood_bay": {
+        "id": "driftwood_bay",
+        "label": "Driftwood Bay",
+        "role": "coastal",
+        "maxElevationM": 48,
+        "beachBandDepthM": 28,
+        "biomes": [
+          "beach",
+          "tropical",
+          "plains",
+          "storm"
+        ]
+      },
+      "ironfang_spire": {
+        "id": "ironfang_spire",
+        "label": "Ironfang Spire",
+        "role": "highland",
+        "maxElevationM": 80,
+        "beachBandDepthM": 14,
+        "biomes": [
+          "forest",
+          "winter",
+          "frozen",
+          "volcanic",
+          "abyssal",
+          "nexus"
+        ]
+      }
+    }
+  },
+  "size": {
+    "gridM": 1,
+    "characterMeshM": 1.8,
+    "characterRadiusM": 0.32,
+    "characterReferenceM": 2,
+    "doorHeightM": 3,
+    "gateOpen": {
+      "w": 1.6,
+      "h": 3.2
+    },
+    "wall": {
+      "lengthM": 2,
+      "thickM": 0.45
+    },
+    "smallBuilding": "4\u00d74",
+    "rts": [
+      "4\u00d74",
+      "6\u00d74"
+    ],
+    "bench": "0.5\u00d71",
+    "classes": {
+      "civic": {
+        "wx": 8,
+        "wz": 6,
+        "label": "Civic hall (keep / barracks / inn)"
+      },
+      "small": {
+        "wx": 4,
+        "wz": 4,
+        "label": "Small building 4\u00d74"
+      },
+      "rts4": {
+        "wx": 4,
+        "wz": 4,
+        "label": "RTS 4\u00d74"
+      },
+      "rts6": {
+        "wx": 6,
+        "wz": 4,
+        "label": "RTS 6\u00d74"
+      },
+      "tower": {
+        "wx": 4,
+        "wz": 4,
+        "label": "Tower 4\u00d74"
+      },
+      "ribbon": {
+        "wx": 2,
+        "wz": 1,
+        "label": "Wall / fence / gate 2\u00d71"
+      },
+      "bench": {
+        "wx": 0.5,
+        "wz": 1,
+        "label": "Bench 0.5\u00d71 \u00b7 shares 1\u00d71 with chairs/chests"
+      },
+      "floor": {
+        "wx": 1,
+        "wz": 1,
+        "label": "Floor misc \u00b7 share the same 1\u00d71 cell"
+      },
+      "surface": {
+        "wx": 0.25,
+        "wz": 0.25,
+        "label": "Sits on table / bench / chest"
+      },
+      "crop": {
+        "wx": 2,
+        "wz": 2,
+        "label": "Harvest plot 2\u00d72"
+      },
+      "dock": {
+        "wx": 4,
+        "wz": 2,
+        "label": "Dock / pier"
+      }
+    }
+  },
+  "occupy": {
+    "gridM": 1,
+    "smallBuilding": "4\u00d74",
+    "rts": [
+      "4\u00d74",
+      "6\u00d74"
+    ],
+    "bench": "0.5\u00d71",
+    "floorShare": "chairs, chests, barrels, crates share the same 1\u00d71 as a bench",
+    "surface": "bottles, pots, buckets, small chests sit on tables / benches / chests",
+    "classes": {
+      "civic": {
+        "wx": 8,
+        "wz": 6,
+        "label": "Civic hall (keep / barracks / inn)"
+      },
+      "small": {
+        "wx": 4,
+        "wz": 4,
+        "label": "Small building 4\u00d74"
+      },
+      "rts4": {
+        "wx": 4,
+        "wz": 4,
+        "label": "RTS 4\u00d74"
+      },
+      "rts6": {
+        "wx": 6,
+        "wz": 4,
+        "label": "RTS 6\u00d74"
+      },
+      "tower": {
+        "wx": 4,
+        "wz": 4,
+        "label": "Tower 4\u00d74"
+      },
+      "ribbon": {
+        "wx": 2,
+        "wz": 1,
+        "label": "Wall / fence / gate 2\u00d71"
+      },
+      "bench": {
+        "wx": 0.5,
+        "wz": 1,
+        "label": "Bench 0.5\u00d71 \u00b7 shares 1\u00d71 with chairs/chests"
+      },
+      "floor": {
+        "wx": 1,
+        "wz": 1,
+        "label": "Floor misc \u00b7 share the same 1\u00d71 cell"
+      },
+      "surface": {
+        "wx": 0.25,
+        "wz": 0.25,
+        "label": "Sits on table / bench / chest"
+      },
+      "crop": {
+        "wx": 2,
+        "wz": 2,
+        "label": "Harvest plot 2\u00d72"
+      },
+      "dock": {
+        "wx": 4,
+        "wz": 2,
+        "label": "Dock / pier"
+      }
+    },
+    "missing": [
+      {
+        "id": "candle",
+        "severity": "gap",
+        "want": "Tabletop candle / small light \u22640.28 m on benches and tables",
+        "have": "allcraft/torch_1 is 1.6 m (standing). crusade/lamp is 2.3 m. No candle mesh."
+      },
+      {
+        "id": "bed",
+        "severity": "gap",
+        "want": "Bed 1\u00d72 that occupies a floor cell inside 4\u00d74 homes",
+        "have": "Interior kit scales allcraft/throne as a bed stand-in. No bed GLB."
+      },
+      {
+        "id": "plates",
+        "severity": "note",
+        "want": "Plates, cups, bowls on tables",
+        "have": "allcraft/bottle + pot_1/2/3. No dishware."
+      },
+      {
+        "id": "shelf",
+        "severity": "note",
+        "want": "Wall shelf / dresser for chests and bottles",
+        "have": "None. Chests sit on the floor or on a table."
+      },
+      {
+        "id": "rug",
+        "severity": "note",
+        "want": "Rug / mat that shares a 1\u00d71 with furniture",
+        "have": "None."
+      },
+      {
+        "id": "mill-house",
+        "severity": "note",
+        "want": "4\u00d74 mill house RTS",
+        "have": "allcraft/waterwheel is a 6\u00d74 wheel, not a walk-in mill."
+      },
+      {
+        "id": "lumber-camp",
+        "severity": "gap",
+        "want": "4\u00d74 lumber RTS for auto-harvest wood",
+        "have": "farm/wood-pile is a floor prop. No woodcutter building."
+      },
+      {
+        "id": "mine",
+        "severity": "gap",
+        "want": "6\u00d74 mine / quarry RTS for auto-harvest stone",
+        "have": "None. Stone comes from world veins, not a profession building."
+      },
+      {
+        "id": "fish-hut",
+        "severity": "note",
+        "want": "4\u00d74 fishing hut RTS",
+        "have": "farm/fishing-stand is a 1\u00d71 prop, not a building."
+      },
+      {
+        "id": "wagon",
+        "severity": "note",
+        "want": "Cart / wagon and a 4 m cart gate",
+        "have": "Gate opening is 1.6 \u00d7 3.2 m (character). No wagon GLB."
+      },
+      {
+        "id": "rubble",
+        "severity": "note",
+        "want": "Crumbled wall / rubble when a curtain tile dies",
+        "have": "HP drops and the mesh hides. No rubble prefab."
+      },
+      {
+        "id": "faction-house",
+        "severity": "gap",
+        "want": "Dedicated 4\u00d74 house GLB per host (fabled, legion, crusade)",
+        "have": "Crusade tent, legion/farm sheds. No family house mesh."
+      }
+    ],
+    "have": [
+      {
+        "id": "fortress/brazier",
+        "name": "Brazier",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "fortress/fire-bell",
+        "name": "Fire bell",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/counter",
+        "name": "Counter",
+        "occupy": "floor",
+        "size": "small",
+        "host": true,
+        "surface": false
+      },
+      {
+        "id": "crusade/fountain_lion",
+        "name": "Lion fountain",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/fountain_fish",
+        "name": "Fish fountain",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/lamp_1",
+        "name": "Lamp",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/lamp_2",
+        "name": "Tall lamp",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/loom",
+        "name": "Loom",
+        "occupy": "floor",
+        "size": "bench",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/pointer",
+        "name": "Town sign",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "crusade/statue",
+        "name": "Statue",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/alarm_horn",
+        "name": "Alarm horn",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/bake",
+        "name": "Oven",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/barrel_1",
+        "name": "Barrel",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/barrel_2",
+        "name": "Keg",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/bottle",
+        "name": "Bottle",
+        "occupy": "floor",
+        "size": "surface",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "allcraft/box",
+        "name": "Crate",
+        "occupy": "floor",
+        "size": "floor",
+        "host": true,
+        "surface": true
+      },
+      {
+        "id": "allcraft/chair1",
+        "name": "Chair",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/flag",
+        "name": "Banner",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/pointer",
+        "name": "Signpost",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/pot_1",
+        "name": "Cookpot",
+        "occupy": "floor",
+        "size": "surface",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "allcraft/pot_2",
+        "name": "Pot",
+        "occupy": "floor",
+        "size": "surface",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "allcraft/pot_3",
+        "name": "Urn",
+        "occupy": "floor",
+        "size": "surface",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "allcraft/table",
+        "name": "Table",
+        "occupy": "floor",
+        "size": "floor",
+        "host": true,
+        "surface": false
+      },
+      {
+        "id": "allcraft/throne",
+        "name": "Throne",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/torch_1",
+        "name": "Torch",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "allcraft/torch_2",
+        "name": "Wall torch",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/waterwheel",
+        "name": "Waterwheel",
+        "occupy": "floor",
+        "size": "rts6",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/drum_1",
+        "name": "Drum",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "allcraft/drum_2",
+        "name": "War drum",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "fabled/brazier",
+        "name": "Elf brazier",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "legion/alarm-drum",
+        "name": "Alarm drum",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "legion/brazier",
+        "name": "Legion brazier",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/sign",
+        "name": "Signpost",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/sign-double",
+        "name": "Double sign",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/ladder",
+        "name": "Wooden ladder",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/barrel",
+        "name": "Barrel",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/chest",
+        "name": "Claim chest",
+        "occupy": "floor",
+        "size": "floor",
+        "host": true,
+        "surface": true
+      },
+      {
+        "id": "farm/bucket",
+        "name": "Bucket",
+        "occupy": "floor",
+        "size": "surface",
+        "host": false,
+        "surface": true
+      },
+      {
+        "id": "farm/storage-box",
+        "name": "Storage box",
+        "occupy": "floor",
+        "size": "floor",
+        "host": true,
+        "surface": true
+      },
+      {
+        "id": "farm/fishing-stand",
+        "name": "Fishing stand",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/wood-pile",
+        "name": "Wood pile",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/anvil-bench",
+        "name": "Anvil bench",
+        "occupy": "floor",
+        "size": "bench",
+        "host": true,
+        "surface": false
+      },
+      {
+        "id": "farm/campfire",
+        "name": "Campfire",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/workbench",
+        "name": "Work bench",
+        "occupy": "floor",
+        "size": "bench",
+        "host": true,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/silo",
+        "name": "Silo",
+        "occupy": "floor",
+        "size": "rts4",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/hay",
+        "name": "Hay stack",
+        "occupy": "floor",
+        "size": "crop",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/wheat",
+        "name": "Wheat",
+        "occupy": "floor",
+        "size": "crop",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/carrot",
+        "name": "Carrot row",
+        "occupy": "floor",
+        "size": "crop",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/chicken",
+        "name": "Chicken",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "farm/gaucho/trough",
+        "name": "Trough",
+        "occupy": "floor",
+        "size": "bench",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "docks/post",
+        "name": "Piling",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "castle/chest",
+        "name": "Chest",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "castle/banner-crusade",
+        "name": "Crusade banner",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "castle/banner-fabled",
+        "name": "Fabled banner",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "castle/banner-legion",
+        "name": "Legion banner",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      },
+      {
+        "id": "castle/banner-pirate",
+        "name": "Pirate banner",
+        "occupy": "floor",
+        "size": "floor",
+        "host": false,
+        "surface": false
+      }
+    ]
+  },
+  "phases": [
+    {
+      "id": "claim",
+      "label": "Claim flag",
+      "hint": "Plant the banner and drop the claim chest. Builders path here."
+    },
+    {
+      "id": "harvest",
+      "label": "Harvest materials",
+      "hint": "AI auto-cuts wood, stone, and forage so later lots have materials."
+    },
+    {
+      "id": "plaza",
+      "label": "Central plaza",
+      "hint": "Keep, inn, vendor, barracks \u2014 the walkable centre."
+    },
+    {
+      "id": "walls",
+      "label": "Walls and gates",
+      "hint": "Close the ring. Gates on the road. Towers on corners."
+    },
+    {
+      "id": "paths",
+      "label": "Paths",
+      "hint": "Lamps and signs between lots. 2 m gap is the street."
+    },
+    {
+      "id": "outposts",
+      "label": "Outposts",
+      "hint": "Sentry boxes and tents along the roads out of town."
+    },
+    {
+      "id": "lots",
+      "label": "Build lots",
+      "hint": "Houses and extra halls after the wall is up."
+    },
+    {
+      "id": "rts",
+      "label": "Profession RTS",
+      "hint": "Barns, smith, herbalist, mill \u2014 profession harvest buildings."
+    },
+    {
+      "id": "defense",
+      "label": "Defenses",
+      "hint": "Extra towers, alarm, fire bell after the yard is stocked."
+    }
+  ],
+  "roles": [
+    {
+      "id": "claim",
+      "label": "Claim",
+      "can": "Deposit materials. Builders return here. Players search the chest."
+    },
+    {
+      "id": "harvest",
+      "label": "Harvest",
+      "can": "AI auto-harvests wood, stone, forage, and fish over time."
+    },
+    {
+      "id": "vendor",
+      "label": "Vendor",
+      "can": "Barter at the counter. Merchant NPC sells kit."
+    },
+    {
+      "id": "inn",
+      "label": "Inn",
+      "can": "Sit, hide, recover. Innkeep rest and rumors."
+    },
+    {
+      "id": "mission",
+      "label": "Mission giver",
+      "can": "Champion / warden issues charges from the keep."
+    },
+    {
+      "id": "workshop",
+      "label": "Workshop",
+      "can": "Smith, brew, weave, or mill. Use with E."
+    },
+    {
+      "id": "barracks",
+      "label": "Barracks",
+      "can": "Faction AI drills arms here."
+    },
+    {
+      "id": "keep",
+      "label": "Keep",
+      "can": "Hall of the host. Mission giver and roster spawn."
+    },
+    {
+      "id": "house",
+      "label": "House",
+      "can": "Family lot OUTSIDE the fence. Sleep and stash. Attackable by enemies."
+    },
+    {
+      "id": "wall",
+      "label": "Wall",
+      "can": "2 m curtain tile. Occupies two cells. Weld on X. Attackable."
+    },
+    {
+      "id": "gate",
+      "label": "Gate",
+      "can": "1.6 \u00d7 3.2 m passage on the road. 1.8 m character walks through. Attackable."
+    },
+    {
+      "id": "tower",
+      "label": "Tower",
+      "can": "Climb, lookout, arrow slit. Attackable."
+    },
+    {
+      "id": "path",
+      "label": "Path",
+      "can": "Lamp or sign on the 2 m street."
+    },
+    {
+      "id": "bench",
+      "label": "Bench",
+      "can": "Sit or work. Defined use only \u2014 no dummy furniture."
+    },
+    {
+      "id": "lamp",
+      "label": "Lamp",
+      "can": "Night light above head height."
+    },
+    {
+      "id": "storage",
+      "label": "Storage",
+      "can": "Search cache for supplies."
+    },
+    {
+      "id": "dock",
+      "label": "Dock",
+      "can": "Tie off boats and rafts."
+    },
+    {
+      "id": "defense",
+      "label": "Defense",
+      "can": "Alarm, bell, extra tower after the wall stands."
+    },
+    {
+      "id": "profession",
+      "label": "Profession RTS",
+      "can": "RTS harvest building OUTSIDE the fence. Gatherers path here, then through the gate to the claim."
+    },
+    {
+      "id": "tent",
+      "label": "Tent",
+      "can": "Camp shelter. No interior door."
+    },
+    {
+      "id": "plaza",
+      "label": "Plaza",
+      "can": "Open 2 m court at the claim."
+    },
+    {
+      "id": "misc",
+      "label": "Misc",
+      "can": "Chair, chest, barrel, crate share a 1 m cell with benches. Bottles and pots sit on tables."
+    }
+  ],
+  "layers": [
+    "quick",
+    "camp",
+    "bench",
+    "modular",
+    "dock",
+    "rts",
+    "race_home"
+  ],
+  "stations": [
+    {
+      "id": "quick",
+      "label": "Camp bench",
+      "hint": "No world bench. Torch and camp kits from the Main Panel.",
+      "profession": "any",
+      "objectStore": [
+        "Camp Bench",
+        "workbench"
+      ],
+      "mark": "bag"
+    },
+    {
+      "id": "cook",
+      "label": "Cooking fire",
+      "hint": "Campfire and cookpot. Chef food and water.",
+      "profession": "Chef",
+      "objectStore": [
+        "Campfire",
+        "campfire",
+        "cooking-pot"
+      ],
+      "mark": "fire"
+    },
+    {
+      "id": "engineer",
+      "label": "Engineering bench",
+      "hint": "Workbench and workshop. Tinker guns and camp kits.",
+      "profession": "Engineer",
+      "objectStore": [
+        "Tinker Table",
+        "workshop",
+        "workbench"
+      ],
+      "mark": "cog"
+    },
+    {
+      "id": "forestry",
+      "label": "Sawmill",
+      "hint": "Wood pile and waterwheel. Pine logs to planks.",
+      "profession": "Forester",
+      "objectStore": [
+        "Lumber Table",
+        "sawmill",
+        "woodworking-bench"
+      ],
+      "mark": "crate"
+    },
+    {
+      "id": "smelter",
+      "label": "Smelter",
+      "hint": "Smithy forge. Stone (Copper Ore) to Copper Ingot.",
+      "profession": "Miner",
+      "objectStore": [
+        "forge",
+        "Smithing Table"
+      ],
+      "mark": "crystal"
+    },
+    {
+      "id": "loom",
+      "label": "Loom",
+      "hint": "Spin hemp to thread, weave linen cloth.",
+      "profession": "Mystic",
+      "objectStore": [
+        "Loom Table",
+        "loom",
+        "Spinning Wheel",
+        "master-loom"
+      ],
+      "mark": "spool"
+    },
+    {
+      "id": "potion",
+      "label": "Alchemy bowl",
+      "hint": "Herbalist and alchemist. Minor potions.",
+      "profession": "Chef",
+      "objectStore": [
+        "alchemy-station",
+        "Alchemy Table",
+        "enchanting-table"
+      ],
+      "mark": "bowl"
+    },
+    {
+      "id": "anvil",
+      "label": "Anvil",
+      "hint": "Weapons and armour. Default for benches we have not themed yet.",
+      "profession": "Miner",
+      "objectStore": [
+        "anvil",
+        "Smithing Table"
+      ],
+      "mark": "anvil"
+    }
+  ],
+  "factions": [
+    {
+      "id": "crusade",
+      "label": "Crusade",
+      "playable": true,
+      "world": false,
+      "races": [
+        "human",
+        "dwarf",
+        "barbarian"
+      ]
+    },
+    {
+      "id": "fabled",
+      "label": "Fabled",
+      "playable": true,
+      "world": false,
+      "races": [
+        "elf"
+      ]
+    },
+    {
+      "id": "legion",
+      "label": "Legion",
+      "playable": true,
+      "world": false,
+      "races": [
+        "orc"
+      ]
+    },
+    {
+      "id": "pirates",
+      "label": "Pirates",
+      "playable": false,
+      "world": true,
+      "races": [
+        "undead",
+        "barbarian",
+        "human"
+      ]
+    }
+  ],
+  "npcs": {
+    "professions": [
+      "miner",
+      "forester",
+      "farmer",
+      "herbalist",
+      "smith",
+      "mason",
+      "engineer",
+      "soldier",
+      "merchant",
+      "innkeep"
+    ],
+    "hobbies": [
+      "fish",
+      "fireside",
+      "market",
+      "drill",
+      "forage",
+      "whistle",
+      "rest",
+      "gossip",
+      "cook",
+      "lookout"
+    ],
+    "dockCrew": [
+      {
+        "id": "sailor",
+        "label": "Sailor",
+        "meshScale": 0.9,
+        "classId": "ranger",
+        "weapon": "bow",
+        "abilities": [
+          "crows_nest_sniper",
+          "harpoon_gun",
+          "auto_fish",
+          "repair_hull",
+          "ranged_weapon_skill",
+          "cook_t0"
+        ]
+      },
+      {
+        "id": "weatherman",
+        "label": "Weatherman",
+        "meshScale": 0.9,
+        "classId": "mage",
+        "weapon": "staff",
+        "abilities": [
+          "cast_wind",
+          "cast_storm_barrier",
+          "cast_side_wave"
+        ],
+        "constants": {
+          "sideWavePushM": 20,
+          "barrierCrewOnlySwim": true
+        }
+      },
+      {
+        "id": "gunner",
+        "label": "Gunner",
+        "meshScale": 0.9,
+        "classId": "raider",
+        "weapon": "rifle",
+        "abilities": [
+          "use_cannons",
+          "sniper_nest",
+          "boarding_hook",
+          "throw_bomb",
+          "deploy_mine",
+          "fire_bomb",
+          "oil_trap",
+          "exploding_ball",
+          "scatter_ball",
+          "harpoon_fish"
+        ],
+        "constants": {
+          "oilBurnSec": 20
+        }
+      }
+    ],
+    "jobs": [
+      "vendor",
+      "inn",
+      "workshop",
+      "guard",
+      "hero",
+      "harvest",
+      "builder",
+      "faction-ai",
+      "sailor",
+      "weatherman",
+      "gunner"
+    ]
+  },
+  "ships": [
+    {
+      "size": "rowboat",
+      "maxHp": 30,
+      "speed": 4,
+      "cannons": 0,
+      "crewCap": 2,
+      "starterFree": true
+    },
+    {
+      "size": "sloop",
+      "maxHp": 80,
+      "speed": 3,
+      "cannons": 3,
+      "crewCap": 5,
+      "starterFree": false
+    },
+    {
+      "size": "galleon",
+      "maxHp": 200,
+      "speed": 2,
+      "cannons": 5,
+      "crewCap": 10,
+      "starterFree": false
+    }
+  ],
+  "hud": {
+    "docs": "https://info.grudge-studio.com/WEAPON_SKILLS.html",
+    "items": "https://info.grudge-studio.com/GRUDGE_Item_Database.html",
+    "stats": "https://info.grudge-studio.com/stats-guide.html",
+    "rows": {
+      "weapon": {
+        "keys": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "hint": "Mainhand weapon skills from master-weaponSkills"
+      },
+      "classArts": {
+        "keys": [
+          "Shift+1",
+          "Shift+2",
+          "Shift+3",
+          "Shift+4",
+          "Shift+5"
+        ],
+        "hint": "Class tree at L1/5/10/15/20"
+      },
+      "chrome": [
+        {
+          "key": "6",
+          "id": "menu",
+          "label": "Menu",
+          "hint": "Map, quests, close overlays"
+        },
+        {
+          "key": "7",
+          "id": "settings",
+          "label": "Settings",
+          "hint": "HUD toggles"
+        },
+        {
+          "key": "8",
+          "id": "panel",
+          "label": "Main panel",
+          "hint": "I \u00b7 equipment and bag"
+        },
+        {
+          "key": "9",
+          "id": "skills",
+          "label": "Skill book",
+          "hint": "P \u00b7 class and weapon trees"
+        },
+        {
+          "key": "0",
+          "id": "craft",
+          "label": "Camp craft",
+          "hint": "Camp bench \u00b7 no world station"
+        }
+      ],
+      "utility": {
+        "keys": [
+          "Shift+6",
+          "Shift+7",
+          "Shift+8",
+          "Shift+9",
+          "Shift+0"
+        ],
+        "hint": "Consumables, active items, mount"
+      }
+    },
+    "equip": {
+      "mainhand": "Paperdoll Mainhand swaps the combat hand-bone mesh",
+      "offhand": "Shield or torch on offhand bone"
+    }
+  },
+  "nature": {
+    "banned": [
+      "CommonTree",
+      "TwistedTree",
+      "DeadTree",
+      "Rock_Medium",
+      "Pine_1",
+      "Pine_2",
+      "Pine_3",
+      "Pine_4",
+      "Pine_5",
+      "Bush_Common",
+      "nature-megakit",
+      "/models/lowpoly/"
+    ],
+    "stems": {
+      "tree": "/nature/stylized-tree.glb",
+      "pine": "/nature/stylized-tree.glb",
+      "rock": "/nature/stone-black.glb",
+      "rock2": "/nature/stone_black_2.glb",
+      "bush": "/nature/stylized-foliage.glb",
+      "palms": "/nature/realistic-palms.glb",
+      "grass": "/nature/grass-pack.glb",
+      "ore": "/nature/ore-pack.glb",
+      "veg": "/nature/vegetation-pack.glb"
+    },
+    "cdn": {
+      "islandTree": "https://assets.grudge-studio.com/models/environment/island_tree.glb",
+      "islandRock": "https://assets.grudge-studio.com/models/environment/island_rock.glb",
+      "gemCluster": "https://assets.grudge-studio.com/models/environment/gem_cluster.glb",
+      "palmPack": "https://assets.grudge-studio.com/models/environment/palm-tree.glb"
+    },
+    "harvestRegenHours": 4
+  },
+  "loops": [
+    {
+      "id": "island_harvest_craft_build",
+      "live": true,
+      "hint": "Claim \u2192 harvest \u2192 plaza \u2192 walls \u2192 paths \u2192 outposts \u2192 lots \u2192 RTS \u2192 defense"
+    },
+    {
+      "id": "rts_train_promote",
+      "live": true,
+      "hint": "Barracks / armoury train faction AI. Promote hero at keep."
+    },
+    {
+      "id": "harbor_ship_crew_sail",
+      "live": "catalog",
+      "hint": "Dock crew + ship catalog live. Ocean sim is P0."
+    },
+    {
+      "id": "ocean_sector_combat_return",
+      "live": false,
+      "hint": "Tactical ocean + 9-sector map \u2014 spec, not runtime."
+    },
+    {
+      "id": "battle_lane_deploy",
+      "live": false,
+      "hint": "Satellite Grudge-Studio-Game."
+    }
+  ],
+  "missing": [
+    {
+      "id": "dock_crew_api",
+      "priority": "P0",
+      "status": "catalog",
+      "hint": "Roster + 0.9 scale wired. Railway crew_ids assign still P0."
+    },
+    {
+      "id": "crew_ai_ocean_runtime",
+      "priority": "P0",
+      "status": "missing"
+    },
+    {
+      "id": "ship_stats_panel_full",
+      "priority": "P0",
+      "status": "catalog"
+    },
+    {
+      "id": "storm_barrier_physics",
+      "priority": "P1",
+      "status": "missing"
+    },
+    {
+      "id": "oil_mine_entities",
+      "priority": "P1",
+      "status": "missing"
+    },
+    {
+      "id": "ship_cargo_bag",
+      "priority": "P1",
+      "status": "missing"
+    },
+    {
+      "id": "cdn_asset_verify_dock_tools",
+      "priority": "P1",
+      "status": "missing"
+    },
+    {
+      "id": "sector_event_director",
+      "priority": "P2",
+      "status": "missing"
+    },
+    {
+      "id": "fantasy_walls_as_build_pieces",
+      "priority": "P2",
+      "status": "live",
+      "hint": "Faction kits isolate wall/gate/fence nodeNames on the 1 m grid."
+    },
+    {
+      "id": "lumber-camp",
+      "priority": "gap",
+      "status": "named",
+      "hint": "4\u00d74 lumber RTS for auto-harvest wood"
+    },
+    {
+      "id": "mine",
+      "priority": "gap",
+      "status": "named",
+      "hint": "6\u00d74 mine / quarry RTS for auto-harvest stone"
+    },
+    {
+      "id": "faction-house",
+      "priority": "gap",
+      "status": "named",
+      "hint": "Dedicated 4\u00d74 house GLB per host (fabled, legion, crusade)"
+    },
+    {
+      "id": "candle",
+      "priority": "gap",
+      "status": "named",
+      "hint": "Tabletop candle / small light \u22640.28 m on benches and tables"
+    },
+    {
+      "id": "bed",
+      "priority": "gap",
+      "status": "named",
+      "hint": "Bed 1\u00d72 that occupies a floor cell inside 4\u00d74 homes"
+    }
+  ],
+  "scaleNote": "Home-island contract uses 2.0 m as the prop-scale human. GOLDEN grudge6 kits plant at 1.8 m. Gate opening 1.6 \u00d7 3.2 m admits both. Never stretch race kits to 2.0."
+}
