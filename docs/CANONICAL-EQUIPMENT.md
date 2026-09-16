@@ -54,14 +54,16 @@ Pattern: `three-slot-starter` · Meta: `_meta/t0-starter-slot-pattern.json`
 
 ### T1+ combat weapons
 
+Each **weapon type** has its own tree (Sword slash/grudge ≠ Bow shot/volley ≠ Staff school bolt). Named weapons (Bloodfeud vs Wraithfang) **filter** that type — they do not dump a shared 2–3 pool.
+
 | Slot | Role |
 |------|------|
-| 1 | Standard attack (type-wide) |
-| 2–3 | Shared style pool |
+| 1 | This weapon's attack (type + variant basicAbility) |
+| 2–3 | This weapon's arts / techniques (variant abilities, never another type) |
 | 4 | Variant signature |
 | 5 | Passives |
 
-Pattern: `five-slot` · Off-hand SHIELD/TOME: F-toggle injects slots 1–3.
+Pattern: `five-slot-unique` · Off-hand SHIELD/TOME: hold **E (block)** injects slots 1–3. Anim clips: `sword_shield` / `longbow` / `magic` / `pistol` / `rifle` / `unarmed` pack roles. Class trees stay in `master-skillTrees.json`.
 
 ### Harvest tool — Crude Tool (T0)
 

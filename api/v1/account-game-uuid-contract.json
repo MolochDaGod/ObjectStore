@@ -1,5 +1,6 @@
 {
   "id": "account-game-uuid-contract",
+  "version": "2026-09-03",
   "version": "2026-09-06",
   "title": "Grudge account DB · game character DB · UUID law",
   "authority": "Railway Postgres grudge-api-production (player SSOT)",
@@ -14,6 +15,7 @@
     "characterName": { "field": "characters.name", "use": "in-world game name" },
     "characterStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display/support not PK" },
     "itemInstance": { "field": "grudge_uuid", "mint": "server ledger/uuid only" },
+    "itemDefinition": { "field": "catalog slug", "use": "recipes/templates only" },
     "itemDefinition": { "field": "uuid", "format": "ITEM-*|FOOD-*|POTN-*|CONS-*", "catalog": "/api/v1/master-items.json" },
     "materialDefinition": { "field": "uuid", "format": "MATL-*", "catalog": "/api/v1/master-materials.json" },
     "recipeDefinition": { "field": "uuid", "format": "RECP-*", "catalog": "/api/v1/master-recipes.json" },

@@ -1,8 +1,12 @@
 {
-  "version": "1.0.0",
-  "generated": "2026-08-19T00:00:59.197Z",
+  "version": "1.1.0",
+  "generated": "2026-09-05T22:40:00.000Z",
   "source": "api/v1/sources/harvest-nodes.json",
-  "totalNodes": 21,
+  "lootLaw": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
+  "lootAuthority": "character gathering profession level",
+  "nodeQualityDoesNotAffectLoot": true,
+  "nodeRole": "visual prefab + type (ore/wood/herb/hide) + respawn. drops[] are display examples only — runtime rolls professions.json gathering.tierResources at the harvester's level.",
+  "totalNodes": 23,
   "rarityChances": {
     "common": 0.7,
     "uncommon": 0.2,
@@ -1675,6 +1679,133 @@
         ],
         "recipeCount": 0,
         "recipeUuids": []
+      }
+    },
+    {
+      "id": "wood-crate-node",
+      "name": "Wood crate",
+      "type": "wood",
+      "tier": 0,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 2,
+      "respawnTime": 36,
+      "xpReward": 8,
+      "harvestDefId": "crate_wood",
+      "paletteId": "node.crate",
+      "meshUrl": "https://assets.grudge-studio.com/models/island-scenery/crates_and_barrels.glb",
+      "meshKey": "models/island-scenery/crates_and_barrels.glb",
+      "isolatePool": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C14",
+        "C15"
+      ],
+      "tool": "axe",
+      "heightM": 1,
+      "biomes": [
+        "home_island",
+        "plains",
+        "village"
+      ],
+      "drops": [
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 2,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260621232130-0009FF-8759B1BD",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+          "recipeUuids": [
+            "RECP-20260207-WDW-0001"
+          ]
+        }
+      ],
+      "spritePath": "/icons/materials/pine-log.png",
+      "description": "Isolated crate (C*) from crates_and_barrels.glb — axe gather wood. Never the whole pack.",
+      "nodeUuid": "NODE-WOOD-CRATE",
+      "spriteUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+      "links": {
+        "materials": [
+          "Pine Log"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260207-WDW-0001"
+        ]
+      },
+      "mp": {
+        "bagId": "mat-wood",
+        "note": "Casting lab bag uses mat-wood; fleet craft uses pine-log UUID"
+      }
+    },
+    {
+      "id": "wood-barrel-node",
+      "name": "Wood barrel",
+      "type": "wood",
+      "tier": 0,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 1,
+      "harvestTime": 2,
+      "respawnTime": 34,
+      "xpReward": 6,
+      "harvestDefId": "barrel_wood",
+      "paletteId": "node.barrel",
+      "meshUrl": "https://assets.grudge-studio.com/models/island-scenery/crates_and_barrels.glb",
+      "meshKey": "models/island-scenery/crates_and_barrels.glb",
+      "isolatePool": [
+        "B1",
+        "B2",
+        "B3",
+        "B5"
+      ],
+      "tool": "axe",
+      "heightM": 1.18,
+      "biomes": [
+        "home_island",
+        "plains",
+        "village"
+      ],
+      "drops": [
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 1,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260621232130-0009FF-8759B1BD",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+          "recipeUuids": [
+            "RECP-20260207-WDW-0001"
+          ]
+        }
+      ],
+      "spritePath": "/icons/materials/pine-log.png",
+      "description": "Isolated barrel (B*) from crates_and_barrels.glb — axe gather wood. Never the whole pack.",
+      "nodeUuid": "NODE-WOOD-BARREL",
+      "spriteUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+      "links": {
+        "materials": [
+          "Pine Log"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260207-WDW-0001"
+        ]
+      },
+      "mp": {
+        "bagId": "mat-wood",
+        "note": "Casting lab bag uses mat-wood; fleet craft uses pine-log UUID"
       }
     }
   ]

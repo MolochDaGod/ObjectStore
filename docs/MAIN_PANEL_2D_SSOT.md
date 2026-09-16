@@ -2,8 +2,8 @@
 
 **Live:** https://info.grudge-studio.com/main-panel.html  
 **Repo:** `MolochDaGod/ObjectStore`  
-**Related host:** `ui.grudge-studio.com/main-panel.html` (era paperdoll + craft **embed** SSOT)  
-**Craft product:** https://grudgewarlords.com/craft/ (Railway bag — never Puter KV alone)
+**Related host:** `ui.grudge-studio.com/main-panel.html` (HYDRA / era HUD **editor** — not this character sheet)  
+**Craft product:** https://grudgewarlords.com/craft/ (Railway bag — pop-out only; live XFO SAMEORIGIN)
 
 ## Stack (do not invent parallel UI)
 
@@ -41,7 +41,7 @@
 
 | Rule | Value |
 |------|--------|
-| Suite URL | `https://grudgewarlords.com/craft/?embed=1&from=info-main-panel` |
+| Suite URL | `https://grudgewarlords.com/craft/?era=warlords&from=info-main-panel&returnTo=` (pop-out; `embed=1` does **not** lift XFO) |
 | SSO | query `sso_token` + `postMessage` `GRUDGE_AUTH` |
 | Pop-out | always available |
 | Bag | Railway account (suite authority) |

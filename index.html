@@ -729,9 +729,9 @@
 <span class="kw">const</span> res = <span class="kw">await</span> sdk.auth.<span class="fn">login</span>(<span class="str">'user'</span>, <span class="str">'pass'</span>);
 <span class="kw">const</span> me  = <span class="kw">await</span> sdk.auth.<span class="fn">getMe</span>();
 
-<span class="cm">// ── Game API (api.grudge-studio.com) ──</span>
+<span class="cm">// ── Player API (Railway grudge-api via same-origin /api/*) ──</span>
 <span class="kw">const</span> chars   = <span class="kw">await</span> sdk.game.<span class="fn">listCharacters</span>();
-<span class="kw">await</span> sdk.game.<span class="fn">startCraft</span>({ char_id: <span class="str">1</span>, recipe_key: <span class="str">'iron-sword'</span> });
+<span class="kw">await</span> sdk.game.<span class="fn">startCraft</span>({ characterId: <span class="str">'&lt;uuid&gt;'</span>, recipe_key: <span class="str">'iron-sword'</span> });
 
 <span class="cm">// ── Account &amp; Assets ──</span>
 <span class="kw">const</span> profile = <span class="kw">await</span> sdk.account.<span class="fn">getProfile</span>(grudgeId);
@@ -775,7 +775,7 @@
     <div class="footer-links">
       <a href="https://grudgewarlords.com">&#127918; Grudge Warlords</a>
       <a href="https://github.com/MolochDaGod/ObjectStore">&#128187; GitHub</a>
-      <a href="https://github.com/MolochDaGod/ObjectStore/wiki">&#128218; Wiki</a>
+      <a href="./wiki.html">Wiki</a>
       <a href="./docs/">&#128214; API Docs</a>
       <a href="./openapi.yaml">&#128203; OpenAPI Spec</a>
       <a href="./AGENT-CONTEXT.md">&#129302; Agent Context</a>

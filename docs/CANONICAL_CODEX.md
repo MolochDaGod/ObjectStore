@@ -1,6 +1,10 @@
 # Grudge Studio — Canonical Codex (ONE TRUTH)
 
 **Machine SSOT:** [`/api/v1/fleet-canonical.json`](../api/v1/fleet-canonical.json)  
+**Eras:** [`/api/v1/era-systems.json`](../api/v1/era-systems.json) · [ERA_SYSTEMS_API.md](./ERA_SYSTEMS_API.md)  
+**Open launcher:** [`/api/v1/open-launcher.json`](../api/v1/open-launcher.json)  
+**Prefabs:** [`/api/v1/prefab-scheme.json`](../api/v1/prefab-scheme.json)  
+**Updated:** 2026-09-11  
 **Updated:** 2026-09-16  
 **Audience:** agents, deploy, production audits  
 

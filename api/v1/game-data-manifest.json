@@ -9,6 +9,7 @@
     "recipes": "https://info.grudge-studio.com/api/v1/master-recipes.json",
     "materials": "https://info.grudge-studio.com/api/v1/master-materials.json",
     "harvestNodes": "https://info.grudge-studio.com/api/v1/master-harvest-nodes.json",
+    "harvestLootByProfession": "https://info.grudge-studio.com/api/v1/harvest-loot-by-profession.json",
     "uuidLaw": "https://info.grudge-studio.com/api/v1/uuid-law.json",
     "accountGameUuid": "https://info.grudge-studio.com/api/v1/account-game-uuid-contract.json",
     "islandBuildings": "https://info.grudge-studio.com/api/v1/island-building-prefabs.json",
@@ -38,6 +39,10 @@
     "registry": "https://info.grudge-studio.com/api/v1/master-registry.json",
     "iconResolver": "https://info.grudge-studio.com/utils/icon-resolver.js",
     "magicRocks": "https://info.grudge-studio.com/api/v1/magic-rocks.json",
+    "superTerrain": "https://info.grudge-studio.com/api/v1/super-terrain.json",
+    "stylizedProjectiles": "https://info.grudge-studio.com/api/v1/stylized-projectiles.json",
+    "vfxProductionGlb": "https://info.grudge-studio.com/api/v1/vfx-production-glb.json",
+    "vfxSkillTypes": "https://info.grudge-studio.com/api/v1/vfx-skill-types.json"
     "stylizedProjectiles": "https://info.grudge-studio.com/api/v1/stylized-projectiles.json",
     "vfxProductionGlb": "https://info.grudge-studio.com/api/v1/vfx-production-glb.json"
   },
@@ -56,6 +61,7 @@
     "prefabsWithSkills": 823
   },
   "graph": {
+    "harvestToMaterial": "harvest-loot-by-profession.json (profession level → gathering.tierResources) → master-materials.json. Node prefab = master-harvest-nodes.json type only — node.tier does not gate loot.",
     "harvestToMaterial": "master-harvest-nodes.json type + profession level → master-materials.json (not node quality)",
     "materialToRecipe": "master-recipes.json → materials[].uuid",
     "recipeToItem": "master-recipes.json → resultItemId → master-items.json",

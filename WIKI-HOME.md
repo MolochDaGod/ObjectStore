@@ -1,9 +1,12 @@
 # 🎮 Grudge Studio ObjectStore Wiki
 
-**Public API for Grudge Warlords game data** • Weapons • Materials • Armor • Icons • No Auth Required
+**Public definitions API** • Skills • Weapons • Icons • UUIDs • No auth for JSON
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success)](https://molochdagod.github.io/ObjectStore)
-[![API Status](https://img.shields.io/badge/API-Active-brightgreen)](https://molochdagod.github.io/ObjectStore/api/v1/)
+**Live wiki:** https://info.grudge-studio.com/wiki.html  
+**Live JSON:** https://info.grudge-studio.com/api/v1/  
+**UUID law:** https://info.grudge-studio.com/api/v1/uuid-law.json  
+
+GitHub Pages is a **mirror only**. Player bag/heroes are **Railway**, not this API.
 
 ---
 
@@ -51,9 +54,8 @@ ObjectStore is the centralized **single source of truth** for all Grudge Warlord
 ### Basic API Usage
 
 ```javascript
-// Fetch all weapons
-const response = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/weapons.json');
-const weapons = await response.json();
+const response = await fetch('https://info.grudge-studio.com/api/v1/master-weaponSkills.json');
+const skills = await response.json();
 
 // Get materials
 const materials = await fetch('https://molochdagod.github.io/ObjectStore/api/v1/materials.json')
@@ -87,20 +89,19 @@ const swords = await sdk.getWeaponsByCategory('swords');
 
 ### Base URL
 ```
-https://molochdagod.github.io/ObjectStore/api/v1/
+https://info.grudge-studio.com/api/v1/
 ```
 
-### Endpoints
+### Endpoints (prefer these)
 
-| Endpoint | Description | Items |
-|----------|-------------|-------|
-| `/weapons.json` | All weapon definitions | 816 weapons |
-| `/materials.json` | Crafting materials | 98 materials |
-| `/armor.json` | Armor slots and tiers | 11 slots |
-| `/consumables.json` | Food, potions, items | 132 items |
-| `/skills.json` | Weapon skills | 47 skills |
-| `/professions.json` | Professions data | 5 professions |
-| `/sprites.json` | Sprite icon catalog | 4000+ icons |
+| Endpoint | Description |
+|----------|-------------|
+| `/master-weaponSkills.json` | Play skills — `SKIL-*` + icons + Bip001 clips |
+| `/master-weapon-prefabs.json` | Weapon item prefabs |
+| `/master-items.json` | Merged item catalog |
+| `/icon-registry.json` | `ICON-*` image SSOT |
+| `/uuid-law.json` | UUID families (machine) |
+| `/account-game-uuid-contract.json` | Account vs character vs item instance |
 
 ### Data Structure
 
@@ -150,64 +151,22 @@ https://molochdagod.github.io/ObjectStore/api/v1/
 
 ---
 
-## 🆔 UUID System
+## UUID System (do not mix)
 
-ObjectStore uses the **GRUDGE UUID System** from Warlord-Crafting-Suite/Arsenal for consistent object identification across all projects.
+Live: [wiki.html](https://info.grudge-studio.com/wiki.html) · [uuid-law.json](https://info.grudge-studio.com/api/v1/uuid-law.json)
 
-### Format
-```
-{PREFIX}-{TIMESTAMP}-{SEQUENCE}-{HASH}
-```
+| Family | Format | Owns |
+|--------|--------|------|
+| Account | `GRUDGE_…` | SSO, bag, wallet, island (Railway) |
+| Character | RFC UUID | Play handoff `?characterId=` only |
+| Hero stamp | `GRDG-…` | Display — **not** PK |
+| Item instance | server `grudge_uuid` | Unique gear ledger |
+| Skill definition | `SKIL-XXXX-XXXX-XXXX` | `master-weaponSkills.json` |
+| Icon asset | `ICON-XXXX-XXXX-XXXX` | `icon-registry.json` / R2 |
 
-Example: `ITEM-20260225120000-000001-A1B2C3D4`
+Timestamp `ABIL-2026…` rows are **legacy**. Skills now stamp deterministic `SKIL-*` (`sha1(grudge-skill:{id})`) and keep `uuidLegacy`.
 
-### Entity Prefixes
-
-| Entity Type | Prefix | Example |
-|-------------|--------|---------|
-| Hero/Character | `HERO` | `HERO-20260225120000-000001-F3E2D1C0` |
-| Item (Generic) | `ITEM` | `ITEM-20260225120000-000002-B4A3C2D1` |
-| Equipment | `EQIP` | `EQIP-20260225120000-000003-C5B4D3E2` |
-| Ability/Skill | `ABIL` | `ABIL-20260225120000-000004-D6C5E4F3` |
-| Material | `MATL` | `MATL-20260225120000-000005-E7D6F5G4` |
-| Recipe | `RECP` | `RECP-20260225120000-000006-F8E7G6H5` |
-| Resource Node | `NODE` | `NODE-20260225120000-000007-G9F8H7I6` |
-| Mob/Enemy | `MOBS` | `MOBS-20260225120000-000008-H0G9I8J7` |
-| Boss | `BOSS` | `BOSS-20260225120000-000009-I1H0J9K8` |
-| Mission/Quest | `MISS` | `MISS-20260225120000-000010-J2I1K0L9` |
-| Infusion | `INFU` | `INFU-20260225120000-000011-K3J2L1M0` |
-| Loot Table | `LOOT` | `LOOT-20260225120000-000012-L4K3M2N1` |
-| Consumable | `CONS` | `CONS-20260225120000-000013-M5L4N3O2` |
-| Quest | `QUST` | `QUST-20260225120000-000014-N6M5O4P3` |
-| Zone | `ZONE` | `ZONE-20260225120000-000015-O7N6P5Q4` |
-| Save State | `SAVE` | `SAVE-20260225120000-000016-P8O7Q6R5` |
-
-### SDK Usage
-
-```javascript
-import { generateGrudgeUuid, parseGrudgeUuid, isValidGrudgeUuid } from './sdk/grudge-sdk.js';
-
-// Generate UUID
-const itemId = generateGrudgeUuid('item', 'legendary-sword');
-// Returns: ITEM-20260225120000-000001-A1B2C3D4
-
-// Parse UUID
-const parsed = parseGrudgeUuid(itemId);
-console.log(parsed);
-// {
-//   prefix: 'ITEM',
-//   timestamp: '20260225120000',
-//   sequence: '000001',
-//   hash: 'A1B2C3D4',
-//   entityType: 'item',
-//   createdAt: Date('2026-02-25T12:00:00Z')
-// }
-
-// Validate UUID
-if (isValidGrudgeUuid(itemId)) {
-  console.log('Valid GRUDGE UUID');
-}
-```
+**Do not** mint bag items in the client. **Do not** hand off play with `GRDG-*` or `GRUDGE_*`.
 
 ---
 

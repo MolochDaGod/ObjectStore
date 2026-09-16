@@ -15,7 +15,7 @@
   <div class="container">
     <header class="header">
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">3D Models Browser</h1>
-      <p class="subtitle">GLB-only 3D object storage — powered by Three.js + Draco
+      <p class="subtitle">D1 index + era prefabs · binaries on assets.grudge-studio.com · three r185
         <span class="r2-status checking" id="r2Status"><span class="r2-dot"></span> Checking R2…</span>
       </p>
     </header>
@@ -24,15 +24,15 @@
       <div class="stat-item"><span class="stat-label">Total Models</span><span class="stat-value" id="totalModels">—</span></div>
       <div class="stat-item"><span class="stat-label">Categories</span><span class="stat-value" id="totalCategories">—</span></div>
       <div class="stat-item"><span class="stat-label">Total Size</span><span class="stat-value" id="totalSize">—</span></div>
-      <div class="stat-item"><span class="stat-label">Pipeline</span><span class="stat-value">v2.0</span></div>
+      <div class="stat-item"><span class="stat-label">D1 meshes</span><span class="stat-value" id="d1Count">—</span></div>
     </div>
 
     <div class="bp-banner">
       <span class="bp-banner-icon">&#9889;</span>
       <div class="bp-banner-text">
-        <strong>Grudge Pipeline:</strong> Only GLB is served to game engines.
-        Drop any format (FBX, OBJ, GLTF) and it goes through the pipeline —
-        Draco compression, PBR materials, skeletal animation preserved, smallest file size.
+        <strong>Catalog SSOT:</strong> Cloudflare D1 (<code>objectstore.grudge-studio.com/v1/assets</code>)
+        + era taxonomy + Warlords entity prefabs + Toon <code>loadRaceKit</code> play kits.
+        GitHub Pages KayKit paths are not the live mesh store.
       </div>
     </div>
 
@@ -104,8 +104,8 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/"
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
     }
   }
   </script>

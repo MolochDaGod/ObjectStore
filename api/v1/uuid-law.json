@@ -6,6 +6,10 @@
   "docs": [
     "docs/API-AND-UUID-GUIDE.md",
     "api/v1/account-game-uuid-contract.json",
+    "api/v1/era-systems.json",
+    "api/v1/open-launcher.json",
+    "api/v1/prefab-scheme.json",
+    "docs/ERA_SYSTEMS_API.md",
     "docs/WEAPON_SKILLS_API_SSOT.md",
     "docs/ICON-ASSET-LIBRARY.md"
   ],
@@ -34,6 +38,9 @@
       "pathIndex": "/api/v1/icon-path-index.json",
       "cdn": "https://assets.grudge-studio.com/game-assets/icons/..."
     },
+    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
+    "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
+    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" },
     "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*", "also": ["FOOD-*", "POTN-*", "CONS-*"] },
     "materialDefinition": { "catalog": "/api/v1/master-materials.json", "prefix": "MATL-*" },
     "recipeDefinition": { "catalog": "/api/v1/master-recipes.json", "prefix": "RECP-*" },
@@ -96,6 +103,7 @@
     "SKIL-": "skill definition",
     "ICON-": "icon asset",
     "ITEM-": "item / weapon prefab definition (not bag instance)",
+    "PFAB-": "entity prefab",
     "FOOD-": "consumable food definition (master-items)",
     "POTN-": "potion definition (master-items)",
     "CONS-": "consumable definition (master-items)",
@@ -112,6 +120,7 @@
     "https://info.grudge-studio.com/api/v1/uuid-law.json",
     "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
     "https://info.grudge-studio.com/api/v1/fleet-wiring.json"
+  ]
   ],
   "verified": {
     "date": "2026-09-06",
