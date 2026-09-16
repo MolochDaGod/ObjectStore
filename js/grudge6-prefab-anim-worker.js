@@ -354,18 +354,34 @@ export class PrefabAnimWorker {
       'Be concise. Suggest concrete fill order for null prefab fields.';
     this.putering = true;
     try {
-      const res = await window.puter.ai.chat(
-        [
-          { role: 'system', content: system },
-          { role: 'user', content: `Context:\n${context}\n\nQuestion:\n${prompt}` },
-        ],
-        { model: 'gpt-4o-mini' },
-      );
-      const text = typeof res === 'string' ? res : res?.message?.content || res?.toString?.() || String(res);
+      const origin =
+        typeof location !== 'undefined' &&
+        (location.hostname === 'localhost' ||
+          location.hostname === '127.0.0.1' ||
+          location.hostname === 'grudgewarlords.com' ||
+          location.hostname === 'client.grudge-studio.com')
+          ? ''
+          : 'https://grudge-api-production-0d46.up.railway.app';
+      const r = await fetch(`${origin}/api/ai/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: `Context:\n${context}\n\nQuestion:\n${prompt}` },
+          ],
+          model: 'cheap',
+          page: 'objectstore_prefab_anim',
+          tier: 'cheap',
+          maxTokens: 700,
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      const text = data.text || '';
       this.pushLog(text.slice(0, 500));
       return text;
     } catch (e) {
-      this.pushLog(`Puter error: ${e.message}`, 'err');
+      this.pushLog(`AI router error: ${e.message}`, 'err');
       return null;
     } finally {
       this.putering = false;

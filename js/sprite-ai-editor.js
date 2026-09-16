@@ -1,7 +1,7 @@
 /**
  * Grudge Studio — Sprite AI Editor
  * Puter.js powered chat panel for AI-assisted sprite editing.
- * Uses puter.ai.chat() for vision analysis and puter.ai.txt2img() for generation.
+ * Chat/vision via Railway /api/ai/chat (gruda-ai-router). txt2img stays Puter.
  */
 (function () {
   'use strict';
@@ -226,34 +226,17 @@
     var fullResponse = '';
 
     try {
-      // Prepare chat call
-      var chatOpts = { model: currentModel, stream: true };
-
-      var response;
-      if (imageUrl && hasVision) {
-        // Vision call with image
-        response = await puter.ai.chat(text, imageUrl, chatOpts);
-      } else {
-        // Text-only call with message history
-        response = await puter.ai.chat(messages, chatOpts);
-      }
-
-      // Handle streaming
-      if (response && typeof response[Symbol.asyncIterator] === 'function') {
-        for await (var part of response) {
-          var chunk = part?.text || part?.message?.content || '';
-          if (typeof chunk === 'string') {
-            fullResponse += chunk;
-            responseBubble.innerHTML = formatMarkdown(fullResponse);
-            chatLog.scrollTop = chatLog.scrollHeight;
-          }
-        }
-      } else {
-        // Non-streaming response
-        fullResponse = response?.message?.content?.[0]?.text || response?.message?.content || response || '';
-        if (typeof fullResponse !== 'string') fullResponse = JSON.stringify(fullResponse);
-        responseBubble.innerHTML = formatMarkdown(fullResponse);
-      }
+      if (!window.grudaChat) throw new Error('gruda-ai-client.js not loaded');
+      var routerModel = currentModel.indexOf(':') >= 0 ? currentModel : ('puter:' + currentModel);
+      var data = await window.grudaChat(messages, {
+        model: routerModel,
+        page: 'objectstore_sprite_ai_editor',
+        maxTokens: 800,
+        imageUrl: imageUrl && hasVision ? imageUrl : null,
+      });
+      fullResponse = data.text || '';
+      if (typeof fullResponse !== 'string') fullResponse = JSON.stringify(fullResponse);
+      responseBubble.innerHTML = formatMarkdown(fullResponse);
 
       messages.push({ role: 'assistant', content: fullResponse });
 
