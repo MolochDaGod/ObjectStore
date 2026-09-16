@@ -266,6 +266,7 @@
     <a href="#maps-terrain">Maps & Terrain</a>
     <a href="#map-families">Map Families</a>
     <a href="#home-islands">Home Islands</a>
+    <a href="#island-build">Island Build Doctrine</a>
     <a href="#nature-assets">Nature Assets</a>
     <a href="#biome-ecosystems">Biome Ecosystems</a>
     <a href="#freeform-arpg">Freeform ARPG</a>
@@ -1357,9 +1358,75 @@ npx tsx scripts/seed-d1.ts</code></pre>
       </div>
     </section>
 
+    <section id="island-build">
+      <h2>Island Build Doctrine</h2>
+      <p>Canonical 1&nbsp;m occupy grid, faction kits, NPC execution order, HUD, dock crew, and honest asset gaps. Play client executes this contract. Definitions: ObjectStore. Binaries: R2. Island seed: Railway <code class="inline-code">home_islands</code>.</p>
+      <p><a href="./ISLAND-BUILD-DOCTRINE.md">ISLAND-BUILD-DOCTRINE.md</a> · machine JSON below.</p>
+
+      <table>
+        <tr><th>Contract</th><th>Value</th></tr>
+        <tr><td>Occupy grid</td><td><strong>1 m × 1 m</strong></td></tr>
+        <tr><td>Small building / 4×4 RTS</td><td><strong>4 × 4 m</strong></td></tr>
+        <tr><td>Medium RTS</td><td><strong>6 × 4 m</strong> (barn, smith, brewery)</td></tr>
+        <tr><td>Bench</td><td><strong>0.5 × 1 m</strong> · chairs/chests share the leftover 1×1</td></tr>
+        <tr><td>Wall / fence / gate ribbon</td><td><strong>2 × 1 m</strong> · isolate <code class="inline-code">nodeName</code></td></tr>
+        <tr><td>Gate opening</td><td><strong>1.6 × 3.2 m</strong> · 1.8 m kit walks through</td></tr>
+        <tr><td>Kit plant height</td><td><strong>1.8 m</strong> GOLDEN grudge6 — do not stretch to 2.0</td></tr>
+        <tr><td>Prop-scale human</td><td><strong>2.0 m</strong> home-island-contract reference</td></tr>
+        <tr><td>Harvest regen</td><td><strong>4 hours</strong></td></tr>
+        <tr><td>Personal homes</td><td><strong>Outside</strong> the fenced yard · attackable</td></tr>
+      </table>
+
+      <h3>Build phases (NPC order)</h3>
+      <p>Claim flag → harvest → plaza → walls/gates → paths → outposts → lots → profession RTS → defense. One host pack. No mixed-faction mashups. No dummy benches.</p>
+
+      <h3>Dock crew (hubs only)</h3>
+      <p>Sailor · Weatherman · Gunner — race of the captain, grudge6 kit @ <strong>0.9</strong>. Planted on the dock / outpost zone, not inside the curtain.</p>
+
+      <h3>Nature runtime</h3>
+      <p>Kenney <code class="inline-code">CommonTree</code> / <code class="inline-code">Pine_1</code> / <code class="inline-code">Rock_Medium</code> / <code class="inline-code">Bush_Common</code> are <strong>author-only</strong>. Play loads organized stems + R2 <code class="inline-code">island_tree.glb</code> / <code class="inline-code">island_rock.glb</code> / palm isolate <code class="inline-code">M_Palm_P2_*</code>.</p>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/island-build-doctrine.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Machine SSOT: size law, occupy layers, phases, stations, HUD, dock crew, ships, nature policy, honest gaps.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/buildable-prefabs.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">118 playable prefabs with 1&nbsp;m footprints, roles, occupy layer, size class, attackable flag, wood/stone/iron, build duration.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/faction-kits.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Crusade / Fabled / Legion kits — keep, walls, gates, houses, RTS lots. One host pack per settlement.</p>
+        </div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-url">/api/v1/npc-roster.json</span>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Hub / camp / outpost rosters + dock crew. Jobs, professions, zones (plaza · homestead · curtain · outpost).</p>
+        </div>
+      </div>
+    </section>
+
     <section id="nature-assets">
       <h2>Nature Assets (Home Island)</h2>
-      <p>Organized nature for home islands. Quaternius / nature-megakit scatter props are <strong>banned</strong> at runtime.</p>
+      <p>Organized nature for home islands. Quaternius / nature-megakit scatter props are <strong>banned</strong> at runtime. The Warlords play client loads stylized-tree, stone-black, realistic-palms, and R2 harvest packs — never Kenney CommonTree / Pine_1 / Rock_Medium / Bush_Common.</p>
 
       <h3>Banned path fragments</h3>
       <p><code class="inline-code">CommonTree</code>, <code class="inline-code">TwistedTree</code>, <code class="inline-code">DeadTree</code>, <code class="inline-code">Rock_Medium</code>, <code class="inline-code">Pine_1..5</code> megakit, <code class="inline-code">Bush_Common</code>, <code class="inline-code">nature-megakit</code>, <code class="inline-code">/models/lowpoly/</code></p>

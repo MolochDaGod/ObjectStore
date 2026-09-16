@@ -1,0 +1,783 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-16",
+  "factions": [
+    {
+      "faction": "crusade",
+      "kit": {
+        "faction": "crusade",
+        "keep": "fortress/keep",
+        "barracks": "fortress/barracks",
+        "armoury": "fortress/armoury",
+        "inn": "crusade/tavern",
+        "vendor": "crusade/store",
+        "house": "crusade/tent_1",
+        "herbalist": "crusade/herbalist_s_house",
+        "bakery": "crusade/bakery",
+        "alchemist": "crusade/alchemist_house",
+        "smith": "crusade/smithy",
+        "weaver": "crusade/weaving_works_final",
+        "tent": "crusade/tent_1",
+        "tent2": "crusade/tent_2",
+        "sentry": "fortress/sentry",
+        "tower": "fortress/tower",
+        "towerAlt": "fortress/tower-round",
+        "wall": "fortress/wall-seg",
+        "wallAlt": "fortress/wall-merlon",
+        "gate": "fortress/gate",
+        "gateMinor": "fortress/gate-minor",
+        "gatePostern": "fortress/gate-postern",
+        "woodFence": "fortress/fence-line",
+        "woodGate": "fortress/gate",
+        "stoneFence": "farm/fence-fortified",
+        "fenceLine": "fortress/fence-line",
+        "fenceCorner": "fortress/fence-corner",
+        "lamps": [
+          "crusade/lamp_1",
+          "crusade/lamp_2"
+        ],
+        "props": [
+          {
+            "id": "crusade/counter"
+          },
+          {
+            "id": "allcraft/throne"
+          },
+          {
+            "id": "allcraft/flag"
+          },
+          {
+            "id": "farm/workbench"
+          },
+          {
+            "id": "farm/anvil-bench"
+          },
+          {
+            "id": "allcraft/table"
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 0.5
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 2.2
+          },
+          {
+            "id": "allcraft/bottle"
+          },
+          {
+            "id": "allcraft/pot_1"
+          },
+          {
+            "id": "allcraft/barrel_1",
+            "yaw": 0.4
+          },
+          {
+            "id": "allcraft/barrel_2",
+            "yaw": 1.1
+          },
+          {
+            "id": "allcraft/box",
+            "yaw": 0.2
+          },
+          {
+            "id": "farm/bucket"
+          },
+          {
+            "id": "allcraft/torch_1"
+          }
+        ]
+      },
+      "audit": {
+        "present": 38,
+        "missing": [],
+        "ids": 38
+      },
+      "grades": [
+        {
+          "grade": "embassy",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 2,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "fortress/keep",
+            "fortress/barracks",
+            "fortress/armoury",
+            "crusade/store"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "hub",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 3,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "fortress/keep",
+            "crusade/tavern",
+            "crusade/store",
+            "fortress/barracks",
+            "fortress/armoury"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "camp",
+          "enclosure": {
+            "kind": "palisade",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "fortress/keep"
+          ],
+          "npcs": 4
+        },
+        {
+          "grade": "outpost",
+          "enclosure": {
+            "kind": "stone-fence",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "fortress/barracks"
+          ],
+          "npcs": 5
+        }
+      ],
+      "npcsHub": [
+        {
+          "role": "vendor",
+          "label": "Vendor",
+          "profession": "merchant",
+          "dx": 1.8,
+          "dz": 1.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "inn",
+          "label": "Innkeep",
+          "profession": "innkeep",
+          "dx": -2.6,
+          "dz": 1.4,
+          "yaw": 2.8,
+          "zone": "plaza"
+        },
+        {
+          "role": "workshop",
+          "label": "Smith",
+          "profession": "smith",
+          "dx": 20,
+          "dz": 10,
+          "yaw": -0.6,
+          "zone": "homestead"
+        },
+        {
+          "role": "faction-ai",
+          "label": "Sergeant",
+          "profession": "soldier",
+          "dx": -3.2,
+          "dz": -2.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "hero",
+          "label": "Crusade champion",
+          "profession": "soldier",
+          "dx": -4.2,
+          "dz": -1.6,
+          "yaw": 1.1,
+          "zone": "plaza"
+        },
+        {
+          "role": "harvest",
+          "label": "Forager",
+          "profession": "herbalist",
+          "dx": 18,
+          "dz": -16,
+          "yaw": -0.4,
+          "zone": "homestead"
+        },
+        {
+          "role": "harvest",
+          "label": "Miner",
+          "profession": "miner",
+          "dx": -22,
+          "dz": 12,
+          "yaw": 0.3,
+          "zone": "homestead"
+        },
+        {
+          "role": "builder",
+          "label": "Builder",
+          "profession": "mason",
+          "dx": -16,
+          "dz": 18,
+          "yaw": 0.8,
+          "zone": "homestead"
+        },
+        {
+          "role": "sailor",
+          "label": "Sailor",
+          "profession": "soldier",
+          "dx": 28,
+          "dz": -6,
+          "yaw": -1.2,
+          "zone": "outpost"
+        },
+        {
+          "role": "weatherman",
+          "label": "Weatherman",
+          "profession": "engineer",
+          "dx": 30,
+          "dz": -4,
+          "yaw": -1.4,
+          "zone": "outpost"
+        },
+        {
+          "role": "gunner",
+          "label": "Gunner",
+          "profession": "soldier",
+          "dx": 26,
+          "dz": -8,
+          "yaw": -0.9,
+          "zone": "outpost"
+        }
+      ],
+      "enclosure": {
+        "kind": "curtain",
+        "gates": 3,
+        "towers": true,
+        "farms": false
+      }
+    },
+    {
+      "faction": "fabled",
+      "kit": {
+        "faction": "fabled",
+        "keep": "fabled/keep",
+        "barracks": "fabled/barracks",
+        "armoury": "fabled/arsenal",
+        "inn": "crusade/tavern",
+        "vendor": "crusade/store",
+        "house": "farm/gaucho/shed",
+        "herbalist": "crusade/herbalist_s_house",
+        "bakery": "crusade/bakery",
+        "alchemist": "crusade/alchemist_house",
+        "smith": "crusade/smithy",
+        "weaver": "crusade/weaving_works_final",
+        "tent": "legion/shed",
+        "tent2": "legion/shed",
+        "sentry": "fabled/watchtower",
+        "tower": "fabled/tower",
+        "towerAlt": "fabled/tower",
+        "wall": "fabled/wall",
+        "wallAlt": "fabled/wall",
+        "gate": "fabled/gate",
+        "gateMinor": "fortress/gate-minor",
+        "gatePostern": "fortress/gate-postern",
+        "woodFence": "fortress/fence-line",
+        "woodGate": "fortress/gate",
+        "stoneFence": "farm/fence-fortified",
+        "fenceLine": "fortress/fence-line",
+        "fenceCorner": "fortress/fence-corner",
+        "lamps": [
+          "crusade/lamp_1",
+          "allcraft/torch_2"
+        ],
+        "props": [
+          {
+            "id": "allcraft/flag"
+          },
+          {
+            "id": "fabled/brazier"
+          },
+          {
+            "id": "allcraft/flag"
+          },
+          {
+            "id": "farm/workbench"
+          },
+          {
+            "id": "farm/anvil-bench"
+          },
+          {
+            "id": "allcraft/table"
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 0.5
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 2.2
+          },
+          {
+            "id": "allcraft/bottle"
+          },
+          {
+            "id": "allcraft/pot_1"
+          },
+          {
+            "id": "allcraft/barrel_1",
+            "yaw": 0.4
+          },
+          {
+            "id": "allcraft/barrel_2",
+            "yaw": 1.1
+          },
+          {
+            "id": "allcraft/box",
+            "yaw": 0.2
+          },
+          {
+            "id": "farm/bucket"
+          },
+          {
+            "id": "allcraft/torch_1"
+          }
+        ]
+      },
+      "audit": {
+        "present": 37,
+        "missing": [],
+        "ids": 37
+      },
+      "grades": [
+        {
+          "grade": "embassy",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 2,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "fabled/keep",
+            "fabled/barracks",
+            "fabled/arsenal"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "hub",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 3,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "fabled/keep",
+            "fabled/barracks",
+            "fabled/arsenal"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "camp",
+          "enclosure": {
+            "kind": "palisade",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "fabled/keep"
+          ],
+          "npcs": 4
+        },
+        {
+          "grade": "outpost",
+          "enclosure": {
+            "kind": "stone-fence",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "fabled/barracks"
+          ],
+          "npcs": 5
+        }
+      ],
+      "npcsHub": [
+        {
+          "role": "vendor",
+          "label": "Vendor",
+          "profession": "merchant",
+          "dx": 1.8,
+          "dz": 1.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "inn",
+          "label": "Innkeep",
+          "profession": "innkeep",
+          "dx": -2.6,
+          "dz": 1.4,
+          "yaw": 2.8,
+          "zone": "plaza"
+        },
+        {
+          "role": "workshop",
+          "label": "Smith",
+          "profession": "smith",
+          "dx": 20,
+          "dz": 10,
+          "yaw": -0.6,
+          "zone": "homestead"
+        },
+        {
+          "role": "faction-ai",
+          "label": "Sergeant",
+          "profession": "soldier",
+          "dx": -3.2,
+          "dz": -2.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "hero",
+          "label": "Fabled champion",
+          "profession": "soldier",
+          "dx": -4.2,
+          "dz": -1.6,
+          "yaw": 1.1,
+          "zone": "plaza"
+        },
+        {
+          "role": "harvest",
+          "label": "Forager",
+          "profession": "herbalist",
+          "dx": 18,
+          "dz": -16,
+          "yaw": -0.4,
+          "zone": "homestead"
+        },
+        {
+          "role": "harvest",
+          "label": "Miner",
+          "profession": "miner",
+          "dx": -22,
+          "dz": 12,
+          "yaw": 0.3,
+          "zone": "homestead"
+        },
+        {
+          "role": "builder",
+          "label": "Builder",
+          "profession": "mason",
+          "dx": -16,
+          "dz": 18,
+          "yaw": 0.8,
+          "zone": "homestead"
+        },
+        {
+          "role": "sailor",
+          "label": "Sailor",
+          "profession": "soldier",
+          "dx": 28,
+          "dz": -6,
+          "yaw": -1.2,
+          "zone": "outpost"
+        },
+        {
+          "role": "weatherman",
+          "label": "Weatherman",
+          "profession": "engineer",
+          "dx": 30,
+          "dz": -4,
+          "yaw": -1.4,
+          "zone": "outpost"
+        },
+        {
+          "role": "gunner",
+          "label": "Gunner",
+          "profession": "soldier",
+          "dx": 26,
+          "dz": -8,
+          "yaw": -0.9,
+          "zone": "outpost"
+        }
+      ],
+      "enclosure": {
+        "kind": "curtain",
+        "gates": 3,
+        "towers": true,
+        "farms": false
+      }
+    },
+    {
+      "faction": "legion",
+      "kit": {
+        "faction": "legion",
+        "keep": "legion/keep",
+        "barracks": "legion/barracks",
+        "armoury": "legion/arsenal",
+        "inn": "crusade/tavern",
+        "vendor": "crusade/store",
+        "house": "legion/shed",
+        "herbalist": "crusade/herbalist_s_house",
+        "bakery": "crusade/bakery",
+        "alchemist": "crusade/alchemist_house",
+        "smith": "crusade/smithy",
+        "weaver": "crusade/weaving_works_final",
+        "tent": "legion/shed",
+        "tent2": "legion/shed",
+        "sentry": "legion/tower",
+        "tower": "legion/tower",
+        "towerAlt": "fortress/tower-round",
+        "wall": "legion/wall",
+        "wallAlt": "legion/wall",
+        "gate": "legion/gate",
+        "gateMinor": "fortress/gate-postern",
+        "gatePostern": "fortress/gate-minor",
+        "woodFence": "fortress/fence-line",
+        "woodGate": "fortress/gate",
+        "stoneFence": "farm/fence-fortified",
+        "fenceLine": "fortress/fence-line",
+        "fenceCorner": "fortress/fence-corner",
+        "lamps": [
+          "crusade/lamp_1",
+          "allcraft/torch_1"
+        ],
+        "props": [
+          {
+            "id": "legion/alarm-drum"
+          },
+          {
+            "id": "legion/brazier"
+          },
+          {
+            "id": "allcraft/flag"
+          },
+          {
+            "id": "farm/workbench"
+          },
+          {
+            "id": "farm/anvil-bench"
+          },
+          {
+            "id": "allcraft/table"
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 0.5
+          },
+          {
+            "id": "allcraft/chair1",
+            "yaw": 2.2
+          },
+          {
+            "id": "allcraft/bottle"
+          },
+          {
+            "id": "allcraft/pot_1"
+          },
+          {
+            "id": "allcraft/barrel_1",
+            "yaw": 0.4
+          },
+          {
+            "id": "allcraft/barrel_2",
+            "yaw": 1.1
+          },
+          {
+            "id": "allcraft/box",
+            "yaw": 0.2
+          },
+          {
+            "id": "farm/bucket"
+          },
+          {
+            "id": "allcraft/torch_1"
+          }
+        ]
+      },
+      "audit": {
+        "present": 35,
+        "missing": [],
+        "ids": 35
+      },
+      "grades": [
+        {
+          "grade": "embassy",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 2,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "legion/keep",
+            "legion/barracks",
+            "legion/arsenal"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "hub",
+          "enclosure": {
+            "kind": "curtain",
+            "gates": 3,
+            "towers": true,
+            "farms": false
+          },
+          "lots": [
+            "legion/keep",
+            "legion/barracks",
+            "legion/arsenal"
+          ],
+          "npcs": 11
+        },
+        {
+          "grade": "camp",
+          "enclosure": {
+            "kind": "palisade",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "legion/keep"
+          ],
+          "npcs": 4
+        },
+        {
+          "grade": "outpost",
+          "enclosure": {
+            "kind": "stone-fence",
+            "gates": 1,
+            "towers": true,
+            "farms": true
+          },
+          "lots": [
+            "legion/barracks"
+          ],
+          "npcs": 5
+        }
+      ],
+      "npcsHub": [
+        {
+          "role": "vendor",
+          "label": "Vendor",
+          "profession": "merchant",
+          "dx": 1.8,
+          "dz": 1.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "inn",
+          "label": "Innkeep",
+          "profession": "innkeep",
+          "dx": -2.6,
+          "dz": 1.4,
+          "yaw": 2.8,
+          "zone": "plaza"
+        },
+        {
+          "role": "workshop",
+          "label": "Smith",
+          "profession": "smith",
+          "dx": 20,
+          "dz": 10,
+          "yaw": -0.6,
+          "zone": "homestead"
+        },
+        {
+          "role": "faction-ai",
+          "label": "Sergeant",
+          "profession": "soldier",
+          "dx": -3.2,
+          "dz": -2.2,
+          "yaw": 0.2,
+          "zone": "plaza"
+        },
+        {
+          "role": "hero",
+          "label": "Legion champion",
+          "profession": "soldier",
+          "dx": -4.2,
+          "dz": -1.6,
+          "yaw": 1.1,
+          "zone": "plaza"
+        },
+        {
+          "role": "harvest",
+          "label": "Forager",
+          "profession": "herbalist",
+          "dx": 18,
+          "dz": -16,
+          "yaw": -0.4,
+          "zone": "homestead"
+        },
+        {
+          "role": "harvest",
+          "label": "Miner",
+          "profession": "miner",
+          "dx": -22,
+          "dz": 12,
+          "yaw": 0.3,
+          "zone": "homestead"
+        },
+        {
+          "role": "builder",
+          "label": "Builder",
+          "profession": "mason",
+          "dx": -16,
+          "dz": 18,
+          "yaw": 0.8,
+          "zone": "homestead"
+        },
+        {
+          "role": "sailor",
+          "label": "Sailor",
+          "profession": "soldier",
+          "dx": 28,
+          "dz": -6,
+          "yaw": -1.2,
+          "zone": "outpost"
+        },
+        {
+          "role": "weatherman",
+          "label": "Weatherman",
+          "profession": "engineer",
+          "dx": 30,
+          "dz": -4,
+          "yaw": -1.4,
+          "zone": "outpost"
+        },
+        {
+          "role": "gunner",
+          "label": "Gunner",
+          "profession": "soldier",
+          "dx": 26,
+          "dz": -8,
+          "yaw": -0.9,
+          "zone": "outpost"
+        }
+      ],
+      "enclosure": {
+        "kind": "curtain",
+        "gates": 3,
+        "towers": true,
+        "farms": false
+      }
+    }
+  ]
+}
