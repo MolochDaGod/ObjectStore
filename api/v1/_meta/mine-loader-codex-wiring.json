@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-17",
+  "title": "Mine-Loader Codex wiring contract",
+  "authority": {
+    "blocks": "mine-loader GET /api/blocks",
+    "definitions": "mine-loader GET /api/definitions",
+    "assets3d": "mine-loader GET /api/assets",
+    "itemsPrefabs": "objectstore /api/v1/master-weapon-prefabs.json",
+    "materials": "objectstore /api/v1/master-materials.json",
+    "buildings": "objectstore /api/v1/master-buildings.json",
+    "buildables": "objectstore /api/v1/buildable-prefabs.json",
+    "bridge": "objectstore /api/v1/voxel-codex-bridge.json"
+  },
+  "hosts": {
+    "codexEdge": "https://mine.grudge-studio.com",
+    "codexSpa": "https://mine-loader.vercel.app",
+    "codexApi": "https://mine-loader-api-production.up.railway.app",
+    "objectStore": "https://objectstore.grudge-studio.com/api/v1",
+    "cdn": "https://assets.grudge-studio.com"
+  },
+  "idLaw": {
+    "terrainCell": "bare id (stone, grass, woodPlanks)",
+    "codexCell": "cat:<slug>",
+    "itemPrefab": "ITEM-*",
+    "material": "MATL-*",
+    "building": "BLDG-*",
+    "buildablePrefab": "pack/slug (e.g. fortress/armoury)",
+    "neverOnVoxelPrefabs": ["WAND", "GRIMOIRE", "RANGER_LOG", "BATTLE_DUAL"]
+  },
+  "placeRule": "Inventory placeType is a BlockTypeId. Weapons and class kits never place. Buildables occupy scene.props, not greedy-mesh cells, unless occupy=ground and footprint is 1x1 terrain."
+}

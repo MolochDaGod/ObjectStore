@@ -1,0 +1,174 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-17",
+  "description": "Consolidated connections from ObjectStore items / prefabs / materials / buildings / buildables to the Mine-Loader Codex (250 cat: blocks + terrain ids).",
+  "docs": "https://github.com/MolochDaGod/ObjectStore/blob/main/docs/MINE-LOADER-CODEX-WIRING.md",
+  "codex": {
+    "ssot": "https://mine-loader-api-production.up.railway.app/api/ssot",
+    "blocks": "https://mine-loader-api-production.up.railway.app/api/blocks",
+    "definitions": "https://mine-loader-api-production.up.railway.app/api/definitions",
+    "assets": "https://mine-loader-api-production.up.railway.app/api/assets",
+    "totalBlocks": 250,
+    "cellPrefix": "cat:"
+  },
+  "terrainPlacePalette": [
+    "grass", "dirt", "stone", "sand", "snow", "log", "woodPlanks", "leaves",
+    "brickRed", "brickGrey", "brickDark", "brickYellow", "ice", "diamond",
+    "coal", "question", "exclamation", "blockSquare", "blockBlank"
+  ],
+  "terrainAliases": {
+    "grass_block": "grass",
+    "oak_planks": "woodPlanks",
+    "oak_log": "log",
+    "birch_planks": "woodPlanks",
+    "birch_log": "log",
+    "cobblestone": "stone",
+    "stone_bricks": "brickGrey",
+    "smooth_stone": "stone",
+    "brick": "brickRed",
+    "coal_ore": "coal",
+    "diamond_ore": "diamond",
+    "gold_block": "blockSquare",
+    "iron_block": "blockBlank",
+    "tnt": "exclamation"
+  },
+  "materialToCell": {
+    "scrap-ore": { "placeType": "stone", "dropItem": "scrap-ore", "toolTier": "wood", "family": "material" },
+    "copper-ore": { "placeType": "cat:alloy-frame", "dropItem": "copper-ore", "toolTier": "stone", "family": "material" },
+    "iron-ore": { "placeType": "coal", "dropItem": "iron-ore", "toolTier": "stone", "family": "material" },
+    "steel-ore": { "placeType": "stone", "dropItem": "steel-ore", "toolTier": "iron", "family": "material" },
+    "mithril-ore": { "placeType": "ice", "dropItem": "mithril-ore", "toolTier": "iron", "family": "material" },
+    "adamantine-ore": { "placeType": "diamond", "dropItem": "adamantine-ore", "toolTier": "diamond", "family": "material" },
+    "driftwood-log": { "placeType": "log", "dropItem": "driftwood-log", "toolTier": "wood", "family": "material" },
+    "pine-log": { "placeType": "log", "dropItem": "pine-log", "toolTier": "wood", "family": "material" },
+    "oak-log": { "placeType": "log", "dropItem": "oak-log", "toolTier": "wood", "family": "material" },
+    "scrap-plank": { "placeType": "woodPlanks", "dropItem": "scrap-plank", "toolTier": "none", "family": "material" },
+    "pine-plank": { "placeType": "woodPlanks", "dropItem": "pine-plank", "toolTier": "none", "family": "material" },
+    "oak-plank": { "placeType": "woodPlanks", "dropItem": "oak-plank", "toolTier": "none", "family": "material" }
+  },
+  "harvestToolPrefabs": {
+    "t0-tool": {
+      "weaponType": "TOOL",
+      "slots": ["chop", "mine", "skin|pry"],
+      "voxelHarvestFamily": { "1": "axe", "2": "pick", "3": "hand" },
+      "breaks": ["log", "woodPlanks", "stone", "coal", "cat:*"]
+    }
+  },
+  "weaponPrefabRule": {
+    "runtime": "master-weapon-prefabs.json",
+    "voxelAllowed": ["SWORD", "AXE", "MACE", "SPEAR", "DAGGER", "BOW", "STAFF", "TOOL"],
+    "voxelForbiddenClassKits": ["WAND", "GRIMOIRE", "RANGER_LOG", "BATTLE_DUAL"],
+    "heldResolve": "mine-loader content/modelMap + asset-catalog WEAPONS",
+    "placeType": null
+  },
+  "buildingsToStations": [
+    {
+      "uuid": "BLDG-20260604172217-000000-17733B6C",
+      "name": "Miner's Forge",
+      "voxelProp": "stations/workbench_advanced",
+      "modelKey": "workbench",
+      "aliases": ["blacksmith_workbench", "workbench"],
+      "occupy": "ground",
+      "bench": true,
+      "codexRole": "processing"
+    },
+    {
+      "name": "Forester's Workbench",
+      "voxelProp": "stations/workbench_advanced",
+      "modelKey": "workbench",
+      "occupy": "ground",
+      "bench": true,
+      "codexRole": "processing"
+    },
+    {
+      "name": "Engineer's Workshop",
+      "voxelProp": "blacksmith/forge",
+      "modelKey": "forge",
+      "aliases": ["forge"],
+      "occupy": "ground",
+      "bench": true,
+      "codexRole": "processing"
+    },
+    {
+      "name": "Advanced Forge",
+      "voxelProp": "blacksmith/forge",
+      "modelKey": "forge",
+      "occupy": "ground",
+      "bench": true,
+      "codexRole": "processing"
+    },
+    {
+      "name": "Storage Chest",
+      "voxelProp": "crate",
+      "modelKey": "crate",
+      "occupy": "ground",
+      "bench": false,
+      "codexRole": "storage"
+    },
+    {
+      "name": "Reinforced Vault",
+      "voxelProp": "crate",
+      "modelKey": "crate",
+      "occupy": "ground",
+      "bench": false,
+      "codexRole": "storage"
+    },
+    {
+      "name": "Campfire",
+      "voxelProp": "campfire",
+      "modelKey": "campfire",
+      "occupy": "ground",
+      "bench": false,
+      "codexRole": "utility"
+    },
+    {
+      "name": "Repair Anvil",
+      "voxelProp": "blacksmith/forge",
+      "modelKey": "anvil",
+      "occupy": "ground",
+      "bench": true,
+      "codexRole": "utility"
+    }
+  ],
+  "buildablePrefabSockets": {
+    "gridM": 1,
+    "characterHeightM": 1.8,
+    "rule": "118 ObjectStore buildable-prefabs attach as scene.props. Footprint wx/wz is metres on the 1 m voxel grid. Do not voxelize multi-cell footprints into cat: cells.",
+    "kindToCodexRole": {
+      "armoury": "defense",
+      "gate": "defense",
+      "wall": "defense",
+      "tower": "defense",
+      "barracks": "defense",
+      "house": "build",
+      "market": "utility",
+      "workshop": "processing",
+      "farm": "resource",
+      "mine": "mining",
+      "dock": "transport",
+      "shrine": "support"
+    },
+    "occupyToLayer": {
+      "ground": "walk + prop collider",
+      "curtain": "wall ribbon — do not fill cells",
+      "roof": "visual only",
+      "plaza": "ground prop"
+    }
+  },
+  "itemIdSpace": {
+    "sword_iron": { "family": "weapon", "model": "mc_sword", "placeType": null },
+    "pickaxe_wood": { "family": "tool", "model": "mc_pickaxe_stone", "harvestFamily": "pick", "placeType": null },
+    "axe_wood": { "family": "tool", "model": "mc_axe_stone", "harvestFamily": "axe", "placeType": null },
+    "cat:alloy-frame": { "family": "block_catalog", "placeType": "cat:alloy-frame" },
+    "cat:acoustic-dampener-block": { "family": "block_catalog", "placeType": "cat:acoustic-dampener-block" },
+    "stone": { "family": "block_terrain", "placeType": "stone" },
+    "grass": { "family": "block_terrain", "placeType": "grass" }
+  },
+  "consumerChecklist": [
+    "Fetch Codex /api/blocks — never fork 250 slugs into ObjectStore",
+    "Resolve ObjectStore ITEM-* through this bridge before granting in voxel bags",
+    "Place only terrain ids or cat:<slug>",
+    "Spawn BLDG-* and buildable-prefabs as props with modelKey",
+    "Keep Warlords class kits off voxel default equip"
+  ]
+}
