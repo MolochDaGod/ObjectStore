@@ -11,8 +11,8 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 │  ┌──────────────────────┐     ┌──────────────────────────┐     │
 │  │  grudgeassets         │     │  grudge-ai-hub (LIVE)     │     │
 │  │  objectstore.*        │     │  F:\GitHub\grudge-ai-hub  │     │
-│  │  JSON proxies info.*  │     │  ai.grudge-studio.com     │     │
-│  │                        │     │  1.6.7 dual worker        │     │
+│  │  Catalog SSOT         │     │  ai.grudge-studio.com     │     │
+│  │  /api/v1/*.json       │     │  1.6.7 dual worker        │     │
 │  │  + grudge-asset-cdn   │     │  NOT this repo workers/ai │     │
 │  │  assets.grudge-studio │     │                            │     │
 │  └──────────┬─────────────┘     └──────────┬───────────────┘     │
@@ -53,7 +53,7 @@ All edge-deployed Cloudflare Workers for the Grudge Studio platform.
 **Bindings:**
 - `env.BUCKET` → R2 `grudge-assets`
 - `env.DB` → D1 `grudge-objectstore`
-- Catalog JSON: fetch `info.grudge-studio.com/api/v1` (no R2 JSON cache)
+- Catalog JSON: serves `/api/v1/*.json` routes (Worker is catalog SSOT)
 
 **Routes:**
 | Method | Path | Auth | Description |
