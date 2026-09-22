@@ -9,8 +9,9 @@ Do **not** invent skill rows. Do **not** use sprite sheets for slot icons — ea
 
 | Role | URL |
 |------|-----|
-| SSOT browse + JSON | `info.grudge-studio.com` (ObjectStore Vercel) |
-| Catalog SSOT | `objectstore.grudge-studio.com` — **prefer Worker** links (not Vercel/info) |
+| Catalog / JSON SSOT | `objectstore.grudge-studio.com` (Cloudflare Worker) — **prefer Worker** links |
+| Browse (PARKED) | `WEAPON_SKILLS.html` — may 404; do not invent fixes |
+| Docs HTML | `info.grudge-studio.com` — docs host only, **not** catalog SSOT |
 | Pages mirror | `grudge-objectstore.pages.dev/api/v1` fallback only |
 | Drafts / promote | `weapon-skills.grudge-studio.com` — Casting production overrides, **not** the catalog |
 
