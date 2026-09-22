@@ -1029,15 +1029,20 @@ function renderExtendedPanels(race) {
 
 function renderRaceList() {
   const races = (catalog.races || []).filter((r) => r.working !== false);
-  document.getElementById('raceList').innerHTML = races.map((r) => `
+  document.getElementById('raceList').innerHTML = races.map((r) => {
+    const genderBadge = r.gender === 'female' 
+      ? '<span class="badge" style="background:rgba(212,168,75,0.12);color:var(--gold);border-color:var(--gold)">FEMALE</span>'
+      : '';
+    const emoji = r.emoji || (r.gender === 'female' ? '👩' : '⚔');
+    return `
     <div class="race" data-id="${r.id}">
-      <div class="emoji">${r.emoji || '⚔'}</div>
+      <div class="emoji">${emoji}</div>
       <div>
         <div class="name">${r.name}</div>
-        <div class="meta">${RACE_ASSETS[r.id]?.prefix || r.prefix || ''} · ${r.faction || 'grudge6'} · <span class="badge">LIVE</span></div>
+        <div class="meta">${RACE_ASSETS[r.id]?.prefix || r.prefix || ''} · ${r.faction || 'grudge6'} · <span class="badge">LIVE</span> ${genderBadge}</div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
   document.querySelectorAll('.race').forEach((el) => {
     el.onclick = () => {
       const race = races.find((r) => r.id === el.dataset.id);
@@ -1087,6 +1092,19 @@ document.getElementById('btnShowAllArmor').onclick = () => {
     r.models = r.models || {};
     if (!r.models.metaverse) r.models.metaverse = `${CDN}/models/grudge6/metaverse/${r.id}.glb`;
     if (!r.models.toonRts) r.models.toonRts = `${CDN}/asset-packs/toon-rts-characters/glb/characters/${r.id}.glb`;
+    
+    // Ensure female races have RACE_ASSETS entries (fallback to base race prefix/folder)
+    if (!RACE_ASSETS[r.id]) {
+      const baseRaceId = r.id.replace('_female', '');
+      const baseAssets = RACE_ASSETS[baseRaceId] || {};
+      RACE_ASSETS[r.id] = {
+        prefix: r.prefix || baseAssets.prefix || '',
+        folder: r.folder || baseAssets.folder || '',
+        toonRts: r.models.toonRts,
+        glb: r.models.toonRts,
+        texture: r.texture || baseAssets.texture,
+      };
+    }
   }
   renderRaceList();
   const first = (catalog.races || []).find((r) => r.working !== false);
