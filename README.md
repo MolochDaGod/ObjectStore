@@ -3,8 +3,9 @@
 
 The complete data backbone for all Grudge Studio projects — 45+ JSON API endpoints, 13,000+ game assets, full backend SDK for all VPS services, and game data extracted from GrudgeWars.
 
-**Live API:** [info.grudge-studio.com](https://info.grudge-studio.com) · [molochdagod.github.io/ObjectStore](https://molochdagod.github.io/ObjectStore) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [info.grudge-studio.com/wiki.html](https://info.grudge-studio.com/wiki.html) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
-**Live API:** [info.grudge-studio.com](https://info.grudge-studio.com) · Worker [objectstore.grudge-studio.com](https://objectstore.grudge-studio.com) · **Game:** [grudgewarlords.com](https://grudgewarlords.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
+**Catalog SSOT (Worker):** [objectstore.grudge-studio.com](https://objectstore.grudge-studio.com) — prefer this host for `/api/v1` JSON. Do **not** treat Vercel `objectstore-grudge` / `info.grudge-studio.com` as catalog SSOT.
+**Assets CDN:** [assets.grudge-studio.com](https://assets.grudge-studio.com) · **Wiki:** [GitHub Wiki](https://github.com/MolochDaGod/ObjectStore/wiki) · **Agent Context:** [AGENT-CONTEXT.md](AGENT-CONTEXT.md)
+**Warlords apex** [grudgewarlords.com](https://grudgewarlords.com) is Jonathan-signed **PREVIEW** — do not rebind or promote as prod Foundry (Foundry SSOT: `character.grudge-studio.com`).
 
 ---
 
@@ -16,10 +17,10 @@ Unity-style paperdoll, **character/asset editor**, and mesh-level kit tools for 
 |---------|----------|
 | **Main Panel** (paperdoll + hero + mesh kit) | https://info.grudge-studio.com/main-panel.html |
 | **grudge6 Editor SSOT** (T0–T1 equip, skills, gizmo, GLB export) | https://info.grudge-studio.com/grudge6-editor.html |
-| **Editor contract JSON** | https://info.grudge-studio.com/api/v1/grudge6-editor-ssot.json |
+| **Editor contract JSON** | https://objectstore.grudge-studio.com/api/v1/grudge6-editor-ssot.json |
 | **Mesh lab** (full mesh hide/show, bones) | https://info.grudge-studio.com/GRUDGE6_Characters.html |
 | **Item database** | https://info.grudge-studio.com/GRUDGE_Item_Database.html |
-| **Author mesh catalog** | https://info.grudge-studio.com/api/v1/toon-rts-author-inventory.json |
+| **Author mesh catalog** | https://objectstore.grudge-studio.com/api/v1/toon-rts-author-inventory.json |
 
 | Code | Role |
 |------|------|
@@ -108,7 +109,7 @@ curl.exe -sI https://info.grudge-studio.com/css/main-panel-readable.css
 Systems that need **web-ready playable** assets (characters, equip, icons, anims, catalogs) must ship **fleet-wide**:
 
 1. Binaries → `assets.grudge-studio.com` (R2)  
-2. Definitions → `info.grudge-studio.com/api/v1`  
+2. Definitions → `objectstore.grudge-studio.com/api/v1` (Worker catalog SSOT; do not use Vercel objectstore-grudge as SSOT)  
 3. App shells → production Vercel/CF hosts  
 4. Smoke **live** URLs (not localhost / not Desktop paths)  
 
@@ -188,7 +189,7 @@ End-to-end weapon prefab pipeline joins **ITEM-*** UUIDs, **SKIL-*** bindings, R
 | `/api/v1/ummorpg-systems-bridge.json` | uMMORPG drop/chest/craft/enchant mappings from canonical prefabs |
 | `/api/v1/_meta/ability-aliases.json` | Design-layer ability names → canonical SKIL-* names |
 
-**Live browser:** [WEAPON_SKILLS.html](https://molochdagod.github.io/ObjectStore/WEAPON_SKILLS.html) — pick weapon class → named variant → filtered skills/passives.
+**Browse (PARKED):** `WEAPON_SKILLS.html` + skill PNGs may 404 on Pages/info mirrors — do not invent alternate hosts; JSON SSOT remains `https://objectstore.grudge-studio.com/api/v1/master-weaponSkills.json`.
 
 **Equipment standard:** [docs/CANONICAL-EQUIPMENT.md](docs/CANONICAL-EQUIPMENT.md) — weapons + harvest tool (live), armor next. Meta: `/api/v1/_meta/canonical-equipment-pattern.json`
 
@@ -266,7 +267,7 @@ Outputs:
 All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from ObjectStore:
 - **3,024 files migrated** (~306 MB) — icons, sprites, backgrounds, UI, portraits, professions
 - **13,000+ total assets** across all categories
-- Frontend uses `assetUrl()` helper pointing to `https://molochdagod.github.io/ObjectStore`
+- Frontend should use Worker/CDN: `https://objectstore.grudge-studio.com` (JSON) + `https://assets.grudge-studio.com` (binaries). Do **not** point new clients at `molochdagod.github.io/ObjectStore`.
 - New folders: `images/events/`, `images/portraits/`, `images/professions/`, `images/ui/`, `images/misc/`, `images/lore/`, `sprites/pirate/`
 - CORS headers updated for all new asset paths
 
@@ -302,9 +303,15 @@ All frontend assets from grudgewarlords.com (Grudge-Builder) are now served from
 
 ## 🔗 Static API
 
-**Base URL:** `https://molochdagod.github.io/ObjectStore`
+**Base URL (catalog SSOT):** `https://objectstore.grudge-studio.com`
 
-**📚 [Full API Documentation](https://molochdagod.github.io/ObjectStore/docs/)**
+**Path rule:** never document bare `/api/v1/...` as a live absolute URL — always qualify with `https://objectstore.grudge-studio.com`. Do not sell Vercel project `objectstore-grudge` as catalog SSOT.
+
+**Standing outages (do not invent fixes):** `account.grudge-studio.com` / assets-api **522**; `status.grudge-studio.com` **525**.
+
+> GitHub Pages (`molochdagod.github.io/ObjectStore`) is a legacy mirror only — never sell as catalog SSOT.
+
+**📚 API docs:** prefer in-repo `docs/` + Worker `https://objectstore.grudge-studio.com/api/v1/` (Pages `/docs/` is legacy).
 
 | Endpoint | Description |
 |----------|-------------|
