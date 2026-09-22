@@ -436,15 +436,14 @@ class PuterClient {
   }
 
   async generateImage(prompt, options = {}) {
+    // Puter txt2img removed — fail-closed
+    throw new Error('Image generation unavailable: Puter txt2img disabled');
+    
     if (!this.initialized) {
       throw new Error('Puter not initialized');
     }
 
-    return await this.puter.ai.txt2img(prompt, {
-      width: options.width || 256,
-      height: options.height || 256,
-      format: options.format || 'png'
-    });
+    return null; // await this.puter.ai.txt2img(prompt, {...});
   }
 
   async storeFile(path, data) {

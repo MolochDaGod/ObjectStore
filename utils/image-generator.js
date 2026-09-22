@@ -81,16 +81,11 @@ class GrudgeImageGenerator {
       console.log(`🎨 Generating image for: ${item.name} (${category})`);
       console.log(`📝 Prompt: ${prompt}`);
 
-      // Use Puter AI to generate image
-      const result = await puter.ai.txt2img(prompt, {
-        width: 256,
-        height: 256,
-        format: 'png',
-        style: 'fantasy game icon, pixel art style, detailed, dark fantasy aesthetic'
-      });
+      // Puter txt2img removed — fail-closed
+      throw new Error('Image generation unavailable: Puter txt2img disabled');
 
       // Convert to data URL for easy embedding
-      const imageUrl = await this._blobToDataURL(result);
+      const imageUrl = null; // await this._blobToDataURL(result);
       
       // Save to localStorage for persistence
       this._saveToStorage(cacheKey, imageUrl);

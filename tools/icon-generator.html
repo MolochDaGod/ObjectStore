@@ -599,10 +599,11 @@
       log(`Generating: ${item.name}...`, 'info');
 
       try {
-        const rawImg = await puter.ai.txt2img(prompt);
+        // Puter txt2img removed — fail-closed
+        throw new Error('Image generation unavailable: Puter txt2img disabled');
         // Post-process: alpha-key the background if requested
-        const finalBlob = await processGeneratedImage(rawImg, bgMode);
-        const finalUrl = URL.createObjectURL(finalBlob);
+        const finalBlob = null; // await processGeneratedImage(rawImg, bgMode);
+        const finalUrl = null; // URL.createObjectURL(finalBlob);
 
         // Display the post-processed image
         const iconEl = document.getElementById(`icon-${iconId}`);
@@ -894,9 +895,10 @@
         const bgMode = document.getElementById('mBgMode').value;
         log(`Manual generate: "${(document.getElementById('mName').value || 'item')}"`, 'info');
 
-        const rawImg = await puter.ai.txt2img(fullPrompt);
+        // Puter txt2img removed — fail-closed
+        throw new Error('Image generation unavailable: Puter txt2img disabled');
         const autoKey = document.getElementById('mAutoKey').checked;
-        const finalBlob = await processGeneratedImage(rawImg, autoKey ? bgMode : 'none');
+        const finalBlob = null; // await processGeneratedImage(rawImg, autoKey ? bgMode : 'none');
         manualLastBlob = finalBlob;
         const url = URL.createObjectURL(finalBlob);
 
