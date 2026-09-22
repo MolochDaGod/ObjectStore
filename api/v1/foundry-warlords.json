@@ -1,0 +1,1481 @@
+{
+  "version": "1.1.0",
+  "updated": "2026-09-22",
+  "era": "warlords",
+  "source": "ObjectStore + class-kit SSOT",
+  "classes": {
+    "warrior": {
+      "id": "warrior",
+      "name": "Warrior",
+      "level0": {
+        "id": "w_l0_warbound",
+        "name": "Warbound",
+        "description": "Knight-line starter. Plate discipline and threat. F on the avatar.",
+        "effect": "+4 Defense",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "defense": 4
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/paladin/paladin_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "shield",
+        "label": "Shield",
+        "weaponType": "SHIELD",
+        "hotkey": "R",
+        "hint": "Off-hand aegis. Tap R the selected art · hold R the radial.",
+        "skillIds": [
+          "shield_immovable_grudge",
+          "shield_aegis_of_carnage",
+          "shield_wraith_barrage",
+          "shield_broken_covenant",
+          "shield_last_of_the_line",
+          "shield_dragon_barrier"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "hands",
+        "label": "Hands",
+        "weaponType": "CLAW",
+        "hotkey": "1–5",
+        "hint": "Warrior and Raider craft Hands at the anvil — claw combat, not Worge forms.",
+        "skillIds": [
+          "claw_rending_slash",
+          "claw_blood_frenzy",
+          "claw_instinct",
+          "claw_beast_stomp"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-sword",
+          "uuid": "ITEM-20260423030000-000001-4D4C1056",
+          "name": "Training Sword",
+          "type": "weapon",
+          "weaponType": "SWORD",
+          "category": "swords",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Sword_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        },
+        {
+          "id": "t0_shield",
+          "uuid": "ITEM-A044B2924EF4-FDD41AA0",
+          "name": "Training Shield",
+          "type": "weapon",
+          "weaponType": "SHIELD",
+          "category": "shields",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/shield_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "off_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "w_l0_warbound",
+          "foundryId": "warrior.warbound",
+          "name": "Warbound",
+          "description": "Knight-line starter. Plate discipline and threat. F on the avatar.",
+          "effect": "+4 Defense",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/paladin/paladin_01.png",
+          "canonical": true
+        },
+        {
+          "id": "w_taunt",
+          "foundryId": "warrior.taunt",
+          "name": "Taunt",
+          "description": "Force enemies to target you",
+          "effect": "+15% Threat",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "w_quick_strike",
+          "foundryId": "warrior.quick-strike",
+          "name": "Quick Strike",
+          "description": "Fast attack with speed bonus",
+          "effect": "+15% Attack Speed",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "w_rending_strikes",
+          "foundryId": "warrior.rending-strikes",
+          "name": "Rending Strikes",
+          "description": "Attacks have a chance to cause bleeding",
+          "effect": "+10% Bleed Proc",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "claw_rending_slash",
+          "foundryId": "warrior.rending-slash",
+          "name": "Rending Slash",
+          "description": "Slashing strike. Hands primary.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_blood_frenzy",
+          "foundryId": "warrior.blood-frenzy",
+          "name": "Blood Frenzy",
+          "description": "Attacks stack bleed on the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_instinct",
+          "foundryId": "warrior.instinct",
+          "name": "Instinct",
+          "description": "Slight health and a larger stamina buff / self-heal.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_beast_stomp",
+          "foundryId": "warrior.beast-stomp",
+          "name": "Beast Stomp",
+          "description": "AoE stomp — damage and slow.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_immovable_grudge",
+          "foundryId": "warrior.immovable-grudge",
+          "name": "Immovable Grudge",
+          "description": "Plant the shield, impassable barrier wall for 5s.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_aegis_of_carnage",
+          "foundryId": "warrior.aegis-of-carnage",
+          "name": "Aegis of Carnage",
+          "description": "Shield erupts in crimson energy, AoE damage + self-heal.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_wraith_barrage",
+          "foundryId": "warrior.wraith-barrage",
+          "name": "Wraith Barrage",
+          "description": "Unleash stored parry-energy as rapid spectral strikes.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_broken_covenant",
+          "foundryId": "warrior.broken-covenant",
+          "name": "Broken Covenant",
+          "description": "Anti-magic zone — enemy spells fail for 4s.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_last_of_the_line",
+          "foundryId": "warrior.last-of-the-line",
+          "name": "Last of the Line",
+          "description": "Invulnerable 3s. Heal to full on expiry if below 10% HP.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "shield_dragon_barrier",
+          "foundryId": "warrior.dragon-barrier",
+          "name": "Dragon Barrier",
+          "description": "Shield becomes a fire-dragon head, breathe fire cone.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "mage": {
+      "id": "mage",
+      "name": "Mage",
+      "level0": {
+        "id": "m_l0_leyline",
+        "name": "Leyline",
+        "description": "Staff starter. Open a leyline for mana. F on the avatar.",
+        "effect": "+6 Mana",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "mana": 6
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/firemage/firemage_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "tome",
+        "label": "Tome",
+        "weaponType": "TOME",
+        "hotkey": "R",
+        "hint": "Off-hand relic surge. Wand is the ley unique weapon.",
+        "skillIds": [
+          "tome_flame_wave_fireball_inferno_shield_crimson_surge_inferno_page",
+          "tome_ice_nova_frost_lance_glacial_shield_frozen_surge_glacier_page",
+          "tome_thorn_burst_healing_bloom_natures_shield_ancient_surge_verdant_page",
+          "tome_divine_wave_sacred_shield_smite_radiant_surge_dawn_page",
+          "tome_energy_wave_time_stasis_mana_shield_ethereal_surge_void_page",
+          "tome_lightning_strike_chain_shock_storm_shield_voltaic_surge_storm_page"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "wand",
+        "label": "Wand",
+        "weaponType": "WAND",
+        "hotkey": "1–5",
+        "hint": "Mage and Priest bind the wand. Tome stays the class item on R.",
+        "skillIds": [
+          "wand_missile",
+          "wand_blink",
+          "wand_chain",
+          "wand_meteor_shower"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-wand",
+          "uuid": "ITEM-20260423030000-00000C-FAE29372",
+          "name": "Apprentice Wand",
+          "type": "weapon",
+          "weaponType": "WAND",
+          "category": "wands",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/staff_1.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        },
+        {
+          "id": "t0-offhand-tome",
+          "uuid": "ITEM-20260423030000-00000F-0CFAC9C8",
+          "name": "Novice Tome",
+          "type": "weapon",
+          "weaponType": "TOME",
+          "category": "offhand-tome",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Book_1.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "off_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "m_l0_leyline",
+          "foundryId": "mage.leyline",
+          "name": "Leyline",
+          "description": "Staff starter. Open a leyline for mana. F on the avatar.",
+          "effect": "+6 Mana",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/firemage/firemage_01.png",
+          "canonical": true
+        },
+        {
+          "id": "m_mana_flow",
+          "foundryId": "mage.mana-flow",
+          "name": "Mana Flow",
+          "description": "Faster mana regeneration",
+          "effect": "+20% Mana Regen",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Mageskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "m_arcane_focus",
+          "foundryId": "mage.arcane-focus",
+          "name": "Arcane Focus",
+          "description": "Increased spell damage",
+          "effect": "+10% Spell Damage",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Mageskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "m_enfeeble",
+          "foundryId": "mage.enfeeble",
+          "name": "Enfeeble",
+          "description": "Spells sap enemy strength",
+          "effect": "-8% Enemy Attack on Hit",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Mageskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "wand_missile",
+          "foundryId": "mage.magic-missile",
+          "name": "Magic Missile",
+          "description": "3 homing arcane bolts.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_blink",
+          "foundryId": "mage.blink",
+          "name": "Blink",
+          "description": "Instant teleport to the target location.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_chain",
+          "foundryId": "mage.chain-lightning",
+          "name": "Chain Lightning",
+          "description": "Lightning bouncing between enemies.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_meteor_shower",
+          "foundryId": "mage.meteor-shower",
+          "name": "Meteor Shower",
+          "description": "Rain meteors on a large area.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_flame_wave_fireball_inferno_shield_crimson_surge_inferno_page",
+          "foundryId": "mage.inferno-page",
+          "name": "Inferno Page",
+          "description": "Flame Wave, Fireball, Inferno Shield, Crimson Surge. Dash burn.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_ice_nova_frost_lance_glacial_shield_frozen_surge_glacier_page",
+          "foundryId": "mage.glacier-page",
+          "name": "Glacier Page",
+          "description": "Ice Nova, Frost Lance, Glacial Shield, Frozen Surge. Dash chill.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_thorn_burst_healing_bloom_natures_shield_ancient_surge_verdant_page",
+          "foundryId": "mage.verdant-page",
+          "name": "Verdant Page",
+          "description": "Thorn Burst, Healing Bloom, Nature's Shield, Ancient Surge. Dash growth.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_divine_wave_sacred_shield_smite_radiant_surge_dawn_page",
+          "foundryId": "mage.dawn-page",
+          "name": "Dawn Page",
+          "description": "Divine Wave, Sacred Shield, Smite, Radiant Surge. Dash grace.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_energy_wave_time_stasis_mana_shield_ethereal_surge_void_page",
+          "foundryId": "mage.void-page",
+          "name": "Void Page",
+          "description": "Energy Wave, Time Stasis, Mana Shield, Ethereal Surge. Dash mark.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_lightning_strike_chain_shock_storm_shield_voltaic_surge_storm_page",
+          "foundryId": "mage.storm-page",
+          "name": "Storm Page",
+          "description": "Lightning Strike, Chain Shock, Storm Shield, Voltaic Surge. Dash shock.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "worge": {
+      "id": "worge",
+      "name": "Worge",
+      "level0": {
+        "id": "wr_l0_bear",
+        "name": "Bear Form",
+        "description": "Worge starter. 1H+tome or nature/arcane staff. F on the avatar.",
+        "effect": "+4 Vitality",
+        "kind": "form",
+        "formId": "bear",
+        "auto": true,
+        "bonuses": {
+          "vitality": 4,
+          "health": 20
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/abilities/ability_bear_form.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "claw-form",
+        "label": "Claw form",
+        "weaponType": "CLAW",
+        "hotkey": "R",
+        "hint": "Animal forms crafted onto the claw. Grove mace is the unique weapon.",
+        "skillIds": [
+          "bear_form",
+          "raptor_form",
+          "bird_form",
+          "wolf_form",
+          "cheetah_form",
+          "spider_form"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "mace",
+        "label": "Mace",
+        "weaponType": "MACE",
+        "hotkey": "1–5",
+        "hint": "Worge and Verduror craft the grove mace at the alchemy bowl.",
+        "skillIds": [
+          "mace_holy_strike",
+          "mace_sanctify",
+          "mace_smite",
+          "mace_divine_wrath"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-hammer1h",
+          "uuid": "ITEM-20260423030000-000004-A074566A",
+          "name": "Training Hammer",
+          "type": "weapon",
+          "weaponType": "HAMMER",
+          "category": "hammers1h",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Hammer_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "wr_l0_bear",
+          "foundryId": "worge.bear-form",
+          "name": "Bear Form",
+          "description": "Worge starter. 1H+tome or nature/arcane staff. F on the avatar.",
+          "effect": "+4 Vitality",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/abilities/ability_bear_form.png",
+          "canonical": true
+        },
+        {
+          "id": "wr_storm_touch",
+          "foundryId": "worge.storm-touch",
+          "name": "Storm Touch",
+          "description": "Lightning spells hit harder",
+          "effect": "+15% Storm Damage",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Druideskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "wr_bark_skin",
+          "foundryId": "worge.bark-skin",
+          "name": "Bark Skin",
+          "description": "Nature hardens your skin",
+          "effect": "+10% Defense",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Druideskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "wr_feral_instinct",
+          "foundryId": "worge.feral-instinct",
+          "name": "Feral Instinct",
+          "description": "Chance for a bonus follow-up attack on hit",
+          "effect": "+8% Proc Chance",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Druideskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "mace_holy_strike",
+          "foundryId": "worge.holy-strike",
+          "name": "Holy Strike",
+          "description": "Mace hit infused with holy energy.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_sanctify",
+          "foundryId": "worge.sanctify",
+          "name": "Sanctify",
+          "description": "Bless ground, heal allies in zone.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_smite",
+          "foundryId": "worge.smite",
+          "name": "Smite",
+          "description": "Call down a holy bolt on the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_divine_wrath",
+          "foundryId": "worge.divine-wrath",
+          "name": "Divine Wrath",
+          "description": "Massive holy explosion.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "bear_form",
+          "foundryId": "worge.bear-form",
+          "name": "Bear Form",
+          "description": "Worge Nature Grimoire form (bear) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "raptor_form",
+          "foundryId": "worge.raptor-form",
+          "name": "Raptor Form",
+          "description": "Worge Nature Grimoire form (raptor) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "bird_form",
+          "foundryId": "worge.bird-form",
+          "name": "Bird Form",
+          "description": "Worge Nature Grimoire form (bird) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wolf_form",
+          "foundryId": "worge.wolf-form",
+          "name": "Wolf Form",
+          "description": "Worge Nature Grimoire form (wolf) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "cheetah_form",
+          "foundryId": "worge.cheetah-form",
+          "name": "Cheetah Form",
+          "description": "Worge Nature Grimoire form (cheetah) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "spider_form",
+          "foundryId": "worge.spider-form",
+          "name": "Spider Form",
+          "description": "Worge Nature Grimoire form (spider) crafted onto the claw.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "ranger": {
+      "id": "ranger",
+      "name": "Ranger",
+      "level0": {
+        "id": "r_l0_log",
+        "name": "Trail Log",
+        "description": "Bow starter. Mark the trail. F on the avatar.",
+        "effect": "+3 Dexterity",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "dexterity": 3
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/hunter/hunter_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "scythe",
+        "label": "Scythe",
+        "weaponType": "SCYTHE",
+        "hotkey": "R",
+        "hint": "Combat scythe arts on R. Harvest R still picks the flower tool.",
+        "skillIds": [
+          "scythe_reap",
+          "scythe_shadow_step",
+          "scythe_spiral",
+          "scythe_grim_reaper"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "scythe",
+        "label": "Scythe",
+        "weaponType": "SCYTHE",
+        "hotkey": "1–5",
+        "hint": "Ranger and Thief craft the combat scythe at the engineer bench. Harvest scythe stays a flower tool.",
+        "skillIds": [
+          "scythe_reap",
+          "scythe_shadow_step",
+          "scythe_spiral",
+          "scythe_grim_reaper"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-bow",
+          "uuid": "ITEM-20260423030000-000009-0D451C01",
+          "name": "Short Bow",
+          "type": "weapon",
+          "weaponType": "BOW",
+          "category": "bows",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Bow_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "r_l0_log",
+          "foundryId": "ranger.trail-log",
+          "name": "Trail Log",
+          "description": "Bow starter. Mark the trail. F on the avatar.",
+          "effect": "+3 Dexterity",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/hunter/hunter_01.png",
+          "canonical": true
+        },
+        {
+          "id": "r_precision",
+          "foundryId": "ranger.precision",
+          "name": "Precision",
+          "description": "Better accuracy",
+          "effect": "+15% Accuracy",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "r_swift_draw",
+          "foundryId": "ranger.swift-draw",
+          "name": "Swift Draw",
+          "description": "Faster arrow nocking",
+          "effect": "+10% Attack Speed",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "r_crippling_shot",
+          "foundryId": "ranger.crippling-shot",
+          "name": "Crippling Shot",
+          "description": "Arrows weaken enemy defenses",
+          "effect": "-8% Enemy Defense on Hit",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "scythe_reap",
+          "foundryId": "ranger.reaping-slash",
+          "name": "Reaping Slash",
+          "description": "Wide sweeping arc, builds Soul stacks.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_shadow_step",
+          "foundryId": "ranger.shadow-step",
+          "name": "Shadow Step",
+          "description": "Teleport behind the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_spiral",
+          "foundryId": "ranger.death-spiral",
+          "name": "Death Spiral",
+          "description": "Spinning scythe AoE channel.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_grim_reaper",
+          "foundryId": "ranger.grim-reaper",
+          "name": "Grim Reaper",
+          "description": "Transform into Death, AoE execute.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "priest": {
+      "id": "priest",
+      "name": "Priest",
+      "level0": {
+        "id": "p_l0_dawnvow",
+        "name": "Dawn Vow",
+        "description": "Canticle starter. Faith on the avatar (F).",
+        "effect": "+6 Wisdom",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "wisdom": 6
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/bloodmage/bloodmage_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "tome",
+        "label": "Tome",
+        "weaponType": "TOME",
+        "hotkey": "R",
+        "hint": "Off-hand relic surge. Wand is the ley unique weapon.",
+        "skillIds": [
+          "tome_divine_wave_sacred_shield_smite_radiant_surge_dawn_page",
+          "tome_divine_wave_sacred_shield_smite_grace_fury_wrath_page",
+          "tome_thorn_burst_healing_bloom_natures_shield_ancient_surge_verdant_page",
+          "tome_energy_wave_time_stasis_mana_shield_ethereal_surge_void_page"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "wand",
+        "label": "Wand",
+        "weaponType": "WAND",
+        "hotkey": "1–5",
+        "hint": "Mage and Priest bind the wand. Tome stays the class item on R.",
+        "skillIds": [
+          "wand_missile",
+          "wand_blink",
+          "wand_chain",
+          "wand_meteor_shower"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0_staff",
+          "uuid": "ITEM-CF88B0F0A10E-977EF796",
+          "name": "Gnarled Staff",
+          "type": "weapon",
+          "weaponType": "STAFF",
+          "category": "staves",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/staff_1.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        },
+        {
+          "id": "t0-offhand-tome",
+          "uuid": "ITEM-20260423030000-00000F-0CFAC9C8",
+          "name": "Novice Tome",
+          "type": "weapon",
+          "weaponType": "TOME",
+          "category": "offhand-tome",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Book_1.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "off_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "p_l0_dawnvow",
+          "foundryId": "priest.dawn-vow",
+          "name": "Dawn Vow",
+          "description": "Canticle starter. Faith on the avatar (F).",
+          "effect": "+6 Wisdom",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/bloodmage/bloodmage_01.png",
+          "canonical": true
+        },
+        {
+          "id": "p_atonement",
+          "foundryId": "priest.atonement",
+          "name": "Atonement",
+          "description": "Damage you deal heals the bonded ally",
+          "effect": "40% of damage as heal",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Paladinskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "p_smite",
+          "foundryId": "priest.smite",
+          "name": "Smite",
+          "description": "Holy bolt. Feeds Atonement",
+          "effect": "Holy damage",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Paladinskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "p_flash_mend",
+          "foundryId": "priest.flash-mend",
+          "name": "Flash Mend",
+          "description": "Instant emergency heal",
+          "effect": "28% HP",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Paladinskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "wand_missile",
+          "foundryId": "priest.magic-missile",
+          "name": "Magic Missile",
+          "description": "3 homing arcane bolts.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_blink",
+          "foundryId": "priest.blink",
+          "name": "Blink",
+          "description": "Instant teleport to the target location.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_chain",
+          "foundryId": "priest.chain-lightning",
+          "name": "Chain Lightning",
+          "description": "Lightning bouncing between enemies.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "wand_meteor_shower",
+          "foundryId": "priest.meteor-shower",
+          "name": "Meteor Shower",
+          "description": "Rain meteors on a large area.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_divine_wave_sacred_shield_smite_radiant_surge_dawn_page",
+          "foundryId": "priest.dawn-page",
+          "name": "Dawn Page",
+          "description": "Divine Wave, Sacred Shield, Smite, Radiant Surge. Dash grace.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_divine_wave_sacred_shield_smite_grace_fury_wrath_page",
+          "foundryId": "priest.wrath-page",
+          "name": "Wrath Page",
+          "description": "Divine Wave, Sacred Shield, Smite, Grace Fury. Frenzy cast speed.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_thorn_burst_healing_bloom_natures_shield_ancient_surge_verdant_page",
+          "foundryId": "priest.verdant-page",
+          "name": "Verdant Page",
+          "description": "Thorn Burst, Healing Bloom, Nature's Shield, Ancient Surge. Dash growth.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "tome_energy_wave_time_stasis_mana_shield_ethereal_surge_void_page",
+          "foundryId": "priest.void-page",
+          "name": "Void Page",
+          "description": "Energy Wave, Time Stasis, Mana Shield, Ethereal Surge. Dash mark.",
+          "effect": null,
+          "kind": "class-item",
+          "slot": "R",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "raider": {
+      "id": "raider",
+      "name": "Raider",
+      "level0": {
+        "id": "rd_l0_bloodbound",
+        "name": "Bloodbound",
+        "description": "Cleaver-line starter. Fury on the avatar (F).",
+        "effect": "+4 Strength",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "strength": 4
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/barbarian/barbarian_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "hands",
+        "label": "Hands",
+        "weaponType": "CLAW",
+        "hotkey": "R",
+        "hint": "Fist arts on R. Same unique weapon the steel pair crafts at the anvil.",
+        "skillIds": [
+          "claw_rending_slash",
+          "claw_blood_frenzy",
+          "claw_instinct",
+          "claw_beast_stomp"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "hands",
+        "label": "Hands",
+        "weaponType": "CLAW",
+        "hotkey": "1–5",
+        "hint": "Warrior and Raider craft Hands at the anvil — claw combat, not Worge forms.",
+        "skillIds": [
+          "claw_rending_slash",
+          "claw_blood_frenzy",
+          "claw_instinct",
+          "claw_beast_stomp"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-greataxe",
+          "uuid": "ITEM-20260423030000-000007-53358EF2",
+          "name": "Training Greataxe",
+          "type": "weapon",
+          "weaponType": "GREATAXE",
+          "category": "greataxes",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Axe_20.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "rd_l0_bloodbound",
+          "foundryId": "raider.bloodbound",
+          "name": "Bloodbound",
+          "description": "Cleaver-line starter. Fury on the avatar (F).",
+          "effect": "+4 Strength",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/barbarian/barbarian_01.png",
+          "canonical": true
+        },
+        {
+          "id": "rd_riposte",
+          "foundryId": "raider.riposte-stance",
+          "name": "Riposte Stance",
+          "description": "Every 2H swing opens a parry window",
+          "effect": "Parry 0.35s",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "rd_overpower",
+          "foundryId": "raider.overpower",
+          "name": "Overpower",
+          "description": "Cannot miss after a parry",
+          "effect": "2H follow-up",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "rd_rend",
+          "foundryId": "raider.rend",
+          "name": "Rend",
+          "description": "2H bleed DoT",
+          "effect": "Bleed 8s",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Warriorskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "claw_rending_slash",
+          "foundryId": "raider.rending-slash",
+          "name": "Rending Slash",
+          "description": "Slashing strike. Hands primary.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_blood_frenzy",
+          "foundryId": "raider.blood-frenzy",
+          "name": "Blood Frenzy",
+          "description": "Attacks stack bleed on the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_instinct",
+          "foundryId": "raider.instinct",
+          "name": "Instinct",
+          "description": "Slight health and a larger stamina buff / self-heal.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "claw_beast_stomp",
+          "foundryId": "raider.beast-stomp",
+          "name": "Beast Stomp",
+          "description": "AoE stomp — damage and slow.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "thief": {
+      "id": "thief",
+      "name": "Thief",
+      "level0": {
+        "id": "t_l0_nightlog",
+        "name": "Night Log",
+        "description": "Knife-line starter. Edge on the avatar (F).",
+        "effect": "+3 Agility",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "agility": 3
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/thief/thief_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "scythe",
+        "label": "Scythe",
+        "weaponType": "SCYTHE",
+        "hotkey": "R",
+        "hint": "Combat scythe arts on R. Harvest R still picks the flower tool.",
+        "skillIds": [
+          "scythe_reap",
+          "scythe_shadow_step",
+          "scythe_spiral",
+          "scythe_grim_reaper"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "scythe",
+        "label": "Scythe",
+        "weaponType": "SCYTHE",
+        "hotkey": "1–5",
+        "hint": "Ranger and Thief craft the combat scythe at the engineer bench. Harvest scythe stays a flower tool.",
+        "skillIds": [
+          "scythe_reap",
+          "scythe_shadow_step",
+          "scythe_spiral",
+          "scythe_grim_reaper"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-dagger",
+          "uuid": "ITEM-20260423030000-000003-427E8F16",
+          "name": "Training Dagger",
+          "type": "weapon",
+          "weaponType": "DAGGER",
+          "category": "daggers",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Dagger_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "t_l0_nightlog",
+          "foundryId": "thief.night-log",
+          "name": "Night Log",
+          "description": "Knife-line starter. Edge on the avatar (F).",
+          "effect": "+3 Agility",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/thief/thief_01.png",
+          "canonical": true
+        },
+        {
+          "id": "t_between",
+          "foundryId": "thief.between-the-eyes",
+          "name": "Between the Eyes",
+          "description": "Combo finisher stun + crit",
+          "effect": "Spend combo",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_01_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "t_sinister",
+          "foundryId": "thief.sinister-strike",
+          "name": "Sinister Strike",
+          "description": "Combo builder",
+          "effect": "+1 combo",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_02_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "t_pistol",
+          "foundryId": "thief.pistol-shot",
+          "name": "Pistol Shot",
+          "description": "Ranged interrupt",
+          "effect": "12y interrupt",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skill_nobg/Archerskill_03_nobg.png",
+          "canonical": true
+        },
+        {
+          "id": "scythe_reap",
+          "foundryId": "thief.reaping-slash",
+          "name": "Reaping Slash",
+          "description": "Wide sweeping arc, builds Soul stacks.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_shadow_step",
+          "foundryId": "thief.shadow-step",
+          "name": "Shadow Step",
+          "description": "Teleport behind the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_spiral",
+          "foundryId": "thief.death-spiral",
+          "name": "Death Spiral",
+          "description": "Spinning scythe AoE channel.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "scythe_grim_reaper",
+          "foundryId": "thief.grim-reaper",
+          "name": "Grim Reaper",
+          "description": "Transform into Death, AoE execute.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    },
+    "verduror": {
+      "id": "verduror",
+      "name": "Verduror",
+      "level0": {
+        "id": "v_l0_groveroot",
+        "name": "Grove Root",
+        "description": "Grove starter. Mist on the avatar (F).",
+        "effect": "+4 Wisdom",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": {
+          "wisdom": 4
+        },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/necromancer/necromancer_01.png",
+        "slot": "F"
+      },
+      "classItem": {
+        "id": "mace",
+        "label": "Mace",
+        "weaponType": "MACE",
+        "hotkey": "R",
+        "hint": "Grove mace arts on R. Same unique weapon the grove pair crafts at alchemy.",
+        "skillIds": [
+          "mace_holy_strike",
+          "mace_sanctify",
+          "mace_smite",
+          "mace_divine_wrath"
+        ]
+      },
+      "uniqueWeapon": {
+        "id": "mace",
+        "label": "Mace",
+        "weaponType": "MACE",
+        "hotkey": "1–5",
+        "hint": "Worge and Verduror craft the grove mace at the alchemy bowl.",
+        "skillIds": [
+          "mace_holy_strike",
+          "mace_sanctify",
+          "mace_smite",
+          "mace_divine_wrath"
+        ]
+      },
+      "startingKit": [
+        {
+          "id": "t0-hammer1h",
+          "uuid": "ITEM-20260423030000-000004-A074566A",
+          "name": "Training Hammer",
+          "type": "weapon",
+          "weaponType": "HAMMER",
+          "category": "hammers1h",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Hammer_01.png",
+          "tier": 0,
+          "tierLabel": "Starter",
+          "slot": "main_hand"
+        }
+      ],
+      "abilities": [
+        {
+          "id": "v_l0_groveroot",
+          "foundryId": "verduror.grove-root",
+          "name": "Grove Root",
+          "description": "Grove starter. Mist on the avatar (F).",
+          "effect": "+4 Wisdom",
+          "kind": "level0",
+          "slot": "F",
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/necromancer/necromancer_01.png",
+          "canonical": true
+        },
+        {
+          "id": "v_seed",
+          "foundryId": "verduror.plant-seed",
+          "name": "Plant Seed",
+          "description": "Drop an oxygen plant. It opens and heals whoever stands in the bloom.",
+          "effect": "Seed",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/verduror/plant-seed.png",
+          "canonical": true
+        },
+        {
+          "id": "v_lash",
+          "foundryId": "verduror.vine-lash",
+          "name": "Vine Lash",
+          "description": "Lash an enemy. Allies in the whip's arc heal, and a seed drops at their feet.",
+          "effect": "Lash + seed",
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/verduror/vine-lash.png",
+          "canonical": true
+        },
+        {
+          "id": "v_iguana",
+          "foundryId": "verduror.iguana",
+          "name": "Iguana",
+          "description": "Level 0 skill — crawl and cast. Not a form page. Nature bolts while you move.",
+          "effect": null,
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/verduror/iguana.png",
+          "canonical": true
+        },
+        {
+          "id": "v_bolt",
+          "foundryId": "verduror.nature-bolt",
+          "name": "Nature Bolt",
+          "description": "Cast while moving. Builds wild mana for the next seed.",
+          "effect": null,
+          "kind": "class-tree",
+          "slot": null,
+          "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/verduror/nature-bolt.png",
+          "canonical": true
+        },
+        {
+          "id": "mace_holy_strike",
+          "foundryId": "verduror.holy-strike",
+          "name": "Holy Strike",
+          "description": "Mace hit infused with holy energy.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_sanctify",
+          "foundryId": "verduror.sanctify",
+          "name": "Sanctify",
+          "description": "Bless ground, heal allies in zone.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_smite",
+          "foundryId": "verduror.smite",
+          "name": "Smite",
+          "description": "Call down a holy bolt on the target.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        },
+        {
+          "id": "mace_divine_wrath",
+          "foundryId": "verduror.divine-wrath",
+          "name": "Divine Wrath",
+          "description": "Massive holy explosion.",
+          "effect": null,
+          "kind": "unique-weapon",
+          "slot": "1-5",
+          "iconUrl": null,
+          "canonical": true
+        }
+      ]
+    }
+  }
+}

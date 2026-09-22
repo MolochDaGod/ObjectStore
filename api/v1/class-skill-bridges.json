@@ -1,51 +1,103 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-08-18",
-  "description": "Class starter nodes + bridges for Open / Danger Room. Consumed by zie() with master-skillTrees.json.",
+  "version": "1.1.0",
+  "updated": "2026-09-17",
+  "description": "Class starter nodes + bridges. L0 is F on the HUD avatar. Consumed by zie() with master-skillTrees.json.",
   "level0": {
     "warrior": [
       {
         "id": "w_l0_warbound",
         "name": "Warbound",
-        "description": "Knight-line starter. Plate discipline and threat.",
+        "description": "Knight-line starter. Plate discipline and threat. F on the avatar.",
         "effect": "+4 Defense",
         "kind": "passive",
         "auto": true,
-        "bonuses": { "defense": 4 }
+        "bonuses": { "defense": 4 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/paladin/paladin_01.png"
       }
     ],
     "mage": [
       {
         "id": "m_l0_leyline",
         "name": "Leyline",
-        "description": "Staff starter. Open a leyline for mana.",
+        "description": "Staff starter. Open a leyline for mana. F on the avatar.",
         "effect": "+6 Mana",
         "kind": "passive",
         "auto": true,
-        "bonuses": { "mana": 6 }
+        "bonuses": { "mana": 6 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/firemage/firemage_01.png"
       }
     ],
     "ranger": [
       {
         "id": "r_l0_log",
         "name": "Trail Log",
-        "description": "Bow starter. Mark the trail.",
+        "description": "Bow starter. Mark the trail. F on the avatar.",
         "effect": "+3 Dexterity",
         "kind": "passive",
         "auto": true,
-        "bonuses": { "dexterity": 3 }
+        "bonuses": { "dexterity": 3 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/hunter/hunter_01.png"
       }
     ],
     "worge": [
       {
         "id": "wr_l0_bear",
         "name": "Bear Form",
-        "description": "Worge (knight) starter. 1H+tome or nature/arcane staff.",
+        "description": "Worge starter. 1H+tome or nature/arcane staff. F on the avatar.",
         "effect": "+4 Vitality",
         "kind": "form",
         "formId": "bear",
         "auto": true,
-        "bonuses": { "vitality": 4, "health": 20 }
+        "bonuses": { "vitality": 4, "health": 20 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/abilities/ability_bear_form.png"
+      }
+    ],
+    "raider": [
+      {
+        "id": "rd_l0_bloodbound",
+        "name": "Bloodbound",
+        "description": "Cleaver-line starter. Fury on the avatar (F).",
+        "effect": "+4 Strength",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": { "strength": 4 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/barbarian/barbarian_01.png"
+      }
+    ],
+    "thief": [
+      {
+        "id": "t_l0_nightlog",
+        "name": "Night Log",
+        "description": "Knife-line starter. Edge on the avatar (F).",
+        "effect": "+3 Agility",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": { "agility": 3 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/thief/thief_01.png"
+      }
+    ],
+    "priest": [
+      {
+        "id": "p_l0_dawnvow",
+        "name": "Dawn Vow",
+        "description": "Canticle starter. Faith on the avatar (F).",
+        "effect": "+6 Wisdom",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": { "wisdom": 6 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/bloodmage/bloodmage_01.png"
+      }
+    ],
+    "verduror": [
+      {
+        "id": "v_l0_groveroot",
+        "name": "Grove Root",
+        "description": "Grove starter. Mist on the avatar (F).",
+        "effect": "+4 Wisdom",
+        "kind": "passive",
+        "auto": true,
+        "bonuses": { "wisdom": 4 },
+        "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/skills/class/necromancer/necromancer_01.png"
       }
     ]
   },
@@ -53,6 +105,10 @@
     "warrior": [],
     "mage": [],
     "ranger": [],
-    "worge": []
+    "worge": [],
+    "raider": [],
+    "thief": [],
+    "priest": [],
+    "verduror": []
   }
 }
