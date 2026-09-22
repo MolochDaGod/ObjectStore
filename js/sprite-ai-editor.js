@@ -354,12 +354,10 @@
     statusEl.className = 'ai-status ai-status-active';
 
     try {
+      // Puter txt2img removed — fail-closed
+      throw new Error('Image generation unavailable: Puter txt2img disabled');
       var fullPrompt = prompt + ', pixel art sprite sheet, transparent background, game asset, centered, 128x128';
-      var imageEl = await puter.ai.txt2img({
-        prompt: fullPrompt,
-        model: 'gpt-image-1.5',
-        provider: 'openai'
-      });
+      var imageEl = null; // await puter.ai.txt2img({...});
 
       if (imageEl && imageEl.src) {
         addImageBubble(imageEl.src);
