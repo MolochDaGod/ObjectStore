@@ -1,0 +1,80 @@
+name: Purge assets CDN cache (female GLBs)
+on:
+  workflow_dispatch:
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Zone purge files + tag (Cache Purge token)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN || secrets.CF_DNS_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID || secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          set -euo pipefail
+          ZONE="${CF_ZONE_ID:-e8c0c2ee3063f24eb31affddabf9730a}"
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::warning::No CF token secret; skipping zone API purge"
+          else
+            BODY=$(cat <<'EOF'
+          {"files":[
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/human_female.glb",
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/barbarian_female.glb",
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/elf_female.glb",
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/dwarf_female.glb",
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/orc_female.glb",
+            "https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/undead_female.glb"
+          ]}
+          EOF
+            )
+            echo "POST files purge zone=$ZONE"
+            curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE}/purge_cache" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data "$BODY" | tee /tmp/purge-files.json
+            echo
+            echo "POST tags purge 3d-model"
+            curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE}/purge_cache" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data '{"tags":["3d-model"]}' | tee /tmp/purge-tags.json
+            echo
+            python3 - <<'PY'
+          import json
+          for p in ["/tmp/purge-files.json","/tmp/purge-tags.json"]:
+            d=json.load(open(p))
+            print(p, "success=", d.get("success"), "errors=", d.get("errors"))
+            if not d.get("success"):
+              raise SystemExit(2)
+          PY
+          fi
+      - name: Worker /_purge bare paths (runner colo Cache API)
+        run: |
+          set -euo pipefail
+          for f in human_female barbarian_female elf_female dwarf_female orc_female undead_female; do
+            path="asset-packs/toon-rts-characters/glb/characters/${f}.glb"
+            echo -n "$path -> "
+            curl -sS -X POST "https://assets.grudge-studio.com/_purge?path=${path}" -H "Accept: application/json"
+            echo
+          done
+      - name: Verify bare HEAD Content-Length (~10MB)
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in human_female barbarian_female elf_female dwarf_female orc_female undead_female; do
+            url="https://assets.grudge-studio.com/asset-packs/toon-rts-characters/glb/characters/${f}.glb"
+            hdrs=$(curl -sI "$url" | tr -d '\r')
+            cl=$(echo "$hdrs" | awk -F': ' 'tolower($1)=="content-length"{print $2}')
+            etag=$(echo "$hdrs" | awk -F': ' 'tolower($1)=="etag"{print $2}')
+            cfs=$(echo "$hdrs" | awk -F': ' 'tolower($1)=="cf-cache-status"{print $2}')
+            age=$(echo "$hdrs" | awk -F': ' 'tolower($1)=="age"{print $2}')
+            echo "$f CL=$cl etag=$etag cf-cache-status=$cfs age=$age"
+            if [ -z "$cl" ] || [ "$cl" -lt 5000000 ]; then
+              echo "::error::$f still stale/small CL=$cl"
+              fail=1
+            fi
+          done
+          curl -sS https://objectstore.grudge-studio.com/health
+          echo
+          exit $fail
