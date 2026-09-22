@@ -24,18 +24,18 @@ npm run blender:mcp:setup
 Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static data host.
 - **R2 bucket** `grudge-assets`: binaries (sprites, audio, 3D, icons)
 - **D1 database** `grudge-objectstore`: search index (legacy name `objectstore-meta` is retired)
-- **Definitions JSON:** `info.grudge-studio.com/api/v1` (Vercel). Worker proxies the same paths.
+- **Catalog SSOT:** `objectstore.grudge-studio.com` (Worker). Definitions JSON served at `/api/v1/*.json` routes.
 
 ## Architecture
 
 ### Live Endpoints (do not collapse)
 | Host | Owns |
 |------|------|
-| `info.grudge-studio.com` | Vercel `objectstore-grudge` — catalog HTML + `/api/v1` JSON SSOT |
-| `objectstore.grudge-studio.com` | Worker **`grudgeassets`** (`workers/src`) — CRUD/search; JSON **proxies info.*** (no stale R2 catalog cache) |
+| `objectstore.grudge-studio.com` | Worker **`grudgeassets`** (`workers/src`) — **Catalog SSOT** · CRUD/search · `/api/v1/*.json` definitions |
 | `assets.grudge-studio.com` | Worker **`grudge-asset-cdn`** (`workers/cdn`) — R2 binaries, CORS `*` |
 | `ai.grudge-studio.com` | **`F:\GitHub\grudge-ai-hub`** (1.6.7). **Not** this repo’s `workers/ai` (stale fork; do not bind that hostname) |
 | `grudgeassets.grudge.workers.dev` | Same as objectstore Worker |
+| `info.grudge-studio.com` | Vercel `objectstore-grudge` — catalog HTML (legacy JSON host; **not catalog SSOT**) |
 
 **Do not** `wrangler deploy -c workers/ai/wrangler.toml` onto `ai.grudge-studio.com`.  
 **Do not** deploy `GrudgeBuilder/workers/cdn` (same Worker name as live CDN).
@@ -50,8 +50,9 @@ Cloudflare Worker + R2 + D1 serving as the canonical game asset API and static d
 - `POST /v1/convert` — 3D model conversion pipeline (Durable Object)
 
 ### Static Game Data (api/v1/)
-Live SSOT host: **`info.grudge-studio.com/api/v1`**. Worker **proxies** the same paths.  
-Do **not** start updates from `forge-editor.json` or `molochdagod.github.io/ObjectStore`.
+Catalog SSOT: **`objectstore.grudge-studio.com/api/v1/*.json`** (Worker routes).  
+Do **not** start updates from `forge-editor.json` or `molochdagod.github.io/ObjectStore`.  
+**Never** document bare `GET /api/v1` (no file) — 404. Use concrete paths: `/api/v1/catalog.json` or named files.
 
 **Runtime index (start here):** `game-data-manifest.json` → `games-library.json` → master items / recipes / materials / harvest / professions.  
 Deploy pattern: [`docs/INFO_JSON_DEPLOY.md`](docs/INFO_JSON_DEPLOY.md).
