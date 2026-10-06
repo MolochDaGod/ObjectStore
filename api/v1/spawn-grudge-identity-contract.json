@@ -1,0 +1,111 @@
+{
+  "id": "spawn-grudge-identity",
+  "version": "2026-10-04.phase1",
+  "title": "Spawn ID ↔ Grudge account bind + honest character mirror",
+  "status": "phase1",
+  "docs": [
+    "docs/SPAWN_GRUDGE_SHARE_PHASE0.md",
+    "docs/SPAWN_GRUDGE_SHARE_PHASE1.md"
+  ],
+  "shareMatrix": "/api/v1/spawn-grudge-share-matrix.json",
+  "accountLaw": "/api/v1/account-game-uuid-contract.json",
+  "productLocks": {
+    "honestCharacters": true,
+    "noCryptoOnSpawn": true,
+    "noSalesOnSpawn": true,
+    "meritPlay": true,
+    "playerSsot": "Railway Postgres",
+    "spawnPlayerState": "mirror-cache-only"
+  },
+  "identity": {
+    "verifySpawn": "GET https://www.spawn.co/api/agent/v1/me",
+    "login": "POST https://id.grudge-studio.com/api/auth/spawn",
+    "linkExistingAccount": "POST https://id.grudge-studio.com/api/auth/spawn-link",
+    "preferredForCurrentAccounts": "spawn-link",
+    "columns": ["users.spawn_user_id", "users.spawn_username", "users.spawn_linked_at"],
+    "tokenRules": {
+      "spawnSak": "verify never store",
+      "fleetJwt": "agent/cook memory only — never commit or player.state"
+    }
+  },
+  "corsOrigins": [
+    "https://www.spawn.co",
+    "https://spawn.co",
+    "https://play.bigspawn.net"
+  ],
+  "characterHonesty": {
+    "mirrorFromAuth": [
+      "grudgeId",
+      "account.id",
+      "account.displayName",
+      "spawn.userId",
+      "spawn.username",
+      "spawn.handle",
+      "characters[].id",
+      "characters[].name",
+      "characters[].era",
+      "characters[].grudgeCode",
+      "characters[].level",
+      "characters[].active",
+      "isNew",
+      "syncedAt"
+    ],
+    "railwayOnlyUntilLaterSync": [
+      "mesh_ids",
+      "equipment",
+      "profession_xp",
+      "bag_qty",
+      "grudge_uuid",
+      "home_island_state"
+    ],
+    "handoff": "?characterId=<uuid>&era=",
+    "tests": [
+      "each characters[].id exists on GET /api/characters?era= with same JWT",
+      "era matches world product",
+      "no fabricated heroes"
+    ]
+  },
+  "playerStateMirror": {
+    "path": "player.state.grudge",
+    "schema": {
+      "v": 1,
+      "grudgeId": "GRUDGE_*",
+      "displayName": "string",
+      "spawnUserId": "uuid",
+      "spawnUsername": "string",
+      "syncedAt": "ISO-8601",
+      "isNew": "boolean?",
+      "characters": [
+        {
+          "id": "uuid",
+          "name": "string",
+          "era": "warlords|voxel|nexus|armada",
+          "grudgeCode": "GRDG-*?",
+          "level": "number?",
+          "active": "boolean?"
+        }
+      ]
+    },
+    "banned": [
+      "fleetJwt",
+      "sak_",
+      "bagQtyAsSsot",
+      "walletBalanceAsSsot",
+      "mintedGrudgeUuid",
+      "onChainCheckout"
+    ]
+  },
+  "cook": {
+    "script": "scripts/sync-spawn-grudge-account.mjs",
+    "requiresEnv": ["SPAWN_TOKEN"],
+    "outputs": [
+      "spawn/grudge-account-snapshot.json",
+      "spawn/player-state-grudge.json"
+    ],
+    "optionalNemesis": "NEMESIS=1 runs owned-cards into separate nemesis mirror"
+  },
+  "phase2Expense": {
+    "blocked": true,
+    "note": "wallet-free server GBuX burn for budz/gold — see share-matrix burnCandidates"
+  }
+}

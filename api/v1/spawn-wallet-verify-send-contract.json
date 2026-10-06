@@ -1,0 +1,52 @@
+{
+  "id": "spawn-wallet-verify-send-contract",
+  "version": "2026-10-04.verify-send",
+  "status": "live-railway-smoked-2026-10-05",
+  "title": "Verify/test: soft-ledger send to account wallet (no burn)",
+  "doc": "docs/SPAWN_WALLET_VERIFY_SEND.md",
+  "script": "scripts/verify-spawn-account-wallet.mjs",
+  "productLocks": {
+    "sendBeforeBurn": true,
+    "onChain": false,
+    "burn": false,
+    "noSalesOnSpawn": true,
+    "ledger": "fleet_bag_gbux",
+    "authority": "Railway accounts.gbux_balance + gbux_transactions"
+  },
+  "endpoint": {
+    "method": "POST",
+    "path": "/api/wallet/verify-send-to-account",
+    "host": "https://grudge-api-production-0d46.up.railway.app",
+    "auth": "requireAdmin (fleet JWT studio admin/master OR X-Admin-Password + ADMIN_PASSWORD)",
+    "repo": "GrudgeBuilder server/routes.ts"
+  },
+  "request": {
+    "grudgeId": "GRUDGE_… (preferred)",
+    "accountId": "uuid optional alt",
+    "amount": "positive integer ≤ WALLET_VERIFY_SEND_MAX (default 1000)",
+    "purpose": ["verify", "test", "spawn_verify", "ledger_verify"],
+    "idempotencyKey": "string min 8 → sourceRef verify-send:{key}",
+    "note": "optional string"
+  },
+  "responseFlags": {
+    "kind": "verify_send_to_account_wallet",
+    "onChain": false,
+    "burn": false,
+    "idempotent": "true on replay of same idempotencyKey"
+  },
+  "confirm": {
+    "auth": "POST https://id.grudge-studio.com/api/auth/spawn",
+    "read": "GET /api/wallet/overview with fleet JWT"
+  },
+  "rejectedForThisStep": [
+    "POST /api/wallet/send-gbux",
+    "POST /api/wallet/purchase*",
+    "POST /api/wallet/transfer-to-play",
+    "debit/burn expense settle (Phase 2 after verify green)"
+  ],
+  "related": {
+    "adminGrant": "POST /api/admin/grant-gbux",
+    "shareMatrix": "/api/v1/spawn-grudge-share-matrix.json",
+    "identityContract": "/api/v1/spawn-grudge-identity-contract.json"
+  }
+}

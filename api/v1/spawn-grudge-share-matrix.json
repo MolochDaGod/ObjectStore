@@ -1,0 +1,167 @@
+{
+  "id": "spawn-grudge-share-matrix",
+  "version": "2026-10-04.verify-send",
+  "status": "phase2-verify-send",
+  "title": "Spawn ↔ Grudge identity share + currency matrix",
+  "docs": [
+    "docs/SPAWN_GRUDGE_SHARE_PHASE0.md",
+    "docs/SPAWN_GRUDGE_SHARE_PHASE1.md",
+    "docs/SPAWN_WALLET_VERIFY_SEND.md"
+  ],
+  "productLocks": {
+    "honestCharacters": true,
+    "noCryptoOnSpawn": true,
+    "noSalesOnSpawn": true,
+    "meritPlay": true,
+    "gbuxBurnsSettleBudzGoldExpenses": true,
+    "playerSsot": "Railway Postgres only",
+    "spawnPlayerState": "mirror-cache-only"
+  },
+  "bannedOnSpawn": [
+    "solana-checkout",
+    "dex",
+    "wallet.grudge-studio.com-sales-embed",
+    "api/wallet/send-gbux",
+    "api/wallet/purchase",
+    "spl-gbux-budz-as-spawn-money",
+    "thc-vault-flows",
+    "player.state-only-paid",
+    "second-bag-or-roster-db",
+    "guest-auto-account"
+  ],
+  "currencies": {
+    "fleet_bag_gbux": {
+      "authority": "grudge-api accounts.gbux_balance",
+      "host": "https://grudge-api-production-0d46.up.railway.app",
+      "onChain": false,
+      "spawn": "mirror-ok; verify via POST /api/wallet/verify-send-to-account first; burn later via wallet-free debit"
+    },
+    "nemesis_gbux": {
+      "authority": "nemesis users.gbux_balance + gbux_transactions",
+      "host": "https://nemesis.grudge-studio.com",
+      "onChain": false,
+      "spawn": "preferred for Links/TCG entry and expenses"
+    },
+    "play_gold": {
+      "authority": "often Spawn player.state",
+      "onChain": false,
+      "spawn": "play-only; never equals paid GBuX"
+    },
+    "play_budz": {
+      "authority": "product expense ledger after server burn receipt",
+      "onChain": false,
+      "spawn": "show after settle; not SPL $BUDZ"
+    },
+    "spl_gbux_budz": {
+      "authority": "Solana GBUX mint / THC Labz $BUDZ",
+      "onChain": true,
+      "spawn": "banned"
+    }
+  },
+  "worlds": [
+    {
+      "address": "@survival/grudge-links",
+      "identity": ["POST /api/auth/spawn", "POST /api/auth/spawn-link"],
+      "characters": "fleet JWT characters[] + Nemesis owned-cards cook",
+      "expenseLedger": "nemesis_gbux",
+      "notes": "SOCIAL drawer; golf gold != GBuX"
+    },
+    {
+      "address": "@survival/grudge-warlords-open-water",
+      "identity": ["POST /api/auth/spawn", "POST /api/auth/spawn-link"],
+      "characters": "grudge-api characters era=warlords",
+      "expenseLedger": "fleet_bag_gbux",
+      "notes": "Phase 2 needs wallet-free debit; do not use transfer-to-play as-is"
+    },
+    {
+      "address": "@racalvin/grudge-warlords",
+      "identity": ["POST /api/auth/spawn", "POST /api/auth/spawn-link"],
+      "characters": "grudge-api characters era=warlords",
+      "expenseLedger": "fleet_bag_gbux",
+      "notes": "same ledger family as open-water"
+    },
+    {
+      "address": "@legion/*",
+      "identity": "optional-link",
+      "characters": "do-not-invent",
+      "expenseLedger": null,
+      "notes": "identity-only unless contracted"
+    }
+  ],
+  "identity": {
+    "verify": "GET https://www.spawn.co/api/agent/v1/me",
+    "login": "POST https://id.grudge-studio.com/api/auth/spawn",
+    "linkExisting": "POST https://id.grudge-studio.com/api/auth/spawn-link",
+    "columns": ["users.spawn_user_id", "users.spawn_username", "users.spawn_linked_at"],
+    "tokenStorage": "never-store-sak-or-commit-jwt"
+  },
+  "characterHonesty": {
+    "mirrorFromSpawnAuth": [
+      "grudgeId",
+      "account.id",
+      "account.displayName",
+      "spawn.userId",
+      "spawn.username",
+      "spawn.handle",
+      "characters[].id",
+      "characters[].name",
+      "characters[].era",
+      "characters[].grudgeCode",
+      "characters[].level",
+      "characters[].active",
+      "isNew"
+    ],
+    "railwayOnlyUntilSync": [
+      "mesh_ids",
+      "equipment",
+      "profession_xp",
+      "bag_qty",
+      "grudge_uuid",
+      "home_island_state"
+    ],
+    "handoff": "?characterId=<uuid>&era=",
+    "tests": [
+      "mirrored character id exists on GET /api/characters?era=",
+      "era matches world product",
+      "no fabricated heroes"
+    ]
+  },
+  "verifySend": {
+    "order": "send-to-account-wallet before burn",
+    "route": "POST /api/wallet/verify-send-to-account",
+    "ledger": "fleet_bag_gbux",
+    "onChain": false,
+    "burn": false,
+    "auth": "requireAdmin",
+    "capEnv": "WALLET_VERIFY_SEND_MAX",
+    "capDefault": 1000,
+    "idempotency": "idempotencyKey → sourceRef verify-send:{key}",
+    "confirm": "GET /api/wallet/overview with fleet JWT",
+    "contract": "/api/v1/spawn-wallet-verify-send-contract.json",
+    "doc": "docs/SPAWN_WALLET_VERIFY_SEND.md",
+    "script": "scripts/verify-spawn-account-wallet.mjs",
+    "live": "smoked 2026-10-05: credit+idempotent on GRUDGE_MPHOJYNW853BA"
+  },
+  "burnCandidates": {
+    "prerequisite": "verifySend green on target grudge_id",
+    "recommendedLinks": "nemesis_gbux soft debit + receipt",
+    "recommendedWarlords": "new fleet debitGbux expense route without Solana requirement",
+    "rejected": [
+      "POST /api/wallet/transfer-to-play (requires Solana address)",
+      "POST /api/wallet/send-gbux",
+      "POST /api/wallet/purchase*",
+      "player.state-only decrement",
+      "burn-before-verify-send"
+    ]
+  },
+  "phaseGate": {
+    "phase0": "complete",
+    "phase1": "complete — spawn-grudge-identity-contract + sync-spawn-grudge-account.mjs",
+    "phase2a": "verify-send-to-account (soft credit; this package)",
+    "phase2b": "wallet-free server GBuX expense settle for budz/gold (burn after verify)"
+  },
+  "identityContract": "/api/v1/spawn-grudge-identity-contract.json",
+  "verifySendContract": "/api/v1/spawn-wallet-verify-send-contract.json",
+  "phase1Docs": "docs/SPAWN_GRUDGE_SHARE_PHASE1.md",
+  "verifySendDocs": "docs/SPAWN_WALLET_VERIFY_SEND.md"
+}
