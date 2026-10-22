@@ -662,6 +662,7 @@
       justify-content: center;
       margin-bottom: 16px;
     }
+    .wst-class-allow { margin: 8px 0 0; font-size: 0.82em; color: var(--text-muted); letter-spacing: 0.02em; }
     .wst-preview-bar label {
       font-family: var(--font-heading);
       color: var(--text-gold);
@@ -830,7 +831,7 @@
 
 <div class="header">
   <h1>⚔ Weapon Skills</h1>
-  <p>Unique skill tree per weapon type — named weapons filter that tree</p>
+  <p id="wstStatus">Unique skill tree per weapon type — one skill per slot, named weapons filter that tree</p>
   <p class="ssot">SSOT <a href="https://info.grudge-studio.com/api/v1/master-weaponSkills.json">master-weaponSkills.json</a>
     · class trees stay in <a href="https://info.grudge-studio.com/api/v1/master-skillTrees.json">master-skillTrees.json</a>
     · anim packs sword_shield / longbow / magic / pistol / rifle / unarmed
@@ -880,8 +881,7 @@ function asset(url) {
 
 function skillIcon(skill) {
   if (!skill) return '';
-  if (skill.iconUrl) return skill.iconUrl;
-  return asset(skill.icon);
+  return asset(skill.iconUrl || skill.icon || '');
 }
 
 /** Catalog SSOT: info.grudge-studio.com. Drafts DO is not this catalog. */
@@ -891,6 +891,7 @@ const API_SOURCES = [
   'https://grudge-objectstore.pages.dev/api/v1',
 ];
 
+let weaponCatalog = null;
 let activeWeapon = 'SWORD';
 let activeVariantId = null;
 let playerTier = 3;
@@ -1078,6 +1079,12 @@ function renderWeaponInfo() {
   const base = getActiveTypeDef();
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
   let html = WeaponSkillTree.renderWeaponInfoHeader(base, variant, { asset });
+  const who = Object.entries(weaponCatalog?.classRestrictions || {})
+    .filter(([, types]) => types.includes(activeWeapon))
+    .map(([name]) => name);
+  if (who.length) {
+    html += `<div class="wst-class-allow">Classes: ${who.join(' · ')} — from master-weaponSkills.json classRestrictions</div>`;
+  }
   if (variant?.isT0) html += WeaponSkillTree.renderT0CraftBanner(variant);
   el.innerHTML = html;
 }
@@ -1204,9 +1211,11 @@ function showDetail(skill, slotType) {
   document.getElementById('detailName').textContent = skill.name;
   document.getElementById('detailDesc').textContent = skill.description;
 
-  const dmgLabel = skill.damage < 0 ? 'Heal' : 'Damage';
-  const dmgVal = Math.abs(skill.damage);
-  const dmgColor = skill.damage < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
+  const dmgNum = Number(skill.damage);
+  const dmgKnown = Number.isFinite(dmgNum) && dmgNum !== 0;
+  const dmgLabel = dmgNum < 0 ? 'Heal' : 'Damage';
+  const dmgVal = dmgKnown ? Math.abs(dmgNum) : '—';
+  const dmgColor = dmgNum < 0 ? 'hsl(140 60% 55%)' : 'hsl(0 70% 60%)';
   const detCast = skill.castTime ? skill.castTime + 's' : 'Instant';
   const detRange = skill.range ? skill.range + 'm' : '—';
 
@@ -1254,20 +1263,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 (async function init() {
-  document.querySelector('.header p').textContent = 'Loading canonical weapon skills…';
+  const status = document.getElementById('wstStatus');
+  status.textContent = 'Loading canonical weapon skills…';
   const [data] = await Promise.all([
     WeaponSkillTree.loadCatalog(API_SOURCES),
     WeaponSkillTree.loadWeaponsCatalog(API_SOURCES),
   ]);
   if (!data?.weaponTypes?.length) {
-    document.querySelector('.header p').textContent = 'Failed to load master-weaponSkills.json';
+    status.textContent = 'Failed to load master-weaponSkills.json';
     return;
   }
+  weaponCatalog = data;
   activeWeapon = data.weaponTypes[0].id;
   activeVariantId = WeaponSkillTree.getDefaultVariantId(activeWeapon, false);
   const variantCount = WeaponSkillTree.listVariantsForType(activeWeapon).length;
-  document.querySelector('.header p').textContent =
-    `${data.totalWeaponTypes || data.weaponTypes.length} weapon types · ${data.totalSkills || '—'} skills · ${variantCount} named variants · T0 starters · Shield/Tome off-hand`;
+  status.textContent =
+    `${data.totalWeaponTypes || data.weaponTypes.length} weapon types · ${data.totalSkills || '—'} skills · ${variantCount} named variants on this type · one skill per slot · Shield/Tome off-hand`;
   render();
 })();
 </script>

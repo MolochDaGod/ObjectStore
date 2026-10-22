@@ -7,7 +7,9 @@
 <link rel="icon" href="./branding/favicon-32x32.png" type="image/png" />
 <meta name="theme-color" content="#0a0e14" />
 <meta property="og:title" content="Grudge 3DFX Viewer" />
-<meta property="og:description" content="Same spell stack as vfxgrudge: skillswrite, GLSL particles, VFXLibrary, AdvancedFX, R2 GLBs, GRDG-3DFX UUIDs." />
+<meta property="og:description" content="Three.js r185 VFX stage for Grudge fleet effects. Deep-link with ?effect=effectId. Gallery: /vfx" />
+<meta property="og:url" content="https://info.grudge-studio.com/3dfx-viewer.html" />
+<link rel="canonical" href="https://info.grudge-studio.com/3dfx-viewer.html" />
 <style>
 :root{
   --bg:#070b12;--panel:#0f1520;--panel2:#121a28;--line:#243044;--text:#e8eef5;--muted:#8b95a8;
@@ -85,18 +87,19 @@ button,input{font:inherit}
       <span class="badge" id="countBadge">loading…</span>
     </div>
     <div class="top-links">
-      <a href="./hub.html">Hub</a>
-      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">vfxgrudge (ref)</a>
+      <a href="./vfx">Effects gallery</a>
+      <a href="./spell-vfx-library.html">Spell library</a>
+      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">Sandbox</a>
       <a href="https://vfx.grudge.studio/" target="_blank" rel="noopener">VFX Studio</a>
-      <a href="https://open.grudge-studio.com/danger" target="_blank" rel="noopener">Danger</a>
-      <a href="./api/v1/vfx-production-glb.json" target="_blank" rel="noopener">GLB JSON</a>
+      <a href="./api/v1/effects.json" target="_blank" rel="noopener">effects.json</a>
+      <button class="btn" id="btnShareEffect" type="button">Share</button>
     </div>
   </header>
 
   <aside class="side">
     <div class="tabs">
       <button class="tab active" data-tab="skills">Skills</button>
-      <button class="tab" data-tab="library">Library</button>
+      <button class="tab" data-tab="library">Effects</button>
       <button class="tab" data-tab="advanced">Advanced</button>
       <button class="tab" data-tab="glb">R2 GLB</button>
       <button class="tab" data-tab="registry">Registry</button>
@@ -148,10 +151,14 @@ button,input{font:inherit}
       Stack: skillswrite (GLSL particles, FireAura, IceSnake, Meteor…) · VFXLibrary (catalog beams/projectiles) · AdvancedFX (splines/ribbons) · UnrealBloom · R2 GLBs · GRDG-3DFX UUIDs
     </div>
     <div class="block">
-      <h3>Grudge UUID</h3>
+      <h3>Grudge UUID / effectId</h3>
       <div class="row">
         <div class="code" id="uuid">—</div>
         <button class="btn" id="btnCopyUuid" type="button">Copy</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div class="code" id="shareLink" style="font-size:10px">—</div>
+        <button class="btn" id="btnCopyShare" type="button">Share URL</button>
       </div>
       <div class="msg" id="copyMsg"></div>
     </div>

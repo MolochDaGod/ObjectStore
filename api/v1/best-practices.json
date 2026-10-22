@@ -1,15 +1,17 @@
 {
-  "version": "1.0.0",
-  "generated": "2026-07-11",
-  "title": "Grudge Studio Best Practices",
+  "version": "2026-10-06",
+  "generated": "2026-10-06",
+  "title": "Grudge Studio Best Practices (game-ready)",
   "docs": {
     "markdown": "/docs/BEST-PRACTICES.md",
-    "html": "/docs/best-practices.html",
+    "hub": "https://info.grudge-studio.com/docs#best-practices",
+    "gameReady": "https://info.grudge-studio.com/docs#game-ready",
     "usage": "/docs/USAGE.md",
     "assets": "/docs/ASSETS.md",
     "grudge6": "/docs/GRUDGE6.md",
     "apiUuid": "/docs/API-AND-UUID-GUIDE.md",
-    "infoHub": "https://info.grudge-studio.com/docs"
+    "infoHub": "https://info.grudge-studio.com/docs",
+    "index": "/api/v1/game-ready-systems.json"
   },
   "endpoints": {
     "cdn": "https://assets.grudge-studio.com",
@@ -17,23 +19,48 @@
     "info": "https://info.grudge-studio.com",
     "auth": "https://id.grudge-studio.com",
     "gameApi": "https://grudge-api-production-0d46.up.railway.app",
+    "warlords": "https://grudgewarlords.com",
+    "craft": "https://grudgewarlords.com/craft/",
+    "foundry": "https://character.grudge-studio.com",
+    "open": "https://open.grudge-studio.com",
+    "wallet": "https://wallet.grudge-studio.com",
+    "casting": "https://casting.grudge-studio.com",
     "grudge6Kit": "https://assets.grudge-studio.com/js/grudge6-kit.js",
     "grudgeIdClient": "https://assets.grudge-studio.com/js/grudge-id-client.js",
     "fleetJs": "https://assets.grudge-studio.com/js/grudge-fleet.js",
     "grudge6Canonical": "/api/v1/grudge6-canonical.json",
-    "grudge6GearPresets": "/api/v1/grudge6-gear-presets.json"
+    "grudge6GearPresets": "/api/v1/grudge6-gear-presets.json",
+    "playContract": "/api/v1/grudge6-warlords-play-contract.json",
+    "accountUuid": "/api/v1/account-game-uuid-contract.json",
+    "verifySend": "/api/v1/spawn-wallet-verify-send-contract.json",
+    "spawnMatrix": "/api/v1/spawn-grudge-share-matrix.json",
+    "gameReadySystems": "/api/v1/game-ready-systems.json"
   },
   "principles": [
     "One SSOT per concern: ObjectStore definitions, R2 binaries, Railway player state",
     "Same-origin /api for first-party apps; Railway+ID for Puter/foreign hosts",
-    "Bearer JWT; fleet token keys only",
+    "Bearer JWT; fleet token keys only (include grudge.open.token)",
     "Never mix account inventory with character PATCH",
-    "No Meshy/capsule stand-ins for grudge6 races",
+    "Play heroes: Toon RTS via loadRaceKit only — no Meshy/capsule/races-bake FBX",
     "Validate visually and with stub/size gates before claiming fixed",
-    "Tag every upload with era (warlords|nexus|voxel|armada) + dim/style; follow era-asset-taxonomy.json and era-systems.json",
-    "Open is the library/launcher; Warlords play is client.*; GRUDOX is voxel cabinets — do not collapse",
+    "Tag every upload with era (warlords|nexus|voxel|armada) + dim/style",
+    "Open is the library; Warlords play is grudgewarlords.com; GRUDOX is voxel cabinets",
     "Handoff ?characterId=<RFC-UUID>&era= — never GRDG-* or GRUDGE_* as hero PK",
-    "Never mix open-world 9 sector ids with home-block 3x3 slots"
+    "Never mix open-world 9 sector ids with home-block 3x3 slots",
+    "Spawn: verify-send to account wallet before burn; no crypto/sales UX on Spawn"
+  ],
+  "gameReadyOrder": [
+    "warlords-play-kit",
+    "account-character-uuid",
+    "fleet-bag-gbux-verify-send",
+    "spawn-identity-share",
+    "home-island",
+    "warlords-catalogs",
+    "craft-suite",
+    "open-library",
+    "era-systems",
+    "prefab-scheme",
+    "fleet-editors-stack"
   ],
   "eraAssets": {
     "taxonomy": "/api/v1/era-asset-taxonomy.json",
@@ -68,12 +95,12 @@
       ]
     },
     "rendering": {
-      "summary": "Three.js loaders, SkeletonUtils.clone, sRGB, material clone per instance",
-      "skills": ["threejs-loaders", "threejs-materials", "animation-and-skinned-meshes"],
+      "summary": "Three.js r185 loaders, SkeletonUtils.clone, sRGB, material clone per instance",
+      "skills": ["threejs-loaders", "threejs-materials", "grudge-character-correctness"],
       "rules": [
-        "FBXLoader for browse truth; GLTFLoader for kit GLB deploy path",
-        "Ground characters with bbox feet offset",
-        "Share AnimationClips; fade crossfades"
+        "GLTFLoader for kit GLB deploy path via loadRaceKit",
+        "Ground with bone structural box → feet min.y (not pelvis)",
+        "One AnimationMixer; share clips; fade crossfades; strip position tracks"
       ]
     },
     "textures": {
@@ -115,16 +142,17 @@
     },
     "climbing": {
       "summary": "Kinematic capsule + surface tags walk/climb; separate climb SM from combat",
-      "skills": ["spatial-queries-and-surfaces", "rapier-physics-patterns"]
+      "skills": ["spatial-queries-and-surfaces", "grudge-rapier"]
     },
     "combat": {
       "summary": "8-attr pipeline; freeform ARPG equipment; soft/hard target; arsenal VFX",
       "json": [
         "/api/v1/master-attributes.json",
         "/api/v1/weapon-stat-bridge.json",
-        "/api/v1/spell-arsenal.json"
+        "/api/v1/spell-arsenal.json",
+        "/api/v1/master-weaponSkills.json"
       ],
-      "skills": ["grudge-combat-targeting", "grudge-character-tester"]
+      "skills": ["grudge-combat-targeting", "grudge-fleet-combat", "casting-t0-weapon-play"]
     },
     "harvesting": {
       "summary": "Biome/island nodes; tool mesh + profession; yield to account/stockpile; server deplete",
@@ -135,28 +163,60 @@
       "skills": ["kenney-build", "kenney-roads"]
     },
     "authCharacters": {
-      "summary": "id.grudge-studio.com + Railway characters; grudge-id-client.js",
+      "summary": "id.grudge-studio.com + Railway characters; spawn-link for Spawn players",
       "skills": ["grudge-production-wiring"],
+      "contracts": [
+        "/api/v1/account-game-uuid-contract.json",
+        "/api/v1/spawn-grudge-identity-contract.json"
+      ],
       "tokenKeys": [
+        "grudge.open.token",
         "grudge_auth_token",
         "grudge_session_token",
         "grudge.token",
         "sso_token",
         "grudge_token"
       ]
+    },
+    "walletVerify": {
+      "summary": "Soft credit fleet_bag_gbux for verify/testing before expense burns",
+      "route": "POST /api/wallet/verify-send-to-account",
+      "contract": "/api/v1/spawn-wallet-verify-send-contract.json",
+      "doc": "/docs/SPAWN_WALLET_VERIFY_SEND.md",
+      "rules": [
+        "onChain false · burn false",
+        "Admin auth; idempotencyKey required",
+        "Confirm GET /api/wallet/overview with fleet JWT",
+        "Do not use send-gbux / purchase / transfer-to-play for Spawn verify"
+      ]
+    },
+    "craft": {
+      "summary": "Account bag materials · character profession XP",
+      "url": "https://grudgewarlords.com/craft/",
+      "legacyRedirect": "https://grudge-crafting.puter.site/",
+      "sheet": "https://info.grudge-studio.com/main-panel.html"
     }
   },
   "antiPatterns": [
     { "bad": "localStorage-only characters", "good": "Railway Postgres + optional cache" },
-    { "bad": "stub ~44KB race GLB", "good": "real kit FBX/GLB from convert pipeline" },
+    { "bad": "stub ~44KB race GLB", "good": "real Toon kit via loadRaceKit" },
     { "bad": "account bag on character PATCH", "good": "/api/account or /api/inventory" },
-    { "bad": "models/characters/grudge6/*.glb or races/*_Characters.glb or metaverse/*.glb or browser FBX", "good": "asset-packs/toon-rts-characters/glb/characters/{raceId}.glb (Toon RTS ★)" },
+    { "bad": "models/characters/grudge6/*.glb or races bake or metaverse or browser FBX as play body", "good": "asset-packs/toon-rts-characters/glb/characters/{race}.glb" },
     { "bad": "api.grudge-studio.com auth", "good": "id.grudge-studio.com" },
-    { "bad": "Meshy/capsule for WK/BRB races", "good": "grudge6 modular kit" }
+    { "bad": "Meshy/capsule for play heroes", "good": "grudge6 Toon RTS kit" },
+    { "bad": "warlords-systems-catalog.json", "good": "warlords-catalog.json + master-* datasets" },
+    { "bad": "grudge-crafting.puter.site as craft SSOT", "good": "grudgewarlords.com/craft/" },
+    { "bad": "burn GBuX before verify-send", "good": "POST /api/wallet/verify-send-to-account first" },
+    { "bad": "Solana/DEX/sales UX inside Spawn", "good": "merit play + soft ledger only" },
+    { "bad": "second AnimationMixer or second physics engine", "good": "one mixer · Rapier only" },
+    { "bad": "pelvis-as-feet grounding", "good": "bone structural box feet min.y" }
   ],
   "validate": {
     "grudge6": "npm run validate:grudge6:strict",
     "fleetAssets": "node scripts/verify-fleet-assets.mjs",
-    "auth": "npm run probe:auth"
+    "auth": "npm run probe:auth",
+    "verifySend": "node scripts/verify-spawn-account-wallet.mjs",
+    "docs": "npm run sync:docs",
+    "playKitDoctor": "casting npm run play-kit:doctor"
   }
 }
