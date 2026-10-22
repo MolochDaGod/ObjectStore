@@ -310,10 +310,8 @@
     <div class="header">
         <h1>⚔ Grudge Spell VFX Library</h1>
         <div class="header-right">
-            <a href="./vfx">Effects gallery</a>
-            <a href="3dfx-viewer.html">3D Stage</a>
-            <a href="api/v1/effects.json" target="_blank">effects.json</a>
-            <a href="api/v1/vfx-spells.json" target="_blank">vfx-spells.json</a>
+            <a href="3dfx-viewer.html">← Back to 3DFX Viewer</a>
+            <a href="api/v1/vfx-spells.json" target="_blank">📄 JSON API</a>
         </div>
     </div>
 
@@ -433,12 +431,12 @@
         }
 
         window.openInViewer = function (id) {
-            window.open(`${VIEWER_URL}?effect=${encodeURIComponent(id)}`, '_blank');
+            window.open(`${VIEWER_URL}?spell=${id}`, '_blank');
         };
 
         window.copyApiUrl = function (id) {
-            const url = `${location.origin}/vfx?id=${encodeURIComponent(id)}`;
-            navigator.clipboard.writeText(url).then(() => showToast(`Share link copied: ${url}`)).catch(() => showToast('Copy failed — check clipboard permissions'));
+            const url = `${location.origin}${location.pathname.replace('spell-vfx-library.html', '')}api/v1/vfx-spells.json#${id}`;
+            navigator.clipboard.writeText(url).then(() => showToast(`Copied: ${url}`)).catch(() => showToast('Copy failed — check clipboard permissions'));
         };
 
         function showToast(msg) {
