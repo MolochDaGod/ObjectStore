@@ -141,6 +141,11 @@
         "definitions": "https://objectstore.grudge-studio.com/api/v1",
         "cdn": "https://assets.grudge-studio.com",
         "fleetWiring": "https://info.grudge-studio.com/api/v1/fleet-wiring.json",
+        "gameReadySystems": "https://info.grudge-studio.com/api/v1/game-ready-systems.json",
+        "bestPractices": "https://info.grudge-studio.com/api/v1/best-practices.json",
+        "verifySend": "https://info.grudge-studio.com/api/v1/spawn-wallet-verify-send-contract.json",
+        "playContract": "https://info.grudge-studio.com/api/v1/grudge6-warlords-play-contract.json",
+        "docsHub": "https://info.grudge-studio.com/docs#game-ready",
         "scope": {
           "account": [
             "inventory",
@@ -166,14 +171,17 @@
           "Create heroes only via character.grudge-studio.com Foundry; return with characterId + era=warlords",
           "No product guest accounts or wallets — Puter / GitHub / Google via id.grudge-studio.com",
           "Wallet / cNFT UI is wallet.grudge-studio.com — id.* is login only",
-          "D1 is asset index only; Railway is player SSOT; ObjectStore is definitions"
+          "D1 is asset index only; Railway is player SSOT; ObjectStore is definitions",
+          "Craft product SSOT is grudgewarlords.com/craft/ — Puter craft URL is legacy redirect only",
+          "Spawn verify: POST /api/wallet/verify-send-to-account before burns; no crypto/sales on Spawn",
+          "Play heroes: Toon loadRaceKit only — see game-ready-systems.json"
         ],
-        "version": "1.2.0",
-        "updated": "2026-08-22",
+        "version": "1.3.0",
+        "updated": "2026-10-06",
         "warlordsPrimary": "https://grudgewarlords.com",
         "createFunnel": [
           "id login",
-          "client /home",
+          "grudgewarlords.com hub",
           "Foundry create on character.grudge-studio.com",
           "return /airship?characterId=&from=gcs",
           "home-island | play | tutorial | lobby"
