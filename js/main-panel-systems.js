@@ -536,12 +536,17 @@
       [];
 
     const family = FAMILY_OF[key] || key;
-    const specs = FAMILY_SPECS[family] || [key];
+    const catalog = skillTrees?.skillTrees || skillTrees || {};
+    const classOrder = ['warrior', 'raider', 'mage', 'priest', 'ranger', 'thief', 'worge', 'verduror'];
+    const specs = classOrder.filter((id) => catalog[id]).concat(
+      Object.keys(catalog).filter((id) => !classOrder.includes(id)),
+    );
     const identity = tree.specIdentity;
     const specBtns = specs
       .map((s) => {
         const on = s === key;
-        return `<button type="button" class="mp-spec-btn ${on ? 'on' : ''}" data-spec-swap="${esc(s)}">${esc(s)}</button>`;
+        const label = catalog[s]?.className || s;
+        return `<button type="button" class="mp-spec-btn ${on ? 'on' : ''}" data-spec-swap="${esc(s)}">${esc(label)}</button>`;
       })
       .join('');
 
@@ -554,7 +559,7 @@
         <span class="mp-spec-lab">Spec</span>${specBtns}
         <button type="button" class="mp-spec-btn reset" data-class-reset="1">Reset points</button>
       </div>
-      <p class="mp-spec-note">Swap connected specs by resetting points and picking a different L0. Rewrite the same spec by reset + same L0.</p>
+      <p class="mp-spec-note">Classes come from master-skillTrees.json. Picking one resets spent points and opens that tree, including its icons.</p>
       ${renderEquipRulesStrip(rules)}
       ${tree.graph?.nodes ? `<div class="mp-tree-container mp-class-graph" id="mpClassGraph" data-class-graph="${esc(key)}"></div>` : ''}
       <div class="mp-class-tree">`;
@@ -671,8 +676,8 @@
     root.querySelectorAll('[data-spec-swap]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const spec = btn.getAttribute('data-spec-swap');
-        const fam = FAMILY_OF[char.classKey] || char.classKey;
-        if (!(FAMILY_SPECS[fam] || []).includes(spec)) return;
+        const catalog = skillTrees?.skillTrees || skillTrees || {};
+        if (!catalog[spec]) return;
         const spent = Object.values(char.classSkills || {}).reduce((a, n) => a + (n | 0), 0);
         char.classSkillPointsAvailable = (char.classSkillPointsAvailable | 0) + spent;
         char.classSkills = {};

@@ -194,25 +194,43 @@ function esc(s) {
   return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 
+function effectShareUrl(id) {
+  const u = new URL(location.href);
+  u.searchParams.set('effect', id || '');
+  return u.toString();
+}
+
+function syncShareUi(item) {
+  const id = item?.effectId || item?.id || item?.grudgeUuid || '';
+  const share = document.getElementById('shareLink');
+  if (share) share.textContent = id ? effectShareUrl(id) : '—';
+  if (id) {
+    const next = new URL(location.href);
+    next.searchParams.set('effect', id);
+    history.replaceState(null, '', next.pathname + '?' + next.searchParams.toString());
+  }
+}
+
 async function select(kind, item) {
   if (!item) return;
   document.getElementById('title').textContent = item.name || item.id;
   document.getElementById('desc').textContent = item.effect || item.path || kind;
-  document.getElementById('uuid').textContent = item.id || item.grudgeUuid || '—';
+  document.getElementById('uuid').textContent = item.effectId || item.id || item.grudgeUuid || '—';
+  syncShareUi(item);
   const details = document.getElementById('details');
   details.innerHTML = Object.entries({
-    kind, weapon: item.weapon, slot: item.slot, path: item.path, era: item.era,
+    kind, effectId: item.effectId, weapon: item.weapon, slot: item.slot, path: item.path, era: item.era,
     clip: item.prefab?.animationClip, model: item.prefab?.modelRef,
   }).filter(([, v]) => v).map(([k, v]) => `<b>${esc(k)}</b><span>${esc(v)}</span>`).join('');
   document.getElementById('snippet').textContent =
-    `// skill API\ncast(${JSON.stringify(item.id || item.path)})`;
+    `// skill API\ncast(${JSON.stringify(item.effectId || item.id || item.path)})`;
   const empty = document.getElementById('emptyHint');
   if (empty) empty.style.display = 'none';
   burstSparks(new THREE.Vector3(0, 1.2, 1.4), 64);
   const hit = rapierRay(new THREE.Vector3(0, 8, 0), new THREE.Vector3(0, -1, 0));
   if (hit) setHud(`Rapier ray ground y=${hit.y.toFixed(3)} · ${item.name}`);
   else setHud(item.name);
-  const path = item.path || item.prefab?.modelRef;
+  const path = item.path || item.prefab?.modelRef || item.glbAbsolute || item.glbUrl;
   if (path && /\.glb/i.test(path)) await loadGlb(path.startsWith('http') ? path : `${CDN}/${path.replace(/^\/+/, '')}`);
 }
 
@@ -241,26 +259,44 @@ async function loadGlb(url) {
 async function boot() {
   const empty = document.getElementById('emptyHint');
   try {
-    const [skillsJ, glbJ, d1] = await Promise.all([
+    const [skillsJ, glbJ, d1, fxJ] = await Promise.all([
       fetch(`${INFO}/master-weaponSkills.json`).then((r) => r.json()),
       fetch(`${INFO}/vfx-production-glb.json`).then((r) => r.json()).catch(() => ({ meshes: [] })),
       fetch('https://objectstore.grudge-studio.com/v1/assets?q=vfx&limit=80').then((r) => r.json()).catch(() => ({ items: [] })),
+      fetch(`${INFO}/effects.json`).then((r) => r.json()).catch(() => ({ effects: [] })),
     ]);
     DB.skills = flattenSkills(skillsJ);
     DB.glb = glbJ.meshes || [];
+    DB.effects = fxJ.effects || [];
     DB.d1fx = (d1.items || []).filter((it) => /\.glb$/i.test(it.key || '')).map((it) => ({
       id: it.id, name: it.filename, path: it.key, kind: 'd1-vfx', era: 'shared',
     }));
     document.getElementById('countBadge').textContent =
-      `${DB.skills.length} skills · ${DB.glb.length} GLB · r185+Rapier`;
+      `${DB.skills.length} skills · ${DB.effects.length} effects · ${DB.glb.length} GLB`;
     renderList(elist('listSkills'), DB.skills.slice(0, 80), 'skill');
-    renderList(elist('listLib'), DB.glb, 'glb');
+    renderList(elist('listLib'), DB.effects.map((e) => ({
+      id: e.effectId, effectId: e.effectId, name: e.name, kind: e.category,
+      path: e.glbAbsolute || e.glbUrl, tags: e.tags,
+    })), 'effect');
     renderList(elist('listGlb'), DB.glb.concat(DB.d1fx), 'glb');
     renderList(elist('listAdv'), DB.skills.filter((s) => /ultimate|special/i.test(s.slot || '')).slice(0, 40), 'skill');
     renderList(elist('listReg'), DB.d1fx, 'glb');
-    empty.textContent = 'Pick a skill (ObjectStore skill API) · Rapier ray on terrain';
+    empty.textContent = 'Pick a skill or Library effect · share with ?effect=';
     await bootRapier();
-    if (DB.skills[0]) select('skill', DB.skills[0]);
+
+    const params = new URLSearchParams(location.search);
+    const want = params.get('effect') || params.get('spell') || params.get('id');
+    if (want) {
+      const fromFx = DB.effects.find((e) => e.effectId === want || e.sandboxUuid === want);
+      const fromSkill = DB.skills.find((s) => s.id === want || s.name === want);
+      if (fromFx) {
+        select('effect', {
+          id: fromFx.effectId, effectId: fromFx.effectId, name: fromFx.name,
+          kind: fromFx.category, path: fromFx.glbAbsolute || fromFx.glbUrl,
+        });
+      } else if (fromSkill) select('skill', fromSkill);
+      else if (DB.skills[0]) select('skill', DB.skills[0]);
+    } else if (DB.skills[0]) select('skill', DB.skills[0]);
   } catch (e) {
     empty.textContent = 'Boot failed: ' + (e.message || e);
   }
@@ -281,6 +317,38 @@ document.getElementById('btnGrid')?.addEventListener('click', () => {
   scene.traverse((o) => { if (o.isMesh && o.geometry?.type === 'PlaneGeometry') o.material.wireframe = !o.material.wireframe; });
 });
 document.getElementById('btnResetCam')?.addEventListener('click', () => { camera.position.set(6, 3.2, 8); controls.target.set(0, 1, 0); });
+
+async function copyText(text, okMsg) {
+  const msg = document.getElementById('copyMsg');
+  try {
+    await navigator.clipboard.writeText(text);
+    if (msg) { msg.textContent = okMsg || 'Copied'; msg.className = 'msg ok'; }
+  } catch {
+    if (msg) { msg.textContent = text; msg.className = 'msg err'; }
+  }
+}
+document.getElementById('btnCopyUuid')?.addEventListener('click', () => {
+  copyText(document.getElementById('uuid')?.textContent || '', 'ID copied');
+});
+document.getElementById('btnCopyShare')?.addEventListener('click', () => {
+  copyText(document.getElementById('shareLink')?.textContent || location.href, 'Share URL copied');
+});
+document.getElementById('btnShareEffect')?.addEventListener('click', async () => {
+  const url = document.getElementById('shareLink')?.textContent || location.href;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: document.getElementById('title')?.textContent || 'Grudge 3DFX', url });
+      return;
+    } catch { /* fall through */ }
+  }
+  copyText(url, 'Share URL copied');
+});
+document.getElementById('btnCopySnippet')?.addEventListener('click', () => {
+  copyText(document.getElementById('snippet')?.textContent || '', 'Snippet copied');
+});
+document.getElementById('btnCopyCdn')?.addEventListener('click', () => {
+  copyText(document.getElementById('cdnUrl')?.textContent || '', 'CDN URL copied');
+});
 
 function tick() {
   requestAnimationFrame(tick);
