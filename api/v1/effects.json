@@ -1,0 +1,1110 @@
+{
+  "ok": true,
+  "version": "1.0.0",
+  "generated": "2026-10-22T03:17:12.162Z",
+  "id": "fleet-effects-api",
+  "description": "Fleet Effects API bridge. Prefer effectId on weapon skills. Sandbox 3dfx uuids and ObjectStore vfx-spells/spell-arsenal join here. Do not invent a fourth effects catalog.",
+  "ssot": "https://info.grudge-studio.com/api/v1/effects.json",
+  "hosts": {
+    "definitions": "https://info.grudge-studio.com/api/v1",
+    "definitionsProxy": "https://objectstore.grudge-studio.com/api/v1",
+    "sandboxApi": "https://vfx.grudge-studio.com/api/v1/effects.json",
+    "sandboxUi": "https://vfxgrudge.puter.site/",
+    "sandboxUiAlias": "https://vfx-grudge.puter.site/",
+    "studioUi": "https://vfx.grudge.studio/",
+    "deadHosts": [
+      "https://grudge-vfx.puter.site/",
+      "https://vfx.grudge.studio/api/v1/effects.json"
+    ]
+  },
+  "related": {
+    "vfxSpells": "/api/v1/vfx-spells.json",
+    "spellArsenal": "/api/v1/spell-arsenal.json",
+    "stylizedProjectiles": "/api/v1/stylized-projectiles.json",
+    "vfxProductionGlb": "/api/v1/vfx-production-glb.json",
+    "threeDfxUuids": "/api/v1/3dfx-uuids.json",
+    "castingSpellKit": "/api/v1/casting-spell-kit.json",
+    "weaponSkills": "/api/v1/master-weaponSkills.json",
+    "abilityEffects": "/api/v1/abilityEffects.json"
+  },
+  "playerApi": {
+    "railway": "https://grudge-api-production-0d46.up.railway.app",
+    "sameOrigin": [
+      "https://grudgewarlords.com/api/*",
+      "https://client.grudge-studio.com/api/*",
+      "https://wallet.grudge-studio.com/api/*"
+    ],
+    "avoid": [
+      "https://api.grudge-studio.com for bag/wallet/characters (use same-origin → Railway)",
+      "https://account.grudge-studio.com (522 dead)"
+    ],
+    "assetIndexOnly": "https://api.grudge-studio.com/assets (D1 search — not player SSOT)"
+  },
+  "runtime": {
+    "bindFields": [
+      "effectId",
+      "castEffectId",
+      "travelEffectId",
+      "impactEffectId",
+      "vfxRef"
+    ],
+    "rule": "Resolve effectId via this file, then deploy via Open/Warlords vfxEffectCatalog / deploySandboxVfx. Never load whole fireball.glb as projectile — use orb meshes from vfx-production-glb.",
+    "warlordsHotkeys": "Alt+V/B/F/G/T/C only (bare C/G are mobility)"
+  },
+  "count": 56,
+  "sandboxCount": 13,
+  "effects": [
+    {
+      "effectId": "arcane_aura_ring",
+      "name": "Arcane Aura",
+      "category": "aura",
+      "tags": [
+        "aura",
+        "loop"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "G"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-arcaneaura00",
+      "vfxSpellId": null,
+      "arsenalId": "arcane_aura_ring",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "arcane_hands",
+      "name": "Arcane Hands",
+      "category": "hand",
+      "tags": [
+        "arcane",
+        "hand"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "arcane_hands",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "arcane_nova",
+      "name": "Arcane Nova",
+      "category": "aoe",
+      "tags": [
+        "arcane",
+        "explosion"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "arcane_nova",
+      "arsenalId": "arcane_nova",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "arcane_orb",
+      "name": "Arcane Orb",
+      "category": "projectile",
+      "tags": [
+        "arcane",
+        "slow"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "arcane_orb",
+      "arsenalId": "arcane_orb",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "arcane_slash",
+      "name": "Void Slash",
+      "category": "arcane",
+      "tags": [
+        "slash",
+        "dark",
+        "glb"
+      ],
+      "sources": [
+        "sandbox",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-slashvoid000",
+      "vfxSpellId": "arcane_slash",
+      "arsenalId": null,
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": "/models/vfx/slash/slashpurple.glb",
+      "glbAbsolute": "https://assets.grudge-studio.com/models/vfx/slash/slashpurple.glb"
+    },
+    {
+      "effectId": "arcane_swirl",
+      "name": "Arcane Swirl",
+      "category": "aura",
+      "tags": [
+        "arcane",
+        "turret_charge"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "arcane_swirl",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "blizzard",
+      "name": "Blizzard",
+      "category": "aoe",
+      "tags": [
+        "ice",
+        "channeled"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "blizzard",
+      "legacyUuid": "GRDG-3DFX-D30F86F6",
+      "stylizedId": null
+    },
+    {
+      "effectId": "blizzard_aoe",
+      "name": "Blizzard AOE",
+      "category": "aoe",
+      "tags": [
+        "ice",
+        "storm"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "blizzard_aoe",
+      "arsenalId": "blizzard_aoe",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "chain_lightning",
+      "name": "Chain Lightning",
+      "category": "projectile",
+      "tags": [
+        "lightning",
+        "chain"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "chain_lightning",
+      "arsenalId": "chain_lightning",
+      "legacyUuid": "GRDG-3DFX-D3CC51ED",
+      "stylizedId": null
+    },
+    {
+      "effectId": "earth_quake",
+      "name": "Earthquake",
+      "category": "aoe",
+      "tags": [
+        "earth",
+        "ground"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "earth_quake",
+      "arsenalId": "earth_quake",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "earth_wall",
+      "name": "Earth Wall",
+      "category": "wall",
+      "tags": [
+        "earth",
+        "lane"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "earth_wall",
+      "arsenalId": "earth_wall",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "earth_wall_builtin",
+      "name": "Stone Wall",
+      "category": "wall",
+      "tags": [
+        "earth",
+        "defense"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "earth_wall_builtin",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "earth_wave",
+      "name": "Earth Surge",
+      "category": "slash",
+      "tags": [
+        "earth",
+        "ground"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "earth_wave",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "fire_aura",
+      "name": "Fire Aura",
+      "category": "aura",
+      "tags": [
+        "fire",
+        "self"
+      ],
+      "sources": [
+        "hotkey-panel",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "G"
+      ],
+      "vfxSpellId": null,
+      "arsenalId": "fire_aura",
+      "legacyUuid": null
+    },
+    {
+      "effectId": "fire_dragon",
+      "name": "Fire Dragon",
+      "category": "summon",
+      "tags": [
+        "fire",
+        "summon"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "fire_dragon",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "fire_hand",
+      "name": "Flame Gauntlet",
+      "category": "hand",
+      "tags": [
+        "hand",
+        "fire"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "H"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-handgauntlet",
+      "vfxSpellId": null,
+      "arsenalId": "fire_hand",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "fire_slash",
+      "name": "Flame Slash",
+      "category": "slash",
+      "tags": [
+        "slash",
+        "fire",
+        "glb"
+      ],
+      "sources": [
+        "sandbox",
+        "vfx-spells",
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-slashfire000",
+      "vfxSpellId": "fire_slash",
+      "arsenalId": "fire_slash",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": "/models/vfx/slash/slashred.glb",
+      "glbAbsolute": "https://assets.grudge-studio.com/models/vfx/slash/slashred.glb"
+    },
+    {
+      "effectId": "fire_wisps",
+      "name": "Seeking Wisps",
+      "category": "projectile",
+      "tags": [
+        "wisp",
+        "homing"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "K"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-wispsorbit00",
+      "vfxSpellId": null,
+      "arsenalId": "fire_wisps",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "fireball",
+      "name": "Fireball",
+      "category": "projectile",
+      "tags": [
+        "projectile",
+        "fire",
+        "aoe_impact"
+      ],
+      "sources": [
+        "sandbox",
+        "vfx-spells",
+        "spell-arsenal",
+        "hotkey-panel"
+      ],
+      "hotkeys": [
+        "C"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-fireball0000",
+      "vfxSpellId": "fireball",
+      "arsenalId": "fireball",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "flame_body",
+      "name": "Flame Body",
+      "category": "aura",
+      "tags": [
+        "fire",
+        "clone"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "flame_body",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "flame_bolt",
+      "name": "Flame Bolt",
+      "category": "projectile",
+      "tags": [
+        "fire",
+        "fast"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "flame_bolt",
+      "arsenalId": "flame_bolt",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "flame_clone",
+      "name": "Flame Clone",
+      "category": "portal",
+      "tags": [
+        "fire",
+        "poof"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "flame_clone",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "flame_turret",
+      "name": "Flame Turret",
+      "category": "summon",
+      "tags": [
+        "fire",
+        "deploy"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "flame_turret",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "frost_lance",
+      "name": "Frost Lance",
+      "category": "projectile",
+      "tags": [
+        "ice",
+        "pierce"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "frost_lance",
+      "arsenalId": "frost_lance",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "frost_nova",
+      "name": "Frost Nova",
+      "category": "impact",
+      "tags": [
+        "ice",
+        "nova"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "frost_nova",
+      "legacyUuid": "GRDG-3DFX-8FE77BD7",
+      "stylizedId": null
+    },
+    {
+      "effectId": "frost_slash",
+      "name": "Frost Slash",
+      "category": "ice",
+      "tags": [
+        "slash",
+        "ice",
+        "glb"
+      ],
+      "sources": [
+        "sandbox",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-slashfrost00",
+      "vfxSpellId": "frost_slash",
+      "arsenalId": null,
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": "/models/vfx/slash/slashblue.glb",
+      "glbAbsolute": "https://assets.grudge-studio.com/models/vfx/slash/slashblue.glb"
+    },
+    {
+      "effectId": "frost_wave",
+      "name": "Frost Wave",
+      "category": "slash",
+      "tags": [
+        "wave",
+        "ice",
+        "ground"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal",
+        "hotkey-panel"
+      ],
+      "hotkeys": [
+        "F",
+        "T"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-frostwave000",
+      "vfxSpellId": null,
+      "arsenalId": "frost_wave",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "getsuga_slash",
+      "name": "Getsuga Slash",
+      "category": "slash",
+      "tags": [
+        "arcane",
+        "traveling"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "getsuga_slash",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "hellfire",
+      "name": "Hellfire Vortex",
+      "category": "impact",
+      "tags": [
+        "fire",
+        "vortex"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "hellfire",
+      "legacyUuid": "GRDG-3DFX-FFF6F4CD",
+      "stylizedId": null
+    },
+    {
+      "effectId": "holy_beam",
+      "name": "Holy Slash",
+      "category": "holy",
+      "tags": [
+        "slash",
+        "light",
+        "glb"
+      ],
+      "sources": [
+        "sandbox",
+        "vfx-spells"
+      ],
+      "hotkeys": [
+        "B"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-slashholy000",
+      "vfxSpellId": "holy_beam",
+      "arsenalId": null,
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": "/models/vfx/slash/slashyellow.glb",
+      "glbAbsolute": "https://assets.grudge-studio.com/models/vfx/slash/slashyellow.glb"
+    },
+    {
+      "effectId": "holy_hands",
+      "name": "Holy Hands",
+      "category": "hand",
+      "tags": [
+        "holy",
+        "hand"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "holy_hands",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "hot_hands_fire",
+      "name": "Hot Hands (Fire)",
+      "category": "hand",
+      "tags": [
+        "fire",
+        "toggle"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "hot_hands_fire",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "hot_hands_poison",
+      "name": "Hot Hands (Poison)",
+      "category": "hand",
+      "tags": [
+        "poison",
+        "toggle"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "hot_hands_poison",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "ice_lightning_burst",
+      "name": "Ice Burst",
+      "category": "aura",
+      "tags": [
+        "ice",
+        "self"
+      ],
+      "sources": [
+        "hotkey-panel",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "V"
+      ],
+      "vfxSpellId": null,
+      "arsenalId": "ice_lightning_burst",
+      "legacyUuid": null
+    },
+    {
+      "effectId": "ice_serpent",
+      "name": "Ice Serpent",
+      "category": "projectile",
+      "tags": [
+        "ice",
+        "homing",
+        "weave"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "ice_serpent",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "ice_wall",
+      "name": "Ice Wall Rise",
+      "category": "wall",
+      "tags": [
+        "ice",
+        "lane"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "ice_wall",
+      "arsenalId": "ice_wall",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "impact_crater",
+      "name": "Impact Crater",
+      "category": "impact",
+      "tags": [
+        "impact",
+        "ground"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "impact_crater",
+      "arsenalId": "impact_crater",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "inferno",
+      "name": "Inferno Blast",
+      "category": "aoe",
+      "tags": [
+        "fire",
+        "burst"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "inferno",
+      "legacyUuid": "GRDG-3DFX-A5BF3982",
+      "stylizedId": null
+    },
+    {
+      "effectId": "inferno_aoe",
+      "name": "Inferno AOE",
+      "category": "aoe",
+      "tags": [
+        "fire",
+        "ground"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "inferno_aoe",
+      "arsenalId": "inferno_aoe",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "lightning_storm",
+      "name": "Lightning Storm",
+      "category": "aoe",
+      "tags": [
+        "lightning",
+        "storm"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "lightning_storm",
+      "arsenalId": "lightning_storm",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "meteor",
+      "name": "Meteor",
+      "category": "projectile",
+      "tags": [
+        "projectile",
+        "meteor"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "O"
+      ],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-meteor000000",
+      "vfxSpellId": null,
+      "arsenalId": "meteor",
+      "legacyUuid": "GRDG-3DFX-PROD-METEOR",
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "meteor_shower",
+      "name": "Meteor Shower",
+      "category": "aoe",
+      "tags": [
+        "fire",
+        "rain"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "meteor_shower",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "moon_beam",
+      "name": "Moon Beam",
+      "category": "slash",
+      "tags": [
+        "light",
+        "pillar"
+      ],
+      "sources": [
+        "hotkey-panel",
+        "spell-arsenal"
+      ],
+      "hotkeys": [
+        "B"
+      ],
+      "vfxSpellId": null,
+      "arsenalId": "moon_beam",
+      "legacyUuid": null
+    },
+    {
+      "effectId": "nature_heal",
+      "name": "Nature Heal",
+      "category": "cloud",
+      "tags": [
+        "nature",
+        "hot"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "nature_heal",
+      "arsenalId": "nature_heal",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "nature_thorns",
+      "name": "Thorn Burst",
+      "category": "wall",
+      "tags": [
+        "nature",
+        "snare"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "nature_thorns",
+      "arsenalId": "nature_thorns",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "poison_cloud",
+      "name": "Poison Cloud",
+      "category": "cloud",
+      "tags": [
+        "cloud",
+        "poison"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-poisoncloud0",
+      "vfxSpellId": null,
+      "arsenalId": "poison_cloud",
+      "legacyUuid": null,
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "portal_open",
+      "name": "Portal Open",
+      "category": "portal",
+      "tags": [
+        "portal",
+        "vortex"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "portal_open",
+      "arsenalId": "portal_open",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "rapid_fire",
+      "name": "Rapid Fire",
+      "category": "summon",
+      "tags": [
+        "fire",
+        "multihit"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "rapid_fire",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "roots",
+      "name": "Roots / Snare",
+      "category": "wall",
+      "tags": [
+        "nature",
+        "cc"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "roots",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "shockwave",
+      "name": "Shockwave",
+      "category": "aoe",
+      "tags": [
+        "wave",
+        "shockwave"
+      ],
+      "sources": [
+        "sandbox",
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-shockwave000",
+      "vfxSpellId": null,
+      "arsenalId": "shockwave",
+      "legacyUuid": "GRDG-3DFX-7ADE46CA",
+      "stylizedId": null,
+      "glbUrl": null,
+      "glbAbsolute": null
+    },
+    {
+      "effectId": "smoke_bomb",
+      "name": "Smoke Bomb",
+      "category": "cloud",
+      "tags": [
+        "smoke",
+        "thrown"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "smoke_bomb",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "smoke_clone",
+      "name": "Smoke Clone",
+      "category": "portal",
+      "tags": [
+        "smoke",
+        "poof"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "smoke_clone",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "smoke_screen",
+      "name": "Smoke Screen",
+      "category": "cloud",
+      "tags": [
+        "smoke",
+        "cover"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "smoke_screen",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "styproj.frost",
+      "name": "Stylized Ice Bow",
+      "category": "weapon",
+      "tags": [
+        "weapon",
+        "glb"
+      ],
+      "sources": [
+        "sandbox"
+      ],
+      "hotkeys": [],
+      "sandboxUuid": "3dfx0000-0000-4000-8000-icebow000000",
+      "vfxSpellId": null,
+      "arsenalId": null,
+      "legacyUuid": null,
+      "stylizedId": "VFX-STY-FROST",
+      "glbUrl": "/models/vfx/stylized_ice_bow.glb",
+      "glbAbsolute": "https://assets.grudge-studio.com/models/vfx/stylized_ice_bow.glb"
+    },
+    {
+      "effectId": "teleport_puff",
+      "name": "Teleport Puff",
+      "category": "portal",
+      "tags": [
+        "smoke",
+        "blink"
+      ],
+      "sources": [
+        "spell-arsenal"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": null,
+      "arsenalId": "teleport_puff",
+      "legacyUuid": null,
+      "stylizedId": null
+    },
+    {
+      "effectId": "void_rift",
+      "name": "Void Rift",
+      "category": "portal",
+      "tags": [
+        "void",
+        "pull"
+      ],
+      "sources": [
+        "spell-arsenal",
+        "vfx-spells"
+      ],
+      "hotkeys": [],
+      "vfxSpellId": "void_rift",
+      "arsenalId": "void_rift",
+      "legacyUuid": "GRDG-3DFX-8B971713",
+      "stylizedId": null
+    }
+  ],
+  "productionGlbNote": "Production VFX GLB meshes on R2 CDN (assets.grudge-studio.com). Used by 3DFX viewer, Danger Room, and fleet combat."
+}
