@@ -11,35 +11,46 @@ Single reference for **which API serves what**, **which UUID scheme to use**, an
 | ObjectStore API (live JSON) | https://objectstore.grudge-studio.com/api/v1/ |
 | Docs hub (browse data) | https://info.grudge-studio.com/docs |
 | Asset CDN (binary files) | https://assets.grudge-studio.com/ |
-| Game API (characters, islands) | Railway `grudge-api-production` via same-origin `/api/*` — **not** `api.grudge-studio.com` |
+| Game API (characters, islands) | Railway `grudge-api-production` via same-origin `/api/*` — **not** `api.grudge-studio.com` for bag/wallet |
 | Auth (Grudge ID) | https://id.grudge-studio.com/ |
 | Production game | https://grudgewarlords.com/ |
 | Integration manifest | [`api/v1/assets-api.json`](../api/v1/assets-api.json) |
 | OpenAPI spec | [`openapi.yaml`](../openapi.yaml) |
 | 3DFX Viewer | https://info.grudge-studio.com/3dfx-viewer.html |
-| VFX Sandbox (live) | https://grudge-vfx.puter.site/ |
+| **Effects API (fleet bridge)** | https://info.grudge-studio.com/api/v1/effects.json |
+| **Effects gallery + share** | https://info.grudge-studio.com/vfx |
+| **3D stage** | https://info.grudge-studio.com/3dfx-viewer.html?effect= |
+| VFX Sandbox UI | https://vfxgrudge.puter.site/ |
+| VFX Sandbox API (mirror) | https://vfx.grudge-studio.com/api/v1/effects.json |
+| VFX Studio UI | https://vfx.grudge.studio/ |
+| Dead VFX host | `grudge-vfx.puter.site` (404) — do not link |
 
 ---
 
-## Spell VFX arsenal (July 2026)
+## Spell VFX arsenal + Effects API (fleet)
+
+**One bridge for agents and clients:** `GET /api/v1/effects.json`  
+Joins sandbox `3dfx…` uuids, `effectId` (weapon skills / hotkeys), `vfx-spells`, and `spell-arsenal`. Rebuild with `npm run effects:fleet-api`.
 
 Multiple visual variants per spell **type** so one effect family can serve many `SKIL-*` slots and status procs.
 
 | Endpoint | Purpose |
 |----------|---------|
-| `GET /api/v1/spell-arsenal.json` | 10 types → 50+ variants with `skillSlot`, `skillUses` |
-| `GET /api/v1/vfx-spells.json` | Full descriptors (shaders, particles, timing) — 26 spells |
+| **`GET /api/v1/effects.json`** | **Fleet bridge SSOT** — `effectId` → sandbox uuid + catalogs |
+| `GET /api/v1/spell-arsenal.json` | Types → variants with `skillSlot`, `skillUses` |
+| `GET /api/v1/vfx-spells.json` | Full descriptors (shaders, particles, timing) |
 | `GET /api/v1/vfx-skill-types.json` | Classify effects by combat role |
 | `GET /api/v1/stylized-projectiles.json` | Trail / head / hit overlay pack (`VFX-STY-*`) — not a second engine |
 | `GET /api/v1/vfx-production-glb.json` | Production GLB meshes + overlay note |
 
-**Browse:** [3dfx-viewer.html](../3dfx-viewer.html) (Arsenal + Sandbox tabs) · [spell-vfx-library.html](../spell-vfx-library.html)
+**Browse:** [3dfx-viewer.html](../3dfx-viewer.html) (Arsenal + Sandbox tabs) · [spell-vfx-library.html](../spell-vfx-library.html)  
+**Wire:** `weaponSkill.effectId` / `castEffectId` / `travelEffectId` / `impactEffectId` → `effects.json` → deploy helper. Never invent a fourth effects catalog.
 
 **Build & deploy sandbox** (Fantasy-Scene-Creator monorepo):
 
 ```bash
 pnpm --filter @workspace/vfx-sandbox run build
-pnpm --filter @workspace/vfx-sandbox run deploy:puter   # → grudge-vfx.puter.site
+pnpm --filter @workspace/vfx-sandbox run deploy:puter   # → vfxgrudge.puter.site (never grudge-vfx — 404)
 ```
 
 **Wire to a skill:** `spell-arsenal.json` variant `id` → `vfx-spells.json` or effects-lib seed → `prefab.vfxRef` / ability `vfxRef`.
