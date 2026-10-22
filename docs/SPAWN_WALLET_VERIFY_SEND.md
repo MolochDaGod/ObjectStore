@@ -1,3 +1,5 @@
+> **Status: PLANNED / NOT IMPLEMENTED.** POST /api/wallet/verify-send-to-account does NOT exist in MolochDaGod/Grudge-Builder: not on main 782988be, not on the live tip 2a4be017, and not anywhere in its git history. No client or agent may build against this contract until a reviewed Grudge-Builder PR implements the route.
+
 # Spawn / fleet wallet — verify-send to account (no burn)
 
 **Best practice for verify & testing:** credit the **account bag wallet** (`accounts.gbux_balance` / `fleet_bag_gbux`) with a soft-ledger send. Do **not** burn first. Do **not** use on-chain `/api/wallet/send-gbux`. Do **not** open sales UX on Spawn.

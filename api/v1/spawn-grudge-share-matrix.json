@@ -127,6 +127,8 @@
     ]
   },
   "verifySend": {
+    "status": "planned / not implemented",
+    "implementationNote": "POST /api/wallet/verify-send-to-account does NOT exist in MolochDaGod/Grudge-Builder: not on main 782988be, not on the live tip 2a4be017, and not anywhere in its git history. No client or agent may build against this contract until a reviewed Grudge-Builder PR implements the route.",
     "order": "send-to-account-wallet before burn",
     "route": "POST /api/wallet/verify-send-to-account",
     "ledger": "fleet_bag_gbux",
@@ -140,7 +142,7 @@
     "contract": "/api/v1/spawn-wallet-verify-send-contract.json",
     "doc": "docs/SPAWN_WALLET_VERIFY_SEND.md",
     "script": "scripts/verify-spawn-account-wallet.mjs",
-    "live": "smoked 2026-10-05: credit+idempotent on GRUDGE_MPHOJYNW853BA"
+    "live": "UNVERIFIED earlier claim (smoked 2026-10-05); superseded by status above"
   },
   "burnCandidates": {
     "prerequisite": "verifySend green on target grudge_id",
