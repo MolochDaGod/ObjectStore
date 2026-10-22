@@ -1,0 +1,239 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-26T09:19:52.009Z",
+  "note": "Island scenery + crate/barrel isolates. Binary on R2. D1 indexes pack + isolate names. MP games load meshKey + isolateName — not the 26-variant showcase.",
+  "cdnBase": "https://assets.grudge-studio.com",
+  "r2Prefix": "models/island-scenery",
+  "license": {
+    "crates_and_barrels": {
+      "title": "Crates and barrels",
+      "author": "employee_of_the_month",
+      "source": "https://sketchfab.com/3d-models/crates-and-barrels-f000bdd06ad440c2824d0dd3f0d596f7",
+      "license": "Sketchfab Standard — game use on Grudge CDN; credit author"
+    }
+  },
+  "kits": [
+    {
+      "id": "crates_and_barrels",
+      "file": "crates_and_barrels.glb",
+      "r2Key": "models/island-scenery/crates_and_barrels.glb",
+      "role": "harvest-pack",
+      "purpose": "catalog",
+      "tags": [
+        "harvest",
+        "container",
+        "crate",
+        "barrel",
+        "island-scenery",
+        "mp"
+      ],
+      "localUrl": "./models/island-scenery/crates_and_barrels.glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/island-scenery/crates_and_barrels.glb",
+      "bytes": 1951268
+    },
+    {
+      "id": "farm_modular_pack",
+      "file": "farm_modular_pack.glb",
+      "r2Key": "models/island-scenery/farm_modular_pack.glb",
+      "role": "home-scenery",
+      "purpose": "play",
+      "tags": [
+        "scenery",
+        "farm",
+        "island-scenery",
+        "mp"
+      ],
+      "localUrl": "./models/island-scenery/farm_modular_pack.glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/island-scenery/farm_modular_pack.glb",
+      "bytes": 4835476
+    },
+    {
+      "id": "low_poly_lake",
+      "file": "low_poly_lake.glb",
+      "r2Key": "models/island-scenery/low_poly_lake.glb",
+      "role": "home-scenery",
+      "purpose": "play",
+      "tags": [
+        "scenery",
+        "lake",
+        "island-scenery",
+        "mp"
+      ],
+      "localUrl": "./models/island-scenery/low_poly_lake.glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/island-scenery/low_poly_lake.glb",
+      "bytes": 2261216
+    },
+    {
+      "id": "river_village",
+      "file": "river_village.glb",
+      "r2Key": "models/island-scenery/river_village.glb",
+      "role": "home-scenery",
+      "purpose": "play",
+      "tags": [
+        "scenery",
+        "village",
+        "island-scenery",
+        "mp"
+      ],
+      "localUrl": "./models/island-scenery/river_village.glb",
+      "cdnUrl": "https://assets.grudge-studio.com/models/island-scenery/river_village.glb",
+      "bytes": 10394676
+    }
+  ],
+  "isolates": {
+    "crates": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8",
+      "C9",
+      "C14",
+      "C15"
+    ],
+    "barrels": [
+      "B1",
+      "B2",
+      "B3",
+      "B5"
+    ]
+  },
+  "harvest": {
+    "crate": {
+      "id": "wood-crate-node",
+      "name": "Wood crate",
+      "type": "wood",
+      "tier": 0,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 2,
+      "harvestTime": 2,
+      "respawnTime": 36,
+      "xpReward": 8,
+      "harvestDefId": "crate_wood",
+      "paletteId": "node.crate",
+      "meshUrl": "https://assets.grudge-studio.com/models/island-scenery/crates_and_barrels.glb",
+      "meshKey": "models/island-scenery/crates_and_barrels.glb",
+      "isolatePool": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C14",
+        "C15"
+      ],
+      "tool": "axe",
+      "heightM": 1,
+      "biomes": [
+        "home_island",
+        "plains",
+        "village"
+      ],
+      "drops": [
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 2,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260621232130-0009FF-8759B1BD",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+          "recipeUuids": [
+            "RECP-20260207-WDW-0001"
+          ]
+        }
+      ],
+      "spritePath": "/icons/materials/pine-log.png",
+      "description": "Isolated crate (C*) from crates_and_barrels.glb — axe gather wood. Never the whole pack.",
+      "nodeUuid": "NODE-WOOD-CRATE",
+      "spriteUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+      "links": {
+        "materials": [
+          "Pine Log"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260207-WDW-0001"
+        ]
+      },
+      "mp": {
+        "bagId": "mat-wood",
+        "note": "Casting lab bag uses mat-wood; fleet craft uses pine-log UUID"
+      }
+    },
+    "barrel": {
+      "id": "wood-barrel-node",
+      "name": "Wood barrel",
+      "type": "wood",
+      "tier": 0,
+      "profession": "Logging",
+      "requiredLevel": 1,
+      "baseYield": 1,
+      "harvestTime": 2,
+      "respawnTime": 34,
+      "xpReward": 6,
+      "harvestDefId": "barrel_wood",
+      "paletteId": "node.barrel",
+      "meshUrl": "https://assets.grudge-studio.com/models/island-scenery/crates_and_barrels.glb",
+      "meshKey": "models/island-scenery/crates_and_barrels.glb",
+      "isolatePool": [
+        "B1",
+        "B2",
+        "B3",
+        "B5"
+      ],
+      "tool": "axe",
+      "heightM": 1.18,
+      "biomes": [
+        "home_island",
+        "plains",
+        "village"
+      ],
+      "drops": [
+        {
+          "itemId": "WOOD_PINE_LOG_T1",
+          "quantity": 1,
+          "chance": 1,
+          "rarity": "common",
+          "materialName": "Pine Log",
+          "materialUuid": "MATL-20260621232130-0009FF-8759B1BD",
+          "iconUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+          "recipeUuids": [
+            "RECP-20260207-WDW-0001"
+          ]
+        }
+      ],
+      "spritePath": "/icons/materials/pine-log.png",
+      "description": "Isolated barrel (B*) from crates_and_barrels.glb — axe gather wood. Never the whole pack.",
+      "nodeUuid": "NODE-WOOD-BARREL",
+      "spriteUrl": "https://assets.grudge-studio.com/icons/materials/pine-log.png",
+      "links": {
+        "materials": [
+          "Pine Log"
+        ],
+        "recipeCount": 1,
+        "recipeUuids": [
+          "RECP-20260207-WDW-0001"
+        ]
+      },
+      "mp": {
+        "bagId": "mat-wood",
+        "note": "Casting lab bag uses mat-wood; fleet craft uses pine-log UUID"
+      }
+    }
+  },
+  "paths": {
+    "farm": "./models/island-scenery/farm_modular_pack.glb",
+    "lake": "./models/island-scenery/low_poly_lake.glb",
+    "village": "./models/island-scenery/river_village.glb",
+    "crates": "./models/island-scenery/crates_and_barrels.glb"
+  }
+}
