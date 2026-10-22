@@ -4,13 +4,13 @@
   "version": "2026-09-06",
   "title": "Grudge account DB · game character DB · UUID law",
   "authority": "Railway Postgres grudge-api-production (player SSOT)",
-  "notAuthority": ["D1", "localStorage", "Puter KV", "client-minted ent_* bag ids"],
+  "notAuthority": ["D1", "localStorage", "Puter KV", "client-minted ent_* bag ids", "Spawn player.state as bag/roster SSOT"],
   "identity": {
     "accountSso": { "field": "grudge_id", "format": "GRUDGE_*", "use": "JWT, bag ownership, wallet" },
     "userPk": { "field": "users.id", "format": "uuid" },
     "accountPk": { "field": "accounts.id", "format": "uuid" },
     "accountName": { "field": "accounts.display_name", "use": "human account label" },
-    "loginKey": { "field": "users.username", "use": "internal unique key; may be puter:/discord:/wallet:" },
+    "loginKey": { "field": "users.username", "use": "internal unique key; may be puter:/discord:/wallet:/spawn:" },
     "characterPk": { "field": "characters.id", "format": "uuid", "use": "only play handoff characterId" },
     "characterName": { "field": "characters.name", "use": "in-world game name" },
     "characterStamp": { "field": "characters.grudge_code", "format": "GRDG-*", "use": "display/support not PK" },
@@ -23,8 +23,17 @@
     "mapPrefab": { "field": "prefabId", "format": "PFAB-*", "catalog": "/api/v1/island-building-prefabs.json" },
     "skillDefinition": { "field": "grudgeUuid", "format": "SKIL-*", "catalog": "/api/v1/master-weaponSkills.json" },
     "iconAsset": { "field": "iconUuid", "format": "ICON-*", "catalog": "/api/v1/icon-path-index.json" },
-    "effectDefinition": { "field": "vfxRef", "format": "VFX-*", "catalog": "/api/v1/stylized-projectiles.json", "legacy": "GRDG-3DFX-* read-only" }
+    "effectDefinition": { "field": "vfxRef", "format": "VFX-*", "catalog": "/api/v1/stylized-projectiles.json", "legacy": "GRDG-3DFX-* read-only" },
+    "spawnProvider": {
+      "fields": ["users.spawn_user_id", "users.spawn_username", "users.spawn_linked_at"],
+      "login": "POST /api/auth/spawn",
+      "linkExisting": "POST /api/auth/spawn-link",
+      "verify": "GET https://www.spawn.co/api/agent/v1/me",
+      "token": "sak_ verified never stored",
+      "shareMatrix": "/api/v1/spawn-grudge-share-matrix.json"
+    }
   },
+  "providers": ["discord", "puter", "wallet", "telegram", "spawn"],
   "eras": ["warlords", "voxel", "nexus", "armada"],
   "scope": {
     "account": [
@@ -50,6 +59,8 @@
   },
   "api": {
     "auth": "/api/auth/*",
+    "authSpawn": "POST /api/auth/spawn",
+    "authSpawnLink": "POST /api/auth/spawn-link",
     "account": "/api/account/*",
     "accountRecipes": "/api/account/recipes",
     "inventory": "/api/inventory/*",
@@ -59,6 +70,19 @@
     "island": "/api/island/*",
     "uuid": "/api/uuid/*",
     "ledger": "/api/ledger/*"
+  },
+  "spawnShare": {
+    "matrix": "/api/v1/spawn-grudge-share-matrix.json",
+    "identityContract": "/api/v1/spawn-grudge-identity-contract.json",
+    "docs": [
+      "docs/SPAWN_GRUDGE_SHARE_PHASE0.md",
+      "docs/SPAWN_GRUDGE_SHARE_PHASE1.md"
+    ],
+    "cook": "scripts/sync-spawn-grudge-account.mjs",
+    "playerState": "mirror-only",
+    "preferredLink": "POST /api/auth/spawn-link",
+    "noCryptoOnSpawn": true,
+    "expenseBurns": "server soft GBuX only — Phase 2"
   },
   "craft": {
     "materials": "account bag",

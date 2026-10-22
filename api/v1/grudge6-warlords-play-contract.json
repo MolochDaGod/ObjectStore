@@ -1,46 +1,201 @@
 {
-  "version": "2026-08-07.harden.1",
-  "title": "Warlords / grudge6 character PLAY contract",
+  "id": "grudge6-warlords-play",
+  "version": "2026-08-21.feet-terrain.2",
+  "stamp": "root.userData.warlordsPlayContract",
+  "proof": "https://casting.grudge.studio/",
+  "health": "/api/play-kit-health",
+  "loader": "loadRaceKit | deployToonPlayKit",
   "code": "ObjectStore/js/grudge6-kit.js#loadRaceKit",
   "docs": [
     "docs/GRUDGE6_PLAY_PATH_PURGE.md",
-    "docs/GRUDGE6_CHARACTERS_LAB_WARLORDS_SSOT.md"
+    "docs/GRUDGE6_RACES_BEST_PRACTICES.md"
   ],
+  "mixer": 1,
+  "siHumanM": 1.8,
   "cdn": "https://assets.grudge-studio.com",
-  "play": {
-    "meshPath": "asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
-    "raceIds": ["human", "barbarian", "elf", "dwarf", "orc", "undead"],
-    "materials": "embedded-normalize",
-    "forceAtlas": false,
-    "faceCameraYaw": 0,
-    "siHumanM": 1.8,
-    "measure": "bone_structural_bbox",
-    "equip": "mesh_ids_visibility_SLOT_DEFS",
-    "skeleton": "Bip001",
-    "mixer": "one_on_kit_root",
-    "animPacks": "Bip001_baked_rotation_only"
+  "playMesh": {
+    "cdnDir": "asset-packs/toon-rts-characters/glb/characters",
+    "path": "asset-packs/toon-rts-characters/glb/characters/{raceId}.glb",
+    "races": ["human", "barbarian", "elf", "dwarf", "orc", "undead"],
+    "ban": ["races-bake", "fbx-play", "metaverse", "meshy", "capsule-hero"]
+  },
+  "races": {
+    "human": {
+      "prefix": "WK_",
+      "folder": "western-kingdoms",
+      "atlas": "WK_Standard_Units.webp",
+      "heightM": 1.83,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": ["Body_A"],
+        "splitNeedsArmsLegs": ["Body_B", "Body_C"],
+        "splitNeedsArmsHasFeet": ["Body_D", "Body_E"]
+      },
+      "siegeProvider": "human",
+      "notes": "Default Warlords human. Face yaw 0 on Toon play GLB."
+    },
+    "barbarian": {
+      "prefix": "BRB_",
+      "folder": "barbarians",
+      "atlas": "BRB_StandardUnits_texture.webp",
+      "heightM": 1.98,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": [],
+        "alwaysAddArmsNeverExtraLegs": true,
+        "note": "Every body_* has feet, no hands — always Arms, never extra Legs"
+      },
+      "siegeProvider": "human",
+      "notes": "Head typo Haed_* in author meta → BRB_head_* on GLB. Siege shares human catapult."
+    },
+    "elf": {
+      "prefix": "ELF_",
+      "folder": "elves",
+      "atlas": "ELF_HighElves_Texture.webp",
+      "heightM": 1.95,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": ["Body_F"],
+        "splitNeedsArmsLegs": ["Body_A", "Body_B", "Body_C", "Body_D", "Body_E"]
+      },
+      "siegeProvider": "elf",
+      "notes": "Boltthrower owner for dwarf ally share."
+    },
+    "dwarf": {
+      "prefix": "DWF_",
+      "folder": "dwarves",
+      "atlas": "DWF_Standard_Units.webp",
+      "heightM": 1.52,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": ["Body_A", "Body_B", "Body_C", "Body_D"],
+        "splitNeedsArmsHasFeet": ["Body_E"]
+      },
+      "siegeProvider": "elf",
+      "notes": "Shortest infantry. Siege = elf boltthrower."
+    },
+    "orc": {
+      "prefix": "ORC_",
+      "folder": "orcs",
+      "atlas": "ORC_StandardUnits.webp",
+      "heightM": 2.13,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": ["Body_A", "Body_B", "Body_F", "Body_G"],
+        "splitHasHandsNeedsLegs": ["Body_C", "Body_D", "Body_E"]
+      },
+      "siegeProvider": "orc",
+      "notes": "Tallest infantry. Catapult owner for undead ally share."
+    },
+    "undead": {
+      "prefix": "UD_",
+      "folder": "undead",
+      "atlas": "UD_Standard_Units.webp",
+      "heightM": 1.83,
+      "bodyCoverage": {
+        "onesieNoArmsLegs": ["*"],
+        "neverAddArmsLegs": true,
+        "note": "Every body_* is full onesie — never add Arms/Legs"
+      },
+      "siegeProvider": "orc",
+      "notes": "Unity-only body_ghoul / body_necro stay off CDN play GLB. Siege = orc catapult."
+    }
+  },
+  "bestPractices": {
+    "loader": "loadRaceKit only for play — stamp warlordsPlayContract",
+    "materials": "keep Toon embeds; never forceAtlas on good Toon",
+    "equip": "mesh_ids + SLOT_DEFS after prefix strip; arms include hands",
+    "ground": "bone-structural-box min.y — not pelvis, not unskinned AABB",
+    "face": { "toonPlayYaw": 0, "fbxAuthorYaw": 1.57079632679 },
+    "anim": "one mixer; Bip001 packs; bones-only rematch; strip position tracks",
+    "limbs": "reconcileKitLoadout / toonKitCoverage — robe onesie hides Arms/Legs",
+    "siFit": "uniform root SI from bone box; height band 1.55–2.15 m",
+    "ban": [
+      "skeleton.pose_on_every_skinned_mesh",
+      "unifySkeletons_multi_pose_play",
+      "setFromObject_skinned_si_fit",
+      "facePlusZ_default_true_toon_play",
+      "forceAtlas_on_good_toon_embeds",
+      "play_default_races_bake",
+      "play_default_metaverse",
+      "play_default_fbx",
+      "silent_fallback_toon_to_races_metaverse_fbx",
+      "anim_rematch_to_units_head_meshes",
+      "whole_body_glb_swap_for_equip",
+      "meshy_capsule_play_hero"
+    ]
+  },
+  "clips": {
+    "root": "prod/anims",
+    "required": [
+      "magic/standing-idle",
+      "magic/standing-walk-forward",
+      "magic/standing-1h-cast-spell-01",
+      "sword_shield/sword-and-shield-idle",
+      "sword_shield/sword-and-shield-attack"
+    ]
+  },
+  "ground": {
+    "method": "placeRootFeetAt Vector3/Matrix4 + bone-structural-box-min-y",
+    "not": ["pelvis-as-feet", "unskinned-aabb", "root.y=terrainY"],
+    "feetTolM": 0.12,
+    "heightM": [1.55, 2.15],
+    "footIk": {
+      "module": "src/character/grudge6-foot-ik.js",
+      "order": "beginFrame → mixer.update → apply",
+      "sampler": "same IslandHeightfield as Rapier CCT / body Y"
+    }
+  },
+  "locomotion": {
+    "controller": "one",
+    "mapOpen": "rebind-surface-only",
+    "terrainSample": "same-as-feet"
+  },
+  "colliders": {
+    "player": "CCT capsule r=0.35 halfH=0.55 kinematic",
+    "terrain": "Rapier heightfield",
+    "staticGltf": "convex hull from mesh verts (trimesh only if fixed and <8k tris)",
+    "weapon": "follow convex on R_hand_container — sensor",
+    "ban": ["dynamic trimesh", "capsule as play mesh"]
+  },
+  "anim": {
+    "hands": ["R_hand_container", "Bip001 R Hand", "L_hand_container", "Bip001 L Hand"],
+    "bones": "/api/v1/bip001-play-bones.json",
+    "spine": ["Bip001 Spine", "Bip001 Spine1", "Bip001 Spine2"],
+    "retarget": "Mixamo / Bip01 / Bandai → Bip001 spaced names + strip position/scale",
+    "helpers": "?rigDebug=1 SkeletonHelper",
+    "ban": "mixamorig tracks on play mixer"
+  },
+  "xyz": { "up": "+Y", "forward": "+Z", "right": "+X", "unit": "m" },
+  "ray": {
+    "pick": "Raycaster firstHitOnly + three-mesh-bvh",
+    "physics": "Rapier.castRay",
+    "ground": "IslandHeightfield.sample"
+  },
+  "playClasses": {
+    "product": ["warrior", "raider", "mage", "priest", "ranger", "thief", "worge", "verduror"],
+    "collider": ["cct", "heightfield", "convex", "trimesh", "followConvex", "sensor", "hurtbox"],
+    "travel": ["melee", "bullet", "linear", "bend"]
+  },
+  "equip": {
+    "method": "mesh_ids + SLOT_DEFS",
+    "hands": ["R_hand_container", "Bip001 R Hand"],
+    "ban": "swap-whole-body-glb"
+  },
+  "weapons": {
+    "packs": ["magic", "sword_shield", "longbow", "polearm", "pistol"],
+    "spearStab": "polearm/drake_stab",
+    "skills": "weapon-catalog-not-class",
+    "anim": "bip001-rotation-only-rematch"
+  },
+  "face": {
+    "toonPlayYaw": 0,
+    "fbxAuthorYaw": 1.57079632679
   },
   "notPlayDefault": {
     "racesBake": "models/grudge6/races/{PREFIX}_Characters.glb",
     "fbx": "models/grudge6/races/{PREFIX}_Characters.fbx",
     "metaverse": "models/grudge6/metaverse/{race}.glb"
   },
-  "banned": [
-    "skeleton.pose_on_every_skinned_mesh",
-    "unifySkeletons_multi_pose_play",
-    "setFromObject_skinned_si_fit",
-    "facePlusZ_default_true_toon_play",
-    "forceAtlas_on_good_toon_embeds",
-    "play_default_races_bake",
-    "play_default_metaverse",
-    "play_default_fbx",
-    "silent_fallback_toon_to_races_metaverse_fbx",
-    "anim_rematch_to_units_head_meshes",
-    "whole_body_glb_swap_for_equip"
-  ],
   "playerSave": "Railway Postgres mesh_ids / gear — not a second body GLB",
   "verify": {
+    "health": "GET casting.grudge.studio/api/play-kit-health → ok:true",
     "console": "root.userData.warlordsPlayContract + grudge6Play===true + importPipeline===toon-rts-glb",
-    "lab": "https://info.grudge-studio.com/grudge6-race-scenes.html"
+    "lab": "https://casting.grudge.studio/"
   }
 }

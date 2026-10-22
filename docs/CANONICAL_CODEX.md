@@ -57,7 +57,7 @@ Browser (*.grudge-studio.com · grudgewarlords.com · *.puter.site)
 | Water / TI | water.grudge-studio.com | Tactical-Infinity |
 | Forge | forge.grudge-studio.com | RTS-Grudge studio |
 | Survival / Grudges | grudges.grudge-studio.com | survival |
-| Crafting | grudge-crafting.puter.site | grudge-crafting.html |
+| Crafting | grudgewarlords.com/craft/ (legacy: grudge-crafting.puter.site redirect) | grudge-crafting.html |
 | Docs | info.grudge-studio.com | ObjectStore |
 | Portal | grudge-studio.com | The-ENGINE |
 | AI | ai.grudge-studio.com | grudge-ai-hub |

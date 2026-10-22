@@ -21,6 +21,9 @@ const MANIFEST_PATH = join(ROOT, 'docs', 'canonical-manifest.json');
 const CATALOG_PATH = join(ROOT, 'api', 'v1', 'catalog.json');
 const CANONICAL_URL = 'https://info.grudge-studio.com/docs';
 const OBJECTSTORE_URL = 'https://objectstore.grudge-studio.com';
+// Fleet catalog bases (canonicalUrl / staticJsonBase / workerApiBase) MUST point at the
+// ObjectStore host, never info.grudge-studio.com (docs host). Guarded in assertCatalogBases().
+const REQUIRED_CATALOG_ORIGIN = 'https://objectstore.grudge-studio.com';
 
 function loadJSON(filename) {
   try {
@@ -240,9 +243,19 @@ function buildCatalog(stats) {
   };
 }
 
+function assertCatalogBases(catalog) {
+  for (const key of ['canonicalUrl', 'staticJsonBase', 'workerApiBase']) {
+    const v = String(catalog[key] || '');
+    if (v !== REQUIRED_CATALOG_ORIGIN && !v.startsWith(REQUIRED_CATALOG_ORIGIN + '/')) {
+      throw new Error(`[sync-docs] catalog.${key} must be on ${REQUIRED_CATALOG_ORIGIN}, got ${v}`);
+    }
+  }
+}
+
 function main() {
   const stats = buildStats();
   const catalog = buildCatalog(stats);
+  assertCatalogBases(catalog);
   writeFileSync(MANIFEST_PATH, JSON.stringify(stats, null, 2) + '\n');
   writeFileSync(CATALOG_PATH, JSON.stringify(catalog, null, 2) + '\n');
   patchDocsIndex(stats);

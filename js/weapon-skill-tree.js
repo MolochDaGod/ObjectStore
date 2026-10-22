@@ -863,7 +863,7 @@
     const castText = skill.castTime ? `${skill.castTime}s` : 'Instant';
     const rangeText = skill.range ? `${skill.range}m` : '—';
     const dmgTypeClass = skill.damageType || 'physical';
-    const icon = skill.iconUrl || asset(skill.icon);
+    const icon = asset(skill.iconUrl || skill.icon);
 
     const modTag =
       skill._modifier === 'shield'
@@ -937,11 +937,11 @@
     // Key number sits under the icon so the art stays clean (Unity/hotbar style).
     let html = '';
     barSlots.forEach((slotType, i) => {
-      const slot = typeDef.slots.find((s) => s.type === slotType);
+      const slot = typeDef.slots?.find((s) => s.type === slotType);
       const isUnlocked = slot && playerTier >= slot.unlockTier;
       const selectedId = selected[slotType];
       const skill = selectedId ? findSkill(typeDef, slotType, selectedId) : null;
-      const icon = skill ? (skill.iconUrl || asset(skill.icon)) : '';
+      const icon = skill ? asset(skill.iconUrl || skill.icon) : '';
       const title = labels[slotType] || slotType;
       const skillName = skill?.name || (isUnlocked ? 'Empty' : 'Locked');
 

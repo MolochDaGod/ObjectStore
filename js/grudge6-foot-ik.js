@@ -1,202 +1,374 @@
 /**
- * Post-mixer stance + two-bone foot IK (grudge6 play contract).
+ * Warlords / grudge6 foot IK — post-mixer two-bone plant on terrain.
+ * SSOT for ALL play kits (loadRaceKit stamp + Casting + Open FootGrounder).
  *
- * Order: mixer.update → placeRootBetweenFeet → applyFootIk
- * Root XZ = midpoint of L/R feet. Y from lower sole vs sampler.
- * Never `root.y = terrainY`. Never Euler on Bip001 after mixer.
+ * Order every frame:
+ *   beginFrame() → mixer.update(dt) → apply(dt)
+ *
+ * Sampler MUST be the same height field as Rapier CCT / body ground.
+ * Pelvis-as-feet is forbidden. Flat y=0 is a no-op when already planted.
  */
-import * as THREE from 'https://esm.sh/three@0.185.0';
-
-const FOOT_LIFT = 0.03;
-const FOOT_MAX_UP = 0.42;
-const FOOT_MAX_DOWN = 0.55;
-const STANCE_MAX_SHIFT = 0.55;
-const ANKLE_TO_SOLE = 0.04;
-
-export function flatGround(_x, _z) {
-  return 0;
-}
-
-const FOOT_L = ['Bip001 L Foot', 'Bip001_L_Foot', 'mixamorigLeftFoot', 'LeftFoot'];
-const FOOT_R = ['Bip001 R Foot', 'Bip001_R_Foot', 'mixamorigRightFoot', 'RightFoot'];
-const TOE_L = ['Bip001 L Toe0', 'Bip001_L_Toe0', 'mixamorigLeftToeBase'];
-const TOE_R = ['Bip001 R Toe0', 'Bip001_R_Toe0', 'mixamorigRightToeBase'];
-const THIGH_L = ['Bip001 L Thigh', 'Bip001_L_Thigh', 'mixamorigLeftUpLeg', 'LeftUpLeg'];
-const THIGH_R = ['Bip001 R Thigh', 'Bip001_R_Thigh', 'mixamorigRightUpLeg', 'RightUpLeg'];
-const CALF_L = ['Bip001 L Calf', 'Bip001_L_Calf', 'mixamorigLeftLeg', 'LeftLeg'];
-const CALF_R = ['Bip001 R Calf', 'Bip001_R_Calf', 'mixamorigRightLeg', 'RightLeg'];
-
-function findNamed(root, names) {
-  for (const n of names) {
-    const o = root.getObjectByName(n);
-    if (o) return o;
-  }
-  return null;
-}
-
-const _lf = new THREE.Vector3();
-const _rf = new THREE.Vector3();
-const _delta = new THREE.Vector3();
-const _a = new THREE.Vector3();
-const _b = new THREE.Vector3();
-const _c = new THREE.Vector3();
-const _ab = new THREE.Vector3();
-const _bc = new THREE.Vector3();
-const _ac = new THREE.Vector3();
-const _at = new THREE.Vector3();
-const _nAb = new THREE.Vector3();
-const _nBc = new THREE.Vector3();
-const _nAc = new THREE.Vector3();
-const _axis = new THREE.Vector3();
-const _tgt = new THREE.Vector3();
-const _qParent = new THREE.Quaternion();
-const _qRot = new THREE.Quaternion();
-const _qDelta = new THREE.Quaternion();
-
-function rotateBoneWorld(bone, axis, angle) {
-  if (!bone.parent || Math.abs(angle) < 1e-5) return;
-  bone.parent.getWorldQuaternion(_qParent);
-  _qRot.setFromAxisAngle(axis, angle);
-  _qDelta.copy(_qParent).invert().multiply(_qRot).multiply(_qParent);
-  bone.quaternion.premultiply(_qDelta);
-  bone.updateWorldMatrix(false, true);
-}
-
-function solveTwoBone(upperLen, lowerLen, targetDist) {
+export function solveTwoBoneIk(upperLen, lowerLen, targetDist) {
   const reach = upperLen + lowerLen;
   const minDist = Math.abs(upperLen - lowerLen);
-  if (targetDist >= reach) return { rootAngle: 0, jointAngle: Math.PI };
-  const d = THREE.MathUtils.clamp(targetDist, minDist + 1e-6, reach - 1e-6);
-  const rootCos = THREE.MathUtils.clamp(
+  const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+  if (targetDist >= reach) return { reachable: false, rootAngle: 0, jointAngle: Math.PI };
+  const d = clamp(targetDist, minDist + 1e-6, reach - 1e-6);
+  const rootCos = clamp(
     (upperLen * upperLen + d * d - lowerLen * lowerLen) / (2 * upperLen * d),
     -1,
     1,
   );
-  const jointCos = THREE.MathUtils.clamp(
+  const jointCos = clamp(
     (upperLen * upperLen + lowerLen * lowerLen - d * d) / (2 * upperLen * lowerLen),
     -1,
     1,
   );
-  return { rootAngle: Math.acos(rootCos), jointAngle: Math.acos(jointCos) };
+  return { reachable: true, rootAngle: Math.acos(rootCos), jointAngle: Math.acos(jointCos) };
 }
 
-function solveLegToTarget(upper, lower, foot, target) {
-  upper.getWorldPosition(_a);
-  lower.getWorldPosition(_b);
-  foot.getWorldPosition(_c);
-  const lab = _a.distanceTo(_b);
-  const lbc = _b.distanceTo(_c);
-  if (lab < 1e-5 || lbc < 1e-5) return;
-
-  _at.subVectors(target, _a);
-  const lat = THREE.MathUtils.clamp(_at.length(), 1e-4, lab + lbc - 1e-4);
-  _ab.subVectors(_b, _a);
-  _bc.subVectors(_c, _b);
-  _ac.subVectors(_c, _a);
-  _nAb.copy(_ab).normalize();
-  _nBc.copy(_bc).normalize();
-  _nAc.copy(_ac).normalize();
-
-  const acab0 = Math.acos(THREE.MathUtils.clamp(_nAc.dot(_nAb), -1, 1));
-  const babc0 = Math.acos(THREE.MathUtils.clamp(-_nAb.dot(_nBc), -1, 1));
-  const sol = solveTwoBone(lab, lbc, lat);
-
-  _axis.copy(_ac).cross(_ab);
-  if (_axis.lengthSq() < 1e-8) {
-    _axis.set(0, 0, 1);
-    _axis.crossVectors(_at, _axis);
-    if (_axis.lengthSq() < 1e-8) return;
-  }
-  _axis.normalize();
-  rotateBoneWorld(upper, _axis, sol.rootAngle - acab0);
-  rotateBoneWorld(lower, _axis, -(sol.jointAngle - babc0));
-
-  foot.getWorldPosition(_c);
-  _ac.subVectors(_c, _a).normalize();
-  _at.subVectors(target, _a).normalize();
-  _axis.copy(_ac).cross(_at);
-  if (_axis.lengthSq() > 1e-8) {
-    _axis.normalize();
-    const swing = Math.acos(THREE.MathUtils.clamp(_ac.dot(_at), -1, 1));
-    rotateBoneWorld(upper, _axis, swing);
-  }
+export function footPlantOffset(footY, groundY, maxLift, maxDrop) {
+  const d = groundY - footY;
+  const hi = Math.abs(maxLift);
+  const lo = -Math.abs(maxDrop);
+  return d < lo ? lo : d > hi ? hi : d;
 }
 
-function soleWorld(root, footNames, toeNames, out) {
-  const toe = findNamed(root, toeNames);
-  const foot = findNamed(root, footNames);
-  const bone = toe || foot;
-  if (!bone) return null;
-  bone.getWorldPosition(out);
-  if (!toe) out.y -= ANKLE_TO_SOLE;
-  return bone;
+export function pelvisDropForFeet(offsets) {
+  let drop = 0;
+  for (const o of offsets) if (o < drop) drop = o;
+  return drop;
 }
 
 /**
- * Shift kit root so L/R foot midpoint is on world origin XZ and the lower
- * sole meets the sampler. Does not write rotation.
+ * Place skinned root so bone-feet sit on terrainY (world).
+ * Uses Vector3 + Matrix4 — never assign root.y = terrain (that is pelvis-as-feet).
+ * @param {import('three').Object3D} root
+ * @param {number} terrainY
+ * @param {typeof import('three')} THREE
  */
-export function placeRootBetweenFeet(root, groundAt = flatGround) {
-  if (!root) return false;
+export function placeRootFeetAt(root, terrainY, THREE) {
+  if (!root || !Number.isFinite(terrainY)) return 0;
   root.updateMatrixWorld(true);
-  if (!soleWorld(root, FOOT_L, TOE_L, _lf)) return false;
-  if (!soleWorld(root, FOOT_R, TOE_R, _rf)) return false;
-  const mx = (_lf.x + _rf.x) * 0.5;
-  const mz = (_lf.z + _rf.z) * 0.5;
-  const minY = Math.min(_lf.y, _rf.y);
-  const gy = groundAt(mx, mz);
-  _delta.set(-mx, gy - minY, -mz);
-  const horiz = Math.hypot(_delta.x, _delta.z);
-  if (horiz > STANCE_MAX_SHIFT) {
-    const s = STANCE_MAX_SHIFT / horiz;
-    _delta.x *= s;
-    _delta.z *= s;
+  const v = new THREE.Vector3();
+  let minY = Infinity;
+  root.traverse((n) => {
+    if (!n.isBone || !n.name) return;
+    if (!/foot/i.test(n.name) || /toe|ball/i.test(n.name)) return;
+    n.getWorldPosition(v);
+    if (v.y < minY) minY = v.y;
+  });
+  if (!Number.isFinite(minY) || minY === Infinity) {
+    const box = new THREE.Box3();
+    root.traverse((o) => {
+      if (o.isSkinnedMesh && o.skeleton) {
+        o.skeleton.update();
+        o.updateMatrixWorld(true);
+      }
+    });
+    box.setFromObject(root);
+    minY = box.min.y;
   }
-  _delta.y = THREE.MathUtils.clamp(_delta.y, -FOOT_MAX_DOWN, FOOT_MAX_UP);
-  root.position.add(_delta);
+  if (!Number.isFinite(minY)) return 0;
+  const dy = terrainY - minY;
+  if (Math.abs(dy) > 1e-4) {
+    const pos = new THREE.Vector3();
+    const quat = new THREE.Quaternion();
+    const scl = new THREE.Vector3();
+    const local = new THREE.Matrix4();
+    root.matrix.decompose(pos, quat, scl);
+    pos.y += dy;
+    local.compose(pos, quat, scl);
+    root.matrix.copy(local);
+    local.decompose(root.position, root.quaternion, root.scale);
+    root.matrixWorldNeedsUpdate = true;
+  }
   root.updateMatrixWorld(true);
-  return true;
+  const feet = new THREE.Vector3();
+  root.getWorldPosition(feet);
+  feet.y = terrainY;
+  root.userData.feetWorld = feet;
+  root.userData.plantMatrix = root.matrix.clone();
+  return dy;
 }
 
-/** Two-bone plant onto the height sampler. After mixer + placeRootBetweenFeet. */
-export function applyFootIk(root, groundAt = flatGround) {
-  if (!root) return false;
-  const legs = [
-    {
-      upper: findNamed(root, THIGH_L),
-      lower: findNamed(root, CALF_L),
-      foot: findNamed(root, FOOT_L),
-    },
-    {
-      upper: findNamed(root, THIGH_R),
-      lower: findNamed(root, CALF_R),
-      foot: findNamed(root, FOOT_R),
-    },
-  ];
-  let any = false;
-  root.updateMatrixWorld(true);
-  for (const leg of legs) {
-    if (!leg.upper || !leg.lower || !leg.foot) continue;
-    leg.foot.getWorldPosition(_c);
-    const gy = groundAt(_c.x, _c.z) + FOOT_LIFT;
-    const dy = gy - _c.y;
-    if (dy > FOOT_MAX_UP) continue;
-    const apply = THREE.MathUtils.clamp(dy, -FOOT_MAX_DOWN, FOOT_MAX_UP);
-    if (Math.abs(apply) < 0.008) continue;
-    _tgt.set(_c.x, _c.y + apply, _c.z);
-    solveLegToTarget(leg.upper, leg.lower, leg.foot, _tgt);
-    any = true;
-  }
-  return any;
-}
+export const FLAT_FOOT_SAMPLER = () => ({ y: 0, normal: null });
 
-export function findStanceBones(root) {
-  return {
-    lFoot: findNamed(root, FOOT_L),
-    rFoot: findNamed(root, FOOT_R),
-    lThigh: findNamed(root, THIGH_L),
-    rThigh: findNamed(root, THIGH_R),
-    lCalf: findNamed(root, CALF_L),
-    rCalf: findNamed(root, CALF_R),
+export function samplerFromHeightAt(heightAt, opts = {}) {
+  const eps = opts.epsilon ?? 0.28;
+  const withNormals = opts.withNormals !== false;
+  return (x, z) => {
+    const y = heightAt(x, z);
+    if (y == null || !Number.isFinite(y)) return { y: Number.NaN, normal: null };
+    if (!withNormals) return { y, normal: null };
+    const yx0 = heightAt(x - eps, z);
+    const yx1 = heightAt(x + eps, z);
+    const yz0 = heightAt(x, z - eps);
+    const yz1 = heightAt(x, z + eps);
+    if (![yx0, yx1, yz0, yz1].every((v) => v != null && Number.isFinite(v))) {
+      return { y, normal: { x: 0, y: 1, z: 0 } };
+    }
+    const nx = yx0 - yx1;
+    const ny = 2 * eps;
+    const nz = yz0 - yz1;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return { y, normal: { x: nx / len, y: ny / len, z: nz / len } };
   };
 }
+
+function keyOf(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+export function findLegChain(root, side) {
+  const sideRe = side === 'L' ? /(^|[^a-z])l(eft)?([^a-z]|$)/i : /(^|[^a-z])r(ight)?([^a-z]|$)/i;
+  const toeRe = /toe|ball/i;
+  const footRe = /foot|ankle/i;
+  const upperRe = /thigh|upleg|upperleg|hip(?!s)/i;
+  const lowerRe = /calf|shin|lowerleg|leg/i;
+  let upper = null;
+  let lower = null;
+  let foot = null;
+  root.traverse((n) => {
+    if (!n.isBone || !n.name) return;
+    if (!sideRe.test(n.name) || toeRe.test(n.name)) return;
+    if (!foot && footRe.test(n.name)) foot = n;
+    else if (!upper && /thigh|upleg|upperleg/i.test(n.name)) upper = n;
+    else if (!lower && /calf|shin|lowerleg/i.test(n.name)) lower = n;
+  });
+  if (!lower) {
+    root.traverse((n) => {
+      if (lower || !n.isBone) return;
+      if (!sideRe.test(n.name) || toeRe.test(n.name)) return;
+      if (n !== upper && n !== foot && lowerRe.test(n.name) && !upperRe.test(n.name)) lower = n;
+    });
+  }
+  return upper && lower && foot ? { upper, lower, foot } : null;
+}
+
+export function findPelvis(root) {
+  let best = null;
+  let bestScore = -1;
+  root.traverse((n) => {
+    if (!n.isBone || !n.name) return;
+    const key = keyOf(n.name);
+    let score = 0;
+    if (key === 'bip001pelvis' || key === 'pelvis') score = 100;
+    else if (key.endsWith('pelvis')) score = 90;
+    else if (key === 'mixamorighips' || key === 'hips') score = 80;
+    else if (key.endsWith('hips')) score = 70;
+    if (score > bestScore) {
+      bestScore = score;
+      best = n;
+    }
+  });
+  return best;
+}
+
+/**
+ * @param {typeof import('three')} THREE
+ */
+export function createFootGrounder(THREE) {
+  const _a = new THREE.Vector3();
+  const _b = new THREE.Vector3();
+  const _c = new THREE.Vector3();
+  const _ab = new THREE.Vector3();
+  const _bc = new THREE.Vector3();
+  const _ac = new THREE.Vector3();
+  const _at = new THREE.Vector3();
+  const _nAc = new THREE.Vector3();
+  const _nAb = new THREE.Vector3();
+  const _nBc = new THREE.Vector3();
+  const _nAt = new THREE.Vector3();
+  const _axis = new THREE.Vector3();
+  const _qParent = new THREE.Quaternion();
+  const _qRot = new THREE.Quaternion();
+  const _qDelta = new THREE.Quaternion();
+  const _footWorld = new THREE.Vector3();
+  const _pole = new THREE.Vector3();
+  const _nUp = new THREE.Vector3();
+  const _qAlign = new THREE.Quaternion();
+  const _qClamp = new THREE.Quaternion();
+  const _qId = new THREE.Quaternion();
+  const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+  function rotateBoneWorld(bone, axis, angle) {
+    if (!bone.parent || Math.abs(angle) < 1e-5) return;
+    bone.parent.getWorldQuaternion(_qParent);
+    _qRot.setFromAxisAngle(axis, angle);
+    _qDelta.copy(_qParent).invert().multiply(_qRot).multiply(_qParent);
+    bone.quaternion.premultiply(_qDelta);
+    bone.updateWorldMatrix(false, true);
+  }
+  function rotateBoneWorldQuat(bone, qWorld) {
+    if (!bone.parent) return;
+    bone.parent.getWorldQuaternion(_qParent);
+    _qDelta.copy(_qParent).invert().multiply(qWorld).multiply(_qParent);
+    bone.quaternion.premultiply(_qDelta);
+    bone.updateWorldMatrix(false, true);
+  }
+  function solveLegToTarget(chain, target, poleHint) {
+    const { upper, lower, foot } = chain;
+    upper.getWorldPosition(_a);
+    lower.getWorldPosition(_b);
+    foot.getWorldPosition(_c);
+    const lab = _a.distanceTo(_b);
+    const lbc = _b.distanceTo(_c);
+    if (lab < 1e-5 || lbc < 1e-5) return;
+    _at.copy(target).sub(_a);
+    const lat = clamp(_at.length(), 1e-4, lab + lbc - 1e-4);
+    _ab.copy(_b).sub(_a);
+    _bc.copy(_c).sub(_b);
+    _ac.copy(_c).sub(_a);
+    _nAb.copy(_ab).normalize();
+    _nBc.copy(_bc).normalize();
+    _nAc.copy(_ac).normalize();
+    _nAt.copy(_at).normalize();
+    const acab0 = Math.acos(clamp(_nAc.dot(_nAb), -1, 1));
+    const babc0 = Math.acos(clamp(-_nAb.dot(_nBc), -1, 1));
+    const sol = solveTwoBoneIk(lab, lbc, lat);
+    _axis.copy(_ac).cross(_ab);
+    if (_axis.lengthSq() < 1e-8 && poleHint) {
+      _axis.copy(_ac).cross(poleHint);
+    }
+    if (_axis.lengthSq() < 1e-8) return;
+    _axis.normalize();
+    rotateBoneWorld(upper, _axis, sol.rootAngle - acab0);
+    rotateBoneWorld(lower, _axis, sol.jointAngle - babc0);
+    upper.getWorldPosition(_a);
+    foot.getWorldPosition(_c);
+    _ac.copy(_c).sub(_a).normalize();
+    _nAt.copy(target).sub(_a).normalize();
+    _axis.copy(_ac).cross(_nAt);
+    if (_axis.lengthSq() > 1e-10) {
+      _axis.normalize();
+      const swing = Math.acos(clamp(_ac.dot(_nAt), -1, 1));
+      rotateBoneWorld(upper, _axis, swing);
+    }
+  }
+
+  return {
+    enabled: true,
+    maxLift: 0.28,
+    maxDrop: 0.18,
+    minHipClearanceM: 0.78,
+    alignFeet: true,
+    maxTilt: 0.5,
+    smooth: 16,
+    left: null,
+    right: null,
+    pelvis: null,
+    sampler: FLAT_FOOT_SAMPLER,
+    smLeft: 0,
+    smRight: 0,
+    smDrop: 0,
+    primed: false,
+    pelvisBindLocal: new THREE.Vector3(),
+    pelvisBindCaptured: false,
+    bind(root) {
+      this.left = findLegChain(root, 'L');
+      this.right = findLegChain(root, 'R');
+      this.pelvis = findPelvis(root);
+      if (this.pelvis) {
+        this.pelvisBindLocal.copy(this.pelvis.position);
+        this.pelvisBindCaptured = true;
+      } else this.pelvisBindCaptured = false;
+      return this.isBound;
+    },
+    get isBound() {
+      return !!(this.left && this.right);
+    },
+    beginFrame() {
+      if (!this.enabled || !this.pelvisBindCaptured || !this.pelvis) return;
+      this.pelvis.position.copy(this.pelvisBindLocal);
+    },
+    setGroundSampler(fn) {
+      this.sampler = fn || FLAT_FOOT_SAMPLER;
+      this.primed = false;
+    },
+    setEnabled(on) {
+      if (!on && this.pelvisBindCaptured && this.pelvis) {
+        this.pelvis.position.copy(this.pelvisBindLocal);
+        this.pelvis.updateWorldMatrix(false, true);
+      }
+      this.enabled = !!on;
+      if (!on) this.primed = false;
+    },
+    footSample(chain) {
+      if (!chain) return null;
+      chain.foot.getWorldPosition(_footWorld);
+      const s = this.sampler(_footWorld.x, _footWorld.z);
+      const ny = s && s.normal;
+      const normal =
+        ny && typeof ny.y === 'number'
+          ? ny.isVector3
+            ? ny
+            : new THREE.Vector3(ny.x, ny.y, ny.z)
+          : null;
+      if (!s || !Number.isFinite(s.y)) return { offset: 0, normal: null };
+      return {
+        offset: footPlantOffset(_footWorld.y, s.y, this.maxLift, this.maxDrop),
+        normal,
+      };
+    },
+    plant(chain, offset, poleHint) {
+      if (!chain || Math.abs(offset) < 1e-4) return;
+      chain.foot.getWorldPosition(_footWorld);
+      _footWorld.y += offset;
+      solveLegToTarget(chain, _footWorld, poleHint);
+    },
+    align(chain, normal) {
+      if (!chain || !normal || !this.alignFeet) return;
+      _nUp.set(0, 1, 0);
+      const n = normal.isVector3 ? normal : _nAt.set(normal.x, normal.y, normal.z);
+      _qAlign.setFromUnitVectors(_nUp, n);
+      const ang = 2 * Math.acos(Math.min(1, Math.abs(_qAlign.w)));
+      if (ang < 1e-4) return;
+      const t = ang > this.maxTilt ? this.maxTilt / ang : 1;
+      _qId.identity();
+      _qClamp.copy(_qId).slerp(_qAlign, t);
+      rotateBoneWorldQuat(chain.foot, _qClamp);
+    },
+    apply(dt) {
+      if (!this.enabled || !this.left || !this.right) return;
+      const ls = this.footSample(this.left);
+      const rs = this.footSample(this.right);
+      if (!ls || !rs) return;
+      const k = this.primed ? 1 - Math.exp(-this.smooth * Math.max(dt, 1e-4)) : 1;
+      this.smLeft += (ls.offset - this.smLeft) * k;
+      this.smRight += (rs.offset - this.smRight) * k;
+      const drop = pelvisDropForFeet([this.smLeft, this.smRight]);
+      this.smDrop += (drop - this.smDrop) * k;
+      this.primed = true;
+      if (this.pelvis && this.smDrop < -1e-4) {
+        const p = this.pelvis;
+        p.getWorldPosition(_footWorld);
+        const ground = this.sampler(_footWorld.x, _footWorld.z);
+        const gY = ground && Number.isFinite(ground.y) ? ground.y : _footWorld.y;
+        let drop = this.smDrop;
+        if (_footWorld.y + drop < gY + this.minHipClearanceM) {
+          drop = Math.min(0, gY + this.minHipClearanceM - _footWorld.y);
+        }
+        _footWorld.y += drop;
+        p.parent?.worldToLocal(_footWorld);
+        p.position.copy(_footWorld);
+        p.updateWorldMatrix(false, true);
+      }
+      _pole.set(0, 0, 1);
+      this.plant(this.left, this.smLeft - this.smDrop, _pole);
+      this.plant(this.right, this.smRight - this.smDrop, _pole);
+      this.align(this.left, ls.normal);
+      this.align(this.right, rs.normal);
+    },
+  };
+}
+
+export const FOOT_IK_CONTRACT = {
+  enabled: true,
+  order: 'beginFrame → mixer.update → apply',
+  sampler: 'same height field as Rapier CCT / body Y',
+  bones: 'Bip001 L/R Thigh+Calf+Foot + Pelvis',
+  ban: ['pelvis-as-feet', 'second mixer', 'second physics engine', 'IK before mixer'],
+};
