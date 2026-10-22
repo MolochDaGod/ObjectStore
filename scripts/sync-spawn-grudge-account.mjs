@@ -14,8 +14,13 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ID = process.env.GRUDGE_ID_URL || 'https://id.grudge-studio.com';
-const API = process.env.GRUDGE_API_URL || 'https://grudge-api-production-0d46.up.railway.app';
+// No host fallbacks: set GRUDGE_ID_URL and GRUDGE_API_URL explicitly (canonical: https://id.grudge-studio.com).
+const ID = String(process.env.GRUDGE_ID_URL || '').trim().replace(/\/+$/, '');
+const API = String(process.env.GRUDGE_API_URL || '').trim().replace(/\/+$/, '');
+if (!ID || !API) {
+  console.error('GRUDGE_ID_URL and GRUDGE_API_URL must be set (e.g. https://id.grudge-studio.com). Refusing to fall back to a hardcoded host.');
+  process.exit(2);
+}
 const NEMESIS_URL = process.env.NEMESIS_URL || 'https://nemesis.grudge-studio.com';
 const WANT_NEMESIS = String(process.env.NEMESIS || '').trim() === '1';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
