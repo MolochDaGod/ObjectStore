@@ -54,7 +54,7 @@ Outputs under `ObjectStore/spawn/` (gitignored if present — do not commit toke
 
 ## Honesty checks
 
-1. Every `characters[].id` from auth appears on `GET https://grudge-api-production-0d46.up.railway.app/api/characters?era=<era>` with the same fleet JWT.  
+1. Every `characters[].id` from auth appears on `GET https://id.grudge-studio.com/api/characters?era=<era>` with the same fleet JWT.  
 2. World product era matches (Links TCG → nexus cards path; Warlords worlds → `warlords`).  
 3. UI shows “stale / unlinked” if sync missing — never invent a hero.
 

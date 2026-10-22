@@ -5,7 +5,7 @@
 | | |
 |--|--|
 | **Route** | `POST /api/wallet/verify-send-to-account` |
-| **Host** | `https://grudge-api-production-0d46.up.railway.app` (Railway grudge-api) |
+| **Host** | `https://id.grudge-studio.com` (custom domain for Railway grudge-api) |
 | **Auth** | Admin — fleet JWT with studio admin/master **or** `X-Admin-Password` when `ADMIN_PASSWORD` is set |
 | **Ledger** | Soft `creditGbux` → `accounts.gbux_balance` + `gbux_transactions` |
 | **On-chain** | `false` |
