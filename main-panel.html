@@ -1230,7 +1230,7 @@
     // Character state (owned attrs / skills / profession nodes)
     if (typeof MainPanelSystems !== 'undefined') {
       charState = MainPanelSystems.defaultCharState(allAttributes);
-      charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || 'warrior';
+      if (!charState.classKey) charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || 'warrior';
       charState.raceKey = selectedRace;
     } else {
       charState = { level: 1, attrs: {}, attrPointsAvailable: 0, classSkills: {}, classSkillPointsAvailable: 0, professionLevels: {}, professionNodes: {} };
@@ -2146,7 +2146,7 @@ function showError(msg) {
     if (charState) {
       charState.raceKey = race;
       if (typeof MainPanelSystems !== 'undefined') {
-        charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || charState.classKey;
+        if (!charState.classKey) charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || 'warrior';
       }
     }
     document.getElementById('playerClass').textContent = `Lv.${charState?.level || 1} ${selectedClass}`;
@@ -2326,7 +2326,7 @@ function showError(msg) {
       return `<div class="section-title">Attributes</div><p style="color:var(--muted)">main-panel-systems.js not loaded</p>`;
     }
     if (!charState) charState = MainPanelSystems.defaultCharState(allAttributes);
-    charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || charState.classKey;
+    if (!charState.classKey) charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || 'warrior';
     charState.raceKey = selectedRace;
     if (typeof MainPanelSystems.destroyAttributeRadar === 'function') {
       MainPanelSystems.destroyAttributeRadar();
@@ -2349,6 +2349,8 @@ function showError(msg) {
       area,
       charState,
       () => {
+        const className = Object.keys(MainPanelSystems.CLASS_KEY_FROM_NAME).find((n) => n !== 'Mage Priest' && MainPanelSystems.CLASS_KEY_FROM_NAME[n] === charState.classKey) || selectedClass;
+        selectedClass = className;
         document.getElementById('playerClass').textContent = `Lv.${charState.level} ${selectedClass}`;
         renderTab();
         renderLeftCol();
@@ -2825,7 +2827,7 @@ function attachSlotListeners() {
       return `<p style="color:var(--muted)">Class trees require main-panel-systems.js — <a href="./profession-trees.html#classes" style="color:var(--gold)">open class trees →</a></p>`;
     }
     if (!charState) charState = MainPanelSystems.defaultCharState(allAttributes);
-    charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || charState.classKey;
+    if (!charState.classKey) charState.classKey = MainPanelSystems.CLASS_KEY_FROM_NAME[selectedClass] || 'warrior';
     return MainPanelSystems.renderClassSkillTree({
       char: charState,
       skillTrees: classSkillTreesData,

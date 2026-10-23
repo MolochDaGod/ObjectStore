@@ -67,6 +67,26 @@
     .skill-chip{background:var(--card);border:1px solid var(--gold-dim);border-radius:4px;padding:8px 12px;font-size:.78em;max-width:280px}
     .skill-chip .sc-name{font-weight:600;color:var(--text)}
     .skill-chip .sc-desc{color:var(--muted);font-size:.9em;margin-top:2px}
+    .build-wrap{display:flex;flex-direction:column;gap:14px}
+    .build-bar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--gold-dim);border-radius:8px;padding:12px 16px}
+    .build-bar b{color:var(--gold);font-family:var(--font-mono)}
+    .build-rule{color:var(--muted);font-size:.78em;line-height:1.45;max-width:760px}
+    .build-reset{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);border-radius:4px;padding:6px 12px;cursor:pointer;font-family:var(--font-mono);font-size:.75em}
+    .build-row{background:rgba(255,255,255,.02);border:1px solid var(--gold-dim);border-radius:8px;padding:12px}
+    .build-row h4{font-family:var(--font-mono);font-size:.78em;color:var(--gold);margin:0 0 10px;display:flex;justify-content:space-between;gap:8px}
+    .build-cards{display:flex;flex-wrap:wrap;gap:8px}
+    .build-card{display:flex;gap:10px;text-align:left;width:min(280px,100%);padding:10px;border-radius:6px;border:1px solid var(--gold-dim);background:var(--card);color:var(--text);cursor:pointer}
+    .build-card img{width:40px;height:40px;object-fit:contain;border-radius:4px;background:#14100a;flex-shrink:0}
+    .build-card .bn{font-weight:700;font-size:.82em}
+    .build-card .be{color:var(--muted);font-size:.72em;line-height:1.35;margin-top:3px}
+    .build-card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+    .build-card.core{cursor:default;border-color:#3d6b4f}
+    .build-card.off{opacity:.45}
+    .build-card:hover{border-color:var(--gold)}
+    .build-path{font-size:.78em;color:var(--muted);line-height:1.5}
+    .build-path strong{color:var(--text)}
+    .tt-line{font-size:.75em;color:#d6c7a1;margin-top:4px;line-height:1.35}
+    .tt-lock{font-size:.72em;color:#fbbf24;margin-top:6px}
     .footer{text-align:center;padding:24px 0;border-top:1px solid var(--gold-dim);color:var(--dim);font-size:.8em;margin-top:32px}
     @media(max-width:768px){.tree-container{height:60vh;min-height:360px}}
   </style>
@@ -412,35 +432,95 @@ function renderClassGraph() {
 
 function renderClassTrees() {
   if (!classData) return;
+  const cls = classData.skillTrees?.[activeClass];
   document.getElementById('classLoading').style.display = 'none';
+  const treeHost = document.getElementById('classTreeContainer');
   const root = document.getElementById('classTreesRoot');
-  const trees = classData.skillTrees || {};
-  root.innerHTML = Object.entries(trees).map(([key, cls]) => {
-    const color = cls.color || 'var(--gold)';
-    const tiers = cls.tiers || [];
-    const tierHtml = tiers.map(tier => `
-      <div class="tier-block">
-        <h4>${tier.name} (Lv ${tier.requiredLevel})</h4>
-        <div class="skill-chips">
-          ${(tier.skills || []).map(sk => `
-            <div class="skill-chip">
-              <div class="sc-name">${sk.name}</div>
-              <div class="sc-desc">${sk.description || sk.effect || ''}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
-    return `
-      <div class="class-panel">
-        <div class="class-header" style="border-left-color:${color}">
-          <h3 style="color:${color}">${cls.className || key}</h3>
-          <span style="font-size:.78em;color:var(--muted);font-family:var(--font-mono)">${tiers.reduce((s,t)=>s+(t.skills?.length||0),0)} skills</span>
-        </div>
-        ${tierHtml}
-      </div>
-    `;
+  if (!cls?.build) {
+    if (treeHost) treeHost.style.display = '';
+    root.innerHTML = '';
+    return;
+  }
+  if (treeHost) treeHost.style.display = 'none';
+  const build = cls.build;
+  const picks = picksFor(activeClass);
+  const spent = Object.keys(picks).filter(id => picks[id]).length;
+  const cap = build.pointsAt20;
+  const coreCards = build.core.map(id => {
+    const sk = skillById(cls, id);
+    if (!sk) return '';
+    const icon = cdnIcon(sk.iconUrl || sk.icon);
+    return `<button type="button" class="build-card core" data-tip="${escHtml(tooltipHtml(sk, null))}">
+      ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+      <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
+    </button>`;
   }).join('');
+  const rows = build.rows.map(row => {
+    const chosen = picks[row.id];
+    const cards = row.skills.map(id => {
+      const sk = skillById(cls, id);
+      if (!sk) return '';
+      const on = chosen === id;
+      const off = chosen && !on;
+      const icon = cdnIcon(sk.iconUrl || sk.icon);
+      return `<button type="button" class="build-card${on ? ' on' : ''}${off ? ' off' : ''}" data-row="${escHtml(row.id)}" data-skill="${escHtml(id)}" data-tip="${escHtml(tooltipHtml(sk, row))}">
+        ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+        <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
+      </button>`;
+    }).join('');
+    return `<section class="build-row">
+      <h4><span>${escHtml(row.name)} · Lv ${row.level}</span><span>${chosen ? '1 chosen' : 'pick 1'}</span></h4>
+      <div class="build-cards">${cards}</div>
+    </section>`;
+  }).join('');
+  const taken = build.rows.filter(r => picks[r.id]).map(r => {
+    const sk = skillById(cls, picks[r.id]);
+    return `${r.name}: ${sk?.name || picks[r.id]}`;
+  });
+  const skipped = build.rows.filter(r => !picks[r.id]).map(r => r.name);
+  root.innerHTML = `<div class="build-wrap">
+    <div class="build-bar">
+      <div>
+        <div><b>${escHtml(cls.className || activeClass)}</b> · ${spent} / ${cap} row picks</div>
+        <div class="build-rule">${escHtml(build.rule)}</div>
+      </div>
+      <button type="button" class="build-reset" id="classBuildReset">Reset picks</button>
+    </div>
+    <section class="build-row">
+      <h4><span>Core · always known</span><span>not a pick</span></h4>
+      <div class="build-cards">${coreCards}</div>
+    </section>
+    ${rows}
+    <div class="build-path"><strong>Build an AI can read</strong> — core ${build.core.join(', ')}${taken.length ? ' · ' + taken.join(' · ') : ''}${skipped.length ? ' · empty rows: ' + skipped.join(', ') : ''}</div>
+  </div>`;
+  bindTips(root);
+  root.querySelectorAll('[data-row]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rowId = btn.getAttribute('data-row');
+      const skillId = btn.getAttribute('data-skill');
+      const cur = picksFor(activeClass);
+      if (cur[rowId] === skillId) {
+        delete cur[rowId];
+      } else if (cur[rowId]) {
+        cur[rowId] = skillId;
+      } else if (Object.keys(cur).length >= cap) {
+        return;
+      } else {
+        cur[rowId] = skillId;
+      }
+      renderClassGraph();
+    });
+  });
+  document.getElementById('classBuildReset')?.addEventListener('click', () => {
+    classPicks[activeClass] = {};
+    renderClassGraph();
+  });
+}
+
+function renderClassTrees() {
+  if (!classData) return;
+  document.getElementById('classLoading').style.display = 'none';
+  renderClassGraph();
 }
 
 async function loadClasses() {

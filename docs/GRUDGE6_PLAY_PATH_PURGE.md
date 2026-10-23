@@ -69,8 +69,9 @@ If you load a Warlords hero and are not using `loadRaceKit` / ObjectStore parity
    Every Warlords-era play / lab / client that shows a grudge6 hero must appear here with `status`: green | yellow | audit | n/a.
 
 2. **Contract (SSOT of how):** `api/v1/grudge6-warlords-play-contract.json` + `loadRaceKit` stamp  
-   `root.userData.warlordsPlayContract === "2026-08-07.harden.1"`  
-   `grudge6Play === true` · `importPipeline === "toon-rts-glb"`
+   `root.userData.warlordsPlayContract === "2026-08-21.feet-terrain.2"`  
+   `grudge6Play === true` · `importPipeline === "toon-rts-glb"`  
+   Per-race matrix + practices: `docs/GRUDGE6_RACES_BEST_PRACTICES.md` (same JSON `races` / `bestPractices`)
 
 3. **Audit command (repeatable):**
    ```bash

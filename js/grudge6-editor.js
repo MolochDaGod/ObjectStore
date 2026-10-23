@@ -226,20 +226,15 @@ export class Grudge6Editor {
     }
     const cls = this.ui.classSelect;
     if (cls) {
-      const list = this.apis.classes?.classes || [
-        { id: 'warrior', name: 'Warrior' },
-        { id: 'mage', name: 'Mage' },
-        { id: 'ranger', name: 'Ranger' },
-        { id: 'unarmed', name: 'Unarmed' },
-      ];
-      const ids = Array.isArray(list)
+      const list = this.apis.classes?.classes || {};
+      const fromApi = Array.isArray(list)
         ? list.map((c) => (typeof c === 'string' ? c : c.id || c.name))
         : Object.keys(list || {});
-      cls.innerHTML = ids
-        .filter(Boolean)
-        .slice(0, 24)
-        .map((id) => `<option value="${String(id).toLowerCase()}">${id}</option>`)
-        .join('');
+      const fromKits = Object.keys(this.catalog?.races?.[0]?.classLoadouts || {});
+      const order = ['warrior', 'raider', 'mage', 'priest', 'ranger', 'thief', 'worge', 'verduror', 'unarmed'];
+      const ids = [...new Set([...fromApi, ...fromKits].map((id) => String(id).toLowerCase()).filter(Boolean))];
+      ids.sort((a, b) => (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
+      cls.innerHTML = ids.map((id) => `<option value="${id}">${id}</option>`).join('');
       cls.value = this.classId;
       cls.onchange = () => {
         this.classId = cls.value;
@@ -276,6 +271,10 @@ export class Grudge6Editor {
   async loadRace(raceId) {
     this.raceId = raceId;
     this.status(`Loading Toon RTS ★ ${raceId}…`);
+    if (this.formRoot) {
+      this.scene.remove(this.formRoot);
+      this.formRoot = null;
+    }
     if (this.root) {
       this.scene.remove(this.root);
       this.gizmo.detach();
@@ -325,7 +324,45 @@ export class Grudge6Editor {
     this.mixer.clipAction(clip).reset().fadeIn(0.15).play();
   }
 
+  clearShapeshift() {
+    if (this.formRoot) {
+      this.scene.remove(this.formRoot);
+      this.formRoot = null;
+    }
+    if (this.root) this.root.visible = true;
+  }
+
+  async applyShapeshift(it) {
+    const def = it.meta || {};
+    if (!def.mesh) return;
+    this.clearShapeshift();
+    if (this.root) this.root.visible = false;
+    this.status(`Loading ${it.name}…`);
+    const gltf = await new GLTFLoader().loadAsync(def.mesh);
+    const root = gltf.scene;
+    if (def.albedo) {
+      const tex = await new THREE.TextureLoader().loadAsync(def.albedo);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.flipY = false;
+      const tint = new THREE.Color(def.tint || '#ffffff');
+      root.traverse((o) => {
+        if (!o.isMesh) return;
+        const mats = [].concat(o.material).filter(Boolean);
+        for (const m of mats) {
+          m.map = tex;
+          if (m.color) m.color.copy(tint);
+          m.needsUpdate = true;
+        }
+      });
+    }
+    fitRootUniformSi(THREE, root, def.heightM || 1.8, { characterType: 'infantry', centerXZ: true });
+    this.scene.add(root);
+    this.formRoot = root;
+    this.status(it.name);
+  }
+
   applyClassForm() {
+    this.clearShapeshift();
     if (!this.equip || !this.catalog) return;
     const race = (this.catalog.races || []).find((r) => r.id === this.raceId);
     const meshIds = race?.classLoadouts?.[this.classId];
@@ -564,10 +601,10 @@ export class Grudge6Editor {
       }
     }
 
-    // Forms = class loadouts (mesh_ids SSOT)
+    // Forms = class kits, plus the six race bears and six iguana colors.
     if (slot === 'form') {
       const race = (this.catalog?.races || []).find((r) => r.id === this.raceId);
-      const forms = Object.keys(race?.classLoadouts || { warrior: 1, mage: 1, ranger: 1, unarmed: 1 });
+      const forms = Object.keys(race?.classLoadouts || {});
       for (const f of forms) {
         push({
           id: `form:${f}`,
@@ -580,6 +617,28 @@ export class Grudge6Editor {
           uuid: `${this.raceId}:${f}`,
           source: 'classLoadouts',
         });
+      }
+      const shape = this.catalog?.forms || {};
+      for (const [formId, form] of Object.entries(shape)) {
+        for (const [raceId, skin] of Object.entries(form.races || {})) {
+          push({
+            id: `shape:${formId}:${raceId}`,
+            name: skin.label || `${form.name} ${raceId}`,
+            tier: 'T0',
+            kind: 'shapeshift',
+            slot: 'form',
+            formId,
+            uuid: `${formId}:${raceId}`,
+            source: 'class-forms',
+            meta: {
+              mesh: form.mesh,
+              albedo: skin.albedo,
+              tint: skin.tint || '#ffffff',
+              heightM: form.heightM,
+              normal: form.normal || null,
+            },
+          });
+        }
       }
     }
 
@@ -712,9 +771,16 @@ export class Grudge6Editor {
     this.bindSlot(it);
     if (!this.equip || !this.root) return;
 
+    if (it.kind === 'shapeshift') {
+      await this.applyShapeshift(it);
+      this.refreshInventory();
+      return;
+    }
+
     if (it.kind === 'form' || it.formId) {
       this.classId = it.formId || it.name;
       if (this.ui.classSelect) this.ui.classSelect.value = this.classId;
+      this.clearShapeshift();
       this.applyClassForm();
       this.syncBoundFromEquip();
       this.refreshSkills();

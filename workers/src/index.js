@@ -302,6 +302,13 @@ async function handleList(url, env) {
   const params = [];
 
   if (category) { where.push('category = ?'); params.push(category); }
+  if (category === 'character') {
+    where.push("key NOT LIKE 'models/characters/races/%'");
+    where.push("key NOT LIKE 'models/grudge6/races/%'");
+    where.push("key NOT LIKE 'models/grudge6/variants/%'");
+    where.push("key NOT LIKE 'models/grudge6/wk/%'");
+    where.push("key NOT LIKE 'models/grudge6/brb/%'");
+  }
   if (tag)      { where.push("tags LIKE '%' || ? || '%'"); params.push(tag); }
   if (prefix)   { where.push('key LIKE ? || \'%\''); params.push(prefix); }
   if (q)        { where.push('filename LIKE \'%\' || ? || \'%\''); params.push(q); }

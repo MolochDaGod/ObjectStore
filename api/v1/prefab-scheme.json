@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-09-11",
+  "version": "1.0.1",
+  "updated": "2026-10-10",
   "title": "Asset · prefab · era update scheme (one pattern)",
   "docs": [
     "/docs/PREFAB_ASSET_SCHEME.md",
@@ -57,7 +57,10 @@
     "entityPrefabs": "/api/v1/warlords-entity-prefabs.json",
     "weaponSkills": "/api/v1/master-weaponSkills.json",
     "playHero": "/api/v1/grudge6-warlords-play-contract.json",
-    "gearPresets": "/api/v1/grudge6-gear-presets.json"
+    "gearPresets": "/api/v1/grudge6-gear-presets.json",
+    "skillTrees": "/api/v1/master-skillTrees.json",
+    "namedSockets": "/api/v1/toon-rts-named-sockets.json",
+    "classEquipment": "/api/v1/class-equipment-rules.json"
   },
   "addOrUpdate": {
     "definition": [
@@ -86,6 +89,33 @@
     "mixer": "one AnimationMixer",
     "anims": "Bip001 idle+walk+cast+melee",
     "feet": "bone-box min.y on same terrain sample",
-    "red": ["races bake as play body", "FBX in browser", "Meshy", "capsule", "multi-mixer"]
+    "red": [
+      "races bake as play body",
+      "FBX in browser",
+      "Meshy",
+      "capsule",
+      "multi-mixer"
+    ]
+  },
+  "attachment": {
+    "source": "/api/v1/toon-rts-named-sockets.json + class-equipment-rules.json",
+    "profiles": {
+      "main_hand": "R_hand_container → Bone_R_weapon → Bip001 R Hand",
+      "two_hand": "R_hand_container (blocks off-hand)",
+      "off_hand": "L_hand_container → Bone_L_weapon → Bip001 L Hand",
+      "shield": "L_shield_container → Bone_L_Shield",
+      "ranged_2h": "bow/crossbow → L_hand_container; gun → R_hand_container"
+    },
+    "catalogsStamped": [
+      "master-weapon-prefabs.json",
+      "master-item-prefabs.json",
+      "warlords-entity-prefabs.json"
+    ],
+    "iconsAbsolutized": [
+      "master-skillTrees.json",
+      "master-weaponSkills.json"
+    ],
+    "notInScope": "Unity ProBuilder ToggleXRay.cs is editor selection X-ray (EditorHandleDrawing.xRay) — selection visibility only; not a fleet prefab attach API.",
+    "nullOk": "Leave vfxRef/animationClip null until wired by wire-skill-prefab-anims or Casting lab."
   }
 }
