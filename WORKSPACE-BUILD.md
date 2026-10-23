@@ -8,4 +8,4 @@ Each build offers to launch the completed program. Windows installers have an as
 
 Cleanup terminates processes owned by this project and removes managed D build runs. It preserves C source, E outputs and persistent data outside the grouped D project folder. UAC is requested only when the cleanup option is chosen.
 
-Build scripts in package.json enter this workflow; their original commands are preserved in the manifest and restored in the D snapshot. No build was run during configuration.
+This workflow is opt-in and Windows-only: run `npm run workspace:build` or `npm run workspace:menu`. The normal `build` and `build:*` scripts in package.json are unchanged and run on any OS (CI, Vercel). `.workspace-build.json`, `.storage/profile.json` and `.storage/device.json` are per-machine files and are gitignored.
