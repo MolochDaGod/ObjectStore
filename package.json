@@ -239,8 +239,9 @@
     "buildings:bake": "node ./scripts/bake-island-buildings.mjs",
     "buildings:wire": "node ./scripts/bake-island-buildings.mjs --skip-bake",
     "buildings:upload": "node ./scripts/bake-island-buildings.mjs --upload",
-    "buildings:verify": "node ./scripts/verify-island-buildings.mjs"
-
+    "buildings:verify": "node ./scripts/verify-island-buildings.mjs",
+    "workspace:build": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\grudgegit\\ObjectStore/Build-Workspace.ps1\"",
+    "workspace:menu": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\grudgegit\\ObjectStore/Project-Console.ps1\""
   },
   "repository": {
     "type": "git",
