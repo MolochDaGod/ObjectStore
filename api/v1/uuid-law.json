@@ -1,6 +1,6 @@
 {
   "id": "uuid-law",
-  "version": "2026-09-06",
+  "version": "2026-11-04",
   "title": "Grudge UUID families — one law, do not mix",
   "wiki": "https://info.grudge-studio.com/wiki.html",
   "docs": [
@@ -28,7 +28,10 @@
       "format": "SKIL-XXXX-XXXX-XXXX",
       "algorithm": "sha1(grudge-skill:{id})",
       "catalog": "/api/v1/master-weaponSkills.json",
-      "legacy": "uuid / uuidLegacy"
+      "mirror": "uuid equals grudgeUuid. Timestamp SKIL-YYYYMMDD rows are legacy only.",
+      "legacy": "uuidLegacy",
+      "classGates": false,
+      "specialCraft": "WAND, SCYTHE, and MACE are the only class-made weapons. Slot skill recipes use this same SKIL law. They are not a second UUID family and not an equip lock on other weapons."
     },
     "icon": {
       "field": "grudgeUuid",
@@ -38,9 +41,6 @@
       "pathIndex": "/api/v1/icon-path-index.json",
       "cdn": "https://assets.grudge-studio.com/game-assets/icons/..."
     },
-    "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*" },
-    "weaponPrefab": { "catalog": "/api/v1/master-weapon-prefabs.json" },
-    "entityPrefab": { "catalog": "/api/v1/warlords-entity-prefabs.json", "prefix": "PFAB-*" },
     "itemDefinition": { "catalog": "/api/v1/master-items.json", "prefix": "ITEM-*", "also": ["FOOD-*", "POTN-*", "CONS-*"] },
     "materialDefinition": { "catalog": "/api/v1/master-materials.json", "prefix": "MATL-*" },
     "recipeDefinition": { "catalog": "/api/v1/master-recipes.json", "prefix": "RECP-*" },
@@ -103,14 +103,13 @@
     "SKIL-": "skill definition",
     "ICON-": "icon asset",
     "ITEM-": "item / weapon prefab definition (not bag instance)",
-    "PFAB-": "entity prefab",
+    "PFAB-": "entity / building prefab",
     "FOOD-": "consumable food definition (master-items)",
     "POTN-": "potion definition (master-items)",
     "CONS-": "consumable definition (master-items)",
     "MATL-": "material definition (stack mats — account bag qty)",
     "RECP-": "recipe definition",
     "NODE-": "harvest node definition on maps (not a bag item)",
-    "PFAB-": "entity / building prefab on maps",
     "ATTR-": "attribute definition",
     "ENCH-": "enchant definition",
     "VFX-": "effect / overlay definition (prefab.vfxRef)",
@@ -120,7 +119,6 @@
     "https://info.grudge-studio.com/api/v1/uuid-law.json",
     "https://info.grudge-studio.com/api/v1/game-data-manifest.json",
     "https://info.grudge-studio.com/api/v1/fleet-wiring.json"
-  ]
   ],
   "verified": {
     "date": "2026-09-06",
