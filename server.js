@@ -247,7 +247,7 @@ app.get('/api/v1/weapon-skills', (req, res) => {
   if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded. Run: node scripts/export-weapon-skills.mjs');
   const { tier, className } = req.query;
   let types = weaponSkillsData.weaponTypes;
-  if (className) {
+  if (className && weaponSkillsData.classWeaponRestrictions !== false && weaponSkillsData.classRestrictions) {
     const allowed = weaponSkillsData.classRestrictions[className];
     if (allowed) types = types.filter(wt => allowed.includes(wt.id));
   }
@@ -255,7 +255,7 @@ app.get('/api/v1/weapon-skills', (req, res) => {
     version: weaponSkillsData.version,
     totalWeaponTypes: types.length,
     totalSkills: types.reduce((s, w) => s + w.totalSkills, 0),
-    classRestrictions: weaponSkillsData.classRestrictions,
+    classWeaponRestrictions: weaponSkillsData.classWeaponRestrictions === false ? false : true,
     weaponTypes: types.map(wt => ({
       id: wt.id, name: wt.name, icon: wt.icon, classes: wt.classes, totalSkills: wt.totalSkills,
     })),
@@ -291,12 +291,18 @@ app.get('/api/v1/weapon-skills/search', (req, res) => {
 app.get('/api/v1/weapon-skills/class/:className', (req, res) => {
   if (!weaponSkillsData) return jsonErr(res, 503, 'Weapon skills not loaded');
   const className = req.params.className;
-  const allowed = weaponSkillsData.classRestrictions[className];
-  if (!allowed) return jsonErr(res, 404, `Unknown class: ${className}. Valid: ${Object.keys(weaponSkillsData.classRestrictions).join(', ')}`);
-  const types = weaponSkillsData.weaponTypes.filter(wt => allowed.includes(wt.id));
+  const gated = weaponSkillsData.classWeaponRestrictions !== false && weaponSkillsData.classRestrictions;
+  const allowed = gated ? weaponSkillsData.classRestrictions[className] : null;
+  if (gated && !allowed) {
+    return jsonErr(res, 404, `Unknown class: ${className}. Valid: ${Object.keys(weaponSkillsData.classRestrictions).join(', ')}`);
+  }
+  const types = allowed
+    ? weaponSkillsData.weaponTypes.filter(wt => allowed.includes(wt.id))
+    : weaponSkillsData.weaponTypes;
   jsonOk(res, {
     className,
-    allowedWeapons: allowed,
+    classWeaponRestrictions: weaponSkillsData.classWeaponRestrictions === false ? false : true,
+    allowedWeapons: types.map(wt => wt.id),
     totalWeaponTypes: types.length,
     totalSkills: types.reduce((s, w) => s + w.totalSkills, 0),
     weaponTypes: types,

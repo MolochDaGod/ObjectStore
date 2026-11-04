@@ -714,7 +714,10 @@ class GrudgeSDK {
       if (res.ok) return res.json();
     } catch { /* fall through */ }
     const d = await this.getWeaponSkills();
-    const allowed = d.classRestrictions?.[className] || [];
+    if (d.classWeaponRestrictions === false || !d.classRestrictions) {
+      return { className, classWeaponRestrictions: false, weaponTypes: d.weaponTypes || [] };
+    }
+    const allowed = d.classRestrictions[className] || [];
     return { className, weaponTypes: (d.weaponTypes || []).filter(wt => allowed.includes(wt.id)), classRestrictions: d.classRestrictions };
   }
   async getWeaponSkill(skillId) {

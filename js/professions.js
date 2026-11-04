@@ -329,13 +329,10 @@
   function renderWeapons() {
     el("weaponTypesGrid").innerHTML = wTypes
       .map((w) => {
-        const restrict = w.classRestrictions || w.classes || [];
         return `
         <div style="background:var(--card);border:1px solid var(--gold-dim);border-radius:4px;padding:12px 14px;">
           <div style="font-family:var(--font-heading);font-size:0.9em;color:var(--gold);margin-bottom:6px;">${w.name || w.id}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;">
-            ${restrict.map((c) => `<span style="background:rgba(255,255,255,0.05);color:var(--muted);padding:1px 7px;border-radius:3px;font-size:0.7em;font-family:var(--font-mono);">${c}</span>`).join("")}
-          </div>
+          <div style="color:var(--muted);font-size:0.75em;font-family:var(--font-mono);">${w.totalSkills || 0} skills</div>
         </div>`;
       })
       .join("");

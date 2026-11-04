@@ -662,7 +662,6 @@
       justify-content: center;
       margin-bottom: 16px;
     }
-    .wst-class-allow { margin: 8px 0 0; font-size: 0.82em; color: var(--text-muted); letter-spacing: 0.02em; }
     .wst-preview-bar label {
       font-family: var(--font-heading);
       color: var(--text-gold);
@@ -1079,12 +1078,6 @@ function renderWeaponInfo() {
   const base = getActiveTypeDef();
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
   let html = WeaponSkillTree.renderWeaponInfoHeader(base, variant, { asset });
-  const who = Object.entries(weaponCatalog?.classRestrictions || {})
-    .filter(([, types]) => types.includes(activeWeapon))
-    .map(([name]) => name);
-  if (who.length) {
-    html += `<div class="wst-class-allow">Classes: ${who.join(' · ')} — from master-weaponSkills.json classRestrictions</div>`;
-  }
   if (variant?.isT0) html += WeaponSkillTree.renderT0CraftBanner(variant);
   el.innerHTML = html;
 }
