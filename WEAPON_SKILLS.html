@@ -654,6 +654,14 @@
       gap: 8px;
       cursor: pointer;
     }
+    .wst-special-craft {
+      margin: 8px auto 0;
+      max-width: 720px;
+      font-size: 0.82em;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .wst-special-craft strong { color: var(--text-gold); font-weight: 600; }
     .wst-preview-bar {
       display: flex;
       flex-wrap: wrap;
@@ -1068,6 +1076,17 @@ function renderPreviewBar() {
   });
 }
 
+function renderSpecialCraft(typeId) {
+  const wt = (weaponCatalog?.weaponTypes || []).find((w) => w.id === typeId);
+  const craft = wt?.craft;
+  if (!wt?.special || !craft) return '';
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const recipes = (craft.slotRecipes || [])
+    .map((r) => esc(r.name))
+    .join(' · ');
+  return `<div class="wst-special-craft"><strong>Class-made.</strong> ${esc(craft.how)} Slot recipes: ${recipes}.</div>`;
+}
+
 function renderWeaponInfo() {
   const el = document.getElementById('weaponInfo');
   if (!el) return;
@@ -1078,6 +1097,7 @@ function renderWeaponInfo() {
   const base = getActiveTypeDef();
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
   let html = WeaponSkillTree.renderWeaponInfoHeader(base, variant, { asset });
+  html += renderSpecialCraft(activeWeapon);
   if (variant?.isT0) html += WeaponSkillTree.renderT0CraftBanner(variant);
   el.innerHTML = html;
 }

@@ -1,10 +1,110 @@
 {
-  "version": "3.2.3",
+  "version": "3.2.4",
   "generated": "2026-09-05T23:02:09.241Z",
   "totalWeaponTypes": 18,
   "totalArtifactWeapons": 1,
   "totalSkills": 300,
   "classWeaponRestrictions": false,
+  "specialWeapons": {
+    "count": 3,
+    "ids": [
+      "WAND",
+      "SCYTHE",
+      "MACE"
+    ],
+    "rule": "Only these three weapons are class-made. The classes that use them craft the weapon and infuse one skill recipe into each slot. No other weapon is class-gated.",
+    "weapons": [
+      {
+        "id": "WAND",
+        "madeBy": [
+          "Mage",
+          "Priest"
+        ],
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "wand_missile",
+            "name": "Magic Missile"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "wand_blink",
+            "name": "Blink"
+          },
+          {
+            "slot": "ability",
+            "skillId": "wand_chain",
+            "name": "Chain Lightning"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "wand_meteor_shower",
+            "name": "Meteor Shower"
+          }
+        ]
+      },
+      {
+        "id": "SCYTHE",
+        "madeBy": [
+          "Ranger",
+          "Thief"
+        ],
+        "station": "engineer bench",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "scythe_reap",
+            "name": "Reaping Slash"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "scythe_shadow_step",
+            "name": "Shadow Step"
+          },
+          {
+            "slot": "ability",
+            "skillId": "scythe_spiral",
+            "name": "Death Spiral"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "scythe_grim_reaper",
+            "name": "Grim Reaper"
+          }
+        ]
+      },
+      {
+        "id": "MACE",
+        "madeBy": [
+          "Worge",
+          "Verduror"
+        ],
+        "station": "alchemy bowl",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "mace_holy_strike",
+            "name": "Holy Strike"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "mace_sanctify",
+            "name": "Sanctify"
+          },
+          {
+            "slot": "ability",
+            "skillId": "mace_smite",
+            "name": "Smite"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "mace_divine_wrath",
+            "name": "Divine Wrath"
+          }
+        ]
+      }
+    ]
+  },
   "weaponTypes": [
     {
       "id": "SWORD",
@@ -19573,7 +19673,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "attack"
+              "animRole": "attack",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-FA77-CF5C-3401",
@@ -19698,7 +19799,8 @@
               "animPack": "2h_melee",
               "animRole": "attack"
             }
-          ]
+          ],
+          "recipeSkillId": "mace_holy_strike"
         },
         {
           "type": "secondary",
@@ -19765,7 +19867,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "idle"
+              "animRole": "idle",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-E657-A187-D1E8",
@@ -19890,7 +19993,8 @@
               "animPack": "2h_melee",
               "animRole": "heavy"
             }
-          ]
+          ],
+          "recipeSkillId": "mace_sanctify"
         },
         {
           "type": "ability",
@@ -19957,7 +20061,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "cast"
+              "animRole": "cast",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-2EF7-196E-627D",
@@ -20145,7 +20250,8 @@
               "animPack": "2h_melee",
               "animRole": "skill1"
             }
-          ]
+          ],
+          "recipeSkillId": "mace_smite"
         },
         {
           "type": "ultimate",
@@ -20213,7 +20319,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "idle"
+              "animRole": "idle",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-D444-D246-3779",
@@ -20276,7 +20383,8 @@
               "animPack": "2h_melee",
               "animRole": "attack"
             }
-          ]
+          ],
+          "recipeSkillId": "mace_divine_wrath"
         }
       ],
       "uuid": "ITEM-20260621232130-000DBD-92FA6ED1",
@@ -20288,6 +20396,37 @@
         "ability": "Slot 3 · Smite",
         "ultimate": "Slot 4 · Signature",
         "passive": "Slot 5 · Passives"
+      },
+      "special": true,
+      "craft": {
+        "madeBy": [
+          "Worge",
+          "Verduror"
+        ],
+        "station": "alchemy bowl",
+        "how": "Worge and Verduror craft the grove mace at the alchemy bowl and infuse one skill recipe into each slot.",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "mace_holy_strike",
+            "name": "Holy Strike"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "mace_sanctify",
+            "name": "Sanctify"
+          },
+          {
+            "slot": "ability",
+            "skillId": "mace_smite",
+            "name": "Smite"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "mace_divine_wrath",
+            "name": "Divine Wrath"
+          }
+        ]
       }
     },
     {
@@ -20361,7 +20500,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "magic",
-              "animRole": "cast"
+              "animRole": "cast",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-DA07-BFBD-31C0",
@@ -20485,7 +20625,8 @@
               "animPack": "magic",
               "animRole": "cast"
             }
-          ]
+          ],
+          "recipeSkillId": "wand_missile"
         },
         {
           "type": "secondary",
@@ -20548,7 +20689,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "magic",
-              "animRole": "heavy"
+              "animRole": "heavy",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-29AD-E519-3DDC",
@@ -20671,7 +20813,8 @@
               "animPack": "magic",
               "animRole": "heavy"
             }
-          ]
+          ],
+          "recipeSkillId": "wand_blink"
         },
         {
           "type": "ability",
@@ -20736,7 +20879,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "magic",
-              "animRole": "skill1"
+              "animRole": "skill1",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-9ABA-5C7A-C69C",
@@ -20980,7 +21124,8 @@
               "animPack": "magic",
               "animRole": "cast"
             }
-          ]
+          ],
+          "recipeSkillId": "wand_chain"
         },
         {
           "type": "ultimate",
@@ -21046,7 +21191,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "magic",
-              "animRole": "skill4"
+              "animRole": "skill4",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-417A-E6B9-25D0",
@@ -21109,7 +21255,8 @@
               "animPack": "magic",
               "animRole": "skill2"
             }
-          ]
+          ],
+          "recipeSkillId": "wand_meteor_shower"
         }
       ],
       "uuid": "ITEM-20260621232130-000DCA-99331940",
@@ -21460,6 +21607,36 @@
         "ability": "Slot 3 · Arcane arts",
         "ultimate": "Slot 4 · Signature",
         "passive": "Slot 5 · Passives"
+      },
+      "special": true,
+      "craft": {
+        "madeBy": [
+          "Mage",
+          "Priest"
+        ],
+        "how": "Mage and Priest craft the wand and infuse one skill recipe into each slot.",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "wand_missile",
+            "name": "Magic Missile"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "wand_blink",
+            "name": "Blink"
+          },
+          {
+            "slot": "ability",
+            "skillId": "wand_chain",
+            "name": "Chain Lightning"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "wand_meteor_shower",
+            "name": "Meteor Shower"
+          }
+        ]
       }
     },
     {
@@ -21532,7 +21709,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.674Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "attack"
+              "animRole": "attack",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-FC66-EC05-AF0B",
@@ -21656,7 +21834,8 @@
               "animPack": "2h_melee",
               "animRole": "heavy"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_reap"
         },
         {
           "type": "secondary",
@@ -21720,7 +21899,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.675Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "heavy"
+              "animRole": "heavy",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-CB98-01BB-959F",
@@ -21846,7 +22026,8 @@
               "animPack": "2h_melee",
               "animRole": "heavy"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_shadow_step"
         },
         {
           "type": "ability",
@@ -21913,7 +22094,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.675Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "cast"
+              "animRole": "cast",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-B8FC-328E-95D7",
@@ -22101,7 +22283,8 @@
               "animPack": "2h_melee",
               "animRole": "cast"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_spiral"
         },
         {
           "type": "ultimate",
@@ -22167,7 +22350,8 @@
               "prefabWiredAt": "2026-10-10T22:20:24.675Z",
               "prefabWireSource": "grudge6-prefab-anim-rules",
               "animPack": "2h_melee",
-              "animRole": "skill4"
+              "animRole": "skill4",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-6854-3EA0-5F60",
@@ -22230,7 +22414,8 @@
               "animPack": "2h_melee",
               "animRole": "skill4"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_grim_reaper"
         }
       ],
       "uuid": "ITEM-20260621232130-000DE5-A61195C2",
@@ -22242,6 +22427,37 @@
         "ability": "Slot 3 · Necrotic",
         "ultimate": "Slot 4 · Signature",
         "passive": "Slot 5 · Passives"
+      },
+      "special": true,
+      "craft": {
+        "madeBy": [
+          "Ranger",
+          "Thief"
+        ],
+        "station": "engineer bench",
+        "how": "Ranger and Thief craft the combat scythe at the engineer bench and infuse one skill recipe into each slot. The harvest scythe stays a flower tool.",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "scythe_reap",
+            "name": "Reaping Slash"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "scythe_shadow_step",
+            "name": "Shadow Step"
+          },
+          {
+            "slot": "ability",
+            "skillId": "scythe_spiral",
+            "name": "Death Spiral"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "scythe_grim_reaper",
+            "name": "Grim Reaper"
+          }
+        ]
       }
     },
     {
@@ -24237,7 +24453,8 @@
               "iconUuid": "ICON-2C75-9069-8DE5",
               "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Scythe_01.png",
               "weaponType": "SCYTHE",
-              "slotType": "primary"
+              "slotType": "primary",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-FC66-EC05-AF0B",
@@ -24351,7 +24568,8 @@
               "weaponType": "SCYTHE",
               "slotType": "primary"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_reap"
         },
         {
           "type": "secondary",
@@ -24410,7 +24628,8 @@
               "iconUuid": "ICON-FE5E-49F8-F185",
               "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/misc/smoke.png",
               "weaponType": "SCYTHE",
-              "slotType": "secondary"
+              "slotType": "secondary",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-CB98-01BB-959F",
@@ -24527,7 +24746,8 @@
               "weaponType": "SCYTHE",
               "slotType": "secondary"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_shadow_step"
         },
         {
           "type": "ability",
@@ -24589,7 +24809,8 @@
               "iconUuid": "ICON-75ED-E509-D039",
               "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Scythe_06.png",
               "weaponType": "SCYTHE",
-              "slotType": "ability"
+              "slotType": "ability",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-B8FC-328E-95D7",
@@ -24763,7 +24984,8 @@
               "weaponType": "SCYTHE",
               "slotType": "ability"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_spiral"
         },
         {
           "type": "ultimate",
@@ -24824,7 +25046,8 @@
               "iconUuid": "ICON-45E0-2F06-0739",
               "iconUrl": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Scythe_07.png",
               "weaponType": "SCYTHE",
-              "slotType": "ultimate"
+              "slotType": "ultimate",
+              "slotRecipe": true
             },
             {
               "uuid": "SKIL-6854-3EA0-5F60",
@@ -24882,10 +25105,42 @@
               "weaponType": "SCYTHE",
               "slotType": "ultimate"
             }
-          ]
+          ],
+          "recipeSkillId": "scythe_grim_reaper"
         }
       ],
-      "uuid": "ITEM-20260621232130-000DF2-703D3C1D"
+      "uuid": "ITEM-20260621232130-000DF2-703D3C1D",
+      "special": true,
+      "craft": {
+        "madeBy": [
+          "Ranger",
+          "Thief"
+        ],
+        "station": "engineer bench",
+        "how": "Ranger and Thief craft the combat scythe at the engineer bench and infuse one skill recipe into each slot. The harvest scythe stays a flower tool.",
+        "slotRecipes": [
+          {
+            "slot": "primary",
+            "skillId": "scythe_reap",
+            "name": "Reaping Slash"
+          },
+          {
+            "slot": "secondary",
+            "skillId": "scythe_shadow_step",
+            "name": "Shadow Step"
+          },
+          {
+            "slot": "ability",
+            "skillId": "scythe_spiral",
+            "name": "Death Spiral"
+          },
+          {
+            "slot": "ultimate",
+            "skillId": "scythe_grim_reaper",
+            "name": "Grim Reaper"
+          }
+        ]
+      }
     }
   ],
   "offhandMechanics": {
