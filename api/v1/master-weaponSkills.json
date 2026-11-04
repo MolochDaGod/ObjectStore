@@ -1,5 +1,5 @@
 {
-  "version": "3.2.1",
+  "version": "3.2.2",
   "generated": "2026-09-05T23:02:09.241Z",
   "totalWeaponTypes": 18,
   "totalArtifactWeapons": 1,
@@ -24,7 +24,6 @@
       "STAFF",
       "TOME",
       "WAND",
-      "MACE",
       "CLAW"
     ],
     "Priest": [
@@ -40,13 +39,15 @@
       "DAGGER",
       "GREATSWORD",
       "SPEAR",
-      "CLAW"
+      "CLAW",
+      "SCYTHE"
     ],
     "Thief": [
       "DAGGER",
       "SWORD",
       "GUN",
-      "CLAW"
+      "CLAW",
+      "SCYTHE"
     ],
     "Worge": [
       "STAFF",
@@ -54,20 +55,84 @@
       "DAGGER",
       "BOW",
       "HAMMER",
+      "MACE",
       "CLAW"
     ],
     "Verduror": [
       "STAFF",
       "HAMMER",
+      "MACE",
       "CLAW"
     ]
+  },
+  "restrictionSource": {
+    "catalog": "api/v1/classes.json",
+    "catalogVersion": "1.2.2",
+    "equipment": "api/v1/class-equipment-rules.json",
+    "rule": "Skill-tree classes are classes.json weaponTypes plus that class unique weapon and class item. Claws are every class. Harvest TOOL is not class-gated.",
+    "corrections": [
+      "MACE is the Worge and Verduror grove weapon. Mage does not use maces.",
+      "SCYTHE is the Ranger and Thief combat scythe. It is not a Warrior or Worge weapon.",
+      "TOME and WAND belong to Mage and Priest.",
+      "GUN covers Ranger guns and Thief pistols.",
+      "GREATSWORD and GREATAXE include Raider."
+    ],
+    "sharedTrees": {
+      "HAMMER": {
+        "Warrior": [
+          "hammers1h",
+          "hammers2h"
+        ],
+        "Raider": [
+          "hammers2h"
+        ],
+        "Worge": [
+          "hammers1h"
+        ],
+        "Verduror": [
+          "hammers1h"
+        ]
+      },
+      "STAFF": {
+        "Mage": [
+          "fireStaves",
+          "frostStaves",
+          "holyStaves",
+          "lightningStaves",
+          "arcaneStaves",
+          "natureStaves"
+        ],
+        "Priest": [
+          "holyStaves",
+          "arcaneStaves"
+        ],
+        "Worge": [
+          "fireStaves",
+          "natureStaves"
+        ],
+        "Verduror": [
+          "natureStaves"
+        ]
+      },
+      "GUN": {
+        "Ranger": [
+          "guns"
+        ],
+        "Thief": [
+          "pistols"
+        ]
+      }
+    }
   },
   "weaponTypes": [
     {
       "id": "SWORD",
       "name": "Sword",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Sword_01.png",
-      "classes": [],
+      "classes": [
+        "Warrior",
+        "Thief"
+      ],
       "classification": "standard",
       "totalSkills": 13,
       "slots": [
@@ -1254,7 +1319,9 @@
       "id": "AXE",
       "name": "Axe",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Axe_01.png",
-      "classes": [],
+      "classes": [
+        "Warrior"
+      ],
       "classification": "standard",
       "totalSkills": 12,
       "slots": [
@@ -2268,7 +2335,10 @@
       "id": "BOW",
       "name": "Bow",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Bow_01.png",
-      "classes": [],
+      "classes": [
+        "Ranger",
+        "Worge"
+      ],
       "classification": "standard",
       "totalSkills": 10,
       "slots": [
@@ -3346,7 +3416,9 @@
       "id": "CROSSBOW",
       "name": "Crossbow",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Crossbow_01.png",
-      "classes": [],
+      "classes": [
+        "Ranger"
+      ],
       "classification": "standard",
       "totalSkills": 12,
       "slots": [
@@ -4423,7 +4495,8 @@
       "name": "Gun",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/weapons/blackpowder.png",
       "classes": [
-        "Ranger"
+        "Ranger",
+        "Thief"
       ],
       "classification": "standard",
       "totalSkills": 12,
@@ -5552,7 +5625,11 @@
       "id": "DAGGER",
       "name": "Dagger",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Dagger_01.png",
-      "classes": [],
+      "classes": [
+        "Ranger",
+        "Thief",
+        "Worge"
+      ],
       "classification": "standard",
       "totalSkills": 13,
       "slots": [
@@ -6736,7 +6813,12 @@
       "id": "STAFF",
       "name": "Staff",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/staff_1.png",
-      "classes": [],
+      "classes": [
+        "Mage",
+        "Priest",
+        "Worge",
+        "Verduror"
+      ],
       "classification": "standard",
       "totalSkills": 13,
       "slots": [
@@ -9634,7 +9716,12 @@
       "id": "HAMMER",
       "name": "Hammer",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Hammer_01.png",
-      "classes": [],
+      "classes": [
+        "Warrior",
+        "Raider",
+        "Worge",
+        "Verduror"
+      ],
       "classification": "standard",
       "totalSkills": 12,
       "slots": [
@@ -13304,6 +13391,7 @@
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Sword_27.png",
       "classes": [
         "Warrior",
+        "Raider",
         "Ranger"
       ],
       "classification": "standard",
@@ -14467,7 +14555,8 @@
       "name": "Greataxe",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Axe_30.png",
       "classes": [
-        "Warrior"
+        "Warrior",
+        "Raider"
       ],
       "classification": "standard",
       "totalSkills": 18,
@@ -16708,7 +16797,7 @@
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Book_1.png",
       "classes": [
         "Mage",
-        "Worge"
+        "Priest"
       ],
       "classification": "offhandCoupling",
       "role": "offhandCoupling",
@@ -19580,8 +19669,8 @@
       "name": "Mace",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Hammer_21.png",
       "classes": [
-        "Mage",
-        "Worge"
+        "Worge",
+        "Verduror"
       ],
       "classification": "standard",
       "totalSkills": 12,
@@ -20370,7 +20459,8 @@
       "name": "Wand",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/staff_34.png",
       "classes": [
-        "Mage"
+        "Mage",
+        "Priest"
       ],
       "classification": "standard",
       "totalSkills": 13,
@@ -21544,8 +21634,8 @@
       "name": "Scythe",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Scythe_01.png",
       "classes": [
-        "Worge",
-        "Warrior"
+        "Ranger",
+        "Thief"
       ],
       "classification": "standard",
       "totalSkills": 12,
@@ -22765,9 +22855,13 @@
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Dagger_01.png",
       "classes": [
         "Warrior",
+        "Raider",
         "Mage",
+        "Priest",
         "Ranger",
-        "Worge"
+        "Thief",
+        "Worge",
+        "Verduror"
       ],
       "classification": "standard",
       "totalSkills": 22,
@@ -24256,8 +24350,8 @@
       "name": "Scythe",
       "icon": "https://assets.grudge-studio.com/game-assets/icons/pack/weapons/Scythe_01.png",
       "classes": [
-        "Worge",
-        "Warrior"
+        "Ranger",
+        "Thief"
       ],
       "classification": "artifact",
       "tierSystem": false,
@@ -25064,7 +25158,7 @@
     "animPacks": "sword_shield | longbow | magic | pistol | rifle | unarmed",
     "oneMixer": true
   },
-  "updated": "2026-10-10",
+  "updated": "2026-11-03",
   "iconPassAt": "2026-10-10T22:20:22.949Z",
   "prefabAnimWiredAt": "2026-10-10T22:20:24.675Z",
   "prefabAnimWireVersion": 1,
