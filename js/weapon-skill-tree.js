@@ -3,11 +3,16 @@
  *
  * Hotbar (T1+, Jonathan version A / shift — page display only):
  *   Key 1 = basic attack / combo, same action as focus-LMB (Spawn requestBasicAttack).
- *   Old slots 1–4 display on keys 2–5, except TOOL, SHIELD, and TOME, which stop
- *   at key 4 (TOOL has no slot 4; SHIELD and TOME are off-hand only).
- *   Slot 5 (unassigned, no hotbar key) lists each type's type-ultimate skill
- *   from Spawn WEAPON_STYLES TYPE:* src5 at b6103022691d3f8edcb2d99cf2cf0d7fc3575acd.
+ *   After the shift: key 1 = basic attack, key 2 = old Button 1, key 3 = old
+ *   Button 2, key 4 = old Button 3, key 5 = old Button 4.
+ *   Old Button 4 is the style picks from Spawn WEAPON_STYLES TYPE:* ["4"]
+ *   at b6103022691d3f8edcb2d99cf2cf0d7fc3575acd (e.g. SWORD crimson_reprisal,
+ *   ancestral_curse, wrath_of_kin).
+ *   Old Button 5 is the type-ultimate (WEAPON_STYLES TYPE:* ["5"], src5),
+ *   shown in a "No key yet" list — placement not decided. Not on key 5.
  *   Passives are in their own column with no hotbar key.
+ *   TOOL is not in WEAPON_STYLES and has no Button 4 or 5, so it stops at key 4.
+ *   SHIELD and TOME have both ["4"] and ["5"] and follow the same mapping.
  *   Labels for key 1 follow ALE's Spawn main b6103022 notes in
  *   /workspace/skill-tree/weapon-slot1.md — family combo, bow draw, gun shot,
  *   caster bolt (not the tree's Fire Bolt). Nothing is invented beyond that note.
@@ -102,16 +107,43 @@
     passive: 'Passives · no hotbar key',
   };
 
-  /** TOOL has no slot 4; SHIELD and TOME are off-hand only. None of the three shift past key 4. */
-  const STOP_AT_KEY4 = new Set(['TOOL', 'SHIELD', 'TOME']);
+  /** TOOL is not in WEAPON_STYLES and has no Button 4 or 5. It stops at key 4. */
+  const STOP_AT_KEY4 = new Set(['TOOL']);
 
   /**
-   * TYPE:* slot 5, src5: 'type-ultimate', from Spawn WEAPON_STYLES at
-   * b6103022691d3f8edcb2d99cf2cf0d7fc3575acd (main, not a draft branch).
+   * Old Button 4 — style picks. Spawn WEAPON_STYLES TYPE:* ["4"] at
+   * b6103022691d3f8edcb2d99cf2cf0d7fc3575acd (main). Ids only; names come from the catalog.
+   * TOOL has no entry. Catalog ids are not edited.
+   */
+  const STYLE_PICKS_BY_TYPE = {
+    SWORD: ['sword_crimson_reprisal', 'sword_ancestral_curse', 'sword_wrath_of_kin'],
+    AXE: ['axe_reaping_slash', 'axe_apocalypse_cleave'],
+    BOW: ['bow_hellfire_barrage', 'bow_storm_of_arrows', 'bow_arrow_rain'],
+    CROSSBOW: ['crossbow_crippling_shot', 'xbow_sweeping_bolt'],
+    GUN: ['gun_demon_blast', 'gun_blackpowder_fury', 'gun_storm_blast'],
+    DAGGER: ['dagger_deathgiver', 'dagger_raging_blades', 'dagger_bloodletter'],
+    STAFF: ['staff_verdant_cataclysm', 'staff_wild_apocalypse', 'staff_hellstorm'],
+    HAMMER: ['hammer_seismic_slam', 'hammer_vengeful_slam'],
+    SHIELD: ['shield_wraith_barrage', 'shield_broken_covenant', 'shield_last_of_the_line'],
+    GREATSWORD: ['greatsword_doom_cleave', 'greatsword_grudge_vortex', 'greatsword_hellbrand'],
+    GREATAXE: ['greataxe_hellcleave', 'greataxe_rampage_cleave', 'ga_iron_rend'],
+    SPEAR: ['spear_storm'],
+    TOME: [
+      'tome_flame_wave_fireball_inferno_shield_crimson_surge_inferno_page',
+      'tome_flame_wave_fireball_inferno_shield_blaze_fury_wrath_page',
+      'tome_ice_nova_frost_lance_glacial_shield_frozen_surge_glacier_page',
+    ],
+    MACE: ['mace_divine_wrath'],
+    WAND: ['wand_meteor_shower'],
+    SCYTHE: ['scythe_grim_reaper'],
+    CLAW: ['spider_form', 'bear_form', 'raptor_form'],
+  };
+
+  /**
+   * Old Button 5 — type-ultimate. WEAPON_STYLES TYPE:* ["5"], src5: 'type-ultimate',
+   * same SHA. Goes in the "No key yet" list, not on key 5.
    * Names are the ObjectStore catalog names for the same ids. Catalog ids are not edited.
-   * TOOL is not in WEAPON_STYLES. SHIELD and TOME have TYPE:* entries
-   * (shield_dragon_barrier, tome_lightning_strike_chain_shock_storm_shield_voltaic_surge_storm_page)
-   * but do not shift past key 4, so they are omitted from this page section.
+   * TOOL is not in WEAPON_STYLES (no row). SHIELD and TOME follow the same mapping.
    */
   const TYPE_ULTIMATE_BY_TYPE = {
     SWORD: { id: 'sword_nights_judgment', name: "Night's Judgment" },
@@ -122,9 +154,11 @@
     DAGGER: { id: 'dagger_death_blossom', name: 'Death Blossom' },
     STAFF: { id: 'staff_absolute_zero', name: 'Absolute Zero' },
     HAMMER: { id: 'hammer_mjolnir_strike', name: 'Mjolnir Strike' },
+    SHIELD: { id: 'shield_dragon_barrier', name: 'Dragon Barrier' },
     GREATSWORD: { id: 'gs_rift', name: 'Dimensional Rift' },
     GREATAXE: { id: 'ga_blood_reaper', name: 'Blood Reaper' },
     SPEAR: { id: 'spear_dragontail', name: 'Dragontail Sweep' },
+    TOME: { id: 'tome_lightning_strike_chain_shock_storm_shield_voltaic_surge_storm_page', name: '"Lightning Strike", "Chain Shock", "Storm Shield", "Voltaic Surge ", "Storm Page "' },
     MACE: { id: 'mace_armageddon', name: 'Armageddon' },
     WAND: { id: 'wand_singularity', name: 'Void Singularity' },
     SCYTHE: { id: 'scythe_apocalypse_harvest', name: 'Apocalypse Harvest' },
@@ -748,7 +782,7 @@
     return first ? [first] : [];
   }
 
-  /** T1+ display: 1 basic attack/combo, 2–5 = former slots 1–4 (2–4 only for TOOL/SHIELD/TOME). T0 unchanged. */
+  /** T1+ display: 1 basic, 2–4 = old Buttons 1–3, 5 = old Button 4 style picks. T0 unchanged. TOOL stops at key 4. */
   function applyVariantToTypeDef(typeDef, variant) {
     if (!typeDef) return null;
     const cloned = cloneTypeDef(typeDef);
@@ -757,7 +791,8 @@
         cloned.slots = cloned.slots.map((s) => ({
           ...s,
           label: slotLabelFor(cloned, s.type),
-        }));
+          skills: s.type === 'ultimate' ? stylePickSkills(cloned.id, s.skills) : s.skills,
+        })).filter((s) => s.type !== 'ultimate' || (s.skills && s.skills.length));
       }
       return withBasicAttackSlot(cloned);
     }
@@ -822,11 +857,13 @@
         skills: filterUniqueSkills(byType.ability.skills, variant, cloned.id),
       });
     }
-    if (byType.ultimate) {
+    const styleSkills = stylePickSkills(cloned.id, byType.ultimate?.skills);
+    if (styleSkills.length) {
       nextSlots.push({
-        ...byType.ultimate,
+        ...(byType.ultimate || { type: 'ultimate', unlockTier: 1 }),
+        type: 'ultimate',
         label: slotLabelFor(cloned, 'ultimate'),
-        skills: pickSignature(byType.ultimate.skills, variant),
+        skills: styleSkills,
       });
     }
 
@@ -921,9 +958,27 @@
    * Look up the TYPE:* type-ultimate in the raw catalog (same id, not invented).
    * Falls back to id + catalog name only — no invented numbers or effects.
    */
+  /**
+   * Catalog skills for WEAPON_STYLES TYPE:* ["4"], in that order.
+   * Only ids present in the catalog are returned — nothing is invented.
+   */
+  function stylePickSkills(typeId, fallbackPool) {
+    const id = String(typeId || '').toUpperCase();
+    const ids = STYLE_PICKS_BY_TYPE[id] || [];
+    if (!ids.length) return [];
+    const by = {};
+    for (const slot of (catalogById[id] || {}).slots || []) {
+      for (const sk of slot.skills || []) by[sk.id] = sk;
+    }
+    for (const sk of fallbackPool || []) {
+      if (sk && sk.id && !by[sk.id]) by[sk.id] = sk;
+    }
+    return ids.map((sid) => by[sid]).filter(Boolean);
+  }
+
   function lookupTypeUltimate(typeDef) {
     const id = String(typeDef?.id || '').toUpperCase();
-    if (stopsAtKey4(typeDef) || !TYPE_ULTIMATE_BY_TYPE[id]) return null;
+    if (!TYPE_ULTIMATE_BY_TYPE[id]) return null;
     const meta = TYPE_ULTIMATE_BY_TYPE[id];
     const raw = catalogById[id] || typeDef;
     for (const slot of raw?.slots || []) {
@@ -934,18 +989,18 @@
   }
 
   /**
-   * Unassigned Slot 5: the game's type-ultimate (WEAPON_STYLES TYPE:* src5), no hotbar key.
-   * Not shown for T0, or for TOOL / SHIELD / TOME (they stop at key 4).
+   * Old Button 5 (type-ultimate) — "No key yet". Placement not decided. Not on key 5.
+   * Not shown for T0 or for TOOL (no WEAPON_STYLES entry). SHIELD and TOME are included.
    */
   function renderTypeUltimateColumn(typeDef, opts = {}) {
-    if (!typeDef || isStarterPattern(typeDef) || stopsAtKey4(typeDef)) return '';
+    if (!typeDef || isStarterPattern(typeDef)) return '';
     const meta = TYPE_ULTIMATE_BY_TYPE[String(typeDef.id || '').toUpperCase()];
     if (!meta) return '';
     const skill = lookupTypeUltimate(typeDef);
     const asset = opts.asset || defaultAsset;
     const icon = skill ? asset(skill.iconUrl || skill.icon) : '';
     const desc = skill?.description || '';
-    return `<div class="wst-ultimate-column"><div class="slot-header" data-type="type-ultimate">Slot 5 · Type ultimate<span class="unlock-tag">no hotbar key</span></div>
+    return `<div class="wst-ultimate-column"><div class="slot-header" data-type="type-ultimate">No key yet<span class="unlock-tag">old Button 5 · type-ultimate · placement not decided</span></div>
       <div class="skill-card" data-slot="type-ultimate">
         <div class="skill-icon-row">${icon ? `<img src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}<span class="skill-name">${esc(skill?.name || meta.name)}</span></div>
         ${desc ? `<div class="skill-desc">${esc(desc)}</div>` : ''}
@@ -1383,7 +1438,9 @@
     SLOT_UI_LABELS,
     T0_SLOT_UI_LABELS,
     STOP_AT_KEY4,
+    STYLE_PICKS_BY_TYPE,
     TYPE_ULTIMATE_BY_TYPE,
+    stylePickSkills,
     stopsAtKey4,
     t1BarSlotsFor,
     BASIC_ATTACK_BY_TYPE,
