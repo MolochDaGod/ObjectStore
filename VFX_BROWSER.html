@@ -10,12 +10,15 @@
     :root {
       --bg: #0f1419; --card: #1a1f2e; --gold: #d4a84b; --gold-light: #f0d890;
       --text: #e8e6e3; --text-dim: #8b8685; --border: #3d3d3d; --code-bg: #0d1117;
+      --preview-bg: #0a0e14; --danger: #ef4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: dark; }
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
       background:
         radial-gradient(ellipse at 50% 0%, rgba(212,168,75,0.05) 0%, transparent 40%),
         radial-gradient(ellipse at 80% 90%, rgba(239,68,68,0.04) 0%, transparent 45%),
@@ -26,41 +29,57 @@
     .header-inner { max-width: 1400px; margin: 0 auto; }
     .back-link { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; }
     .back-link:hover { color: var(--gold); }
-    h1 { font-size: 1.8rem; background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 8px 0 4px; }
+    h1 { font-size: 1.8rem; background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 8px 0 4px; }
     .subtitle { color: var(--text-dim); font-size: 0.95rem; }
     .controls { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
-    .search-box { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-size: 0.9rem; width: 220px; }
+    .search-box { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-size: 0.9rem; width: min(220px, 100%); }
     .search-box:focus { outline: none; border-color: var(--gold); }
-    .cat-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
-    .pill { background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); padding: 5px 12px; border-radius: 16px; cursor: pointer; font-size: 0.78rem; transition: all 0.2s; white-space: nowrap; }
+    .cat-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0; }
+    .pill { background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); padding: 5px 12px; border-radius: 16px; cursor: pointer; font-size: 0.78rem; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
     .pill:hover { border-color: var(--gold); color: var(--text); }
     .pill.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
-    .stats-bar { display: flex; gap: 20px; color: var(--text-dim); font-size: 0.82rem; margin-top: 10px; }
+    .stats-bar { display: flex; gap: 20px; color: var(--text-dim); font-size: 0.82rem; margin-top: 10px; flex-wrap: wrap; }
     .stat-v { color: var(--gold); font-weight: bold; }
+    .stat-v.is-bad { color: var(--danger); }
     .main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-    .fx-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+    .fx-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; position: relative; min-width: 0; font-family: inherit; color: inherit; width: 100%; }
     .fx-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(212,168,75,0.15); }
-    .fx-card canvas { display: block; margin: 0 auto 8px; border-radius: 6px; background: #0a0e14; image-rendering: pixelated; }
+    .fx-card canvas,
+    .modal canvas {
+      display: block;
+      margin: 0 auto 8px;
+      border-radius: 6px;
+      background: var(--preview-bg);
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .modal canvas { margin: 0 auto 16px; border-radius: 8px; }
     .fx-name { font-size: 0.78rem; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .fx-meta { font-size: 0.68rem; color: var(--text-dim); }
     .fx-tags { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
     .fx-tag { font-size: 0.6rem; padding: 1px 5px; border-radius: 8px; background: rgba(212,168,75,0.15); color: var(--gold); }
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; }
+    .fx-missing-badge {
+      position: absolute; top: 8px; right: 8px;
+      font-size: 0.62rem; letter-spacing: 0.02em; text-transform: uppercase;
+      background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.45);
+      border-radius: 8px; padding: 1px 6px; display: none;
+    }
+    .fx-card.is-missing .fx-missing-badge { display: inline-block; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; padding: 16px; }
     .modal-bg.open { display: flex; }
-    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 620px; width: 92%; max-height: 85vh; overflow-y: auto; position: relative; }
-    .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 620px; width: min(92%, 620px); max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 6px; }
     .modal-close:hover { color: var(--text); }
-    .modal h2 { color: var(--gold); margin-bottom: 4px; }
-    .modal .sub { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 16px; }
-    .modal canvas { display: block; margin: 0 auto 16px; border-radius: 8px; background: #0a0e14; }
+    .modal h2 { color: var(--gold); margin-bottom: 4px; padding-right: 28px; overflow-wrap: anywhere; }
+    .modal .sub { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 16px; overflow-wrap: anywhere; }
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-    .detail-item { padding: 8px 12px; background: var(--bg); border-radius: 6px; }
+    .detail-item { padding: 8px 12px; background: var(--bg); border-radius: 6px; min-width: 0; }
     .detail-label { font-size: 0.72rem; color: var(--text-dim); }
-    .detail-val { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    .detail-val { font-size: 0.9rem; color: var(--text); font-weight: 500; overflow-wrap: anywhere; }
     .usage-section { margin-top: 16px; }
     .usage-section h3 { color: var(--gold); font-size: 0.95rem; margin-bottom: 8px; }
-    .usage-item { padding: 6px 10px; background: var(--bg); border-radius: 6px; margin-bottom: 4px; font-size: 0.82rem; display: flex; justify-content: space-between; }
+    .usage-item { padding: 6px 10px; background: var(--bg); border-radius: 6px; margin-bottom: 4px; font-size: 0.82rem; display: flex; justify-content: space-between; gap: 8px; }
     .usage-class { color: var(--gold); font-weight: 600; text-transform: capitalize; }
     .usage-role { color: var(--text-dim); font-size: 0.72rem; }
     .loading { text-align: center; padding: 60px; color: var(--text-dim); }
@@ -68,9 +87,19 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     footer { text-align: center; color: var(--text-dim); padding: 32px; border-top: 1px solid var(--border); margin-top: 40px; }
     footer a { color: var(--gold); text-decoration: none; }
+    .pill:focus-visible, .search-box:focus-visible, .fx-card:focus-visible, .modal-close:focus-visible, .back-link:focus-visible, footer a:focus-visible, .modal a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
     @media (max-width: 768px) {
       .header { padding: 16px; } .main { padding: 16px; }
       .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pill, .fx-card { transition: none; }
+      .fx-card:hover { transform: none; }
+      .spin { animation: none; }
     }
   </style>
 </head>
@@ -85,14 +114,15 @@
       <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">VFX Effects Browser</h1>
       <p class="subtitle">Animated battle effect sprites from GRUDA-Wars</p>
       <div class="controls">
-        <input type="text" class="search-box" id="search" placeholder="Search effects...">
-        <div class="cat-pills" id="pills"></div>
+        <input type="text" class="search-box" id="search" placeholder="Search effects..." autocomplete="off">
+        <div class="cat-pills" id="pills" role="tablist" aria-label="Effect categories"></div>
       </div>
       <div class="stats-bar">
         <span>Effects: <span class="stat-v" id="countFx">-</span></span>
         <span>Abilities: <span class="stat-v" id="countAb">-</span></span>
         <span>Categories: <span class="stat-v" id="countCat">-</span></span>
         <span>Showing: <span class="stat-v" id="countShow">-</span></span>
+        <span>Broken sheets: <span class="stat-v" id="countBroken">0</span></span>
       </div>
     </div>
   </header>
@@ -102,9 +132,9 @@
     <div class="grid" id="gridEl"></div>
   </main>
 
-  <div class="modal-bg" id="modalBg">
-    <div class="modal" id="modal">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
+  <div class="modal-bg" id="modalBg" aria-hidden="true">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+      <button type="button" class="modal-close" id="modalClose" aria-label="Close">&times;</button>
       <div id="modalContent"></div>
     </div>
   </div>
@@ -116,80 +146,472 @@
   <script src="./js/nav.js"></script>
   <script>
     const BASE = './api/v1';
-    const SRC_BASE = 'https://objectstore.grudge-studio.com';
-    let fxData = null, abData = null, activeCat = 'all', animFrames = {};
+    // Live page used objectstore.grudge-studio.com, but those /sprites paths 404.
+    // Relative sourceUrl values were resolved against info.grudge-studio.com, which
+    // returns the Info Hub HTML (200, text/html) instead of the sheet. Prefer the
+    // public CDN at assets.grudge-studio.com; fall back to JSON sourceBase
+    // (GitHub Pages) for sheets not yet on the CDN (currently retro_impact/*).
+    const SRC_BASE = 'https://assets.grudge-studio.com';
+    const PREVIEW_BG = '#0a0e14';
+    const FRAME_MS = 60;
+    const ALLOWED_BLENDS = new Set([
+      'source-over', 'source-in', 'source-out', 'source-atop',
+      'destination-over', 'destination-in', 'destination-out', 'destination-atop',
+      'lighter', 'copy', 'xor', 'multiply', 'screen', 'overlay',
+      'darken', 'lighten', 'color-dodge', 'color-burn',
+      'hard-light', 'soft-light', 'difference', 'exclusion',
+      'hue', 'saturation', 'color', 'luminosity'
+    ]);
 
-    // Featured categories to show as pills
+    let fxData = null, abData = null, activeCat = 'all';
+    let lastFocus = null, modalOpen = false, modalState = null, rafId = 0;
+
+    const imageCache = new Map();
+    const brokenUrls = new Set();
+    const visible = new Map();
+    const cardStates = new Set();
+
     const FEATURED_CATS = ['fire','ice','earth','lightning','arcane','holy','water','wind','dark','physical','melee','impact','projectile','aura','buff','debuff','heal','crit','retro','custom','pixel'];
+
+    const reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function esc(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function safeHttpUrl(value) {
+      if (value == null || value === '') return null;
+      try {
+        const url = new URL(String(value), SRC_BASE);
+        if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
+      } catch (e) { /* ignore invalid */ }
+      return null;
+    }
+
+    function sheetPath(fx) {
+      const raw = (fx && (fx.sourceUrl || fx.src)) || '';
+      if (!raw) return '';
+      if (/^https?:\/\//i.test(raw)) {
+        try { return new URL(raw).pathname + new URL(raw).search; } catch (e) { return raw; }
+      }
+      return raw.startsWith('/') ? raw : '/' + raw;
+    }
+
+    function fallbackBase() {
+      const raw = (fxData && fxData.sourceBase) || 'https://molochdagod.github.io/ObjectStore';
+      return String(raw).replace(/\/$/, '');
+    }
+
+    function sheetCandidates(fx) {
+      const raw = (fx && (fx.sourceUrl || fx.src)) || '';
+      if (/^https?:\/\//i.test(raw)) {
+        const u = safeHttpUrl(raw);
+        return u ? [u] : [];
+      }
+      const path = sheetPath(fx);
+      if (!path) return [];
+      const bases = [SRC_BASE];
+      const fb = fallbackBase();
+      if (fb && fb !== SRC_BASE) bases.push(fb);
+      const out = [];
+      for (const base of bases) {
+        const u = safeHttpUrl(base + path);
+        if (u && !out.includes(u)) out.push(u);
+      }
+      return out;
+    }
+
+    function sheetUrl(fx) {
+      for (const url of sheetCandidates(fx)) {
+        const entry = imageCache.get(url);
+        if (entry && entry.status === 'ok') return url;
+      }
+      return sheetCandidates(fx)[0] || null;
+    }
+
+    function positiveInt(value, fallback) {
+      const n = Number(value);
+      if (!Number.isFinite(n) || n <= 0) return fallback;
+      return Math.max(1, Math.floor(n));
+    }
+
+    function layout(fx, img) {
+      const rawFrames = positiveInt(fx && fx.frames, 1);
+      const hasCustom = fx && fx.cols != null && Number(fx.cols) > 0;
+      const cols = hasCustom
+        ? positiveInt(fx.cols, 1)
+        : Math.max(1, Math.round(Math.sqrt(rawFrames)) || 1);
+      const rows = (hasCustom && fx.rows != null && Number(fx.rows) > 0)
+        ? positiveInt(fx.rows, 1)
+        : Math.max(1, Math.ceil(rawFrames / cols));
+      const frames = Math.min(rawFrames, cols * rows);
+
+      const natW = img && img.naturalWidth ? img.naturalWidth : 0;
+      const natH = img && img.naturalHeight ? img.naturalHeight : 0;
+      let frameW, frameH;
+      if (hasCustom && Number(fx.frameW) > 0 && Number(fx.frameH) > 0) {
+        frameW = Number(fx.frameW);
+        frameH = Number(fx.frameH);
+      } else if (fx && Number(fx.size) > 0) {
+        frameW = Number(fx.size) / cols;
+        frameH = Number(fx.size) / cols;
+      } else if (natW && natH) {
+        frameW = natW / cols;
+        frameH = natH / rows;
+      } else {
+        frameW = 64;
+        frameH = 64;
+      }
+      if (!Number.isFinite(frameW) || frameW <= 0) frameW = 64;
+      if (!Number.isFinite(frameH) || frameH <= 0) frameH = 64;
+      frameW = Math.max(1, Math.round(frameW));
+      frameH = Math.max(1, Math.round(frameH));
+      return { frames, cols, rows, frameW, frameH, natW, natH };
+    }
+
+    function sourceRect(lay, frame) {
+      const max = Math.max(0, lay.frames - 1);
+      const f = Math.max(0, Math.min(frame, max));
+      const col = f % lay.cols;
+      const row = Math.floor(f / lay.cols);
+      if (row >= lay.rows) return null;
+      let sx = col * lay.frameW;
+      let sy = row * lay.frameH;
+      let sw = lay.frameW;
+      let sh = lay.frameH;
+      if (lay.natW && lay.natH) {
+        if (sx >= lay.natW || sy >= lay.natH) return null;
+        sw = Math.min(sw, lay.natW - sx);
+        sh = Math.min(sh, lay.natH - sy);
+        if (sw <= 0 || sh <= 0) return null;
+      }
+      return { sx, sy, sw, sh };
+    }
+
+    function blendMode(fx) {
+      const raw = fx && fx.blendMode;
+      if (!raw || raw === 'normal') return 'source-over';
+      return ALLOWED_BLENDS.has(raw) ? raw : 'source-over';
+    }
+
+    function currentDpr() {
+      const dpr = Number(window.devicePixelRatio);
+      return Number.isFinite(dpr) && dpr > 0 ? Math.min(4, Math.max(1, dpr)) : 1;
+    }
+
+    function setupCanvas(canvas, cssSize) {
+      const dpr = currentDpr();
+      const w = Math.max(1, Math.round(cssSize * dpr));
+      const h = Math.max(1, Math.round(cssSize * dpr));
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+      canvas.style.width = cssSize + 'px';
+      canvas.style.height = cssSize + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingQuality = 'low';
+      return ctx;
+    }
+
+    function fillBg(ctx, cssSize) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = PREVIEW_BG;
+      ctx.fillRect(0, 0, cssSize, cssSize);
+      ctx.restore();
+    }
+
+    function updateBrokenStat() {
+      const el = document.getElementById('countBroken');
+      if (!el) return;
+      el.textContent = String(brokenUrls.size);
+      el.classList.toggle('is-bad', brokenUrls.size > 0);
+    }
+
+    function markMissing(state, isMissing) {
+      if (state.card) state.card.classList.toggle('is-missing', isMissing);
+    }
+
+    function looksLikeImage(blob, buf) {
+      const type = (blob && blob.type) || '';
+      if (type.startsWith('image/')) return true;
+      if (!buf || buf.byteLength < 12) return false;
+      const b = new Uint8Array(buf);
+      if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
+      if (b[0] === 0xff && b[1] === 0xd8) return true;
+      if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
+      if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46) return true;
+      return false;
+    }
+
+    function loadImage(url) {
+      if (!url) {
+        return Promise.resolve({ status: 'error', img: null, url: '' });
+      }
+      let entry = imageCache.get(url);
+      if (entry) return entry.promise;
+      entry = { status: 'loading', img: null, url, promise: null };
+      entry.promise = new Promise((resolve) => {
+        const fail = () => {
+          if (entry.status !== 'error') {
+            entry.status = 'error';
+            entry.img = null;
+          }
+          resolve(entry);
+        };
+        const succeed = (img) => {
+          entry.status = 'ok';
+          entry.img = img;
+          resolve(entry);
+        };
+        fetch(url, { mode: 'cors', credentials: 'omit' }).then(async (res) => {
+          if (!res.ok) { fail(); return; }
+          const buf = await res.arrayBuffer();
+          const blob = new Blob([buf], { type: res.headers.get('content-type') || '' });
+          if (!looksLikeImage(blob, buf)) { fail(); return; }
+          const obj = URL.createObjectURL(blob);
+          const img = new Image();
+          const finish = () => { URL.revokeObjectURL(obj); succeed(img); };
+          img.onload = () => {
+            if (typeof img.decode === 'function') img.decode().then(finish).catch(finish);
+            else finish();
+          };
+          img.onerror = () => { URL.revokeObjectURL(obj); fail(); };
+          img.src = obj;
+        }).catch(fail);
+      });
+      imageCache.set(url, entry);
+      return entry.promise;
+    }
+
+    async function loadSheet(fx) {
+      const urls = sheetCandidates(fx);
+      if (!urls.length) return { status: 'error', img: null, url: '' };
+      let last = null;
+      for (const url of urls) {
+        const entry = await loadImage(url);
+        last = entry;
+        if (entry.status === 'ok') return entry;
+      }
+      brokenUrls.add(urls[0]);
+      updateBrokenStat();
+      return last;
+    }
+
+    function prefersReducedMotion() {
+      return reduceMotionMq.matches;
+    }
+
+    function drawState(state, time) {
+      if (!state || !state.ctx) return;
+      const { ctx, cssSize, fx } = state;
+      const entry = state.entry;
+      fillBg(ctx, cssSize);
+      if (!entry || entry.status === 'loading') return;
+      if (entry.status === 'error' || !entry.img) {
+        markMissing(state, true);
+        ctx.save();
+        ctx.fillStyle = '#8b8685';
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('missing', cssSize / 2, cssSize / 2);
+        ctx.restore();
+        return;
+      }
+      markMissing(state, false);
+      if (!state.layout) state.layout = layout(fx, entry.img);
+      const lay = state.layout;
+      if (prefersReducedMotion()) {
+        state.frame = 0;
+      } else if (time - state.lastTime >= FRAME_MS) {
+        state.lastTime = time;
+        state.frame = (state.frame + 1) % lay.frames;
+      }
+      const rect = sourceRect(lay, state.frame);
+      if (!rect) return;
+      const scale = cssSize / Math.max(lay.frameW, lay.frameH);
+      const dw = lay.frameW * scale;
+      const dh = lay.frameH * scale;
+      const dx = (cssSize - dw) / 2;
+      const dy = (cssSize - dh) / 2;
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      ctx.globalCompositeOperation = blendMode(fx);
+      ctx.drawImage(entry.img, rect.sx, rect.sy, rect.sw, rect.sh, dx, dy, dw, dh);
+      ctx.restore();
+    }
+
+    function ensureLoop() {
+      if (rafId) return;
+      if (document.hidden) return;
+      if (!visible.size && !modalState) return;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function tick(time) {
+      rafId = 0;
+      if (document.hidden) return;
+      for (const state of visible.values()) drawState(state, time);
+      if (modalState) drawState(modalState, time);
+      if (visible.size || modalState) rafId = requestAnimationFrame(tick);
+    }
+
+    function attachState(state) {
+      cardStates.add(state);
+      loadSheet(state.fx).then((entry) => {
+        state.entry = entry;
+        state.url = entry.url || state.url;
+        if (entry.status === 'ok') state.layout = layout(state.fx, entry.img);
+        if ((state.card && visible.has(state.card)) || state === modalState) ensureLoop();
+        else if (state.ctx) drawState(state, performance.now());
+      });
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      for (const ent of entries) {
+        const state = ent.target._fxState;
+        if (!state) continue;
+        if (ent.isIntersecting) visible.set(ent.target, state);
+        else visible.delete(ent.target);
+      }
+      ensureLoop();
+    }, { root: null, rootMargin: '80px 0px', threshold: 0 });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+      } else {
+        ensureLoop();
+      }
+    });
+
+    function resizeCanvases() {
+      for (const state of cardStates) {
+        if (!state.canvas) continue;
+        state.ctx = setupCanvas(state.canvas, state.cssSize);
+        drawState(state, performance.now());
+      }
+      if (modalState && modalState.canvas) {
+        modalState.ctx = setupCanvas(modalState.canvas, modalState.cssSize);
+        drawState(modalState, performance.now());
+      }
+    }
+    window.addEventListener('resize', resizeCanvases);
 
     async function init() {
       try {
         const [fxRes, abRes] = await Promise.all([
-          fetch(`${BASE}/effectSprites.json`).then(r => r.json()),
-          fetch(`${BASE}/abilityEffects.json`).then(r => r.json()),
+          fetch(`${BASE}/effectSprites.json`).then((r) => {
+            if (!r.ok) throw new Error('effectSprites.json HTTP ' + r.status);
+            return r.json();
+          }),
+          fetch(`${BASE}/abilityEffects.json`).then((r) => {
+            if (!r.ok) throw new Error('abilityEffects.json HTTP ' + r.status);
+            return r.json();
+          }),
         ]);
         fxData = fxRes;
         abData = abRes;
         document.getElementById('countFx').textContent = fxData.totalEffects;
         document.getElementById('countAb').textContent = abData.totalAbilities;
-        document.getElementById('countCat').textContent = Object.keys(fxData.categories).length;
+        document.getElementById('countCat').textContent = Object.keys(fxData.categories || {}).length;
+        updateBrokenStat();
         buildPills();
         renderGrid();
         document.getElementById('loadingEl').style.display = 'none';
-      } catch(e) {
-        document.getElementById('loadingEl').innerHTML = `<p style="color:#ef4444">Failed to load: ${e.message}</p>`;
+      } catch (e) {
+        document.getElementById('loadingEl').innerHTML = '<p style="color:#ef4444">Failed to load: ' + esc(e.message) + '</p>';
       }
     }
 
     function buildPills() {
       const el = document.getElementById('pills');
-      let html = '<span class="pill active" data-cat="all" onclick="setCat(\'all\')">All</span>';
+      el.replaceChildren();
+      const makePill = (cat, label) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pill' + (cat === activeCat ? ' active' : '');
+        btn.dataset.cat = cat;
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', cat === activeCat ? 'true' : 'false');
+        btn.textContent = label;
+        btn.addEventListener('click', () => setCat(cat));
+        return btn;
+      };
+      el.appendChild(makePill('all', 'All'));
       for (const c of FEATURED_CATS) {
-        if (fxData.categories[c]) {
-          html += `<span class="pill" data-cat="${c}" onclick="setCat('${c}')">${c}</span>`;
-        }
+        if (fxData.categories && fxData.categories[c]) el.appendChild(makePill(c, c));
       }
-      el.innerHTML = html;
     }
 
     function setCat(cat) {
       activeCat = cat;
-      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+      document.querySelectorAll('.pill').forEach((p) => {
+        const on = p.dataset.cat === cat;
+        p.classList.toggle('active', on);
+        p.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
       renderGrid();
     }
 
     function getFilteredKeys() {
       const q = document.getElementById('search').value.toLowerCase();
-      let keys = Object.keys(fxData.effects);
+      let keys = Object.keys(fxData.effects || {});
       if (activeCat !== 'all') {
-        const catEffects = new Set(fxData.categories[activeCat] || []);
-        keys = keys.filter(k => catEffects.has(k));
+        const catEffects = new Set((fxData.categories && fxData.categories[activeCat]) || []);
+        keys = keys.filter((k) => catEffects.has(k));
       }
-      if (q) keys = keys.filter(k => k.toLowerCase().includes(q) || (fxData.effects[k].categories || []).some(c => c.includes(q)));
+      if (q) {
+        keys = keys.filter((k) =>
+          k.toLowerCase().includes(q) ||
+          (fxData.effects[k].categories || []).some((c) => String(c).toLowerCase().includes(q))
+        );
+      }
       return keys;
     }
 
-    function renderGrid() {
-      // Stop existing animations
-      for (const id of Object.keys(animFrames)) { cancelAnimationFrame(animFrames[id]); }
-      animFrames = {};
+    function clearGridStates() {
+      for (const state of cardStates) {
+        if (state.card) {
+          io.unobserve(state.card);
+          visible.delete(state.card);
+        }
+      }
+      cardStates.clear();
+    }
 
+    function renderGrid() {
+      clearGridStates();
       const keys = getFilteredKeys();
       document.getElementById('countShow').textContent = keys.length;
       const el = document.getElementById('gridEl');
-      el.innerHTML = '';
+      el.replaceChildren();
 
+      const displaySize = 80;
       for (const key of keys) {
         const fx = fxData.effects[key];
-        const card = document.createElement('div');
+        const lay = layout(fx, null);
+        const card = document.createElement('button');
+        card.type = 'button';
         card.className = 'fx-card';
-        card.onclick = () => openModal(key);
+        card.addEventListener('click', () => openModal(key));
 
         const cvs = document.createElement('canvas');
-        const displaySize = 80;
-        cvs.width = displaySize;
-        cvs.height = displaySize;
+        const ctx = setupCanvas(cvs, displaySize);
+        fillBg(ctx, displaySize);
         card.appendChild(cvs);
+
+        const badge = document.createElement('span');
+        badge.className = 'fx-missing-badge';
+        badge.textContent = 'missing';
+        card.appendChild(badge);
 
         const nameEl = document.createElement('div');
         nameEl.className = 'fx-name';
@@ -198,117 +620,119 @@
 
         const metaEl = document.createElement('div');
         metaEl.className = 'fx-meta';
-        metaEl.textContent = `${fx.frames}f · ${fx.cols||'?'}×${fx.rows||'?'} · ${fx.frameW||'?'}×${fx.frameH||'?'}px`;
+        metaEl.textContent = `${lay.frames}f · ${lay.cols}×${lay.rows} · ${lay.frameW}×${lay.frameH}px`;
         card.appendChild(metaEl);
 
         const tags = (fx.categories || []).slice(0, 3);
         if (tags.length) {
           const tagEl = document.createElement('div');
           tagEl.className = 'fx-tags';
-          tagEl.innerHTML = tags.map(t => `<span class="fx-tag">${t}</span>`).join('');
+          for (const t of tags) {
+            const span = document.createElement('span');
+            span.className = 'fx-tag';
+            span.textContent = t;
+            tagEl.appendChild(span);
+          }
           card.appendChild(tagEl);
         }
 
+        const state = {
+          card, canvas: cvs, ctx, fx, key, cssSize: displaySize,
+          url: sheetUrl(fx), entry: null, layout: null, frame: 0, lastTime: 0
+        };
+        card._fxState = state;
+        attachState(state);
         el.appendChild(card);
-        animateCanvas(cvs, fx, key, displaySize);
+        io.observe(card);
       }
-    }
-
-    function animateCanvas(canvas, fx, key, displaySize) {
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = fx.sourceUrl || (SRC_BASE + fx.src);
-
-      let frame = 0, lastTime = 0;
-      const interval = 60; // ms per frame
-
-      const hasCustom = fx.cols !== undefined;
-      const cols = hasCustom ? fx.cols : Math.round(Math.sqrt(fx.frames));
-      const rows = hasCustom ? (fx.rows || Math.ceil(fx.frames / cols)) : Math.ceil(fx.frames / cols);
-      const frameW = hasCustom ? fx.frameW : (fx.size ? fx.size / cols : 64);
-      const frameH = hasCustom ? fx.frameH : (fx.size ? fx.size / cols : 64);
-
-      function draw(time) {
-        if (time - lastTime >= interval) {
-          lastTime = time;
-          frame = (frame + 1) % fx.frames;
-          ctx.clearRect(0, 0, displaySize, displaySize);
-          if (img.complete && img.naturalWidth > 0) {
-            const col = frame % cols;
-            const row2 = Math.floor(frame / cols);
-            const sx = col * frameW;
-            const sy = row2 * frameH;
-            // Scale to fit displaySize
-            const scale = displaySize / Math.max(frameW, frameH);
-            const dw = frameW * scale;
-            const dh = frameH * scale;
-            const dx = (displaySize - dw) / 2;
-            const dy = (displaySize - dh) / 2;
-            ctx.drawImage(img, sx, sy, frameW, frameH, dx, dy, dw, dh);
-          }
-        }
-        animFrames[key] = requestAnimationFrame(draw);
-      }
-      animFrames[key] = requestAnimationFrame(draw);
     }
 
     function openModal(key) {
       const fx = fxData.effects[key];
       const modal = document.getElementById('modalContent');
-      const hasCustom = fx.cols !== undefined;
-      const cols = hasCustom ? fx.cols : Math.round(Math.sqrt(fx.frames));
-      const rows = hasCustom ? (fx.rows || Math.ceil(fx.frames / cols)) : Math.ceil(fx.frames / cols);
-      const frameW = hasCustom ? fx.frameW : (fx.size ? fx.size / cols : 64);
-      const frameH = hasCustom ? fx.frameH : (fx.size ? fx.size / cols : 64);
-
-      // Find abilities using this effect
+      const lay = layout(fx, null);
       const usages = findUsages(key);
+      const resolved = sheetUrl(fx);
+      const href = safeHttpUrl(resolved);
+      const srcLabel = fx.src || resolved || '';
 
-      let html = `<h2>${key}</h2><p class="sub">${fx.src}</p>`;
-      html += `<canvas id="modalCanvas" width="160" height="160"></canvas>`;
-      html += `<div class="detail-grid">`;
-      html += `<div class="detail-item"><div class="detail-label">Frames</div><div class="detail-val">${fx.frames}</div></div>`;
-      html += `<div class="detail-item"><div class="detail-label">Grid</div><div class="detail-val">${cols} × ${rows}</div></div>`;
-      html += `<div class="detail-item"><div class="detail-label">Frame Size</div><div class="detail-val">${frameW} × ${frameH}px</div></div>`;
-      html += `<div class="detail-item"><div class="detail-label">Sheet Size</div><div class="detail-val">${cols * frameW} × ${rows * frameH}px</div></div>`;
-      if (fx.blendMode) html += `<div class="detail-item"><div class="detail-label">Blend Mode</div><div class="detail-val">${fx.blendMode}</div></div>`;
-      html += `<div class="detail-item"><div class="detail-label">Categories</div><div class="detail-val">${(fx.categories||[]).join(', ') || 'none'}</div></div>`;
-      html += `</div>`;
+      const parts = [];
+      parts.push('<h2 id="modalTitle">' + esc(key) + '</h2>');
+      parts.push('<p class="sub">' + esc(srcLabel) + '</p>');
+      parts.push('<canvas id="modalCanvas" width="160" height="160"></canvas>');
+      parts.push('<div class="detail-grid">');
+      parts.push('<div class="detail-item"><div class="detail-label">Frames</div><div class="detail-val">' + esc(lay.frames) + '</div></div>');
+      parts.push('<div class="detail-item"><div class="detail-label">Grid</div><div class="detail-val">' + esc(lay.cols + ' × ' + lay.rows) + '</div></div>');
+      parts.push('<div class="detail-item"><div class="detail-label">Frame Size</div><div class="detail-val">' + esc(lay.frameW + ' × ' + lay.frameH + 'px') + '</div></div>');
+      parts.push('<div class="detail-item"><div class="detail-label">Sheet Size</div><div class="detail-val">' + esc((lay.cols * lay.frameW) + ' × ' + (lay.rows * lay.frameH) + 'px') + '</div></div>');
+      if (fx.blendMode) {
+        parts.push('<div class="detail-item"><div class="detail-label">Blend Mode</div><div class="detail-val">' + esc(fx.blendMode) + '</div></div>');
+      }
+      parts.push('<div class="detail-item"><div class="detail-label">Categories</div><div class="detail-val">' + esc((fx.categories || []).join(', ') || 'none') + '</div></div>');
+      parts.push('</div>');
 
-      // Source URL
-      html += `<div class="detail-item" style="margin-bottom:16px"><div class="detail-label">Source URL</div><div class="detail-val" style="font-size:0.75rem;word-break:break-all"><a href="${fx.sourceUrl}" target="_blank" style="color:var(--gold)">${fx.sourceUrl}</a></div></div>`;
+      parts.push('<div class="detail-item" style="margin-bottom:16px"><div class="detail-label">Source URL</div><div class="detail-val" style="font-size:0.75rem;word-break:break-all">');
+      if (href) {
+        parts.push('<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" style="color:var(--gold)">' + esc(href) + '</a>');
+      } else {
+        parts.push(esc(resolved || srcLabel || 'unavailable'));
+      }
+      parts.push('</div></div>');
 
-      // Usages
       if (usages.length) {
-        html += `<div class="usage-section"><h3>Used by ${usages.length} abilities</h3>`;
+        parts.push('<div class="usage-section"><h3>Used by ' + esc(usages.length) + ' abilities</h3>');
         for (const u of usages.slice(0, 20)) {
-          html += `<div class="usage-item"><span>${u.ability}</span><span><span class="usage-class">${u.source}</span> <span class="usage-role">${u.role}</span></span></div>`;
+          parts.push('<div class="usage-item"><span>' + esc(u.ability) + '</span><span><span class="usage-class">' + esc(u.source) + '</span> <span class="usage-role">' + esc(u.role) + '</span></span></div>');
         }
-        if (usages.length > 20) html += `<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;margin-top:6px">+${usages.length - 20} more</div>`;
-        html += `</div>`;
+        if (usages.length > 20) {
+          parts.push('<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;margin-top:6px">+' + esc(usages.length - 20) + ' more</div>');
+        }
+        parts.push('</div>');
       }
 
-      // JSON snippet
-      html += `<details style="margin-top:16px"><summary style="color:var(--gold);cursor:pointer;font-size:0.85rem">JSON Definition</summary><pre style="background:var(--code-bg);padding:12px;border-radius:8px;margin-top:8px;font-size:0.75rem;overflow-x:auto;color:var(--gold-light)">${JSON.stringify(fx, null, 2)}</pre></details>`;
+      parts.push('<details style="margin-top:16px"><summary style="color:var(--gold);cursor:pointer;font-size:0.85rem">JSON Definition</summary><pre style="background:var(--code-bg);padding:12px;border-radius:8px;margin-top:8px;font-size:0.75rem;overflow-x:auto;color:var(--gold-light)">' + esc(JSON.stringify(fx, null, 2)) + '</pre></details>');
 
-      modal.innerHTML = html;
-      document.getElementById('modalBg').classList.add('open');
+      modal.innerHTML = parts.join('');
 
-      // Animate modal canvas
+      const bg = document.getElementById('modalBg');
+      lastFocus = document.activeElement;
+      bg.classList.add('open');
+      bg.setAttribute('aria-hidden', 'false');
+      modalOpen = true;
+
       const cvs = document.getElementById('modalCanvas');
-      animateCanvas(cvs, fx, '_modal', 160);
+      const ctx = setupCanvas(cvs, 160);
+      fillBg(ctx, 160);
+      modalState = {
+        card: null, canvas: cvs, ctx, fx, key: '_modal', cssSize: 160,
+        url: resolved, entry: null, layout: null, frame: 0, lastTime: 0
+      };
+      attachState(modalState);
+      ensureLoop();
+      document.getElementById('modalClose').focus();
     }
 
     function closeModal() {
-      document.getElementById('modalBg').classList.remove('open');
-      if (animFrames['_modal']) { cancelAnimationFrame(animFrames['_modal']); delete animFrames['_modal']; }
+      if (!modalOpen) return;
+      const bg = document.getElementById('modalBg');
+      bg.classList.remove('open');
+      bg.setAttribute('aria-hidden', 'true');
+      modalOpen = false;
+      modalState = null;
+      if (lastFocus && typeof lastFocus.focus === 'function') {
+        try { lastFocus.focus(); } catch (e) { /* ignore */ }
+      }
+      lastFocus = null;
+    }
+
+    function modalFocusables() {
+      const root = document.getElementById('modal');
+      return [...root.querySelectorAll('a[href], button:not([disabled]), details summary, [tabindex]:not([tabindex="-1"])')];
     }
 
     function findUsages(effectKey) {
       const usages = [];
       if (!abData) return usages;
-      // Class abilities
       for (const [cls, abilities] of Object.entries(abData.classAbilities || {})) {
         for (const [name, ab] of Object.entries(abilities)) {
           if (ab.effect === effectKey) usages.push({ ability: name, source: cls, role: 'primary' });
@@ -319,7 +743,6 @@
           }
         }
       }
-      // Weapon skills
       for (const [id, ab] of Object.entries(abData.weaponSkills || {})) {
         if (ab.effect === effectKey) usages.push({ ability: id, source: 'weapon', role: 'primary' });
         if (ab.followUp) {
@@ -328,7 +751,6 @@
           }
         }
       }
-      // Enemy abilities
       for (const [name, ab] of Object.entries(abData.enemyAbilities || {})) {
         if (ab.effect === effectKey) usages.push({ ability: name, source: 'enemy', role: 'primary' });
         if (ab.followUp) {
@@ -341,7 +763,40 @@
     }
 
     document.getElementById('search').addEventListener('input', renderGrid);
-    document.getElementById('modalBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.getElementById('modalBg').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (!modalOpen) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const list = modalFocusables();
+      if (!list.length) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !list.includes(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    window.closeModal = closeModal;
+    window.__VFX_BROWSER__ = {
+      visibleCount: () => visible.size,
+      brokenCount: () => brokenUrls.size,
+      rafRunning: () => rafId !== 0,
+      cacheSize: () => imageCache.size,
+      modalOpen: () => modalOpen
+    };
+
     init();
   </script>
 </body>
