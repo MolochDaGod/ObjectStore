@@ -334,7 +334,7 @@ function renderWeaponSummary() {
   const types = weaponData.weaponTypes || [];
   grid.innerHTML = types.map(wt => `
     <a class="type-card" href="WEAPON_SKILLS.html" style="text-decoration:none;color:inherit">
-      <h4>${wt.icon ? `<img src="${wt.icon}" alt="" onerror="this.style.display='none'">` : ''}${wt.name}</h4>
+      <h4>${wt.icon ? ((window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) ? window.GrudgeAsset.iconImgHtml(wt.icon, { alt: wt.name || '' }) : `<img src="${wt.icon}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">`) : ''}${wt.name}</h4>
       <p>${wt.totalSkills || (wt.slots || []).reduce((s, sl) => s + (sl.skills?.length || 0), 0)} skills · ${(wt.classes || []).join(', ') || 'all classes'}</p>
     </a>
   `).join('');
@@ -458,7 +458,7 @@ function renderClassTrees() {
     if (!sk) return '';
     const icon = cdnIcon(sk.iconUrl || sk.icon);
     return `<button type="button" class="build-card core" data-tip="${escHtml(tooltipHtml(sk, null))}">
-      ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+      ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
       <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
     </button>`;
   }).join('');
@@ -471,7 +471,7 @@ function renderClassTrees() {
       const off = chosen && !on;
       const icon = cdnIcon(sk.iconUrl || sk.icon);
       return `<button type="button" class="build-card${on ? ' on' : ''}${off ? ' off' : ''}" data-row="${escHtml(row.id)}" data-skill="${escHtml(id)}" data-tip="${escHtml(tooltipHtml(sk, row))}">
-        ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+        ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
         <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
       </button>`;
     }).join('');

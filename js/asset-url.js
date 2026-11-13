@@ -5,15 +5,23 @@
  *   for missing /icons), and prefix root-relative /icons and /game-assets/icons
  *   with https://assets.grudge-studio.com.
  * Also covers /images (profession-trees), favicon.svg / favicon.ico, and
- * encodeURI. Known CDN 404s are not given stand-in art — callers should use
- * missingIconMarker() so the gap stays visible.
+ * encodeURI. Known-missing paths (real 404, or fake 200 HTML) are not given
+ * stand-in art — callers should use missingIconMarker() so the gap stays visible.
  */
 (function (global) {
   var CDN = 'https://assets.grudge-studio.com';
 
-  /** Paths confirmed 404 on the CDN (Verdict icon-probe). Do not swap lookalike art. */
+  /**
+   * Paths confirmed missing on the CDN by the magic-byte probe (Friday Nov 13, 2026, CT).
+   * people.png: HTTP 404, application/json.
+   * tool_01.png: HTTP 200, Content-Type image/png, but a 44,964-byte Game Info Hub
+   * HTML body (magic 3c21444f4354595045), not a PNG. Alternate CDN paths were also
+   * fake-HTML or 404. Do not swap lookalike art (including craftpix-games/people.png).
+   */
   var KNOWN_CDN_MISSING = {
     '/icons/ui/buttons/people.png': true,
+    '/game-assets/icons/tools/tool_01.png': true,
+    '/icons/tools/tool_01.png': true,
   };
 
   function encodeAssetUrl(u) {
@@ -49,7 +57,7 @@
   /**
    * Resolve a catalog or page path to a URL that should be fetched.
    * Returns '' for known-missing icons so the caller can show a marker
-   * instead of requesting a CDN 404.
+   * instead of requesting a 404 or a fake-200 HTML body.
    */
   function assetUrl(url) {
     if (!url) return url;
@@ -72,9 +80,9 @@
   }
 
   function missingIconMarker(label) {
-    var text = label ? 'icon missing' : 'icon missing';
+    var text = 'icon missing';
     return (
-      '<span class="icon-missing" title="Icon missing — not on assets.grudge-studio.com" role="img" aria-label="icon missing">' +
+      '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">' +
       text +
       '</span>'
     );
@@ -97,9 +105,9 @@
     if (!src) return missingIconMarker(alt);
     var dim = (width ? ' width="' + width + '"' : '') + (height ? ' height="' + height + '"' : '');
     var klass = cls ? ' class="' + cls + '"' : '';
-    // Replace the img with the marker; do not swap in other art.
+    // No inner double-quotes in the onerror handler (it sits in an onerror="..." attribute).
     var onerr =
-      "this.outerHTML='<span class=icon-missing title=Missing role=img aria-label=missing>icon missing</span>';";
+      "this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';";
     return (
       '<img src="' +
       src.replace(/"/g, '&quot;') +

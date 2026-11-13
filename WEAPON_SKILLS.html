@@ -823,6 +823,26 @@
       color: hsl(225 30% 10%);
     }
 
+    .icon-missing {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border: 1px dashed #a86;
+      border-radius: 2px;
+      color: #d4a84b;
+      font-size: 9px;
+      white-space: nowrap;
+      background: rgba(212,168,75,0.08);
+    }
+    .weapon-tab .icon-missing,
+    .detail-panel .detail-icon .icon-missing {
+      width: 28px;
+      height: 28px;
+      margin-right: 4px;
+    }
     /* Responsive */
     @media (max-width: 900px) {
       .slot-columns { grid-template-columns: repeat(2, 1fr); }
@@ -890,6 +910,17 @@ function asset(url) {
   }
   if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
   return u;
+}
+
+function iconHtml(url, attrs) {
+  attrs = attrs || {};
+  if (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) {
+    return window.GrudgeAsset.iconImgHtml(url, attrs);
+  }
+  const src = asset(url);
+  if (!src) return '<span class="icon-missing" role="img" aria-label="icon missing">icon missing</span>';
+  const alt = attrs.alt != null ? String(attrs.alt) : '';
+  return `<img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">`;
 }
 
 function skillIcon(skill) {
@@ -975,7 +1006,7 @@ function renderWeaponTabs() {
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
     const suffix = key === 'TOME' || key === 'SHIELD' ? ' (Off-Hand)' : '';
-    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
+    tab.innerHTML = `${iconHtml(weapon.icon, { alt: weapon.name })} ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
       const preferT0 = playerTier === 0 && !WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(key);
@@ -1226,7 +1257,7 @@ function renderSlotColumns() {
 
 function showDetail(skill, slotType) {
   const panel = document.getElementById('detailPanel');
-  document.getElementById('detailIcon').innerHTML = `<img src="${skillIcon(skill)}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailIcon').innerHTML = iconHtml(skill.iconUrl || skill.icon, { alt: skill.name });
   document.getElementById('detailName').textContent = skill.name;
   document.getElementById('detailDesc').textContent = skill.description;
 
