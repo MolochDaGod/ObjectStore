@@ -276,8 +276,13 @@
       position: relative;
     }
     .asset-preview img {
-      max-height: 50px;
-      max-width: 50px;
+      /* Sheets are wide (e.g. 1360x96). max-width:50px shrank them to a few
+         pixels tall. Cover + left crop shows the first frame at 50x50.
+         Square icons still fill the same box. */
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      object-position: left center;
       image-rendering: pixelated;
       transition: transform 0.2s;
     }
@@ -827,11 +832,21 @@
   <script>
     // Lazy-load preview images for asset cards
     (function() {
+      // Sprites and icons are omitted from the Vercel deploy (.vercelignore:
+      // sprites/** and icons/**), and info.grudge-studio.com answers missing
+      // paths with 200 text/html (root index.html). Prefer the public CDN,
+      // then GitHub Pages. Per-image (not a single probed base): the CDN
+      // serves only a subset and returns 403 for Vercel preview / unknown
+      // referers. Matches the 2D_MODELS / VFX browser loader.
+      var SPRITE_CDN = 'https://assets.grudge-studio.com';
+      var SPRITE_FALLBACK = 'https://molochdagod.github.io/ObjectStore';
+      var spriteBlobCache = {};
+
       var spritePreviews = [
-        'sprites/Barbarian/Walk.png', 'sprites/Crusade_Warrior/Idle.png',
-        'sprites/Dragon/Attack.png', 'sprites/Elf_Ranger/Walk.png',
-        'sprites/Goblin/Attack.png', 'sprites/Orc/Idle.png',
-        'sprites/Skeleton/Walk.png', 'sprites/Fire_Mage/Attack.png'
+        'sprites/barbarian-warrior/walk.png', 'sprites/knight-templar/idle.png',
+        'sprites/dragon-red/Attack_1.png', 'sprites/elf-ranger/walk.png',
+        'sprites/monsters/goblin/attack1.png', 'sprites/orc/idle.png',
+        'sprites/skeleton/walk.png', 'sprites/fire-wizard/attack1.png'
       ];
       var iconPreviews = [
         'icons/weapons/Sword_01.png', 'icons/weapons/Axe_01.png',
@@ -839,16 +854,113 @@
         'icons/armor/Helm_01.png', 'icons/armor/Chest_01.png',
         'icons/weapons/Gun_01.png', 'icons/weapons/Dagger_01.png'
       ];
+
+      function encodeSpriteKey(path) {
+        if (!path) return '';
+        return path.split('/').map(function(seg) {
+          if (!seg) return seg;
+          // encodeURIComponent encodes spaces, parentheses, and '+' as %2B
+          return encodeURIComponent(seg);
+        }).join('/');
+      }
+
+      function spritePath(raw) {
+        if (!raw) return '';
+        if (/^https?:\/\//i.test(raw)) {
+          try {
+            var u = new URL(raw);
+            var segs = u.pathname.split('/');
+            return segs.map(function(seg) {
+              if (!seg) return seg;
+              try { seg = decodeURIComponent(seg); } catch (e) {}
+              return encodeURIComponent(seg);
+            }).join('/') + u.search;
+          } catch (e) { return raw; }
+        }
+        var path = raw.charAt(0) === '/' ? raw : '/' + raw;
+        return encodeSpriteKey(path);
+      }
+
+      function spriteCandidates(raw) {
+        if (!raw) return [];
+        if (/^https?:\/\//i.test(raw)) return [raw];
+        var path = spritePath(raw);
+        if (!path) return [];
+        return [SPRITE_CDN + path, SPRITE_FALLBACK + path];
+      }
+
+      function looksLikeImage(blob, buf) {
+        var type = (blob && blob.type) || '';
+        if (type.indexOf('image/') === 0) return true;
+        if (!buf || buf.byteLength < 12) return false;
+        var b = new Uint8Array(buf);
+        if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
+        if (b[0] === 0xff && b[1] === 0xd8) return true;
+        if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
+        if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46) return true;
+        return false;
+      }
+
+      function fetchSpriteBlob(url) {
+        if (spriteBlobCache[url]) return spriteBlobCache[url];
+        var p = fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
+          if (!res.ok) return { ok: false };
+          return res.arrayBuffer().then(function(buf) {
+            var blob = new Blob([buf], { type: res.headers.get('content-type') || '' });
+            if (!looksLikeImage(blob, buf)) return { ok: false };
+            return { ok: true, blob: blob };
+          });
+        }).catch(function() { return { ok: false }; });
+        spriteBlobCache[url] = p;
+        return p;
+      }
+
+      // Load path into img: try CDN, then GH Pages. Resolves on success, rejects if both fail.
+      // Keeps crossOrigin=anonymous. Uses a blob URL so a successful CORS fetch stays untainted.
+      function loadSprite(img, raw) {
+        img.crossOrigin = 'anonymous';
+        var urls = spriteCandidates(raw);
+        return new Promise(function(resolve, reject) {
+          var i = 0;
+          function next() {
+            if (i >= urls.length) { reject(); return; }
+            var url = urls[i++];
+            fetchSpriteBlob(url).then(function(entry) {
+              if (!entry || !entry.ok) { next(); return; }
+              var obj = URL.createObjectURL(entry.blob);
+              function cleanup() { URL.revokeObjectURL(obj); }
+              img.onload = function() {
+                // Keep the blob URL so the <img> preview stays visible.
+                // (2D_MODELS can revoke after drawing to a canvas; these strips cannot.)
+                var done = function() { resolve(url); };
+                if (typeof img.decode === 'function') img.decode().then(done).catch(done);
+                else done();
+              };
+              img.onerror = function() { cleanup(); next(); };
+              img.src = obj;
+            });
+          }
+          next();
+        });
+      }
+
       function loadPreviews(containerId, paths) {
         var el = document.getElementById(containerId);
         if (!el) return;
         paths.forEach(function(p) {
           var img = new Image();
-          img.src = p;
           img.alt = '';
-          img.loading = 'lazy';
-          img.onerror = function() { this.style.display = 'none'; };
+          // Already fetched via loadSprite; lazy can skip blob-URL decode offscreen.
+          img.loading = 'eager';
+          img.crossOrigin = 'anonymous';
+          img.dataset.path = p;
           el.insertBefore(img, el.querySelector('.asset-preview-gradient'));
+          loadSprite(img, p).then(function(url) {
+            img.dataset.loadedFrom = url;
+          }, function() {
+            img.style.display = 'none';
+            img.dataset.failed = '1';
+          });
         });
       }
       loadPreviews('sprite-preview', spritePreviews);
