@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weapon Skills — Warlord Crafting Suite</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="https://assets.grudge-studio.com/favicon.svg" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Spectral+SC:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English+SC&family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -60,6 +61,21 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
     }
+    .rule-note {
+      max-width: 820px;
+      margin: 14px auto 0;
+      padding: 12px 16px;
+      font-family: var(--font-body);
+      font-size: 0.92em;
+      line-height: 1.45;
+      color: var(--text-light);
+      background: hsl(225 25% 12%);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      text-align: left;
+    }
+    .rule-note strong { color: var(--text-gold); }
+    .rule-note em { color: var(--text-muted); }
     .header h1 {
       font-family: var(--font-heading);
       font-size: 2.8em;
@@ -226,10 +242,12 @@
       align-items: center;
       justify-content: center;
     }
+    .action-slot[data-type="basic"] { border-color: var(--primary-color); }
     .action-slot[data-type="primary"] { border-color: var(--primary-color); }
     .action-slot[data-type="secondary"] { border-color: var(--secondary-color); }
     .action-slot[data-type="ability"] { border-color: var(--ability-color); }
     .action-slot[data-type="ultimate"] { border-color: var(--ultimate-color); }
+    .action-slot[data-type="basic"] { box-shadow: inset 0 0 0 1px var(--gold); }
     .action-slot .slot-label {
       position: absolute;
       bottom: -20px;
@@ -239,10 +257,12 @@
       text-transform: uppercase;
       white-space: nowrap;
     }
+    .action-slot[data-type="basic"] .slot-label { color: var(--primary-color); }
     .action-slot[data-type="primary"] .slot-label { color: var(--primary-color); }
     .action-slot[data-type="secondary"] .slot-label { color: var(--secondary-color); }
     .action-slot[data-type="ability"] .slot-label { color: var(--ability-color); }
     .action-slot[data-type="ultimate"] .slot-label { color: var(--ultimate-color); }
+    .slot-key.wst-no-key { border-style: dashed; opacity: 0.7; font-size: 0.85em; }
 
     /* Slot Columns */
     .slot-columns {
@@ -265,6 +285,10 @@
       font-size: 0.9em;
       letter-spacing: 0.06em;
       text-transform: uppercase;
+    }
+    .slot-header[data-type="basic"] {
+      background: hsla(38,80%,50%,0.15);
+      border-bottom: 2px solid var(--primary-color);
     }
     .slot-header[data-type="primary"] {
       border-color: var(--primary-color);
@@ -332,6 +356,7 @@
         0 0 20px rgba(212,175,55,0.3),
         0 4px 12px rgba(0,0,0,0.5);
     }
+    .skill-card.selected[data-slot="basic"] { border-color: var(--primary-color); box-shadow: 0 0 16px hsla(38,80%,50%,0.3); }
     .skill-card.selected[data-slot="primary"] { border-color: var(--primary-color); box-shadow: 0 0 16px hsla(38,80%,50%,0.3); }
     .skill-card.selected[data-slot="secondary"] { border-color: var(--secondary-color); box-shadow: 0 0 16px hsla(210,70%,50%,0.3); }
     .skill-card.selected[data-slot="ability"] { border-color: var(--ability-color); box-shadow: 0 0 16px hsla(270,60%,55%,0.3); }
@@ -361,6 +386,7 @@
       font-weight: 700;
       color: hsl(225 30% 8%);
     }
+    .skill-card[data-slot="basic"] .selected-check { background: var(--primary-color); }
     .skill-card[data-slot="primary"] .selected-check { background: var(--primary-color); }
     .skill-card[data-slot="secondary"] .selected-check { background: var(--secondary-color); }
     .skill-card[data-slot="ability"] .selected-check { background: var(--ability-color); }
@@ -812,6 +838,20 @@
       background: hsla(140, 40%, 40%, 0.1);
       color: hsl(140 60% 55%);
     }
+    .wst-ultimate-column {
+      margin-bottom: 20px;
+    }
+    .wst-ultimate-column .slot-header[data-type="type-ultimate"] {
+      border-color: hsl(28 70% 45%);
+      background: hsla(28, 60%, 40%, 0.12);
+      color: hsl(32 80% 62%);
+    }
+    .wst-ultimate-column .skill-id {
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-size: 0.75em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
     .tier-btn.t0 {
       border-color: hsl(220 15% 35%);
       color: hsl(210 15% 70%);
@@ -822,6 +862,26 @@
       color: hsl(225 30% 10%);
     }
 
+    .icon-missing {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border: 1px dashed #a86;
+      border-radius: 2px;
+      color: #d4a84b;
+      font-size: 9px;
+      white-space: nowrap;
+      background: rgba(212,168,75,0.08);
+    }
+    .weapon-tab .icon-missing,
+    .detail-panel .detail-icon .icon-missing {
+      width: 28px;
+      height: 28px;
+      margin-right: 4px;
+    }
     /* Responsive */
     @media (max-width: 900px) {
       .slot-columns { grid-template-columns: repeat(2, 1fr); }
@@ -839,6 +899,7 @@
 <div class="header">
   <h1>⚔ Weapon Skills</h1>
   <p id="wstStatus">Unique skill tree per weapon type — one skill per slot, named weapons filter that tree</p>
+  <p class="rule-note"><strong>Key 1</strong> is always the basic attack / combo. Left-click (LMB) while in focus is the same action — they are one control. Every weapon style has the same normal-attack options. What the attack does can still vary by class, stats, and skills, but key 1 never holds a special ability. On T1+ this is the family combo, a bow draw, a gun shot, or a caster bolt (not the tree’s Fire Bolt). T0 starters (Practice Slash, and so on) already are that basic attack and stay on key 1. After the shift, <strong>key 2</strong> is old Button 1, <strong>key 3</strong> is old Button 2, <strong>key 4</strong> is old Button 3, and <strong>key 5</strong> is old Button 4 — the style picks from the game’s weapon styles (for example a sword’s Crimson Reprisal, Ancestral Curse, and Wrath of Kin). Old Button 5, the type-ultimate (for example Night's Judgment or Blood Harvest), is in a <strong>No key yet</strong> list; placement is not decided. Passives are in their own column, also with no hotbar key. TOOL has no Button 4 or 5 in those styles and stops at key 4. SHIELD and TOME follow the same mapping. <em>Exception:</em> in Iguana form, LMB is Rejuvenation and key 1 is a form skill — they are not the same.</p>
   <p class="ssot">SSOT <a href="https://info.grudge-studio.com/api/v1/master-weaponSkills.json">master-weaponSkills.json</a>
     · class trees stay in <a href="https://info.grudge-studio.com/api/v1/master-skillTrees.json">master-skillTrees.json</a>
     · anim packs sword_shield / longbow / magic / pistol / rifle / unarmed
@@ -879,11 +940,40 @@ const PAGE_BASE = (() => {
 })();
 
 function asset(url) {
+  if (window.GrudgeAsset && window.GrudgeAsset.assetUrl) return window.GrudgeAsset.assetUrl(url);
   if (!url) return url;
-  if (/^(https?:|data:|blob:)/i.test(url)) return url;
-  if (url.startsWith('/icons/')) return `https://assets.grudge-studio.com${url}`;
-  if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
-  return url;
+  const CDN = 'https://assets.grudge-studio.com';
+  let u = String(url).trim();
+  u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+  if (u.indexOf('\\') !== -1 || (u.charAt(0) === '/' && u.charAt(1) === '/')) return '';
+  let mapped = false;
+  if (u.startsWith('/icons/') || u.startsWith('/images/') || u.startsWith('/game-assets/icons/') || u.startsWith('/favicon')) {
+    u = CDN + u;
+    mapped = true;
+  }
+  let parsed;
+  try {
+    parsed = new URL(u, CDN);
+  } catch (e) {
+    return '';
+  }
+  if (parsed.origin !== 'https://assets.grudge-studio.com' || parsed.username || parsed.password) return '';
+  let wasAbsolute = false;
+  try { new URL(u); wasAbsolute = true; } catch (e) {}
+  if (mapped || wasAbsolute) return parsed.href;
+  if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
+  return u;
+}
+
+function iconHtml(url, attrs) {
+  attrs = attrs || {};
+  if (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) {
+    return window.GrudgeAsset.iconImgHtml(url, attrs);
+  }
+  const src = asset(url);
+  if (!src) return '<span class="icon-missing" role="img" aria-label="icon missing">icon missing</span>';
+  const alt = attrs.alt != null ? String(attrs.alt) : '';
+  return `<img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">`;
 }
 
 function skillIcon(skill) {
@@ -908,7 +998,7 @@ let pairedOffhandMode = 'none';
 let pairedShieldKey = 'kite';
 let pairedTomeKey = 'elemental';
 let pairedOffhandToggle = false;
-let selectedSkills = { primary: null, secondary: null, ability: null, ultimate: null };
+let selectedSkills = { basic: 'basic_attack', primary: null, secondary: null, ability: null, ultimate: null };
 
 function isOffhandModifierTab() {
   return WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(activeWeapon);
@@ -969,7 +1059,7 @@ function renderWeaponTabs() {
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
     const suffix = key === 'TOME' || key === 'SHIELD' ? ' (Off-Hand)' : '';
-    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
+    tab.innerHTML = `${iconHtml(weapon.icon, { alt: weapon.name })} ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
       const preferT0 = playerTier === 0 && !WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(key);
@@ -1114,7 +1204,11 @@ function renderPassiveColumn() {
     return;
   }
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
-  el.innerHTML = WeaponSkillTree.renderPassiveColumn(variant, { asset });
+  const typeDef = getEffectiveTypeDef();
+  const ultimateHtml = WeaponSkillTree.renderTypeUltimateColumn
+    ? WeaponSkillTree.renderTypeUltimateColumn(typeDef, { asset })
+    : '';
+  el.innerHTML = ultimateHtml + WeaponSkillTree.renderPassiveColumn(variant, { asset });
 }
 
 function renderTierBar() {
@@ -1220,7 +1314,7 @@ function renderSlotColumns() {
 
 function showDetail(skill, slotType) {
   const panel = document.getElementById('detailPanel');
-  document.getElementById('detailIcon').innerHTML = `<img src="${skillIcon(skill)}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailIcon').innerHTML = iconHtml(skill.iconUrl || skill.icon, { alt: skill.name });
   document.getElementById('detailName').textContent = skill.name;
   document.getElementById('detailDesc').textContent = skill.description;
 
