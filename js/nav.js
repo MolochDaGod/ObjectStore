@@ -5,7 +5,19 @@
     var slash = path.lastIndexOf('/');
     return slash <= 0 ? '' : path.slice(0, slash);
   })();
-  var ICN = pageBase + '/icons';
+  // Icons live on the assets CDN. Relative /icons on a Vercel preview hits SSO
+  // and returns HTML. Shared helper: js/asset-url.js (same rule as defaultAsset).
+  var CDN = (window.GrudgeAsset && window.GrudgeAsset.CDN) || 'https://assets.grudge-studio.com';
+  var ICN = CDN + '/icons';
+  function assetUrl(u) {
+    return (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(u) : (CDN + (String(u).charAt(0) === '/' ? u : '/' + u));
+  }
+  function iconImg(url, w, h) {
+    if (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) {
+      return window.GrudgeAsset.iconImgHtml(url, { width: w || 16, height: h || 16, alt: '' });
+    }
+    return '<img src="' + assetUrl(url) + '" alt="" width="' + (w || 16) + '" height="' + (h || 16) + '">';
+  }
 
   // Internal ObjectStore pages — icon is now image path relative to ICN
   var pages = [
@@ -72,6 +84,7 @@
     '.os-appbar-label{color:#8b8685;font-size:0.7rem;margin-right:8px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;}',
     '.os-nav-btn{padding:6px 12px;border-radius:6px;font-size:0.78rem;color:#8b8685;text-decoration:none;transition:all 0.15s;border:1px solid transparent;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;}',
     '.os-nav-btn img{width:16px;height:16px;object-fit:contain;vertical-align:middle;image-rendering:auto;flex-shrink:0;}',
+    '.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 3px;margin-right:1px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;letter-spacing:0.02em;white-space:nowrap;flex-shrink:0;background:rgba(212,168,75,0.08);}',
     '.os-nav-btn:hover{color:#e8e6e3;background:#1a1f2e;border-color:#3d3d3d;}',
     '.os-nav-btn.active{color:#d4a84b;background:rgba(212,168,75,0.12);border-color:rgba(212,168,75,0.3);font-weight:600;}',
     '.os-nav-btn.external{color:#a7b0c0;border-color:transparent;}',
@@ -99,7 +112,7 @@
     al.className = 'os-nav-btn external';
     al.href = app.href;
     al.title = app.title || app.label;
-    al.innerHTML = '<img src="' + app.icon + '" alt="" width="16" height="16"> ' + app.label;
+    al.innerHTML = iconImg(app.icon, 16, 16) + ' ' + app.label;
     appbar.appendChild(al);
   }
   wrap.appendChild(appbar);
@@ -108,8 +121,8 @@
   var nav = document.createElement('nav');
   nav.className = 'os-nav';
   nav.setAttribute('aria-label', 'ObjectStore pages');
-  var faviconPath = inSubdir ? '../favicon.svg' : './favicon.svg';
-  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '"><img src="' + faviconPath + '" alt=""> <span>Game Info Hub</span><span style="font-size:0.6rem;background:rgba(212,168,75,0.15);color:#d4a84b;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600;">v5</span></a>';
+  var faviconPath = assetUrl('./favicon.svg');
+  nav.innerHTML = '<a class="os-nav-logo" href="' + resolveHref('./') + '">' + iconImg(faviconPath, 18, 18) + ' <span>Game Info Hub</span><span style="font-size:0.6rem;background:rgba(212,168,75,0.15);color:#d4a84b;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600;">v5</span></a>';
 
   for (var i = 0; i < pages.length; i++) {
     var p = pages[i];
@@ -117,7 +130,7 @@
     var a = document.createElement('a');
     a.className = 'os-nav-btn' + (isActive(p.href) ? ' active' : '');
     a.href = href;
-    a.innerHTML = '<img src="' + p.icon + '" alt="" width="16" height="16"> ' + p.label;
+    a.innerHTML = iconImg(p.icon, 16, 16) + ' ' + p.label;
     nav.appendChild(a);
   }
   wrap.appendChild(nav);
