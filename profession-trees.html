@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="https://assets.grudge-studio.com/favicon.ico">
+  <script src="./js/asset-url.js"></script>
   <title>Grudge Warlords — Skill Trees &amp; Arsenal</title>
   <link rel="stylesheet" href="css/grudge-theme.css">
   <style>
+    .icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;white-space:nowrap;}
     .container{max-width:1500px;margin:0 auto;padding:20px}
     .back-links{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
     .back-links a{color:var(--gold);font-size:.9em;text-decoration:none;padding:6px 14px;border:1px solid var(--gold-dim);border-radius:4px}
@@ -215,7 +217,11 @@ function renderProfTabs() {
   for (const [key, prof] of Object.entries(profData.professions)) {
     const tab = document.createElement('button');
     tab.className = key === activeProf ? 'active' : '';
-    tab.innerHTML = `<img src="${prof.iconImage}" alt="" onerror="this.remove()"> ${prof.icon || ''} ${prof.name}`;
+    const iconSrc = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(prof.iconImage) : prof.iconImage;
+    const iconHtml = (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml)
+      ? window.GrudgeAsset.iconImgHtml(prof.iconImage, { alt: '' })
+      : `<img src="${iconSrc}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">`;
+    tab.innerHTML = `${iconHtml} ${prof.icon || ''} ${prof.name}`;
     tab.onclick = () => { activeProf = key; renderProfTabs(); renderTree(); };
     container.appendChild(tab);
   }
@@ -227,7 +233,8 @@ function renderTree() {
   if (!prof) return;
 
   document.getElementById('profLoading').style.display = 'none';
-  document.getElementById('treeBg').style.backgroundImage = prof.bgImage ? `url(${prof.bgImage})` : 'none';
+  const bg = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(prof.bgImage) : prof.bgImage;
+  document.getElementById('treeBg').style.backgroundImage = bg ? `url("${bg}")` : 'none';
 
   document.getElementById('profInfo').innerHTML = `
     <div class="pi-name">${prof.icon || ''} ${prof.name}</div>

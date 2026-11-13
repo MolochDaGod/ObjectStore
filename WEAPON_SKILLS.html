@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weapon Skills — Warlord Crafting Suite</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="https://assets.grudge-studio.com/favicon.svg" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Spectral+SC:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English+SC&family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -879,11 +880,16 @@ const PAGE_BASE = (() => {
 })();
 
 function asset(url) {
+  if (window.GrudgeAsset && window.GrudgeAsset.assetUrl) return window.GrudgeAsset.assetUrl(url);
   if (!url) return url;
-  if (/^(https?:|data:|blob:)/i.test(url)) return url;
-  if (url.startsWith('/icons/')) return `https://assets.grudge-studio.com${url}`;
-  if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
-  return url;
+  let u = String(url).trim();
+  u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, 'https://assets.grudge-studio.com');
+  if (/^(https?:|data:|blob:)/i.test(u)) return u;
+  if (u.startsWith('/icons/') || u.startsWith('/images/') || u.startsWith('/game-assets/icons/') || u.startsWith('/favicon')) {
+    return 'https://assets.grudge-studio.com' + u;
+  }
+  if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
+  return u;
 }
 
 function skillIcon(skill) {
