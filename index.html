@@ -316,6 +316,7 @@
     }
     .has-icon-missing { outline: 1px dashed rgba(243,193,74,.85); }
     .preview-icon-host .icon-missing { position: absolute; inset: 0; font-size: 7px; }
+    .tool-thumb .icon-missing { position: absolute; inset: 0; z-index: 1; }
     .asset-preview-gradient {
       position: absolute;
       bottom: 0;
@@ -476,33 +477,33 @@
       </div>
       <div class="tool-grid">
         <a href="./GRUDGE_Item_Database.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/camp_shop.png')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1510,#0d1520)" data-cdn-bg="backgrounds/camp_shop.png"></div>
           <span class="tool-name">Item Database</span>
           <span class="tool-desc">Full searchable item database</span>
         </a>
         <a href="./SPRITE_DATABASE.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/arena.png')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1020,#0d1520)" data-cdn-bg="backgrounds/arena.png"></div>
           <span class="tool-name">Sprite Database</span>
           <span class="tool-desc">Visual icon & sprite browser</span>
         </a>
         <a href="./2D_MODELS.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/character_create.png')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#101a20,#0d1520)" data-cdn-bg="backgrounds/character_create.png"></div>
           <span class="tool-name">2D Models</span>
           <span class="tool-desc">Animated sprite browser — 7,324</span>
         </a>
         <a href="./3D_MODELS.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/crystal_caves.png')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#102018,#0d1520)" data-cdn-bg="backgrounds/crystal_caves.png"></div>
           <span class="tool-name">3D Models</span>
           <span class="tool-desc">471 models — Three.js viewer</span>
         </a>
         <a href="./VFX_BROWSER.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/magic_portal.jpg')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1028,#0d1520)" data-cdn-bg="backgrounds/magic_portal.jpg"></div>
           <span class="tool-name">VFX Browser</span>
           <span class="tool-desc">Animated effect previews</span>
         </a>
 
         <a href="./tools/icon-generator.html" class="tool-card">
-          <div class="tool-thumb" style="background-image:url('./backgrounds/enchanted_stones.jpg')"></div>
+          <div class="tool-thumb" style="background:linear-gradient(135deg,#1a1510,#15100d)" data-cdn-bg="backgrounds/enchanted_stones.jpg"></div>
           <span class="tool-name">Icon Generator</span>
           <span class="tool-desc">Puter AI icon creation</span>
         </a>
@@ -569,7 +570,7 @@
       <p class="section-desc">10,000+ production-ready assets collected from GrudgeWars, Warlord-Crafting-Suite, and grudgedot-launcher.</p>
       <div class="asset-grid">
         <a href="./2D_MODELS.html" class="asset-card">
-          <div class="asset-preview" style="background: url('./backgrounds/arena_battle.png') center/cover, linear-gradient(135deg, #1a1028, #0d1520);" id="sprite-preview">
+          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1028, #0d1520);" data-cdn-bg="backgrounds/arena_battle.png" id="sprite-preview">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -578,7 +579,7 @@
           </div>
         </a>
         <a href="./SPRITE_DATABASE.html" class="asset-card">
-          <div class="asset-preview" style="background: url('./backgrounds/tavern_bg.png') center/cover, linear-gradient(135deg, #1a1510, #101820);" id="icon-preview">
+          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1510, #101820);" data-cdn-bg="backgrounds/tavern_bg.png" id="icon-preview">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -587,7 +588,7 @@
           </div>
         </a>
         <a href="./AUDIO_BROWSER.html" class="asset-card">
-          <div class="asset-preview" style="background: url('./backgrounds/shadow_citadel.png') center/cover, linear-gradient(135deg, #0d1a15, #101520);">
+          <div class="asset-preview" style="background: linear-gradient(135deg, #0d1a15, #101520);" data-cdn-bg="backgrounds/shadow_citadel.png">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -596,7 +597,7 @@
           </div>
         </a>
         <a href="./3D_MODELS.html" class="asset-card">
-          <div class="asset-preview" style="background: url('./backgrounds/dragon_peaks.png') center/cover, linear-gradient(135deg, #1a1020, #0d1520);">
+          <div class="asset-preview" style="background: linear-gradient(135deg, #1a1020, #0d1520);" data-cdn-bg="backgrounds/dragon_peaks.png">
             <div class="asset-preview-gradient"></div>
           </div>
           <div class="asset-info">
@@ -857,13 +858,13 @@
 
       var spritePreviews = [
         'sprites/barbarian-warrior/walk.png', 'sprites/knight-templar/idle.png',
-        'sprites/dragon-red/Attack_1.png', 'sprites/elf-ranger/walk.png',
+        'sprites/bosses/dragon-red/Attack_1.png', 'sprites/elf-ranger/walk.png',
         'sprites/monsters/goblin/attack1.png', 'sprites/orc/idle.png',
-        'sprites/skeleton/walk.png', 'sprites/fire-wizard/attack1.png'
+        'sprites/skeleton/walk.png', 'sprites/characters/fire-wizard/attack1.png'
       ];
       var iconPreviews = [
         'icons/weapons/Sword_01.png', 'icons/weapons/Axe_01.png',
-        'icons/weapons/Staff_01.png', 'icons/weapons/Bow_01.png',
+        'icons/weapons/staff_1.png', 'icons/weapons/Bow_01.png',
         'icons/armor/Helm_01.png', 'icons/armor/Chest_01.png',
         'icons/weapons/Gun_01.png', 'icons/weapons/Dagger_01.png'
       ];
@@ -1002,6 +1003,30 @@
           });
         });
       }
+
+      function applyCdnBackground(el) {
+        var raw = el.getAttribute('data-cdn-bg') || '';
+        var path = raw.charAt(0) === '/' ? raw : '/' + raw;
+        var url = (window.GrudgeAsset && raw) ? (GrudgeAsset.assetUrl(GrudgeAsset.CDN + path) || '') : '';
+        if (!url) {
+          // Tool thumbs are empty on a miss — show the marker. Asset cards
+          // already have a CSS color/gradient and may host a preview strip.
+          if (el.classList.contains('tool-thumb')) showIconMissingOn(el, raw);
+          return;
+        }
+        probeImageMagic(url).then(function(ok) {
+          if (!ok) {
+            if (el.classList.contains('tool-thumb')) showIconMissingOn(el, raw);
+            return;
+          }
+          var prev = el.style.backgroundImage;
+          el.style.backgroundImage = 'url("' + url.replace(/"/g, '%22') + '")' + (prev ? ', ' + prev : '');
+          el.style.backgroundSize = 'cover';
+          el.style.backgroundPosition = 'center';
+        });
+      }
+      document.querySelectorAll('[data-cdn-bg]').forEach(applyCdnBackground);
+
       loadPreviews('sprite-preview', spritePreviews);
       loadPreviews('icon-preview', iconPreviews);
     })();
