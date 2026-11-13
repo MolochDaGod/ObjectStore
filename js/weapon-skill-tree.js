@@ -110,10 +110,10 @@
     STAFF: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1, not the tree Fire Bolt. Same action as focus-LMB.' },
     WAND: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1, not the tree Magic Missile. Same action as focus-LMB.' },
     TOME: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1. Same action as focus-LMB.' },
-    // SHIELD is an off-hand; TOOL is a harvest tool. ALE did not name a family combo for either.
-    // Fallback is Jonathan's 'Basic Attack' label — no invented payload.
-    SHIELD: { name: 'Basic Attack', detail: 'Same action as focus-LMB. Shield is an off-hand; ALE did not name a shield-specific basic.' },
-    TOOL: { name: 'Basic Attack', detail: 'Same action as focus-LMB. ALE: harvest / tools may steal key 1 and/or LMB — not a combat style.' },
+    // ALE, Spawn main b6103022, basic-attacks.js:78-79 and familyFor :101.
+    SHIELD: { name: 'Basic Attack · sword-and-shield combo', detail: 'basic-attacks.js maps SHIELD to SWORD_SHIELD (3 steps, E3-E5). familyFor also maps one-hand sword, blade or knife with a shield to SWORD_SHIELD. Same action as focus-LMB.' },
+    // ALE: TOOL is not in FAMILY_OF, so it falls back to ONE_H.
+    TOOL: { name: 'Basic Attack (generic one-hand swing)', detail: 'Not in FAMILY_OF; falls back to the ONE_H family. Same action as focus-LMB.' },
   };
   const BASIC_ATTACK_DEFAULT = {
     name: 'Family combo',
