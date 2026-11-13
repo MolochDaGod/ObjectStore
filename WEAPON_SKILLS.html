@@ -902,12 +902,25 @@ const PAGE_BASE = (() => {
 function asset(url) {
   if (window.GrudgeAsset && window.GrudgeAsset.assetUrl) return window.GrudgeAsset.assetUrl(url);
   if (!url) return url;
+  const CDN = 'https://assets.grudge-studio.com';
   let u = String(url).trim();
-  u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, 'https://assets.grudge-studio.com');
-  if (/^(https?:|data:|blob:)/i.test(u)) return u;
+  u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+  if (u.indexOf('\\') !== -1 || (u.charAt(0) === '/' && u.charAt(1) === '/')) return '';
+  let mapped = false;
   if (u.startsWith('/icons/') || u.startsWith('/images/') || u.startsWith('/game-assets/icons/') || u.startsWith('/favicon')) {
-    return 'https://assets.grudge-studio.com' + u;
+    u = CDN + u;
+    mapped = true;
   }
+  let parsed;
+  try {
+    parsed = new URL(u, CDN);
+  } catch (e) {
+    return '';
+  }
+  if (parsed.origin !== 'https://assets.grudge-studio.com' || parsed.username || parsed.password) return '';
+  let wasAbsolute = false;
+  try { new URL(u); wasAbsolute = true; } catch (e) {}
+  if (mapped || wasAbsolute) return parsed.href;
   if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
   return u;
 }

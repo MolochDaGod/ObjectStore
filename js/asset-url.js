@@ -55,6 +55,21 @@
   }
 
   /**
+   * After the info/objectstore rewrite, the only allowed absolute output is
+   * https://assets.grudge-studio.com (exact host, https). Rejected inputs
+   * return '' so callers show the existing "icon missing" marker.
+   */
+  function allowedAssetsUrl(u) {
+    try {
+      var parsed = new URL(u, CDN);
+      if (parsed.origin === 'https://assets.grudge-studio.com' && !parsed.username && !parsed.password) {
+        return parsed;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  /**
    * Resolve a catalog or page path to a URL that should be fetched.
    * Returns '' for known-missing icons so the caller can show a marker
    * instead of requesting a 404 or a fake-200 HTML body.
@@ -64,18 +79,30 @@
     var u = String(url).trim();
     if (isKnownMissing(u)) return '';
     u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+    // Protocol-relative and backslash host tricks (e.g. //evil, /\\evil).
+    if (u.indexOf('\\') !== -1 || (u.charAt(0) === '/' && u.charAt(1) === '/')) return '';
+    var mapped = false;
     if (/^(?:\.\.\/|\.\/)?favicon\.(svg|ico)$/i.test(u)) {
-      return encodeAssetUrl(CDN + '/' + u.replace(/^(?:\.\.\/|\.\/)/, ''));
-    }
-    if (/^(https?:|data:|blob:)/i.test(u)) return encodeAssetUrl(u);
-    if (
+      u = CDN + '/' + u.replace(/^(?:\.\.\/|\.\/)/, '');
+      mapped = true;
+    } else if (
       u.startsWith('/icons/') ||
       u.startsWith('/images/') ||
       u.startsWith('/game-assets/icons/') ||
       u.startsWith('/favicon')
     ) {
-      return encodeAssetUrl(CDN + u);
+      u = CDN + u;
+      mapped = true;
     }
+    var parsed = allowedAssetsUrl(u);
+    if (!parsed) return '';
+    var wasAbsolute = false;
+    try {
+      new URL(u);
+      wasAbsolute = true;
+    } catch (e) {}
+    if (mapped || wasAbsolute) return encodeAssetUrl(parsed.href);
+    // Safe relative path that this helper does not map onto the CDN.
     return u;
   }
 
