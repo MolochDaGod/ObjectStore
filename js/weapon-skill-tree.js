@@ -1,12 +1,23 @@
 /**
- * Canonical weapon skill UI — loads master-weaponSkills.json (slot 1 primary/LMB,
- * slots 2–4 secondary / ability / ultimate with tier unlocks).
+ * Canonical weapon skill UI — loads master-weaponSkills.json.
+ *
+ * Hotbar (T1+, Jonathan version A / shift — page display only):
+ *   Key 1 = basic attack / combo, same action as focus-LMB (Spawn requestBasicAttack).
+ *   Old slots 1–4 display on keys 2–5. Old slot 5 (passives) is kept with no hotbar key.
+ *   Labels for key 1 follow ALE's Spawn main b6103022 notes in
+ *   /workspace/skill-tree/weapon-slot1.md — family combo, bow draw, gun shot,
+ *   caster bolt (not the tree's Fire Bolt). Nothing is invented beyond that note.
+ *   T0 starter trees are not shifted: Practice Slash / Chop / Shot already IS the
+ *   basic attack the game casts on key 1 and focus-LMB.
+ *   Iguana form exception (ALE): LMB = Rejuvenation; key 1 is a form skill. LMB ≠ key 1.
  *
  * Off-hand rules:
- *   SHIELD + TOME — hold E (block) replaces mainhand slots 1–3 only; slots 4–5 stay on main weapon
+ *   SHIELD + TOME — hold E (block) replaces mainhand skill slots (keys 2–4: former 1–3);
+ *   key 1 stays the basic attack; key 5 (former signature) stays on the main weapon.
+ *   Passives stay visible with no hotbar key.
  *   Active only with 1H sword, knife (dagger), hammer, mace, or axe — not 2H, gun, wand, claw, staff, bow
- *   Each weapon TYPE has a unique 5-slot tree. Named weapons filter that type
- *   (never dump another weapon's pool into slots 2–3).
+ *   Each weapon TYPE has a unique tree. Named weapons filter that type
+ *   (never dump another weapon's pool into the mid keys).
  */
 (function (global) {
   const CDN = 'https://assets.grudge-studio.com';
@@ -74,14 +85,79 @@
   const OFFHAND_INJECT_SLOTS = ['primary', 'secondary', 'ability'];
 
   const SLOT_TYPES = ['primary', 'secondary', 'ability', 'ultimate'];
-  const SLOT_HOTKEYS = ['1', '2', '3', '4', '5'];
+  /** T1+ action bar after the shift. T0 keeps ['primary','secondary','ability'] on keys 1–3. */
+  const T1_BAR_SLOTS = ['basic', 'primary', 'secondary', 'ability', 'ultimate'];
+  const SLOT_HOTKEYS = { basic: '1', primary: '2', secondary: '3', ability: '4', ultimate: '5', passive: null };
+  const T0_HOTKEYS = { primary: '1', secondary: '2', ability: '3' };
   const SLOT_UI_LABELS = {
-    primary: 'Slot 1 · Attack',
-    secondary: 'Slot 2 · Weapon arts',
-    ability: 'Slot 3 · Weapon techniques',
-    ultimate: 'Slot 4 · Signature',
-    passive: 'Slot 5 · Passives',
+    basic: 'Slot 1 · Basic attack / combo',
+    primary: 'Slot 2 · Weapon arts',
+    secondary: 'Slot 3 · Weapon techniques',
+    ability: 'Slot 4 · Weapon techniques',
+    ultimate: 'Slot 5 · Signature',
+    passive: 'Passives · no hotbar key',
   };
+
+  /**
+   * Key-1 labels from ALE, /workspace/skill-tree/weapon-slot1.md, Spawn main b6103022.
+   * T1+ requestBasicAttack does NOT fire the tree's old slot-1 skill.
+   * Melee (unlisted types) = BASIC family combo. Do not invent names past that note.
+   */
+  const BASIC_ATTACK_BY_TYPE = {
+    BOW: { name: 'Bow draw', detail: 'Draw on press, loose on release. Same action as focus-LMB.' },
+    CROSSBOW: { name: 'Bow draw', detail: 'Draw on press, loose on release. Same action as focus-LMB.' },
+    GUN: { name: 'Gun shot', detail: 'Same action as focus-LMB (gunFire).' },
+    STAFF: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1, not the tree Fire Bolt. Same action as focus-LMB.' },
+    WAND: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1, not the tree Magic Missile. Same action as focus-LMB.' },
+    TOME: { name: 'Caster bolt', detail: 'Caster-kit basic-spell-1. Same action as focus-LMB.' },
+    // SHIELD is an off-hand; TOOL is a harvest tool. ALE did not name a family combo for either.
+    // Fallback is Jonathan's 'Basic Attack' label — no invented payload.
+    SHIELD: { name: 'Basic Attack', detail: 'Same action as focus-LMB. Shield is an off-hand; ALE did not name a shield-specific basic.' },
+    TOOL: { name: 'Basic Attack', detail: 'Same action as focus-LMB. ALE: harvest / tools may steal key 1 and/or LMB — not a combat style.' },
+  };
+  const BASIC_ATTACK_DEFAULT = {
+    name: 'Family combo',
+    detail: 'BASIC family combo at T1+. Same action as focus-LMB. Class, stats, and skills may change what it does.',
+  };
+
+  function basicAttackInfo(typeDef) {
+    const id = String(typeDef?.id || '').toUpperCase();
+    return BASIC_ATTACK_BY_TYPE[id] || BASIC_ATTACK_DEFAULT;
+  }
+
+  function makeBasicAttackSlot(typeDef) {
+    const info = basicAttackInfo(typeDef);
+    return {
+      type: 'basic',
+      label: `Slot 1 · ${info.name}`,
+      unlockTier: 0,
+      fixed: true,
+      autoAssigned: true,
+      choice: false,
+      skills: [{
+        id: 'basic_attack',
+        name: info.name,
+        description: info.detail,
+        tier: 0,
+        // No invented damage, cooldown, or effects — display-only, from ALE's note.
+      }],
+    };
+  }
+
+  function withBasicAttackSlot(typeDef) {
+    if (!typeDef || isStarterPattern(typeDef)) return typeDef;
+    const slots = typeDef.slots || [];
+    if (slots.some((s) => s.type === 'basic')) return typeDef;
+    typeDef.slots = [makeBasicAttackSlot(typeDef), ...slots];
+    return typeDef;
+  }
+
+  /** Renumber a stored "Slot N · …" label by +1. Passives are not given a key (not Slot 6). */
+  function bumpStoredSlotLabel(label, slotType) {
+    if (slotType === 'passive') return SLOT_UI_LABELS.passive;
+    if (typeof label !== 'string') return label;
+    return label.replace(/Slot ([1-5])\b/, (_, n) => `Slot ${Number(n) + 1}`);
+  }
 
   const STAFF_SCHOOL_RE = {
     fireStaves: /fire|flame|inferno|hell|ember|meteor|blaze/i,
@@ -277,7 +353,18 @@
   }
 
   function slotLabelFor(typeDef, slotType) {
-    return typeDef?.slotLabels?.[slotType] || SLOT_UI_LABELS[slotType] || slotType;
+    if (slotType === 'basic') {
+      return `Slot 1 · ${basicAttackInfo(typeDef).name}`;
+    }
+    if (isStarterPattern(typeDef)) {
+      // starterSlots carry their own labels (e.g. "Slot 1 · Starter Attack").
+      // Do not use typeDef.slotLabels — those are the T1+ tree labels.
+      const fromSlot = (typeDef.slots || []).find((s) => s.type === slotType)?.label;
+      return fromSlot || T0_SLOT_UI_LABELS[slotType] || slotType;
+    }
+    const raw = typeDef?.slotLabels?.[slotType];
+    if (raw) return bumpStoredSlotLabel(raw, slotType);
+    return SLOT_UI_LABELS[slotType] || slotType;
   }
 
   function skillMatchesIdentity(sk, identityKeys) {
@@ -380,7 +467,7 @@
           kind: source.kind,
           title: `${OFFHAND_TOGGLE_KEY} · ${source.title}`,
           detail:
-            'Off-hand replaces slots 1–3. Slot 4 (signature) and slot 5 (passives) stay on your main weapon.',
+            'Off-hand replaces keys 2–4 (former slots 1–3). Key 1 stays the basic attack / combo. Key 5 (former signature) stays on your main weapon. Passives have no hotbar key.',
         };
         for (const slotType of OFFHAND_INJECT_SLOTS) {
           const modSlot = offSlots.find((s) => s.type === slotType);
@@ -611,7 +698,7 @@
     return first ? [first] : [];
   }
 
-  /** 5-slot unique tree: 1 attack, 2–3 this weapon's arts, 4 signature, 5 passives */
+  /** T1+ display: 1 basic attack/combo, 2–5 = former slots 1–4, passives unkeyed. T0 unchanged. */
   function applyVariantToTypeDef(typeDef, variant) {
     if (!typeDef) return null;
     const cloned = cloneTypeDef(typeDef);
@@ -622,7 +709,7 @@
           label: slotLabelFor(cloned, s.type),
         }));
       }
-      return cloned;
+      return withBasicAttackSlot(cloned);
     }
 
     cloned._variant = variant;
@@ -694,7 +781,7 @@
     }
 
     cloned.slots = nextSlots;
-    return cloned;
+    return withBasicAttackSlot(cloned);
   }
 
   function renderWeaponVariantBar(typeId, opts = {}) {
@@ -769,7 +856,7 @@
       return { name: name || p, desc };
     });
 
-    let html = '<div class="wst-passive-column"><div class="slot-header" data-type="passive">PASSIVES<span class="unlock-tag">Choose 1 of ' + parsed.length + '</span></div>';
+    let html = '<div class="wst-passive-column"><div class="slot-header" data-type="passive">PASSIVES · no hotbar key<span class="unlock-tag">Old slot 5 · choose 1 of ' + parsed.length + ' · placement undecided</span></div>';
     for (const p of parsed) {
       html += `<div class="skill-card" data-slot="passive">
         <div class="skill-icon-row"><span class="skill-name">${esc(p.name)}</span></div>
@@ -810,7 +897,7 @@
       sel.ability = ds.ability || null;
       return sel;
     }
-    const slotTypes = isStarterPattern(typeDef) ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
+    const slotTypes = isStarterPattern(typeDef) ? ['primary', 'secondary', 'ability'] : T1_BAR_SLOTS;
     slotTypes.forEach((slotType) => {
       const slot = typeDef.slots?.find((s) => s.type === slotType);
       if (!slot || playerTier < (slot.unlockTier ?? 1)) return;
@@ -930,8 +1017,7 @@
     if (!typeDef) return '';
 
     const starter = isStarterPattern(typeDef);
-    const barSlots = starter ? ['primary', 'secondary', 'ability'] : SLOT_TYPES;
-    const labels = starter ? T0_SLOT_UI_LABELS : SLOT_UI_LABELS;
+    const barSlots = starter ? ['primary', 'secondary', 'ability'] : T1_BAR_SLOTS;
 
     // Structure: label ABOVE the icon slot (not overlaid on top of the icon).
     // Key number sits under the icon so the art stays clean (Unity/hotbar style).
@@ -942,7 +1028,7 @@
       const selectedId = selected[slotType];
       const skill = selectedId ? findSkill(typeDef, slotType, selectedId) : null;
       const icon = skill ? asset(skill.iconUrl || skill.icon) : '';
-      const title = labels[slotType] || slotType;
+      const title = slotLabelFor(typeDef, slotType);
       const skillName = skill?.name || (isUnlocked ? 'Empty' : 'Locked');
 
       html += `<div class="action-slot-wrap" data-type="${esc(slotType)}" title="${esc(title)}: ${esc(skillName)}">
@@ -968,7 +1054,7 @@
       <div class="action-slot" style="${passives.length ? '' : 'opacity:0.35'}">
         <span class="slot-empty" style="font-size:0.7em;padding:4px;text-align:center;line-height:1.15;">${esc(passiveLabel)}</span>
       </div>
-      <div class="slot-key">5</div>
+      <div class="slot-key wst-no-key" title="Old slot 5 — no hotbar key; Jonathan to decide placement">—</div>
       <div class="slot-skill-name">${esc(passiveLabel)}</div>
     </div>`;
 
@@ -1057,7 +1143,7 @@
       OFFHAND_INJECT_SLOTS.includes(s.type),
     );
     const pseudo = { slots: injectSlots, _passives: [] };
-    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} (block) · ${esc(title)}</strong> — injects into <strong>mainhand slots 1–3</strong> only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. Slots <strong>4–5</strong> remain your main weapon signature + passives.</div>`;
+    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} (block) · ${esc(title)}</strong> — injects into <strong>mainhand keys 2–4</strong> (former slots 1–3) only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. <strong>Key 1</strong> stays the basic attack / combo. <strong>Key 5</strong> remains your main weapon signature. Passives have no hotbar key.</div>`;
     return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
@@ -1178,7 +1264,7 @@
     html += `<div class="wst-action-bar-compact">${renderActionBarHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div class="slot-columns wst-compact-cols">${renderSlotColumnsHTML(typeDef, { asset, playerTier, selectedSkills: selected })}</div>`;
     html += `<div style="margin-top:10px;font-size:9px;color:var(--dim);text-align:center">
-      1=attack · 2–3=this weapon · 4=signature · 5=passives · ${OFFHAND_TOGGLE_KEY}=block / off-hand slots 1–3 (shield/tome) ·
+      1=basic attack / combo (same as focus-LMB) · 2–5=former slots 1–4 · passives have no hotbar key · ${OFFHAND_TOGGLE_KEY}=block / off-hand keys 2–4 (shield/tome) ·
       <a href="./WEAPON_SKILLS.html" style="color:var(--gold)">Full browser</a></div>`;
     return html;
   }
@@ -1193,14 +1279,17 @@
     if (!typeDef) return [];
     const selected = defaultSelections(typeDef, playerTier);
     const asset = opts.asset || defaultAsset;
-    return SLOT_TYPES.map((slotType, i) => {
+    const starter = isStarterPattern(typeDef);
+    const barSlots = starter ? ['primary', 'secondary', 'ability'] : T1_BAR_SLOTS;
+    const keys = starter ? T0_HOTKEYS : SLOT_HOTKEYS;
+    return barSlots.map((slotType) => {
       const skill = findSkill(typeDef, slotType, selected[slotType]);
       return {
-        key: SLOT_HOTKEYS[i],
+        key: keys[slotType],
         slotType,
         skill,
         icon: skill ? (skill.iconUrl || asset(skill.icon)) : null,
-        label: skill?.name || SLOT_UI_LABELS[slotType],
+        label: skill?.name || slotLabelFor(typeDef, slotType),
         modifier: skill?._modifier || null,
       };
     });
@@ -1216,7 +1305,14 @@
     OFFHAND_TOGGLE_KEY,
     OFFHAND_INJECT_SLOTS,
     SLOT_TYPES,
+    T1_BAR_SLOTS,
+    SLOT_HOTKEYS,
+    T0_HOTKEYS,
+    SLOT_UI_LABELS,
     T0_SLOT_UI_LABELS,
+    BASIC_ATTACK_BY_TYPE,
+    basicAttackInfo,
+    withBasicAttackSlot,
     isStarterPattern,
     buildFiveSlotFromRawSlots,
     getOffhandModifierSlots,
