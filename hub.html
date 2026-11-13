@@ -7,8 +7,19 @@
   <meta name="description" content="The single source of truth for Grudge Warlords — items, weapon skills, skill trees, 3D models, sprites, VFX, and the full T1–T8 tier system.">
   <meta name="theme-color" content="#0f1419">
   <link rel="canonical" href="https://info.grudge-studio.com/docs">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" id="page-favicon" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
+  <script>
+    (function () {
+      var href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      var ico = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.ico') || '';
+      var link = document.getElementById('page-favicon');
+      if (link && href) link.href = href;
+      var icoLink = document.getElementById('page-favicon-ico');
+      if (icoLink && ico) icoLink.href = ico;
+    })();
+  </script>
+  <link rel="icon" id="page-favicon-ico" sizes="any">
   <style>
     :root {
       --bg: #0a0e14;
@@ -287,6 +298,24 @@
       transition: transform 0.2s;
     }
     .asset-card:hover .asset-preview img { transform: scale(1.1); }
+    .preview-icon-host {
+      display: inline-flex;
+      width: 50px;
+      height: 50px;
+      position: relative;
+      flex: 0 0 50px;
+    }
+    .preview-icon-host img { width: 50px; height: 50px; }
+
+    .icon-missing {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; min-height: 28px; padding: 3px 4px; box-sizing: border-box;
+      font: 700 8px/1.15 Inter, system-ui, sans-serif; letter-spacing: .04em;
+      text-transform: uppercase; text-align: center; color: #f3c14a;
+      background: rgba(80,16,16,.72); border: 1px solid rgba(243,193,74,.7);
+    }
+    .has-icon-missing { outline: 1px dashed rgba(243,193,74,.85); }
+    .preview-icon-host .icon-missing { position: absolute; inset: 0; font-size: 7px; }
     .asset-preview-gradient {
       position: absolute;
       bottom: 0;
@@ -832,15 +861,39 @@
   <script>
     // Lazy-load preview images for asset cards
     (function() {
-      // Sprites and icons are omitted from the Vercel deploy (.vercelignore:
-      // sprites/** and icons/**), and info.grudge-studio.com answers missing
-      // paths with 200 text/html (root index.html). Prefer the public CDN,
-      // then GitHub Pages. Per-image (not a single probed base): the CDN
-      // serves only a subset and returns 403 for Vercel preview / unknown
-      // referers. Matches the 2D_MODELS / VFX browser loader.
-      var SPRITE_CDN = 'https://assets.grudge-studio.com';
-      var SPRITE_FALLBACK = 'https://molochdagod.github.io/ObjectStore';
+      // Preview-strip images load only from https://assets.grudge-studio.com
+      // via GrudgeAsset.assetUrl. A miss (error, non-image, or HTML body)
+      // shows the "icon missing" marker. Magic bytes are probed with
+      // Range: bytes=0-15; Content-Type is not trusted.
       var spriteBlobCache = {};
+
+      /* Show a visible "icon missing" marker. No substitute art. */
+      function showIconMissing(img) {
+        if (!img) return;
+        img.style.display = 'none';
+        img.removeAttribute('src');
+        var host = img.parentElement;
+        showIconMissingOn(host, img.getAttribute('alt') || img.dataset.path || '');
+      }
+      function showIconMissingOn(host, label) {
+        if (!host) return;
+        if (!host.querySelector('.icon-missing')) {
+          var m = document.createElement('span');
+          m.className = 'icon-missing';
+          m.textContent = 'icon missing';
+          m.setAttribute('role', 'img');
+          m.setAttribute('aria-label', 'icon missing');
+          if (label) m.setAttribute('title', String(label));
+          host.appendChild(m);
+          host.classList.add('has-icon-missing');
+        }
+      }
+      function clearIconMissing(host) {
+        if (!host) return;
+        var m = host.querySelector('.icon-missing');
+        if (m) m.remove();
+        host.classList.remove('has-icon-missing');
+      }
 
       var spritePreviews = [
         'sprites/barbarian-warrior/walk.png', 'sprites/knight-templar/idle.png',
@@ -881,41 +934,65 @@
         return encodeSpriteKey(path);
       }
 
-      function spriteCandidates(raw) {
-        if (!raw) return [];
-        if (/^https?:\/\//i.test(raw)) return [raw];
+      function spriteUrl(raw) {
+        if (!raw || !window.GrudgeAsset) return '';
+        if (/^https?:\/\//i.test(raw)) return GrudgeAsset.assetUrl(raw) || '';
         var path = spritePath(raw);
-        if (!path) return [];
-        return [SPRITE_CDN + path, SPRITE_FALLBACK + path];
+        if (!path) return '';
+        return GrudgeAsset.assetUrl(GrudgeAsset.CDN + path) || '';
       }
 
-      function looksLikeImage(blob, buf) {
-        var type = (blob && blob.type) || '';
-        if (type.indexOf('image/') === 0) return true;
+      function spriteCandidates(raw) {
+        var u = spriteUrl(raw);
+        return u ? [u] : [];
+      }
+
+      function looksLikeImageBuf(buf) {
         if (!buf || buf.byteLength < 12) return false;
         var b = new Uint8Array(buf);
         if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
         if (b[0] === 0xff && b[1] === 0xd8) return true;
         if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
-        if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46) return true;
+        if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
+            b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return true;
+        if (b[0] === 0x00 && b[1] === 0x00 && b[2] === 0x01 && b[3] === 0x00) return true;
         return false;
+      }
+
+      function probeImageMagic(url) {
+        return fetch(url, {
+          mode: 'cors',
+          credentials: 'omit',
+          headers: { 'Range': 'bytes=0-15' }
+        }).then(function(res) {
+          if (!res.ok && res.status !== 206) return false;
+          return res.arrayBuffer().then(function(buf) { return looksLikeImageBuf(buf); });
+        }).catch(function() { return false; });
       }
 
       function fetchSpriteBlob(url) {
         if (spriteBlobCache[url]) return spriteBlobCache[url];
-        var p = fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
-          if (!res.ok) return { ok: false };
-          return res.arrayBuffer().then(function(buf) {
-            var blob = new Blob([buf], { type: res.headers.get('content-type') || '' });
-            if (!looksLikeImage(blob, buf)) return { ok: false };
-            return { ok: true, blob: blob };
+        var p = probeImageMagic(url).then(function(ok) {
+          if (!ok) return { ok: false };
+          return fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
+            if (!res.ok) return { ok: false };
+            return res.arrayBuffer().then(function(buf) {
+              if (!looksLikeImageBuf(buf)) return { ok: false };
+              var b = new Uint8Array(buf);
+              var mime = 'application/octet-stream';
+              if (b[0] === 0x89) mime = 'image/png';
+              else if (b[0] === 0xff) mime = 'image/jpeg';
+              else if (b[0] === 0x47) mime = 'image/gif';
+              else if (b[0] === 0x52) mime = 'image/webp';
+              return { ok: true, blob: new Blob([buf], { type: mime }) };
+            });
           });
         }).catch(function() { return { ok: false }; });
         spriteBlobCache[url] = p;
         return p;
       }
 
-      // Load path into img: try CDN, then GH Pages. Resolves on success, rejects if both fail.
+      // Load path into img from the assets CDN only. Resolves on success, rejects on a miss.
       // Keeps crossOrigin=anonymous. Uses a blob URL so a successful CORS fetch stays untainted.
       function loadSprite(img, raw) {
         img.crossOrigin = 'anonymous';
@@ -954,12 +1031,14 @@
           img.loading = 'eager';
           img.crossOrigin = 'anonymous';
           img.dataset.path = p;
-          el.insertBefore(img, el.querySelector('.asset-preview-gradient'));
+          var host = document.createElement('span');
+          host.className = 'preview-icon-host';
+          host.appendChild(img);
+          el.insertBefore(host, el.querySelector('.asset-preview-gradient'));
           loadSprite(img, p).then(function(url) {
             img.dataset.loadedFrom = url;
           }, function() {
-            img.style.display = 'none';
-            img.dataset.failed = '1';
+            showIconMissing(img);
           });
         });
       }
