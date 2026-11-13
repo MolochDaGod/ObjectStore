@@ -4,7 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grudge Studio 2D Models Browser</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" id="page-favicon" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
+  <script>
+    (function () {
+      var href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      var link = document.getElementById('page-favicon');
+      if (link && href) link.href = href;
+    })();
+  </script>
   <link rel="stylesheet" href="./css/tier-system.css">
   <script src="https://js.puter.com/v2/"></script>
   <style>
@@ -44,6 +52,18 @@
     .char-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); border-color: var(--tier-4); }
     .sprite-viewport { width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.4); position: relative; image-rendering: pixelated; cursor: pointer; }
     .sprite-viewport canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+
+    .icon-missing {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; min-height: 28px; padding: 3px 4px; box-sizing: border-box;
+      font: 700 8px/1.15 Inter, system-ui, sans-serif; letter-spacing: .04em;
+      text-transform: uppercase; text-align: center; color: #f3c14a;
+      background: rgba(80,16,16,.72); border: 1px solid rgba(243,193,74,.7);
+    }
+    .has-icon-missing { outline: 1px dashed rgba(243,193,74,.85); }
+    .sprite-viewport .icon-missing { position: absolute; inset: 0; z-index: 2; }
+    .modal-preview { position: relative; }
+    .modal-preview .icon-missing { position: absolute; inset: 20px; }
     .char-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-top: 8px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .char-meta { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; }
     .char-uuid { font-size: 0.55rem; color: var(--tier-7); font-family: monospace; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -180,7 +200,7 @@
   <script>document.addEventListener('DOMContentLoaded', function() { if (typeof GrudgeAuth !== 'undefined') GrudgeAuth.renderAuthBar(); });</script>
   <div class="container">
     <div class="header">
-      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">2D Models Browser</h1>
+      <h1><img id="header-favicon" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">2D Models Browser</h1>
       <p class="subtitle">Animated sprite browser with AI editing &amp; upload &mdash; Grudge Studio ObjectStore v3</p>
       <div class="stats-bar" id="statsBar"></div>
     </div>
@@ -221,6 +241,137 @@
     var chars = [], filtered = [], page = 0, SIZE = 48;
     var filters = { q: '', cat: 'all', src: 'all', sub: 'all' };
     var anims = {}, obs, BASE = '.';
+    // Sprites load only from https://assets.grudge-studio.com via GrudgeAsset.assetUrl.
+    // A miss (error, non-image, or HTML body) shows the "icon missing" marker.
+    // Magic bytes are probed with Range: bytes=0-15; Content-Type is not trusted.
+    (function resolveHeaderFavicon() {
+      var href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      var img = document.getElementById('header-favicon');
+      if (img && href) img.src = href;
+    })();
+    var spriteBlobCache = {};
+
+    /* Show a visible "icon missing" marker. No substitute art. */
+    function showIconMissing(img) {
+      if (!img) return;
+      img.style.display = 'none';
+      img.removeAttribute('src');
+      var host = img.parentElement;
+      showIconMissingOn(host, img.getAttribute('alt') || img.dataset.path || '');
+    }
+    function showIconMissingOn(host, label) {
+      if (!host) return;
+      if (!host.querySelector('.icon-missing')) {
+        var m = document.createElement('span');
+        m.className = 'icon-missing';
+        m.textContent = 'icon missing';
+        m.setAttribute('role', 'img');
+        m.setAttribute('aria-label', 'icon missing');
+        if (label) m.setAttribute('title', String(label));
+        host.appendChild(m);
+        host.classList.add('has-icon-missing');
+      }
+    }
+    function clearIconMissing(host) {
+      if (!host) return;
+      var m = host.querySelector('.icon-missing');
+      if (m) m.remove();
+      host.classList.remove('has-icon-missing');
+    }
+
+    function spritePath(raw) {
+      if (!raw) return '';
+      if (/^https?:\/\//i.test(raw)) {
+        try { var u = new URL(raw); return u.pathname + u.search; } catch (e) { return raw; }
+      }
+      return raw.charAt(0) === '/' ? raw : '/' + raw;
+    }
+
+    function spriteUrl(raw) {
+      if (!raw || !window.GrudgeAsset) return '';
+      if (/^https?:\/\//i.test(raw)) return GrudgeAsset.assetUrl(raw) || '';
+      var path = spritePath(raw);
+      if (!path) return '';
+      return GrudgeAsset.assetUrl(GrudgeAsset.CDN + path) || '';
+    }
+
+    function spriteCandidates(raw) {
+      var u = spriteUrl(raw);
+      return u ? [u] : [];
+    }
+
+    function looksLikeImageBuf(buf) {
+      if (!buf || buf.byteLength < 12) return false;
+      var b = new Uint8Array(buf);
+      if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
+      if (b[0] === 0xff && b[1] === 0xd8) return true;
+      if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
+      if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
+          b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return true;
+      if (b[0] === 0x00 && b[1] === 0x00 && b[2] === 0x01 && b[3] === 0x00) return true;
+      return false;
+    }
+
+    function probeImageMagic(url) {
+      return fetch(url, {
+        mode: 'cors',
+        credentials: 'omit',
+        headers: { 'Range': 'bytes=0-15' }
+      }).then(function(res) {
+        if (!res.ok && res.status !== 206) return false;
+        return res.arrayBuffer().then(function(buf) { return looksLikeImageBuf(buf); });
+      }).catch(function() { return false; });
+    }
+
+    function fetchSpriteBlob(url) {
+      if (spriteBlobCache[url]) return spriteBlobCache[url];
+      var p = probeImageMagic(url).then(function(ok) {
+        if (!ok) return { ok: false };
+        return fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
+          if (!res.ok) return { ok: false };
+          return res.arrayBuffer().then(function(buf) {
+            if (!looksLikeImageBuf(buf)) return { ok: false };
+            var b = new Uint8Array(buf);
+            var mime = 'application/octet-stream';
+            if (b[0] === 0x89) mime = 'image/png';
+            else if (b[0] === 0xff) mime = 'image/jpeg';
+            else if (b[0] === 0x47) mime = 'image/gif';
+            else if (b[0] === 0x52) mime = 'image/webp';
+            return { ok: true, blob: new Blob([buf], { type: mime }) };
+          });
+        });
+      }).catch(function() { return { ok: false }; });
+      spriteBlobCache[url] = p;
+      return p;
+    }
+
+    // Load path into img from the assets CDN only. Resolves on success, rejects on a miss.
+    // Keeps crossOrigin=anonymous. Uses a blob URL so a successful CORS fetch stays untainted.
+    function loadSprite(img, raw) {
+      img.crossOrigin = 'anonymous';
+      var urls = spriteCandidates(raw);
+      return new Promise(function(resolve, reject) {
+        var i = 0;
+        function next() {
+          if (i >= urls.length) { reject(); return; }
+          var url = urls[i++];
+          fetchSpriteBlob(url).then(function(entry) {
+            if (!entry || !entry.ok) { next(); return; }
+            var obj = URL.createObjectURL(entry.blob);
+            function cleanup() { URL.revokeObjectURL(obj); }
+            img.onload = function() {
+              var done = function() { cleanup(); resolve(url); };
+              if (typeof img.decode === 'function') img.decode().then(done).catch(done);
+              else done();
+            };
+            img.onerror = function() { cleanup(); next(); };
+            img.src = obj;
+          });
+        }
+        next();
+      });
+    }
+
 
     async function init() {
       try {
@@ -375,10 +526,11 @@
           var fsh = (typeof fp === 'object' && fp.sh != null) ? fp.sh : null;
           a.frameMeta[idx] = { sx: fsx, sy: fsy, sw: fsw, sh: fsh };
           var fi = new Image(); fi.crossOrigin = 'anonymous';
-          fi.onload = function() { a.framesLoaded++; if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) obs.observe(vp); var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; } };
-          fi.onerror = function() { a.framesLoaded++; };
-          fi.src = BASE + fpath;
           a.frameImgs[idx] = fi;
+          loadSprite(fi, fpath).then(function() {
+            a.framesLoaded++;
+            if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) obs.observe(vp); var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; }
+          }, function() { a.framesLoaded++; });
         });
         return;
       }
@@ -391,33 +543,41 @@
         drawF(a, 0);
         var vp = cv.parentElement; if(vp) obs.observe(vp);
       };
-      img.onerror = function() {
-        var retry = +(img.dataset.retry || 0);
-        if (retry === 0) {
-          img.dataset.retry = '1';
-          // Try 1: strip category subfolder (categorized → flat)
-          var alt = ad.path.replace(/\/sprites\/[a-zA-Z_-]+\/([a-zA-Z_-]+\/)/, '/sprites/$1');
-          if (alt !== ad.path) { img.src = BASE + alt; return; }
-        }
-        if (retry <= 1) {
-          img.dataset.retry = '2';
-          // Try 2: add category subfolder (flat → categorized)
-          var cat = ch.category || 'characters';
-          var nested = ad.path.replace(/\/sprites\/(?!characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui|buildings|backgrounds)/, '/sprites/' + cat + '/');
-          if (nested !== ad.path && nested !== img.src.replace(BASE, '')) { img.src = BASE + nested; return; }
-        }
-        if (retry <= 2) {
-          img.dataset.retry = '3';
-          // Try 3: lowercase the filename
-          var lower = ad.path.replace(/\/([^\/]+)$/, function(m, f) { return '/' + f.toLowerCase(); });
-          if (lower !== ad.path) { img.src = BASE + lower; return; }
-        }
+      var sheetOnload = img.onload;
+      function failSheet() {
         var fi = document.getElementById('fi-'+id);
         if(fi) fi.textContent = 'Failed';
-        ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='12px sans-serif'; ctx.textAlign='center';
-        ctx.fillText('\u274C',cv.width/2,cv.height/2);
-      };
-      img.src = BASE + ad.path;
+        ctx.clearRect(0,0,cv.width,cv.height);
+        showIconMissingOn(cv.parentElement, ad.path || ch.name || '');
+      }
+      function trySheet(path) {
+        loadSprite(img, path).then(function() {
+          if (typeof sheetOnload === 'function') sheetOnload.call(img);
+        }, function() {
+          var retry = +(img.dataset.retry || 0);
+          if (retry === 0) {
+            img.dataset.retry = '1';
+            // Try 1: strip category subfolder (categorized → flat)
+            var alt = ad.path.replace(/\/sprites\/[a-zA-Z_-]+\/([a-zA-Z_-]+\/)/, '/sprites/$1');
+            if (alt !== ad.path && alt !== path) { trySheet(alt); return; }
+          }
+          if (retry <= 1) {
+            img.dataset.retry = '2';
+            // Try 2: add category subfolder (flat → categorized)
+            var cat = ch.category || 'characters';
+            var nested = ad.path.replace(/\/sprites\/(?!characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui|buildings|backgrounds)/, '/sprites/' + cat + '/');
+            if (nested !== ad.path && nested !== path) { trySheet(nested); return; }
+          }
+          if (retry <= 2) {
+            img.dataset.retry = '3';
+            // Try 3: lowercase the filename
+            var lower = ad.path.replace(/\/([^\/]+)$/, function(m, f) { return '/' + f.toLowerCase(); });
+            if (lower !== ad.path && lower !== path) { trySheet(lower); return; }
+          }
+          failSheet();
+        });
+      }
+      trySheet(ad.path);
     }
 
     function drawF(a, f) {
@@ -613,8 +773,11 @@
           mA.raf=requestAnimationFrame(tick);
         }
       };
-      img.onerror = function() { ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#ff4d4d'; ctx.font='18px sans-serif'; ctx.textAlign='center'; ctx.fillText('\u274C Load failed',cv.width/2,cv.height/2); };
-      img.src = BASE + ad.path;
+      var modalOnload = img.onload;
+      var modalOnerror = function() { ctx.clearRect(0,0,cv.width,cv.height); showIconMissingOn(cv.parentElement, ad.path || ''); };
+      loadSprite(img, ad.path).then(function() {
+        if (typeof modalOnload === 'function') modalOnload.call(img);
+      }, modalOnerror);
     }
 
     // ── Get source rect for a frame ──
@@ -782,22 +945,19 @@
           if (a.frameW > a.width || a.frameH > a.height) issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': frame size ('+a.frameW+'x'+a.frameH+') exceeds sheet ('+a.width+'x'+a.height+')'});
           if (a.layout==='horizontal' && a.width % a.frameW !== 0) issues.push({type:'warn', msg: esc(c.name)+'/'+esc(a.name)+': sheet width '+a.width+' not divisible by frame width '+a.frameW});
           if (a.layout==='vertical' && a.height % a.frameH !== 0) issues.push({type:'warn', msg: esc(c.name)+'/'+esc(a.name)+': sheet height '+a.height+' not divisible by frame height '+a.frameH});
-          // Test image loading
+          // Test image loading (CDN only, then existing alt-path retry still on the CDN)
           var img = new Image(); img.crossOrigin='anonymous';
-          img.onload = function() { tested++; checkDone(); };
-          img.onerror = function() {
-            // Try fallback
+          loadSprite(img, a.path).then(function() { tested++; checkDone(); }, function() {
             var alt = a.path.replace(/\/sprites\/(characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui)\//, '/sprites/');
             if (alt !== a.path) {
               var img2 = new Image(); img2.crossOrigin='anonymous';
-              img2.onload = function() { tested++; checkDone(); };
-              img2.onerror = function() { issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': image failed to load: '+esc(a.path)}); tested++; checkDone(); };
-              img2.src = BASE + alt;
+              loadSprite(img2, alt).then(function() { tested++; checkDone(); }, function() {
+                issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': image failed to load: '+esc(a.path)}); tested++; checkDone();
+              });
             } else {
               issues.push({type:'error', msg: esc(c.name)+'/'+esc(a.name)+': image failed to load: '+esc(a.path)}); tested++; checkDone();
             }
-          };
-          img.src = BASE + a.path;
+          });
         });
       });
       function checkDone() {
