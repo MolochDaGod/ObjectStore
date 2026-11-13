@@ -22,7 +22,8 @@
  *
  * Off-hand rules:
  *   SHIELD + TOME — hold E (block) replaces mainhand skill slots (keys 2–4: former 1–3);
- *   key 1 stays the basic attack; key 5 (former signature) stays on the main weapon.
+ *   key 1 stays the basic attack; key 5 is the style picks (old Button 4) and stays on the main weapon.
+ *   The old Button 5 type-ultimate has no key yet.
  *   Passives stay visible with no hotbar key.
  *   Active only with 1H sword, knife (dagger), hammer, mace, or axe — not 2H, gun, wand, claw, staff, bow
  *   Each weapon TYPE has a unique tree. Named weapons filter that type
@@ -235,7 +236,7 @@
   function bumpStoredSlotLabel(label, slotType, typeDef) {
     if (slotType === 'passive') return SLOT_UI_LABELS.passive;
     if (typeof label !== 'string') return label;
-    // SHIELD / TOME ultimate stays Slot 4 — they do not shift past key 4.
+    // TOOL has no Button 4 or 5, so it does not shift past key 4. SHIELD and TOME have WEAPON_STYLES ["4"] and ["5"] and follow the same mapping.
     if (stopsAtKey4(typeDef) && slotType === 'ultimate') return label;
     return label.replace(/Slot ([1-5])\b/, (_, n) => `Slot ${Number(n) + 1}`);
   }
@@ -551,7 +552,7 @@
           kind: source.kind,
           title: `${OFFHAND_TOGGLE_KEY} · ${source.title}`,
           detail:
-            'Off-hand replaces keys 2–4 (former slots 1–3). Key 1 stays the basic attack / combo. Key 5 (former signature) stays on your main weapon. Passives have no hotbar key.',
+            'Off-hand replaces keys 2–4 (former slots 1–3). Key 1 stays the basic attack / combo. Key 5 is the style picks (old Button 4) and stays on your main weapon. The old Button 5 type-ultimate has no key yet. Passives have no hotbar key.',
         };
         for (const slotType of OFFHAND_INJECT_SLOTS) {
           const modSlot = offSlots.find((s) => s.type === slotType);
@@ -1270,7 +1271,7 @@
       OFFHAND_INJECT_SLOTS.includes(s.type),
     );
     const pseudo = { slots: injectSlots, _passives: [] };
-    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} (block) · ${esc(title)}</strong> — injects into <strong>mainhand keys 2–4</strong> (former slots 1–3) only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. <strong>Key 1</strong> stays the basic attack / combo. <strong>Key 5</strong> remains your main weapon signature. Passives have no hotbar key.</div>`;
+    const intro = `<div class="wst-modifier-intro"><strong>${OFFHAND_TOGGLE_KEY} (block) · ${esc(title)}</strong> — injects into <strong>mainhand keys 2–4</strong> (former slots 1–3) only with a <strong>1H sword, knife, hammer, mace, or axe</strong>. <strong>Key 1</strong> stays the basic attack / combo. <strong>Key 5</strong> is the style picks (old Button 4) and stays on your main weapon. The old Button 5 type-ultimate has no key yet. Passives have no hotbar key.</div>`;
     return `${intro}${renderSlotColumnsHTML(pseudo, { asset, playerTier, selectedSkills: {} })}`;
   }
 
