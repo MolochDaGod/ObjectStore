@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VFX Effects Browser - Grudge Studio ObjectStore</title>
   <meta name="description" content="Animated VFX sprite browser for GRUDA-Wars battle effects">
-  <link rel="icon" href="favicon.svg">
+  <link rel="icon" id="page-favicon" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
+  <script>
+    (function () {
+      var href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      var link = document.getElementById('page-favicon');
+      if (link && href) link.href = href;
+    })();
+  </script>
   <style>
     :root {
       --bg: #0f1419; --card: #1a1f2e; --gold: #d4a84b; --gold-light: #f0d890;
@@ -45,27 +53,39 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
     .fx-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; position: relative; min-width: 0; font-family: inherit; color: inherit; width: 100%; }
     .fx-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(212,168,75,0.15); }
+    .fx-preview {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 8px;
+    }
+    .fx-preview-modal { width: 160px; height: 160px; margin: 0 auto 16px; }
     .fx-card canvas,
+    .fx-preview canvas,
     .modal canvas {
       display: block;
-      margin: 0 auto 8px;
+      margin: 0 auto;
       border-radius: 6px;
       background: var(--preview-bg);
       image-rendering: pixelated;
       image-rendering: crisp-edges;
     }
+    .fx-preview canvas { width: 100%; height: 100%; margin: 0; }
     .modal canvas { margin: 0 auto 16px; border-radius: 8px; }
+    .fx-preview-modal canvas { margin: 0; }
+    .icon-missing {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; min-height: 28px; padding: 3px 4px; box-sizing: border-box;
+      font: 700 8px/1.15 Inter, system-ui, sans-serif; letter-spacing: .04em;
+      text-transform: uppercase; text-align: center; color: #f3c14a;
+      background: rgba(80,16,16,.72); border: 1px solid rgba(243,193,74,.7);
+    }
+    .has-icon-missing { outline: 1px dashed rgba(243,193,74,.85); }
+    .fx-preview .icon-missing { position: absolute; inset: 0; }
     .fx-name { font-size: 0.78rem; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .fx-meta { font-size: 0.68rem; color: var(--text-dim); }
     .fx-tags { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
     .fx-tag { font-size: 0.6rem; padding: 1px 5px; border-radius: 8px; background: rgba(212,168,75,0.15); color: var(--gold); }
-    .fx-missing-badge {
-      position: absolute; top: 8px; right: 8px;
-      font-size: 0.62rem; letter-spacing: 0.02em; text-transform: uppercase;
-      background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.45);
-      border-radius: 8px; padding: 1px 6px; display: none;
-    }
-    .fx-card.is-missing .fx-missing-badge { display: inline-block; }
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; padding: 16px; }
     .modal-bg.open { display: flex; }
     .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 620px; width: min(92%, 620px); max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; position: relative; }
@@ -111,7 +131,7 @@
   <header class="header">
     <div class="header-inner">
       <a href="./" class="back-link">← Back to ObjectStore</a>
-      <h1><img src="favicon.svg" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">VFX Effects Browser</h1>
+      <h1><img id="header-favicon" alt="" style="height:1em;vertical-align:middle;margin-right:6px;">VFX Effects Browser</h1>
       <p class="subtitle">Animated battle effect sprites from GRUDA-Wars</p>
       <div class="controls">
         <input type="text" class="search-box" id="search" placeholder="Search effects..." autocomplete="off">
@@ -146,12 +166,14 @@
   <script src="./js/nav.js"></script>
   <script>
     const BASE = './api/v1';
-    // Live page used objectstore.grudge-studio.com, but those /sprites paths 404.
-    // Relative sourceUrl values were resolved against info.grudge-studio.com, which
-    // returns the Info Hub HTML (200, text/html) instead of the sheet. Prefer the
-    // public CDN at assets.grudge-studio.com; fall back to JSON sourceBase
-    // (GitHub Pages) for sheets not yet on the CDN (currently retro_impact/*).
-    const SRC_BASE = 'https://assets.grudge-studio.com';
+    // Sheets load only from https://assets.grudge-studio.com via GrudgeAsset.assetUrl.
+    // A miss (error, non-image, or HTML body) shows the "icon missing" marker.
+    // All 152 catalog /sprites/ paths are real PNGs on the CDN.
+    (function resolveHeaderFavicon() {
+      const href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      const img = document.getElementById('header-favicon');
+      if (img && href) img.src = href;
+    })();
     const PREVIEW_BG = '#0a0e14';
     const FRAME_MS = 60;
     const ALLOWED_BLENDS = new Set([
@@ -181,46 +203,18 @@
       }[ch]));
     }
 
-    function safeHttpUrl(value) {
-      if (value == null || value === '') return null;
-      try {
-        const url = new URL(String(value), SRC_BASE);
-        if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
-      } catch (e) { /* ignore invalid */ }
-      return null;
-    }
-
-    function sheetPath(fx) {
+    function sheetUrlOf(fx) {
       const raw = (fx && (fx.sourceUrl || fx.src)) || '';
-      if (!raw) return '';
-      if (/^https?:\/\//i.test(raw)) {
-        try { return new URL(raw).pathname + new URL(raw).search; } catch (e) { return raw; }
-      }
-      return raw.startsWith('/') ? raw : '/' + raw;
-    }
-
-    function fallbackBase() {
-      const raw = (fxData && fxData.sourceBase) || 'https://molochdagod.github.io/ObjectStore';
-      return String(raw).replace(/\/$/, '');
+      if (!raw || !window.GrudgeAsset) return '';
+      // Absolute URLs: assetUrl accepts only the assets CDN host; any other host is ''.
+      if (/^https?:\/\//i.test(raw)) return GrudgeAsset.assetUrl(raw) || '';
+      const path = raw.charAt(0) === '/' ? raw : '/' + raw;
+      return GrudgeAsset.assetUrl(GrudgeAsset.CDN + path) || '';
     }
 
     function sheetCandidates(fx) {
-      const raw = (fx && (fx.sourceUrl || fx.src)) || '';
-      if (/^https?:\/\//i.test(raw)) {
-        const u = safeHttpUrl(raw);
-        return u ? [u] : [];
-      }
-      const path = sheetPath(fx);
-      if (!path) return [];
-      const bases = [SRC_BASE];
-      const fb = fallbackBase();
-      if (fb && fb !== SRC_BASE) bases.push(fb);
-      const out = [];
-      for (const base of bases) {
-        const u = safeHttpUrl(base + path);
-        if (u && !out.includes(u)) out.push(u);
-      }
-      return out;
+      const u = sheetUrlOf(fx);
+      return u ? [u] : [];
     }
 
     function sheetUrl(fx) {
@@ -333,18 +327,55 @@
 
     function markMissing(state, isMissing) {
       if (state.card) state.card.classList.toggle('is-missing', isMissing);
+      const host = state.preview || (state.canvas && state.canvas.parentElement);
+      if (isMissing) showIconMissingOn(host, state.key || '');
+      else clearIconMissing(host);
     }
 
-    function looksLikeImage(blob, buf) {
-      const type = (blob && blob.type) || '';
-      if (type.startsWith('image/')) return true;
+
+    function looksLikeImageBuf(buf) {
       if (!buf || buf.byteLength < 12) return false;
       const b = new Uint8Array(buf);
       if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
       if (b[0] === 0xff && b[1] === 0xd8) return true;
       if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
-      if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46) return true;
+      if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
+          b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return true;
+      if (b[0] === 0x00 && b[1] === 0x00 && b[2] === 0x01 && b[3] === 0x00) return true;
       return false;
+    }
+
+    function probeImageMagic(url) {
+      return fetch(url, {
+        mode: 'cors',
+        credentials: 'omit',
+        headers: { 'Range': 'bytes=0-15' }
+      }).then(async (res) => {
+        if (!res.ok && res.status !== 206) return false;
+        const buf = await res.arrayBuffer();
+        return looksLikeImageBuf(buf);
+      }).catch(() => false);
+    }
+
+    /* Show a visible "icon missing" marker. No substitute art. */
+    function showIconMissingOn(host, label) {
+      if (!host) return;
+      if (!host.querySelector('.icon-missing')) {
+        const m = document.createElement('span');
+        m.className = 'icon-missing';
+        m.textContent = 'icon missing';
+        m.setAttribute('role', 'img');
+        m.setAttribute('aria-label', 'icon missing');
+        if (label) m.setAttribute('title', String(label));
+        host.appendChild(m);
+        host.classList.add('has-icon-missing');
+      }
+    }
+    function clearIconMissing(host) {
+      if (!host) return;
+      const m = host.querySelector('.icon-missing');
+      if (m) m.remove();
+      host.classList.remove('has-icon-missing');
     }
 
     function loadImage(url) {
@@ -367,11 +398,19 @@
           entry.img = img;
           resolve(entry);
         };
-        fetch(url, { mode: 'cors', credentials: 'omit' }).then(async (res) => {
+        probeImageMagic(url).then(async (ok) => {
+          if (!ok) { fail(); return; }
+          const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
           if (!res.ok) { fail(); return; }
           const buf = await res.arrayBuffer();
-          const blob = new Blob([buf], { type: res.headers.get('content-type') || '' });
-          if (!looksLikeImage(blob, buf)) { fail(); return; }
+          if (!looksLikeImageBuf(buf)) { fail(); return; }
+          const b = new Uint8Array(buf);
+          let mime = 'application/octet-stream';
+          if (b[0] === 0x89) mime = 'image/png';
+          else if (b[0] === 0xff) mime = 'image/jpeg';
+          else if (b[0] === 0x47) mime = 'image/gif';
+          else if (b[0] === 0x52) mime = 'image/webp';
+          const blob = new Blob([buf], { type: mime });
           const obj = URL.createObjectURL(blob);
           const img = new Image();
           const finish = () => { URL.revokeObjectURL(obj); succeed(img); };
@@ -413,13 +452,6 @@
       if (!entry || entry.status === 'loading') return;
       if (entry.status === 'error' || !entry.img) {
         markMissing(state, true);
-        ctx.save();
-        ctx.fillStyle = '#8b8685';
-        ctx.font = '11px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('missing', cssSize / 2, cssSize / 2);
-        ctx.restore();
         return;
       }
       markMissing(state, false);
@@ -603,15 +635,13 @@
         card.className = 'fx-card';
         card.addEventListener('click', () => openModal(key));
 
+        const preview = document.createElement('div');
+        preview.className = 'fx-preview';
         const cvs = document.createElement('canvas');
         const ctx = setupCanvas(cvs, displaySize);
         fillBg(ctx, displaySize);
-        card.appendChild(cvs);
-
-        const badge = document.createElement('span');
-        badge.className = 'fx-missing-badge';
-        badge.textContent = 'missing';
-        card.appendChild(badge);
+        preview.appendChild(cvs);
+        card.appendChild(preview);
 
         const nameEl = document.createElement('div');
         nameEl.className = 'fx-name';
@@ -637,7 +667,7 @@
         }
 
         const state = {
-          card, canvas: cvs, ctx, fx, key, cssSize: displaySize,
+          card, preview, canvas: cvs, ctx, fx, key, cssSize: displaySize,
           url: sheetUrl(fx), entry: null, layout: null, frame: 0, lastTime: 0
         };
         card._fxState = state;
@@ -653,13 +683,13 @@
       const lay = layout(fx, null);
       const usages = findUsages(key);
       const resolved = sheetUrl(fx);
-      const href = safeHttpUrl(resolved);
+      const href = resolved || '';
       const srcLabel = fx.src || resolved || '';
 
       const parts = [];
       parts.push('<h2 id="modalTitle">' + esc(key) + '</h2>');
       parts.push('<p class="sub">' + esc(srcLabel) + '</p>');
-      parts.push('<canvas id="modalCanvas" width="160" height="160"></canvas>');
+      parts.push('<div class="fx-preview fx-preview-modal"><canvas id="modalCanvas" width="160" height="160"></canvas></div>');
       parts.push('<div class="detail-grid">');
       parts.push('<div class="detail-item"><div class="detail-label">Frames</div><div class="detail-val">' + esc(lay.frames) + '</div></div>');
       parts.push('<div class="detail-item"><div class="detail-label">Grid</div><div class="detail-val">' + esc(lay.cols + ' × ' + lay.rows) + '</div></div>');
@@ -704,7 +734,8 @@
       const ctx = setupCanvas(cvs, 160);
       fillBg(ctx, 160);
       modalState = {
-        card: null, canvas: cvs, ctx, fx, key: '_modal', cssSize: 160,
+        card: null, preview: cvs.parentElement, canvas: cvs, ctx, fx, key,
+        cssSize: 160,
         url: resolved, entry: null, layout: null, frame: 0, lastTime: 0
       };
       attachState(modalState);
