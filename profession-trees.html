@@ -456,7 +456,7 @@ function renderClassTrees() {
   const coreCards = build.core.map(id => {
     const sk = skillById(cls, id);
     if (!sk) return '';
-    const icon = cdnIcon(sk.iconUrl || sk.icon);
+    const icon = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(sk.iconUrl || sk.icon) : (sk.iconUrl || sk.icon);
     return `<button type="button" class="build-card core" data-tip="${escHtml(tooltipHtml(sk, null))}">
       ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
       <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
@@ -469,7 +469,7 @@ function renderClassTrees() {
       if (!sk) return '';
       const on = chosen === id;
       const off = chosen && !on;
-      const icon = cdnIcon(sk.iconUrl || sk.icon);
+      const icon = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(sk.iconUrl || sk.icon) : (sk.iconUrl || sk.icon);
       return `<button type="button" class="build-card${on ? ' on' : ''}${off ? ' off' : ''}" data-row="${escHtml(row.id)}" data-skill="${escHtml(id)}" data-tip="${escHtml(tooltipHtml(sk, row))}">
         ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
         <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
