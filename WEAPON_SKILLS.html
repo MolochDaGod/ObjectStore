@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weapon Skills — Warlord Crafting Suite</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="https://assets.grudge-studio.com/favicon.svg" type="image/svg+xml">
+  <script src="./js/asset-url.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Spectral+SC:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English+SC&family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -861,6 +862,26 @@
       color: hsl(225 30% 10%);
     }
 
+    .icon-missing {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border: 1px dashed #a86;
+      border-radius: 2px;
+      color: #d4a84b;
+      font-size: 9px;
+      white-space: nowrap;
+      background: rgba(212,168,75,0.08);
+    }
+    .weapon-tab .icon-missing,
+    .detail-panel .detail-icon .icon-missing {
+      width: 28px;
+      height: 28px;
+      margin-right: 4px;
+    }
     /* Responsive */
     @media (max-width: 900px) {
       .slot-columns { grid-template-columns: repeat(2, 1fr); }
@@ -919,11 +940,40 @@ const PAGE_BASE = (() => {
 })();
 
 function asset(url) {
+  if (window.GrudgeAsset && window.GrudgeAsset.assetUrl) return window.GrudgeAsset.assetUrl(url);
   if (!url) return url;
-  if (/^(https?:|data:|blob:)/i.test(url)) return url;
-  if (url.startsWith('/icons/')) return `https://assets.grudge-studio.com${url}`;
-  if (url.startsWith('/')) return `${PAGE_BASE}${url}`;
-  return url;
+  const CDN = 'https://assets.grudge-studio.com';
+  let u = String(url).trim();
+  u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
+  if (u.indexOf('\\') !== -1 || (u.charAt(0) === '/' && u.charAt(1) === '/')) return '';
+  let mapped = false;
+  if (u.startsWith('/icons/') || u.startsWith('/images/') || u.startsWith('/game-assets/icons/') || u.startsWith('/favicon')) {
+    u = CDN + u;
+    mapped = true;
+  }
+  let parsed;
+  try {
+    parsed = new URL(u, CDN);
+  } catch (e) {
+    return '';
+  }
+  if (parsed.origin !== 'https://assets.grudge-studio.com' || parsed.username || parsed.password) return '';
+  let wasAbsolute = false;
+  try { new URL(u); wasAbsolute = true; } catch (e) {}
+  if (mapped || wasAbsolute) return parsed.href;
+  if (u.startsWith('/')) return `${PAGE_BASE}${u}`;
+  return u;
+}
+
+function iconHtml(url, attrs) {
+  attrs = attrs || {};
+  if (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) {
+    return window.GrudgeAsset.iconImgHtml(url, attrs);
+  }
+  const src = asset(url);
+  if (!src) return '<span class="icon-missing" role="img" aria-label="icon missing">icon missing</span>';
+  const alt = attrs.alt != null ? String(attrs.alt) : '';
+  return `<img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">`;
 }
 
 function skillIcon(skill) {
@@ -1009,7 +1059,7 @@ function renderWeaponTabs() {
     const tab = document.createElement('button');
     tab.className = 'weapon-tab' + (key === activeWeapon ? ' active' : '');
     const suffix = key === 'TOME' || key === 'SHIELD' ? ' (Off-Hand)' : '';
-    tab.innerHTML = `<img src="${asset(weapon.icon)}" alt="${weapon.name}" onerror="this.style.display='none'"> ${weapon.name}${suffix}`;
+    tab.innerHTML = `${iconHtml(weapon.icon, { alt: weapon.name })} ${weapon.name}${suffix}`;
     tab.onclick = () => {
       activeWeapon = key;
       const preferT0 = playerTier === 0 && !WeaponSkillTree.OFFHAND_MODIFIER_TYPES.has(key);
@@ -1264,7 +1314,7 @@ function renderSlotColumns() {
 
 function showDetail(skill, slotType) {
   const panel = document.getElementById('detailPanel');
-  document.getElementById('detailIcon').innerHTML = `<img src="${skillIcon(skill)}" alt="${skill.name}" onerror="this.style.display='none'">`;
+  document.getElementById('detailIcon').innerHTML = iconHtml(skill.iconUrl || skill.icon, { alt: skill.name });
   document.getElementById('detailName').textContent = skill.name;
   document.getElementById('detailDesc').textContent = skill.description;
 
