@@ -4,7 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grudge Spell VFX Library</title>
-  <link rel="icon" href="./branding/favicon-32x32.png" type="image/png" />
+  <link rel="icon" id="page-favicon" type="image/svg+xml" />
+  <script src="./js/asset-url.js"></script>
+  <script>
+    (function () {
+      // Smaller than /branding/favicon.png (1.7 MB): /favicon.svg is a real
+      // 163-byte SVG (200, image/svg+xml, magic '<svg'). assetUrl maps it to the CDN.
+      var href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
+      var link = document.getElementById('page-favicon');
+      if (link && href) link.href = href;
+    })();
+  </script>
   <meta name="theme-color" content="#070b12" />
   <meta name="description" content="Grudge Warlords — 3D spell VFX showcase: projectiles, magic, and skill effects in a clean demo scene." />
   <style>
@@ -229,8 +239,8 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
+      "three": "./vendor/three/0.185.0/build/three.module.js",
+      "three/addons/": "./vendor/three/0.185.0/examples/jsm/"
     }
   }
   </script>

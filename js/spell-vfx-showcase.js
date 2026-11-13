@@ -281,6 +281,7 @@ const S = {
   tA: new THREE.Vector3(), tB: new THREE.Vector3(), tC: new THREE.Vector3(),
   chargeOrb: null, staffGlow: null, disposables: [],
   shakeT: 0, shakeAmp: 0, camTarget: new THREE.Vector3(0, 0.95, 0),
+  resizeObserver: null, tornDown: false,
 };
 for (let i = 0; i < JOB_N; i++) S.jobs[i] = { alive: false, at: 0, fn: null };
 for (let i = 0; i < 64; i++) S.frames[i] = { alive: false, fn: null };
@@ -1845,6 +1846,7 @@ function buildScene(container) {
     renderer.setSize(w, h, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   });
+  S.resizeObserver = ro;
   ro.observe(container);
   const r = container.getBoundingClientRect();
   camera.aspect = Math.max(1, r.width) / Math.max(1, r.height);
@@ -1903,10 +1905,43 @@ function tick() {
 
 function setPaused(p) {
   S.paused = p;
+  if (!S.renderer || S.tornDown) return;
   if (p) S.renderer.setAnimationLoop(null);
   else {
     S.clock = performance.now() * 0.001;
     S.renderer.setAnimationLoop(tick);
+  }
+}
+
+function teardown() {
+  if (S.tornDown) return;
+  S.tornDown = true;
+  S.paused = true;
+  if (S.renderer) S.renderer.setAnimationLoop(null);
+  if (S.resizeObserver) {
+    S.resizeObserver.disconnect();
+    S.resizeObserver = null;
+  }
+  if (S.controls && typeof S.controls.dispose === 'function') {
+    S.controls.dispose();
+    S.controls = null;
+  }
+  const list = S.disposables || [];
+  for (let i = 0; i < list.length; i++) {
+    const d = list[i];
+    if (d && typeof d.dispose === 'function') {
+      try { d.dispose(); } catch (e) { /* already disposed */ }
+    }
+  }
+  S.disposables.length = 0;
+  if (S.renderer) {
+    try { S.renderer.dispose(); } catch (e) {}
+    if (typeof S.renderer.forceContextLoss === 'function') {
+      try { S.renderer.forceContextLoss(); } catch (e) {}
+    }
+    const el = S.renderer.domElement;
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    S.renderer = null;
   }
 }
 
@@ -2070,6 +2105,8 @@ async function init() {
   }
 
   document.addEventListener('visibilitychange', () => setPaused(document.hidden));
+  window.addEventListener('pagehide', teardown);
+  window.addEventListener('beforeunload', teardown);
   setPaused(false);
   updateHook();
   after(0.15, () => play('fireball'));
