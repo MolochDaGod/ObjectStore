@@ -837,6 +837,20 @@
       background: hsla(140, 40%, 40%, 0.1);
       color: hsl(140 60% 55%);
     }
+    .wst-ultimate-column {
+      margin-bottom: 20px;
+    }
+    .wst-ultimate-column .slot-header[data-type="type-ultimate"] {
+      border-color: hsl(28 70% 45%);
+      background: hsla(28, 60%, 40%, 0.12);
+      color: hsl(32 80% 62%);
+    }
+    .wst-ultimate-column .skill-id {
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-size: 0.75em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
     .tier-btn.t0 {
       border-color: hsl(220 15% 35%);
       color: hsl(210 15% 70%);
@@ -864,7 +878,7 @@
 <div class="header">
   <h1>⚔ Weapon Skills</h1>
   <p id="wstStatus">Unique skill tree per weapon type — one skill per slot, named weapons filter that tree</p>
-  <p class="rule-note"><strong>Key 1</strong> is always the basic attack / combo. Left-click (LMB) while in focus is the same action — they are one control. Every weapon style has the same normal-attack options. What the attack does can still vary by class, stats, and skills, but key 1 never holds a special ability. On T1+ this is the family combo, a bow draw, a gun shot, or a caster bolt (not the tree’s Fire Bolt). T0 starters (Practice Slash, and so on) already are that basic attack and stay on key 1. Former slots 1–4 sit on keys 2–5. Passives (former slot 5) are shown with no hotbar key. <em>Exception:</em> in Iguana form, LMB is Rejuvenation and key 1 is a form skill — they are not the same.</p>
+  <p class="rule-note"><strong>Key 1</strong> is always the basic attack / combo. Left-click (LMB) while in focus is the same action — they are one control. Every weapon style has the same normal-attack options. What the attack does can still vary by class, stats, and skills, but key 1 never holds a special ability. On T1+ this is the family combo, a bow draw, a gun shot, or a caster bolt (not the tree’s Fire Bolt). T0 starters (Practice Slash, and so on) already are that basic attack and stay on key 1. Former slots 1–4 sit on keys 2–5, except TOOL, SHIELD, and TOME, which stop at key 4 (TOOL has no slot 4; SHIELD and TOME are off-hand only). <strong>Slot 5</strong> lists that type’s type-ultimate skill (from the game’s weapon styles) with no hotbar key. Passives are in their own column, also with no hotbar key. <em>Exception:</em> in Iguana form, LMB is Rejuvenation and key 1 is a form skill — they are not the same.</p>
   <p class="ssot">SSOT <a href="https://info.grudge-studio.com/api/v1/master-weaponSkills.json">master-weaponSkills.json</a>
     · class trees stay in <a href="https://info.grudge-studio.com/api/v1/master-skillTrees.json">master-skillTrees.json</a>
     · anim packs sword_shield / longbow / magic / pistol / rifle / unarmed
@@ -1140,7 +1154,11 @@ function renderPassiveColumn() {
     return;
   }
   const variant = WeaponSkillTree.getVariant(activeWeapon, activeVariantId);
-  el.innerHTML = WeaponSkillTree.renderPassiveColumn(variant, { asset });
+  const typeDef = getEffectiveTypeDef();
+  const ultimateHtml = WeaponSkillTree.renderTypeUltimateColumn
+    ? WeaponSkillTree.renderTypeUltimateColumn(typeDef, { asset })
+    : '';
+  el.innerHTML = ultimateHtml + WeaponSkillTree.renderPassiveColumn(variant, { asset });
 }
 
 function renderTierBar() {
