@@ -405,7 +405,7 @@
 /* Tab handlers available immediately (module registers real impl when ready) */
 (function () {
   const pending = [];
-  const names = ['setType','setTier','setSub','onSearch','onSort','loadMore','closeDrawer','selectWeaponType','backToWeaponTypes'];
+  const names = ['setType','setTier','setSub','onSearch','onSort','loadMore','closeDrawer','selectWeaponType','backToWeaponTypes','toggleGrudge6Ready'];
   names.forEach((name) => {
     window[name] = function (...args) {
       if (window.__catalogApi && window.__catalogApi[name]) {
@@ -1452,7 +1452,7 @@ document.addEventListener('keydown', ev => {
 
 window.__bindCatalogApi({
   setType, setTier, setSub, onSearch, onSort, loadMore, closeDrawer,
-  selectWeaponType, backToWeaponTypes,
+  selectWeaponType, backToWeaponTypes, toggleGrudge6Ready,
 });
 </script>
 <script src="./js/asset-url.js"></script>
