@@ -372,7 +372,7 @@ function renderClassGraph() {
   const cls = classData.skillTrees?.[activeClass];
   const graph = cls?.graph;
   document.getElementById('classLoading').style.display = 'none';
-  if (!graph?.nodes) { renderClassTrees(); return; }
+  if (!graph?.nodes) { renderClassBuild(); return; }
 
   document.getElementById('classInfo').innerHTML = `
     <div class="pi-name">${cls.className || activeClass}</div>
@@ -437,7 +437,7 @@ function renderClassGraph() {
   });
 }
 
-function renderClassTrees() {
+function renderClassBuild() {
   if (!classData) return;
   const cls = classData.skillTrees?.[activeClass];
   document.getElementById('classLoading').style.display = 'none';
@@ -456,9 +456,9 @@ function renderClassTrees() {
   const coreCards = build.core.map(id => {
     const sk = skillById(cls, id);
     if (!sk) return '';
-    const icon = cdnIcon(sk.iconUrl || sk.icon);
+    const icon = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(sk.iconUrl || sk.icon) : '';
     return `<button type="button" class="build-card core" data-tip="${escHtml(tooltipHtml(sk, null))}">
-      ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
+      ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : '<span class=icon-missing>icon missing</span>'}
       <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
     </button>`;
   }).join('');
@@ -469,9 +469,9 @@ function renderClassTrees() {
       if (!sk) return '';
       const on = chosen === id;
       const off = chosen && !on;
-      const icon = cdnIcon(sk.iconUrl || sk.icon);
+      const icon = (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(sk.iconUrl || sk.icon) : '';
       return `<button type="button" class="build-card${on ? ' on' : ''}${off ? ' off' : ''}" data-row="${escHtml(row.id)}" data-skill="${escHtml(id)}" data-tip="${escHtml(tooltipHtml(sk, row))}">
-        ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : ''}
+        ${icon ? `<img src="${escHtml(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing>icon missing</span>'">` : '<span class=icon-missing>icon missing</span>'}
         <div><div class="bn">${escHtml(sk.name)}</div><div class="be">${escHtml(sk.effect || sk.description || '')}</div></div>
       </button>`;
     }).join('');
@@ -524,16 +524,10 @@ function renderClassTrees() {
   });
 }
 
-function renderClassTrees() {
-  if (!classData) return;
-  document.getElementById('classLoading').style.display = 'none';
-  renderClassGraph();
-}
-
 async function loadClasses() {
   try {
     classData = await fetchJSON('master-skillTrees.json');
-    renderClassTrees();
+    renderClassGraph();
   } catch (e) {
     document.getElementById('classLoading').innerHTML = `<div class="err">Failed to load class trees: ${e.message}</div>`;
   }
@@ -558,7 +552,6 @@ async function loadClasses() {
     activeClass = Object.keys(cls.skillTrees || {})[0] || 'warrior';
     renderClassTabs();
     renderClassGraph();
-    renderClassTrees();
     applyHashTab();
   } catch (e) {
     document.getElementById('profLoading').innerHTML = `<div class="err">Failed to load canonical data: ${e.message}</div>`;
