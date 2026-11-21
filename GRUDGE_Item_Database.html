@@ -328,8 +328,8 @@
         <button class="tier-btn" data-tier="4" onclick="setTier('4')" title="Epic">T4</button>
         <button class="tier-btn" data-tier="5" onclick="setTier('5')" title="Heroic">T5</button>
         <button class="tier-btn" data-tier="6" onclick="setTier('6')" title="Mythic">T6</button>
-        <button class="tier-btn" data-tier="7" onclick="setTier('7')" title="Legendary">T7</button>
-        <button class="tier-btn" data-tier="8" onclick="setTier('8')" title="Immortal">T8</button>
+        <button class="tier-btn" data-tier="7" onclick="setTier('7')" title="Ancient">T7</button>
+        <button class="tier-btn" data-tier="8" onclick="setTier('8')" title="Legendary">T8</button>
       </div>
     </div>
   </nav>
@@ -935,6 +935,10 @@ function toggleGrudge6Ready() {
   grudge6ReadyOnly = !grudge6ReadyOnly;
   const btn = document.getElementById('btn-g6-ready');
   if (btn) btn.classList.toggle('active', grudge6ReadyOnly);
+  if (activeType === 'weapon' && weaponViewMode === 'types') {
+    showWeaponTypeGrid();
+    return;
+  }
   applyFilters();
 }
 
@@ -1008,22 +1012,37 @@ function renderGrid(fresh) {
 function loadMore() { renderGrid(false); }
 
 // ─── Card ─────────────────────────────────────────────────────────────────
+const CATEGORY_LABEL = {
+  swords:'Sword', greatswords:'Greatsword', axes1h:'One-Hand Axe', greataxes:'Greataxe',
+  hammers1h:'One-Hand Hammer', hammers2h:'Two-Hand Hammer', daggers:'Dagger', bows:'Bow',
+  crossbows:'Crossbow', spears:'Spear', guns:'Gun', scythes:'Scythe', wands:'Wand',
+  shields:'Shield', staves:'Staff', staff:'Staff', firestaves:'Fire Staff', froststaves:'Frost Staff',
+  holystaves:'Holy Staff', lightningstaves:'Lightning Staff', naturestaves:'Nature Staff',
+  'offhand-tome':'Tome', tools:'Tool',
+};
+function categoryLabel(value) {
+  const key = String(value || '').toLowerCase();
+  return CATEGORY_LABEL[key] || key.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function displayName(item) {
+  return item.baseName || (item.name || '').replace(/ T\d+$/, '');
+}
 function makeCard(item) {
   const div = document.createElement('div');
   div.className = 'item-card';
-  div.dataset.tier = item._tierNum || 1;
+  div.dataset.tier = item._tierNum ?? 1;
   const tc  = item.tierColor || '#8b7355';
   const cat = item._type === 'recipe'
     ? (item.profession || 'Recipe')
     : item._type === 'spell-recipe'
-      ? `Spell · ${item.school || 'arcane'}`
+      ? `Spell · ${categoryLabel(item.school || 'arcane')}`
       : item._type === 'building'
-        ? (item.category || 'building').replace(/_/g, ' ')
+        ? categoryLabel(item.category || 'building')
         : item._type === 'mount'
           ? (item.race || 'mount')
           : item._type === 'armor' && item.slotType
             ? item.slotType + (item.material ? ' · ' + item.material : '')
-            : (item.category || item.subCategory || item.weaponType || item._subType || '');
+            : categoryLabel(item.category || item.subCategory || item.weaponType || item._subType || '');
   const icon = resolveIcon(item);
 
   // Rich tooltip
@@ -1048,7 +1067,7 @@ function makeCard(item) {
            <span class="item-icon-fallback" style="display:none">${item._ico}</span>`
         : `<span class="item-icon-fallback">${item._ico}</span>`}
     </div>
-    <div class="item-name">${e(item.name||'Unknown')}</div>
+    <div class="item-name">${e(displayName(item)||'Unknown')}</div>
     <div class="item-meta">
       ${item.tierLabel ? `<span class="tag tag-tier" style="border-color:${tc};color:${tc}">${item.tierLabel}</span>` : ''}
       ${cat ? `<span class="tag tag-cat">${e(cat)}</span>` : ''}
@@ -1074,9 +1093,9 @@ function openDrawer(item, cardEl) {
   // Tags (deduplicated, element-styled)
   const tagDefs = [
     [item._type,         ''],
-    [item.category,      ''],
-    [item.subCategory,   ''],
-    [item.weaponType,    ''],
+    [item.category && categoryLabel(item.category),      ''],
+    [item.subCategory && categoryLabel(item.subCategory),   ''],
+    [item.weaponType && categoryLabel(item.weaponType),    ''],
     [item.slotType,      ''],
     [item.material,      ''],
     [item.setName,       ''],
@@ -1142,7 +1161,7 @@ function openDrawer(item, cardEl) {
   if (item.signature) body += `<div class="section-title">Signature</div><div class="ability-list"><div class="ability-item sig">⚡ ${e(item.signature)}</div></div>`;
   const abs = Array.isArray(item.abilities) ? item.abilities : [];
   const pas = Array.isArray(item.passives)  ? item.passives  : [];
-  if (abs.length) body += `<div class="section-title">Abilities</div><div class="ability-list">${abs.map(a=>`<div class="ability-item">• ${e(String(a))}</div>`).join('')}</div>`;
+  if (abs.length) body += `<div class="section-title">Abilities</div><div class="ability-list">${abs.map(a=>`<div class="ability-item">• ${e(a && typeof a==='object' ? (a.name||'') : String(a))}</div>`).join('')}</div>`;
   if (pas.length) body += `<div class="section-title">Passives</div><div class="ability-list">${pas.map(p=>`<div class="ability-item">◈ ${e(typeof p==='object'?(p.name||JSON.stringify(p)):String(p))}</div>`).join('')}</div>`;
 
   // ── Craft / spell recipe ──
@@ -1305,9 +1324,9 @@ function openDrawer(item, cardEl) {
         : `<span class="drawer-icon-fb">${item._ico}</span>`}
     </div>
     <div class="drawer-body">
-      <div class="drawer-name">${e(item.name||'')}</div>
+      <div class="drawer-name">${e(displayName(item))}</div>
       <div class="drawer-chips">
-        <span class="chip" style="border-color:${tc};color:${tc}">${e(item.tierLabel||'T'+(item._tierNum||1))}</span>
+        <span class="chip" style="border-color:${tc};color:${tc}">${e(item.tierLabel||'T'+(item._tierNum??1))}</span>
         ${acq ? `<span class="chip" style="border-color:var(--border);color:var(--text-dim)">${acq}</span>` : ''}
         ${item.craftedBy ? `<span class="chip" style="border-color:var(--border-gold);color:var(--gold-light)">🧙 ${e(item.craftedBy)}</span>` : ''}
       </div>
@@ -1348,7 +1367,7 @@ function showWeaponTypeGrid() {
   backBar.style.display = 'none';
 
   // Count items per weapon type
-  let weapons = allItems.filter(i => i._type === 'weapon');
+  let weapons = allItems.filter(i => i._type === 'weapon' && (!grudge6ReadyOnly || i._grudge6Ready));
   if (activeTier !== 'all') {
     const tierNum = parseInt(activeTier);
     weapons = weapons.filter(i => i._tierNum === tierNum);
