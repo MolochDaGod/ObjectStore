@@ -162,6 +162,7 @@
     .note { color: var(--dim); font-size: 0.7rem; line-height: 1.4; }
     .ok { color: var(--ok); }
   </style>
+<style>/* missing-icon marker (no stand-in art) */.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;min-height:16px;padding:0 3px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;white-space:nowrap;background:rgba(212,168,75,0.08);}</style>
 </head>
 <body>
   <header>
@@ -308,8 +309,14 @@
         const thumb = document.getElementById('boardThumb');
         const link = document.getElementById('boardLink');
         const gaps = document.getElementById('boardGaps');
-        thumb.src = board.image;
-        thumb.style.display = 'block';
+        if (/^https:\/\/assets\.grudge-studio\.com\//.test(String(board.image || ''))) {
+          thumb.src = board.image;
+          thumb.style.display = 'block';
+          thumb.onerror = () => { thumb.outerHTML = '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>'; };
+        } else {
+          // Board art is not on the assets CDN (was an off-CDN host): show the marker.
+          thumb.outerHTML = '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>';
+        }
         link.href = board.image;
         const cdn = board.cdn || {};
         const miss = Object.entries(cdn)

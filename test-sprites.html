@@ -44,7 +44,8 @@
           
           const testSprites = catData.sprites.slice(0, 3);
           for (const sprite of testSprites) {
-            const path = sprite.path;
+            // Sprites are not deployed with the site; load only from the assets CDN.
+            const path = /^https?:/i.test(sprite.path) ? sprite.path : 'https://assets.grudge-studio.com/' + String(sprite.path).replace(/^\.?\/+/, '').split('/').map(encodeURIComponent).join('/');
             html += `
               <div class="test-card">
                 <img src="${path}" 
