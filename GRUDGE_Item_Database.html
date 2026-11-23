@@ -293,15 +293,15 @@
 
     <div class="sidebar-label">Crafting</div>
     <button class="nav-btn" data-type="recipe" onclick="setType('recipe')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/forge.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Recipes <span class="badge" id="count-recipe">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Recipes <span class="badge" id="count-recipe">—</span>
     </button>
 
     <div class="sidebar-label">World</div>
     <button class="nav-btn" data-type="building" onclick="setType('building')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/workbench.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Buildings <span class="badge" id="count-building">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Buildings <span class="badge" id="count-building">—</span>
     </button>
     <button class="nav-btn" data-type="mount" onclick="setType('mount')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/entities/horse.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Mounts <span class="badge" id="count-mount">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Mounts <span class="badge" id="count-mount">—</span>
     </button>
     <button class="nav-btn" data-type="tool" onclick="setType('tool')">
       <span class="ico"><img src="https://assets.grudge-studio.com/icons/pack/weapons/Hammer_01.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Tools <span class="badge" id="count-tool">—</span>
@@ -310,10 +310,10 @@
     <div class="sidebar-divider"></div>
     <div class="sidebar-label">grudge6 3D</div>
     <button class="nav-btn" id="btn-g6-ready" onclick="toggleGrudge6Ready()" title="Only weapons/tools with game-ready GLB + attachment socket">
-      <span class="ico">🧬</span> grudge6 Ready <span class="badge" id="count-g6">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> grudge6 Ready <span class="badge" id="count-g6">—</span>
     </button>
     <a class="nav-btn" href="./GRUDGE6_Characters" style="text-decoration:none" title="Working race prefabs">
-      <span class="ico">🧑</span> Race Prefabs
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Race Prefabs
     </a>
 
     <div class="sidebar-divider"></div>
@@ -736,8 +736,8 @@ const WEAPON_TYPES = [
   { key: 'staff',    label: 'Staves',    icon: `${CDN}/icons/pack/weapons/staff_1.png` },
   { key: 'wand',     label: 'Wands',     icon: `${CDN}/icons/pack/weapons/staff_5.png` },
   { key: 'tome',     label: 'Tomes',     icon: `${CDN}/icons/pack/weapons/Book_1.png` },
-  { key: 'gun',      label: 'Guns',      icon: `${CDN}/icons/pack/weapons/Crossbow_05.png` },
-  { key: 'scythe',   label: 'Scythes',   icon: `${CDN}/icons/pack/weapons/Scythe_1.png` },
+  { key: 'gun',      label: 'Guns',      icon: '' },
+  { key: 'scythe',   label: 'Scythes',   icon: '' },
   { key: 'shield',   label: 'Shields',   icon: `${CDN}/icons/pack/weapons/shield_01.png` },
 ];
 
@@ -1382,7 +1382,7 @@ function showWeaponTypeGrid() {
   let html = '<div class="weapon-type-grid">';
   WEAPON_TYPES.forEach(wt => {
     html += `<div class="weapon-type-card" onclick="selectWeaponType('${wt.key}','${e(wt.label)}')">
-      <img src="${wt.icon}" alt="${e(wt.label)}" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';">
+      ${wt.icon ? `<img src="${wt.icon}" alt="${e(wt.label)}" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';">` : '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>'}
       <span class="wt-label">${e(wt.label)}</span>
       <span class="wt-count">${counts[wt.key] || 0} weapons</span>
     </div>`;

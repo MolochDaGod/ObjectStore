@@ -5,7 +5,7 @@
  *   for missing /icons), and prefix root-relative /icons and /game-assets/icons
  *   with https://assets.grudge-studio.com.
  * Also covers /images (profession-trees), favicon.svg / favicon.ico, and
- * encodeURI. Known-missing paths (real 404, or fake 200 HTML) are not given
+ * per-segment encodeURIComponent. Known-missing paths (real 404, or fake 200 HTML) are not given
  * stand-in art — callers should use missingIconMarker() so the gap stays visible.
  */
 (function (global) {
@@ -24,9 +24,40 @@
     '/icons/tools/tool_01.png': true,
   };
 
+  /**
+   * Sha256-confirmed prefix remaps from Kiln's 2026-11-23 icon audit
+   * (item-db-2026-11-21/icon-map.json proposed_key). Broken short-path
+   * keys are rewritten to the live game-assets twin. horse.png -> horse.PNG
+   * and Scythe_01 / Emberburst art swaps are omitted (Jonathan's pending calls).
+   */
+  var SHA256_CONFIRMED_REMAPS = {
+    '/icons/pack/misc/AquaCore.png': '/game-assets/icons/pack/misc/AquaCore.png',
+    '/icons/pack/misc/NatureFlower.png': '/game-assets/icons/pack/misc/NatureFlower.png',
+    '/icons/materials/cotton-thread.png': '/game-assets/icons/materials/cotton-thread.png',
+    '/icons/materials/divine-ingot.png': '/game-assets/icons/materials/divine-ingot.png',
+    '/icons/materials/fine-gem.png': '/game-assets/icons/materials/fine-gem.png',
+    '/icons/materials/pristine-gem.png': '/game-assets/icons/materials/pristine-gem.png',
+    '/icons/materials/rugged-leather.png': '/game-assets/icons/materials/rugged-leather.png',
+    '/icons/materials/standard-gem.png': '/game-assets/icons/materials/standard-gem.png',
+    '/icons/materials/thick-hide.png': '/game-assets/icons/materials/thick-hide.png',
+    '/icons/pack/weapons/Crossbow_04.png': '/game-assets/icons/pack/weapons/Crossbow_04.png',
+  };
+
+  function encodePathSegments(pathname) {
+    return String(pathname || '').split('/').map(function (seg) {
+      if (!seg) return seg;
+      try {
+        seg = decodeURIComponent(seg);
+      } catch (e) {}
+      return encodeURIComponent(seg);
+    }).join('/');
+  }
+
   function encodeAssetUrl(u) {
     try {
-      return encodeURI(u);
+      var parsed = new URL(u);
+      parsed.pathname = encodePathSegments(parsed.pathname);
+      return parsed.href;
     } catch (e) {
       return u;
     }
@@ -74,10 +105,16 @@
    * Returns '' for known-missing icons so the caller can show a marker
    * instead of requesting a 404 or a fake-200 HTML body.
    */
+  function applyConfirmedRemap(url) {
+    var path = normalizePath(url);
+    return SHA256_CONFIRMED_REMAPS[path] || url;
+  }
+
   function assetUrl(url) {
     if (!url) return url;
     var u = String(url).trim();
     if (isKnownMissing(u)) return '';
+    u = applyConfirmedRemap(u);
     u = u.replace(/^https?:\/\/(www\.)?(info|objectstore)\.grudge-studio\.com/i, CDN);
     // Protocol-relative and backslash host tricks (e.g. //evil, /\\evil).
     if (u.indexOf('\\') !== -1 || (u.charAt(0) === '/' && u.charAt(1) === '/')) return '';
