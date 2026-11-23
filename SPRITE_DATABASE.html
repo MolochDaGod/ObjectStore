@@ -177,6 +177,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(212, 168, 75, 0.2);
     }
+    .icon-missing { display:inline-flex; align-items:center; justify-content:center; min-width:48px; min-height:48px; padding:2px 4px; border:1px dashed #a86; border-radius:4px; color:#d4a84b; font-size:10px; background:rgba(212,168,75,0.08); }
     .item-icon {
       font-size: 2.5rem;
       margin-bottom: 8px;
@@ -738,7 +739,9 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
 
   <script>
     const BASE_URL = './api/v1';
-    const ICONS_URL = './icons';
+    // Icons are not deployed with this site (.vercelignore icons/**); same-origin
+    // ./icons returns the HTML shell. Always load from the assets CDN.
+    const ICONS_URL = 'https://assets.grudge-studio.com/icons';
     let allData = { weapons: null, materials: null, armor: null, consumables: null, enemies: null, bosses: null, skills: null };
     let iconIndex = null;
     let currentTab = 'weapons';
@@ -1285,9 +1288,9 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
 
     function createIconElement(iconPath, emoji, cssClass = '') {
       if (iconPath) {
-        return `<img src="${iconPath}" class="item-icon-img ${cssClass}" onerror="this.outerHTML='<span class=item-icon>${emoji}</span>'" alt="icon">`;
+        return `<img src="${iconPath}" class="item-icon-img ${cssClass}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'" alt="icon">`;
       }
-      return `<span class="item-icon">${emoji}</span>`;
+      return `<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>`;
     }
 
     // Card creators
@@ -1299,7 +1302,7 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
         categoryData?.iconOffset || 0,
         categoryData?.noPad || false
       );
-      const imgHtml = `<img src="${primaryIcon}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackIcon}'">`;
+      const imgHtml = `<img src="${primaryIcon}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`; // no borrowed pack art (was ${fallbackIcon})
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="${type}" onclick="showDetail('${type}', '${item.id}', '${category}')">
           ${imgHtml}
@@ -1386,9 +1389,11 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
       }
 
       const emoji = item.icon || '🧪';
-      // Cascade: named category path → named flat → pack fallback → emoji
-      const fb2 = fallbackPath || flatNamed;
-      const imgHtml = `<img src="${namedPath}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML='<span class=item-icon>${emoji}</span>'};this.src='${fb2}';">`;
+      // Cascade: named category path → named flat → missing-icon marker
+      // Same item's art at the flat path only; picked pack art (fallbackPath) is a stand-in.
+      void fallbackPath;
+      const fb2 = flatNamed;
+      const imgHtml = `<img src="${namedPath}" class="item-icon-img" alt="${item.name}" loading="lazy" onerror="this.onerror=function(){this.onerror=null;this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'};this.src='${fb2}';">`;
       return `
         <div class="item-card" data-name="${item.name.toLowerCase()}" data-type="consumable" data-slug="${slug}" onclick="showConsumableDetail('${item.id}', '${category}')">
           ${imgHtml}
@@ -1622,7 +1627,7 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
             const s = maxDim > 80 ? 80 / maxDim : maxDim < 40 ? 80 / maxDim : 1;
             iconHtml = `<div class="sprite-display-scale">${spriteAnimHTML(sd, 'idle', item.id, s)}</div>`;
           } else {
-            iconHtml = `<span class="item-icon">${item.emoji}</span>`;
+            iconHtml = `<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>`;
           }
           html += `<div class="item-card" data-name="${item.name.toLowerCase()}" data-tier="${item.tier}" onclick="showEnemyDetail('${item.id}')">`;
           html += `<span class="tier-badge tier-${item.tier}">T${item.tier}</span>`;
@@ -1857,8 +1862,8 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
     function renderSkillCard(sk, fallbackEmoji, slotColor, slotLabel) {
       const iconSrc = sk.icon || '';
       const iconHtml = iconSrc
-        ? `<img src="${iconSrc}" class="item-icon-img" onerror="this.outerHTML='<span class=item-icon>${fallbackEmoji}</span>'" alt="${sk.name}">`
-        : `<span class="item-icon">${fallbackEmoji}</span>`;
+        ? `<img src="${iconSrc}" class="item-icon-img" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'" alt="${sk.name}">`
+        : `<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>`;
       const cd = sk.cooldown > 0 ? `${sk.cooldown}s` : 'Instant';
       const mp = sk.manaCost > 0 ? `${sk.manaCost}mp` : 'Free';
       const dmg = sk.damageMultiplier ? ` • ${Math.round(sk.damageMultiplier*100)}%` : '';
@@ -1928,10 +1933,11 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
         // Show first 50 sprites from each category
         const spritesToShow = catData.sprites.slice(0, 50);
         for (const sprite of spritesToShow) {
-          const spritePath = sprite.path.startsWith('icons/') ? sprite.path : `icons/${catKey}/${sprite.filename}`;
+          const spriteRel = sprite.path.startsWith('icons/') ? sprite.path : `icons/${catKey}/${sprite.filename}`;
+          const spritePath = 'https://assets.grudge-studio.com/' + spriteRel.split('/').map(encodeURIComponent).join('/');
           html += `
             <div class="item-card" data-name="${sprite.filename.toLowerCase()}">
-              <img src="${spritePath}" class="item-icon-img" onerror="this.outerHTML='<span class=item-icon>🖼️</span>'" alt="${sprite.filename}">
+              <img src="${spritePath}" class="item-icon-img" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'" alt="${sprite.filename}">
               <div class="item-name">${sprite.filename.replace(/\.(png|jpg|jpeg|gif)$/i, '')}</div>
               <div class="item-meta">${(sprite.size / 1024).toFixed(1)}KB</div>
             </div>
@@ -2016,6 +2022,7 @@ const fallbackSrc = `${BASE}/icons/wcs/weapons/Axe_03.png`;</pre>
       }
     });
   </script>
+  <script src="./js/asset-url.js"></script>
   <script src="./js/nav.js"></script>
 </body>
 </html>

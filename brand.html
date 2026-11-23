@@ -556,6 +556,7 @@
     .asset-source-badge .asb-stats { color: var(--text-muted); font-size: .62rem; }
     @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .45 } }
   </style>
+<style>/* missing-icon marker (no stand-in art) */.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;min-height:16px;padding:0 3px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;white-space:nowrap;background:rgba(212,168,75,0.08);}</style>
 </head>
 <body>
 
@@ -1384,7 +1385,7 @@
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
           <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--orange,#f59e0b)">assets.grudge-studio.com</code>
-          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--text-muted)">fallback → github.io/ObjectStore</code>
+          <code style="font-size:.7rem;background:var(--bg-muted);padding:2px 7px;border-radius:4px;color:var(--text-muted)">no fallback host · misses show a marker</code>
         </div>
       </div>
 
@@ -1425,12 +1426,11 @@
 <script>
   /* ══════ OBJECT STORAGE LOADER ══════
      All brand imagery is streamed from R2 (assets.grudge-studio.com).
-     If the CDN is unreachable for a given asset, fall back to the
-     GitHub Pages mirror at molochdagod.github.io/ObjectStore/. */
+     No fallback host: if the CDN misses an asset, the image is replaced
+     with the missing-icon marker so the gap stays visible. */
   const OBJECTSTORE = {
     cdn:      'https://assets.grudge-studio.com',
     worker:   'https://objectstore.grudge-studio.com',
-    fallback: 'https://molochdagod.github.io/ObjectStore'   // GitHub Pages mirror
   };
 
   (function trackAndFallbackImages() {
@@ -1451,18 +1451,13 @@
 
       const onLoad = () => { loaded++; if (loadedEl) loadedEl.textContent = loaded; };
       const onError = () => {
-        if (!img._osFallback) {
-          img._osFallback = true;
-          fallbackHits++;
-          const path = img.src.replace(OBJECTSTORE.cdn + '/', '');
-          img.src = OBJECTSTORE.fallback + '/' + path;
-          if (badge) {
-            badge.classList.add('fallback');
-            if (urlEl) urlEl.textContent = 'fallback: github.io/ObjectStore';
-          }
-          // retry load listener after src swap
-          img.addEventListener('load', onLoad, { once: true });
-        } else {
+        // No fallback host: a CDN miss shows the missing-icon marker so the gap stays visible.
+        {
+          const mark = document.createElement('span');
+          mark.className = 'icon-missing';
+          mark.title = 'icon missing'; mark.setAttribute('role', 'img'); mark.setAttribute('aria-label', 'icon missing');
+          mark.textContent = 'icon missing';
+          if (img.parentNode) img.parentNode.replaceChild(mark, img);
           errors++;
           setTotal(cdnTotal - 1); // don't count truly broken images
           if (errors > 0 && badge) badge.classList.add('error');
