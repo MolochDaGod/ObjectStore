@@ -53,6 +53,7 @@
     .attr-icon { width: 20px; height: 20px; image-rendering: pixelated; vertical-align: middle; }
     @media(max-width:1100px) { .layout { grid-template-columns: 1fr; } }
   </style>
+<style>/* missing-icon marker (no stand-in art) */.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;min-height:16px;padding:0 3px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;white-space:nowrap;background:rgba(212,168,75,0.08);}</style>
 </head>
 <body>
   <div class="container">
@@ -292,7 +293,7 @@
       left.innerHTML = '<h2>Attributes</h2>' +
         ATTR_DATA.map(a => {
           const iconUrl = getIconUrl(a.id);
-          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" onerror="this.style.display='none'">` : '';
+          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : '';
           return `
             <div class="attr-row">
               <div class="attr-header">
@@ -369,7 +370,7 @@
         ATTR_DATA.map(a => {
           const pts = getTotal(a.id);
           const iconUrl = getIconUrl(a.id);
-          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" style="width:18px;height:18px" onerror="this.style.display='none'">` : '';
+          const iconTag = iconUrl ? `<img src="${iconUrl}" class="attr-icon" style="width:18px;height:18px" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : '';
           const eff = effectivePoints(pts);
           const drPct = pts > 0 ? Math.floor((eff / pts) * 100) : 100;
           const gainsText = a.gains ? Object.entries(a.gains).map(([k,g]) => {
