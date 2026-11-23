@@ -667,7 +667,7 @@ export class Grudge6Editor {
       .map((it) => {
         const on = bound && String(bound.id) === String(it.id) ? ' on' : '';
         const ic = it.icon
-          ? `<img src="${it.icon}" alt="" loading="lazy" onerror="this.style.display='none'"/>`
+          ? `<img src="${it.icon}" alt="" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'"/>`
           : `<span class="ico-ph">${(it.kind || '?')[0]}</span>`;
         return `<button type="button" class="inv-item${on}" data-id="${encodeURIComponent(it.id)}" title="${it.uuid || it.id}">
           ${ic}
@@ -932,7 +932,7 @@ export class Grudge6Editor {
     const dmg = s.damage != null ? `DMG ${s.damage}` : '';
     const icon = resolveIconUrl(s, this.apis);
     const ic = icon
-      ? `<img src="${icon}" alt="" style="width:20px;height:20px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"/>`
+      ? `<img src="${icon}" alt="" style="width:20px;height:20px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'"/>`
       : '';
     return `<div class="skill-card">${ic}<span class="badge">${slot}</span> <strong>${name}</strong>
       <div class="dim"><code>${id}</code> ${dmg} ${cd}</div>

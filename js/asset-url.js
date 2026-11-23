@@ -22,6 +22,14 @@
     '/icons/ui/buttons/people.png': true,
     '/game-assets/icons/tools/tool_01.png': true,
     '/icons/tools/tool_01.png': true,
+    // Gate audit 2026-11-23 (Range 0-15 magic-byte probe, info referer):
+    '/icons/weapons/Gun_01.png': true, // 404; hub/index preview tile. No real gun art on the CDN.
+    '/icons/pack/weapons/Gun_01.png': true, // HTML impostor (44,089 bytes)
+    '/icons/professions/forge.png': true, // HTML impostor; no real forge art anywhere
+    '/icons/professions/workbench.png': true, // HTML impostor
+    '/icons/entities/horse.png': true, // HTML impostor (horse.PNG is real but is Jonathan's call)
+    '/icons/pack/weapons/Scythe_1.png': true, // HTML impostor (Scythe_01 is Jonathan's call)
+    '/game-assets/icons/pack/weapons/Scythe_1.png': true, // 404
   };
 
   /**
