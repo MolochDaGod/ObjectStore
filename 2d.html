@@ -75,10 +75,11 @@
   }
   dialog .foot .primary { background: var(--accent); color: #1a0f00; border-color: var(--accent); }
 </style>
+<style>/* missing-asset marker (no stand-in art) */.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;min-height:16px;padding:0 3px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;white-space:nowrap;background:rgba(212,168,75,0.08);}</style>
 </head>
 <body>
 <header>
-  <img src="./favicon.svg" alt="" height="22">
+  <img src="https://assets.grudge-studio.com/favicon.svg" alt="" height="22">
   <h1>Grudge ObjectStore · 2D</h1>
   <nav>
     <a href="./">Home</a>
@@ -195,7 +196,7 @@
       const isImg = ['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind);
       c.innerHTML = `
         <div class="preview ${a.kind === 'audio' ? 'audio' : a.kind === 'video' ? 'video' : ''}">
-          ${isImg ? `<img loading="lazy" src="${url}" alt="">` : ''}
+          ${isImg ? `<img loading="lazy" src="${url}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>asset missing</span>'">` : ''}
         </div>
         <div class="label">
           <span class="n">${a.name || a.path.split('/').pop()}</span>
@@ -218,7 +219,7 @@
     els.size.textContent = fmtBytes(a.size);
     els.preview.innerHTML = '';
     if (['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind)) {
-      els.preview.innerHTML = `<img src="${url}" alt="">`;
+      els.preview.innerHTML = `<img src="${url}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>asset missing</span>'">`;
     } else if (a.kind === 'audio') {
       els.preview.innerHTML = `<audio src="${url}" controls></audio>`;
     } else if (a.kind === 'video') {

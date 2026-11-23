@@ -131,6 +131,7 @@
   <script>
     const BASE = 'https://molochdagod.github.io/ObjectStore';
     const BASE_FALLBACK = 'https://objectstore.grudge-studio.com';
+    const AUDIO_CDN = 'https://assets.grudge-studio.com';
     let allAudio = [];
     let currentAudioEl = null;
     let currentItem = null;
@@ -223,7 +224,11 @@
     function togglePlay(idx) {
       const filtered = getFiltered();
       const a = filtered[idx];
-      const url = a.url || (a.path?.startsWith('http') ? a.path : BASE + '/' + (a.path || 'audio/' + a.name));
+      // Audio binaries load only from the assets CDN (no github.io fallback host).
+      // Registry paths may carry Windows backslashes; encode each segment.
+      const rawPath = a.url || a.path || ('audio/' + a.name);
+      const keyPath = String(rawPath).replace(/^https?:\/\/molochdagod\.github\.io\/ObjectStore/i, '').replace(/^https?:\/\/[^/]+/i, '').replace(/\\/g, '/').replace(/^\/+/, '');
+      const url = AUDIO_CDN + '/' + keyPath.split('/').map((seg) => { try { seg = decodeURIComponent(seg); } catch (e) {} return encodeURIComponent(seg); }).join('/');
 
       // stop current
       if (currentAudioEl) {
