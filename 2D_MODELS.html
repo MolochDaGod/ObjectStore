@@ -251,6 +251,45 @@
     })();
     var spriteBlobCache = {};
 
+    /* Fit catalog frame metadata to the real sheet size. The catalog values were
+       re-measured from the CDN images, but if a sheet changes this keeps frames
+       inside the image instead of drawing empty or partial cells. */
+    function fitSheet(ad, img) {
+      var iw = img.naturalWidth || 0, ih = img.naturalHeight || 0;
+      var fw = +ad.frameW > 0 ? +ad.frameW : iw, fh = +ad.frameH > 0 ? +ad.frameH : ih;
+      var cols = +ad.cols > 0 ? +ad.cols : 1, rows = +ad.rows > 0 ? +ad.rows : 1;
+      var fc = +ad.frameCount > 0 ? +ad.frameCount : 1, layout = ad.layout || 'horizontal';
+      var adjusted = false;
+      if (iw && ih) {
+        if (fw > iw) { fw = iw; adjusted = true; }
+        if (fh > ih) { fh = ih; adjusted = true; }
+        if (layout === 'vertical') { if (fh * fc > ih) { fc = Math.max(1, Math.floor(ih / fh)); adjusted = true; } }
+        else if (cols * fw > iw || rows * fh > ih) {
+          cols = Math.max(1, Math.floor(iw / fw)); rows = Math.max(1, Math.floor(ih / fh)); adjusted = true;
+        }
+        if (layout !== 'vertical' && fc > cols * rows) { fc = cols * rows; adjusted = true; }
+        if (layout === 'horizontal' && rows === 1 && fc > Math.floor(iw / fw)) { fc = Math.max(1, Math.floor(iw / fw)); adjusted = true; }
+      }
+      return { fw: fw, fh: fh, cols: cols, rows: rows, fc: Math.max(1, fc), layout: layout, adjusted: adjusted };
+    }
+    function isAnimatedGif(ad) {
+      return ad && (ad.layout === 'gif' || (/\.gif$/i.test(ad.path || '') && +ad.frameCount > 1));
+    }
+    /* Animated GIFs: canvas drawImage only paints the first frame, so show the
+       verified CDN GIF itself in an <img>. */
+    function showGifIn(host, url, alt) {
+      if (!host) return null;
+      var old = host.querySelector('img.gif-anim'); if (old) old.remove();
+      var g = document.createElement('img');
+      g.className = 'gif-anim'; g.alt = alt || ''; g.decoding = 'async';
+      g.crossOrigin = 'anonymous';
+      g.style.cssText = 'max-width:100%;max-height:100%;image-rendering:pixelated;object-fit:contain;position:relative;z-index:1;';
+      g.onerror = function() { g.remove(); showIconMissingOn(host, alt || ''); };
+      g.src = url;
+      host.insertBefore(g, host.firstChild);
+      return g;
+    }
+
     /* Show a visible "icon missing" marker. No substitute art. */
     function showIconMissing(img) {
       if (!img) return;
@@ -473,7 +512,7 @@
       for (var i=0; i<pg.length; i++) {
         var c=pg[i], gi=s+i, aid='a-'+gi;
         var opts=''; for (var j=0;j<c.animations.length;j++) opts+='<option value="'+j+'"'+(j===0?' selected':'')+'>'+esc(c.animations[j].name)+'</option>';
-        var dot = c.animations.some(function(x){return x.layout==='horizontal-guess'||x.layout==='unknown';}) ? 'dot-warn' : 'dot-ok';
+        var dot = c.animations.some(function(x){return x.layout==='horizontal-guess'||x.layout==='unknown'||x.frameGridUnverified;}) ? 'dot-warn' : 'dot-ok';
         var srcClass = (c.source||'rpg-modular').replace(/[^a-z-]/g,'');
         var nameLabel = esc(charDisplayName(c));
         var heroTag = c.heroClass ? '<div class="hero-class">'+esc(c.heroClass)+' Class</div>' : '';
@@ -534,14 +573,25 @@
         });
         return;
       }
-      img.onload = function() {
+      img.onload = function(resolvedUrl) {
         var a = anims[id]; if(!a) return;
-        cv.width = a.fw; cv.height = a.fh;
+        var fit = fitSheet(ad, img);
+        a.fw = fit.fw; a.fh = fit.fh; a.cols = fit.cols; a.rows = fit.rows; a.fc = fit.fc;
         var fi = document.getElementById('fi-'+id);
-        if(fi) fi.textContent = a.fc+' frames \u00b7 '+a.fw+'x'+a.fh;
+        var vp = cv.parentElement;
+        var oldGif = vp && vp.querySelector('img.gif-anim'); if (oldGif) oldGif.remove();
+        cv.style.display = '';
+        if (isAnimatedGif(ad) && resolvedUrl) {
+          a.fc = 1; cv.style.display = 'none';
+          showGifIn(vp, resolvedUrl, ad.path || ch.name || '');
+          if(fi) fi.textContent = (+ad.frameCount||1)+' frames \u00b7 GIF '+img.naturalWidth+'x'+img.naturalHeight;
+          return;
+        }
+        cv.width = a.fw; cv.height = a.fh;
+        if(fi) fi.textContent = a.fc+' frames \u00b7 '+a.fw+'x'+a.fh + (fit.adjusted ? ' (fitted)' : '') + (ad.frameGridUnverified ? ' \u00b7 grid unverified' : '');
         ctx.imageSmoothingEnabled = false;
         drawF(a, 0);
-        var vp = cv.parentElement; if(vp) obs.observe(vp);
+        if(vp) obs.observe(vp);
       };
       var sheetOnload = img.onload;
       function failSheet() {
@@ -550,32 +600,12 @@
         ctx.clearRect(0,0,cv.width,cv.height);
         showIconMissingOn(cv.parentElement, ad.path || ch.name || '');
       }
+      // CDN key exactly as catalogued. No folder/case guessing: a different key
+      // is different art unless its sha256 matches, so a miss shows the marker.
       function trySheet(path) {
-        loadSprite(img, path).then(function() {
-          if (typeof sheetOnload === 'function') sheetOnload.call(img);
-        }, function() {
-          var retry = +(img.dataset.retry || 0);
-          if (retry === 0) {
-            img.dataset.retry = '1';
-            // Try 1: strip category subfolder (categorized → flat)
-            var alt = ad.path.replace(/\/sprites\/[a-zA-Z_-]+\/([a-zA-Z_-]+\/)/, '/sprites/$1');
-            if (alt !== ad.path && alt !== path) { trySheet(alt); return; }
-          }
-          if (retry <= 1) {
-            img.dataset.retry = '2';
-            // Try 2: add category subfolder (flat → categorized)
-            var cat = ch.category || 'characters';
-            var nested = ad.path.replace(/\/sprites\/(?!characters|enemies|bosses|monsters|npcs|companions|fish|effects|projectiles|ui|buildings|backgrounds)/, '/sprites/' + cat + '/');
-            if (nested !== ad.path && nested !== path) { trySheet(nested); return; }
-          }
-          if (retry <= 2) {
-            img.dataset.retry = '3';
-            // Try 3: lowercase the filename
-            var lower = ad.path.replace(/\/([^\/]+)$/, function(m, f) { return '/' + f.toLowerCase(); });
-            if (lower !== ad.path && lower !== path) { trySheet(lower); return; }
-          }
-          failSheet();
-        });
+        loadSprite(img, path).then(function(url) {
+          if (typeof sheetOnload === 'function') sheetOnload.call(img, url);
+        }, failSheet);
       }
       trySheet(ad.path);
     }
@@ -734,8 +764,12 @@
       img.crossOrigin='anonymous';
       var cols=ad.cols||1, rows=ad.rows||1;
       mA = { img:img, cv:cv, ctx:ctx, f:0, fc:1, fw:256, fh:256, cols:cols, rows:rows, raf:null, fps:+(document.getElementById('mFps').value)||8, lt:0, layout:'horizontal', ad:ad, ch:ch, dir:1 };
-      img.onload = function() {
-        mA.fc=ad.frameCount||1; mA.fw=ad.frameW||img.naturalWidth; mA.fh=ad.frameH||img.naturalHeight; mA.layout=ad.layout||'horizontal'; mA.cols=ad.cols||1; mA.rows=ad.rows||1;
+      img.onload = function(resolvedUrl) {
+        var fit = fitSheet(ad, img);
+        mA.fc=fit.fc; mA.fw=fit.fw; mA.fh=fit.fh; mA.layout=fit.layout; mA.cols=fit.cols; mA.rows=fit.rows;
+        var mHost = cv.parentElement, oldG = mHost && mHost.querySelector('img.gif-anim'); if (oldG) oldG.remove();
+        cv.style.display = '';
+        if (isAnimatedGif(ad) && resolvedUrl) { mA.fc = 1; cv.style.display = 'none'; showGifIn(mHost, resolvedUrl, ad.path || ''); }
         cv.width=mA.fw; cv.height=mA.fh;
         var z=+(document.getElementById('mZoom').value)||2; cv.style.width=(mA.fw*z)+'px';
         var sc=document.getElementById('mScrub'); sc.max=Math.max(0,mA.fc-1); sc.value=0; document.getElementById('mScrubV').textContent='0';
@@ -775,8 +809,8 @@
       };
       var modalOnload = img.onload;
       var modalOnerror = function() { ctx.clearRect(0,0,cv.width,cv.height); showIconMissingOn(cv.parentElement, ad.path || ''); };
-      loadSprite(img, ad.path).then(function() {
-        if (typeof modalOnload === 'function') modalOnload.call(img);
+      loadSprite(img, ad.path).then(function(url) {
+        if (typeof modalOnload === 'function') modalOnload.call(img, url);
       }, modalOnerror);
     }
 

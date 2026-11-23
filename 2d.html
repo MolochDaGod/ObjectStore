@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="grudge-api" content="">
 <link rel="icon" href="./favicon.svg">
+<script src="./js/asset-url.js"></script>
 <style>
   :root {
     color-scheme: dark;
@@ -47,7 +48,8 @@
   }
   .card:hover { border-color: var(--accent); }
   .preview { aspect-ratio: 1 / 1; background: #0a0a0f center/contain no-repeat; display: grid; place-items: center; color: var(--muted); font-size: 11px; }
-  .preview img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+  .preview { overflow: hidden; min-height: 0; }
+  .preview img, .preview canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
   .preview.audio::before { content: "🎵"; font-size: 26px; }
   .preview.video::before { content: "🎞"; font-size: 26px; }
   .label { padding: 6px 8px 8px; font-size: 11px; line-height: 1.3; }
@@ -74,6 +76,24 @@
     text-decoration: none;
   }
   dialog .foot .primary { background: var(--accent); color: #1a0f00; border-color: var(--accent); }
+  dialog .body canvas { max-width: 100%; max-height: 260px; image-rendering: pixelated; background: #0a0a0f; border-radius: 6px; }
+  .tab[hidden] { display: none; }
+  .tab .n { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  .preview { position: relative; }
+  .preview .chip { font-size: 11px; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 3px 6px; text-transform: uppercase; letter-spacing: .04em; }
+  .icon-missing {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%; min-height: 28px; padding: 3px 4px; box-sizing: border-box;
+    font: 700 9px/1.15 system-ui, sans-serif; letter-spacing: .04em;
+    text-transform: uppercase; text-align: center; color: #f3c14a;
+    background: rgba(80,16,16,.72); border: 1px solid rgba(243,193,74,.7);
+  }
+  .has-icon-missing { outline: 1px dashed rgba(243,193,74,.85); }
+  @media (max-width: 640px) {
+    dialog .body { grid-template-columns: 1fr; }
+    .toolbar input, .toolbar select { min-width: 0; flex: 1 1 140px; }
+    .toolbar .count { margin-left: 0; width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -130,6 +150,9 @@
 <script type="module">
   import createStoreClient from './js/store-client.js';
   const store = createStoreClient();
+  const CDN = (window.GrudgeAsset && GrudgeAsset.CDN) || 'https://assets.grudge-studio.com';
+  const IMAGE_KINDS = ['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'];
+  const IMAGE_EXT = /\.(png|jpe?g|gif|webp)$/i;
 
   const state = { kind: '', q: '', pack: '', all: [] };
   const els = {
@@ -151,18 +174,145 @@
     close: document.getElementById('dClose'),
   };
 
+  // All files come from the assets CDN through GrudgeAsset.assetUrl (per-segment
+  // encoding). Images are shown only after their first bytes are a real image
+  // (magic bytes); a 404 or an HTML body stored as .png shows the marker.
+  function keyOf(a) { return String(a.r2Key || a.path || '').replace(/^\/+/, ''); }
+  function urlOf(a) {
+    const key = keyOf(a);
+    if (!key || !window.GrudgeAsset) return '';
+    return GrudgeAsset.assetUrl(CDN + '/' + key) || '';
+  }
+  function isImageRecord(a) { return IMAGE_KINDS.includes(a.kind) && IMAGE_EXT.test(keyOf(a)); }
+  function extOf(a) { const m = keyOf(a).match(/\.([a-z0-9]+)$/i); return m ? m[1].toUpperCase() : 'FILE'; }
+
+  function looksLikeImage(b) {
+    if (!b || b.length < 12) return false;
+    if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
+    if (b[0] === 0xff && b[1] === 0xd8) return true;
+    if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return true;
+    if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return true;
+    return false;
+  }
+  const probeCache = new Map();
+  function probe(url) {
+    if (!url) return Promise.resolve(false);
+    if (!probeCache.has(url)) {
+      probeCache.set(url, fetch(url, { mode: 'cors', credentials: 'omit', headers: { Range: 'bytes=0-15' } })
+        .then(async (r) => (r.ok || r.status === 206) && looksLikeImage(new Uint8Array(await r.arrayBuffer())))
+        .catch(() => false));
+    }
+    return probeCache.get(url);
+  }
+  function showMissing(host, label) {
+    if (!host || host.querySelector('.icon-missing')) return;
+    const m = document.createElement('span');
+    m.className = 'icon-missing'; m.textContent = 'icon missing';
+    m.setAttribute('role', 'img'); m.setAttribute('aria-label', 'icon missing');
+    if (label) m.title = label;
+    host.appendChild(m); host.classList.add('has-icon-missing');
+  }
+  async function fillPreview(host, a) {
+    const url = urlOf(a);
+    if (!(await probe(url))) { showMissing(host, keyOf(a)); return; }
+    const img = document.createElement('img');
+    img.alt = a.name || ''; img.decoding = 'async'; img.crossOrigin = 'anonymous';
+    img.onerror = () => { img.remove(); showMissing(host, keyOf(a)); };
+    if (a.fx && (+a.fx.frames || 1) > 1) {
+      // Animated sheet: play its frames on a canvas while the card is on screen.
+      img.onload = () => { const cv = document.createElement('canvas'); host.appendChild(cv); cardAnims.set(host, makeAnim(cv, img, a.fx)); animIo.observe(host); };
+      img.src = url;
+      return;
+    }
+    img.src = url;
+    host.appendChild(img);
+  }
+  function fxGrid(fx, img) {
+    const frames = Math.max(1, +fx.frames || 1);
+    const cols = +fx.cols > 0 ? +fx.cols : Math.max(1, Math.round(Math.sqrt(frames)));
+    const rows = +fx.rows > 0 ? +fx.rows : Math.ceil(frames / cols);
+    let fw = +fx.frameW > 0 ? +fx.frameW : (+fx.size > 0 ? +fx.size / cols : img.naturalWidth / cols);
+    let fh = +fx.frameH > 0 ? +fx.frameH : (+fx.size > 0 ? +fx.size / cols : img.naturalHeight / rows);
+    if (Math.abs(fw * cols - img.naturalWidth) > 1 || Math.abs(fh * rows - img.naturalHeight) > 1) { fw = img.naturalWidth / cols; fh = img.naturalHeight / rows; }
+    return { n: Math.min(frames, cols * rows), cols, fw: Math.round(fw), fh: Math.round(fh) };
+  }
+  function makeAnim(cv, img, fx) {
+    const g = fxGrid(fx, img);
+    cv.width = g.fw; cv.height = g.fh;
+    const ctx = cv.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    const st = { f: 0, draw() {
+      ctx.clearRect(0, 0, g.fw, g.fh);
+      ctx.drawImage(img, (st.f % g.cols) * g.fw, Math.floor(st.f / g.cols) * g.fh, g.fw, g.fh, 0, 0, g.fw, g.fh);
+      st.f = (st.f + 1) % g.n;
+    } };
+    st.draw();
+    return st;
+  }
+  const cardAnims = new Map(), liveAnims = new Set();
+  let loopRaf = 0, loopLast = 0;
+  function loop(t) {
+    loopRaf = 0;
+    if (!liveAnims.size) return;
+    if (t - loopLast >= 60) { loopLast = t; for (const h of liveAnims) { const st = cardAnims.get(h); if (st && h.isConnected) st.draw(); else liveAnims.delete(h); } }
+    loopRaf = requestAnimationFrame(loop);
+  }
+  const animIo = new IntersectionObserver((entries) => {
+    for (const en of entries) { if (en.isIntersecting) liveAnims.add(en.target); else liveAnims.delete(en.target); }
+    if (liveAnims.size && !loopRaf) loopRaf = requestAnimationFrame(loop);
+  });
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      io.unobserve(en.target);
+      const a = en.target._asset; if (a) fillPreview(en.target, a);
+    }
+  }, { rootMargin: '300px 0px' });
+
+  async function loadManifest() {
+    const MANIFEST = CDN + '/manifests/v2/index.json';
+    // info.grudge-studio.com is static and has no /api/manifest/v2, so only ask the
+    // API when a <meta name="grudge-api"> base is configured.
+    if (store.base) {
+      try { return await store.manifest({ dimension: '2d', pageSize: 10000 }); } catch (e) { /* fall through */ }
+    }
+    const r = await fetch(MANIFEST, { mode: 'cors', credentials: 'omit' });
+    if (!r.ok) throw new Error('manifest HTTP ' + r.status);
+    return r.json();
+  }
+  async function loadSpriteVfx() {
+    // Real animated 2D effect sheets (all on the CDN) from the VFX browser catalog.
+    try {
+      const r = await fetch('./api/v1/effectSprites.json');
+      if (!r.ok) return [];
+      const d = await r.json();
+      return Object.entries(d.effects || {}).map(([k, fx]) => ({
+        id: 'fx:' + k, kind: 'vfx2d', dimension: '2d', name: k, path: String(fx.src || fx.sourceUrl || '').replace(/^\/+/, ''),
+        pack: 'sprite-vfx', tags: fx.categories || [], fx,
+      })).filter((a) => a.path);
+    } catch (e) { return []; }
+  }
+
   async function load() {
-    const MANIFEST_FALLBACK = 'https://assets.grudge-studio.com/manifests/v2/index.json';
-    const data = await store.manifest({ dimension: '2d', pageSize: 10000 }).catch(() =>
-      fetch(MANIFEST_FALLBACK).then((r) => r.json())
-    );
-    state.all = (data.assets || data).filter((a) => a.dimension === '2d');
+    let data = null, err = null;
+    try { data = await loadManifest(); } catch (e) { err = e; }
+    const manifest = data ? (data.assets || data).filter((a) => a.dimension === '2d') : [];
+    const fx = await loadSpriteVfx();
+    state.all = fx.concat(manifest.map((a) => ({ ...a, pack: a.pack || a.category || '' })));
     const packs = Array.from(new Set(state.all.map((a) => a.pack).filter(Boolean))).sort();
     for (const p of packs) {
       const o = document.createElement('option');
       o.value = p; o.textContent = p;
       els.pack.appendChild(o);
     }
+    const counts = {};
+    for (const a of state.all) counts[a.kind] = (counts[a.kind] || 0) + 1;
+    els.tabs.querySelectorAll('.tab').forEach((t) => {
+      const k = t.dataset.kind;
+      const n = k ? (counts[k] || 0) : state.all.length;
+      if (k && !n) t.hidden = true;
+      const span = document.createElement('span'); span.className = 'n'; span.textContent = n; t.appendChild(span);
+    });
+    if (err && !state.all.length) els.count.textContent = 'Failed to load: ' + err.message;
     render();
   }
 
@@ -184,52 +334,89 @@
   }
 
   function render() {
+    for (const h of cardAnims.keys()) animIo.unobserve(h);
+    cardAnims.clear(); liveAnims.clear();
     const rows = filtered();
-    els.count.textContent = `${rows.length} of ${state.all.length}`;
-    els.grid.innerHTML = '';
+    els.count.textContent = `${rows.length} of ${state.all.length}` + (rows.length > 500 ? ' (first 500 shown)' : '');
+    els.grid.replaceChildren();
     const frag = document.createDocumentFragment();
     for (const a of rows.slice(0, 500)) {
       const c = document.createElement('div');
       c.className = 'card';
-      const url = store.assetUrl(a);
-      const isImg = ['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind);
-      c.innerHTML = `
-        <div class="preview ${a.kind === 'audio' ? 'audio' : a.kind === 'video' ? 'video' : ''}">
-          ${isImg ? `<img loading="lazy" src="${url}" alt="">` : ''}
-        </div>
-        <div class="label">
-          <span class="n">${a.name || a.path.split('/').pop()}</span>
-          <span class="s">${a.kind} · ${fmtBytes(a.size)}</span>
-        </div>
-      `;
+      const pv = document.createElement('div');
+      pv.className = 'preview' + (a.kind === 'audio' ? ' audio' : a.kind === 'video' ? ' video' : '');
+      if (isImageRecord(a)) { pv._asset = a; io.observe(pv); }
+      else if (a.kind !== 'audio' && a.kind !== 'video') {
+        const chip = document.createElement('span'); chip.className = 'chip'; chip.textContent = extOf(a) + ' file';
+        pv.appendChild(chip);
+      }
+      const label = document.createElement('div'); label.className = 'label';
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = a.name || keyOf(a).split('/').pop();
+      const sz = document.createElement('span'); sz.className = 's';
+      sz.textContent = a.fx ? `${a.kind} · ${a.fx.frames || 1} frames` : `${a.kind} · ${fmtBytes(a.size)}`;
+      label.append(n, sz);
+      c.append(pv, label);
       c.addEventListener('click', () => open(a));
       frag.appendChild(c);
     }
     els.grid.appendChild(frag);
   }
 
-  function open(a) {
-    const url = store.assetUrl(a);
-    els.name.textContent = a.name || a.path.split('/').pop();
+  let dlgRaf = 0;
+  function animateFx(cv, img, fx) {
+    const { n, cols, fw, fh } = fxGrid(fx, img);
+    cv.width = fw; cv.height = fh;
+    const ctx = cv.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    let f = 0, last = 0;
+    const tick = (t) => {
+      if (!cv.isConnected) return;
+      if (t - last >= 60) {
+        last = t; ctx.clearRect(0, 0, fw, fh);
+        ctx.drawImage(img, (f % cols) * fw, Math.floor(f / cols) * fh, fw, fh, 0, 0, fw, fh);
+        f = (f + 1) % n;
+      }
+      dlgRaf = requestAnimationFrame(tick);
+    };
+    dlgRaf = requestAnimationFrame(tick);
+  }
+
+  async function open(a) {
+    cancelAnimationFrame(dlgRaf);
+    const url = urlOf(a);
+    els.name.textContent = a.name || keyOf(a).split('/').pop();
     els.kind.textContent = a.kind;
-    els.path.textContent = a.path;
+    els.path.textContent = keyOf(a);
     els.packD.textContent = a.pack || '—';
     els.tags.textContent = (a.tags || []).join(', ') || '—';
-    els.size.textContent = fmtBytes(a.size);
-    els.preview.innerHTML = '';
-    if (['sprite', 'sprite-animation', 'icon', 'background', 'vfx2d'].includes(a.kind)) {
-      els.preview.innerHTML = `<img src="${url}" alt="">`;
-    } else if (a.kind === 'audio') {
-      els.preview.innerHTML = `<audio src="${url}" controls></audio>`;
-    } else if (a.kind === 'video') {
-      els.preview.innerHTML = `<video src="${url}" controls></video>`;
-    }
-    els.open.href = url;
+    els.size.textContent = a.fx ? `${a.fx.frames || 1} frames · ${a.fx.cols || '?'}×${a.fx.rows || '?'}` : fmtBytes(a.size);
+    els.preview.replaceChildren();
+    els.preview.classList.remove('has-icon-missing');
+    els.open.href = url || '#';
+    els.open.textContent = isImageRecord(a) ? 'Open / download' : 'Download';
     els.edit.href = `/editors/${a.kind === 'vfx2d' ? 'vfx2d' : 'sprite'}.html?id=${encodeURIComponent(a.id)}`;
     els.dlg.showModal();
+    if (isImageRecord(a)) {
+      if (!(await probe(url))) { showMissing(els.preview, keyOf(a)); return; }
+      const img = new Image(); img.crossOrigin = 'anonymous';
+      img.onerror = () => showMissing(els.preview, keyOf(a));
+      img.onload = () => {
+        if (a.fx && (+a.fx.frames || 1) > 1) { const cv = document.createElement('canvas'); els.preview.appendChild(cv); animateFx(cv, img, a.fx); }
+        else els.preview.appendChild(img);
+      };
+      img.src = url;
+    } else if (a.kind === 'audio') {
+      els.preview.innerHTML = '';
+      const au = document.createElement('audio'); au.src = url; au.controls = true; els.preview.appendChild(au);
+    } else if (a.kind === 'video') {
+      const v = document.createElement('video'); v.src = url; v.controls = true; els.preview.appendChild(v);
+    } else {
+      const chip = document.createElement('span'); chip.className = 'chip'; chip.textContent = extOf(a) + ' file (no image preview)';
+      els.preview.appendChild(chip);
+    }
   }
 
   els.close.addEventListener('click', () => els.dlg.close());
+  els.dlg.addEventListener('close', () => cancelAnimationFrame(dlgRaf));
   els.tabs.addEventListener('click', (e) => {
     const t = e.target.closest('.tab');
     if (!t) return;

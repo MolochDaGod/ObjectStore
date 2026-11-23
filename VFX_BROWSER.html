@@ -168,7 +168,7 @@
     const BASE = './api/v1';
     // Sheets load only from https://assets.grudge-studio.com via GrudgeAsset.assetUrl.
     // A miss (error, non-image, or HTML body) shows the "icon missing" marker.
-    // All 152 catalog /sprites/ paths are real PNGs on the CDN.
+    // All 143 effect sheets in effectSprites.json are real PNGs on the CDN (checked 2026-11-23).
     (function resolveHeaderFavicon() {
       const href = window.GrudgeAsset && GrudgeAsset.assetUrl('favicon.svg') || '';
       const img = document.getElementById('header-favicon');
@@ -260,6 +260,13 @@
       }
       if (!Number.isFinite(frameW) || frameW <= 0) frameW = 64;
       if (!Number.isFinite(frameH) || frameH <= 0) frameH = 64;
+      // Catalog frame sizes were measured from the CDN sheets. If a sheet on the CDN
+      // no longer matches (e.g. a downscaled .768.png), derive the cell from the real
+      // image so frames don't drift or crop.
+      if (natW && natH && (Math.abs(frameW * cols - natW) > 1 || Math.abs(frameH * rows - natH) > 1)) {
+        frameW = natW / cols;
+        frameH = natH / rows;
+      }
       frameW = Math.max(1, Math.round(frameW));
       frameH = Math.max(1, Math.round(frameH));
       return { frames, cols, rows, frameW, frameH, natW, natH };

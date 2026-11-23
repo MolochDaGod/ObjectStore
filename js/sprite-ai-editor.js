@@ -118,7 +118,7 @@
     isOpen = !isOpen;
     panelEl.classList.toggle('open', isOpen);
     document.getElementById('aiToggleBtn').classList.toggle('active', isOpen);
-    if (isOpen) chatInput.focus();
+    if (isOpen) { chatInput.focus(); activatePuter(); }
   }
 
   // ── Chat Logic ──
@@ -439,13 +439,16 @@
     statusEl.textContent = '● Ready';
     statusEl.className = 'ai-status ai-status-ready';
 
-    // Auto-save chat periodically
-    setInterval(saveChatHistory, 30000);
+    // Puter storage is only touched after the user opens the AI panel. Calling
+    // puter.kv on page load pops Puter's consent dialog over the whole browser.
+  }
 
-    // Try to load previous chat
-    if (typeof puter !== 'undefined') {
-      loadChatHistory();
-    }
+  var puterActive = false;
+  function activatePuter() {
+    if (puterActive || typeof puter === 'undefined') return;
+    puterActive = true;
+    loadChatHistory();
+    setInterval(saveChatHistory, 30000);
   }
 
   // Wait for DOM
