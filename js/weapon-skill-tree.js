@@ -892,7 +892,7 @@
       const tierTag = v.isT0 ? ' <span class="wst-tier-tag">T0</span>' : '';
       const iconSrc = v.icon ? asset(v.icon) : fallbackIcon;
       const iconHtml = iconSrc
-        ? `<img class="wst-variant-icon" src="${esc(iconSrc)}" alt="" onerror="this.style.display='none'">`
+        ? `<img class="wst-variant-icon" src="${esc(iconSrc)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`
         : '';
       html += `<button type="button" class="wst-variant-btn${active}" data-wst-weapon-variant="${esc(v.id)}" title="${esc(v.lore || v.name)}">${iconHtml}<span class="wst-variant-name">${esc(v.name)}</span>${tierTag}</button>`;
     }
@@ -925,7 +925,7 @@
     }
 
     return `<div class="wst-weapon-header">
-      ${icon ? `<img class="wst-weapon-icon" src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+      ${icon ? `<img class="wst-weapon-icon" src="${esc(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
       <div class="wst-weapon-meta">
         <div class="wst-weapon-title">${esc(variant.name)} ${tierBadge}</div>
         <div class="wst-weapon-lore">${esc(variant.lore)}${variant.primaryStat ? ` · identity <b>${esc(variant.primaryStat)}</b>` : ''}</div>
@@ -1003,7 +1003,7 @@
     const desc = skill?.description || '';
     return `<div class="wst-ultimate-column"><div class="slot-header" data-type="type-ultimate">No key yet<span class="unlock-tag">old Button 5 · type-ultimate · placement not decided</span></div>
       <div class="skill-card" data-slot="type-ultimate">
-        <div class="skill-icon-row">${icon ? `<img src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}<span class="skill-name">${esc(skill?.name || meta.name)}</span></div>
+        <div class="skill-icon-row">${icon ? `<img src="${esc(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}<span class="skill-name">${esc(skill?.name || meta.name)}</span></div>
         ${desc ? `<div class="skill-desc">${esc(desc)}</div>` : ''}
         <div class="skill-id">${esc(meta.id)}</div>
       </div>
@@ -1117,7 +1117,7 @@
     return `<div class="skill-card${isSelected ? ' selected' : ''}${locked ? ' locked' : ''}" data-slot="${esc(slotType)}"${clickAttr}>
       ${isSelected ? '<div class="selected-check">✓</div>' : ''}
       <div class="skill-icon-row">
-        <div class="skill-icon"><img src="${esc(icon)}" alt="${esc(skill.name)}" loading="lazy" onerror="this.style.display='none'"></div>
+        <div class="skill-icon"><img src="${esc(icon)}" alt="${esc(skill.name)}" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'"></div>
         <span class="skill-name">${esc(skill.name)}</span>
         <span class="skill-tier-tag">T${skill.tier}</span>
       </div>
@@ -1178,7 +1178,7 @@
         <div class="slot-label-above">${esc(title)}</div>
         <div class="action-slot" style="${isUnlocked ? '' : 'opacity:0.4'}">
           ${skill
-            ? `<img src="${esc(icon)}" alt="${esc(skill.name)}" onerror="this.style.display='none'">`
+            ? `<img src="${esc(icon)}" alt="${esc(skill.name)}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`
             : `<span class="slot-empty">${isUnlocked ? '—' : '🔒'}</span>`}
         </div>
         <div class="slot-key">${i + 1}</div>
@@ -1377,7 +1377,7 @@
     const icon = mainhand.iconUrl ? asset(mainhand.iconUrl) : asset(typeDef.icon);
 
     let html = `<div class="wst-header">
-      ${icon ? `<img class="wst-icon" src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+      ${icon ? `<img class="wst-icon" src="${esc(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
       <div>
         <div class="wst-title">${esc(mainhand.name)}</div>
         <div class="wst-lore">${esc(mainhand.lore || mainhand.description || typeDef._variant?.lore || '')}</div>

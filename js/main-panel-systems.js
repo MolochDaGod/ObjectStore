@@ -380,7 +380,7 @@
         const eff = effectivePoints(total);
         return `<div class="mp-attr-row mp-attr-row--compact" style="border-left-color:${a.color || 'var(--gold)'}">
         <div class="mp-attr-head">
-          <img src="${esc(icon)}" alt="" class="mp-attr-icon" onerror="this.style.display='none'">
+          <img src="${esc(icon)}" alt="" class="mp-attr-icon" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">
           <div class="mp-attr-titles">
             <div class="mp-attr-name" style="color:${a.color || 'var(--gold)'}">${esc(a.abbrev || a.name)}</div>
             <div class="mp-attr-role">${esc(a.name)}</div>
@@ -604,7 +604,7 @@
         html += `<button type="button" class="mp-skill-chip ${has ? 'owned' : ''} ${canInvest ? 'can-invest' : ''} ${!unlocked || !reqOk ? 'locked' : ''} ${isPassive ? 'is-passive' : ''}"
           data-class-skill="${esc(sk.id)}"
           title="${esc(sk.name)}: ${esc(sk.description || sk.effect || '')}">
-          ${icon ? `<img src="${esc(icon)}" alt="" onerror="this.style.display='none'">` : ''}
+          ${icon ? `<img src="${esc(icon)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
           <div class="mp-sc-body">
             <div class="mp-sc-name">${esc(sk.name)} ${has ? `<span class="mp-sc-pts">${pts}/${max}</span>` : ''}</div>
             <div class="mp-sc-tags">${tags}</div>
@@ -625,7 +625,7 @@
       classAbilities.slice(0, 12).forEach((ab) => {
         const ico = skillIcon(ab.iconUrl || ab.icon);
         html += `<div class="mp-prefab-chip" title="${esc(ab.description || '')}">
-          ${ico ? `<img src="${esc(ico)}" alt="" onerror="this.remove()">` : ''}
+          ${ico ? `<img src="${esc(ico)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
           <div>
             <div class="mp-sc-name">${esc(ab.name)}</div>
             <div class="mp-sc-desc">${esc(ab.type || '')} · CD ${ab.cooldown ?? '—'} · ${ab.staminaCost ? 'STA ' + ab.staminaCost : ab.manaCost ? 'MP ' + ab.manaCost : 'free'}</div>
@@ -774,7 +774,7 @@
         const lv = char.professionLevels[k] | 0;
         const on = k === active;
         return `<button type="button" class="mp-prof-tab ${on ? 'active' : ''}" data-prof="${esc(k)}">
-          ${p.iconImage ? `<img src="${esc(p.iconImage)}" alt="" onerror="this.remove()">` : ''}
+          ${p.iconImage ? `<img src="${esc(p.iconImage)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
           ${esc(p.icon || '')} ${esc(p.name)} <span class="mp-prof-lv">Lv ${lv}</span>
         </button>`;
       })

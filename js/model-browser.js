@@ -20,11 +20,11 @@ const RACE_PREFIXES = {
 };
 
 const KAYKIT_PREVIEW_UNITS = [
-  { id: 'knight', label: 'Knight', url: `${GHPAGES_BASE}/models/characters/kaykit/Knight.glb` },
-  { id: 'barbarian', label: 'Barbarian', url: `${GHPAGES_BASE}/models/characters/kaykit/Barbarian.glb` },
-  { id: 'mage', label: 'Mage', url: `${GHPAGES_BASE}/models/characters/kaykit/Mage.glb` },
-  { id: 'ranger', label: 'Ranger', url: `${GHPAGES_BASE}/models/characters/kaykit/Ranger.glb` },
-  { id: 'rogue', label: 'Rogue', url: `${GHPAGES_BASE}/models/characters/kaykit/Rogue.glb` },
+  { id: 'knight', label: 'Knight', url: `${R2_CDN_URL}/models/characters/kaykit/Knight.glb` },
+  { id: 'barbarian', label: 'Barbarian', url: `${R2_CDN_URL}/models/characters/kaykit/Barbarian.glb` },
+  { id: 'mage', label: 'Mage', url: `${R2_CDN_URL}/models/characters/kaykit/Mage.glb` },
+  { id: 'ranger', label: 'Ranger', url: `${R2_CDN_URL}/models/characters/kaykit/Ranger.glb` },
+  { id: 'rogue', label: 'Rogue', url: `${R2_CDN_URL}/models/characters/kaykit/Rogue.glb` },
 ];
 
 const REGISTRY_URLS = [
@@ -60,9 +60,9 @@ function modelGrudgeUuid(modelPath) {
 
 // ── Featured models (animated characters) ─────────────
 const FEATURED = [
-  { name: 'Soldier', path: 'models/characters/soldier.glb', url: `${GHPAGES_BASE}/models/characters/soldier.glb`, sizeKB: 2110, category: 'characters', animations: 4, uuid: modelGrudgeUuid('models/characters/soldier.glb') },
-  { name: 'Male Base Rig', path: 'models/characters/male_base.glb', url: `${GHPAGES_BASE}/models/characters/male_base.glb`, sizeKB: 479, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/male_base.glb') },
-  { name: 'Female Base', path: 'models/characters/female_base.glb', url: `${GHPAGES_BASE}/models/characters/female_base.glb`, sizeKB: 15, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/female_base.glb') },
+  { name: 'Soldier', path: 'models/characters/soldier.glb', url: `${R2_CDN_URL}/models/characters/soldier.glb`, sizeKB: 2110, category: 'characters', animations: 4, uuid: modelGrudgeUuid('models/characters/soldier.glb') },
+  { name: 'Male Base Rig', path: 'models/characters/male_base.glb', url: `${R2_CDN_URL}/models/characters/male_base.glb`, sizeKB: 479, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/male_base.glb') },
+  { name: 'Female Base', path: 'models/characters/female_base.glb', url: `${R2_CDN_URL}/models/characters/female_base.glb`, sizeKB: 15, category: 'characters', animations: 1, uuid: modelGrudgeUuid('models/characters/female_base.glb') },
 ];
 
 // ── State ──────────────────────────────────────────────
@@ -221,7 +221,7 @@ function resolvePreviewUnit(entry) {
   }
   if (/^Rig_Medium_/i.test(name)) return { ...KAYKIT_PREVIEW_UNITS[0], kind: 'kaykit-rig' };
   if ((entry?.animations || 0) > 0 && /mixamorig|soldier|male_base|female_base/i.test(name)) {
-    return { id: 'soldier', label: 'Soldier', url: `${GHPAGES_BASE}/models/characters/soldier.glb` };
+    return { id: 'soldier', label: 'Soldier', url: `${R2_CDN_URL}/models/characters/soldier.glb` };
   }
   return null;
 }
@@ -259,11 +259,12 @@ function modelUrlCandidates(m) {
   if (m.url) urls.push(m.url);
   if (m._gameReadyUrl) urls.push(m._gameReadyUrl);
   if (m._cdnUrl) urls.push(m._cdnUrl);
-  if (m.gameReadyPath) urls.push(`${GHPAGES_BASE}/${encPath(m.gameReadyPath)}`);
+  // Assets CDN only — no github.io fallback host. A model that is on none of
+  // these keys stays missing (reported in the viewer) rather than loading elsewhere.
   urls.push(`${R2_CDN_URL}/${encPath(m.gameReadyPath || m.path)}`);
   const cleanPath = m.path.replace('models/_optimized/', 'models/');
-  urls.push(`${GHPAGES_BASE}/${encPath(cleanPath)}`);
-  urls.push(`${GHPAGES_BASE}/${encPath(m.path)}`);
+  urls.push(`${R2_CDN_URL}/${encPath(cleanPath)}`);
+  urls.push(`${R2_CDN_URL}/${encPath(m.path)}`);
   return [...new Set(urls)];
 }
 

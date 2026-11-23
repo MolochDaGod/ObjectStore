@@ -809,6 +809,7 @@
     .mp-node-tooltip .tt-unlock { color:#fbbf24; font-size:10px; margin-top:4px; }
     .mp-node-tooltip .tt-req { color:#ef4444; font-size:10px; margin-top:4px; }
   </style>
+<style>/* missing-icon marker (no stand-in art) */.icon-missing{display:inline-flex;align-items:center;justify-content:center;min-width:16px;min-height:16px;padding:0 3px;border:1px dashed #a86;border-radius:2px;color:#d4a84b;font-size:9px;line-height:1;white-space:nowrap;background:rgba(212,168,75,0.08);}</style>
 </head>
 <body class="scroll-theme">
 <script>if (/\bembed=1\b/.test(location.search)) document.documentElement.classList.add('mp-embed');</script>
@@ -1723,7 +1724,7 @@ function showError(msg) {
             const color = p.branches?.[0]?.color?.stroke || 'var(--gold)';
             const icon = p.iconImage || '';
             return `<div class="prof-row" title="Open Professions tab">
-              ${icon ? `<img src="${icon}" alt="" style="width:16px;height:16px;object-fit:contain;" onerror="this.style.display='none'">` : ''}
+              ${icon ? `<img src="${icon}" alt="" style="width:16px;height:16px;object-fit:contain;" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">` : ''}
               <span class="prof-name">${p.name || key}</span>
               <div class="prof-bar"><div class="prof-fill" style="width:${xp}%;background:${color};"></div></div>
               <span class="prof-lv">${level}</span>
@@ -1737,7 +1738,7 @@ function showError(msg) {
           const xp = p.xp || Math.min(level * 15, 100);
           const color = p.color || 'var(--gold)';
           return `<div class="prof-row">
-            <img src="${icon}" alt="${name}" style="width:16px;height:16px;object-fit:contain;image-rendering:pixelated;" onerror="this.style.display='none'">
+            <img src="${icon}" alt="${name}" style="width:16px;height:16px;object-fit:contain;image-rendering:pixelated;" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">
             <span class="prof-name">${name}</span>
             <div class="prof-bar"><div class="prof-fill" style="width:${xp}%;background:${color};"></div></div>
             <span class="prof-lv">${level}</span>
@@ -1807,7 +1808,7 @@ function showError(msg) {
           const showStack = stackable || st > 1;
           const fullCls = st >= max ? ' is-full' : st === 1 ? ' is-one' : '';
           html += `<div class="inv-cell has-item" data-inv-idx="${i}" data-uuid="${inv.uuid}" data-stack="${st}" style="border-color:${tc};" title="${esc(item.name || '')} · x${st}${stackable ? '/' + max : ''}">`;
-          if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`;
+          if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item.name)}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`;
           html += `<span class="inv-tier" style="background:${tc};color:#000;">T${tier}</span>`;
           if (showStack) {
             html += `<span class="inv-stack${fullCls}" aria-label="Stack ${st}">${formatStackCount(st)}</span>`;
@@ -1935,7 +1936,7 @@ function showError(msg) {
       const icon = fixIconUrl(s?.icon || s?.skill?.iconUrl || s?.skill?.icon || '');
       const title = s?.label || `Slot ${i + 1}`;
       html += `<div class="hb-slot skill" title="${esc(title)}"><span class="key">${i + 1}</span>`;
-      if (icon) html += `<img src="${icon}" alt="${esc(title)}" onerror="this.style.display='none'">`;
+      if (icon) html += `<img src="${icon}" alt="${esc(title)}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`;
       html += `</div>`;
     }
     html += `<div class="hb-divider"></div>`;
@@ -1945,7 +1946,7 @@ function showError(msg) {
         const item = findItemByUuid(c.uuid);
         const icon = item?.iconUrl || '';
         html += `<div class="hb-slot consumable" data-uuid="${c.uuid}"><span class="key">${i+6}</span>`;
-        if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item?.name)}" onerror="this.style.display='none'">`;
+        if (icon) html += `<img src="${fixIconUrl(icon)}" alt="${esc(item?.name)}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`;
         html += `</div>`;
       } else {
         html += `<div class="hb-slot consumable"><span class="key">${i+6}</span></div>`;
@@ -2283,7 +2284,7 @@ function showError(msg) {
     const tier = item ? item.tier : 0;
     const tierColor = TIER_COLORS[tier] || '#3a2a1a';
     const iconHtml = item && item.iconUrl
-      ? `<img class="slot-icon" src="${fixIconUrl(item.iconUrl)}" alt="${esc(item.name)}" onerror="this.style.display='none'">`
+      ? `<img class="slot-icon" src="${fixIconUrl(item.iconUrl)}" alt="${esc(item.name)}" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`
       : `<span class="slot-placeholder">${slotLabel(slotName)}</span>`;
     const tierBadge = item
       ? `<span class="slot-tier" style="background:${tierColor};color:#000;">T${tier}</span>`
@@ -2304,7 +2305,7 @@ function showError(msg) {
       const item = findEquippedItem(uuid);
       if (!item || !isMeshEquipmentItem(item)) continue;
       const icon = item.iconUrl
-        ? `<img src="${fixIconUrl(item.iconUrl)}" alt="" onerror="this.style.display='none'">`
+        ? `<img src="${fixIconUrl(item.iconUrl)}" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>'">`
         : `<span style="font-size:9px;color:var(--dim)">${slotLabel(slot)}</span>`;
       chips.push(`<div class="eq-mesh-chip" data-slot="${slot}" data-uuid="${uuid}">
         ${icon}
