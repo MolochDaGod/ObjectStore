@@ -25,9 +25,8 @@ const ARMOR_SLOT_ICON = {
   'Ring':     { prefix: 'Ring',     count: 57 },
   'Necklace': { prefix: 'necklace', count: 36 },
   'Legs':     { prefix: 'Pants',    count: 42 },
-  'Offhand':  { prefix: 'Bracer',   count: 7  },
-  'Relic':    { prefix: 'Ring',     count: 57 },
-  'Belt':     { prefix: 'Bracer',   count: 7  },
+  // Offhand / Relic / Belt intentionally absent: no real slot art on the CDN.
+  // They used to borrow Bracer / Ring art; now they resolve to '' (marker).
 };
 
 // Weapon type → { prefix, count } in icons/pack/weapons/
@@ -43,7 +42,7 @@ const WEAPON_TYPE_ICON = {
   'spears':       { prefix: 'Spear',    count: 40 },
   'bows':         { prefix: 'Bow',      count: 40 },
   'crossbows':    { prefix: 'Crossbow', count: 10 },
-  'guns':         { prefix: 'Crossbow', count: 10 },
+  // 'guns' intentionally absent: no real gun art; used to borrow Crossbow.
   'scythes':      { prefix: 'Scythe',   count: 7  },
   'shields':      { prefix: 'shield',   count: 51 },
   'tools':        { prefix: 'Hammer',   count: 50 },
@@ -56,7 +55,6 @@ const WEAPON_TYPE_ICON = {
   'spear':    { prefix: 'Spear',    count: 40 },
   'bow':      { prefix: 'Bow',      count: 40 },
   'crossbow': { prefix: 'Crossbow', count: 10 },
-  'gun':      { prefix: 'Crossbow', count: 10 },
   'scythe':   { prefix: 'Scythe',   count: 7  },
   'shield':   { prefix: 'shield',   count: 51 },
   'staff':    { prefix: 'staff',    count: 50, nopad: true },
@@ -201,7 +199,7 @@ export function getIconUrl(item, base) {
   if (item.type === 'relic')      return getRelicIcon(item, baseId, base);
   if (item.type === 'artifact')   return getArtifactIcon(item, baseId, base);
   if (item.type === 'skill' || (item.category || '').toLowerCase() === 'skill') return getSkillIcon(item, baseId, base);
-  return base + '/icons/pack/resources/Loot_01.png';
+  return ''; // no stand-in: caller shows the missing-icon marker
 }
 
 // ── Fallback icon URL (guaranteed to exist) ──
@@ -209,7 +207,8 @@ export function getFallbackUrl(item, base) {
   base = base || ICON_CDN;
   var baseId = String(item.id).replace(/-t\d+$/, '');
   if (item.type === 'weapon')     return getWeaponPackIcon(item, baseId, base);
-  if (item.type === 'armor')      return base + '/icons/armor_full/Chest_01.png';
+  // Chest art only for chest pieces; other slots get '' (marker), not borrowed Chest art.
+  if (item.type === 'armor')      return (!item.slotType || item.slotType === 'Chest') ? base + '/icons/armor_full/Chest_01.png' : '';
   if (item.type === 'material')   return getMaterialFallback(item, baseId, base);
   if (item.type === 'consumable') return base + '/icons/consumables/alchemy_1.png';
   if (item.type === 'enchant')    return base + '/icons/abilities/ability_arcane_bolt.png';
@@ -217,7 +216,7 @@ export function getFallbackUrl(item, base) {
   if (item.type === 'relic')      return base + '/icons/items/artifacts/artifacts_01_framed.png';
   if (item.type === 'artifact')   return base + '/icons/loot/loot_1.png';
   if (item.type === 'skill' || (item.category || '').toLowerCase() === 'skill') return base + '/icons/abilities/ability_quick_strike.png';
-  return base + '/icons/pack/resources/Loot_01.png';
+  return ''; // no stand-in: caller shows the missing-icon marker
 }
 
 // ── Weapon: try named icon first, then pack/weapons/ ──
@@ -247,14 +246,15 @@ function getWeaponIcon(item, baseId, base) {
     var num = slot.nopad ? String(n) : pad2(n);
     return base + '/icons/pack/weapons/' + slot.prefix + '_' + num + '.png';
   }
-  // Fallback: try named file, then generic sword
-  return raw ? absAssetUrl(raw, base) : base + '/icons/pack/weapons/Sword_01.png';
+  // Fallback: named file, else '' (marker) — no borrowed Sword_01 art
+  return raw ? absAssetUrl(raw, base) : '';
 }
 
 // ── Weapon fallback (pack/weapons/) ──
 function getWeaponPackIcon(item, baseId, base) {
-  var iconBase = TOOL_ICON_MAP[baseId] || item.iconBase || 'Sword';
-  var slot = WEAPON_TYPE_ICON[iconBase.toLowerCase()] || { prefix: 'Sword', count: 61 };
+  var iconBase = TOOL_ICON_MAP[baseId] || item.iconBase || '';
+  var slot = WEAPON_TYPE_ICON[iconBase.toLowerCase()];
+  if (!slot) return ''; // unknown weapon type: marker, not borrowed Sword art
   var n = (hashStr(baseId) % Math.min(slot.count, 10)) + 1;
   var numStr = slot.nopad ? String(n) : pad2(n);
   return base + '/icons/pack/weapons/' + slot.prefix + '_' + numStr + '.png';
@@ -264,7 +264,7 @@ function getWeaponPackIcon(item, baseId, base) {
 function getArmorIcon(item, baseId, base) {
   var slotType = item.slotType || 'Chest';
   var slot = ARMOR_SLOT_ICON[slotType];
-  if (!slot) return base + '/icons/armor_full/Chest_01.png';
+  if (!slot) return ''; // unknown slot: marker, not borrowed Chest art
   var matShift = MAT_OFFSET[(item.material || '').toLowerCase()] || 0;
   var baseNum = Math.floor(matShift * slot.count);
   var n = (baseNum + hashStr(item.baseName || item.name || baseId) % Math.ceil(slot.count / 3)) % slot.count + 1;
@@ -313,8 +313,8 @@ function getRelicIcon(item, baseId, base) {
 
 // ── Artifact: loot icons ──
 function getArtifactIcon(item, baseId, base) {
-  var n = (hashStr(baseId) % 20) + 1;
-  return base + '/icons/loot/loot_' + n + '.png';
+  // Was a hash-picked random loot_N.png (stand-in). Use the catalog iconUrl or the marker.
+  return item.iconUrl ? absAssetUrl(item.iconUrl, base) : '';
 }
 
 // ── Material primary icon (kebab-case name, not UUID) ──
@@ -507,8 +507,7 @@ export function resolveCatalogIcon(item, base) {
     return getRelicIcon(item, '', base);
   }
   if (t === 'artifact' && !raw) {
-    var n = (hashStr(String(item.id || item.uuid || '')) % 16) + 1;
-    return base + '/icons/loot/loot_' + n + '.png';
+    return ''; // was a random loot_N.png stand-in
   }
   if (t === 'armor') return getArmorIcon(item, String(item.id || '').replace(/-t\d+$/, ''), base);
   if (t === 'weapon' || t === 'tool' || t === 'offhand-tome') {
@@ -520,16 +519,16 @@ export function resolveCatalogIcon(item, base) {
   if (t === 'material') return catalogMaterialIcon(item, base);
   if (t === 'building') {
     if (raw) return absAssetUrl(raw, base);
-    return base + '/icons/professions/forge.png';
+    return ''; // was icons/professions/forge.png (HTML impostor on the CDN)
   }
   if (t === 'mount') {
     if (raw) return absAssetUrl(raw, base);
-    return base + '/icons/entities/horse.png';
+    return ''; // was icons/entities/horse.png (HTML impostor on the CDN)
   }
   if (t === 'recipe' || t === 'spell-recipe') {
     if (item.icon) return absAssetUrl(item.icon, base);
     if (raw) return absAssetUrl(raw, base);
-    return base + '/icons/items/alchemy/alchemy_01_framed.png';
+    return ''; // was borrowed alchemy_01_framed.png art
   }
 
   if (raw && raw.includes('/icons/items/') && !raw.includes('_framed')) {

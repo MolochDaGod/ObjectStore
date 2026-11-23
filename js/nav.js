@@ -10,13 +10,29 @@
   var CDN = (window.GrudgeAsset && window.GrudgeAsset.CDN) || 'https://assets.grudge-studio.com';
   var ICN = CDN + '/icons';
   function assetUrl(u) {
-    return (window.GrudgeAsset && window.GrudgeAsset.assetUrl) ? window.GrudgeAsset.assetUrl(u) : (CDN + (String(u).charAt(0) === '/' ? u : '/' + u));
+    if (window.GrudgeAsset && window.GrudgeAsset.assetUrl) return window.GrudgeAsset.assetUrl(u);
+    // Fallback when js/asset-url.js is not on the page. Icons here are already
+    // absolute CDN URLs (ICN + ...); prefixing them again produced
+    // https://assets.grudge-studio.com/https://assets.grudge-studio.com/...
+    var s = String(u || '').trim();
+    if (!s) return '';
+    if (s.indexOf(CDN + '/') === 0) return s;
+    if (/^[a-z][a-z0-9+.-]*:|^\/\//i.test(s)) return ''; // any other host or scheme: marker
+    s = s.replace(/^(?:\.\.\/|\.\/)+/, '');
+    return CDN + (s.charAt(0) === '/' ? s : '/' + s);
   }
+  var MISSING = '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>';
   function iconImg(url, w, h) {
     if (window.GrudgeAsset && window.GrudgeAsset.iconImgHtml) {
       return window.GrudgeAsset.iconImgHtml(url, { width: w || 16, height: h || 16, alt: '' });
     }
-    return '<img src="' + assetUrl(url) + '" alt="" width="' + (w || 16) + '" height="' + (h || 16) + '">';
+    // Pages that do not load js/asset-url.js: same rule, inline. Empty icon or a
+    // load error shows the marker; never another image.
+    if (!url) return MISSING;
+    var src = assetUrl(url);
+    if (!src) return MISSING;
+    return '<img src="' + src.replace(/"/g, '&quot;') + '" alt="" width="' + (w || 16) + '" height="' + (h || 16) +
+      '" onerror="this.outerHTML=\'<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>\';">';
   }
 
   // Internal ObjectStore pages — icon is now image path relative to ICN
@@ -24,7 +40,7 @@
     { label: 'API Docs',     href: './docs/',                     icon: ICN + '/496_rpg_icons/I_Scroll.png' },
     { label: 'Browse Hub',   href: './hub.html',                  icon: ICN + '/Icons_Essential/v1.2/Icons/Home.png' },
     { label: 'Items',        href: './GRUDGE_Item_Database.html',  icon: ICN + '/Icons_Essential/v1.2/Icons/ChestTreasure.png' },
-    { label: 'Sprites',      href: './SPRITE_DATABASE.html',       icon: ICN + '/ui/buttons/people.png' },
+    { label: 'Sprites',      href: './SPRITE_DATABASE.html',       icon: '' /* icons/ui/buttons/people.png is a 404 on the CDN: marker */ },
     { label: 'Weapon Skills', href: './WEAPON_SKILLS.html',        icon: ICN + '/496_rpg_icons/S_Sword07.png' },
     { label: '2D Models',    href: './2D_MODELS.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/PaintBrush.png' },
     { label: 'VFX',          href: './VFX_BROWSER.html',           icon: ICN + '/496_rpg_icons/S_Fire05.png' },
@@ -38,7 +54,7 @@
     { label: 'Stats',        href: './stats-guide.html',            icon: ICN + '/496_rpg_icons/I_Book.png' },
     { label: 'Professions',  href: './professions.html',            icon: ICN + '/Icons_Essential/v1.2/Icons/Hammer.png' },
     { label: 'Crafting',     href: './crafting.html',               icon: ICN + '/496_rpg_icons/S_Fire05.png' },
-    { label: 'Builder',      href: './character-builder.html',      icon: ICN + '/ui/buttons/people.png' },
+    { label: 'Builder',      href: './character-builder.html',      icon: '' /* icons/ui/buttons/people.png is a 404 on the CDN: marker */ },
     { label: 'Panel',        href: './main-panel.html',             icon: ICN + '/Icons_Essential/v1.2/Icons/Gamepad.png' },
     { label: 'Admin',        href: './admin.html',                 icon: ICN + '/Icons_Essential/v1.2/Icons/Gear.png' }
   ];
