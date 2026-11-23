@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://objectstore.grudge-studio.com/api/v1/schemas/canon-entry.schema.json",
+  "title": "Grudge canon entry",
+  "description": "One shape for every lore, era and catalog entry that Legion and games read. Ids follow api/v1/uuid-law.json; LORE-* and ERA-* are added by canon-manifest.v1.json. No art fields: art is resolved by catalog key on assets.grudge-studio.com, and a miss shows the missing marker.",
+  "type": "object",
+  "required": ["uuid", "kind", "slug", "name", "status", "source"],
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Deterministic id. LORE-/ERA-/SKIL-/ICON- are the first 12 hex of sha1 of the family seed. ITEM-/FOOD-/POTN-/CONS-/MATL-/RECP- are frozen catalog ids and are never re-minted.",
+      "pattern": "^(LORE|ERA|SKIL|ICON)-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$|^(ITEM|FOOD|POTN|CONS|MATL|RECP|NODE|PFAB)-[A-Z0-9-]+$"
+    },
+    "grudgeUuid": { "type": "string", "description": "Mirror of uuid for families that use the grudgeUuid field name." },
+    "kind": {
+      "type": "string",
+      "enum": ["world", "god", "faction", "race", "class", "hero", "place", "event", "era", "item", "skill", "profession"]
+    },
+    "slug": { "type": "string", "pattern": "^[a-z0-9_]+$", "description": "Stable seed for the id. Renaming an entry changes name, never slug." },
+    "name": { "type": "string", "minLength": 1 },
+    "summary": { "type": ["string", "null"], "description": "Short canon text Legion may quote." },
+    "status": {
+      "type": "string",
+      "enum": ["canon", "draft", "held", "unratified", "retired"],
+      "description": "Legion treats only canon as fact. draft can be shown with a caveat. held and unratified are never asserted. retired stays for old saves."
+    },
+    "era": { "type": "string", "enum": ["warlords", "nexus", "voxel", "armada", "shared"], "description": "Product era. In-world history uses an age field, not era." },
+    "faction": { "type": ["string", "null"], "enum": ["crusade", "legion", "fabled", null] },
+    "race": { "type": ["string", "null"], "enum": ["human", "orc", "elf", "undead", "barbarian", "dwarf", null] },
+    "class": { "type": ["string", "null"], "enum": ["warrior", "mage", "worge", "ranger", "priest", "raider", "thief", "verduror", null] },
+    "portrait": {
+      "type": ["string", "null"],
+      "description": "Catalog key on assets.grudge-studio.com, or null. Never a full URL to another host.",
+      "pattern": "^(?!https?://)(?!//)[A-Za-z0-9_./-]+$"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "detail"],
+        "properties": {
+          "code": { "type": "string", "enum": ["wow-name", "class-label", "race-unknown", "faction-mismatch", "value-drift", "dangling-ref", "external-art"] },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string" },
+        "line": { "type": "integer" },
+        "pointer": { "type": "string", "description": "JSON pointer inside path." },
+        "spawn": { "type": "string", "description": "Spawn file path at the manifest's spawnPin commit, when Spawn is the authority." }
+      }
+    }
+  },
+  "additionalProperties": true
+}

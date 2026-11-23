@@ -1,0 +1,704 @@
+{
+  "id": "lore-canon",
+  "version": "1.0.0-draft",
+  "status": "draft — needs Jonathan to ratify flagged entries before Legion treats them as canon",
+  "schema": "/api/v1/schemas/canon-entry.schema.json",
+  "idLaw": "LORE-XXXX-XXXX-XXXX = first 12 hex of sha1(\"grudge-lore:{kind}:{slug}\"), same shape as SKIL-*. Never mint by hand.",
+  "source": {
+    "path": "docs/loreHeroes.txt",
+    "sha256": "8a6f2eb3850bf9a0fed5328c013223b6805f7084b6659571f5e976ad69c3a80e"
+  },
+  "imageRule": "No art fields here. Portraits come only from assets.grudge-studio.com by catalog key; a missing key shows the missing marker. The imgur reference in the source text is dropped.",
+  "stripped": [
+    "AI_MODEL (model ids are Legion config, not lore)",
+    "PUTER_SITE",
+    "imgur visual references",
+    "quest rewards and goal metrics (game data, not lore)"
+  ],
+  "world": {
+    "uuid": "LORE-FF5E-AD25-BA87",
+    "kind": "world",
+    "slug": "grudge_warlords",
+    "name": "The world of Grudge Warlords",
+    "summary": "The realm consists of endless floating islands drifting through an infinite sky. At the edge of existence lies THE COSMIC WATERFALL - a void of pure entropy that slowly consumes islands, pulling them into oblivion. The closer to the Waterfall, the stronger the magic flows from the gods. The further away, the safer but weaker. All races struggle between power and survival in this eternal migration.",
+    "status": "canon",
+    "source": {
+      "path": "docs/loreHeroes.txt",
+      "line": 6
+    }
+  },
+  "gods": [
+    {
+      "uuid": "LORE-4BCB-47E6-98F7",
+      "grudgeUuid": "LORE-4BCB-47E6-98F7",
+      "kind": "god",
+      "slug": "odin",
+      "name": "Odin the All-Father",
+      "patronOf": "crusade",
+      "domain": [
+        "War",
+        "Wisdom",
+        "Fate",
+        "Victory"
+      ],
+      "role": "Patron of warriors who seek victory through strength and strategy",
+      "facts": [
+        "Odin sacrificed his eye to see all timelines of the Grudge wars",
+        "His ravens report all player activities daily",
+        "Odin favors those who die gloriously in combat",
+        "He secretly admires The Omni's balance but will never admit it",
+        "His spear Gungnir never misses its mark",
+        "Odin can speak to players through crow NPCs"
+      ],
+      "status": "canon",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 17
+      }
+    },
+    {
+      "uuid": "LORE-8CC2-0F88-3F97",
+      "grudgeUuid": "LORE-8CC2-0F88-3F97",
+      "kind": "god",
+      "slug": "madra",
+      "name": "Madra the Chaos Mother",
+      "patronOf": "legion",
+      "domain": [
+        "Entropy",
+        "Transformation",
+        "Destruction",
+        "Rebirth"
+      ],
+      "role": "Force of necessary destruction and evolution",
+      "facts": [
+        "Madra created the Undead by refusing to let her children truly die",
+        "She believes destruction is the only path to true growth",
+        "The Cosmic Waterfall is actually her domain expanding",
+        "She loves her Legion children but shows it through trials",
+        "Her temples appear randomly as islands are consumed",
+        "Madra speaks in riddles that reveal future catastrophes"
+      ],
+      "status": "canon",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 36
+      }
+    },
+    {
+      "uuid": "LORE-2C48-0DE6-46A1",
+      "grudgeUuid": "LORE-2C48-0DE6-46A1",
+      "kind": "god",
+      "slug": "omni",
+      "name": "The Omni, the Eternal One",
+      "patronOf": "fabled",
+      "domain": [
+        "Balance",
+        "Unity",
+        "Infinity",
+        "Harmony"
+      ],
+      "role": "Keeper of cosmic balance, prevents total annihilation",
+      "facts": [
+        "The Omni is neither male nor female but all things",
+        "They created the islands to give mortals a chance against the Waterfall",
+        "The Omni secretly mourns that balance requires conflict",
+        "Their third eye can see a player's true intentions",
+        "Dwarves believe The Omni taught them to forge, Elves believe nature magic",
+        "The Omni speaks in absolute truths that can be hard to accept"
+      ],
+      "status": "canon",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 55
+      }
+    }
+  ],
+  "unratified": [
+    {
+      "uuid": "LORE-C262-3EBC-5A48",
+      "kind": "god",
+      "slug": "lorian",
+      "name": "Lorian, the Weaver of Fate",
+      "status": "unratified",
+      "flag": "The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 1134
+      }
+    },
+    {
+      "uuid": "LORE-474C-F12B-C2FD",
+      "kind": "god",
+      "slug": "thalindra",
+      "name": "Thalindra, the Guardian of Nature",
+      "status": "unratified",
+      "flag": "The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 1139
+      }
+    },
+    {
+      "uuid": "LORE-FA91-62B4-C6D9",
+      "kind": "god",
+      "slug": "grundor",
+      "name": "Grundor, the Forge Master",
+      "status": "unratified",
+      "flag": "The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 1144
+      }
+    },
+    {
+      "uuid": "LORE-E8BB-9D4C-69BC",
+      "kind": "god",
+      "slug": "kragoth",
+      "name": "Kragoth, the Warlord of Rage",
+      "status": "unratified",
+      "flag": "The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 1149
+      }
+    },
+    {
+      "uuid": "LORE-171A-5E22-539B",
+      "kind": "god",
+      "slug": "zephyria",
+      "name": "Zephyria, the Eternal Flame",
+      "status": "unratified",
+      "flag": "The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.",
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 1154
+      }
+    }
+  ],
+  "factions": [
+    {
+      "uuid": "LORE-F4A6-C53B-E25B",
+      "kind": "faction",
+      "slug": "crusade",
+      "name": "The Crusade",
+      "patron": "Odin",
+      "races": [
+        "human",
+        "barbarian"
+      ],
+      "summary": "United under the banner of Odin, the Crusade marches with righteous fury. Humans bring adaptability and cunning, while Barbarians unleash primal rage upon their enemies.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/factions.json",
+        "pointer": "/factions/crusade"
+      }
+    },
+    {
+      "uuid": "LORE-44BE-4D6B-EFF6",
+      "kind": "faction",
+      "slug": "legion",
+      "name": "The Legion",
+      "patron": "Madra",
+      "races": [
+        "orc",
+        "undead"
+      ],
+      "summary": "Madra's Legion thrives on destruction. Orcs crush their foes with brute strength while the Undead overwhelm with dark sorcery and sheer persistence beyond death.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/factions.json",
+        "pointer": "/factions/legion"
+      }
+    },
+    {
+      "uuid": "LORE-2124-4B13-95DA",
+      "kind": "faction",
+      "slug": "fabled",
+      "name": "The Fabled",
+      "patron": "The Omni",
+      "races": [
+        "elf",
+        "dwarf"
+      ],
+      "summary": "The eldest alliance, guided by the mysterious Omni. Elves wield arcane mastery while Dwarves provide unbreakable fortitude and legendary forge-craft.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/factions.json",
+        "pointer": "/factions/fabled"
+      }
+    }
+  ],
+  "races": [
+    {
+      "uuid": "LORE-E354-4BDE-C47D",
+      "kind": "race",
+      "slug": "human",
+      "name": "Human",
+      "faction": "crusade",
+      "trait": "Adaptable",
+      "summary": "The most numerous of the Grudge War survivors, Humans thrive through sheer adaptability. Where other races rely on innate gifts, Humans forge their destiny through will and cunning.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/human"
+      }
+    },
+    {
+      "uuid": "LORE-7617-D2C4-6DCC",
+      "kind": "race",
+      "slug": "orc",
+      "name": "Orc",
+      "faction": "legion",
+      "trait": "Bloodrage",
+      "summary": "Born in the blood pits of the Shattered Wastes, Orcs know nothing but battle. Their bones are dense as stone, their muscles forged by a lifetime of brutality.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/orc"
+      }
+    },
+    {
+      "uuid": "LORE-8EC2-AEB9-4F82",
+      "kind": "race",
+      "slug": "elf",
+      "name": "Elf",
+      "faction": "fabled",
+      "trait": "Arcane Affinity",
+      "summary": "The Elves walked this world before the first grudge was spoken. Their mastery of magic and movement is unrivaled, though their arrogance has earned them many enemies.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/elf"
+      }
+    },
+    {
+      "uuid": "LORE-0393-2099-C643",
+      "kind": "race",
+      "slug": "undead",
+      "name": "Undead",
+      "faction": "legion",
+      "trait": "Undying Will",
+      "summary": "Neither alive nor truly dead, the Undead are sustained by the grudges that bind them to this world. Their rotting flesh hides an unbreakable will and dark power.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/undead"
+      }
+    },
+    {
+      "uuid": "LORE-CFE0-E52B-2F50",
+      "kind": "race",
+      "slug": "barbarian",
+      "name": "Barbarian",
+      "faction": "crusade",
+      "trait": "Berserker Rage",
+      "summary": "From the frozen steppes and scorched badlands, Barbarians reject civilization and embrace primal rage. Their ferocity in battle is unmatched, striking with wild abandon that terrifies even hardened soldiers.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/barbarian"
+      }
+    },
+    {
+      "uuid": "LORE-82BE-EDF4-2771",
+      "kind": "race",
+      "slug": "dwarf",
+      "name": "Dwarf",
+      "faction": "fabled",
+      "trait": "Stoneborn",
+      "summary": "Deep beneath the mountains, the Dwarves forged their kingdoms in stone and iron. Generations of mining and warfare have made them nearly unbreakable, with an endurance that outlasts any foe.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/races.json",
+        "pointer": "/races/dwarf"
+      }
+    }
+  ],
+  "classes": [
+    {
+      "uuid": "LORE-AB59-8215-3DB5",
+      "kind": "class",
+      "slug": "warrior",
+      "name": "Warrior",
+      "summary": "Forged in the crucible of the Grudge Wars, Warriors are the backbone of any warband. Their strength and endurance are unmatched on the battlefield.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/warrior"
+      }
+    },
+    {
+      "uuid": "LORE-71B4-1D26-BFB1",
+      "kind": "class",
+      "slug": "mage",
+      "name": "Mage",
+      "summary": "Drawing power from ancient ley lines and forgotten gods, Mage Priests wield destructive magic alongside sacred healing — a balance few can master.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/mage"
+      }
+    },
+    {
+      "uuid": "LORE-2212-88FE-A738",
+      "kind": "class",
+      "slug": "worge",
+      "name": "Worge",
+      "summary": "Worges walk between worlds — scholars of storm and root in mortal guise, unstoppable predators in beast form. Their mace and dagger channel primal energies until the wild within is unleashed.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/worge"
+      }
+    },
+    {
+      "uuid": "LORE-6FB0-E5D2-FD34",
+      "kind": "class",
+      "slug": "ranger",
+      "name": "Ranger",
+      "summary": "Silent and patient, Rangers strike from the shadows with lethal precision. Their arrows find gaps in even the thickest armor.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/ranger"
+      }
+    },
+    {
+      "uuid": "LORE-6B40-A5CD-41AE",
+      "kind": "class",
+      "slug": "priest",
+      "name": "Priest",
+      "summary": "Priests bind an ally and turn every holy bolt into a heal. They strip hexes, plant barriers before slams, and reflect pain back as light.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/priest"
+      }
+    },
+    {
+      "uuid": "LORE-1573-E64F-93E4",
+      "kind": "class",
+      "slug": "raider",
+      "name": "Raider",
+      "summary": "Raiders dropped the shield. Every swing opens a parry window; a catch becomes Overpower. They offtank slams and cut healing in the arena.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/raider"
+      }
+    },
+    {
+      "uuid": "LORE-08B6-E9B7-C7E4",
+      "kind": "class",
+      "slug": "thief",
+      "name": "Thief",
+      "summary": "Thieves fight dirty and close. A pistol shot stops a cast; a smoke bomb covers the healer; Between the Eyes spends the combo.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/thief"
+      }
+    },
+    {
+      "uuid": "LORE-9095-5AEB-CCDA",
+      "kind": "class",
+      "slug": "verduror",
+      "name": "Verduror",
+      "summary": "Verduror drop living plants. Iguana is a level 0 skill, not a form. The Arcanum opens on Barrel Cactus; Green Tara is the heal mantra.",
+      "status": "canon",
+      "source": {
+        "path": "api/v1/classes.json",
+        "pointer": "/classes/verduror"
+      }
+    }
+  ],
+  "heroes": [
+    {
+      "uuid": "LORE-7610-D9D5-1898",
+      "grudgeUuid": "LORE-7610-D9D5-1898",
+      "kind": "hero",
+      "slug": "aurion_radiant",
+      "number": 1,
+      "name": "Aurion the Radiant",
+      "title": "\"The Golden Dawn\" / \"Odin's Chosen Flame\"",
+      "race": "human",
+      "class": "mage",
+      "classLabel": "Mage",
+      "faction": "crusade",
+      "summary": "Aurion was born during a solar eclipse on an island that would be consumed by the Waterfall three days later. His mother, a temple priestess of Odin, gave birth as golden light erupted from the sky - Odin himself marking the child. The entire village evacuated, but Aurion's first cry caused a beam of divine energy to shoot into the sky, temporarily pushing back the Waterfall's advance.",
+      "relationships": [
+        {
+          "kind": "rival",
+          "text": "Silesh the Dread (Undead Mage) - ancient enemies",
+          "unresolved": true
+        },
+        {
+          "kind": "friend",
+          "text": "Aelindor the Swift (Elf Warrior) - fought together",
+          "unresolved": true
+        },
+        {
+          "kind": "mentor",
+          "text": "High Priest Valorian (deceased, speaks in visions)"
+        },
+        {
+          "kind": "student",
+          "text": "Teaches young Crusade mages"
+        }
+      ],
+      "portrait": null,
+      "status": "draft",
+      "flags": [],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 79
+      }
+    },
+    {
+      "uuid": "LORE-0A92-C70C-FEFD",
+      "grudgeUuid": "LORE-0A92-C70C-FEFD",
+      "kind": "hero",
+      "slug": "sigurd_unbreakable",
+      "number": 2,
+      "name": "Sigurd the Unbreakable",
+      "title": "\"The Mountain\" / \"Shield of the Crusade\"",
+      "race": "human",
+      "class": "warrior",
+      "classLabel": "Warrior",
+      "faction": "crusade",
+      "summary": "Born to a blacksmith family on a mid-rim island, Sigurd grew up hammering steel. When the Legion attacked his home at age 16, he picked up his father's warhammer and single-handedly held the bridge while his village evacuated. He fought for three days without rest, breaking seven weapons before the enemy retreated. They called him \"Unbreakable\" - not for his armor, but his will.",
+      "relationships": [
+        {
+          "kind": "blood brother",
+          "text": "Thrax the Savage (Barbarian) - earned respect in battle"
+        },
+        {
+          "kind": "rival",
+          "text": "Gruk Skullcrusher (Orc) - worthy opponent"
+        },
+        {
+          "kind": "student",
+          "text": "Young Crusade warriors look to him"
+        },
+        {
+          "kind": "secret",
+          "text": "Loves Silvaine the Starwhisper (Elf Mage) but will never tell",
+          "unresolved": true
+        }
+      ],
+      "portrait": null,
+      "status": "draft",
+      "flags": [],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 184
+      }
+    },
+    {
+      "uuid": "LORE-2DB0-3A31-3828",
+      "grudgeUuid": "LORE-2DB0-3A31-3828",
+      "kind": "hero",
+      "slug": "kael_shadowblade",
+      "number": 3,
+      "name": "Kael the Shadowblade",
+      "title": "\"The Unseen\" / \"Odin's Whisper\"",
+      "race": "human",
+      "class": "ranger",
+      "classLabel": "Ranger/Assassin",
+      "faction": "crusade",
+      "summary": "No one knows Kael's true origin - and that's intentional. He appeared in the Crusade's spy network fifteen years ago, already a master of shadows. Some whisper he was born in the Legion lands and defected. Others say he's actually three different people using one name. Kael encourages all rumors equally.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [
+        {
+          "code": "class-label",
+          "detail": "Lore says \"Ranger/Assassin\"; canonical class id is ranger."
+        }
+      ],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 276
+      }
+    },
+    {
+      "uuid": "LORE-B042-52CC-66CA",
+      "grudgeUuid": "LORE-B042-52CC-66CA",
+      "kind": "hero",
+      "slug": "theron_wildkin",
+      "number": 4,
+      "name": "Theron Wildkin",
+      "title": "\"The Primal Heart\" / \"Brother of Beasts\"",
+      "race": "human",
+      "class": "worge",
+      "classLabel": "Worges (Beast-bonded)",
+      "faction": "crusade",
+      "summary": "Theron was lost in the Wildwood at age 5 when his village was attacked. A pack of dire wolves found him and, instead of killing him, adopted him. He lived as a wolf for twelve years, forgetting human speech entirely. When Crusade rangers found him, he attacked - defending his pack.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [
+        {
+          "code": "class-label",
+          "detail": "Lore says \"Worges (Beast-bonded)\"; canonical class id is worge."
+        }
+      ],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 366
+      }
+    },
+    {
+      "uuid": "LORE-8960-9879-C8B5",
+      "grudgeUuid": "LORE-8960-9879-C8B5",
+      "kind": "hero",
+      "slug": "thrax_savage",
+      "number": 5,
+      "name": "Thrax the Savage",
+      "title": "\"The Bloodstorm\" / \"Odin's Berserker\"",
+      "race": "barbarian",
+      "class": "warrior",
+      "classLabel": "Warrior",
+      "faction": "crusade",
+      "summary": "The Barbarian tribes were once enemies of the \"civilized\" Crusade. That changed when Thrax was born. A prophecy marked him: \"The Red Storm shall unite the axes with the swords, or all shall fall to the endless dark.\"",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 454
+      }
+    },
+    {
+      "uuid": "LORE-A1B2-4277-2185",
+      "grudgeUuid": "LORE-A1B2-4277-2185",
+      "kind": "hero",
+      "slug": "grok_spiritcaller",
+      "number": 6,
+      "name": "Grok Spiritcaller",
+      "title": "\"The Spirit Walker\" / \"Voice of the Ancestors\"",
+      "race": "barbarian",
+      "class": "mage",
+      "classLabel": "Mage (Shaman)",
+      "faction": "crusade",
+      "summary": "Grok was born dead. For three minutes, his spirit wandered the ancestor realm before being pulled back by his grandmother's magic. He returned... different. He could see the spirits that guided his tribe, hear the ancestors whisper, and channel their power through wild, untamed magic.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [
+        {
+          "code": "class-label",
+          "detail": "Lore says \"Mage (Shaman)\"; canonical class id is mage."
+        }
+      ],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 538
+      }
+    },
+    {
+      "uuid": "LORE-C035-F1DC-721B",
+      "grudgeUuid": "LORE-C035-F1DC-721B",
+      "kind": "hero",
+      "slug": "kira_fang",
+      "number": 7,
+      "name": "Kira the Fang",
+      "note": "Female Barbarian Worges",
+      "title": "\"The Alpha's Daughter\" / \"Moonbound\"",
+      "race": "barbarian",
+      "class": "worge",
+      "classLabel": "Worges",
+      "faction": "crusade",
+      "summary": "Kira's tribe are the Wolf Singers - Barbarians who have worshipped wolves since before recorded history. Each tribe member bonds with a wolf at birth; their souls are literally linked. When one dies, the other follows within days.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [
+        {
+          "code": "class-label",
+          "detail": "Lore says \"Worges\"; canonical class id is worge."
+        }
+      ],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 620
+      }
+    },
+    {
+      "uuid": "LORE-6DE6-A2AE-12A4",
+      "grudgeUuid": "LORE-6DE6-A2AE-12A4",
+      "kind": "hero",
+      "slug": "vox_skyhunter",
+      "number": 8,
+      "name": "Vox Skyhunter",
+      "title": "\"The Eagle's Eye\" / \"Never-Miss Vox\"",
+      "race": "barbarian",
+      "class": "ranger",
+      "classLabel": "Ranger",
+      "faction": "crusade",
+      "summary": "Born on a cliff-edge island where the only food was flying creatures, Vox learned to shoot before he learned to walk. His tribe, the Skyhunters, are specialists in aerial combat - using gliders, grappling hooks, and incredible archery to hunt the massive sky-beasts that drift between islands.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 701
+      }
+    },
+    {
+      "uuid": "LORE-3114-130A-58B5",
+      "grudgeUuid": "LORE-3114-130A-58B5",
+      "kind": "hero",
+      "slug": "gruk_skullcrusher",
+      "number": 9,
+      "name": "Gruk Skullcrusher",
+      "title": "\"The Annihilator\" / \"Madra's Fist\"",
+      "race": "orc",
+      "class": "warrior",
+      "classLabel": "Warrior",
+      "faction": "legion",
+      "summary": "Gruk was the runt of his litter - the smallest, weakest orc born to the Skullcrusher clan. By orc tradition, runts are left to die. But Gruk refused. He crawled back to camp. They threw him out. He crawled back. Seven times.",
+      "relationships": [],
+      "portrait": null,
+      "status": "draft",
+      "flags": [],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 788
+      }
+    },
+    {
+      "uuid": "LORE-594B-E815-86DD",
+      "grudgeUuid": "LORE-594B-E815-86DD",
+      "kind": "hero",
+      "slug": "nazgrim_profane",
+      "number": 10,
+      "name": "Nazgrim the Profane",
+      "title": "\"The Death Speaker\" / \"Herald of Madra\"",
+      "race": "orc",
+      "class": "mage",
+      "classLabel": "Mage (Necromancer)",
+      "faction": "legion",
+      "summary": "Nazgrim was once a proud orc warrior until a Crusade ambush left him dying alone on a battlefield. As his life faded, Madra appeared to him. She offered him a choice: true death, or service. He chose service.",
+      "relationships": [],
+      "portrait": null,
+      "status": "held",
+      "flags": [
+        {
+          "code": "wow-name",
+          "detail": "Name matches a World of Warcraft character (Nazgrim). Rename before it ships."
+        },
+        {
+          "code": "class-label",
+          "detail": "Lore says \"Mage (Necromancer)\"; canonical class id is mage."
+        }
+      ],
+      "source": {
+        "path": "docs/loreHeroes.txt",
+        "line": 879
+      }
+    }
+  ]
+}

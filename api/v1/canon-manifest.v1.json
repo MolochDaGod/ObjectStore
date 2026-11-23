@@ -1,0 +1,183 @@
+{
+  "id": "canon-manifest",
+  "version": 1,
+  "status": "draft",
+  "law": "Spawn @racalvin/grudge-warlords main is the source of truth for how the game plays. ObjectStore api/v1 is the published catalog: definitions are edited here, checked against the Spawn pin, then served from info/objectstore. Binaries only from assets.grudge-studio.com. Player state only from grudge-api (Railway) keyed by grudgeId.",
+  "hosts": {
+    "definitions": "https://objectstore.grudge-studio.com/api/v1",
+    "mirror": "https://info.grudge-studio.com/api/v1",
+    "binaries": "https://assets.grudge-studio.com",
+    "identity": "https://id.grudge-studio.com",
+    "playerApi": "https://api.grudge-studio.com",
+    "legion": "https://ai.grudge-studio.com"
+  },
+  "readers": {
+    "legion": "Fetch this manifest, then the files it lists. Ground answers on them (retrieval), cite uuid, and call the player API for anything about a player. Do not fine-tune canon into a model; canon changes weekly.",
+    "games": "Read definitions by uuid. Never copy a catalog into a client bundle without its sha256 from here."
+  },
+  "idFamilies": {
+    "player": "grudgeId GRUDGE_* (grudge-api). The only cross-service player key.",
+    "character": "characters.id RFC UUID (grudge-api). GRDG-* is a display stamp, not a key.",
+    "itemInstance": "grudge_uuid minted by the server ledger only.",
+    "itemDefinition": "ITEM-*/FOOD-*/POTN-*/CONS-* in master-items.json. Frozen: existing ids are never re-minted, even though they are timestamp-based.",
+    "skill": "SKIL-* = sha1(\"grudge-skill:{id}\")",
+    "asset": "grudgeUuid = sha1(\"grudge-asset:{r2Key}\") laid out as a v5-style UUID; ICON-* uses the same seed",
+    "lore": "LORE-* = sha1(\"grudge-lore:{kind}:{slug}\") (new, this manifest)",
+    "era": "ERA-* = sha1(\"grudge-era:{id}\") (new, this manifest)"
+  },
+  "eras": [
+    {
+      "uuid": "ERA-C5A4-4E0A-D85E",
+      "id": "warlords",
+      "status": "canonical",
+      "slots": 4,
+      "stats": "STR VIT DEX INT TAC (8 attrs in master-attributes)"
+    },
+    {
+      "uuid": "ERA-7511-0C2F-37A7",
+      "id": "nexus",
+      "status": "shipping",
+      "slots": 12,
+      "stats": "BIO NEU KIN QNT SYN CHR ENT GRA — live GET https://grudges.grudge-studio.com/api/stats/primary"
+    },
+    {
+      "uuid": "ERA-A395-1D55-CCD8",
+      "id": "voxel",
+      "status": "canonical",
+      "slots": 4,
+      "stats": "Same Nexus BIO…GRA when playing Grudges"
+    },
+    {
+      "uuid": "ERA-5F46-FE3D-6646",
+      "id": "armada",
+      "status": "gated",
+      "slots": 4,
+      "stats": "ship/mech loadout (not Toon STR)"
+    }
+  ],
+  "glossary": [
+    {
+      "term": "era",
+      "means": "A product era (warlords, nexus, voxel, armada, plus shared for assets). Not a period of in-world history; use \"age\" for that. No ages are canon yet."
+    },
+    {
+      "term": "Legion (faction)",
+      "means": "In-world faction id legion: orcs and undead, patron Madra."
+    },
+    {
+      "term": "Legion AI",
+      "means": "The studio AI service at ai.grudge-studio.com (service id legion-ai). Never the faction."
+    },
+    {
+      "term": "Grudge ID",
+      "means": "The sign-in service at id.grudge-studio.com."
+    },
+    {
+      "term": "grudgeId",
+      "means": "A player account key, GRUDGE_ plus 20 characters total."
+    },
+    {
+      "term": "grudgeUuid",
+      "means": "A deterministic definition or asset id. Never a player."
+    },
+    {
+      "term": "GRD-17",
+      "means": "Three things share the name: the GRUDACHAIN ESP32 node, the Legion persona grd17, and grd17CompressionService. In canon it only ever means the compression format for stored JSON."
+    }
+  ],
+  "compression": "Large canon files may be stored at rest as GRD-17 brotli with the algorithm in R2 customMetadata. HTTP responses rely on Cloudflare compression; sha256 here is of the uncompressed JSON.",
+  "files": {
+    "uuidLaw": {
+      "path": "/api/v1/uuid-law.json",
+      "sha256": "bd877e48b3c1be5ec23a62450c69785e94ca893205f690dec4a313a9c968ff2a",
+      "bytes": 6414
+    },
+    "accountGameContract": {
+      "path": "/api/v1/account-game-uuid-contract.json",
+      "sha256": "d1f5cdd3fb8a7b9814852c4a82663e6f419673cf3cd20e746b469a8dd69df350",
+      "bytes": 5541
+    },
+    "eras": {
+      "path": "/api/v1/era-systems.json",
+      "sha256": "78a7330ae5b580b6c9179792e5cfa8955b0deaf2422ab0c36eb8e2427787198f",
+      "bytes": 7473
+    },
+    "eraTaxonomy": {
+      "path": "/api/v1/era-asset-taxonomy.json",
+      "sha256": "d2e159fa6afedd208cea6f81609325273eabd2dd4b25cdff23abb638e2e2d520",
+      "bytes": 12178
+    },
+    "factions": {
+      "path": "/api/v1/factions.json",
+      "sha256": "ad430079729fed6536ef646e010ec1ec783dcb1ab6f53a28fbe507297b9f7ae3",
+      "bytes": 1387
+    },
+    "races": {
+      "path": "/api/v1/races.json",
+      "sha256": "635935f3c8091503f401013b29d19f776d9fb82ad0537b72aec9406426a91878",
+      "bytes": 6129
+    },
+    "classes": {
+      "path": "/api/v1/classes.json",
+      "sha256": "bea39ea9f6513bf76bdb5fcdd8ffdfc3e5134a570832db5e8535fcf21b1d913a",
+      "bytes": 125575
+    },
+    "items": {
+      "path": "/api/v1/master-items.json",
+      "sha256": "a53e63b64dc981c8983ba16473e2e8d367f0dc1394aab064f9693a97cccb5c59",
+      "bytes": 1494431
+    },
+    "itemsManifest": {
+      "path": "/api/v1/canonical-items-manifest.json",
+      "sha256": "80a6e2648489b62d4b87b748cf33c59a914945def4cf982eca8acf1cf9a363b2",
+      "bytes": 6519
+    },
+    "weaponPrefabs": {
+      "path": "/api/v1/master-weapon-prefabs.json",
+      "sha256": "31738e2ae524b4b1ea1feca311e12fddc756c2f67f33948b95d75d2f3a52eb3e",
+      "bytes": 7878319
+    },
+    "skills": {
+      "path": "/api/v1/master-weaponSkills.json",
+      "sha256": "5c3d858f65b0e9871efdb13a4b120121f1c94ec71789d3024eae030e37686c8b",
+      "bytes": 934776
+    },
+    "materials": {
+      "path": "/api/v1/master-materials.json",
+      "sha256": "7ea4e4c5ecee130bfe2833352a0b9be4970de5fa5ba544e01086510c3873101a",
+      "bytes": 48337
+    },
+    "recipes": {
+      "path": "/api/v1/master-recipes.json",
+      "sha256": "9ff637972f431aaf22bec9b56d71dbf0a872143e74acc58d66417e761041bfb1",
+      "bytes": 2039476
+    },
+    "professions": {
+      "path": "/api/v1/master-professions.json",
+      "sha256": "886ee127f83b15d2167e829ef41480ceee378ae4876fe2262b5783b0c41395e2",
+      "bytes": 87782
+    },
+    "attributes": {
+      "path": "/api/v1/master-attributes.json",
+      "sha256": "ea89dd52bd93c61ad15be604ab707e492d0a9f259c8bec43c4c7097a3b338dc3",
+      "bytes": 15991
+    },
+    "lore": {
+      "path": "/api/v1/lore-canon.json",
+      "sha256": "c3e5265553ced91d80448e5e761b83d225132d1a7963cfcc5444d6de38b2d68e",
+      "bytes": 24736
+    }
+  },
+  "spawnPin": {
+    "world": "@racalvin/grudge-warlords",
+    "ref": "main",
+    "commit": "952865fde415ecf2bdd5531e60813f014c0bcb3f",
+    "tree": "33a0fe3275481429f6c63c70496e65dad4908bef",
+    "files": {
+      "scripts/lib/data/canon.js": "09141dea0fc0e70c2d4967be405295b6c1cff49aa253c8c34ac526615ae88aff",
+      "scripts/lib/data/combat-canon.js": "c7530199b5d61c3f589fedeac67015f7eb0fdccf523274b518f91c98dd0880e4",
+      "scripts/lib/data/class-books.yml": "1eb0a0c5db461657a645c25c0d11eee8fccf9aabd8d81fc4316c113799123e9d"
+    }
+  },
+  "build": "node scripts/build-canon-manifest.mjs [--spawn-commit <sha> --spawn-tree <sha> --spawn-file <path>=<sha256>]"
+}
