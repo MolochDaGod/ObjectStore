@@ -1,0 +1,11 @@
+# nexus.grudge-studio.com — was a proxy to the Vercel hub.
+# It now opens Nexus Nemesis Season 1 on Spawn.
+name = "grudge-nexus-proxy"
+main = "index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+account_id = "ee475864561b02d4588180b8b9acf694"
+
+routes = [
+  { pattern = "nexus.grudge-studio.com/*", zone_name = "grudge-studio.com" }
+]
