@@ -1,6 +1,6 @@
 # God hunts (draft)
 
-Status: **draft**. Names and numbers need Jonathan's approval. No line is live in Grudge Warlords until its avatar has approved art.
+Status: **draft**. Names are final: ALE chose them under Jonathan's delegation on 2026-11-23 ("you chose, and use original grudge lore systems best you can"), checked against a World of Warcraft name list. Numbers are tuning picks. No line is live in Grudge Warlords until its avatar has approved art.
 
 Data: [`api/v1/god-hunts.json`](../api/v1/god-hunts.json). Check: `node scripts/check-god-hunts.mjs`.
 
@@ -8,7 +8,7 @@ Data: [`api/v1/god-hunts.json`](../api/v1/god-hunts.json). Check: `node scripts/
 The five race gods ratified on 2026-11-23 (Lorian, Thalindra, Grundor, Kragoth, Zephyria) are canon bosses. Since the Godwake, each god walks the world as an avatar that tests its people. A hunt line starts with a quest-giver in a faction town, sends the player to a lore site, real foes and a gathering offering, then to the god's avatar on an event isle. Beating the avatar earns the god's mark. The god itself is never killed.
 
 ## Source of truth
-Gameplay lives in Spawn (`@racalvin/grudge-warlords`, `scripts/lib/data/god-hunts.js`). This file mirrors it for info only. The draft commit is local on `ale/god-hunts-draft` and has not been pushed. God ids come from `api/v1/lore-canon.json` on `canon/manifest-lore-v1`.
+Gameplay lives in Spawn (`@racalvin/grudge-warlords`, `scripts/lib/data/god-hunts.js`). This file mirrors it for info only. The draft is local on `ale/god-hunts-draft` (head `bdd8de8e`, tree `9cf4ec9e`, base main `ff7f83ed`) and has not been pushed; the push waits on Verdict's SIGN. God ids come from `api/v1/lore-canon.json` on `canon/manifest-lore-v1`.
 
 ## Id law
 `LORE-XXXX-XXXX-XXXX` = first 12 hex of `sha1("grudge-lore:{kind}:{slug}")`. Boss: `boss:<god>`. Line: `quest:<god>-hunt`.
@@ -54,7 +54,7 @@ There is no avatar art yet. Clients show the missing marker. Approved art may on
 - **Starts:** Korvash the Ember-Scaled, Saltgrudge Harbor
 - **Steps:** Talk to Marta Saltgrudge → Reach Ember Rise → Defeat 4 × horned fire drake → Defeat 1 × caldera warden → Reach Throne Drift → Defeat The Unending Pyre
 - **Boss:** The Unending Pyre, Wake of Zephyria (`LORE-04BF-2DE9-A7D7`), level 20, 5600 HP, at Throne Drift (`event:crusade:1`)
-- **Abilities:** Pyre Breath, Ashfall, Claw Rake, Rebirth Flame
+- **Abilities:** Pyre Breath, Ashfall, Cinder Talons, Pyre Renewal
 - **Rewards:** 550 gold, 2100 XP, dragon-sinew ×3, divine-essence ×1
 
 ## Open items
@@ -63,3 +63,4 @@ There is no avatar art yet. Clients show the missing marker. Approved art may on
 - Starweave Canopy (elves) and Runeforge Hold (dwarves) have no NPCs, so Thalindra and Grundor start at Sunspire.
 - Zephyria has no faction (dragons are not a playable race), so her line starts at Saltgrudge Harbor.
 - Faction gating of who may take a line is not enforced.
+- Starfall Shoal is the canon atlas name of event:fabled:2. "Starfall" is also a World of Warcraft spell; renaming an atlas isle is outside this pass.
