@@ -31,7 +31,8 @@
     }
     *{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;height:100%;}
-    body{font-family:'Spectral SC',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    body{font-family:'Spectral SC',Georgia,serif;background:var(--bg);color:var(--text);height:100vh;height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column;}
+    .site-header,.os-nav-wrap{flex-shrink:0;}
 
     /* Header */
     .site-header{background:linear-gradient(180deg,hsl(225 28% 13%) 0%,hsl(225 30% 8%) 100%);border-bottom:1px solid var(--border-gold);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.5);}
@@ -88,7 +89,7 @@
     .back-bar .type-count{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--text-dim);margin-left:auto;}
 
     /* Main */
-    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;min-height:0;}
     .toolbar{padding:10px 16px;background:var(--bg-mid);border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;}
     .search-wrap{flex:1;position:relative;}
     .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none;}
@@ -224,14 +225,14 @@
       .site-header h1{font-size:1rem;}
       .header-counts,.header-sub{display:none;}
       .layout{flex-direction:column;}
-      .sidebar{width:100%;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:5px;border-right:none;border-bottom:1px solid var(--border);flex-shrink:0;}
+      .sidebar{width:100%;max-height:none;display:flex;align-items:center;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:5px;border-right:none;border-bottom:1px solid var(--border);flex-shrink:0;}
       .sidebar-label,.sidebar-divider{display:none;}
       .tier-filters{display:block;padding:0 8px 6px;min-width:max-content;}
-      .nav-btn{white-space:nowrap;padding:5px 11px;border-left:none;border-bottom:3px solid transparent;flex-shrink:0;font-size:0.74rem;}
+      .nav-btn{width:auto;white-space:nowrap;padding:5px 11px;border-left:none;border-bottom:3px solid transparent;flex-shrink:0;font-size:0.74rem;}
       .nav-btn.active{border-left:none;border-bottom-color:var(--gold);}
       .main{min-height:0;flex:1;}
       .subfilter-strip.visible{flex-wrap:nowrap;}
-      .detail-drawer{width:100%;border-left:none;border-top:1px solid var(--border-gold);}
+      .detail-drawer{width:100%;max-height:55vh;max-height:55dvh;border-left:none;border-top:1px solid var(--border-gold);}
     }
   </style>
 <!-- deploy-ts-20260709170925 -->
@@ -251,68 +252,68 @@
   <nav class="sidebar">
     <div class="sidebar-label">Browse</div>
     <button class="nav-btn active" data-type="all" onclick="setType('all')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/Icons_Essential/v1.2/Icons/ChestTreasure.png" width="16" height="16" alt=""></span> All Items <span class="badge" id="count-all">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/Icons_Essential/v1.2/Icons/ChestTreasure.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> All Items <span class="badge" id="count-all">—</span>
     </button>
 
     <div class="sidebar-label">Equipment</div>
     <button class="nav-btn" data-type="weapon" onclick="setType('weapon')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/496_rpg_icons/S_Sword07.png" width="16" height="16" alt=""></span> Weapons <span class="badge" id="count-weapon">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/496_rpg_icons/S_Sword07.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Weapons <span class="badge" id="count-weapon">—</span>
     </button>
     <button class="nav-btn" data-type="armor" onclick="setType('armor')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/armor_full/Chest_01.png" width="16" height="16" alt=""></span> Armor <span class="badge" id="count-armor">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/armor_full/Chest_01.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Armor <span class="badge" id="count-armor">—</span>
     </button>
     <button class="nav-btn" data-type="relic" onclick="setType('relic')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/artifacts/artifacts_01_framed.png" width="16" height="16" alt=""></span> Relics <span class="badge" id="count-relic">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/artifacts/artifacts_01_framed.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Relics <span class="badge" id="count-relic">—</span>
     </button>
 
     <div class="sidebar-label">Consumables</div>
     <button class="nav-btn" data-type="consumable" onclick="setType('consumable')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt=""></span> All Consumables <span class="badge" id="count-consumable">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/health_potion.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> All Consumables <span class="badge" id="count-consumable">—</span>
     </button>
     <button class="nav-btn" data-type="food" onclick="setType('food')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/food_steak_cooked.png" width="16" height="16" alt=""></span> Food <span class="badge" id="count-food">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/food_steak_cooked.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Food <span class="badge" id="count-food">—</span>
     </button>
     <button class="nav-btn" data-type="potion" onclick="setType('potion')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/mana_potion.png" width="16" height="16" alt=""></span> Potions <span class="badge" id="count-potion">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/consumables/mana_potion.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Potions <span class="badge" id="count-potion">—</span>
     </button>
     <button class="nav-btn" data-type="material" onclick="setType('material')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt=""></span> Materials <span class="badge" id="count-material">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/materials/iron-ore.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Materials <span class="badge" id="count-material">—</span>
     </button>
     <button class="nav-btn" data-type="artifact" onclick="setType('artifact')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/loot/loot_1.png" width="16" height="16" alt=""></span> Artifacts <span class="badge" id="count-artifact">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/loot/loot_1.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Artifacts <span class="badge" id="count-artifact">—</span>
     </button>
 
     <div class="sidebar-label">Mystic System</div>
     <button class="nav-btn" data-type="enchant" onclick="setType('enchant')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/abilities/ability_arcane_bolt.png" width="16" height="16" alt=""></span> Enchants <span class="badge" id="count-enchant">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/abilities/ability_arcane_bolt.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Enchants <span class="badge" id="count-enchant">—</span>
     </button>
     <button class="nav-btn" data-type="infusion" onclick="setType('infusion')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt=""></span> Infusions <span class="badge" id="count-infusion">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/items/alchemy/alchemy_01_framed.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Infusions <span class="badge" id="count-infusion">—</span>
     </button>
 
     <div class="sidebar-label">Crafting</div>
     <button class="nav-btn" data-type="recipe" onclick="setType('recipe')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/forge.png" width="16" height="16" alt=""></span> Recipes <span class="badge" id="count-recipe">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Recipes <span class="badge" id="count-recipe">—</span>
     </button>
 
     <div class="sidebar-label">World</div>
     <button class="nav-btn" data-type="building" onclick="setType('building')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/professions/workbench.png" width="16" height="16" alt=""></span> Buildings <span class="badge" id="count-building">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Buildings <span class="badge" id="count-building">—</span>
     </button>
     <button class="nav-btn" data-type="mount" onclick="setType('mount')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/entities/horse.png" width="16" height="16" alt=""></span> Mounts <span class="badge" id="count-mount">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Mounts <span class="badge" id="count-mount">—</span>
     </button>
     <button class="nav-btn" data-type="tool" onclick="setType('tool')">
-      <span class="ico"><img src="https://assets.grudge-studio.com/icons/pack/weapons/Hammer_01.png" width="16" height="16" alt=""></span> Tools <span class="badge" id="count-tool">—</span>
+      <span class="ico"><img src="https://assets.grudge-studio.com/icons/pack/weapons/Hammer_01.png" width="16" height="16" alt="" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';"></span> Tools <span class="badge" id="count-tool">—</span>
     </button>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-label">grudge6 3D</div>
     <button class="nav-btn" id="btn-g6-ready" onclick="toggleGrudge6Ready()" title="Only weapons/tools with game-ready GLB + attachment socket">
-      <span class="ico">🧬</span> grudge6 Ready <span class="badge" id="count-g6">—</span>
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> grudge6 Ready <span class="badge" id="count-g6">—</span>
     </button>
     <a class="nav-btn" href="./GRUDGE6_Characters" style="text-decoration:none" title="Working race prefabs">
-      <span class="ico">🧑</span> Race Prefabs
+      <span class="ico"><span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span></span> Race Prefabs
     </a>
 
     <div class="sidebar-divider"></div>
@@ -327,8 +328,8 @@
         <button class="tier-btn" data-tier="4" onclick="setTier('4')" title="Epic">T4</button>
         <button class="tier-btn" data-tier="5" onclick="setTier('5')" title="Heroic">T5</button>
         <button class="tier-btn" data-tier="6" onclick="setTier('6')" title="Mythic">T6</button>
-        <button class="tier-btn" data-tier="7" onclick="setTier('7')" title="Legendary">T7</button>
-        <button class="tier-btn" data-tier="8" onclick="setTier('8')" title="Immortal">T8</button>
+        <button class="tier-btn" data-tier="7" onclick="setTier('7')" title="Ancient">T7</button>
+        <button class="tier-btn" data-tier="8" onclick="setTier('8')" title="Legendary">T8</button>
       </div>
     </div>
   </nav>
@@ -404,7 +405,7 @@
 /* Tab handlers available immediately (module registers real impl when ready) */
 (function () {
   const pending = [];
-  const names = ['setType','setTier','setSub','onSearch','onSort','loadMore','closeDrawer','selectWeaponType','backToWeaponTypes'];
+  const names = ['setType','setTier','setSub','onSearch','onSort','loadMore','closeDrawer','selectWeaponType','backToWeaponTypes','toggleGrudge6Ready'];
   names.forEach((name) => {
     window[name] = function (...args) {
       if (window.__catalogApi && window.__catalogApi[name]) {
@@ -424,7 +425,6 @@
 </script>
 
 <script type="module">
-import { resolveCatalogIcon } from './utils/icon-resolver.js';
 import { ICON_CDN, OBJECTSTORE_API, absAssetUrl } from './utils/asset-config.js';
 
 const CDN = ICON_CDN;
@@ -437,6 +437,9 @@ const API_CANDIDATES = [
   OBJECTSTORE_API || 'https://objectstore.grudge-studio.com/api/v1',
   'https://objectstore.grudge-studio.com/api/v1',
 ].filter((v, i, a) => v && a.indexOf(v) === i);
+if (location.hostname.endsWith('.vercel.app') || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+  API_CANDIDATES.unshift(`${location.origin}/api/v1`);
+}
 
 let API = API_CANDIDATES[0];
 
@@ -505,7 +508,13 @@ function parseTierNum(item) {
 }
 
 function resolveIcon(item) {
-  return resolveCatalogIcon(item, CDN);
+  return item.iconUrl;
+}
+
+function iconHtml(icon, name) {
+  const asset = window.GrudgeAsset;
+  return asset ? (icon ? asset.iconImgHtml(icon, {alt: name || ''}) : asset.missingIconMarker())
+    : '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>';
 }
 
 // ─── Registry + 3D model lookups (ObjectStore Worker SSOT) ─────────────
@@ -640,6 +649,11 @@ function enrichItem(item) {
   const rawIcon =
     item.iconUrl || item.iconCdnUrl || resultReg?.iconUrl || reg?.iconUrl ||
     item.icon || reg?.iconCdnUrl || prefabIdx?.assets?.iconUrl || '';
+  let iconUrl = rawIcon ? (absAssetUrl(rawIcon, CDN) || '') : '';
+  try {
+    const url = new URL(iconUrl);
+    if (url.origin !== 'https://assets.grudge-studio.com' || url.username || url.password) iconUrl = '';
+  } catch { iconUrl = ''; }
 
   // Model: weapon-model map → item fields → prefab index → assets block
   const fromItemR2 = item.modelR2Key || item.modelPath || item.assets?.mesh?.r2Key || null;
@@ -683,7 +697,7 @@ function enrichItem(item) {
   return {
     ...item,
     uuid,
-    iconUrl: rawIcon ? (absAssetUrl(rawIcon, CDN) || rawIcon) : '',
+    iconUrl,
     iconCdnUrl: reg?.iconCdnUrl || item.iconCdnUrl || '',
     iconUuid: item.iconUuid || reg?.iconUuid || '',
     _gameModelUrl: modelPrimary,
@@ -725,8 +739,8 @@ const WEAPON_TYPES = [
   { key: 'staff',    label: 'Staves',    icon: `${CDN}/icons/pack/weapons/staff_1.png` },
   { key: 'wand',     label: 'Wands',     icon: `${CDN}/icons/pack/weapons/staff_5.png` },
   { key: 'tome',     label: 'Tomes',     icon: `${CDN}/icons/pack/weapons/Book_1.png` },
-  { key: 'gun',      label: 'Guns',      icon: `${CDN}/icons/pack/weapons/Crossbow_05.png` },
-  { key: 'scythe',   label: 'Scythes',   icon: `${CDN}/icons/pack/weapons/Scythe_1.png` },
+  { key: 'gun',      label: 'Guns',      icon: '' },
+  { key: 'scythe',   label: 'Scythes',   icon: '' },
   { key: 'shield',   label: 'Shields',   icon: `${CDN}/icons/pack/weapons/shield_01.png` },
 ];
 
@@ -934,6 +948,10 @@ function toggleGrudge6Ready() {
   grudge6ReadyOnly = !grudge6ReadyOnly;
   const btn = document.getElementById('btn-g6-ready');
   if (btn) btn.classList.toggle('active', grudge6ReadyOnly);
+  if (activeType === 'weapon' && weaponViewMode === 'types') {
+    showWeaponTypeGrid();
+    return;
+  }
   applyFilters();
 }
 
@@ -1007,22 +1025,37 @@ function renderGrid(fresh) {
 function loadMore() { renderGrid(false); }
 
 // ─── Card ─────────────────────────────────────────────────────────────────
+const CATEGORY_LABEL = {
+  swords:'Sword', greatswords:'Greatsword', axes1h:'One-Hand Axe', greataxes:'Greataxe',
+  hammers1h:'One-Hand Hammer', hammers2h:'Two-Hand Hammer', daggers:'Dagger', bows:'Bow',
+  crossbows:'Crossbow', spears:'Spear', guns:'Gun', scythes:'Scythe', wands:'Wand',
+  shields:'Shield', staves:'Staff', staff:'Staff', firestaves:'Fire Staff', froststaves:'Frost Staff',
+  holystaves:'Holy Staff', lightningstaves:'Lightning Staff', naturestaves:'Nature Staff',
+  'offhand-tome':'Tome', tools:'Tool',
+};
+function categoryLabel(value) {
+  const key = String(value || '').toLowerCase();
+  return CATEGORY_LABEL[key] || key.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function displayName(item) {
+  return item.baseName || (item.name || '').replace(/ T\d+$/, '');
+}
 function makeCard(item) {
   const div = document.createElement('div');
   div.className = 'item-card';
-  div.dataset.tier = item._tierNum || 1;
+  div.dataset.tier = item._tierNum ?? 1;
   const tc  = item.tierColor || '#8b7355';
   const cat = item._type === 'recipe'
     ? (item.profession || 'Recipe')
     : item._type === 'spell-recipe'
-      ? `Spell · ${item.school || 'arcane'}`
+      ? `Spell · ${categoryLabel(item.school || 'arcane')}`
       : item._type === 'building'
-        ? (item.category || 'building').replace(/_/g, ' ')
+        ? categoryLabel(item.category || 'building')
         : item._type === 'mount'
           ? (item.race || 'mount')
           : item._type === 'armor' && item.slotType
             ? item.slotType + (item.material ? ' · ' + item.material : '')
-            : (item.category || item.subCategory || item.weaponType || item._subType || '');
+            : categoryLabel(item.category || item.subCategory || item.weaponType || item._subType || '');
   const icon = resolveIcon(item);
 
   // Rich tooltip
@@ -1041,13 +1074,9 @@ function makeCard(item) {
   div.innerHTML = `
     <div class="tier-stripe" style="background:${tc}"></div>
     <div class="item-icon-wrap">
-      ${icon
-        ? `<img src="${icon}" alt="${e(item.name||'')}" loading="lazy"
-               onerror="this.src='';this.style.display='none';this.nextElementSibling.style.display='block'">
-           <span class="item-icon-fallback" style="display:none">${item._ico}</span>`
-        : `<span class="item-icon-fallback">${item._ico}</span>`}
+      ${iconHtml(icon, item.name)}
     </div>
-    <div class="item-name">${e(item.name||'Unknown')}</div>
+    <div class="item-name">${e(displayName(item)||'Unknown')}</div>
     <div class="item-meta">
       ${item.tierLabel ? `<span class="tag tag-tier" style="border-color:${tc};color:${tc}">${item.tierLabel}</span>` : ''}
       ${cat ? `<span class="tag tag-cat">${e(cat)}</span>` : ''}
@@ -1073,9 +1102,9 @@ function openDrawer(item, cardEl) {
   // Tags (deduplicated, element-styled)
   const tagDefs = [
     [item._type,         ''],
-    [item.category,      ''],
-    [item.subCategory,   ''],
-    [item.weaponType,    ''],
+    [item.category && categoryLabel(item.category),      ''],
+    [item.subCategory && categoryLabel(item.subCategory),   ''],
+    [item.weaponType && categoryLabel(item.weaponType),    ''],
     [item.slotType,      ''],
     [item.material,      ''],
     [item.setName,       ''],
@@ -1141,7 +1170,7 @@ function openDrawer(item, cardEl) {
   if (item.signature) body += `<div class="section-title">Signature</div><div class="ability-list"><div class="ability-item sig">⚡ ${e(item.signature)}</div></div>`;
   const abs = Array.isArray(item.abilities) ? item.abilities : [];
   const pas = Array.isArray(item.passives)  ? item.passives  : [];
-  if (abs.length) body += `<div class="section-title">Abilities</div><div class="ability-list">${abs.map(a=>`<div class="ability-item">• ${e(String(a))}</div>`).join('')}</div>`;
+  if (abs.length) body += `<div class="section-title">Abilities</div><div class="ability-list">${abs.map(a=>`<div class="ability-item">• ${e(a && typeof a==='object' ? (a.name||'') : String(a))}</div>`).join('')}</div>`;
   if (pas.length) body += `<div class="section-title">Passives</div><div class="ability-list">${pas.map(p=>`<div class="ability-item">◈ ${e(typeof p==='object'?(p.name||JSON.stringify(p)):String(p))}</div>`).join('')}</div>`;
 
   // ── Craft / spell recipe ──
@@ -1247,7 +1276,7 @@ function openDrawer(item, cardEl) {
 
   // ── Assets Used (icon, mesh, R2) ──
   {
-    const icon = resolveIcon(item) || item.iconUrl;
+    const icon = resolveIcon(item);
     const mesh = item._gameModelUrl;
     const r2 = item._modelR2Key || item._modelSourcePath;
     body += `<div class="section-title">Assets Used</div><div class="canon-block">`;
@@ -1297,16 +1326,12 @@ function openDrawer(item, cardEl) {
 
   document.getElementById('drawerContent').innerHTML = `
     <div class="drawer-icon-wrap">
-      ${icon
-        ? `<img src="${icon}" alt="${e(item.name||'')}"
-               onerror="this.src='';this.style.display='none';this.nextElementSibling.style.display='block'">
-           <span class="drawer-icon-fb" style="display:none">${item._ico}</span>`
-        : `<span class="drawer-icon-fb">${item._ico}</span>`}
+      ${iconHtml(icon, item.name)}
     </div>
     <div class="drawer-body">
-      <div class="drawer-name">${e(item.name||'')}</div>
+      <div class="drawer-name">${e(displayName(item))}</div>
       <div class="drawer-chips">
-        <span class="chip" style="border-color:${tc};color:${tc}">${e(item.tierLabel||'T'+(item._tierNum||1))}</span>
+        <span class="chip" style="border-color:${tc};color:${tc}">${e(item.tierLabel||'T'+(item._tierNum??1))}</span>
         ${acq ? `<span class="chip" style="border-color:var(--border);color:var(--text-dim)">${acq}</span>` : ''}
         ${item.craftedBy ? `<span class="chip" style="border-color:var(--border-gold);color:var(--gold-light)">🧙 ${e(item.craftedBy)}</span>` : ''}
       </div>
@@ -1347,7 +1372,7 @@ function showWeaponTypeGrid() {
   backBar.style.display = 'none';
 
   // Count items per weapon type
-  let weapons = allItems.filter(i => i._type === 'weapon');
+  let weapons = allItems.filter(i => i._type === 'weapon' && (!grudge6ReadyOnly || i._grudge6Ready));
   if (activeTier !== 'all') {
     const tierNum = parseInt(activeTier);
     weapons = weapons.filter(i => i._tierNum === tierNum);
@@ -1360,7 +1385,7 @@ function showWeaponTypeGrid() {
   let html = '<div class="weapon-type-grid">';
   WEAPON_TYPES.forEach(wt => {
     html += `<div class="weapon-type-card" onclick="selectWeaponType('${wt.key}','${e(wt.label)}')">
-      <img src="${wt.icon}" alt="${e(wt.label)}" loading="lazy">
+      ${wt.icon ? `<img src="${wt.icon}" alt="${e(wt.label)}" loading="lazy" onerror="this.outerHTML='<span class=icon-missing title=icon-missing role=img aria-label=icon-missing>icon missing</span>';">` : '<span class="icon-missing" title="icon missing" role="img" aria-label="icon missing">icon missing</span>'}
       <span class="wt-label">${e(wt.label)}</span>
       <span class="wt-count">${counts[wt.key] || 0} weapons</span>
     </div>`;
@@ -1430,9 +1455,10 @@ document.addEventListener('keydown', ev => {
 
 window.__bindCatalogApi({
   setType, setTier, setSub, onSearch, onSort, loadMore, closeDrawer,
-  selectWeaponType, backToWeaponTypes,
+  selectWeaponType, backToWeaponTypes, toggleGrudge6Ready,
 });
 </script>
+<script src="./js/asset-url.js"></script>
 <script src="./js/nav.js"></script>
 </body>
 </html>
