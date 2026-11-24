@@ -1,0 +1,967 @@
+{
+  "id": "god-hunts",
+  "version": "1.0.0-draft",
+  "status": "draft: names and numbers need Jonathan's approval; no line is live until its avatar has approved art",
+  "updated": "2026-11-23",
+  "check": "node scripts/check-god-hunts.mjs",
+  "idLaw": "LORE-XXXX-XXXX-XXXX = first 12 hex of sha1(\"grudge-lore:{kind}:{slug}\"). Boss: kind \"boss\", slug = god slug. Line: kind \"quest\", slug \"<god>-hunt\". Never mint by hand.",
+  "imageRule": "No art fields. Avatar art comes only from assets.grudge-studio.com once approved; until then clients show the missing marker. No stand-in art.",
+  "sourceOfTruth": {
+    "gameplay": {
+      "world": "@racalvin/grudge-warlords",
+      "branch": "ale/god-hunts-draft (local draft, not pushed)",
+      "baseCommit": "ff7f83eda28c3e799d31d269d13a36057cbb0e60",
+      "baseTree": "67568f2c9dc3914b6dfd02649482d245798042ac",
+      "files": {
+        "scripts/lib/data/god-hunts.js": "f18f15c89edda5e5de0f354c533c4c8cd803a2ddd4e52c73a4c3c7c0d242cb17",
+        "scripts/lib/data/saga/god-hunts.js": "6b10da00da867a38811f582982f0c2978574bcff155a575777453a8898f92f4f"
+      }
+    },
+    "lore": {
+      "path": "api/v1/lore-canon.json",
+      "branch": "canon/manifest-lore-v1",
+      "branchHead": "8a9302fe35c2a46f822368b191a70f2ea8c8e783",
+      "blobSha1": "214db7f3dff4aa97ea1128336e55e758eceb2e4a",
+      "sha256": "3417b18f2bca211eb2444fe47b8d534d5edaaf7fc9ce69dd570f48a51e644293"
+    }
+  },
+  "rules": {
+    "levelBand": [
+      15,
+      20
+    ],
+    "avatarLevel": 20,
+    "frame": "Since the Godwake each race god walks the world as an avatar that tests its people. A hunt beats the avatar and earns the god's mark; it never kills the god.",
+    "eventIsleWindow": "Event isles are live 75 s per cycle; holding the isle up while an avatar is engaged is proposed, not built."
+  },
+  "lines": [
+    {
+      "uuid": "LORE-A901-0CA2-9AE4",
+      "slug": "lorian-hunt",
+      "title": "The Unwoven Thread",
+      "god": {
+        "uuid": "LORE-C262-3EBC-5A48",
+        "slug": "lorian",
+        "name": "Lorian, the Weaver of Fate",
+        "race": "human",
+        "domain": [
+          "Fate",
+          "choice",
+          "ambition"
+        ]
+      },
+      "faction": "crusade",
+      "startTown": {
+        "name": "Whitehaven",
+        "spawnPlace": "crusade-capital",
+        "chartIsle": "stable:ashen_throne"
+      },
+      "giver": {
+        "name": "Herald Maud",
+        "profileId": "crusade_herald"
+      },
+      "ally": {
+        "name": "Lord-Marshal Edric Halloway",
+        "profileId": "crusade_marshal"
+      },
+      "loreSite": {
+        "name": "Raider Ridge",
+        "spawnPlace": "main",
+        "spreadZone": "rol-ogre-raid"
+      },
+      "encounter": {
+        "chartIsle": "event:crusade:2",
+        "name": "Ashen Ring",
+        "sector": "ashen_wastes"
+      },
+      "quests": [
+        {
+          "id": "gh-lorian-1",
+          "title": "Threads in the Glass",
+          "text": "Since the Godwake the glass storms over Ashen Ring show Crusaders futures they never chose. Herald Maud says a thread of Lorian's loom has come loose. Take the Lord-Marshal's leave, find where oaths are being broken, and bring timber for a new loom frame.",
+          "steps": [
+            {
+              "kind": "talk",
+              "target": "gh-lord-marshal",
+              "text": "Talk to Lord-Marshal Edric Halloway"
+            },
+            {
+              "kind": "reach",
+              "target": "raider-ridge",
+              "text": "Reach Raider Ridge"
+            },
+            {
+              "kind": "kill",
+              "target": "oathbreaker",
+              "count": 3,
+              "foe": [
+                "ogre-paladin"
+              ],
+              "text": "Defeat 3 × oathbreaker"
+            },
+            {
+              "kind": "collect",
+              "target": "woodcutting",
+              "count": 12,
+              "text": "Gather 12 through Woodcutting"
+            }
+          ],
+          "rewards": {
+            "gold": 150,
+            "xp": 600,
+            "materials": []
+          }
+        },
+        {
+          "id": "gh-lorian-2",
+          "title": "The Loomwarden",
+          "text": "When Ashen Ring rises, the Loomwarden walks its glass and weaves each challenger a choice. Choose well, and break the knot it ties around you.",
+          "steps": [
+            {
+              "kind": "reach",
+              "target": "ashen-ring",
+              "text": "Reach Ashen Ring"
+            },
+            {
+              "kind": "kill",
+              "target": "loomwarden",
+              "text": "Defeat The Loomwarden"
+            }
+          ],
+          "rewards": {
+            "gold": 400,
+            "xp": 1500,
+            "materials": [
+              {
+                "uuid": "MATL-20260621232130-000A36-AF4554CA",
+                "id": "starweave-thread",
+                "qty": 3
+              },
+              {
+                "uuid": "MATL-20260621232130-000A37-8FDF1813",
+                "id": "voidweave-thread",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ],
+      "lore": [
+        {
+          "title": "Snapped Oath-Cord",
+          "text": "An ogre knot cut clean through. Humans say every broken oath is a thread Lorian has to weave again."
+        },
+        {
+          "title": "The Glass Loom",
+          "text": "Storm-glass fused into warp and weft. In it you see two roads and the one you took."
+        }
+      ],
+      "boss": {
+        "uuid": "LORE-7DF9-74F7-49BC",
+        "id": "god_avatar_lorian",
+        "name": "The Loomwarden",
+        "title": "Thread of Lorian",
+        "level": 20,
+        "hp": 4800,
+        "phases": 2,
+        "art": {
+          "status": "missing",
+          "marker": "missing",
+          "want": "tall robed figure with a loom of light (lore-canon LORE-C262-3EBC-5A48)"
+        },
+        "mechanics": {
+          "phase1": {
+            "name": "Trial",
+            "hp_threshold": "100%-50%",
+            "abilities": [
+              {
+                "id": "severed-thread",
+                "name": "Severed Thread",
+                "damage": 28,
+                "desc": "Line rush up to 24 m, 2.6 m wide; side-step the telegraph."
+              },
+              {
+                "id": "loom-of-choices",
+                "name": "Loom of Choices",
+                "damage": 26,
+                "desc": "Marks a 3.2 m circle under every fighter plus 2 more; move out before it lands."
+              },
+              {
+                "id": "fates-knot",
+                "name": "Fate's Knot",
+                "damage": 24,
+                "desc": "Close swing, 3.6 m reach; dodge or guard."
+              }
+            ]
+          },
+          "phase2": {
+            "name": "THE LOOM UNRAVELS",
+            "hp_threshold": "50%-0%",
+            "speedMul": 1.3,
+            "abilities": [
+              {
+                "id": "unweaving",
+                "name": "Unweaving",
+                "damage": 38,
+                "desc": "9 m burst around the avatar with a shockwave; get out of the ring."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "uuid": "LORE-6EDA-6E49-D988",
+      "slug": "thalindra-hunt",
+      "title": "The Grove Remembers",
+      "god": {
+        "uuid": "LORE-474C-F12B-C2FD",
+        "slug": "thalindra",
+        "name": "Thalindra, the Guardian of Nature",
+        "race": "elf",
+        "domain": [
+          "Nature",
+          "harmony",
+          "wisdom"
+        ]
+      },
+      "faction": "fabled",
+      "startTown": {
+        "name": "Sunspire",
+        "spawnPlace": "fabled-desert",
+        "chartIsle": null,
+        "townNote": "Sunspire is a Spawn place with no chart isle; the elf and dwarf homes (Starweave Canopy, Runeforge Hold) have no NPCs yet."
+      },
+      "giver": {
+        "name": "Grove-Mother Illa",
+        "profileId": "fabled_worge"
+      },
+      "ally": {
+        "name": "Sael Thornwhisper",
+        "profileId": "fabled_crafts"
+      },
+      "loreSite": {
+        "name": "Wildwood",
+        "spawnPlace": "main",
+        "spreadZone": "rol-wildwood"
+      },
+      "encounter": {
+        "chartIsle": "event:fabled:2",
+        "name": "Starfall Shoal",
+        "sector": "frostbite_expanse"
+      },
+      "quests": [
+        {
+          "id": "gh-thalindra-1",
+          "title": "The Grove Remembers",
+          "text": "Grove-Mother Illa hears the grove wardens of the Wildwood restless since the Godwake: Thalindra walks again and weighs whether her children still keep the balance. Ask Sael what the old practices say, listen at the Wildwood without harming its wardens, cut back the carniflora that strangles it, and gather a living offering.",
+          "steps": [
+            {
+              "kind": "talk",
+              "target": "gh-sael-thornwhisper",
+              "text": "Talk to Sael Thornwhisper"
+            },
+            {
+              "kind": "reach",
+              "target": "wildwood",
+              "text": "Reach Wildwood"
+            },
+            {
+              "kind": "kill",
+              "target": "carniflora",
+              "count": 4,
+              "foe": [
+                "carniflora"
+              ],
+              "text": "Defeat 4 × carniflora"
+            },
+            {
+              "kind": "collect",
+              "target": "herbalism",
+              "count": 12,
+              "text": "Gather 12 through Herbalism"
+            }
+          ],
+          "rewards": {
+            "gold": 150,
+            "xp": 600,
+            "materials": []
+          }
+        },
+        {
+          "id": "gh-thalindra-2",
+          "title": "The Thornmother's Trial",
+          "text": "Starfall Shoal rises with the tide, and the Thornmother rises with it, crowned in leaf and vine. She does not hate you. She tests whether you take only what the wild can give back.",
+          "steps": [
+            {
+              "kind": "reach",
+              "target": "starfall-shoal",
+              "text": "Reach Starfall Shoal"
+            },
+            {
+              "kind": "kill",
+              "target": "thornmother",
+              "text": "Defeat The Thornmother"
+            }
+          ],
+          "rewards": {
+            "gold": 400,
+            "xp": 1500,
+            "materials": [
+              {
+                "uuid": "MATL-20260621232130-000A06-B70473C4",
+                "id": "worldtree-log",
+                "qty": 2
+              },
+              {
+                "uuid": "MATL-20260621232130-000A49-A62BD5F7",
+                "id": "ancient-essence",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ],
+      "lore": [
+        {
+          "title": "Warden Rings",
+          "text": "Bark grown in circles around a footprint of leaves. The wardens stand where she stood."
+        },
+        {
+          "title": "Tide-Grown Altar",
+          "text": "Vines knotted into a seat above the waterline. Every creature on the shoal faces it."
+        }
+      ],
+      "boss": {
+        "uuid": "LORE-E8B4-4D81-5E87",
+        "id": "god_avatar_thalindra",
+        "name": "The Thornmother",
+        "title": "Wildheart of Thalindra",
+        "level": 20,
+        "hp": 4600,
+        "phases": 2,
+        "art": {
+          "status": "missing",
+          "marker": "missing",
+          "want": "ethereal figure, hair of leaves and vines, forest creatures at her side (lore-canon LORE-474C-F12B-C2FD)"
+        },
+        "mechanics": {
+          "phase1": {
+            "name": "Trial",
+            "hp_threshold": "100%-50%",
+            "abilities": [
+              {
+                "id": "bramble-lash",
+                "name": "Bramble Lash",
+                "damage": 24,
+                "desc": "Close swing, 4.2 m reach; dodge or guard."
+              },
+              {
+                "id": "thornbind",
+                "name": "Thornbind",
+                "damage": 26,
+                "desc": "Marks a 3.4 m circle under every fighter plus 3 more; move out before it lands."
+              },
+              {
+                "id": "stag-rush",
+                "name": "Stag Rush",
+                "damage": 30,
+                "desc": "Line rush up to 22 m, 3.2 m wide; side-step the telegraph."
+              }
+            ]
+          },
+          "phase2": {
+            "name": "THE WILD ANSWERS",
+            "hp_threshold": "50%-0%",
+            "speedMul": 1.3,
+            "abilities": [
+              {
+                "id": "greenburst",
+                "name": "Greenburst",
+                "damage": 36,
+                "desc": "9 m burst around the avatar with a shockwave; get out of the ring."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "uuid": "LORE-54DD-36FA-D4BB",
+      "slug": "grundor-hunt",
+      "title": "The Cold Forge",
+      "god": {
+        "uuid": "LORE-FA91-62B4-C6D9",
+        "slug": "grundor",
+        "name": "Grundor, the Forge Master",
+        "race": "dwarf",
+        "domain": [
+          "Craftsmanship",
+          "strength",
+          "endurance"
+        ]
+      },
+      "faction": "fabled",
+      "startTown": {
+        "name": "Sunspire",
+        "spawnPlace": "fabled-desert",
+        "chartIsle": null,
+        "townNote": "Sunspire is a Spawn place with no chart isle; the elf and dwarf homes (Starweave Canopy, Runeforge Hold) have no NPCs yet."
+      },
+      "giver": {
+        "name": "Dagna Emberhollow",
+        "profileId": "fabled_recipes"
+      },
+      "ally": {
+        "name": "Brunhild Copperbraid",
+        "profileId": "fabled_trader"
+      },
+      "loreSite": {
+        "name": "Dune Forge",
+        "spawnPlace": "fabled-desert",
+        "spreadZone": "fd-dune-forge"
+      },
+      "encounter": {
+        "chartIsle": "event:fabled:1",
+        "name": "Rune Spire",
+        "sector": "ethereal_falls"
+      },
+      "quests": [
+        {
+          "id": "gh-grundor-1",
+          "title": "The Cold Forge",
+          "text": "Every dwarven forge in Sunspire burned low on the night of the Godwake. Dagna Emberhollow says Grundor has taken his fire back to the Rune Spire and will return it only to hands that can hold a hammer. Ask Brunhild what the caravans saw, find the buried Dune Forge, break the shale golems that stole its spark, and dig ore to feed his anvil.",
+          "steps": [
+            {
+              "kind": "talk",
+              "target": "gh-brunhild-copperbraid",
+              "text": "Talk to Brunhild Copperbraid"
+            },
+            {
+              "kind": "reach",
+              "target": "dune-forge",
+              "text": "Reach Dune Forge"
+            },
+            {
+              "kind": "kill",
+              "target": "shale golem",
+              "count": 5,
+              "foe": [
+                "rock-golem"
+              ],
+              "text": "Defeat 5 × shale golem"
+            },
+            {
+              "kind": "collect",
+              "target": "mining",
+              "count": 20,
+              "text": "Gather 20 through Mining"
+            }
+          ],
+          "rewards": {
+            "gold": 150,
+            "xp": 600,
+            "materials": []
+          }
+        },
+        {
+          "id": "gh-grundor-2",
+          "title": "Emberanvil",
+          "text": "The Rune Spire surges with forge-fire when it rises. Emberanvil waits there, a body of hammered stone and living embers, to see whether you endure the heat.",
+          "steps": [
+            {
+              "kind": "reach",
+              "target": "rune-spire",
+              "text": "Reach Rune Spire"
+            },
+            {
+              "kind": "kill",
+              "target": "emberanvil",
+              "text": "Defeat Emberanvil"
+            }
+          ],
+          "rewards": {
+            "gold": 400,
+            "xp": 1500,
+            "materials": [
+              {
+                "uuid": "MATL-20260621232130-0009FC-7A362814",
+                "id": "starmetal-ingot",
+                "qty": 2
+              },
+              {
+                "uuid": "MATL-20260621232130-000A52-111C8FFD",
+                "id": "radiant-gem",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ],
+      "lore": [
+        {
+          "title": "Buried Anvil",
+          "text": "A dwarven anvil half under the dunes, still warm. The hammer marks on it are older than Sunspire."
+        },
+        {
+          "title": "Rune of the First Hammer",
+          "text": "Cut deep into the spire: a hammer over a mountain. Embers drift up out of the letters."
+        }
+      ],
+      "boss": {
+        "uuid": "LORE-620D-BCF2-225F",
+        "id": "god_avatar_grundor",
+        "name": "Emberanvil",
+        "title": "Forge-Born of Grundor",
+        "level": 20,
+        "hp": 5200,
+        "phases": 2,
+        "art": {
+          "status": "missing",
+          "marker": "missing",
+          "want": "sturdy bearded god with a massive hammer, glowing embers (lore-canon LORE-FA91-62B4-C6D9)"
+        },
+        "mechanics": {
+          "phase1": {
+            "name": "Trial",
+            "hp_threshold": "100%-45%",
+            "abilities": [
+              {
+                "id": "hammer-swing",
+                "name": "Hammer Swing",
+                "damage": 28,
+                "desc": "Close swing, 4.6 m reach; dodge or guard."
+              },
+              {
+                "id": "anvilfall",
+                "name": "Anvilfall",
+                "damage": 34,
+                "desc": "Leaps to the target and lands a 4 m impact."
+              },
+              {
+                "id": "ember-spray",
+                "name": "Ember Spray",
+                "damage": 26,
+                "desc": "Marks a 3.2 m circle under every fighter plus 3 more; move out before it lands."
+              }
+            ]
+          },
+          "phase2": {
+            "name": "THE FORGE ROARS",
+            "hp_threshold": "45%-0%",
+            "speedMul": 1.35,
+            "abilities": [
+              {
+                "id": "forge-heart",
+                "name": "Forge Heart",
+                "damage": 40,
+                "desc": "10 m burst around the avatar with a shockwave; get out of the ring."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "uuid": "LORE-058E-6DB8-017A",
+      "slug": "kragoth-hunt",
+      "title": "Trophies for the Tribe",
+      "god": {
+        "uuid": "LORE-E8BB-9D4C-69BC",
+        "slug": "kragoth",
+        "name": "Kragoth, the Warlord of Rage",
+        "race": "orc",
+        "domain": [
+          "War",
+          "strength",
+          "survival"
+        ]
+      },
+      "faction": "legion",
+      "startTown": {
+        "name": "Gorehold",
+        "spawnPlace": "legion-capital",
+        "chartIsle": "stable:pit_foundry"
+      },
+      "giver": {
+        "name": "Drillmaster Krug",
+        "profileId": "legion_drillmaster"
+      },
+      "ally": {
+        "name": "Grey-Mother Uska",
+        "profileId": "legion_worge"
+      },
+      "loreSite": {
+        "name": "Goathorn Hills",
+        "spawnPlace": "main",
+        "spreadZone": "rol-goat-hills"
+      },
+      "encounter": {
+        "chartIsle": "event:legion:0",
+        "name": "Blood Reef",
+        "sector": "abyssal_trench"
+      },
+      "quests": [
+        {
+          "id": "gh-kragoth-1",
+          "title": "Trophies for the Tribe",
+          "text": "Drillmaster Krug says Kragoth's avatar walks Blood Reef since the Godwake and will not face a warrior who comes without trophies. Get Grey-Mother Uska's blessing, take the chieftains of the goatman warbands, and prove your blade on the ogre blademasters at Gorebelly Camp.",
+          "steps": [
+            {
+              "kind": "talk",
+              "target": "gh-grey-mother-uska",
+              "text": "Talk to Grey-Mother Uska"
+            },
+            {
+              "kind": "reach",
+              "target": "goathorn-hills",
+              "text": "Reach Goathorn Hills"
+            },
+            {
+              "kind": "kill",
+              "target": "chieftain",
+              "count": 3,
+              "foe": [
+                "goatman-brown-chief",
+                "goatman-dark-chief",
+                "goatman-red-chief"
+              ],
+              "text": "Defeat 3 × chieftain"
+            },
+            {
+              "kind": "kill",
+              "target": "ogre blademaster",
+              "count": 2,
+              "foe": [
+                "ogre-blademaster"
+              ],
+              "text": "Defeat 2 × ogre blademaster"
+            }
+          ],
+          "rewards": {
+            "gold": 150,
+            "xp": 600,
+            "materials": []
+          }
+        },
+        {
+          "id": "gh-kragoth-2",
+          "title": "The Trophy-King",
+          "text": "Blood Reef sinks with the magma and rises red. The Trophy-King stands on it in battle-worn armour hung with the trophies of every tribe that failed him. Add yours, or become one.",
+          "steps": [
+            {
+              "kind": "reach",
+              "target": "blood-reef",
+              "text": "Reach Blood Reef"
+            },
+            {
+              "kind": "kill",
+              "target": "trophy-king",
+              "text": "Defeat The Trophy-King"
+            }
+          ],
+          "rewards": {
+            "gold": 400,
+            "xp": 1500,
+            "materials": [
+              {
+                "uuid": "MATL-20260621232130-000A27-F7681795",
+                "id": "titan-hide",
+                "qty": 2
+              },
+              {
+                "uuid": "MATL-20260621232130-000A40-94EF82CE",
+                "id": "titan-leather",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ],
+      "lore": [
+        {
+          "title": "Horn Cairn",
+          "text": "Goatman horns stacked into a tower. An orc tally is scratched on every one."
+        },
+        {
+          "title": "Trophy Rack of the Tribes",
+          "text": "Helms, tusks and banners of a hundred warbands. One hook is empty and fresh."
+        }
+      ],
+      "boss": {
+        "uuid": "LORE-BF77-B6DC-6304",
+        "id": "god_avatar_kragoth",
+        "name": "The Trophy-King",
+        "title": "Rage of Kragoth",
+        "level": 20,
+        "hp": 5000,
+        "phases": 2,
+        "art": {
+          "status": "missing",
+          "marker": "missing",
+          "want": "fearsome warrior in battle-worn armour hung with trophies (lore-canon LORE-E8BB-9D4C-69BC)"
+        },
+        "mechanics": {
+          "phase1": {
+            "name": "Trial",
+            "hp_threshold": "100%-50%",
+            "abilities": [
+              {
+                "id": "trophy-cleave",
+                "name": "Trophy Cleave",
+                "damage": 28,
+                "desc": "Close swing, 4 m reach; dodge or guard."
+              },
+              {
+                "id": "tusk-charge",
+                "name": "Tusk Charge",
+                "damage": 34,
+                "desc": "Line rush up to 22 m, 3.6 m wide; side-step the telegraph."
+              },
+              {
+                "id": "bloodroar",
+                "name": "Bloodroar",
+                "damage": 32,
+                "desc": "8 m burst around the avatar with a shockwave; get out of the ring."
+              }
+            ]
+          },
+          "phase2": {
+            "name": "RAGE UNBROKEN",
+            "hp_threshold": "50%-0%",
+            "speedMul": 1.4,
+            "abilities": [
+              {
+                "id": "unbroken-rage",
+                "name": "Unbroken Rage",
+                "damage": 34,
+                "desc": "Marks a 3.6 m circle under every fighter plus 3 more; move out before it lands."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "uuid": "LORE-F93E-8451-22B7",
+      "slug": "zephyria-hunt",
+      "title": "Ashes That Remember",
+      "god": {
+        "uuid": "LORE-171A-5E22-539B",
+        "slug": "zephyria",
+        "name": "Zephyria, the Eternal Flame",
+        "race": null,
+        "godOf": "dragons",
+        "domain": [
+          "Destruction",
+          "renewal",
+          "elemental forces"
+        ]
+      },
+      "faction": null,
+      "factionNote": "No faction: dragons are not a playable race, so the line starts at the neutral harbor (needs approval).",
+      "startTown": {
+        "name": "Saltgrudge Harbor",
+        "spawnPlace": "main",
+        "chartIsle": "main:convergence"
+      },
+      "giver": {
+        "name": "Korvash the Ember-Scaled",
+        "profileId": "crusade_warrior"
+      },
+      "ally": {
+        "name": "Marta Saltgrudge",
+        "profileId": "harbor_master"
+      },
+      "loreSite": {
+        "name": "Ember Rise",
+        "spawnPlace": "main",
+        "spreadZone": "rol-ember"
+      },
+      "encounter": {
+        "chartIsle": "event:crusade:1",
+        "name": "Throne Drift",
+        "sector": "ashen_wastes"
+      },
+      "quests": [
+        {
+          "id": "gh-zephyria-1",
+          "title": "Ashes That Remember",
+          "text": "Korvash the Ember-Scaled feels his scales burn whenever Throne Drift rises: Zephyria, mother of flame, is burning something old away so something new can be born. Book passage with Marta, climb Ember Rise, calm the maddened fire drakes, and take the ember core from the Caldera Warden. Only that core lets you walk into her fire.",
+          "steps": [
+            {
+              "kind": "talk",
+              "target": "gh-marta-saltgrudge",
+              "text": "Talk to Marta Saltgrudge"
+            },
+            {
+              "kind": "reach",
+              "target": "ember-rise",
+              "text": "Reach Ember Rise"
+            },
+            {
+              "kind": "kill",
+              "target": "horned fire drake",
+              "count": 4,
+              "foe": [
+                "fire-drake"
+              ],
+              "text": "Defeat 4 × horned fire drake"
+            },
+            {
+              "kind": "kill",
+              "target": "caldera warden",
+              "foe": [
+                "fire-golem-warden"
+              ],
+              "text": "Defeat 1 × caldera warden"
+            }
+          ],
+          "rewards": {
+            "gold": 150,
+            "xp": 600,
+            "materials": []
+          }
+        },
+        {
+          "id": "gh-zephyria-2",
+          "title": "The Unending Pyre",
+          "text": "On Throne Drift the Unending Pyre coils in a dragon's shape of living flame. It burns down what is weak in you; what is left is renewed. Endure it.",
+          "steps": [
+            {
+              "kind": "reach",
+              "target": "throne-drift",
+              "text": "Reach Throne Drift"
+            },
+            {
+              "kind": "kill",
+              "target": "unending pyre",
+              "text": "Defeat The Unending Pyre"
+            }
+          ],
+          "rewards": {
+            "gold": 400,
+            "xp": 1500,
+            "materials": [
+              {
+                "uuid": "MATL-20260621232130-000A25-CE5E1B90",
+                "id": "dragon-sinew",
+                "qty": 3
+              },
+              {
+                "uuid": "MATL-20260621232130-000A4A-791C6394",
+                "id": "divine-essence",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      ],
+      "lore": [
+        {
+          "title": "Scorched Clutch Ring",
+          "text": "Stones fused into a nest. The drakes here circle it like they are waiting for something to hatch."
+        },
+        {
+          "title": "Wing-Burn on the Glass",
+          "text": "A shadow seared into the desert glass: wings wider than a galleon, and new grass already growing in it."
+        }
+      ],
+      "boss": {
+        "uuid": "LORE-04BF-2DE9-A7D7",
+        "id": "god_avatar_zephyria",
+        "name": "The Unending Pyre",
+        "title": "Wake of Zephyria",
+        "level": 20,
+        "hp": 5600,
+        "phases": 2,
+        "art": {
+          "status": "missing",
+          "marker": "missing",
+          "want": "colossal dragon wreathed in flames (lore-canon LORE-171A-5E22-539B)"
+        },
+        "mechanics": {
+          "phase1": {
+            "name": "Trial",
+            "hp_threshold": "100%-50%",
+            "abilities": [
+              {
+                "id": "pyre-breath",
+                "name": "Pyre Breath",
+                "damage": 32,
+                "desc": "Line rush up to 26 m, 4 m wide; side-step the telegraph."
+              },
+              {
+                "id": "ashfall",
+                "name": "Ashfall",
+                "damage": 28,
+                "desc": "Marks a 3.4 m circle under every fighter plus 3 more; move out before it lands."
+              },
+              {
+                "id": "claw-rake",
+                "name": "Claw Rake",
+                "damage": 26,
+                "desc": "Close swing, 5.5 m reach; dodge or guard."
+              }
+            ]
+          },
+          "phase2": {
+            "name": "THE FLAME RENEWS",
+            "hp_threshold": "50%-0%",
+            "speedMul": 1.3,
+            "abilities": [
+              {
+                "id": "rebirth-flame",
+                "name": "Rebirth Flame",
+                "damage": 42,
+                "desc": "11 m burst around the avatar with a shockwave; get out of the ring."
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "needsApproval": [
+    "The Loomwarden",
+    "Thread of Lorian",
+    "Severed Thread",
+    "Loom of Choices",
+    "Fate's Knot",
+    "Unweaving",
+    "Threads in the Glass",
+    "The Loomwarden",
+    "The Thornmother",
+    "Wildheart of Thalindra",
+    "Bramble Lash",
+    "Thornbind",
+    "Stag Rush",
+    "Greenburst",
+    "The Grove Remembers",
+    "The Thornmother's Trial",
+    "Emberanvil",
+    "Forge-Born of Grundor",
+    "Hammer Swing",
+    "Anvilfall",
+    "Ember Spray",
+    "Forge Heart",
+    "The Cold Forge",
+    "Emberanvil",
+    "The Trophy-King",
+    "Rage of Kragoth",
+    "Trophy Cleave",
+    "Tusk Charge",
+    "Bloodroar",
+    "Unbroken Rage",
+    "Trophies for the Tribe",
+    "The Trophy-King",
+    "The Unending Pyre",
+    "Wake of Zephyria",
+    "Pyre Breath",
+    "Ashfall",
+    "Claw Rake",
+    "Rebirth Flame",
+    "Ashes That Remember",
+    "The Unending Pyre"
+  ]
+}
