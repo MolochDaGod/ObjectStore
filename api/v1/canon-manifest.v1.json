@@ -164,8 +164,8 @@
     },
     "lore": {
       "path": "/api/v1/lore-canon.json",
-      "sha256": "c3e5265553ced91d80448e5e761b83d225132d1a7963cfcc5444d6de38b2d68e",
-      "bytes": 24736
+      "sha256": "3417b18f2bca211eb2444fe47b8d534d5edaaf7fc9ce69dd570f48a51e644293",
+      "bytes": 26850
     }
   },
   "spawnPin": {
@@ -179,5 +179,21 @@
       "scripts/lib/data/class-books.yml": "1eb0a0c5db461657a645c25c0d11eee8fccf9aabd8d81fc4316c113799123e9d"
     }
   },
+  "knownDivergences": [
+    {
+      "id": "race-bonus-scale",
+      "canon": "ObjectStore api/v1/races.json bonuses on the 0.1 to 0.4 scale (for example human +0.1 to all, orc +0.4 Strength)",
+      "decidedBy": "Jonathan",
+      "decidedAt": "2026-11-23T18:45:00-06:00",
+      "wrongCopy": {
+        "world": "@racalvin/grudge-warlords",
+        "path": "scripts/lib/data/canon.js",
+        "pointer": "RACES.*.bonuses and RACES.*.passive",
+        "scale": "1 to 4 (10x)"
+      },
+      "fix": "Spawn: replace RACES.*.bonuses and passive with races.json values. Needs Jonathan's \"push\" for Spawn main; then refresh spawnPin.",
+      "status": "spawn-fix-pending"
+    }
+  ],
   "build": "node scripts/build-canon-manifest.mjs [--spawn-commit <sha> --spawn-tree <sha> --spawn-file <path>=<sha256>]"
 }

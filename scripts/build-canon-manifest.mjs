@@ -96,12 +96,34 @@ lines.forEach((l, i) => {
   });
 });
 
-// Pasted text after the last hero names more gods. The header says three; record it, do not ratify it.
+// Race gods. They sit after the heroes in the source, each under a line naming its people.
+// Ratified by Jonathan on 2026-11-23 18:45 CT, so they are canon alongside the three patron gods.
+const RACE_GOD_RATIFIED = { by: 'Jonathan', at: '2026-11-23T18:45:00-06:00' };
 const extraGods = [];
 lines.forEach((l, i) => {
   const m = /^God: ([^,]+), (.+)$/.exec(l);
-  if (m) extraGods.push({ uuid: loreId('god', slugify(m[1])), kind: 'god', slug: slugify(m[1]), name: `${m[1]}, ${m[2]}`, status: 'unratified',
-    flag: 'The lore header says three gods; this one appears only in pasted text at the end of the file. Needs Jonathan to ratify or drop.', source: { path: LORE_SRC, line: i + 1 } });
+  if (!m) return;
+  let k = i - 1; while (k > 0 && !lines[k].trim()) k--;
+  const people = (lines[k] || '').trim();
+  const pid = people.toLowerCase().replace(/s$/, '').replace(/ve$/, 'f');
+  const raceId = races[pid] ? pid : null;
+  const after = (k) => { for (let j = i + 1; j < i + 4; j++) { const mm = new RegExp(`^${k}: (.+)$`).exec(lines[j] || ''); if (mm) return mm[1].trim(); } return null; };
+  const slug = slugify(m[1]);
+  const god = {
+    uuid: loreId('god', slug), grudgeUuid: loreId('god', slug), kind: 'god', slug, name: `${m[1]}, ${m[2]}`,
+    patronOf: null,
+    godOf: raceId || people.toLowerCase() || null,
+    race: raceId,
+    domain: (after('Domain') || '').replace(/\.$/, '').split(',').map((x) => x.trim().replace(/^and /, '')).filter(Boolean),
+    role: after('Description'),
+    facts: [],
+    status: 'canon',
+    ratified: RACE_GOD_RATIFIED,
+    source: { path: LORE_SRC, line: i + 1 },
+  };
+  if (!raceId) god.flags = [{ code: 'race-unknown', detail: `God of "${people}", which is not a playable race in races.json.` }];
+  gods.push(god);
+  extraGods.push(slug);
 });
 
 // ── Heroes ──────────────────────────────────────────────────────────────
@@ -165,7 +187,8 @@ const lore = {
   stripped: ['AI_MODEL (model ids are Legion config, not lore)', 'PUTER_SITE', 'imgur visual references', 'quest rewards and goal metrics (game data, not lore)'],
   world,
   gods,
-  unratified: extraGods,
+  unratified: [],
+  godNote: 'Three patron gods (one per faction) and five race gods. The source header still says three gods; the five race gods were ratified by Jonathan on 2026-11-23.',
   factions: Object.values(factions).map((f) => ({ uuid: loreId('faction', f.id), kind: 'faction', slug: f.id, name: f.name, patron: f.patron, races: f.races, summary: f.lore, status: 'canon', source: { path: 'api/v1/factions.json', pointer: `/factions/${f.id}` } })),
   races: Object.values(races).map((r) => ({ uuid: loreId('race', r.id), kind: 'race', slug: r.id, name: r.name, faction: r.faction, trait: r.trait, summary: r.lore, status: 'canon', source: { path: 'api/v1/races.json', pointer: `/races/${r.id}` } })),
   classes: Object.values(classes).map((c) => ({ uuid: loreId('class', c.id), kind: 'class', slug: c.id, name: c.name, summary: c.lore || c.description, status: 'canon', source: { path: 'api/v1/classes.json', pointer: `/classes/${c.id}` } })),
@@ -236,6 +259,17 @@ const manifest = {
   compression: 'Large canon files may be stored at rest as GRD-17 brotli with the algorithm in R2 customMetadata. HTTP responses rely on Cloudflare compression; sha256 here is of the uncompressed JSON.',
   files,
   spawnPin,
+  knownDivergences: [
+    {
+      id: 'race-bonus-scale',
+      canon: 'ObjectStore api/v1/races.json bonuses on the 0.1 to 0.4 scale (for example human +0.1 to all, orc +0.4 Strength)',
+      decidedBy: 'Jonathan',
+      decidedAt: '2026-11-23T18:45:00-06:00',
+      wrongCopy: { world: '@racalvin/grudge-warlords', path: 'scripts/lib/data/canon.js', pointer: 'RACES.*.bonuses and RACES.*.passive', scale: '1 to 4 (10x)' },
+      fix: 'Spawn: replace RACES.*.bonuses and passive with races.json values. Needs Jonathan\'s "push" for Spawn main; then refresh spawnPin.',
+      status: 'spawn-fix-pending',
+    },
+  ],
   build: 'node scripts/build-canon-manifest.mjs [--spawn-commit <sha> --spawn-tree <sha> --spawn-file <path>=<sha256>]',
 };
 const manifestText = JSON.stringify(manifest, null, 2) + '\n';
@@ -248,5 +282,5 @@ if (CHECK) {
 } else {
   for (const [p, t] of outputs) writeFileSync(p, t);
   const flagged = heroes.filter((h) => h.flags.length).length;
-  console.log(`lore-canon: ${gods.length} gods (+${extraGods.length} unratified), ${heroes.length} heroes (${flagged} flagged); manifest: ${Object.keys(files).length} files`);
+  console.log(`lore-canon: ${gods.length} gods (${extraGods.length} race gods), ${heroes.length} heroes (${flagged} flagged); manifest: ${Object.keys(files).length} files`);
 }
