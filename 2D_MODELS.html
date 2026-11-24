@@ -351,33 +351,47 @@
       return false;
     }
 
+    /* At most 6 CDN requests in flight from this page (probes and sheet fetches). */
+    var cdnActive = 0, cdnQueue = [];
+    function cdnLimit(task) {
+      return new Promise(function(resolve, reject) {
+        cdnQueue.push(function() {
+          cdnActive++;
+          Promise.resolve().then(task).then(resolve, reject).then(function() { cdnActive--; cdnPump(); });
+        });
+        cdnPump();
+      });
+    }
+    function cdnPump() { while (cdnActive < 6 && cdnQueue.length) cdnQueue.shift()(); }
+
     function probeImageMagic(url) {
-      return fetch(url, {
+      return cdnLimit(function() { return fetch(url, {
         mode: 'cors',
         credentials: 'omit',
         headers: { 'Range': 'bytes=0-15' }
       }).then(function(res) {
         if (!res.ok && res.status !== 206) return false;
         return res.arrayBuffer().then(function(buf) { return looksLikeImageBuf(buf); });
-      }).catch(function() { return false; });
+      }); }).catch(function() { return false; });
     }
 
     function fetchSpriteBlob(url) {
       if (spriteBlobCache[url]) return spriteBlobCache[url];
       var p = probeImageMagic(url).then(function(ok) {
         if (!ok) return { ok: false };
-        return fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
-          if (!res.ok) return { ok: false };
-          return res.arrayBuffer().then(function(buf) {
-            if (!looksLikeImageBuf(buf)) return { ok: false };
-            var b = new Uint8Array(buf);
-            var mime = 'application/octet-stream';
-            if (b[0] === 0x89) mime = 'image/png';
-            else if (b[0] === 0xff) mime = 'image/jpeg';
-            else if (b[0] === 0x47) mime = 'image/gif';
-            else if (b[0] === 0x52) mime = 'image/webp';
-            return { ok: true, blob: new Blob([buf], { type: mime }) };
+        return cdnLimit(function() {
+          return fetch(url, { mode: 'cors', credentials: 'omit' }).then(function(res) {
+            return res.ok ? res.arrayBuffer() : null;
           });
+        }).then(function(buf) {
+          if (!buf || !looksLikeImageBuf(buf)) return { ok: false };
+          var b = new Uint8Array(buf);
+          var mime = 'application/octet-stream';
+          if (b[0] === 0x89) mime = 'image/png';
+          else if (b[0] === 0xff) mime = 'image/jpeg';
+          else if (b[0] === 0x47) mime = 'image/gif';
+          else if (b[0] === 0x52) mime = 'image/webp';
+          return { ok: true, blob: new Blob([buf], { type: mime }) };
         });
       }).catch(function() { return { ok: false }; });
       spriteBlobCache[url] = p;
@@ -568,7 +582,7 @@
           a.frameImgs[idx] = fi;
           loadSprite(fi, fpath).then(function() {
             a.framesLoaded++;
-            if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) obs.observe(vp); var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; }
+            if (a.framesLoaded === ad.frames.length) { cv.width=a.fw; cv.height=a.fh; ctx.imageSmoothingEnabled=false; drawF(a,0); var vp=cv.parentElement; if(vp) { obs.unobserve(vp); obs.observe(vp); }; var fie=document.getElementById('fi-'+id); if(fie) fie.textContent=a.fc+' frames \u00b7 '+a.fw+'x'+a.fh; }
           }, function() { a.framesLoaded++; });
         });
         return;
@@ -591,7 +605,7 @@
         if(fi) fi.textContent = a.fc+' frames \u00b7 '+a.fw+'x'+a.fh + (fit.adjusted ? ' (fitted)' : '') + (ad.frameGridUnverified ? ' \u00b7 grid unverified' : '');
         ctx.imageSmoothingEnabled = false;
         drawF(a, 0);
-        if(vp) obs.observe(vp);
+        if(vp) { obs.unobserve(vp); obs.observe(vp); };
       };
       var sheetOnload = img.onload;
       function failSheet() {
@@ -615,7 +629,7 @@
       // Frame-sequence: draw individual frame image (may use sub-rect from sprite sheet)
       if (a.frameImgs && a.frameImgs[f] && a.frameImgs[f].complete) {
         var fm = a.frameMeta && a.frameMeta[f];
-        if (fm && (fm.sx || fm.sy)) {
+        if (fm && (fm.sx || fm.sy || fm.sw || fm.sh)) {
           var fsw = fm.sw || a.fw, fsh = fm.sh || a.fh;
           a.ctx.drawImage(a.frameImgs[f], fm.sx, fm.sy, fsw, fsh, 0, 0, a.fw, a.fh);
         } else {

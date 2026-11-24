@@ -194,13 +194,26 @@
     if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return true;
     return false;
   }
+  // At most 6 CDN requests in flight from this page (probes and sheet fetches).
+  let cdnActive = 0;
+  const cdnQueue = [];
+  function cdnPump() { while (cdnActive < 6 && cdnQueue.length) cdnQueue.shift()(); }
+  function cdnLimit(task) {
+    return new Promise((resolve, reject) => {
+      cdnQueue.push(() => {
+        cdnActive++;
+        Promise.resolve().then(task).then(resolve, reject).finally(() => { cdnActive--; cdnPump(); });
+      });
+      cdnPump();
+    });
+  }
   const probeCache = new Map();
   function probe(url) {
     if (!url) return Promise.resolve(false);
     if (!probeCache.has(url)) {
-      probeCache.set(url, fetch(url, { mode: 'cors', credentials: 'omit', headers: { Range: 'bytes=0-15' } })
-        .then(async (r) => (r.ok || r.status === 206) && looksLikeImage(new Uint8Array(await r.arrayBuffer())))
-        .catch(() => false));
+      const task = () => fetch(url, { mode: 'cors', credentials: 'omit', headers: { Range: 'bytes=0-15' } })
+        .then(async (r) => (r.ok || r.status === 206) && looksLikeImage(new Uint8Array(await r.arrayBuffer())));
+      probeCache.set(url, cdnLimit(task).catch(() => false));
     }
     return probeCache.get(url);
   }

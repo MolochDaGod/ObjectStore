@@ -352,8 +352,22 @@
       return false;
     }
 
+    // At most 6 CDN requests in flight from this page (probes and sheet fetches).
+    let cdnActive = 0;
+    const cdnQueue = [];
+    function cdnPump() { while (cdnActive < 6 && cdnQueue.length) cdnQueue.shift()(); }
+    function cdnLimit(task) {
+      return new Promise((resolve, reject) => {
+        cdnQueue.push(() => {
+          cdnActive++;
+          Promise.resolve().then(task).then(resolve, reject).finally(() => { cdnActive--; cdnPump(); });
+        });
+        cdnPump();
+      });
+    }
+
     function probeImageMagic(url) {
-      return fetch(url, {
+      return cdnLimit(() => fetch(url, {
         mode: 'cors',
         credentials: 'omit',
         headers: { 'Range': 'bytes=0-15' }
@@ -361,7 +375,7 @@
         if (!res.ok && res.status !== 206) return false;
         const buf = await res.arrayBuffer();
         return looksLikeImageBuf(buf);
-      }).catch(() => false);
+      })).catch(() => false);
     }
 
     /* Show a visible "icon missing" marker. No substitute art. */
@@ -407,9 +421,11 @@
         };
         probeImageMagic(url).then(async (ok) => {
           if (!ok) { fail(); return; }
-          const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
-          if (!res.ok) { fail(); return; }
-          const buf = await res.arrayBuffer();
+          const buf = await cdnLimit(async () => {
+            const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+            return res.ok ? res.arrayBuffer() : null;
+          });
+          if (!buf) { fail(); return; }
           if (!looksLikeImageBuf(buf)) { fail(); return; }
           const b = new Uint8Array(buf);
           let mime = 'application/octet-stream';
