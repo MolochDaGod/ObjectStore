@@ -1,171 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grudge 3DFX — effects that render</title>
-<link rel="icon" href="./branding/favicon-32x32.png" type="image/png" />
-<meta name="theme-color" content="#0a0e14" />
-<meta property="og:title" content="Grudge 3DFX Viewer" />
-<meta property="og:description" content="One stage for Grudge 3D effects. Pick an effect, watch it render, share ?effect=id." />
-<meta property="og:url" content="https://info.grudge-studio.com/3dfx-viewer.html" />
-<link rel="canonical" href="https://info.grudge-studio.com/3dfx-viewer.html" />
-<style>
-:root{
-  --bg:#070b12;--panel:#0f1520;--panel2:#121a28;--line:#243044;--text:#e8eef5;--muted:#8b95a8;
-  --gold:#d4a84b;--blue:#4a9eff;--green:#4ade80;--red:#ff5a5a;--purple:#b070ff;
-  --font:Inter,Segoe UI,system-ui,sans-serif;--mono:ui-monospace,Cascadia Code,Consolas,monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
-a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
-button,input{font:inherit}
-.app{display:grid;grid-template-columns:310px 1fr 300px;grid-template-rows:54px 1fr;height:100vh}
-@media(max-width:1000px){.app{grid-template-columns:1fr;grid-template-rows:54px auto 46vh auto;height:auto;min-height:100vh;overflow:auto}.side,.insp{max-height:42vh;overflow:auto}}
-.top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c2b,#0d131d)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand h1{font-size:14px;font-weight:700}.brand h1 span{color:var(--gold)}
-.badge{font-size:10px;color:var(--gold);border:1px solid rgba(212,168,75,.35);background:rgba(212,168,75,.1);padding:2px 8px;border-radius:999px}
-.top a,.btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 10px;border-radius:7px;font-size:11px;cursor:pointer}
-.top a:hover,.btn:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
-.btn.primary{background:var(--gold);border-color:var(--gold);color:#111;font-weight:700}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.top-links{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
-.side{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
-.tabs{display:flex;border-bottom:1px solid var(--line)}
-.tab{flex:1;padding:9px 4px;background:0;border:0;border-bottom:2px solid transparent;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.35px;cursor:pointer}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(212,168,75,.06)}
-.pane{display:none;flex:1;min-height:0;overflow:auto}.pane.active{display:flex;flex-direction:column}
-.search{padding:10px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
-.search input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#0b1018;color:var(--text);outline:0}
-.search input:focus{border-color:var(--gold)}
-.cats{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border-bottom:1px solid var(--line)}
-.chip{border:1px solid var(--line);background:0;color:var(--muted);padding:3px 8px;border-radius:999px;font-size:10px;cursor:pointer}
-.chip.active{border-color:var(--gold);color:var(--gold);background:rgba(212,168,75,.1)}
-.list{padding:8px;display:flex;flex-direction:column;gap:4px}
-.item,button.item{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid transparent;background:#0c121c;cursor:pointer;width:100%;text-align:left;color:inherit;font:inherit;appearance:none}
-.item:hover{border-color:var(--line)}.item.active{border-color:var(--gold);background:rgba(212,168,75,.1)}
-.dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 10px currentColor}
-.item .name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item .meta{font-size:10px;color:var(--muted);margin-top:2px}
-.item .uuid{font-family:var(--mono);font-size:9px;color:var(--blue);max-width:90px;overflow:hidden;text-overflow:ellipsis}
-.stage-wrap{position:relative;min-height:0;background:radial-gradient(ellipse at 50% 40%,#152033 0%,#06090f 72%)}
-#stage{width:100%;height:100%;display:block}
-.hud{position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:2}
-.hud .pill{pointer-events:auto;background:rgba(8,12,18,.82);border:1px solid var(--line);backdrop-filter:blur(8px);padding:7px 10px;border-radius:8px;font-size:11px}
-.hud .controls{display:flex;gap:6px;flex-wrap:wrap}
-.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;padding:24px;text-align:center}
-.insp{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:12px;display:flex;flex-direction:column;gap:11px}
-.insp h2{font-size:15px;font-weight:700}
-.insp .sub{font-size:11px;color:var(--muted);line-height:1.45}
-.block{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px}
-.block h3{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
-.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}.row:last-child{margin-bottom:0}
-.code{font-family:var(--mono);font-size:11px;background:#0b1018;border:1px solid var(--line);border-radius:6px;padding:7px 8px;word-break:break-all;flex:1}
-.tags{display:flex;flex-wrap:wrap;gap:4px}
-.tag{font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(74,158,255,.12);color:var(--blue);border:1px solid rgba(74,158,255,.25)}
-.kv{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:11px}
-.kv b{color:var(--muted);font-weight:600}
-.msg{font-size:11px;color:var(--muted)}.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
-.note{font-size:10px;color:var(--muted);line-height:1.45}
-.warn{font-size:11px;color:#ffcc88;background:rgba(255,170,60,.08);border:1px solid rgba(255,170,60,.25);border-radius:8px;padding:8px}
-</style>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
-  }
-}
+<title>Grudge VFX Sandbox</title>
+<link rel="canonical" href="https://vfx.grudge-studio.com/" />
+<meta property="og:title" content="Grudge VFX Sandbox" />
+<meta property="og:description" content="The Grudge fantasy VFX sandbox. Effects render on the stage. Share with ?effect=." />
+<meta property="og:url" content="https://vfx.grudge-studio.com/" />
+<meta name="robots" content="index, follow" />
+<script>
+(function () {
+  var dest = new URL("https://vfx.grudge-studio.com/");
+  var incoming = new URLSearchParams(location.search);
+  incoming.forEach(function (value, key) { dest.searchParams.set(key, value); });
+  if (location.hash) dest.hash = location.hash;
+  location.replace(dest.href);
+})();
 </script>
 </head>
-<body>
-<div class="app">
-  <header class="top">
-    <div class="brand">
-      <h1>Grudge <span>3DFX</span></h1>
-      <span class="badge" id="countBadge">loading…</span>
-    </div>
-    <div class="top-links">
-      <a href="./vfx">2D gallery</a>
-      <button class="btn primary" id="btnShareEffect" type="button">Share</button>
-    </div>
-  </header>
-
-  <aside class="side">
-    <div class="pane active" id="pane-fx">
-      <div class="search"><input id="qFx" placeholder="Search 3D effects…" autocomplete="off" /></div>
-      <div class="cats" id="catsFx"></div>
-      <div class="list" id="listFx"></div>
-    </div>
-  </aside>
-
-  <main class="stage-wrap">
-    <canvas id="stage"></canvas>
-    <div class="hud">
-      <div class="pill" id="hudLeft">Loading 3D effects…</div>
-      <div class="pill controls">
-        <button class="btn" id="btnReplay" type="button">Replay</button>
-        <button class="btn" id="btnPause" type="button">Pause</button>
-        <button class="btn" id="btnGrid" type="button">Grid</button>
-        <button class="btn" id="btnResetCam" type="button">Cam</button>
-      </div>
-    </div>
-    <div class="empty" id="emptyHint">Loading the 3DFX stage…</div>
-  </main>
-
-  <aside class="insp">
-    <div>
-      <h2 id="title">No selection</h2>
-      <p class="sub" id="desc">One stage. Pick an effect, it renders here. Share the ?effect= link.</p>
-    </div>
-    <div class="warn" id="stackNote">
-      Catalog: ObjectStore <code>3dfx-registry</code> + <code>vfx-spells</code>. Shaders in <code>/3dfx/shaders</code>. three r185.
-    </div>
-    <div class="block">
-      <h3>Effect id</h3>
-      <div class="row">
-        <div class="code" id="uuid">—</div>
-        <button class="btn" id="btnCopyUuid" type="button">Copy</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <div class="code" id="shareLink" style="font-size:10px">—</div>
-        <button class="btn" id="btnCopyShare" type="button">Share URL</button>
-      </div>
-      <div class="msg" id="copyMsg"></div>
-    </div>
-    <div class="block">
-      <h3>Runtime</h3>
-      <div class="kv" id="details"></div>
-    </div>
-    <div class="block">
-      <h3>Tags</h3>
-      <div class="tags" id="tags"></div>
-    </div>
-    <div class="block" id="cdnBlock" hidden>
-      <h3>Shader</h3>
-      <div class="row">
-        <div class="code" id="cdnUrl">—</div>
-        <button class="btn" id="btnCopyCdn" type="button">Copy</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <a class="btn" id="btnOpenCdn" href="#" target="_blank" rel="noopener">Open URL</a>
-      </div>
-    </div>
-    <div class="block">
-      <h3>Cast snippet</h3>
-      <div class="code" id="snippet" style="white-space:pre-wrap;min-height:72px">// pick an effect</div>
-      <div class="row" style="margin-top:8px"><button class="btn" id="btnCopySnippet" type="button">Copy</button></div>
-    </div>
-    <div class="note" id="statusBar">FPS — · mode —</div>
-    <p class="note">
-      Hotkeys: Space replay · P pause · G grid · ↑↓ next effect<br />
-      Share URL stays on <code>?effect=</code> so a link opens that effect.
-    </p>
-  </aside>
-</div>
-
-<script type="module" src="./js/3dfx-lab.js"></script>
-
+<body style="margin:0;background:#04040a;color:#e7ecff;font-family:Inter,Segoe UI,system-ui,sans-serif">
+<p style="padding:24px">Opening the Grudge VFX Sandbox… <a style="color:#c4b5fd" href="https://vfx.grudge-studio.com/">vfx.grudge-studio.com</a></p>
 </body>
 </html>
