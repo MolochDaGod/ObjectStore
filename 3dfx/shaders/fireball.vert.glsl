@@ -1,6 +1,7 @@
 // fireball.vert.glsl — pulsing core sphere with heat-warp displacement
 varying vec2  vUv;
 varying vec3  vNormal;
+varying vec3  vWorldPos;
 varying float vDisplace;
 uniform float uTime;
 
@@ -29,5 +30,7 @@ void main() {
   vDisplace = d;
 
   vec3 pos = position + normal * d;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+  vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+  vWorldPos = worldPos.xyz;
+  gl_Position = projectionMatrix * viewMatrix * worldPos;
 }

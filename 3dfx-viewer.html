@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grudge 3DFX Viewer — skill API · r185 · Rapier heightfield/ray · instanced sparks</title>
+<title>Grudge 3DFX — effects that render</title>
 <link rel="icon" href="./branding/favicon-32x32.png" type="image/png" />
 <meta name="theme-color" content="#0a0e14" />
 <meta property="og:title" content="Grudge 3DFX Viewer" />
-<meta property="og:description" content="Same spell stack as vfxgrudge: skillswrite, GLSL particles, VFXLibrary, AdvancedFX, R2 GLBs, GRDG-3DFX UUIDs." />
+<meta property="og:description" content="One stage for Grudge 3D effects. Pick an effect, watch it render, share ?effect=id." />
+<meta property="og:url" content="https://info.grudge-studio.com/3dfx-viewer.html" />
+<link rel="canonical" href="https://info.grudge-studio.com/3dfx-viewer.html" />
 <style>
 :root{
   --bg:#070b12;--panel:#0f1520;--panel2:#121a28;--line:#243044;--text:#e8eef5;--muted:#8b95a8;
@@ -41,7 +43,7 @@ button,input{font:inherit}
 .chip{border:1px solid var(--line);background:0;color:var(--muted);padding:3px 8px;border-radius:999px;font-size:10px;cursor:pointer}
 .chip.active{border-color:var(--gold);color:var(--gold);background:rgba(212,168,75,.1)}
 .list{padding:8px;display:flex;flex-direction:column;gap:4px}
-.item{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid transparent;background:#0c121c;cursor:pointer}
+.item,button.item{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid transparent;background:#0c121c;cursor:pointer;width:100%;text-align:left;color:inherit;font:inherit;appearance:none}
 .item:hover{border-color:var(--line)}.item.active{border-color:var(--gold);background:rgba(212,168,75,.1)}
 .dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 10px currentColor}
 .item .name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -85,50 +87,23 @@ button,input{font:inherit}
       <span class="badge" id="countBadge">loading…</span>
     </div>
     <div class="top-links">
-      <a href="./hub.html">Hub</a>
-      <a href="https://vfxgrudge.puter.site/" target="_blank" rel="noopener">vfxgrudge (ref)</a>
-      <a href="https://vfx.grudge.studio/" target="_blank" rel="noopener">VFX Studio</a>
-      <a href="https://open.grudge-studio.com/danger" target="_blank" rel="noopener">Danger</a>
-      <a href="./api/v1/vfx-production-glb.json" target="_blank" rel="noopener">GLB JSON</a>
+      <a href="./vfx">2D gallery</a>
+      <button class="btn primary" id="btnShareEffect" type="button">Share</button>
     </div>
   </header>
 
   <aside class="side">
-    <div class="tabs">
-      <button class="tab active" data-tab="skills">Skills</button>
-      <button class="tab" data-tab="library">Library</button>
-      <button class="tab" data-tab="advanced">Advanced</button>
-      <button class="tab" data-tab="glb">R2 GLB</button>
-      <button class="tab" data-tab="registry">Registry</button>
-    </div>
-    <div class="pane active" id="pane-skills">
-      <div class="search"><input id="qSkills" placeholder="Search skillswrite spells…" /></div>
-      <div class="list" id="listSkills"></div>
-    </div>
-    <div class="pane" id="pane-library">
-      <div class="search"><input id="qLib" placeholder="Search AnimationLib catalog…" /></div>
-      <div class="cats" id="catsLib"></div>
-      <div class="list" id="listLib"></div>
-    </div>
-    <div class="pane" id="pane-advanced">
-      <div class="search"><input id="qAdv" placeholder="Search advanced FX…" /></div>
-      <div class="list" id="listAdv"></div>
-    </div>
-    <div class="pane" id="pane-glb">
-      <div class="search"><input id="qGlb" placeholder="Search production R2 GLBs…" /></div>
-      <div class="list" id="listGlb"></div>
-    </div>
-    <div class="pane" id="pane-registry">
-      <div class="search"><input id="qReg" placeholder="Search ObjectStore 3DFX registry…" /></div>
-      <div class="cats" id="catsReg"></div>
-      <div class="list" id="listReg"></div>
+    <div class="pane active" id="pane-fx">
+      <div class="search"><input id="qFx" placeholder="Search 3D effects…" autocomplete="off" /></div>
+      <div class="cats" id="catsFx"></div>
+      <div class="list" id="listFx"></div>
     </div>
   </aside>
 
   <main class="stage-wrap">
     <canvas id="stage"></canvas>
     <div class="hud">
-      <div class="pill" id="hudLeft">Loading skillswrite + catalogs…</div>
+      <div class="pill" id="hudLeft">Loading 3D effects…</div>
       <div class="pill controls">
         <button class="btn" id="btnReplay" type="button">Replay</button>
         <button class="btn" id="btnPause" type="button">Pause</button>
@@ -136,22 +111,26 @@ button,input{font:inherit}
         <button class="btn" id="btnResetCam" type="button">Cam</button>
       </div>
     </div>
-    <div class="empty" id="emptyHint">Booting Three.js + skillswrite stack…</div>
+    <div class="empty" id="emptyHint">Loading the 3DFX stage…</div>
   </main>
 
   <aside class="insp">
     <div>
       <h2 id="title">No selection</h2>
-      <p class="sub" id="desc">Skill API (master-weaponSkills) + production GLB + Rapier terrain ray. three r185.</p>
+      <p class="sub" id="desc">One stage. Pick an effect, it renders here. Share the ?effect= link.</p>
     </div>
     <div class="warn" id="stackNote">
-      Stack: skillswrite (GLSL particles, FireAura, IceSnake, Meteor…) · VFXLibrary (catalog beams/projectiles) · AdvancedFX (splines/ribbons) · UnrealBloom · R2 GLBs · GRDG-3DFX UUIDs
+      Catalog: ObjectStore <code>3dfx-registry</code> + <code>vfx-spells</code>. Shaders in <code>/3dfx/shaders</code>. three r185.
     </div>
     <div class="block">
-      <h3>Grudge UUID</h3>
+      <h3>Effect id</h3>
       <div class="row">
         <div class="code" id="uuid">—</div>
         <button class="btn" id="btnCopyUuid" type="button">Copy</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div class="code" id="shareLink" style="font-size:10px">—</div>
+        <button class="btn" id="btnCopyShare" type="button">Share URL</button>
       </div>
       <div class="msg" id="copyMsg"></div>
     </div>
@@ -164,7 +143,7 @@ button,input{font:inherit}
       <div class="tags" id="tags"></div>
     </div>
     <div class="block" id="cdnBlock" hidden>
-      <h3>CDN / R2</h3>
+      <h3>Shader</h3>
       <div class="row">
         <div class="code" id="cdnUrl">—</div>
         <button class="btn" id="btnCopyCdn" type="button">Copy</button>
@@ -175,13 +154,13 @@ button,input{font:inherit}
     </div>
     <div class="block">
       <h3>Cast snippet</h3>
-      <div class="code" id="snippet" style="white-space:pre-wrap;min-height:72px">// select an item</div>
+      <div class="code" id="snippet" style="white-space:pre-wrap;min-height:72px">// pick an effect</div>
       <div class="row" style="margin-top:8px"><button class="btn" id="btnCopySnippet" type="button">Copy</button></div>
     </div>
     <div class="note" id="statusBar">FPS — · mode —</div>
     <p class="note">
-      Hotkeys: Space replay · P pause · G grid<br />
-      Data: ObjectStore <code>3dfx-*</code> + production GLB · Runtime: <code>vfx.grudge.studio/skillswrite</code> + <code>VFXLibrary</code>
+      Hotkeys: Space replay · P pause · G grid · ↑↓ next effect<br />
+      Share URL stays on <code>?effect=</code> so a link opens that effect.
     </p>
   </aside>
 </div>

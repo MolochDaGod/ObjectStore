@@ -1,6 +1,7 @@
 // fireball.frag.glsl — molten core with surface fire, limb darkening, corona
 varying vec2  vUv;
 varying vec3  vNormal;
+varying vec3  vWorldPos;
 varying float vDisplace;
 uniform float uTime;
 uniform vec3  uColor1;    // #ff4400
@@ -19,7 +20,7 @@ float fbm(vec3 p) {
 
 void main() {
   // Fresnel — bright centre, fading edges
-  vec3  viewDir = normalize(cameraPosition - vNormal);
+  vec3  viewDir = normalize(cameraPosition - vWorldPos);
   float fresnel = 1.0 - max(dot(normalize(vNormal), viewDir), 0.0);
   fresnel       = pow(fresnel, 2.0);
 
