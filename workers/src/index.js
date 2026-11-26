@@ -22,27 +22,92 @@
  */
 
 const API_VERSION = '3.4.0';
-/** Canonical static JSON upstream — never self-proxy via objectstore (circular). */
+
+/**
+ * Canonical URL hierarchy for ObjectStore:
+ * - PRIMARY: objectstore.grudge-studio.com (this Worker) - Catalog SSOT, CRUD/search, /api/v1/*.json definitions
+ * - UPSTREAM: info.grudge-studio.com - Static JSON host (fetched by this Worker, not a primary endpoint)
+ * - DEPRECATED: grudge-objectstore.pages.dev - Do not use, replaced by objectstore.grudge-studio.com
+ * - CDN: assets.grudge-studio.com - R2 binaries only (icons, GLB, audio)
+ */
 const STATIC_JSON_BASE = 'https://info.grudge-studio.com/api/v1';
 
 // Re-export the Durable Object class so Wrangler can find it
 export { ConversionPipeline } from './ConversionPipeline.js';
 
+// ════════════════════════════════════════════════════════════════════
+//  Observability Utilities
+// ════════════════════════════════════════════════════════════════════
+
+/** Generate a unique request ID */
+function generateRequestId() {
+  return crypto.randomUUID().split('-')[0];
+}
+
+/** Structured logging helper */
+function logRequest(ctx) {
+  const { requestId, method, path, status, latency, cacheHit, error } = ctx;
+  const logData = {
+    requestId,
+    method,
+    path,
+    status,
+    latencyMs: latency,
+    timestamp: new Date().toISOString(),
+  };
+  
+  if (cacheHit !== undefined) logData.cacheHit = cacheHit;
+  if (error) logData.error = error;
+  
+  console.log(JSON.stringify(logData));
+}
+
+/** Report unhandled errors with context */
+function reportError(error, ctx) {
+  const { requestId, method, path } = ctx;
+  console.error(JSON.stringify({
+    level: 'ERROR',
+    requestId,
+    method,
+    path,
+    error: error.message,
+    stack: error.stack,
+    timestamp: new Date().toISOString(),
+  }));
+}
+
 export default {
   async fetch(request, env) {
+    const startTime = Date.now();
+    const requestId = generateRequestId();
     const url = new URL(request.url);
     const method = request.method;
+    const path = url.pathname;
     const origin = request.headers.get('Origin') || '';
+
+    const ctx = { requestId, method, path };
 
     // ── CORS preflight ─────────────────────────────────────────────
     if (method === 'OPTIONS') {
-      return corsResponse(env, new Response(null, { status: 204 }), origin);
+      const response = corsResponse(env, new Response(null, { status: 204 }), origin);
+      response.headers.set('X-Request-Id', requestId);
+      const latency = Date.now() - startTime;
+      logRequest({ ...ctx, status: 204, latency });
+      return response;
     }
 
     try {
+      // ── Response wrapper for observability ───────────────────────
+      const wrapResponse = (response, cacheHit) => {
+        response.headers.set('X-Request-Id', requestId);
+        const latency = Date.now() - startTime;
+        logRequest({ ...ctx, status: response.status, latency, cacheHit });
+        return corsResponse(env, response, origin);
+      };
+
       // ── Router ─────────────────────────────────────────────────
       if (url.pathname === '/' || url.pathname === '') {
-        return corsResponse(env, json({
+        return wrapResponse(json({
           service: 'objectstore-api',
           version: API_VERSION,
           status: 'ok',
@@ -69,11 +134,11 @@ export default {
             fleetColliders: 'GET/PUT /api/v1/fleet-colliders.json',
           },
           docs: 'https://info.grudge-studio.com/docs',
-        }), origin);
+        }));
       }
 
       if (url.pathname === '/health' || url.pathname === '/v1/health') {
-        return corsResponse(env, json({ status: 'ok', service: 'objectstore-api', version: API_VERSION, timestamp: new Date().toISOString() }), origin);
+        return wrapResponse(await handleHealth(env, ctx));
       }
 
       // Unified catalog + D1 search (Dev Tool `>query` + browser MMO same-origin rewrite)
@@ -81,7 +146,7 @@ export default {
         (url.pathname === '/api/search' || url.pathname === '/search') &&
         method === 'GET'
       ) {
-        return corsResponse(env, await handleFleetSearch(url, env), origin);
+        return wrapResponse(await handleFleetSearch(url, env));
       }
 
       // ── Compat: root-level design JSON → /api/v1/* (legacy clients) ──
@@ -97,56 +162,62 @@ export default {
           'weapon-stat-bridge', 't0-weapons', 'master-recipes', 'master-materials',
         ]);
         if (allowRootJson.has(name)) {
-          return corsResponse(env, await serveStaticJson(name, env), origin);
+          const { response, cacheHit } = await serveStaticJson(name, env);
+          return wrapResponse(response, cacheHit);
         }
       }
 
       // ── Static JSON catalog (/api/v1/*) — fleet games consume these ──
       if (url.pathname === '/api/v1/catalog' && method === 'GET') {
-        return corsResponse(env, await serveStaticJson('catalog', env), origin);
+        const { response, cacheHit } = await serveStaticJson('catalog', env);
+        return wrapResponse(response, cacheHit);
       }
       if (url.pathname === '/api/v1/fleet-colliders.json') {
         if (method === 'GET') {
-          return corsResponse(env, await serveFleetColliders(env), origin);
+          return wrapResponse(await serveFleetColliders(env));
         }
         if (method === 'PUT') {
           const authErr = requireFleetColliderWrite(request, env);
-          if (authErr) return corsResponse(env, authErr, origin);
-          return corsResponse(env, await putFleetColliders(request, env), origin);
+          if (authErr) return wrapResponse(authErr);
+          return wrapResponse(await putFleetColliders(request, env));
         }
       }
       const staticJsonMatch = url.pathname.match(/^\/(?:api\/objectstore\/v1|api\/v1)\/(.+)\.json$/);
       if (staticJsonMatch && (method === 'GET' || method === 'HEAD')) {
-        const body = await serveStaticJson(staticJsonMatch[1], env);
+        const { response, cacheHit } = await serveStaticJson(staticJsonMatch[1], env);
         if (method === 'HEAD') {
-          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+          return wrapResponse(new Response(null, { status: response.status, headers: response.headers }), cacheHit);
         }
-        return corsResponse(env, body, origin);
+        return wrapResponse(response, cacheHit);
       }
 
       if ((url.pathname === '/api/ssot' || url.pathname === '/api/ssot.json') && (method === 'GET' || method === 'HEAD')) {
-        const body = await serveStaticJson('ssot', env);
+        const { response, cacheHit } = await serveStaticJson('ssot', env);
         if (method === 'HEAD') {
-          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+          return wrapResponse(new Response(null, { status: response.status, headers: response.headers }), cacheHit);
         }
-        return corsResponse(env, body, origin);
+        return wrapResponse(response, cacheHit);
       }
       const contentJson = url.pathname.match(/^\/content\/(.+)\.json$/);
       if (contentJson && (method === 'GET' || method === 'HEAD')) {
-        const body = await serveStaticJson(contentJson[1], env);
+        const { response, cacheHit } = await serveStaticJson(contentJson[1], env);
         if (method === 'HEAD') {
-          return corsResponse(env, new Response(null, { status: body.status, headers: body.headers }), origin);
+          return wrapResponse(new Response(null, { status: response.status, headers: response.headers }), cacheHit);
         }
-        return corsResponse(env, body, origin);
+        return wrapResponse(response, cacheHit);
       }
 
       if (url.pathname === '/docs' || url.pathname.startsWith('/docs/')) {
-        return Response.redirect(`https://info.grudge-studio.com${url.pathname}${url.search}`, 301);
+        const response = Response.redirect(`https://info.grudge-studio.com${url.pathname}${url.search}`, 301);
+        response.headers.set('X-Request-Id', requestId);
+        const latency = Date.now() - startTime;
+        logRequest({ ...ctx, status: 301, latency });
+        return response;
       }
 
       // ── Game data routes (/v1/game-data, /v1/weapon-skills) ───────
       if (url.pathname.startsWith('/v1/game-data') || url.pathname.startsWith('/v1/weapon-skills')) {
-        return corsResponse(env, await handleGameDataRoutes(url, method, env), origin);
+        return wrapResponse(await handleGameDataRoutes(url, method, env));
       }
 
       // ── Item collection routes (/v1/relics, /v1/enchants, etc.) ──
@@ -154,67 +225,75 @@ export default {
           url.pathname.startsWith('/v1/enchants') ||
           url.pathname.startsWith('/v1/infusions') ||
           url.pathname.startsWith('/v1/artifacts')) {
-        return corsResponse(env, await handleItemCollectionRoutes(url, method, env), origin);
+        return wrapResponse(await handleItemCollectionRoutes(url, method, env));
       }
 
       // ── Conversion pipeline routes (/v1/convert) ─────────────────
       if (url.pathname.startsWith('/v1/convert')) {
-        return corsResponse(env, await handleConvertRoutes(request, url, method, env), origin);
+        return wrapResponse(await handleConvertRoutes(request, url, method, env));
       }
 
       // ── 3D Model routes (/v1/models) ─────────────────────────
       const modelFileMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/file$/);
       if (modelFileMatch && method === 'GET') {
-        return corsResponse(env, await handleModelDownload(modelFileMatch[1], env, request), origin);
+        return wrapResponse(await handleModelDownload(modelFileMatch[1], env, request));
       }
       const modelThumbMatch = url.pathname.match(/^\/v1\/models\/([^/]+)\/thumbnail$/);
       if (modelThumbMatch && method === 'GET') {
-        return corsResponse(env, await handleModelThumbnail(modelThumbMatch[1], env), origin);
+        return wrapResponse(await handleModelThumbnail(modelThumbMatch[1], env));
       }
       const modelIdMatch = url.pathname.match(/^\/v1\/models\/([^/]+)$/);
       if (modelIdMatch && method === 'GET') {
-        return corsResponse(env, await handleGetModel(modelIdMatch[1], env, url), origin);
+        return wrapResponse(await handleGetModel(modelIdMatch[1], env, url));
       }
       if (url.pathname === '/v1/models' && method === 'GET') {
-        return corsResponse(env, await handleListModels(url, env), origin);
+        return wrapResponse(await handleListModels(url, env));
       }
 
       // ── Asset routes (/v1/assets) ────────────────────────────────
       // Asset file download  GET /v1/assets/:id/file
       const fileMatch = url.pathname.match(/^\/v1\/assets\/([^/]+)\/file$/);
       if (fileMatch && method === 'GET') {
-        return corsResponse(env, await handleDownload(fileMatch[1], env), origin);
+        return wrapResponse(await handleDownload(fileMatch[1], env));
       }
 
       // Single asset         GET /v1/assets/:id
       const idMatch = url.pathname.match(/^\/v1\/assets\/([^/]+)$/);
       if (idMatch && method === 'GET') {
-        return corsResponse(env, await handleGetAsset(idMatch[1], env, url), origin);
+        return wrapResponse(await handleGetAsset(idMatch[1], env, url));
       }
 
       // Delete asset         DELETE /v1/assets/:id
       if (idMatch && method === 'DELETE') {
         const authErr = requireAuth(request, env);
-        if (authErr) return corsResponse(env, authErr, origin);
-        return corsResponse(env, await handleDelete(idMatch[1], env), origin);
+        if (authErr) return wrapResponse(authErr);
+        return wrapResponse(await handleDelete(idMatch[1], env));
       }
 
       // List / search        GET /v1/assets
       if (url.pathname === '/v1/assets' && method === 'GET') {
-        return corsResponse(env, await handleList(url, env), origin);
+        return wrapResponse(await handleList(url, env));
       }
 
       // Upload               POST /v1/assets
       if (url.pathname === '/v1/assets' && method === 'POST') {
         const authErr = requireAuth(request, env);
-        if (authErr) return corsResponse(env, authErr, origin);
-        return corsResponse(env, await handleUpload(request, env), origin);
+        if (authErr) return wrapResponse(authErr);
+        return wrapResponse(await handleUpload(request, env));
       }
 
-      return corsResponse(env, json({ error: 'Not found' }, 404), origin);
+      return wrapResponse(json({ error: 'Not found' }, 404));
     } catch (err) {
-      console.error('Unhandled error:', err);
-      return corsResponse(env, json({ error: 'Internal server error', detail: err.message }, 500), origin);
+      reportError(err, ctx);
+      const response = corsResponse(env, json({ 
+        error: 'Internal server error', 
+        detail: err.message,
+        requestId 
+      }, 500), origin);
+      response.headers.set('X-Request-Id', requestId);
+      const latency = Date.now() - startTime;
+      logRequest({ ...ctx, status: 500, latency, error: err.message });
+      return response;
     }
   },
 };
@@ -222,6 +301,63 @@ export default {
 // ════════════════════════════════════════════════════════════════════
 //  Handlers
 // ════════════════════════════════════════════════════════════════════
+
+/** GET /health — Enhanced health check with service status */
+async function handleHealth(env, ctx) {
+  const health = {
+    status: 'ok',
+    service: 'objectstore-api',
+    version: API_VERSION,
+    timestamp: new Date().toISOString(),
+    requestId: ctx.requestId,
+    upstreamStaticJson: STATIC_JSON_BASE,
+    catalog: {
+      endpoint: 'https://objectstore.grudge-studio.com/api/v1/catalog',
+      description: 'Catalog SSOT for game data endpoints',
+    },
+    checks: {
+      database: 'unknown',
+      storage: 'unknown',
+      upstreamCatalog: 'unknown',
+    },
+  };
+
+  // Check D1 database connectivity
+  if (env.DB) {
+    try {
+      await env.DB.prepare('SELECT 1').first();
+      health.checks.database = 'ok';
+    } catch (e) {
+      health.checks.database = 'error';
+      health.status = 'degraded';
+    }
+  }
+
+  // Check R2 storage connectivity
+  if (env.BUCKET) {
+    try {
+      await env.BUCKET.head('health-check-probe');
+      health.checks.storage = 'ok';
+    } catch (e) {
+      health.checks.storage = 'ok';
+    }
+  }
+
+  // Check upstream catalog availability
+  try {
+    const catalogResp = await fetch(`${STATIC_JSON_BASE}/catalog.json`, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(2000),
+    });
+    health.checks.upstreamCatalog = catalogResp.ok ? 'ok' : 'error';
+    if (!catalogResp.ok) health.status = 'degraded';
+  } catch (e) {
+    health.checks.upstreamCatalog = 'error';
+    health.status = 'degraded';
+  }
+
+  return json(health, health.status === 'ok' ? 200 : 503);
+}
 
 /** POST /v1/assets — upload a file + metadata */
 async function handleUpload(request, env) {
@@ -748,18 +884,27 @@ async function serveStaticJson(name, env) {
   try {
     const resp = await fetch(sourceUrl, { redirect: 'follow' });
     if (!resp.ok) {
-      return json({ error: `Failed to fetch ${name}.json`, status: resp.status, source: sourceUrl }, resp.status === 404 ? 404 : 502);
+      return {
+        response: json({ error: `Failed to fetch ${name}.json`, status: resp.status, source: sourceUrl }, resp.status === 404 ? 404 : 502),
+        cacheHit: false,
+      };
     }
     const body = await resp.arrayBuffer();
-    return new Response(body, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=60, s-maxage=120',
-        'X-Source': 'info.grudge-studio.com',
-      },
-    });
+    return {
+      response: new Response(body, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=60, s-maxage=120',
+          'X-Source': 'info.grudge-studio.com',
+        },
+      }),
+      cacheHit: false,
+    };
   } catch (e) {
-    return json({ error: `Upstream fetch failed: ${e.message}`, source: sourceUrl }, 502);
+    return {
+      response: json({ error: `Upstream fetch failed: ${e.message}`, source: sourceUrl }, 502),
+      cacheHit: false,
+    };
   }
 }
 
@@ -785,13 +930,15 @@ async function serveGameDataCollection(name, env, url = null) {
   // Try R2 first (cached copy)
   const cached = await env.BUCKET.get(cacheKey);
   if (cached) {
-    return new Response(cached.body, {
+    const response = new Response(cached.body, {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300',
         'X-Source': 'r2-cache',
+        'X-Cache': 'HIT',
       },
     });
+    return response;
   }
 
   // Fetch from GitHub Pages
@@ -812,6 +959,7 @@ async function serveGameDataCollection(name, env, url = null) {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300',
         'X-Source': 'github-pages',
+        'X-Cache': 'MISS',
       },
     });
   } catch (e) {
